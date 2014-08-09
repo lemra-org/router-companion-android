@@ -4,12 +4,27 @@
     <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="status">Status</string>
+    <string name="status_router">Router</string>
+    <string name="status_wan">WAN</string>
+    <string name="status_lan">LAN</string>
+    <string name="status_wireless">Wireless</string>
+    <string name="status_bandwidth">Bandwidth</string>
+    <string name="status_syslog">Syslog</string>
+    <string name="status_sysinfo">Sys-Info</string>
+
+    <string name="setup">Setup</string>
+    <string name="wireless">Wireless</string>
+    <string name="services">Services</string>
+    <string name="security">Security</string>
+    <string name="access_restrictions">Access Restrictions</string>
+    <string name="nat_qos">NAT &amp; QoS</string>
+    <string name="admin_area">Admin Area</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+
+    <string name="no_data">No Data</string>
 
 </resources>
