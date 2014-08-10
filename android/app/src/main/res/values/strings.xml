@@ -84,5 +84,6 @@
     <string name="action_settings">Settings</string>
 
     <string name="no_data">No Data</string>
+    <string name="crash_toast_text">Please report App crash so it can be fixed</string>
 
 </resources>
