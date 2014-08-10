@@ -9,9 +9,9 @@
     tools:context=".DDWRTManagementActivity$PlaceholderFragment">
 
     <!--<TextView-->
-        <!--android:id="@+id/section_label"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <!--android:id="@+id/section_label"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
 
     <org.lemra.dd_wrt.android.common.view.SlidingTabLayout
         android:id="@+id/sliding_tabs"
@@ -23,6 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1"
-        android:background="@android:color/white"/>
+        android:background="@android:color/white" />
 
 </RelativeLayout>
