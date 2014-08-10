@@ -3,9 +3,9 @@ package org.lemra.dd_wrt;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -19,11 +19,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.android.common.view.SlidingTabLayout;
+import org.lemra.dd_wrt.prefs.sort.SortingStrategy;
+import org.lemra.dd_wrt.utils.Utils;
 
 
 public class DDWRTManagementActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    public static final String TAG = DDWRTManagementActivity.class.getSimpleName();
+
+    private SharedPreferences preferences;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -38,6 +45,7 @@ public class DDWRTManagementActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_ddwrtmanagement);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -55,7 +63,7 @@ public class DDWRTManagementActivity extends FragmentActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, preferences))
                 .commit();
     }
 
@@ -130,23 +138,19 @@ public class DDWRTManagementActivity extends FragmentActivity
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String SORTING_STRATEGY = "sorting_strategy";
 
         private FragmentTabsAdapter fragmentTabsAdapter;
-
-        private final int sectionNumber;
-
-        public PlaceholderFragment(int sectionNumber) {
-            this.sectionNumber = sectionNumber;
-        }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment(sectionNumber);
+        public static PlaceholderFragment newInstance(int sectionNumber, SharedPreferences preferences) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putString(SORTING_STRATEGY, preferences.getString("sortingStrategy", SortingStrategy.DEFAULT));
             fragment.setArguments(args);
             return fragment;
         }
@@ -168,7 +172,8 @@ public class DDWRTManagementActivity extends FragmentActivity
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            fragmentTabsAdapter = new FragmentTabsAdapter(sectionNumber, getChildFragmentManager(), getResources());
+            fragmentTabsAdapter = new FragmentTabsAdapter(getArguments().getInt(ARG_SECTION_NUMBER),
+                    getChildFragmentManager(), getResources(), SortingStrategy.class.getPackage().getName()+"."+getArguments().getString(SORTING_STRATEGY));
         }
 
         @Override
@@ -196,46 +201,47 @@ public class DDWRTManagementActivity extends FragmentActivity
 
     private static class FragmentTabsAdapter extends FragmentPagerAdapter {
 
+        @NotNull
+        final DDWRTSectionTabFragment[] tabs;
         private final Resources resources;
-
         private final int parentSectionNumber;
 
-        public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources) {
+        public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy) {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
+            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy);
         }
 
         @Override
         public int getCount() {
-            //FIXME Depends on parentSectionNumber
-            return 2;
+            return this.tabs.length;
         }
 
         @Override
         public Fragment getItem(int position) {
-            //FIXME Depends on parentSectionNumber
-            switch (position) {
-                case 0:
-                    return new DialogFragment();
-                case 1:
-                    return new DialogFragment();
-                //TODO
+            if (this.tabs.length <= position) {
+                Log.d(TAG, "tabs contains less than " + position + " items");
+                return null;
             }
-            return null;
+            final DDWRTSectionTabFragment tab = this.tabs[position];
+            if (tab == null) {
+                return null;
+            }
+            return tab.getFragment();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            //FIXME depends on parentSectionNumber
-            switch (position) {
-                case 0:
-                    return resources.getString(R.string.status_router);
-                case 1:
-                    return resources.getString(R.string.status_sysinfo);
-                //TODO
+            if (this.tabs.length <= position) {
+                Log.d(TAG, "tabs contains less than " + position + " items");
+                return null;
             }
-            return null;
+            final DDWRTSectionTabFragment tab = this.tabs[position];
+            if (tab == null) {
+                return null;
+            }
+            return tab.getTabTitle();
         }
 
         @Override
@@ -245,6 +251,24 @@ public class DDWRTManagementActivity extends FragmentActivity
             if (object != null) {
                 ((Fragment) object).setUserVisibleHint(false);
             }
+        }
+    }
+
+    public static class DDWRTSectionTabFragment {
+        private final Fragment fragment;
+        private final CharSequence tabTitle;
+
+        public DDWRTSectionTabFragment(Fragment fragment, CharSequence tabTitle) {
+            this.fragment = fragment;
+            this.tabTitle = tabTitle;
+        }
+
+        public Fragment getFragment() {
+            return fragment;
+        }
+
+        public CharSequence getTabTitle() {
+            return tabTitle;
         }
     }
 

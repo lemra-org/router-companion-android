@@ -17,74 +17,25 @@ public class Router {
 
     private static final String REMOTE_IP_ADDRESS = "ipAddress";
     private static final String REMOTE_PORT = "port";
-
-    public enum RouterConnectionProtocol {
-        SSH ("ssh", "root", "ddwrt"),
-
-        HTTP ("http", "admin", ""),
-
-        HTTPS ("https", "admin", "");
-
-        @NotNull
-        final String channel;
-
-        @Nullable
-        final String defaultUsername;
-
-        @Nullable
-        final String defaultPassword;
-
-        RouterConnectionProtocol(@NotNull final String channel,
-                                 @Nullable final String defaultUsername,
-                                 @Nullable final String defaultPassword) {
-            this.channel = channel;
-            this.defaultUsername = defaultUsername;
-            this.defaultPassword = defaultPassword;
-        }
-
-        @NotNull
-        public String getChannel() {
-            return channel;
-        }
-
-        @Nullable
-        public String getDefaultUsername() {
-            return defaultUsername;
-        }
-
-        @Nullable
-        public String getDefaultPassword() {
-            return defaultPassword;
-        }
-    }
-
     @NotNull
     @SerializedName("channel")
     private RouterConnectionProtocol routerConnectionProtocol;
-
     @NotNull
     @SerializedName("router_name")
     private String name;
-
     @NotNull
     private String remoteIpAddress;
-
     private int remotePort;
-
     @Nullable
     private String username;
-
     @Nullable
     private String password;
-
     private boolean useDefault = true;
-
     @NotNull
     @SerializedName("uuid")
     private String uuid;
 
-    public static Router loadFromPreferences(ConfigurationBase paramConfigurationBase, String paramString)
-    {
+    public static Router loadFromPreferences(ConfigurationBase paramConfigurationBase, String paramString) {
         final Router routerInfo = new Router();
 
         final SharedPreferences localSharedPreferences = paramConfigurationBase.getPreferences(paramString);
@@ -176,8 +127,7 @@ public class Router {
         this.uuid = uuid;
     }
 
-    public void saveToPreferences(@NotNull final ConfigurationBase paramConfigurationBase)
-    {
+    public void saveToPreferences(@NotNull final ConfigurationBase paramConfigurationBase) {
         paramConfigurationBase
                 .getPreferences(this.uuid)
                 .edit()
@@ -192,9 +142,48 @@ public class Router {
                 .commit();
     }
 
-    public String toString()
-    {
+    public String toString() {
         return this.name;
+    }
+
+    public enum RouterConnectionProtocol {
+        SSH("ssh", "root", "ddwrt"),
+
+        HTTP("http", "admin", ""),
+
+        HTTPS("https", "admin", "");
+
+        @NotNull
+        final String channel;
+
+        @Nullable
+        final String defaultUsername;
+
+        @Nullable
+        final String defaultPassword;
+
+        RouterConnectionProtocol(@NotNull final String channel,
+                                 @Nullable final String defaultUsername,
+                                 @Nullable final String defaultPassword) {
+            this.channel = channel;
+            this.defaultUsername = defaultUsername;
+            this.defaultPassword = defaultPassword;
+        }
+
+        @NotNull
+        public String getChannel() {
+            return channel;
+        }
+
+        @Nullable
+        public String getDefaultUsername() {
+            return defaultUsername;
+        }
+
+        @Nullable
+        public String getDefaultPassword() {
+            return defaultPassword;
+        }
     }
 
 }

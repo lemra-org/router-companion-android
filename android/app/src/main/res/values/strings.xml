@@ -4,6 +4,8 @@
     <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
+    <!-- Sections -->
+    <!--1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}-->
     <string name="status">Status</string>
     <string name="status_router">Router</string>
     <string name="status_wan">WAN</string>
@@ -13,16 +15,72 @@
     <string name="status_syslog">Syslog</string>
     <string name="status_sysinfo">Sys-Info</string>
 
+    <!-- 2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP} -->
     <string name="setup">Setup</string>
+    <string name="setup_basic">Basic</string>
+    <string name="setup_ipv6">IPv6</string>
+    <string name="setup_ddns">DDNS</string>
+    <string name="setup_mac_cloning">MAC Cloning</string>
+    <string name="setup_routing">Routing</string>
+    <string name="setup_vlans">VLAN</string>
+    <string name="setup_networking">Networking</string>
+    <string name="setup_eoip">EoIP</string>
+
+    <!-- 3 = Wireless => {Basic, Radius, Security, MAC Filter, WL0, WL1, ...} -->
     <string name="wireless">Wireless</string>
+    <string name="wireless_basic_settings">Basic</string>
+    <string name="wireless_radius">Radius</string>
+    <string name="wireless_security">Security</string>
+    <string name="wireless_mac_filter">MAC Filter</string>
+    <string name="wireless_wl">WL</string>
+    <string name="wireless_wl0">WL0</string>
+    <string name="wireless_wl1">WL1</string>
+
+    <!--4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}-->
     <string name="services">Services</string>
+    <string name="services_services">Services</string>
+    <string name="services_freeradius">FreeRadius</string>
+    <string name="services_ppoe">PPoE</string>
+    <string name="services_vpn">VPN</string>
+    <string name="services_usb">USB</string>
+    <string name="services_nas">NAS</string>
+    <string name="services_hostspot">HotSpot</string>
+    <string name="services_sip">SIP</string>
+    <string name="services_adblocking">Adblocking</string>
+    <string name="services_webserver">WebServer</string>
+
+    <!--5 = Security => {Firewall, VPN Passthrough}-->
     <string name="security">Security</string>
+    <string name="security_firewall">Firewall</string>
+    <string name="security_vpn_passthrough">VPN Passthrough</string>
+
+    <!--6 = Access => {WAN}-->
     <string name="access_restrictions">Access Restrictions</string>
+    <string name="access_restrictions_wan">WAN Access</string>
+
+    <!--7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}-->
     <string name="nat_qos">NAT &amp; QoS</string>
+    <string name="nat_qos_port_forwarding">Port Fwd</string>
+    <string name="nat_qos_port_range_forwarding">Port Range Fwd</string>
+    <string name="nat_qos_port_trigger">Port Trigger</string>
+    <string name="nat_qos_upnp">UPnP</string>
+    <string name="nat_qos_dmz">DMZ</string>
+    <string name="nat_qos_qos">QoS</string>
+
+    <!--8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}-->
     <string name="admin_area">Admin Area</string>
+    <string name="admin_area_mgmt">Management</string>
+    <string name="admin_area_keep_alive">Keep Alive</string>
+    <string name="admin_area_cmds">Commands</string>
+    <string name="admin_area_wol">WOL</string>
+    <string name="admin_area_factory">Factory Defaults</string>
+    <string name="admin_area_upgrade">Upgrade</string>
+    <string name="admin_area_backup">Backup</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
+    <string name="action_example">Save &amp; Apply</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="no_data">No Data</string>
