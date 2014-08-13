@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "org.lemra.dd_wrt"
-        minSdkVersion 15
-        targetSdkVersion 20
+        minSdkVersion 14
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
@@ -18,9 +18,20 @@ android {
         }
     }
 }
+//
+//repositories {
+//    mavenCentral()
+//    flatDir {
+//        dirs 'libs'
+//    }
+//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+//    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+//    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:19.+'
+    compile project(":actionbarsherlock")
+    compile project(":library")
 }
