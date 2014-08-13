@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ddwrt_purple">#a91991</color>
+    <color name="ddwrt_green">#009900</color>
+    <color name="background_window">#FFE5E5E5</color>
 </resources>

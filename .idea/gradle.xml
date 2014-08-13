@@ -8,7 +8,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/actionbarsherlock" />
+            <option value="$PROJECT_DIR$/actionbarsherlock-fest" />
+            <option value="$PROJECT_DIR$/actionbarsherlock-i18n" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>
       </GradleProjectSettings>

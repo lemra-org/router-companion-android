@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -21,10 +22,11 @@ import android.view.ViewGroup;
 
 import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.android.common.view.SlidingTabLayout;
+import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 import org.lemra.dd_wrt.prefs.sort.SortingStrategy;
 import org.lemra.dd_wrt.utils.Utils;
 
-
+@Deprecated
 public class DDWRTManagementActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -139,6 +141,7 @@ public class DDWRTManagementActivity extends FragmentActivity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final String SORTING_STRATEGY = "sorting_strategy";
+        public  static final String PARENT_SECTION_TITLE = "parent_section_title";
 
         private FragmentTabsAdapter fragmentTabsAdapter;
 
@@ -185,7 +188,7 @@ public class DDWRTManagementActivity extends FragmentActivity
             mViewPager.setAdapter(fragmentTabsAdapter);
 
             final SlidingTabLayout slidingTabs = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
-            slidingTabs.setSelectedIndicatorColors(getResources().getColor(R.color.ddwrt_purple));
+            slidingTabs.setSelectedIndicatorColors(getResources().getColor(R.color.ddwrt_green));
             slidingTabs.setViewPager(mViewPager);
 
             return rootView;
@@ -199,10 +202,10 @@ public class DDWRTManagementActivity extends FragmentActivity
         }
     }
 
-    private static class FragmentTabsAdapter extends FragmentPagerAdapter {
+    private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NotNull
-        final DDWRTSectionTabFragment[] tabs;
+        final DDWRTBaseFragment[] tabs;
         private final Resources resources;
         private final int parentSectionNumber;
 
@@ -224,11 +227,7 @@ public class DDWRTManagementActivity extends FragmentActivity
                 Log.d(TAG, "tabs contains less than " + position + " items");
                 return null;
             }
-            final DDWRTSectionTabFragment tab = this.tabs[position];
-            if (tab == null) {
-                return null;
-            }
-            return tab.getFragment();
+            return this.tabs[position];
         }
 
         @Override
@@ -237,7 +236,8 @@ public class DDWRTManagementActivity extends FragmentActivity
                 Log.d(TAG, "tabs contains less than " + position + " items");
                 return null;
             }
-            final DDWRTSectionTabFragment tab = this.tabs[position];
+            final DDWRTBaseFragment tab = this.tabs[position];
+            Log.d(TAG, "Tab @position #" + position + ": " + tab);
             if (tab == null) {
                 return null;
             }
@@ -252,24 +252,7 @@ public class DDWRTManagementActivity extends FragmentActivity
                 ((Fragment) object).setUserVisibleHint(false);
             }
         }
-    }
 
-    public static class DDWRTSectionTabFragment {
-        private final Fragment fragment;
-        private final CharSequence tabTitle;
-
-        public DDWRTSectionTabFragment(Fragment fragment, CharSequence tabTitle) {
-            this.fragment = fragment;
-            this.tabTitle = tabTitle;
-        }
-
-        public Fragment getFragment() {
-            return fragment;
-        }
-
-        public CharSequence getTabTitle() {
-            return tabTitle;
-        }
     }
 
 }

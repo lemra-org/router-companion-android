@@ -4,12 +4,11 @@ import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static org.lemra.dd_wrt.DDWRTManagementActivity.DDWRTSectionTabFragment;
 
 /**
  * Created by armel on 8/10/14.
@@ -25,19 +24,19 @@ public abstract class SortingStrategy {
     public abstract String getShortDescription();
 
     @NotNull
-    public final DDWRTSectionTabFragment[] sort(@NotNull final DDWRTSectionTabFragment[] tabs) {
+    public final DDWRTBaseFragment[] sort(@NotNull final DDWRTBaseFragment[] tabs) {
         if (doCompare()) {
 
-            final TreeMap<String, DDWRTSectionTabFragment> tabsMap = Maps.newTreeMap(this.getComparator());
+            final TreeMap<String, DDWRTBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
             for (int i = 0; i < tabs.length; i++) {
-                final DDWRTSectionTabFragment tab = tabs[i];
+                final DDWRTBaseFragment tab = tabs[i];
                 tabsMap.put(tab.getTabTitle().toString(), tab);
             }
 
-            final DDWRTSectionTabFragment[] output = new DDWRTSectionTabFragment[tabsMap.size()];
+            final DDWRTBaseFragment[] output = new DDWRTBaseFragment[tabsMap.size()];
             int j = 0;
-            for (Map.Entry<String, DDWRTSectionTabFragment> ddwrtSectionTabFragmentEntry : tabsMap.entrySet()) {
-                output[j++] = ddwrtSectionTabFragmentEntry.getValue();
+            for (Map.Entry<String, DDWRTBaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
+                output[j++] = DDWRTBaseFragmentEntry.getValue();
             }
             return output;
         }

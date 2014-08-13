@@ -4,6 +4,17 @@
     <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
+    <string-array name="navigation_drawer_items_array">
+        <item>Status</item>
+        <item>Setup</item>
+        <item>Wireless</item>
+        <item>Services</item>
+        <item>Security</item>
+        <item>Access</item>
+        <item>NAT &amp; QoS</item>
+        <item>Admin Area</item>
+    </string-array>
+
     <!-- Sections -->
     <!--1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}-->
     <string name="status">Status</string>
@@ -84,6 +95,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="no_data">No Data</string>
-    <string name="crash_toast_text">Please report App crash so it can be fixed</string>
+    <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues so our monkeys can fix them all.</string>
+    <string name="title">Title</string>
+    <string name="loading">Loading...</string>
 
 </resources>

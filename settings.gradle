@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':library', ':actionbarsherlock-fest', ':actionbarsherlock', ':actionbarsherlock-i18n', ':sample'

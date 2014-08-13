@@ -1,9 +1,9 @@
 package org.lemra.dd_wrt.fragments.status;
 
-import org.lemra.dd_wrt.fragments.AbstractDDWRTBaseFragment;
+import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 
 /**
  * Created by armel on 8/10/14.
  */
-public class StatusLANFragment extends AbstractDDWRTBaseFragment {
+public class StatusLANFragment extends DDWRTBaseFragment {
 }
