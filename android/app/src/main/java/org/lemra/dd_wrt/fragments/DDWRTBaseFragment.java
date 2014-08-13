@@ -1,5 +1,6 @@
 package org.lemra.dd_wrt.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -38,7 +38,6 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
     private CharSequence mTabTitle;
 
     private CharSequence mParentSectionTitle;
-    private View mLoadingView;
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -64,17 +63,17 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
         return null;
     }
 
-    public DDWRTBaseFragment setParentSectionTitle(@NotNull final CharSequence parentSectionTitle) {
+    public final DDWRTBaseFragment setParentSectionTitle(@NotNull final CharSequence parentSectionTitle) {
         this.mParentSectionTitle = parentSectionTitle;
         return this;
     }
 
-    public DDWRTBaseFragment setTabTitle(@NotNull final CharSequence tabTitle) {
+    public final  DDWRTBaseFragment setTabTitle(@NotNull final CharSequence tabTitle) {
         this.mTabTitle = tabTitle;
         return this;
     }
 
-    public CharSequence getTabTitle() {
+    public final CharSequence getTabTitle() {
         return mTabTitle;
     }
 
@@ -97,7 +96,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
      * @return Return the View for the fragment's UI, or null.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Bundle arguments = getArguments();
         final CharSequence parentSectionTitle = arguments.getCharSequence(PARENT_SECTION_TITLE);
         String tabTitle = arguments.getString(TAB_TITLE);
@@ -115,16 +114,18 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
 
         final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
                 .getDisplayMetrics());
-
-        mLoadingView = new TextView(getActivity());
         params.setMargins(margin, margin, margin, margin);
-        mLoadingView.setLayoutParams(params);
-        mLoadingView.setLayoutParams(params);
-        ((TextView) mLoadingView).setGravity(Gravity.CENTER);
-        mLoadingView.setBackgroundResource(R.drawable.background_card);
-        ((TextView) mLoadingView).setText(text);
 
-        fl.addView(mLoadingView);
+        View view = getDDWRTSectionView(getActivity(), getArguments());
+        if (view == null) {
+            view = new TextView(getActivity());
+            ((TextView) view).setGravity(Gravity.CENTER);
+            ((TextView) view).setText(getResources().getString(R.string.no_data));
+        }
+        view.setBackgroundResource(R.drawable.background_card);
+        view.setLayoutParams(params);
+
+        fl.addView(view);
         return fl;
     }
 
@@ -201,8 +202,9 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
 
         //Use data over here
         //
-        if (mLoadingView != null) {
-            ((TextView) mLoadingView).setText(isNullOrEmpty(data) ?
+        final View ddwrtSectionView = getDDWRTSectionView(getActivity(), getArguments());
+        if (ddwrtSectionView instanceof TextView) {
+            ((TextView) ddwrtSectionView).setText(isNullOrEmpty(data) ?
                     getResources().getText(R.string.no_data) : data);
         }
 /*
@@ -232,8 +234,13 @@ public abstract class DDWRTBaseFragment extends SherlockFragment implements Load
      */
     @Override
     public void onLoaderReset(Loader<String> loader) {
-        if (mLoadingView != null) {
-            ((TextView) mLoadingView).setText(getResources().getText(R.string.no_data));
+        final View ddwrtSectionView = getDDWRTSectionView(getActivity(), getArguments());
+        if (ddwrtSectionView instanceof TextView) {
+            ((TextView) ddwrtSectionView).setText(getResources().getText(R.string.no_data));
         }
     }
+
+    @Nullable
+    protected abstract View getDDWRTSectionView(@NotNull final Context context, @NotNull final Bundle arguments);
+
 }
