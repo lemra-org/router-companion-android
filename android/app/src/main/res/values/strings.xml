@@ -94,9 +94,12 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="no_data">No Data</string>
+    <string name="no_data">No Data - Feature Coming Soon!</string>
     <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues so our monkeys can fix them all.</string>
     <string name="title">Title</string>
     <string name="loading">Loading...</string>
+    <string name="title_activity_router_state">Router State</string>
+    <string name="router_state_tile_dl_rate">DL</string>
+    <string name="router_state_tile_ul_rate">UL</string>
 
 </resources>
