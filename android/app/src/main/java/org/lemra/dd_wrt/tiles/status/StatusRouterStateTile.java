@@ -1,13 +1,17 @@
 package org.lemra.dd_wrt.tiles.status;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 
 import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
@@ -18,13 +22,28 @@ import org.lemra.dd_wrt.tiles.DDWRTTile;
  */
 public class StatusRouterStateTile extends DDWRTTile<Object> {
 
+    Drawable icon;
+
     public StatusRouterStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments) {
         super(parentFragmentActivity, arguments);
+        // Parse the SVG file from the resource beforehand
+        try {
+            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.router);
+            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
+            this.icon = svg.createPictureDrawable();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
+        }
     }
 
     @Override
     public ViewGroup getViewGroupLayout() {
-        return (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
+        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
+        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
+        imageView.setImageDrawable(this.icon);
+        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        return layout;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_router_state_layout1"
+    android:id="@+id/tile_status_router_router_state"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/tile_background_1"
@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8.0dip"
-        android:src="@drawable/ic_icon_state" />
+        android:id="@+id/ic_tile_status_router_router_state"
+        android:background="@android:color/transparent"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,11 +29,21 @@
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="@string/title_activity_router_state"
+                android:id="@+id/tile_status_router_router_state_title"
+                android:text="Router Name"
                 android:textAppearance="?android:textAppearanceLarge"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:textStyle="bold"
                 android:textColor="@color/ddwrt_purple"
-                android:textStyle="bold" />
-            <!--<TextView android:textAppearance="?android:textAppearanceLarge" android:textStyle="bold" android:textColor="@color/ddwrt_purple" android:id="@id/textView_connection_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="4.0dip" android:textAllCaps="true" />-->
+                android:id="@+id/tile_status_router_router_state_connection_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4.0dip"
+                android:textAllCaps="true"
+                android:text="UP|DOWN"/> <!-- Color depending on connection state to Internet-->
         </LinearLayout>
 
         <View
@@ -46,7 +57,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="3">
-            <!--<TextView android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/router_state_tile_wifi_title" />-->
+
+            <!-- Model -->
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Model" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,48 +71,89 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=":" />
-
             <TextView
-                android:id="@id/textView_wifi"
+                android:id="@+id/tile_status_router_router_state_model"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
 
+            <!-- FW -->
             <TextView
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/router_state_tile_dl_rate"
-                android:textStyle="bold" />
-
+                android:text="Firmware" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
                 android:text=":" />
-
             <TextView
-                android:id="@id/textView_download_rate"
+                android:id="@+id/tile_status_router_router_state_firmware"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
 
+            <!-- Kernel-->
             <TextView
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/router_state_tile_ul_rate"
-                android:textStyle="bold" />
-
+                android:text="Kernel" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
                 android:text=":" />
-
             <TextView
-                android:id="@id/textView_upload_rate"
+                android:id="@+id/tile_status_router_router_state_kernel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
+
+            <!-- LAN IP-->
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LAN IP" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=":" />
+            <TextView
+                android:id="@+id/tile_status_router_router_state_lan_ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" />
+
+            <!-- Uptime-->
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uptime" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=":" />
+            <TextView
+                android:id="@+id/tile_status_router_router_state_uptime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" />
+
+
         </GridLayout>
 
         <TextView
@@ -103,6 +161,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:textColor="@color/ddwrt_green" />
+            android:textColor="@color/ddwrt_green"
+            android:textStyle="italic"
+            android:text="WAN IP here"
+            android:textAppearance="?android:textAppearanceSmall"/>
     </LinearLayout>
 </LinearLayout>
