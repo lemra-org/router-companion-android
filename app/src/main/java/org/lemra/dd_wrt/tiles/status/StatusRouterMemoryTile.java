@@ -14,21 +14,22 @@ import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 
 /**
- * Created by armel on 8/14/14.
+ * Created by armel on 8/15/14.
  */
-public class StatusRouterStateTile extends DDWRTTile<Object> {
+public class StatusRouterMemoryTile extends DDWRTTile<Object> {
 
 //    Drawable icon;
 
-    public StatusRouterStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments) {
+    public StatusRouterMemoryTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments) {
         super(parentFragmentActivity, arguments);
 //        // Parse the SVG file from the resource beforehand
 //        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.router);
+//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.memory);
 //            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
 //            this.icon = svg.createPictureDrawable();
 //        } catch (final Exception e) {
@@ -37,10 +38,11 @@ public class StatusRouterStateTile extends DDWRTTile<Object> {
 //        }
     }
 
+    @Nullable
     @Override
     public ViewGroup getViewGroupLayout() {
-        return (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
+        return (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
+//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
 //        imageView.setImageDrawable(this.icon);
 //        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 //        return layout;

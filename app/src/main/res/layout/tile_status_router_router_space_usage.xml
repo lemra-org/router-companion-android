@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_status_router_router_state"
+    android:id="@+id/tile_status_router_router_space_usage"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/tile_background_1"
@@ -11,7 +11,7 @@
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:layout_marginRight="8.0dip"-->
-        <!--android:id="@+id/ic_tile_status_router_router_state"-->
+        <!--android:id="@+id/ic_tile_status_router_router_space_usage"-->
         <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
@@ -29,22 +29,11 @@
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:id="@+id/tile_status_router_router_state_title"
-                android:text="Router Name"
+                android:id="@+id/tile_status_router_router_space_usage_title"
+                android:text="Space Usage"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textStyle="bold"
                 android:textColor="#000000" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_state_wan_ip"
-                android:textColor="@color/ddwrt_green"
-                android:textStyle="italic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4.0dip"
-                android:textAllCaps="true"
-                android:text="WAN IP here"
-                android:textAppearance="?android:textAppearanceSmall"/>
 
         </LinearLayout>
 
@@ -60,12 +49,12 @@
             android:layout_height="wrap_content"
             android:columnCount="3">
 
-            <!-- Model -->
+            <!-- NVRAM -->
             <TextView
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Model" />
+                android:text="NVRAM" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,17 +63,17 @@
                 android:layout_marginRight="8.0dip"
                 android:text=":" />
             <TextView
-                android:id="@+id/tile_status_router_router_state_model"
+                android:id="@+id/tile_status_router_router_space_usage_nvram"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
 
-            <!-- FW -->
+            <!-- CIFS -->
             <TextView
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Firmware" />
+                android:text="CIFS" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,17 +82,18 @@
                 android:layout_marginRight="8.0dip"
                 android:text=":" />
             <TextView
-                android:id="@+id/tile_status_router_router_state_firmware"
+                android:id="@+id/tile_status_router_router_space_usage_cifs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
 
-            <!-- Kernel-->
+
+            <!-- JFFS2 -->
             <TextView
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kernel" />
+                android:text="JFFS2" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,49 +102,10 @@
                 android:layout_marginRight="8.0dip"
                 android:text=":" />
             <TextView
-                android:id="@+id/tile_status_router_router_state_kernel"
+                android:id="@+id/tile_status_router_router_space_usage_jffs2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" />
-
-            <!-- LAN IP-->
-            <TextView
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LAN IP" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=":" />
-            <TextView
-                android:id="@+id/tile_status_router_router_state_lan_ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right" />
-
-            <!-- Uptime-->
-            <TextView
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Uptime" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=":" />
-            <TextView
-                android:id="@+id/tile_status_router_router_state_uptime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right" />
-
 
         </GridLayout>
 
