@@ -24,15 +24,15 @@ public class NavigationFragment extends SherlockFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_item, container,
                 false);
-        int i = getArguments().getInt(ARG_SECTION_NUMBER);
-        String planet = getResources().getStringArray(R.array.navigation_drawer_items_array)[i];
+        final int i = getArguments().getInt(ARG_SECTION_NUMBER);
+        final String section = getResources().getStringArray(R.array.navigation_drawer_items_array)[i];
 
-        int imageId = getResources().getIdentifier(
-                planet.toLowerCase(Locale.getDefault()), "drawable",
+        final int imageId = getResources().getIdentifier(
+                section.toLowerCase(Locale.getDefault()), "drawable",
                 getActivity().getPackageName());
         ((ImageView) rootView.findViewById(R.id.image))
                 .setImageResource(imageId);
-        getActivity().setTitle(planet);
+        getActivity().setTitle(section);
         return rootView;
     }
 
