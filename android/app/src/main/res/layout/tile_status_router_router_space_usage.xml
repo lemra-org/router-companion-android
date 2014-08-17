@@ -125,5 +125,15 @@
 
         </GridLayout>
 
+        <ToggleButton
+            android:id="@+id/tile_status_router_router_space_usage_togglebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textOn="Auto-refresh on"
+            android:textOff="Auto-refresh off"
+            android:checked="true"/>
+
     </LinearLayout>
 </LinearLayout>

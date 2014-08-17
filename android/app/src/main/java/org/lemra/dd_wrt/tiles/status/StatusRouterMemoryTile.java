@@ -1,25 +1,45 @@
 package org.lemra.dd_wrt.tiles.status;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
+import org.lemra.dd_wrt.utils.SSHUtils;
+
+import java.util.List;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Created by armel on 8/15/14.
  */
-public class StatusRouterMemoryTile extends DDWRTTile<Object> {
+public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
+    private static final String LOG_TAG = StatusRouterMemoryTile.class.getSimpleName();
+
+    private static String getGrepProcMemInfo(@NotNull final String item) {
+        return "grep \"" + item + "\" /proc/meminfo ";
+    }
+
+    long nbRunsLoader = 0;
 //    Drawable icon;
 
     public StatusRouterMemoryTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
@@ -38,7 +58,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<Object> {
     @Nullable
     @Override
     public ViewGroup getViewGroupLayout() {
-        return (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
+        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
+        final ToggleButton toggle = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
+        toggle.setOnCheckedChangeListener(this);
+        return layout;
 //        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
 //        imageView.setImageDrawable(this.icon);
 //        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -53,8 +76,68 @@ public class StatusRouterMemoryTile extends DDWRTTile<Object> {
      * @return Return a new Loader instance that is ready to start loading.
      */
     @Override
-    public Loader<Object> onCreateLoader(int id, Bundle args) {
-        return null;
+    public Loader<NVRAMInfo> onCreateLoader(int id, Bundle args) {
+        final Loader<NVRAMInfo> loader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+
+            @Override
+            public NVRAMInfo loadInBackground() {
+
+                Log.d(LOG_TAG, "Init background loader for " + StatusRouterMemoryTile.class + ": routerInfo=" +
+                        mRouter+ " / this.mAutoRefreshToggle= " + mAutoRefreshToggle+ " / nbRunsLoader="+nbRunsLoader);
+
+                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                    //Skip run
+                    Log.d(LOG_TAG, "Skip loader run");
+                    return null;
+                }
+                nbRunsLoader++;
+
+                final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+                final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                        getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                if (otherCmds != null && otherCmds.length >= 2) {
+                    //Total
+                    String memTotal = null;
+                    List<String> strings = Splitter.on("MemTotal:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
+                    Log.d(LOG_TAG, "strings for MemTotal: "+strings);
+                    if (strings != null && strings.size() >= 1) {
+                        memTotal = strings.get(0);
+                        if (nvramInfo != null) {
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
+                        }
+                    }
+
+                    //Free
+                    String memFree = null;
+                    strings = Splitter.on("MemFree:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[1]);
+                    Log.d(LOG_TAG, "strings for MemFree: "+strings);
+                    if (strings != null && strings.size() >= 1) {
+                        memFree = strings.get(0);
+                        if (nvramInfo != null) {
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
+                        }
+                    }
+
+                    //Mem used
+                    String memUsed = null;
+                    if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
+                        memUsed = Long.toString(
+                                       Long.parseLong(memTotal.replaceAll(" kB", "")) - Long.parseLong(memFree.replaceAll(" kB", "")))
+                                + " kB";
+                        if (nvramInfo != null) {
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
+                        }
+                    }
+
+                }
+
+                return nvramInfo;
+
+            }
+        };
+        loader.forceLoad();
+        return loader;
     }
 
     /**
@@ -97,8 +180,39 @@ public class StatusRouterMemoryTile extends DDWRTTile<Object> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(Loader<Object> loader, Object data) {
+    public void onLoadFinished(final Loader<NVRAMInfo> loader, final NVRAMInfo data) {
 
+        //Set tiles
+        Log.d(LOG_TAG, "onLoadFinished: loader="+loader+" / data="+data);
+        if (data != null) {
+
+            //Total
+            final TextView memTotalView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_total);
+            if (memTotalView != null) {
+                memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL, "N/A"));
+            }
+
+            //Model
+            final TextView memFreeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_free);
+            if (memFreeView != null) {
+                memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "N/A"));
+            }
+
+            //Cores Count
+            final TextView memUsedView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_used);
+            if (memUsedView != null) {
+                memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
+            }
+        }
+
+        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSupportLoaderManager.restartLoader(loader.getId(), null, StatusRouterMemoryTile.this);
+            }
+        }, 10000l);
+        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     /**
@@ -109,7 +223,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<Object> {
      * @param loader The Loader that is being reset.
      */
     @Override
-    public void onLoaderReset(Loader<Object> loader) {
+    public void onLoaderReset(Loader<NVRAMInfo> loader) {
 
     }
 

@@ -20,6 +20,9 @@ public class NVRAMInfo extends Properties implements Serializable  {
     public static final String CPU_CORES_COUNT = "cpu_cores_count";
     public static final String LOAD_AVERAGE = "load_average";
     public static final String CPU_CLOCK_FREQ = "clkfreq";
+    public static final String MEMORY_USED = "memory_used";
+    public static final String MEMORY_FREE = "memory_free";
+    public static final String MEMORY_TOTAL = "memory_total";
 
     public NVRAMInfo() {
         super();
