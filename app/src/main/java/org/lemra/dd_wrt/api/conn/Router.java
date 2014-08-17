@@ -8,12 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.config.ConfigurationBase;
 
+import java.io.Serializable;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
  * Created by armel on 8/9/14.
  */
-public class Router {
+public class Router implements Serializable {
 
     private static final String REMOTE_IP_ADDRESS = "ipAddress";
     private static final String REMOTE_PORT = "port";
@@ -25,11 +27,16 @@ public class Router {
     private String name;
     @NotNull
     private String remoteIpAddress;
-    private int remotePort;
+    private int remotePort = 22;
     @Nullable
     private String username;
     @Nullable
     private String password;
+    @Nullable
+    private String privKey;
+
+    private boolean strictHostKeyChecking = false;
+
     private boolean useDefault = true;
     @NotNull
     @SerializedName("uuid")
@@ -140,6 +147,23 @@ public class Router {
                 .putString("username", this.username)
                 .putString("password", this.password)
                 .commit();
+    }
+
+    @Nullable
+    public String getPrivKey() {
+        return privKey;
+    }
+
+    public void setPrivKey(@Nullable String privKey) {
+        this.privKey = \"fake-key\";
+    }
+
+    public boolean isStrictHostKeyChecking() {
+        return strictHostKeyChecking;
+    }
+
+    public void setStrictHostKeyChecking(boolean strictHostKeyChecking) {
+        this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
     public String toString() {

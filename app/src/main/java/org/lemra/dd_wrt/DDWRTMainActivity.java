@@ -7,14 +7,28 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.io.Closeables;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
+import org.lemra.dd_wrt.api.conn.NVRAMInfo;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
+import org.lemra.dd_wrt.utils.NVRAMParser;
+import org.lemra.dd_wrt.utils.Utils;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 /**
  * Created by armel on 8/9/14.
@@ -32,6 +46,30 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mDDWRTNavigationMenuSections;
+
+    //TESTS
+    private static final Router router = new Router();
+    static {
+        router.setRemoteIpAddress("172.17.17.1");
+        router.setUsername("root");
+        router.setName("@home");
+        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
+//        router.setPassword("2315netgearOrange");
+        router.setPrivKey("-----\n" +
+                "M\n" +
+                "a/K\n" +
+                "H\n" +
+                "G\n" +
+                "5\n" +
+                "C\n" +
+                "V\n" +
+                "4\n" +
+                "7\n" +
+                "J\n" +
+                "------");
+        router.setStrictHostKeyChecking(false);
+    }
+    //END TESTS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +185,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content,
-                        PageSlidingTabStripFragment.newInstance(position, preferences),
+                        PageSlidingTabStripFragment.newInstance(position, router, preferences),
                         PageSlidingTabStripFragment.TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);

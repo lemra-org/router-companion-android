@@ -213,7 +213,8 @@ public class DDWRTManagementActivity extends FragmentActivity
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy);
+            //FIXME
+            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, null);
         }
 
         @Override

@@ -31,9 +31,10 @@
                 android:layout_weight="1.0"
                 android:id="@+id/tile_status_router_router_space_usage_title"
                 android:text="Space Usage"
-                android:textAppearance="?android:textAppearanceLarge"
                 android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:singleLine="true"
+                android:ellipsize="end"/>
 
         </LinearLayout>
 
@@ -61,12 +62,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=":" />
+                android:text=" " />
             <TextView
                 android:id="@+id/tile_status_router_router_space_usage_nvram"
-                android:layout_width="wrap_content"
+                android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:singleLine="false"
+                android:ellipsize="end"/>
 
             <!-- CIFS -->
             <TextView
@@ -80,12 +86,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=":" />
+                android:text=" " />
             <TextView
                 android:id="@+id/tile_status_router_router_space_usage_cifs"
-                android:layout_width="wrap_content"
+                android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:singleLine="false"
+                android:ellipsize="end"/>
 
 
             <!-- JFFS2 -->
@@ -100,12 +111,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=":" />
+                android:text=" " />
             <TextView
                 android:id="@+id/tile_status_router_router_space_usage_jffs2"
-                android:layout_width="wrap_content"
+                android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:singleLine="false"
+                android:ellipsize="end"/>
 
         </GridLayout>
 
