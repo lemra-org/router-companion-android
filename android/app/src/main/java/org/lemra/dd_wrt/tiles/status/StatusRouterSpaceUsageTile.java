@@ -1,21 +1,18 @@
 package org.lemra.dd_wrt.tiles.status;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGParser;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 
 /**
@@ -25,8 +22,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<Object> {
 
 //    Drawable icon;
 
-    public StatusRouterSpaceUsageTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments) {
-        super(parentFragmentActivity, arguments);
+    public StatusRouterSpaceUsageTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragmentActivity, arguments, router);
 //        // Parse the SVG file from the resource beforehand
 //        try {
 //            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.disk);

@@ -19,6 +19,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
+    public static final String ROUTER_CONNECTION_INFO = "router_info";
 
     private CharSequence mTabTitle;
 
@@ -43,11 +45,15 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
     private List<DDWRTTile> fragmentTiles;
 
+    @Nullable
+    protected Router router;
+
 //    WeakReference<View> mView;
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
-                                                @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle) {
+                                                @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
+                                                @Nullable final Router router) {
         try {
             final DDWRTBaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
@@ -57,7 +63,10 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
             args.putCharSequence(TAB_TITLE, tabTitle);
             args.putCharSequence(PARENT_SECTION_TITLE, parentSectionTitle);
             args.putString(FRAGMENT_CLASS, clazz.getCanonicalName());
+            args.putSerializable(ROUTER_CONNECTION_INFO, router);
             fragment.setArguments(args);
+
+            fragment.router = router;
 
             return fragment;
 
@@ -128,16 +137,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
         String tabTitle = arguments.getString(TAB_TITLE);
 
         Log.d(LOG_TAG, "onCreateView: " + parentSectionTitle + " > " + tabTitle);
-//
-//        View v;
-//        if (mView == null || (v = mView.get()) == null) {
-//            v = this.getLayout();
-//            mView = new WeakReference<View>(v);
-//        } else {
-//            container.removeView(v);
-//        }
-//
-//        return v;
+
         return this.getLayout();
     }
 
@@ -152,8 +152,29 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
         // initiate the loaders to do the background work
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
             final LoaderManager loaderManager = getLoaderManager();
+            int i = 0;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
-                loaderManager.initLoader(0, null, ddwrtTile);
+                loaderManager.initLoader(i++, null, ddwrtTile);
+            }
+        }
+    }
+
+    /**
+     * Called when the view previously created by {@link #onCreateView} has
+     * been detached from the fragment.  The next time the fragment needs
+     * to be displayed, a new view will be created.  This is called
+     * after {@link #onStop()} and before {@link #onDestroy()}.  It is called
+     * <em>regardless</em> of whether {@link #onCreateView} returned a
+     * non-null view.  Internally it is called after the view's state has
+     * been saved but before it has been removed from its parent.
+     */
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
+            final LoaderManager loaderManager = getLoaderManager();
+            for (int i = 0; i < this.fragmentTiles.size(); i++) {
+                loaderManager.destroyLoader(i);
             }
         }
     }
@@ -275,7 +296,8 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
             final List<TableRow> rows = new ArrayList<TableRow>();
 
-            final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);

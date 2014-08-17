@@ -16,7 +16,9 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.astuetz.PagerSlidingTabStrip;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.prefs.sort.SortingStrategy;
 import org.lemra.dd_wrt.utils.Utils;
 
@@ -35,16 +37,22 @@ public class PageSlidingTabStripFragment extends Fragment {
 
     private FragmentTabsAdapter mFragmentTabsAdapter;
 
+    @Nullable
+    private Router router;
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static PageSlidingTabStripFragment newInstance(int sectionNumber, SharedPreferences preferences) {
+    public static PageSlidingTabStripFragment newInstance(int sectionNumber,
+                                                          @Nullable final Router router, SharedPreferences preferences) {
         final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(SORTING_STRATEGY, preferences.getString("sortingStrategy", SortingStrategy.DEFAULT));
+        args.putSerializable(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, router);
         fragment.setArguments(args);
+        fragment.router = router;
         return fragment;
     }
 
@@ -53,7 +61,9 @@ public class PageSlidingTabStripFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         mFragmentTabsAdapter = new FragmentTabsAdapter(getArguments().getInt(ARG_SECTION_NUMBER),
-                getChildFragmentManager(), getResources(), SortingStrategy.class.getPackage().getName()+"."+getArguments().getString(SORTING_STRATEGY));
+                getChildFragmentManager(), getResources(),
+                SortingStrategy.class.getPackage().getName()+"."+getArguments().getString(SORTING_STRATEGY),
+                this.router);
     }
 
     @Override
@@ -74,6 +84,15 @@ public class PageSlidingTabStripFragment extends Fragment {
 
     }
 
+    @Nullable
+    public Router getRouter() {
+        return router;
+    }
+
+    public void setRouter(@Nullable Router router) {
+        this.router = router;
+    }
+
     private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NotNull
@@ -81,11 +100,16 @@ public class PageSlidingTabStripFragment extends Fragment {
         private final Resources resources;
         private final int parentSectionNumber;
 
-        public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy) {
+        @Nullable
+        private final Router router;
+
+        public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
+                                   @Nullable final Router router) {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy);
+            this.router = router;
+            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, router);
         }
 
         @Override

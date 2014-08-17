@@ -31,19 +31,22 @@
                 android:layout_weight="1.0"
                 android:id="@+id/tile_status_router_router_mem_title"
                 android:text="Memory"
-                android:textAppearance="?android:textAppearanceLarge"
                 android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:singleLine="true"
+                android:ellipsize="end"/>
 
             <TextView
-                android:id="@+id/tile_status_router_router_mem_wan_ip"
+                android:id="@+id/tile_status_router_router_mem_total"
                 android:textStyle="italic"
-                android:layout_width="wrap_content"
+                android:layout_width="215dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="4.0dip"
-                android:textAllCaps="true"
-                android:text="Total Avail."
-                android:textAppearance="?android:textAppearanceSmall"/>
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading total..."
+                android:textAppearance="?android:textAppearanceSmall"
+                android:singleLine="true"
+                android:ellipsize="end"/>
 
         </LinearLayout>
 
@@ -71,12 +74,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=":" />
+                android:text=" " />
             <TextView
                 android:id="@+id/tile_status_router_router_mem_free"
-                android:layout_width="wrap_content"
+                android:layout_width="310dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:singleLine="false"
+                android:ellipsize="end"/>
 
             <!-- Used -->
             <TextView
@@ -90,12 +98,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=":" />
+                android:text=" " />
             <TextView
                 android:id="@+id/tile_status_router_router_mem_used"
-                android:layout_width="wrap_content"
+                android:layout_width="310dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:singleLine="false"
+                android:ellipsize="end"/>
 
             <!-- Load Avg-->
             <!--<TextView-->

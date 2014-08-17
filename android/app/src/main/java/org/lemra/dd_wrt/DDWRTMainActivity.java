@@ -7,14 +7,28 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.io.Closeables;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
+import org.lemra.dd_wrt.api.conn.NVRAMInfo;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
+import org.lemra.dd_wrt.utils.NVRAMParser;
+import org.lemra.dd_wrt.utils.Utils;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 /**
  * Created by armel on 8/9/14.
@@ -32,6 +46,30 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mDDWRTNavigationMenuSections;
+
+    //TESTS
+    private static final Router router = new Router();
+    static {
+        router.setRemoteIpAddress("172.17.17.1");
+        router.setUsername("root");
+        router.setName("@home");
+        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
+//        router.setPassword("2315netgearOrange");
+        router.setPrivKey("-----BEGIN DSA PRIVATE KEY-----\n" +
+                "MIIBuwIBAAKBgQDDbsDj7rujyw6GNMLCJ0Tv1/JvsLNdNeHGwNlSj/pjxD6yVxmX\n" +
+                "a/KDGaqvXWOWm+TW7ugPeocF2fl8DEC31yLfaY6GrjhyHozqmjut/RcwbLQYsLyp\n" +
+                "HB9XT4zd5ShV4fAXF1Unhg1RCa/yCKJkE3zI+8UZ3HfHv8vg0C1m3ryhNQIVAOk3\n" +
+                "G4IafJlRtyG1B3oO+uayDvH1AoGAU+tLC50aytDDBsqxKY/q2AWcLBoKDUr2DAY+\n" +
+                "5fb2m1Hl8A0/YWwiEISXCOReEkXjvPfUgZg3e3UMCED7ULEu5dGjFLNKaN4dmP6q\n" +
+                "C8NLKornh4tugk+geNq9qW9HmDwPEr2i8gAQxYPmSPCiKv3cW6wt0c3h7zyDfYPT\n" +
+                "Vrf1Cu0CgYBXoU4+bljVUxzXkBsqwdZgKckfp/mABgAz8nEcmvklLRiM0bbMBxtn\n" +
+                "4fQqkh1ENGrk8H+Rx6UNgaFdYg596gFCA8cSJiouwS+xBO8FT79DAeiLN5xTsH32\n" +
+                "7KzlIfgcsnniYZDLD9pS/x58G7/loUD9lH53JAa81THNwZeaaEaHwQIVAN8WSYc6\n" +
+                "JJuAZoyITiuIO2VDTsP4\n" +
+                "-----END DSA PRIVATE KEY-----");
+        router.setStrictHostKeyChecking(false);
+    }
+    //END TESTS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +185,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content,
-                        PageSlidingTabStripFragment.newInstance(position, preferences),
+                        PageSlidingTabStripFragment.newInstance(position, router, preferences),
                         PageSlidingTabStripFragment.TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
