@@ -7,28 +7,16 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.common.io.Closeables;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
-import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
-import org.lemra.dd_wrt.utils.NVRAMParser;
-import org.lemra.dd_wrt.utils.Utils;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
 
 /**
  * Created by armel on 8/9/14.
@@ -36,19 +24,9 @@ import java.util.Properties;
 public class DDWRTMainActivity extends SherlockFragmentActivity {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
-
-    private SharedPreferences preferences;
-
-    DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
-    ActionBarDrawerToggle mDrawerToggle;
-
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    private String[] mDDWRTNavigationMenuSections;
-
     //TESTS
     private static final Router router = new Router();
+
     static {
         router.setRemoteIpAddress("172.17.17.1");
         router.setUsername("root");
@@ -69,6 +47,13 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
                 "------");
         router.setStrictHostKeyChecking(false);
     }
+    DrawerLayout mDrawerLayout;
+    ListView mDrawerList;
+    ActionBarDrawerToggle mDrawerToggle;
+    private SharedPreferences preferences;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private String[] mDDWRTNavigationMenuSections;
     //END TESTS
 
     @Override
@@ -125,7 +110,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     @Override
@@ -143,6 +129,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
                 break;
             }
             case R.id.action_settings:
+                Toast.makeText(this.getApplicationContext(), "Settings selected", Toast.LENGTH_SHORT).show();
                 return true;
 
 //            case R.id.action_contact:
@@ -154,17 +141,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    // The click listener for ListView in the navigation drawer
-    private class DrawerItemClickListener implements
-            ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            selectItem(position);
-        }
-    }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -189,6 +165,16 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
                         PageSlidingTabStripFragment.TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    // The click listener for ListView in the navigation drawer
+    private class DrawerItemClickListener implements
+            ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                                long id) {
+            selectItem(position);
+        }
     }
 
 }

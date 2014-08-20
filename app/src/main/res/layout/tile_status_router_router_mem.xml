@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_router_router_mem"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -8,11 +7,11 @@
     android:orientation="horizontal">
 
     <!--<ImageView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="8.0dip"-->
-        <!--android:id="@+id/ic_tile_status_router_router_mem"-->
-        <!--android:background="@android:color/transparent"/>-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_router_router_mem"-->
+    <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,27 +25,27 @@
             android:paddingTop="4.0dip">
 
             <TextView
+                android:id="@+id/tile_status_router_router_mem_title"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:id="@+id/tile_status_router_router_mem_title"
-                android:text="Memory"
-                android:textStyle="bold"
-                android:textColor="#000000"
+                android:ellipsize="end"
                 android:singleLine="true"
-                android:ellipsize="end"/>
+                android:text="Memory"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tile_status_router_router_mem_total"
-                android:textStyle="italic"
                 android:layout_width="215dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
+                android:singleLine="true"
                 android:text="Loading total..."
                 android:textAppearance="?android:textAppearanceSmall"
-                android:singleLine="true"
-                android:ellipsize="end"/>
+                android:textStyle="italic" />
 
         </LinearLayout>
 
@@ -57,6 +56,20 @@
             android:layout_marginTop="8.0dip"
             android:background="#ffcccccc" />
 
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_router_router_mem_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,10 +77,11 @@
 
             <!-- Free -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Free" />
+                android:text="Free"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,23 +89,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_mem_free"
                 android:layout_width="310dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Used -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Used" />
+                android:text="Used"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,66 +115,89 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_mem_used"
                 android:layout_width="310dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Load Avg-->
             <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Load Average" />-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Load Average" />-->
             <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginLeft="8.0dip"-->
+            <!--android:layout_marginRight="8.0dip"-->
+            <!--android:text=":" />-->
             <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_mem_kernel"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
+            <!--android:id="@+id/tile_status_router_router_mem_kernel"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="right" />-->
 
             <!-- Temperature-->
             <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Temperature" />-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Temperature" />-->
             <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginLeft="8.0dip"-->
+            <!--android:layout_marginRight="8.0dip"-->
+            <!--android:text=":" />-->
             <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_mem_lan_ip"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
+            <!--android:id="@+id/tile_status_router_router_mem_lan_ip"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="right" />-->
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_router_router_mem_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_router_router_mem_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_router_router_mem_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="77dp"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
 
         </GridLayout>
 
-        <ToggleButton
-            android:id="@+id/tile_status_router_router_mem_togglebutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textOn="Auto-refresh on"
-            android:textOff="Auto-refresh off"
-            android:checked="true"/>
 
     </LinearLayout>
 </LinearLayout>
