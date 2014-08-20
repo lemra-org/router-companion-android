@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_router_router_state"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -8,11 +7,11 @@
     android:orientation="horizontal">
 
     <!--<ImageView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="8.0dip"-->
-        <!--android:id="@+id/ic_tile_status_router_router_state"-->
-        <!--android:background="@android:color/transparent"/>-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_router_router_state"-->
+    <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
         android:layout_width="0dp"
@@ -26,43 +25,43 @@
             android:paddingTop="4.0dip">
 
             <TextView
+                android:id="@+id/tile_status_router_router_state_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
                 android:layout_weight="1.0"
-                android:id="@+id/tile_status_router_router_state_title"
-                android:text="Loading..."
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:singleLine="true"
                 android:ellipsize="end"
-                android:layout_marginRight="20dp"/>
+                android:singleLine="true"
+                android:text="Loading Router Name..."
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_wan_ip"
-                android:textStyle="italic"
-                android:textColor="@color/ddwrt_green"
                 android:layout_width="215dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
+                android:singleLine="true"
                 android:text="Fetching WAN IP..."
                 android:textAppearance="?android:textAppearanceSmall"
-                android:singleLine="true"
-                android:ellipsize="end"/>
+                android:textColor="@color/ddwrt_green"
+                android:textStyle="italic" />
 
             <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_state_wan_ip"-->
-                <!--android:textColor="@color/ddwrt_green"-->
-                <!--android:textStyle="italic"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="left"-->
-                <!--android:textAllCaps="true"-->
-                <!--android:gravity="left"-->
-                <!--android:text="Fetching WAN IP..."-->
-                <!--android:textAppearance="?android:textAppearanceSmall"-->
-                <!--android:singleLine="true"-->
-                <!--android:ellipsize="end"/>-->
+            <!--android:id="@+id/tile_status_router_router_state_wan_ip"-->
+            <!--android:textColor="@color/ddwrt_green"-->
+            <!--android:textStyle="italic"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:textAllCaps="true"-->
+            <!--android:gravity="left"-->
+            <!--android:text="Fetching WAN IP..."-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:singleLine="true"-->
+            <!--android:ellipsize="end"/>-->
 
         </LinearLayout>
 
@@ -73,6 +72,20 @@
             android:layout_marginTop="8.0dip"
             android:background="#ffcccccc" />
 
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_router_router_state_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,10 +93,11 @@
 
             <!-- Model -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Model" />
+                android:text="Model"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,23 +105,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_state_model"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- FW -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Firmware" />
+                android:text="Firmware"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,23 +131,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_state_firmware"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Kernel-->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kernel" />
+                android:text="Kernel"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -139,23 +157,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_state_kernel"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading... "
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading... "
+                android:textStyle="italic" />
 
             <!-- LAN IP-->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LAN IP" />
+                android:text="LAN IP"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,23 +183,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_state_lan_ip"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Uptime-->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Uptime" />
+                android:text="Uptime"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -187,29 +209,51 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_state_uptime"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_router_router_state_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_router_router_state_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_router_router_state_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="77dp"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
 
         </GridLayout>
 
-        <ToggleButton
-            android:id="@+id/tile_status_router_router_state_togglebutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textOn="Auto-refresh on"
-            android:textOff="Auto-refresh off"
-            android:checked="true"/>
 
     </LinearLayout>
 

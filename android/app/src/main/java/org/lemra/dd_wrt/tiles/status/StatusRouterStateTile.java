@@ -1,13 +1,11 @@
 package org.lemra.dd_wrt.tiles.status;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,17 +13,19 @@ import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.exceptions.DDWRTNoDataException;
+import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 import org.lemra.dd_wrt.utils.SSHUtils;
 
 import java.util.List;
-import java.util.Random;
 
 
 /**
@@ -33,10 +33,9 @@ import java.util.Random;
  */
 public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
+    public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
     //    Drawable icon;
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
-    public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
-
     long nbRunsLoader = 0;
 
     public StatusRouterStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
@@ -55,8 +54,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public ViewGroup getViewGroupLayout() {
         final LinearLayout linearLayout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
-        final ToggleButton toggle = (ToggleButton) linearLayout.findViewById(R.id.tile_status_router_router_state_togglebutton);
-        toggle.setOnCheckedChangeListener(this);
+        mToggleAutoRefreshButton = (ToggleButton) linearLayout.findViewById(R.id.tile_status_router_router_state_togglebutton);
+        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
         return linearLayout;
 //        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
 //        imageView.setImageDrawable(this.icon);
@@ -78,44 +77,50 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                 @Override
                 public NVRAMInfo loadInBackground() {
 
-                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
-                            mRouter+ " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader="+nbRunsLoader);
+                    try {
+                        Log.d(LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
+                                mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
-                        return null;
-                    }
-                    nbRunsLoader++;
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
+                        nbRunsLoader++;
 
-                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.ROUTER_NAME,
-                            NVRAMInfo.WAN_IPADDR,
-                            NVRAMInfo.MODEL,
-                            NVRAMInfo.DIST_TYPE,
-                            NVRAMInfo.LAN_IPADDR);
+                        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                NVRAMInfo.ROUTER_NAME,
+                                NVRAMInfo.WAN_IPADDR,
+                                NVRAMInfo.MODEL,
+                                NVRAMInfo.DIST_TYPE,
+                                NVRAMInfo.LAN_IPADDR);
 
-                    //Add FW, Kernel and Uptime
-                    final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a");
-                    if (otherCmds != null && otherCmds.length >= 2) {
-                        //Uptime
-                        final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
-                        if (strings != null && strings.size() > 0) {
-                            if (nvramInfo != null) {
-                                nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
+                        //Add FW, Kernel and Uptime
+                        final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a");
+                        if (otherCmds != null && otherCmds.length >= 2) {
+                            //Uptime
+                            final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
+                            if (strings != null && strings.size() > 0) {
+                                if (nvramInfo != null) {
+                                    nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
+                                }
                             }
+
+                            //Kernel
+                            if (nvramInfo != null) {
+                                nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
+                            }
+
+                            //Firmware
+                            //TODO
+
                         }
 
-                        //Kernel
-                        if (nvramInfo != null) {
-                            nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
-                        }
-
-                        //Firmware
-
+                        return nvramInfo;
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        return new NVRAMInfo().setException(e);
                     }
-
-                    return nvramInfo;
 
                 }
             };
@@ -127,7 +132,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -163,10 +168,25 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(final Loader<NVRAMInfo> loader, final NVRAMInfo data) {
+    public void onLoadFinished(final Loader<NVRAMInfo> loader, NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader="+loader+" / data="+data);
-        if (data != null) {
+
+        if (data == null) {
+            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+        }
+
+        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_error);
+
+        final Exception exception = data.getException();
+
+        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+            if (exception == null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+            }
 
             //Router Name
             final TextView routerNameView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_title);
@@ -207,15 +227,20 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             if (uptimeView != null) {
                 uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
             }
+
+            if (exception != null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), null, StatusRouterStateTile.this);
-            }
-        }, 10000l);
+        doneWithLoaderInstance(this, loader,
+                R.id.tile_status_router_router_state_togglebutton_title, R.id.tile_status_router_router_state_togglebutton_separator);
+
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+
     }
 
     /**

@@ -1,7 +1,6 @@
 package org.lemra.dd_wrt.tiles.status;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -15,12 +14,15 @@ import android.widget.ToggleButton;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.exceptions.DDWRTNoDataException;
+import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 import org.lemra.dd_wrt.utils.SSHUtils;
 
@@ -31,9 +33,8 @@ import java.util.List;
  */
 public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = StatusRouterCPUTile.class.getSimpleName();
     public static final String GREP_MODEL_NAME_PROC_CPUINFO = "grep \"model name\" /proc/cpuinfo ";
-
+    private static final String LOG_TAG = StatusRouterCPUTile.class.getSimpleName();
     long nbRunsLoader = 0;
 
 //    Drawable icon;
@@ -55,8 +56,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public ViewGroup getViewGroupLayout() {
         final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_cpu, null);
-        final ToggleButton toggle = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_cpu_togglebutton);
-        toggle.setOnCheckedChangeListener(this);
+        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_cpu_togglebutton);
+        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
         return layout;
 //        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_cpu);
 //        imageView.setImageDrawable(this.icon);
@@ -78,60 +79,66 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             @Override
             public NVRAMInfo loadInBackground() {
 
-                Log.d(LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
-                        mRouter+ " / this.mAutoRefreshToggle= " + mAutoRefreshToggle+ " / nbRunsLoader="+ nbRunsLoader);
+                try {
 
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
-                    return null;
-                }
-                nbRunsLoader++;
+                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
+                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                        NVRAMInfo.CPU_CLOCK_FREQ);
-
-                if (nvramInfo != null) {
-                    final List<String> strings = Splitter.on(",")
-                            .omitEmptyStrings()
-                            .trimResults()
-                            .splitToList(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ));
-                    Log.d(LOG_TAG, "strings for cpu clock: "+strings);
-                    if (strings != null && strings.size() > 0) {
-                        nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
+                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                        //Skip run
+                        Log.d(LOG_TAG, "Skip loader run");
+                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
-                }
+                    nbRunsLoader++;
 
-                final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                        GREP_MODEL_NAME_PROC_CPUINFO +
-                                "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
-                if (otherCmds != null && otherCmds.length >= 3) {
-                    //Model
-                    List<String> strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
-                    Log.d(LOG_TAG, "strings for model name: "+strings);
-                    if (strings != null && strings.size() >= 1) {
+                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                            NVRAMInfo.CPU_CLOCK_FREQ);
+
+                    if (nvramInfo != null) {
+                        final List<String> strings = Splitter.on(",")
+                                .omitEmptyStrings()
+                                .trimResults()
+                                .splitToList(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ));
+                        Log.d(LOG_TAG, "strings for cpu clock: " + strings);
+                        if (strings != null && strings.size() > 0) {
+                            nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
+                        }
+                    }
+
+                    final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                            GREP_MODEL_NAME_PROC_CPUINFO +
+                                    "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
+                    if (otherCmds != null && otherCmds.length >= 3) {
+                        //Model
+                        List<String> strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
+                        Log.d(LOG_TAG, "strings for model name: " + strings);
+                        if (strings != null && strings.size() >= 1) {
+                            if (nvramInfo != null) {
+                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
+                            }
+                        }
+
+                        //Nb Cores
                         if (nvramInfo != null) {
-                            nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
+                            nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[1]);
+                        }
+
+                        //Load Avg
+                        if (nvramInfo != null) {
+                            strings = Splitter.on("load average: ").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
+                            Log.d(LOG_TAG, "strings for load avg: " + strings);
+                            if (strings != null && strings.size() >= 2) {
+                                nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE, strings.get(1));
+                            }
                         }
                     }
 
-                    //Nb Cores
-                    if (nvramInfo != null) {
-                        nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[1]);
-                    }
+                    return nvramInfo;
 
-                    //Load Avg
-                    if (nvramInfo != null) {
-                        strings = Splitter.on("load average: ").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
-                        Log.d(LOG_TAG, "strings for load avg: "+strings);
-                        if (strings != null && strings.size() >= 2) {
-                            nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE, strings.get(1));
-                        }
-                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    return new NVRAMInfo().setException(e);
                 }
-
-                return nvramInfo;
-
             }
         };
         loader.forceLoad();
@@ -142,7 +149,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -178,11 +185,25 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(final Loader<NVRAMInfo> loader, final NVRAMInfo data) {
+    public void onLoadFinished(final Loader<NVRAMInfo> loader, NVRAMInfo data) {
 
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader="+loader+" / data="+data);
-        if (data != null) {
+
+        if (data == null) {
+            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+        }
+
+        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_error);
+
+        final Exception exception = data.getException();
+
+        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            if (exception == null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+            }
 
             //Model
             final TextView cpuSpeedView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_speed);
@@ -208,15 +229,18 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             if (loadAvgView != null) {
                 loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
             }
+
+            if (exception != null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), null, StatusRouterCPUTile.this);
-            }
-        }, 10000l);
+        doneWithLoaderInstance(this, loader,
+                R.id.tile_status_router_router_cpu_togglebutton_title, R.id.tile_status_router_router_cpu_togglebutton_separator);
+
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
