@@ -1,12 +1,14 @@
 package org.lemra.dd_wrt.api.conn;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Properties;
 
 /**
  * Created by armel on 8/16/14.
  */
-public class NVRAMInfo extends Properties implements Serializable  {
+public class NVRAMInfo extends Properties implements Serializable {
 
     public static final String ROUTER_NAME = "router_name";
     public static final String WAN_IPADDR = "wan_ipaddr";
@@ -24,6 +26,9 @@ public class NVRAMInfo extends Properties implements Serializable  {
     public static final String MEMORY_FREE = "memory_free";
     public static final String MEMORY_TOTAL = "memory_total";
 
+    @Nullable
+    private Exception exception;
+
     public NVRAMInfo() {
         super();
     }
@@ -31,5 +36,14 @@ public class NVRAMInfo extends Properties implements Serializable  {
     @Override
     public synchronized String toString() {
         return super.toString();
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public NVRAMInfo setException(@Nullable final Exception exception) {
+        this.exception = exception;
+        return this;
     }
 }

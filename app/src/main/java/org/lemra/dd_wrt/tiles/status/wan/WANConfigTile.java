@@ -1,14 +1,12 @@
-package org.lemra.dd_wrt.tiles.status;
+package org.lemra.dd_wrt.tiles.status.wan;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -18,44 +16,34 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 
 /**
- * Created by armel on 8/15/14.
+ * Created by armel on 8/20/14.
  */
-public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
+public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
+    private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
 
-//    Drawable icon;
-    long nbRunsLoader = 0;
-
-
-    public StatusRouterSpaceUsageTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
+    public WANConfigTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router);
-//        // Parse the SVG file from the resource beforehand
-//        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.disk);
-//            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-//            this.icon = svg.createPictureDrawable();
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
-//        }
     }
 
     @Nullable
     @Override
     public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_space_usage, null);
-        final ToggleButton toggle = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_space_usage_togglebutton);
-        toggle.setOnCheckedChangeListener(this);
+        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_config, null);
+        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_config_togglebutton);
+        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
 
         return layout;
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_space_usage);
-//        imageView.setImageDrawable(this.icon);
-//        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-//        return layout;
+    }
+
+    @Nullable
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
     }
 
     /**
@@ -66,35 +54,39 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
      * @return Return a new Loader instance that is ready to start loading.
      */
     @Override
-    public Loader<NVRAMInfo> onCreateLoader(int id, Bundle args) {
-        final Loader<NVRAMInfo> loader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+    protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
+        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Override
             public NVRAMInfo loadInBackground() {
 
-                Log.d(LOG_TAG, "Init background loader for " + StatusRouterSpaceUsageTile.class + ": routerInfo=" +
-                        mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle+ " / nbRunsLoader="+nbRunsLoader);
+                try {
+                    Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
+                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
+                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                        //Skip run
+                        Log.d(LOG_TAG, "Skip loader run");
+                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    nbRunsLoader++;
+
+                    //TODO
                     return null;
-                }
-                nbRunsLoader++;
 
-                //TODO
-                return null;
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    return new NVRAMInfo().setException(e);
+                }
             }
         };
-        loader.forceLoad();
-        return loader;
     }
 
     /**
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -130,34 +122,12 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(final Loader<NVRAMInfo> loader, final NVRAMInfo data) {
-        if (data != null) {
-            //TODO
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), null, StatusRouterSpaceUsageTile.this);
-            }
-        }, 10000l);
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-    }
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.  The application should at this point
-     * remove any references it has to the Loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
-    @Override
-    public void onLoaderReset(Loader<NVRAMInfo> loader) {
+    public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
 
     }
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(this.mParentFragmentActivity, this.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
+
     }
 }

@@ -1,7 +1,6 @@
-package org.lemra.dd_wrt.tiles.status;
+package org.lemra.dd_wrt.tiles.status.router;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -14,13 +13,15 @@ import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.exceptions.DDWRTNoDataException;
+import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 import org.lemra.dd_wrt.utils.SSHUtils;
 
@@ -35,13 +36,6 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusRouterMemoryTile.class.getSimpleName();
 
-    private static String getGrepProcMemInfo(@NotNull final String item) {
-        return "grep \"" + item + "\" /proc/meminfo ";
-    }
-
-    long nbRunsLoader = 0;
-//    Drawable icon;
-
     public StatusRouterMemoryTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router);
 //        // Parse the SVG file from the resource beforehand
@@ -54,18 +48,29 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 //            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
 //        }
     }
+//    Drawable icon;
+
+    private static String getGrepProcMemInfo(@NotNull final String item) {
+        return "grep \"" + item + "\" /proc/meminfo ";
+    }
 
     @Nullable
     @Override
     public ViewGroup getViewGroupLayout() {
         final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
-        final ToggleButton toggle = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
-        toggle.setOnCheckedChangeListener(this);
+        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
+        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
         return layout;
 //        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
 //        imageView.setImageDrawable(this.icon);
 //        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 //        return layout;
+    }
+
+    @Nullable
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
     }
 
     /**
@@ -76,75 +81,76 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
      * @return Return a new Loader instance that is ready to start loading.
      */
     @Override
-    public Loader<NVRAMInfo> onCreateLoader(int id, Bundle args) {
-        final Loader<NVRAMInfo> loader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+    protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
+        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Override
             public NVRAMInfo loadInBackground() {
 
-                Log.d(LOG_TAG, "Init background loader for " + StatusRouterMemoryTile.class + ": routerInfo=" +
-                        mRouter+ " / this.mAutoRefreshToggle= " + mAutoRefreshToggle+ " / nbRunsLoader="+nbRunsLoader);
+                try {
+                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterMemoryTile.class + ": routerInfo=" +
+                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
-                    return null;
-                }
-                nbRunsLoader++;
+                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                        //Skip run
+                        Log.d(LOG_TAG, "Skip loader run");
+                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    nbRunsLoader++;
 
-                final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                        getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
-                if (otherCmds != null && otherCmds.length >= 2) {
-                    //Total
-                    String memTotal = null;
-                    List<String> strings = Splitter.on("MemTotal:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
-                    Log.d(LOG_TAG, "strings for MemTotal: "+strings);
-                    if (strings != null && strings.size() >= 1) {
-                        memTotal = strings.get(0);
-                        if (nvramInfo != null) {
+                    final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                            getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                    if (otherCmds != null && otherCmds.length >= 2) {
+                        //Total
+                        String memTotal = null;
+                        List<String> strings = Splitter.on("MemTotal:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
+                        Log.d(LOG_TAG, "strings for MemTotal: " + strings);
+                        if (strings != null && strings.size() >= 1) {
+                            memTotal = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
-                        }
-                    }
 
-                    //Free
-                    String memFree = null;
-                    strings = Splitter.on("MemFree:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[1]);
-                    Log.d(LOG_TAG, "strings for MemFree: "+strings);
-                    if (strings != null && strings.size() >= 1) {
-                        memFree = strings.get(0);
-                        if (nvramInfo != null) {
+                        }
+
+                        //Free
+                        String memFree = null;
+                        strings = Splitter.on("MemFree:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[1]);
+                        Log.d(LOG_TAG, "strings for MemFree: " + strings);
+                        if (strings != null && strings.size() >= 1) {
+                            memFree = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
-                        }
-                    }
 
-                    //Mem used
-                    String memUsed = null;
-                    if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
-                        memUsed = Long.toString(
-                                       Long.parseLong(memTotal.replaceAll(" kB", "")) - Long.parseLong(memFree.replaceAll(" kB", "")))
-                                + " kB";
-                        if (nvramInfo != null) {
+                        }
+
+                        //Mem used
+                        String memUsed = null;
+                        if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
+                            memUsed = Long.toString(
+                                    Long.parseLong(memTotal.replaceAll(" kB", "")) - Long.parseLong(memFree.replaceAll(" kB", "")))
+                                    + " kB";
+
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
+
                         }
+
                     }
 
+                    return nvramInfo;
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    return new NVRAMInfo().setException(e);
                 }
-
-                return nvramInfo;
-
             }
         };
-        loader.forceLoad();
-        return loader;
     }
 
     /**
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
@@ -180,11 +186,25 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(final Loader<NVRAMInfo> loader, final NVRAMInfo data) {
-
+    public void onLoadFinished(final Loader<NVRAMInfo> loader, NVRAMInfo data) {
         //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader="+loader+" / data="+data);
-        if (data != null) {
+        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        if (data == null) {
+            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+        }
+
+        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_error);
+
+        final Exception exception = data.getException();
+
+        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+            if (exception == null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+            }
 
             //Total
             final TextView memTotalView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_total);
@@ -203,28 +223,19 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             if (memUsedView != null) {
                 memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
             }
+
+            if (exception != null) {
+                if (errorPlaceHolderView != null) {
+                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), null, StatusRouterMemoryTile.this);
-            }
-        }, 10000l);
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-    }
+        doneWithLoaderInstance(this, loader,
+                R.id.tile_status_router_router_mem_togglebutton_title, R.id.tile_status_router_router_mem_togglebutton_separator);
 
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.  The application should at this point
-     * remove any references it has to the Loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
-    @Override
-    public void onLoaderReset(Loader<NVRAMInfo> loader) {
-
+        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @Override

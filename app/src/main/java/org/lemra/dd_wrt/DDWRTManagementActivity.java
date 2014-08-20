@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.android.common.view.SlidingTabLayout;
 import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 import org.lemra.dd_wrt.prefs.sort.SortingStrategy;
-import org.lemra.dd_wrt.utils.Utils;
 
 @Deprecated
 public class DDWRTManagementActivity extends FragmentActivity
@@ -135,14 +133,13 @@ public class DDWRTManagementActivity extends FragmentActivity
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+        public static final String PARENT_SECTION_TITLE = "parent_section_title";
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final String SORTING_STRATEGY = "sorting_strategy";
-        public  static final String PARENT_SECTION_TITLE = "parent_section_title";
-
         private FragmentTabsAdapter fragmentTabsAdapter;
 
         /**
@@ -214,7 +211,7 @@ public class DDWRTManagementActivity extends FragmentActivity
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
             //FIXME
-            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, null);
+            this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, null);
         }
 
         @Override

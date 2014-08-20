@@ -1,7 +1,6 @@
 package org.lemra.dd_wrt.fragments.status;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
@@ -16,7 +15,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment {
 
     @Nullable
     @Override
-    protected List<DDWRTTile> getTiles() {
+    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return null;
     }
 }
