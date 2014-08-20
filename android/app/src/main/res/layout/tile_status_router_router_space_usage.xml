@@ -26,15 +26,15 @@
             android:paddingTop="4.0dip">
 
             <TextView
+                android:id="@+id/tile_status_router_router_space_usage_title"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:id="@+id/tile_status_router_router_space_usage_title"
-                android:text="Space Usage"
-                android:textStyle="bold"
-                android:textColor="#000000"
+                android:ellipsize="end"
                 android:singleLine="true"
-                android:ellipsize="end"/>
+                android:text="Space Usage"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -45,6 +45,20 @@
             android:layout_marginTop="8.0dip"
             android:background="#ffcccccc" />
 
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_router_router_space_usage_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,10 +66,11 @@
 
             <!-- NVRAM -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NVRAM" />
+                android:text="NVRAM"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,18 +83,19 @@
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- CIFS -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CIFS" />
+                android:text="CIFS"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,19 +108,20 @@
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
 
             <!-- JFFS2 -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JFFS2" />
+                android:text="JFFS2"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,23 +134,43 @@
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_router_router_space_usage_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_router_router_space_usage_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_router_router_space_usage_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
 
         </GridLayout>
-
-        <ToggleButton
-            android:id="@+id/tile_status_router_router_space_usage_togglebutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textOn="Auto-refresh on"
-            android:textOff="Auto-refresh off"
-            android:checked="true"/>
 
     </LinearLayout>
 </LinearLayout>

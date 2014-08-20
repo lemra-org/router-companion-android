@@ -3,7 +3,6 @@ package org.lemra.dd_wrt.utils;
 import android.util.Log;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
@@ -34,7 +33,7 @@ public final class SSHUtils {
     private SSHUtils() {}
 
     @Nullable
-    public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) {
+    public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute)+">");
 
         Session jschSession = null;
@@ -52,7 +51,7 @@ public final class SSHUtils {
             final Properties config = new Properties();
             config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
             jschSession.setConfig(config);
-            jschSession.connect();
+            jschSession.connect(30000);
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
@@ -67,8 +66,6 @@ public final class SSHUtils {
 
             return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
 
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             Closeables.closeQuietly(in);
             Closeables.closeQuietly(err);
@@ -80,13 +77,16 @@ public final class SSHUtils {
             }
         }
 
-        return null;
     }
 
     @Nullable
-    public static NVRAMInfo getNVRamInfoFromRouter(@NotNull final Router router, final String... fieldsToFetch) {
+    public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, final String... fieldsToFetch) throws Exception {
 
         Log.d(TAG, "getNVRamInfoFromRouter: <router=" + router + " / fieldsToFetch=" + Arrays.toString(fieldsToFetch)+">");
+
+        if (router == null) {
+            return null;
+        }
 
         final List<String> grep = Lists.newArrayList();
         if (fieldsToFetch != null) {

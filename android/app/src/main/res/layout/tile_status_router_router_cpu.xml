@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_router_router_cpu"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -8,11 +7,11 @@
     android:orientation="horizontal">
 
     <!--<ImageView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="8.0dip"-->
-        <!--android:id="@+id/ic_tile_status_router_router_cpu"-->
-        <!--android:background="@android:color/transparent"/>-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_router_router_cpu"-->
+    <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,27 +25,27 @@
             android:paddingTop="4.0dip">
 
             <TextView
+                android:id="@+id/tile_status_router_router_cpu_title"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:id="@+id/tile_status_router_router_cpu_title"
-                android:text="CPU"
-                android:textStyle="bold"
-                android:textColor="#000000"
+                android:ellipsize="end"
                 android:singleLine="true"
-                android:ellipsize="end"/>
+                android:text="CPU"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tile_status_router_router_cpu_speed"
-                android:textStyle="italic"
                 android:layout_width="215dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
+                android:singleLine="true"
                 android:text="Loading Clock..."
                 android:textAppearance="?android:textAppearanceSmall"
-                android:singleLine="true"
-                android:ellipsize="end"/>
+                android:textStyle="italic" />
 
         </LinearLayout>
 
@@ -57,6 +56,20 @@
             android:layout_marginTop="8.0dip"
             android:background="#ffcccccc" />
 
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_router_router_cpu_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,10 +77,11 @@
 
             <!-- Model -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CPU Model" />
+                android:text="CPU Model"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,23 +89,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_cpu_model"
                 android:layout_width="254dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Cores -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CPU Cores" />
+                android:text="CPU Cores"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,23 +115,25 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_cpu_cores"
                 android:layout_width="254dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
             <!-- Load Avg -->
             <TextView
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Load Average" />
+                android:text="Load Average"
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -123,48 +141,70 @@
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
                 android:text=" " />
+
             <TextView
                 android:id="@+id/tile_status_router_router_cpu_load_avg"
                 android:layout_width="254dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
+                android:ellipsize="end"
                 android:gravity="left"
-                android:text="Loading..."
-                android:textStyle="italic"
                 android:singleLine="false"
-                android:ellipsize="end"/>
+                android:text="Loading..."
+                android:textStyle="italic" />
 
 
             <!-- Temperature-->
             <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Temperature" />-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Temperature" />-->
             <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginLeft="8.0dip"-->
+            <!--android:layout_marginRight="8.0dip"-->
+            <!--android:text=":" />-->
             <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_cpu_lan_ip"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
+            <!--android:id="@+id/tile_status_router_router_cpu_lan_ip"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="right" />-->
+
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_router_router_cpu_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_router_router_cpu_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_router_router_cpu_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
 
         </GridLayout>
-
-        <ToggleButton
-            android:id="@+id/tile_status_router_router_cpu_togglebutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textOn="Auto-refresh on"
-            android:textOff="Auto-refresh off"
-            android:checked="true"/>
 
     </LinearLayout>
 </LinearLayout>

@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.prefs.sort.SortingStrategy;
-import org.lemra.dd_wrt.utils.Utils;
 
 /**
  * Created by armel on 8/13/14.
@@ -30,11 +29,9 @@ public class PageSlidingTabStripFragment extends Fragment {
 
     public static final String TAG = PageSlidingTabStripFragment.class
             .getSimpleName();
-
+    public static final String PARENT_SECTION_TITLE = "parent_section_title";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String SORTING_STRATEGY = "sorting_strategy";
-    public  static final String PARENT_SECTION_TITLE = "parent_section_title";
-
     private FragmentTabsAdapter mFragmentTabsAdapter;
 
     @Nullable
@@ -109,7 +106,7 @@ public class PageSlidingTabStripFragment extends Fragment {
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
             this.router = router;
-            this.tabs = Utils.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, router);
+            this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, router);
         }
 
         @Override

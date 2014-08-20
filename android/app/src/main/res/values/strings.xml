@@ -42,7 +42,7 @@
     <string name="wireless_basic_settings">Basic</string>
     <string name="wireless_radius">Radius</string>
     <string name="wireless_security">Security</string>
-    <string name="wireless_mac_filter">MAC Filter</string>
+    <string name="wireless_mac_filter">MAC Filtering</string>
     <string name="wireless_wl">WL</string>
     <string name="wireless_wl0">WL0</string>
     <string name="wireless_wl1">WL1</string>
@@ -101,5 +101,6 @@
     <string name="tile_status_router_router_state_title">Router State</string>
     <string name="router_state_tile_dl_rate">DL</string>
     <string name="router_state_tile_ul_rate">UL</string>
+    <string name="unknown">\?\?\?</string>
 
 </resources>
