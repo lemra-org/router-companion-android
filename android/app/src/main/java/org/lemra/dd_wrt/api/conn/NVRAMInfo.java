@@ -32,6 +32,7 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String WAN_GATEWAY = "wan_gateway";
     public static final String WAN_DNS = "wan_get_dns";
     public static final String WAN_3_G_SIGNAL = "wan_3g_signal";
+    public static final String WAN_DEFAULT = "wan_default";
 
     @Nullable
     private Exception exception;

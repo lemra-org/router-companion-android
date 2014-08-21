@@ -12,6 +12,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,11 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.exceptions.DDWRTNoDataException;
 import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
+import org.lemra.dd_wrt.utils.SSHUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * Created by armel on 8/20/14.
@@ -65,15 +72,55 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                     nbRunsLoader++;
 
                     //TODO
-                    return null;
-//                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
-//                            NVRAMInfo.WAN_PROTO,
-//                            NVRAMInfo.WAN_HWADDR,
-//                            NVRAMInfo.WAN_LEASE,
-//                            NVRAMInfo.WAN_IPADDR,
-//                            NVRAMInfo.WAN_NETMASK,
-//                            NVRAMInfo.WAN_GATEWAY,
-//                            NVRAMInfo.WAN_DNS);
+                    //Start by getting information about the WAN iface name
+                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_DEFAULT);
+                    if (nvRamInfoFromRouter == null) {
+                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+                    }
+
+                    final String wanIface = nvRamInfoFromRouter
+                            .getProperty(NVRAMInfo.WAN_DEFAULT);
+
+                    if (Strings.isNullOrEmpty(wanIface)) {
+                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+                    }
+
+                    final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
+                        return null;
+                    }
+
+                    String netDevWanIface = netDevWanIfaces[0];
+                    if (netDevWanIface == null) {
+                        return null;
+                    }
+
+                    netDevWanIface = netDevWanIface.replaceAll(wanIface + ":", "");
+
+                    final List<String> netDevWanIfaceList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(netDevWanIface);
+                    if (netDevWanIfaceList == null || netDevWanIfaceList.size() <= 15) {
+                        return null;
+                    }
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_bytes", netDevWanIfaceList.get(0));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_packets", netDevWanIfaceList.get(1));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_errs", netDevWanIfaceList.get(2));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_drop", netDevWanIfaceList.get(3));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_fifo", netDevWanIfaceList.get(4));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_frame", netDevWanIfaceList.get(5));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_compressed", netDevWanIfaceList.get(6));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_multicast", netDevWanIfaceList.get(7));
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_bytes", netDevWanIfaceList.get(8));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_packets", netDevWanIfaceList.get(9));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_errs", netDevWanIfaceList.get(10));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_drop", netDevWanIfaceList.get(11));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_fifo", netDevWanIfaceList.get(12));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls", netDevWanIfaceList.get(13));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
+
+                    return nvRamInfoFromRouter;
 
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -152,6 +199,50 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //TODO Use appropriate props
+            final String wanIface = data
+                    .getProperty(NVRAMInfo.WAN_DEFAULT);
+
+            //Iface Name
+            final TextView wanIfaceView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_iface);
+            if (wanIfaceView != null) {
+                wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "N/A" : wanIface);
+            }
+
+            final TextView wanIngressView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_ingress);
+            if (wanIngressView != null) {
+                String text;
+                final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
+                try {
+                    final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
+                    if (wanRcvMBytes < 0.) {
+                        text = "N/A";
+                    } else {
+                        text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    }
+
+                } catch (final NumberFormatException nfe) {
+                    text = "N/A";
+                }
+                wanIngressView.setText(text);
+            }
+
+            final TextView wanEgressView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_egress);
+            if (wanEgressView != null) {
+                String text;
+                final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
+                try {
+                    final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
+                    if (wanXmitMBytes < 0.) {
+                        text = "N/A";
+                    } else {
+                        text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    }
+
+                } catch (final NumberFormatException nfe) {
+                    text = "N/A";
+                }
+                wanEgressView.setText(text);
+            }
 
         }
 

@@ -67,6 +67,32 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Interface Name"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wan_traffic_iface"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Ingress -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Ingress (MBytes)"
                 android:textStyle="bold" />
 

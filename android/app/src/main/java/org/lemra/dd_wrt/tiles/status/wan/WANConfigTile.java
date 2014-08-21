@@ -188,6 +188,12 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                 wanConnTypeView.setText(wanConnectionTypeManual);
             }
 
+            //Connection Uptime
+            final TextView wanUptimeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_connection_uptime);
+            if (wanUptimeView != null) {
+                wanUptimeView.setText(data.getProperty("wan_connection_uptime", "N/A"));
+            }
+
             //MAC
             final TextView wanMacView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_wan_mac);
             if (wanMacView != null) {
