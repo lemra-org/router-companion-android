@@ -224,11 +224,12 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                 memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
             }
 
-            if (exception != null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                    errorPlaceHolderView.setVisibility(View.VISIBLE);
-                }
+        }
+
+        if (exception != null) {
+            if (errorPlaceHolderView != null) {
+                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
 

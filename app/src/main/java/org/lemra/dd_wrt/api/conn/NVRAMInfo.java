@@ -25,6 +25,12 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String MEMORY_USED = "memory_used";
     public static final String MEMORY_FREE = "memory_free";
     public static final String MEMORY_TOTAL = "memory_total";
+    public static final String WAN_PROTO = "wan_proto";
+    public static final String WAN_HWADDR = "wan_hwaddr";
+    public static final String WAN_LEASE = "wan_lease";
+    public static final String WAN_NETMASK = "wan_netmask";
+    public static final String WAN_GATEWAY = "wan_gateway";
+    public static final String WAN_DNS = "wan_get_dns";
 
     @Nullable
     private Exception exception;

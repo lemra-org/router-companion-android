@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tile_status_wan_config"
+    android:id="@+id/tile_status_wan_traffic"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/tile_background_1"
@@ -10,7 +10,7 @@
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_wan_config"-->
+    <!--android:id="@+id/ic_tile_status_wan_traffic"-->
     <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
@@ -25,13 +25,13 @@
             android:paddingTop="4.0dip">
 
             <TextView
-                android:id="@+id/tile_status_wan_config_title"
+                android:id="@+id/tile_status_wan_traffic_title"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Configuration"
+                android:text="Total Traffic"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
@@ -46,7 +46,7 @@
 
         <!-- Error message placeholder -->
         <TextView
-            android:id="@+id/tile_status_wan_config_error"
+            android:id="@+id/tile_status_wan_traffic_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -63,11 +63,11 @@
             android:layout_height="wrap_content"
             android:columnCount="3">
 
-            <!-- Connection Type (DHCP, Static, ...) -->
+            <!-- Ingress -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Connection Type"
+                android:text="Ingress (MBytes)"
                 android:textStyle="bold" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:text=" " />
 
             <TextView
-                android:id="@+id/tile_status_wan_config_connection_type"
+                android:id="@+id/tile_status_wan_traffic_ingress"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -89,11 +89,11 @@
                 android:text="Loading..."
                 android:textStyle="italic" />
 
-            <!-- WAN MAC -->
+            <!-- Egress -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAN MAC"
+                android:text="Egress (MBytes)"
                 android:textStyle="bold" />
 
             <TextView
@@ -105,112 +105,7 @@
                 android:text=" " />
 
             <TextView
-                android:id="@+id/tile_status_wan_config_wan_mac"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
-
-            <!-- WAN IP -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="WAN IP"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=" " />
-
-            <TextView
-                android:id="@+id/tile_status_wan_config_wan_ip"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
-
-
-            <!-- WAN Subnet Mask -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Subnet Mask"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=" " />
-
-            <TextView
-                android:id="@+id/tile_status_wan_config_subnet_mask"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
-
-            <!-- GW -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gateway"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=" " />
-
-            <TextView
-                android:id="@+id/tile_status_wan_config_subnet_gateway"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
-
-            <!-- Comma-separated list of DNSs -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DNS"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text=" " />
-
-            <TextView
-                android:id="@+id/tile_status_wan_config_dns"
+                android:id="@+id/tile_status_wan_traffic_egress"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -222,7 +117,7 @@
 
             <!-- Auto-refresh -->
             <TextView
-                android:id="@+id/tile_status_wan_config_togglebutton_title"
+                android:id="@+id/tile_status_wan_traffic_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Auto-refresh"
@@ -230,7 +125,7 @@
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/tile_status_wan_config_togglebutton_separator"
+                android:id="@+id/tile_status_wan_traffic_togglebutton_separator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -240,7 +135,7 @@
                 android:visibility="gone" />
 
             <ToggleButton
-                android:id="@+id/tile_status_wan_config_togglebutton"
+                android:id="@+id/tile_status_wan_traffic_togglebutton"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
