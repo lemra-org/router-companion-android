@@ -89,7 +89,7 @@
                 android:text="Loading..."
                 android:textStyle="italic" />
 
-            <!-- 3G Singal (displayed only if connection type is 3g) -->
+            <!-- 3G Signal (displayed only if connection type is 3g) -->
             <TextView
                 android:id="@+id/tile_status_wan_config_3g_signal_field"
                 android:layout_width="wrap_content"
