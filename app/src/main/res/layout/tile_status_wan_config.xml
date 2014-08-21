@@ -89,6 +89,37 @@
                 android:text="Loading..."
                 android:textStyle="italic" />
 
+            <!-- 3G Singal (displayed only if connection type is 3g) -->
+            <TextView
+                android:id="@+id/tile_status_wan_config_3g_signal_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connection Type"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_wan_config_3g_signal_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_wan_config_3g_signal"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic"
+                android:visibility="gone" />
+
             <!-- WAN MAC -->
             <TextView
                 android:layout_width="wrap_content"

@@ -78,6 +78,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
                     return SSHUtils.getNVRamInfoFromRouter(mRouter,
                             NVRAMInfo.WAN_PROTO,
+                            NVRAMInfo.WAN_3_G_SIGNAL,
                             NVRAMInfo.WAN_HWADDR,
                             NVRAMInfo.WAN_LEASE,
                             NVRAMInfo.WAN_IPADDR,
@@ -164,10 +165,22 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                     wanConnectionTypeManual = "PPoE";
                 } else if ("3g".equalsIgnoreCase(wanProto)) {
                     wanConnectionTypeManual = "3G/UMTS";
+
+                    //Unhide 3g signal text
+                    final TextView wan3gSignalFieldView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal_field);
+                    final TextView wan3gSignalSeparatorView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
+                    final TextView wan3gSignalView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal);
+                    if (wan3gSignalFieldView != null && wan3gSignalSeparatorView != null && wan3gSignalView != null) {
+                        wan3gSignalFieldView.setVisibility(View.VISIBLE);
+                        wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
+                        wan3gSignalView.setVisibility(View.VISIBLE);
+                        wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "N/A"));
+                    }
+
                 } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
                     wanConnectionTypeManual = "Heartbeat Signal";
                 } else if ("disabled".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "* Disabled *";
+                    wanConnectionTypeManual = "*Disabled*";
                 } else {
                     wanConnectionTypeManual = wanProto.toUpperCase();
                 }
