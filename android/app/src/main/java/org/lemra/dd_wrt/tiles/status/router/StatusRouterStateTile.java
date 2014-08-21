@@ -231,11 +231,12 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                 uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
             }
 
-            if (exception != null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                    errorPlaceHolderView.setVisibility(View.VISIBLE);
-                }
+        }
+
+        if (exception != null) {
+            if (errorPlaceHolderView != null) {
+                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
 

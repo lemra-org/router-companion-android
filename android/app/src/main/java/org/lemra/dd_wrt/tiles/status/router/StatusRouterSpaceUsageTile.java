@@ -278,11 +278,12 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                 jffsView.setText(data.getProperty("jffs_space", "N/A"));
             }
 
-            if (exception != null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                    errorPlaceHolderView.setVisibility(View.VISIBLE);
-                }
+        }
+
+        if (exception != null) {
+            if (errorPlaceHolderView != null) {
+                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
 

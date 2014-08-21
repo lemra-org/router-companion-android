@@ -233,11 +233,12 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                 loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
             }
 
-            if (exception != null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                    errorPlaceHolderView.setVisibility(View.VISIBLE);
-                }
+        }
+
+        if (exception != null) {
+            if (errorPlaceHolderView != null) {
+                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
 

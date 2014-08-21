@@ -22,24 +22,24 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.exceptions.DDWRTNoDataException;
 import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
-import org.lemra.dd_wrt.utils.SSHUtils;
 
 /**
  * Created by armel on 8/20/14.
  */
-public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
+public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
+    private static final String LOG_TAG = WANTrafficTile.class.getSimpleName();
 
-    public WANConfigTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
+
+    public WANTrafficTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router);
     }
 
     @Nullable
     @Override
     public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_config, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_config_togglebutton);
+        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_traffic, null);
+        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_traffic_togglebutton);
         mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
 
         return layout;
@@ -47,19 +47,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected String getLogTag() {
-        return LOG_TAG;
-    }
-
-    /**
-     * Instantiate and return a new Loader for the given ID.
-     *
-     * @param id   The ID whose loader is to be created.
-     * @param args Any arguments supplied by the caller.
-     * @return Return a new Loader instance that is ready to start loading.
-     */
-    @Override
-    protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
+    protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Override
@@ -76,14 +64,16 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.WAN_PROTO,
-                            NVRAMInfo.WAN_HWADDR,
-                            NVRAMInfo.WAN_LEASE,
-                            NVRAMInfo.WAN_IPADDR,
-                            NVRAMInfo.WAN_NETMASK,
-                            NVRAMInfo.WAN_GATEWAY,
-                            NVRAMInfo.WAN_DNS);
+                    //TODO
+                    return null;
+//                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
+//                            NVRAMInfo.WAN_PROTO,
+//                            NVRAMInfo.WAN_HWADDR,
+//                            NVRAMInfo.WAN_LEASE,
+//                            NVRAMInfo.WAN_IPADDR,
+//                            NVRAMInfo.WAN_NETMASK,
+//                            NVRAMInfo.WAN_GATEWAY,
+//                            NVRAMInfo.WAN_DNS);
 
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -91,6 +81,12 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
         };
+    }
+
+    @Nullable
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
     }
 
     /**
@@ -135,14 +131,15 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
 
-        //Set tiles
+        //TODO
+//Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_error);
+        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_error);
 
         final Exception exception = data.getException();
 
@@ -154,56 +151,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            //Connection Type
-            final TextView wanConnTypeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_connection_type);
-            if (wanConnTypeView != null) {
-                final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "N/A");
-                final String wanConnectionTypeManual;
-
-                if ("ppoe".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "PPoE";
-                } else if ("3g".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "3G/UMTS";
-                } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "Heartbeat Signal";
-                } else if ("disabled".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "* Disabled *";
-                } else {
-                    wanConnectionTypeManual = wanProto.toUpperCase();
-                }
-
-                wanConnTypeView.setText(wanConnectionTypeManual);
-            }
-
-            //MAC
-            final TextView wanMacView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_wan_mac);
-            if (wanMacView != null) {
-                wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "N/A"));
-            }
-
-            //IP
-            final TextView wanIPView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_wan_ip);
-            if (wanIPView != null) {
-                wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
-            }
-
-            //Subnet
-            final TextView wanSubnetView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_subnet_mask);
-            if (wanSubnetView != null) {
-                wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "N/A"));
-            }
-
-            //Gateway
-            final TextView wanGatewayView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_subnet_gateway);
-            if (wanGatewayView != null) {
-                wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "N/A"));
-            }
-
-            //DNS
-            final TextView wanDNSView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_dns);
-            if (wanDNSView != null) {
-                wanDNSView.setText(data.getProperty(NVRAMInfo.WAN_DNS, "N/A").replaceAll(" ", ", "));
-            }
+            //TODO Use appropriate props
 
         }
 
@@ -215,9 +163,10 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         }
 
         doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wan_config_togglebutton_title, R.id.tile_status_wan_config_togglebutton_separator);
+                R.id.tile_status_wan_traffic_togglebutton_title, R.id.tile_status_wan_traffic_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+
     }
 
     @Override
