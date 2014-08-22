@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item-->
+    <!--android:id="@+id/file"-->
+    <!--android:title="File">-->
+    <!--<menu>-->
+    <!--<item-->
+    <!--android:id="@+id/create_new"-->
+    <!--android:title="New" />-->
+    <!--<item-->
+    <!--android:id="@+id/open"-->
+    <!--android:title="Open" />-->
+    <!--</menu>-->
+    <!--</item>-->
     <item
-        android:id="@+id/file"
-        android:title="File">
-        <!-- "file" submenu -->
-        <menu>
-            <item
-                android:id="@+id/create_new"
-                android:title="New" />
-            <item
-                android:id="@+id/open"
-                android:title="Open" />
-        </menu>
-    </item>
+        android:id="@+id/action_refresh"
+        android:alphabeticShortcut="r"
+        android:icon="@drawable/ic_menu_refresh"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_refresh" />
     <item
         android:id="@+id/action_settings"
-        android:title="Settings" />
+        android:alphabeticShortcut="s"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_settings" />
 </menu>

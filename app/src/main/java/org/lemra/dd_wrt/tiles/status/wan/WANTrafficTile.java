@@ -178,8 +178,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
 
-        //TODO
-//Set tiles
+        //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         if (data == null) {
@@ -198,7 +197,6 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            //TODO Use appropriate props
             final String wanIface = data
                     .getProperty(NVRAMInfo.WAN_DEFAULT);
 

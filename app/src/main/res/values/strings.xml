@@ -102,5 +102,7 @@
     <string name="router_state_tile_dl_rate">DL</string>
     <string name="router_state_tile_ul_rate">UL</string>
     <string name="unknown">\?\?\?</string>
+    <string name="menuitem_refresh">Refresh</string>
+    <string name="menuitem_settings">Settings</string>
 
 </resources>
