@@ -2,7 +2,6 @@ package org.lemra.dd_wrt.prefs.sort;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lemra.dd_wrt.DDWRTManagementActivity;
 
 import java.util.Comparator;
 
