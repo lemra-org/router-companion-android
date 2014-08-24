@@ -101,7 +101,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
-                                                @NotNull final DDWRTMainActivity ddwrtMainActivity, @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
+                                                @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
                                                 @Nullable final Router router) {
         try {
             final DDWRTBaseFragment fragment = clazz.newInstance()
@@ -116,7 +116,6 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
             fragment.setArguments(args);
 
             fragment.router = router;
-            fragment.ddwrtMainActivity = ddwrtMainActivity;
 
             return fragment;
 
@@ -129,7 +128,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
     }
 
     @NotNull
-    public static DDWRTBaseFragment[] getFragments(@NotNull final DDWRTMainActivity ddwrtMainActivity, @NotNull final Resources resources, int parentSectionNumber,
+    public static DDWRTBaseFragment[] getFragments(@NotNull final Resources resources, int parentSectionNumber,
                                                    String sortingStrategy,
                                                    @Nullable final Router router) {
         Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
@@ -159,137 +158,137 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
                 tabsToSort = new DDWRTBaseFragment[7];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(StatusRouterFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(StatusWANFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(StatusWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(StatusLANFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(StatusLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_lan), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_bandwidth), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_sysinfo), router);
                 break;
             case 1:
                 parentSectionTitle = resources.getString(R.string.setup);
                 //2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP}
                 tabsToSort = new DDWRTBaseFragment[8];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(SetupBasicFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(SetupBasicFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_basic), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(SetupIPv6Fragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(SetupIPv6Fragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_ipv6), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(SetupDDNSFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(SetupDDNSFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_ddns), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(SetupMACCloningFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(SetupMACCloningFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_mac_cloning), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(SetupRoutingFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(SetupRoutingFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_routing), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(SetupVLANFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(SetupVLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_vlans), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(SetupNetworkingFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(SetupNetworkingFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_networking), router);
-                tabsToSort[7] = DDWRTBaseFragment.newInstance(SetupEoIPFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[7] = DDWRTBaseFragment.newInstance(SetupEoIPFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_eoip), router);
                 break;
             case 2:
                 parentSectionTitle = resources.getString(R.string.wireless);
                 //3 = Wireless => {Basic, Radius, Security, MAC Filter, WL0, WL1, ...}
                 tabsToSort = new DDWRTBaseFragment[4];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(WirelessBasicFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(WirelessBasicFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_basic_settings), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(WirelessRadiusFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(WirelessRadiusFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_radius), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(WirelessSecurityFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(WirelessSecurityFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_security), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(WirelessMACFilteringFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(WirelessMACFilteringFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_mac_filter), router);
                 break;
             case 3:
                 parentSectionTitle = resources.getString(R.string.services);
                 //4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
                 tabsToSort = new DDWRTBaseFragment[10];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_services), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_freeradius), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_ppoe), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_vpn), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_usb), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_nas), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_hostspot), router);
-                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_sip), router);
-                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_adblocking), router);
-                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_webserver), router);
                 break;
             case 4:
                 //5 = Security => {Firewall, VPN Passthrough}
                 parentSectionTitle = resources.getString(R.string.security);
                 tabsToSort = new DDWRTBaseFragment[2];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(SecurityFirewallFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(SecurityFirewallFragment.class, parentSectionTitle,
                         resources.getString(R.string.security_firewall), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(SecurityVPNPassthroughFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(SecurityVPNPassthroughFragment.class, parentSectionTitle,
                         resources.getString(R.string.security_vpn_passthrough), router);
                 break;
             case 5:
                 //6 = Access => {WAN}
                 parentSectionTitle = resources.getString(R.string.access_restrictions);
                 tabsToSort = new DDWRTBaseFragment[1];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(AccessWANAccessFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(AccessWANAccessFragment.class, parentSectionTitle,
                         resources.getString(R.string.access_restrictions_wan), router);
                 break;
             case 6:
                 parentSectionTitle = resources.getString(R.string.nat_qos);
                 //7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}
                 tabsToSort = new DDWRTBaseFragment[6];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(NATQoSPortForwardingFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(NATQoSPortForwardingFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_forwarding), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(NATQoSPortRangeForwardingFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(NATQoSPortRangeForwardingFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_range_forwarding), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(NATQoSPortTriggeringFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(NATQoSPortTriggeringFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_trigger), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(NATQoSUPnPFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(NATQoSUPnPFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_upnp), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(NATQoSDMZFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(NATQoSDMZFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_dmz), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(NATQoSQoSFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
                 break;
             case 7:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 //8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
                 tabsToSort = new DDWRTBaseFragment[7];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_mgmt), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminKeepAliveFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminKeepAliveFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_keep_alive), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[2] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_cmds), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(AdminWOLFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(AdminWOLFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_wol), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(AdminFactoryDefaultsFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(AdminFactoryDefaultsFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_factory), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(AdminUpgradeFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(AdminUpgradeFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_upgrade), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_backup), router);
                 break;
             default:
                 //This should NOT happen => Error
                 parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
                 tabsToSort = new DDWRTBaseFragment[1];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(NoDataFragment.class, ddwrtMainActivity, parentSectionTitle,
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(NoDataFragment.class, parentSectionTitle,
                         resources.getString(R.string.unknown), null);
                 break;
 
