@@ -3,11 +3,14 @@ package org.lemra.dd_wrt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,11 +27,12 @@ import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 /**
  * Created by armel on 8/9/14.
  */
-public class DDWRTMainActivity extends SherlockFragmentActivity {
+public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewPager.OnPageChangeListener {
 
     public static final Handler HANDLER = new Handler();
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
+    private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
     //TESTS
     private static final Router router = new Router();
     static {
@@ -54,6 +58,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
     private SharedPreferences preferences;
     private CharSequence mDrawerTitle;
@@ -139,22 +144,11 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
                 Toast.makeText(this.getApplicationContext(), "Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
                 //Refresh all tiles currently visible
                 setRefreshActionButtonState(true);
-                HANDLER.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-
-                            //Request refresh of current tab tiles
-                            if (DDWRTMainActivity.this.currentPageSlidingTabStripFragment != null) {
-                                DDWRTMainActivity.this.currentPageSlidingTabStripFragment.refreshCurrentFragment();
-                            }
-
-                        } finally {
-                            //Finish by resetting flag to false
-                            setRefreshActionButtonState(false);
-                        }
-                    }
-                });
+                if (this.mCurrentRefreshAsyncTask != null) {
+                    this.mCurrentRefreshAsyncTask.cancel(true);
+                }
+                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
+                this.mCurrentRefreshAsyncTask.execute();
 
             case R.id.action_settings:
                 //TODO Open Settings activity
@@ -198,7 +192,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
 
         if (this.currentPageSlidingTabStripFragment == null) {
             this.currentPageSlidingTabStripFragment =
-                    PageSlidingTabStripFragment.newInstance(this, position, router, preferences);
+                    PageSlidingTabStripFragment.newInstance(position, router, preferences);
         }
 
         getSupportFragmentManager()
@@ -208,6 +202,49 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
                         PageSlidingTabStripFragment.TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    /**
+     * This method will be invoked when the current page is scrolled, either as part
+     * of a programmatically initiated smooth scroll or a user initiated touch scroll.
+     *
+     * @param position             Position index of the first page currently being displayed.
+     *                             Page position+1 will be visible if positionOffset is nonzero.
+     * @param positionOffset       Value from [0, 1) indicating the offset from the page at position.
+     * @param positionOffsetPixels Value in pixels indicating the offset from position.
+     */
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    /**
+     * This method will be invoked when a new page becomes selected. Animation is not
+     * necessarily complete.
+     *
+     * @param position Position index of the new selected page.
+     */
+    @Override
+    public void onPageSelected(int position) {
+        Log.d(TAG, "onPageSelected (" + position + ")");
+        if (this.mCurrentRefreshAsyncTask != null) {
+            this.mCurrentRefreshAsyncTask.cancel(true);
+        }
+    }
+
+    /**
+     * Called when the scroll state changes. Useful for discovering when the user
+     * begins dragging, when the pager is automatically settling to the current page,
+     * or when it is fully stopped/idle.
+     *
+     * @param state The new scroll state.
+     * @see android.support.v4.view.ViewPager#SCROLL_STATE_IDLE
+     * @see android.support.v4.view.ViewPager#SCROLL_STATE_DRAGGING
+     * @see android.support.v4.view.ViewPager#SCROLL_STATE_SETTLING
+     */
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        Log.d(TAG, "onPageScrollStateChanged (" + state + ")");
     }
 
     // The click listener for ListView in the navigation drawer
@@ -220,4 +257,46 @@ public class DDWRTMainActivity extends SherlockFragmentActivity {
         }
     }
 
+
+    private class RefreshAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "doInBackground");
+            if (!this.isCancelled()) {
+                setRefreshActionButtonState(true);
+                //Request refresh of current tab tiles
+                if (DDWRTMainActivity.this.currentPageSlidingTabStripFragment != null) {
+                    DDWRTMainActivity.this.currentPageSlidingTabStripFragment.refreshCurrentFragment();
+                }
+                Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "doInBackground DONE");
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onPostExecute");
+            //Finish by resetting flag to false
+            setRefreshActionButtonState(false);
+        }
+
+        @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onCancelled(aVoid)");
+            //Finish by resetting flag to false
+            setRefreshActionButtonState(false);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onCancelled()");
+            //Finish by resetting flag to false
+            setRefreshActionButtonState(false);
+        }
+    }
 }
