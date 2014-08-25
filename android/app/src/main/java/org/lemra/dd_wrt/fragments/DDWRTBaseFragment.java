@@ -488,8 +488,8 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
      * Called when a previously created loader is being reset, and thus
      * making its data unavailable.  The application should at this point
      * remove any references it has to the Loader's data.
-     *
-//     * @param loader The Loader that is being reset.
+     * <p/>
+     * //     * @param loader The Loader that is being reset.
      */
 //    @Override
 //    public void onLoaderReset(Loader<String> loader) {
@@ -498,7 +498,6 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 //            ((TextView) ddwrtSectionView).setText(getResources().getText(R.string.no_data));
 //        }
 //    }
-
     @NotNull
     private ViewGroup getLayout() {
         final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -538,7 +537,7 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
             atLeastOneTileAdded = (!rows.isEmpty());
 
-            Log.d(LOG_TAG, "atLeastOneTileAdded: "+atLeastOneTileAdded+", rows: "+rows.size());
+            Log.d(LOG_TAG, "atLeastOneTileAdded: " + atLeastOneTileAdded + ", rows: " + rows.size());
 
             if (atLeastOneTileAdded) {
                 //Drop Everything

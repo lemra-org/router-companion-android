@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -29,10 +28,9 @@ import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
  */
 public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewPager.OnPageChangeListener {
 
-    public static final Handler HANDLER = new Handler();
-
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
+
     //TESTS
     private static final Router router = new Router();
     static {
@@ -141,14 +139,14 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 break;
             }
             case R.id.action_refresh:
-                Toast.makeText(this.getApplicationContext(), "Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
-                //Refresh all tiles currently visible
+                Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
+                //FIXME Refresh all tiles currently visible
                 setRefreshActionButtonState(true);
-                if (this.mCurrentRefreshAsyncTask != null) {
-                    this.mCurrentRefreshAsyncTask.cancel(true);
-                }
-                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
-                this.mCurrentRefreshAsyncTask.execute();
+//                if (this.mCurrentRefreshAsyncTask != null) {
+//                    this.mCurrentRefreshAsyncTask.cancel(true);
+//                }
+//                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
+//                this.mCurrentRefreshAsyncTask.execute();
 
             case R.id.action_settings:
                 //TODO Open Settings activity
@@ -190,10 +188,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     private void selectItem(int position) {
 
-        if (this.currentPageSlidingTabStripFragment == null) {
-            this.currentPageSlidingTabStripFragment =
-                    PageSlidingTabStripFragment.newInstance(position, router, preferences);
-        }
+        Log.d(TAG, "selectItem @" + position);
+
+        this.currentPageSlidingTabStripFragment =
+                PageSlidingTabStripFragment.newInstance(this, position, router, preferences);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -215,7 +213,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
      */
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+        Log.d(TAG, "onPageScrolled @" + position);
     }
 
     /**
@@ -256,7 +254,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
             selectItem(position);
         }
     }
-
 
     private class RefreshAsyncTask extends AsyncTask<Void, Void, Void> {
 
