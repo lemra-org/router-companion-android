@@ -33,6 +33,16 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String WAN_DNS = "wan_get_dns";
     public static final String WAN_3_G_SIGNAL = "wan_3g_signal";
     public static final String WAN_DEFAULT = "wan_default";
+    public static final String LAN_DOMAIN = "lan_domain";
+    public static final String LAN_GATEWAY = "lan_gateway";
+    public static final String LAN_HWADDR = "lan_hwaddr";
+    public static final String LAN_NETMASK = "lan_netmask";
+    public static final String LOCAL_DNS = "local_dns";
+    public static final String LAN_PROTO = "lan_proto";
+    public static final String DHCP_DNSMASQ = "dhcp_dnsmasq";
+    public static final String DHCP_START = "dhcp_start";
+    public static final String DHCP_NUM = "dhcp_num";
+    public static final String DHCP_LEASE = "dhcp_lease";
 
     @Nullable
     private Exception exception;

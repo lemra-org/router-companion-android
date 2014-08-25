@@ -33,6 +33,7 @@ public class PageSlidingTabStripFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String SORTING_STRATEGY = "sorting_strategy";
     private FragmentTabsAdapter mFragmentTabsAdapter;
+    private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
     @Nullable
     private Router router;
@@ -44,7 +45,8 @@ public class PageSlidingTabStripFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static PageSlidingTabStripFragment newInstance(int sectionNumber,
+    public static PageSlidingTabStripFragment newInstance(@NotNull final ViewPager.OnPageChangeListener onPageChangeListener,
+                                                          int sectionNumber,
                                                           @Nullable final Router router, SharedPreferences preferences) {
         final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         Bundle args = new Bundle();
@@ -53,6 +55,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         args.putSerializable(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, router);
         fragment.setArguments(args);
         fragment.router = router;
+        fragment.mOnPageChangeListener = onPageChangeListener;
         return fragment;
     }
 
@@ -62,7 +65,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         setRetainInstance(true);
         mFragmentTabsAdapter = new FragmentTabsAdapter(getArguments().getInt(ARG_SECTION_NUMBER),
                 getChildFragmentManager(), getResources(),
-                SortingStrategy.class.getPackage().getName()+"."+getArguments().getString(SORTING_STRATEGY),
+                SortingStrategy.class.getPackage().getName() + "." + getArguments().getString(SORTING_STRATEGY),
                 this.router);
     }
 
@@ -80,6 +83,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 .findViewById(R.id.tabs);
         this.pager = (ViewPager) view.findViewById(R.id.pager);
         this.pager.setAdapter(mFragmentTabsAdapter);
+        this.pager.setOnPageChangeListener(this.mOnPageChangeListener);
         tabs.setViewPager(this.pager);
     }
 
