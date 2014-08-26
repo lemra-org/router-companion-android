@@ -147,6 +147,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 //                }
 //                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
 //                this.mCurrentRefreshAsyncTask.execute();
+                break;
 
             case R.id.action_settings:
                 //TODO Open Settings activity
