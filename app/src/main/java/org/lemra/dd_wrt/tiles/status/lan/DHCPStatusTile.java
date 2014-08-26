@@ -151,8 +151,10 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             final TextView dhcpServerView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_server);
             if (dhcpServerView != null) {
                 final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
-                String lanProtoTxt = "N/A";
-                if ("dhcp".equalsIgnoreCase(lanProto)) {
+                final String lanProtoTxt;
+                if (lanProto == null) {
+                    lanProtoTxt = "N/A";
+                } else if ("dhcp".equalsIgnoreCase(lanProto)) {
                     lanProtoTxt = "Enabled";
                 } else {
                     lanProtoTxt = "Disabled";
@@ -164,11 +166,11 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             final TextView dhcpDaemonView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
             if (dhcpDaemonView != null) {
                 final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
-                String dhcpDnsmasqTxt = "N/A";
+                final String dhcpDnsmasqTxt;
                 if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
                     dhcpDnsmasqTxt = "DNSMasq";
                 } else {
-                    dhcpDnsmasqTxt = "???";
+                    dhcpDnsmasqTxt = "N/A";
                 }
                 dhcpDaemonView.setText(dhcpDnsmasqTxt);
             }
