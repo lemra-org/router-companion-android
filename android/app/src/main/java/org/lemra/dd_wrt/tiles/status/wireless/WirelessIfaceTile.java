@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -292,7 +293,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onClick(View view) {
-
+        Toast.makeText(this.mParentFragmentActivity, this.getClass().getSimpleName() +
+                " (" + this.iface + ")", Toast.LENGTH_SHORT).show();
     }
 
     public String getIface() {
