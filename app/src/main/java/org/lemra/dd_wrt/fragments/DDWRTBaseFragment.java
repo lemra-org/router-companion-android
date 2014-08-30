@@ -3,6 +3,7 @@ package org.lemra.dd_wrt.fragments;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -80,7 +81,7 @@ import static android.widget.FrameLayout.LayoutParams;
 /**
  * Created by armel on 8/10/14.
  */
-public abstract class DDWRTBaseFragment extends SherlockFragment {
+public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements LoaderManager.LoaderCallbacks<T> {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
@@ -90,14 +91,13 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
     private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
     @Nullable
     protected Router router;
+    protected TableLayout mTableLayout;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     private List<DDWRTTile> fragmentTiles;
-
     @NotNull
     private DDWRTMainActivity ddwrtMainActivity;
-
-//    WeakReference<View> mView;
+    private Loader<T> mLoader;
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -371,11 +371,13 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 //        setRetainInstance(true);
 
         // initiate the loaders to do the background work
+        getLoaderManager().initLoader(this.getId(), savedInstanceState, this);
+
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
             final LoaderManager loaderManager = getLoaderManager();
-            int i = 0;
+            int i = this.getId() + 10;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
-                loaderManager.initLoader(i++, null, ddwrtTile);
+                loaderManager.initLoader(i++, savedInstanceState, ddwrtTile);
             }
         }
     }
@@ -392,112 +394,17 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        final LoaderManager loaderManager = getLoaderManager();
+        if (this.mLoader != null) {
+            loaderManager.destroyLoader(this.mLoader.getId());
+        }
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
-            final LoaderManager loaderManager = getLoaderManager();
             for (int i = 0; i < this.fragmentTiles.size(); i++) {
                 loaderManager.destroyLoader(i);
             }
         }
     }
 
-    /**
-     * Instantiate and return a new Loader for the given ID.
-     *
-     * @param id   The ID whose loader is to be created.
-     * @param args Any arguments supplied by the caller.
-     * @return Return a new Loader instance that is ready to start loading.
-     */
-//    @Override
-//    public Loader<String> onCreateLoader(int id, Bundle args) {
-//        final AsyncTaskLoader<String> loader = new AsyncTaskLoader<String>(getActivity()) {
-//
-//            @Override
-//            public String loadInBackground() {
-//                long i = 0l;
-//                try {
-//                    // TODO SSH Operation will run over here
-//                    String msg;
-//                    while(i < new Random().nextInt(10) + 10) {
-//                        msg = "[Run #" + (++i) + "] I am " +
-//                                DDWRTBaseFragment.this.getArguments().getString(FRAGMENT_CLASS) + " and I am doing time-consuming operations in the background\n";
-//                        Log.d(LOG_TAG, msg);
-//                        Thread.sleep(7000l);
-//                    }
-//                } catch (InterruptedException e) {
-//                }
-//
-//                //FIXME Dummy texts
-//                if (i % 5 == 0) {
-//                    return "Spaces are the lieutenant commanders of the dead adventure.";
-//                }
-//
-//                if (i % 5 == 1) {
-//                    return "Est grandis nix, cesaris.";
-//                }
-//
-//                if (i % 5 == 2) {
-//                    return "Lotus, visitors, and separate lamas will always protect them.";
-//                }
-//
-//                if (i % 5 == 3) {
-//                    return "For a sliced quartered paste, add some bourbon and baking powder.";
-//                }
-//
-//                if (i % 5 == 4) {
-//                    return "The reef vandalizes with hunger, rob the galley before it rises.";
-//                }
-//
-//                return null;
-//            }
-//        };
-//        // somehow the AsyncTaskLoader doesn't want to start its job without
-//        // calling this method
-//        loader.forceLoad();
-//        return loader;
-//    }
-
-//    @Override
-//    public void onLoadFinished(Loader<String> loader, String data) {
-//
-//        //Use data over here
-//        //
-//        final View ddwrtSectionView = getDDWRTSectionView(getActivity(), getArguments());
-//        if (ddwrtSectionView instanceof TextView) {
-//            ((TextView) ddwrtSectionView).setText(isNullOrEmpty(data) ?
-//                    getResources().getText(R.string.no_data) : data);
-//        }
-/*
-// add the new item and let the adapter know in order to refresh the
-		// views
-		mItems.add(TabsFragment.TAB_WORDS.equals(mTag) ? WORDS[mPosition]
-				: NUMBERS[mPosition]);
-		mAdapter.notifyDataSetChanged();
-
-		// advance in your list with one step
-		mPosition++;
-		if (mPosition < mTotal - 1) {
-			getLoaderManager().restartLoader(0, null, this);
-			Log.d(TAG, "onLoadFinished(): loading next...");
-		} else {
-			Log.d(TAG, "onLoadFinished(): done loading!");
-		}
- */
-//    }
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.  The application should at this point
-     * remove any references it has to the Loader's data.
-     * <p/>
-     * //     * @param loader The Loader that is being reset.
-     */
-//    @Override
-//    public void onLoaderReset(Loader<String> loader) {
-//        final View ddwrtSectionView = getDDWRTSectionView(getActivity(), getArguments());
-//        if (ddwrtSectionView instanceof TextView) {
-//            ((TextView) ddwrtSectionView).setText(getResources().getText(R.string.no_data));
-//        }
-//    }
     @NotNull
     private ViewGroup getLayout() {
         final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -545,17 +452,16 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
 
 //                final TableLayout tableLayout = new TableLayout(getSherlockActivity());
 
-                final TableLayout tableLayout = (TableLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_table);
+                mTableLayout = (TableLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_table);
 
 //                tableLayout.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
 //                tableLayout.setStretchAllColumns(true);
-                tableLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                mTableLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
                 for (final TableRow row : rows) {
-                    tableLayout.addView(row);
+                    mTableLayout.addView(row);
                 }
 
-//                viewGroup.addView(tableLayout);
             }
 
             ((ScrollView) viewGroup).setFillViewport(true);
@@ -602,6 +508,84 @@ public abstract class DDWRTBaseFragment extends SherlockFragment {
                 }
             }
         }
+
+    }
+
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public final Loader<T> onCreateLoader(int id, Bundle args) {
+        final Loader<T> loader = this.getLoader(id, args);
+        this.mLoader = loader;
+        if (mLoader == null) {
+            return null;
+        }
+        mLoader.forceLoad();
+        return mLoader;
+    }
+
+    protected Loader<T> getLoader(int id, Bundle args) {
+        return null;
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * activity's state is saved.  See {@link android.support.v4.app.FragmentManager#beginTransaction()
+     * FragmentManager.openTransaction()} for further discussion on this.
+     * <p/>
+     * <p>This function is guaranteed to be called prior to the release of
+     * the last data that was supplied for this Loader.  At this point
+     * you should remove all use of the old data (since it will be released
+     * soon), but should not do your own release of the data since its Loader
+     * owns it and will take care of that.  The Loader will take care of
+     * management of its data so you don't have to.  In particular:
+     * <p/>
+     * <ul>
+     * <li> <p>The Loader will monitor for changes to the data, and report
+     * them to you through new calls here.  You should not monitor the
+     * data yourself.  For example, if the data is a {@link android.database.Cursor}
+     * and you place it in a {@link android.widget.CursorAdapter}, use
+     * the {@link android.widget.CursorAdapter#CursorAdapter(android.content.Context,
+     * android.database.Cursor, int)} constructor <em>without</em> passing
+     * in either {@link android.widget.CursorAdapter#FLAG_AUTO_REQUERY}
+     * or {@link android.widget.CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
+     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
+     * from doing its own observing of the Cursor, which is not needed since
+     * when a change happens you will get a new Cursor throw another call
+     * here.
+     * <li> The Loader will release the data once it knows the application
+     * is no longer using it.  For example, if the data is
+     * a {@link android.database.Cursor} from a {@link android.content.CursorLoader},
+     * you should not call close() on it yourself.  If the Cursor is being placed in a
+     * {@link android.widget.CursorAdapter}, you should use the
+     * {@link android.widget.CursorAdapter#swapCursor(android.database.Cursor)}
+     * method so that the old Cursor is not closed.
+     * </ul>
+     *
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<T> loader, T data) {
+
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<T> loader) {
 
     }
 
