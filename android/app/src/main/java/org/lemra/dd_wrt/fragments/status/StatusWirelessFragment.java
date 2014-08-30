@@ -75,7 +75,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
 
                     for (final String landev : splitToList) {
-                        if (landev == null || !landev.startsWith("wl")) {
+                        if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
                             continue;
                         }
                         tiles.add(new WirelessIfaceTile(landev, sherlockActivity, args, router));
