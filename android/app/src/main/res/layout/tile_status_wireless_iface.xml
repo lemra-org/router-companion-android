@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tile_status_wan_config"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tile_background_1"
+    android:orientation="horizontal">
+
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_wan_config"-->
+    <!--android:background="@android:color/transparent"/>-->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.74"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_title"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_ssid"
+                android:layout_width="215dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="Fetching SSID..."
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/ddwrt_green"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_wireless_iface_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <!-- Ifname -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_ifname"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:checked="false"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Radio -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Radio"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <CheckBox
+                android:id="@+id/tile_status_wireless_iface_radio"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:checked="false"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:gravity="left"
+                android:singleLine="false"
+                android:textStyle="italic" />
+
+            <!-- Connection Uptime -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MAC Address"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_mac_address"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Mode -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_mode"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Network -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Network"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_network"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Channel -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Channel"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_channel"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- TX Power -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TX Power"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_tx_power"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Rate -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rate"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_rate"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Encryption -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Encryption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_encryption"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_iface_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_wireless_iface_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+        </GridLayout>
+
+    </LinearLayout>
+</LinearLayout>

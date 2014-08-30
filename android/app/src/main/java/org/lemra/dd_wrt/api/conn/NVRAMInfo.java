@@ -43,6 +43,7 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String DHCP_START = "dhcp_start";
     public static final String DHCP_NUM = "dhcp_num";
     public static final String DHCP_LEASE = "dhcp_lease";
+    public static final String LANDEVS = "landevs";
 
     @Nullable
     private Exception exception;

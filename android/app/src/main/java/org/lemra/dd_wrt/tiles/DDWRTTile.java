@@ -93,11 +93,12 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
         this.setDoneLoading();
 
-        if (mToggleAutoRefreshButton != null) {
+        final ViewGroup viewGroupLayout = this.getViewGroupLayout();
+        if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
             mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
             if (additionalButtonsToMakeVisible != null) {
                 for (int viewToMakeVisible : additionalButtonsToMakeVisible) {
-                    final View viewById = this.mParentFragmentActivity.findViewById(viewToMakeVisible);
+                    final View viewById = viewGroupLayout.findViewById(viewToMakeVisible);
                     if (viewById == null) {
                         continue;
                     }
