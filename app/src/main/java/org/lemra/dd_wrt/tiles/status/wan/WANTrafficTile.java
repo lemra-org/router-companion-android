@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
@@ -37,20 +34,19 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANTrafficTile.class.getSimpleName();
 
-
     public WANTrafficTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_wan_traffic, R.id.tile_status_wan_traffic_togglebutton);
     }
 
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_traffic, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_traffic_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-        return layout;
-    }
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_traffic, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_traffic_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
+//        return layout;
+//    }
 
     @Nullable
     @Override
@@ -185,7 +181,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_error);
 
         final Exception exception = data.getException();
 
@@ -201,12 +197,12 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                     .getProperty(NVRAMInfo.WAN_DEFAULT);
 
             //Iface Name
-            final TextView wanIfaceView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_iface);
+            final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
             if (wanIfaceView != null) {
                 wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "N/A" : wanIface);
             }
 
-            final TextView wanIngressView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_ingress);
+            final TextView wanIngressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
             if (wanIngressView != null) {
                 String text;
                 final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
@@ -224,7 +220,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                 wanIngressView.setText(text);
             }
 
-            final TextView wanEgressView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_traffic_egress);
+            final TextView wanEgressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
             if (wanEgressView != null) {
                 String text;
                 final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");

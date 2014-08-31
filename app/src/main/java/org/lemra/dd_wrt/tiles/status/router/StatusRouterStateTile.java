@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
@@ -38,7 +35,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
 
     public StatusRouterStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
 //        // Parse the SVG file from the resource beforehand
 //        try {
 //            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.router);
@@ -49,18 +46,18 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 //            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
 //        }
     }
-
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout linearLayout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
-        mToggleAutoRefreshButton = (ToggleButton) linearLayout.findViewById(R.id.tile_status_router_router_state_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-        return linearLayout;
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
-//        imageView.setImageDrawable(this.icon);
-//        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-//        return layout;
-    }
+//
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout linearLayout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
+//        mToggleAutoRefreshButton = (ToggleButton) linearLayout.findViewById(R.id.tile_status_router_router_state_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//        return linearLayout;
+////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
+////        imageView.setImageDrawable(this.icon);
+////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+////        return layout;
+//    }
 
     @Nullable
     @Override
@@ -179,7 +176,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_error);
 
         final Exception exception = data.getException();
 
@@ -192,41 +189,41 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Router Name
-            final TextView routerNameView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_title);
+            final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
             if (routerNameView != null) {
                 routerNameView.setText(data.getProperty(NVRAMInfo.ROUTER_NAME, "N/A"));
             }
 
             //We can change the action bar title
-//        this.mParentFragmentActivity.getSupportActionBar().setTitle((String) data);
+//        this.layout.getSupportActionBar().setTitle((String) data);
 
             //WAN IP
-            final TextView wanIpView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_wan_ip);
+            final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
             if (wanIpView != null) {
                 wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
             }
 
-            final TextView routerModelView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_model);
+            final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
             if (routerModelView != null) {
                 routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "N/A"));
             }
 
-            final TextView lanIpView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_lan_ip);
+            final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
             if (lanIpView != null) {
                 lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
             }
 
-            final TextView fwView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_firmware);
+            final TextView fwView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
             if (fwView != null) {
                 fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "N/A"));
             }
 
-            final TextView kernelView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_kernel);
+            final TextView kernelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
             if (kernelView != null) {
                 kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "N/A"));
             }
 
-            final TextView uptimeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_state_uptime);
+            final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
             if (uptimeView != null) {
                 uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
             }

@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
@@ -42,7 +39,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 //    Drawable icon;
 
     public StatusRouterSpaceUsageTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
 //        // Parse the SVG file from the resource beforehand
 //        try {
 //            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.disk);
@@ -53,20 +50,20 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 //            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
 //        }
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_space_usage, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_space_usage_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-        return layout;
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_space_usage);
-//        imageView.setImageDrawable(this.icon);
-//        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_space_usage, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_space_usage_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
 //        return layout;
-    }
+////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_space_usage);
+////        imageView.setImageDrawable(this.icon);
+////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+////        return layout;
+//    }
 
     @Nullable
     @Override
@@ -249,7 +246,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_space_usage_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
 
         final Exception exception = data.getException();
 
@@ -261,19 +258,19 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //NVRAM
-            final TextView nvramSpaceView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_space_usage_nvram);
+            final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
             if (nvramSpaceView != null) {
                 nvramSpaceView.setText(data.getProperty("nvram_space", "N/A"));
             }
 
             //NVRAM
-            final TextView cifsSpaceView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_space_usage_cifs);
+            final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
             if (cifsSpaceView != null) {
                 cifsSpaceView.setText(data.getProperty("cifs_space", "N/A"));
             }
 
             //NVRAM
-            final TextView jffsView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
+            final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
             if (jffsView != null) {
                 jffsView.setText(data.getProperty("jffs_space", "N/A"));
             }

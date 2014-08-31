@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
-import org.lemra.dd_wrt.tiles.status.wan.WANTrafficTile;
+import org.lemra.dd_wrt.tiles.status.wireless.WirelessClientsTile;
 import org.lemra.dd_wrt.tiles.status.wireless.WirelessIfaceTile;
 import org.lemra.dd_wrt.utils.SSHUtils;
 
@@ -38,8 +38,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         //This is basically made up of a single tile, but other dynamic tiles will be appended to the existing view
         //TODO
-//        return Arrays. <DDWRTTile> asList(new WirelessClientsTile(getSherlockActivity(), savedInstanceState, router));
-        return Arrays.<DDWRTTile>asList(new WANTrafficTile(getSherlockActivity(), savedInstanceState, router));
+        return Arrays.<DDWRTTile>asList(new WirelessClientsTile(getSherlockActivity(), savedInstanceState, router));
     }
 
     @Override

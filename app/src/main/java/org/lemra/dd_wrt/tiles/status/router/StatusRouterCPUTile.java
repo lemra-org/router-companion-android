@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
@@ -39,7 +36,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 //    Drawable icon;
 
     public StatusRouterCPUTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
         // Parse the SVG file from the resource beforehand
 //        try {
 //            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.cpu);
@@ -50,19 +47,19 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 //            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
 //        }
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_cpu, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_cpu_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-        return layout;
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_cpu);
-//        imageView.setImageDrawable(this.icon);
-//        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_cpu, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_cpu_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
 //        return layout;
-    }
+////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_cpu);
+////        imageView.setImageDrawable(this.icon);
+////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+////        return layout;
+//    }
 
     @Nullable
     @Override
@@ -197,7 +194,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_error);
 
         final Exception exception = data.getException();
 
@@ -209,26 +206,26 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Model
-            final TextView cpuSpeedView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_speed);
+            final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
             if (cpuSpeedView != null) {
                 final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
                 cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? "N/A" : (property + " MHz"));
             }
 
             //Model
-            final TextView cpuModelView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_model);
+            final TextView cpuModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
             if (cpuModelView != null) {
                 cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "N/A"));
             }
 
             //Cores Count
-            final TextView cpuCountView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_cores);
+            final TextView cpuCountView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
             if (cpuCountView != null) {
                 cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "N/A"));
             }
 
             //Load Avg
-            final TextView loadAvgView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_cpu_load_avg);
+            final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
             if (loadAvgView != null) {
                 loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
             }

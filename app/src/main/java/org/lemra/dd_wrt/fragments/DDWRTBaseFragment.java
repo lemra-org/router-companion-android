@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -353,12 +354,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
      */
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Bundle arguments = getArguments();
-        final CharSequence parentSectionTitle = arguments.getCharSequence(PARENT_SECTION_TITLE);
-        String tabTitle = arguments.getString(TAB_TITLE);
-
-        Log.d(LOG_TAG, "onCreateView: " + parentSectionTitle + " > " + tabTitle);
-
         return this.getLayout();
     }
 
@@ -433,10 +428,17 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                     continue;
                 }
 
+                //Detach this from Parent
+                final ViewParent parent = viewGroupLayout.getParent();
+                if (parent instanceof ViewGroup) {
+                    ((ViewGroup) parent).removeView(viewGroupLayout);
+                }
+
                 final TableRow tableRow = new TableRow(getSherlockActivity());
                 tableRow.setOnClickListener(ddwrtTile);
                 viewGroupLayout.setOnClickListener(ddwrtTile);
                 tableRow.setLayoutParams(tableRowParams);
+
                 tableRow.addView(viewGroupLayout);
 
                 rows.add(tableRow);
@@ -459,6 +461,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 mTableLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
                 for (final TableRow row : rows) {
+//                    mTableLayout.removeView(row);
                     mTableLayout.addView(row);
                 }
 

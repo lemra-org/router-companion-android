@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
@@ -32,18 +29,18 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = LANStateTile.class.getSimpleName();
 
     public LANStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_lan_status, R.id.tile_status_lan_status_togglebutton);
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_lan_status, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_lan_status_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-        return layout;
-    }
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_lan_status, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_lan_status_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
+//        return layout;
+//    }
 
     @Nullable
     @Override
@@ -149,7 +146,7 @@ lan_wins=
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_error);
 
         final Exception exception = data.getException();
 
@@ -162,25 +159,25 @@ lan_wins=
             }
 
             //MAC Address
-            final TextView macView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_mac);
+            final TextView macView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
             if (macView != null) {
                 macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "N/A"));
             }
 
             //IP Address
-            final TextView ipView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_ip);
+            final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
             if (ipView != null) {
                 ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
             }
 
             //Subnet Mask
-            final TextView maskView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_subnet_mask);
+            final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
             if (maskView != null) {
                 maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
             }
 
             //GW
-            final TextView gwView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_gateway);
+            final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
             if (gwView != null) {
                 gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
             }
