@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -34,14 +35,28 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
     protected ToggleButton mToggleAutoRefreshButton = null;
-
+    protected ViewGroup layout;
     private boolean doneLoading = false;
 
-    public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
+    protected DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragmentActivity = parentFragmentActivity;
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragmentActivity.getSupportLoaderManager();
         this.mFragmentArguments = arguments;
+    }
+
+    public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments,
+                     @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
+        this(parentFragmentActivity, arguments, router);
+        if (layoutId != null) {
+            this.layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(layoutId, null);
+        }
+        if (toggleRefreshButtonId != null) {
+            this.mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(toggleRefreshButtonId);
+            if (this.mToggleAutoRefreshButton != null) {
+                this.mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+            }
+        }
     }
 
     @Override
@@ -51,7 +66,9 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     @Nullable
-    public abstract ViewGroup getViewGroupLayout();
+    public ViewGroup getViewGroupLayout() {
+        return this.layout;
+    }
 
     /**
      * Instantiate and return a new Loader for the given ID.

@@ -3,7 +3,6 @@ package org.lemra.dd_wrt.tiles.status.lan;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -22,14 +21,7 @@ public class DHCPClientsTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
 
     public DHCPClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
-    }
-
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        return null;
+        super(parentFragmentActivity, arguments, router, null, null);
     }
 
     @Nullable

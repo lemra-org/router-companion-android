@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Strings;
@@ -33,18 +30,18 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = DHCPStatusTile.class.getSimpleName();
 
     public DHCPStatusTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_lan_dhcp_status, R.id.tile_status_lan_dhcp_status_togglebutton);
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_lan_dhcp_status, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_lan_dhcp_status_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-        return layout;
-    }
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_lan_dhcp_status, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_lan_dhcp_status_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
+//        return layout;
+//    }
 
     @Nullable
     @Override
@@ -135,7 +132,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_error);
 
         final Exception exception = data.getException();
 
@@ -148,7 +145,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Server Status
-            final TextView dhcpServerView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_server);
+            final TextView dhcpServerView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
             if (dhcpServerView != null) {
                 final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
                 final String lanProtoTxt;
@@ -163,7 +160,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Daemon
-            final TextView dhcpDaemonView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
+            final TextView dhcpDaemonView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
             if (dhcpDaemonView != null) {
                 final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
                 final String dhcpDnsmasqTxt;
@@ -176,18 +173,18 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //FIXME Start IP
-//            final TextView maskView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_subnet_mask);
+//            final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
 //            if (maskView != null) {
 //                maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
 //            }
 
             //FIXME End IP
-//            final TextView gwView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_status_gateway);
+//            final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
 //            if (gwView != null) {
 //                gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
 //            }
 
-            final TextView clientLeaseView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
+            final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
             if (clientLeaseView != null) {
                 final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
                 clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "N/A" :

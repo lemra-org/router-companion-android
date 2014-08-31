@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
@@ -32,18 +29,18 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
 
     public WANConfigTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_config, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_config_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-        return layout;
-    }
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_config, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_config_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
+//        return layout;
+//    }
 
     @Nullable
     @Override
@@ -143,7 +140,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_error);
 
         final Exception exception = data.getException();
 
@@ -156,7 +153,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Connection Type
-            final TextView wanConnTypeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_connection_type);
+            final TextView wanConnTypeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
             if (wanConnTypeView != null) {
                 final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "N/A");
                 final String wanConnectionTypeManual;
@@ -167,9 +164,9 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                     wanConnectionTypeManual = "3G/UMTS";
 
                     //Unhide 3g signal text
-                    final TextView wan3gSignalFieldView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal_field);
-                    final TextView wan3gSignalSeparatorView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
-                    final TextView wan3gSignalView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_3g_signal);
+                    final TextView wan3gSignalFieldView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
+                    final TextView wan3gSignalSeparatorView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
+                    final TextView wan3gSignalView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
                     if (wan3gSignalFieldView != null && wan3gSignalSeparatorView != null && wan3gSignalView != null) {
                         wan3gSignalFieldView.setVisibility(View.VISIBLE);
                         wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
@@ -189,37 +186,37 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Connection Uptime
-            final TextView wanUptimeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_connection_uptime);
+            final TextView wanUptimeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
             if (wanUptimeView != null) {
                 wanUptimeView.setText(data.getProperty("wan_connection_uptime", "N/A"));
             }
 
             //MAC
-            final TextView wanMacView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_wan_mac);
+            final TextView wanMacView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
             if (wanMacView != null) {
                 wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "N/A"));
             }
 
             //IP
-            final TextView wanIPView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_wan_ip);
+            final TextView wanIPView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
             if (wanIPView != null) {
                 wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
             }
 
             //Subnet
-            final TextView wanSubnetView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_subnet_mask);
+            final TextView wanSubnetView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
             if (wanSubnetView != null) {
                 wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "N/A"));
             }
 
             //Gateway
-            final TextView wanGatewayView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_subnet_gateway);
+            final TextView wanGatewayView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
             if (wanGatewayView != null) {
                 wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "N/A"));
             }
 
             //DNS
-            final TextView wanDNSView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_wan_config_dns);
+            final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
             if (wanDNSView != null) {
                 wanDNSView.setText(data.getProperty(NVRAMInfo.WAN_DNS, "N/A").replaceAll(" ", ", "));
             }

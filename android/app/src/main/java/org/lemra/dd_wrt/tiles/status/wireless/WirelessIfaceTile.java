@@ -5,12 +5,9 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
@@ -32,31 +29,24 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
     public static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
-    private final ViewGroup layout;
     @NotNull
     private String iface;
 
     public WirelessIfaceTile(@NotNull String iface, @NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        this(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         this.iface = iface;
     }
-
-    public WirelessIfaceTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
-
-        this.layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_iface, null);
-        layout.setId(LinearLayout.generateViewId());
-
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wireless_iface_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-
-    }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        return layout;
-    }
+//
+//    public WirelessIfaceTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
+//        super(parentFragmentActivity, arguments, router);
+//
+//        this.layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_iface, null);
+//        layout.setId(LinearLayout.generateViewId());
+//
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wireless_iface_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+//
+//    }
 
     @Nullable
     @Override

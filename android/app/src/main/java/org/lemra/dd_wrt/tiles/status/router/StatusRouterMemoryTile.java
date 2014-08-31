@@ -5,11 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
@@ -37,7 +34,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = StatusRouterMemoryTile.class.getSimpleName();
 
     public StatusRouterMemoryTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_mem, R.id.tile_status_router_router_mem_togglebutton);
 //        // Parse the SVG file from the resource beforehand
 //        try {
 //            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.memory);
@@ -53,19 +50,19 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
     private static String getGrepProcMemInfo(@NotNull final String item) {
         return "grep \"" + item + "\" /proc/meminfo ";
     }
-
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
-        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
-        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-        return layout;
-//        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
-//        imageView.setImageDrawable(this.icon);
-//        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//
+//    @Nullable
+//    @Override
+//    public ViewGroup getViewGroupLayout() {
+//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
+//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
+//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
 //        return layout;
-    }
+////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
+////        imageView.setImageDrawable(this.icon);
+////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+////        return layout;
+//    }
 
     @Nullable
     @Override
@@ -194,7 +191,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_error);
 
         final Exception exception = data.getException();
 
@@ -207,19 +204,19 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //Total
-            final TextView memTotalView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_total);
+            final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
             if (memTotalView != null) {
                 memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL, "N/A"));
             }
 
             //Model
-            final TextView memFreeView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_free);
+            final TextView memFreeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
             if (memFreeView != null) {
                 memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "N/A"));
             }
 
             //Cores Count
-            final TextView memUsedView = (TextView) this.mParentFragmentActivity.findViewById(R.id.tile_status_router_router_mem_used);
+            final TextView memUsedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
             if (memUsedView != null) {
                 memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
             }

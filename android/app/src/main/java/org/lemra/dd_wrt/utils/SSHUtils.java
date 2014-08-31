@@ -30,11 +30,12 @@ public final class SSHUtils {
 
     private static final String TAG = SSHUtils.class.getSimpleName();
 
-    private SSHUtils() {}
+    private SSHUtils() {
+    }
 
     @Nullable
     public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
-        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute)+">");
+        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         Session jschSession = null;
         ChannelExec channelExec = null;
@@ -60,9 +61,9 @@ public final class SSHUtils {
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
             channelExec.connect();
-
-            final int exitStatus = channelExec.getExitStatus();
-            Log.d(TAG, "channelExec.getExitStatus(): " + exitStatus);
+//
+//            final int exitStatus = channelExec.getExitStatus();
+//            Log.d(TAG, "channelExec.getExitStatus(): " + exitStatus);
 
             return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
 
@@ -82,8 +83,6 @@ public final class SSHUtils {
     @Nullable
     public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, final String... fieldsToFetch) throws Exception {
 
-        Log.d(TAG, "getNVRamInfoFromRouter: <router=" + router + " / fieldsToFetch=" + Arrays.toString(fieldsToFetch)+">");
-
         if (router == null) {
             return null;
         }
@@ -98,12 +97,9 @@ public final class SSHUtils {
             }
         }
 
-        final NVRAMInfo nvramInfo = NVRAMParser.parseNVRAMOutput(SSHUtils.getManualProperty(router,
+        return NVRAMParser.parseNVRAMOutput(SSHUtils.getManualProperty(router,
                 "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
                         Joiner.on("|").join(grep) + "\""))));
-        Log.d(TAG, "nvramInfo: "+nvramInfo);
-
-        return nvramInfo;
     }
 
 }

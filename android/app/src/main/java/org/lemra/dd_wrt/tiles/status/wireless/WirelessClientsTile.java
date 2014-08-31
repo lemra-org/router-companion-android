@@ -3,12 +3,12 @@ package org.lemra.dd_wrt.tiles.status.wireless;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
@@ -17,14 +17,11 @@ import org.lemra.dd_wrt.tiles.DDWRTTile;
  * Created by armel on 8/28/14.
  */
 public class WirelessClientsTile extends DDWRTTile<NVRAMInfo> {
-    public WirelessClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router);
-    }
 
-    @Nullable
-    @Override
-    public ViewGroup getViewGroupLayout() {
-        return null;
+    private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
+
+    public WirelessClientsTile(SherlockFragmentActivity parentFragmentActivity, Bundle arguments, Router router) {
+        super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_clients, null);
     }
 
     @Nullable
@@ -36,7 +33,7 @@ public class WirelessClientsTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     @Override
     protected String getLogTag() {
-        return null;
+        return LOG_TAG;
     }
 
     /**
@@ -85,6 +82,6 @@ public class WirelessClientsTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onClick(View view) {
-
+        Toast.makeText(this.mParentFragmentActivity, this.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
     }
 }
