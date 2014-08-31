@@ -44,6 +44,8 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String DHCP_NUM = "dhcp_num";
     public static final String DHCP_LEASE = "dhcp_lease";
     public static final String LANDEVS = "landevs";
+    public static final String LAN_IFNAME = "lan_ifname";
+    public static final String WAN_IFNAME = "wan_ifname";
 
     @Nullable
     private Exception exception;

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tile_status_bandwidth_ifaces"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tile_background_1"
+    android:orientation="horizontal">
+
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_bandwidth_ifaces"-->
+    <!--android:background="@android:color/transparent"/>-->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.74"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_title"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Interfaces"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_bandwidth_ifaces_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <!-- LAN -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LAN"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_lan"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Wireless -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wireless"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wireless"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- WAN -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WAN"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" " />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wan"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:text="Loading..."
+                android:textStyle="italic" />
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+        </GridLayout>
+
+    </LinearLayout>
+</LinearLayout>
