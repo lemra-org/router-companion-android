@@ -38,7 +38,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected ViewGroup layout;
     private boolean doneLoading = false;
 
-    protected DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
+    public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragmentActivity = parentFragmentActivity;
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragmentActivity.getSupportLoaderManager();
