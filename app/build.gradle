@@ -31,7 +31,7 @@ dependencies {
 //    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 //    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     // You must install or update the Support Repository through the SDK manager to use this dependency.
-    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:support-v4:20.0.0'
     compile project(":actionbarsherlock")
     compile project(":library")
 }
