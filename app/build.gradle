@@ -27,11 +27,22 @@ android {
 //}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.jcraft:jsch:0.1.51'
+    compile 'ch.acra:acra:4.5.0'
+    compile 'com.intellij:annotations:12.0'
+    compile 'com.github.japgolly:svg-android:2.0.0'
+    compile 'com.koushikdutta.ion:ion:2.0.0'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.jjoe64:graphview:3.1.4'
+//    compile 'de.greenrobot:eventbus:2.2.1'
+    compile 'com.koushikdutta.async:androidasync:2.0.0'
+    compile 'com.googlecode.androidannotations:androidannotations:2.7.1'
 //    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 //    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     // You must install or update the Support Repository through the SDK manager to use this dependency.
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
     compile project(":actionbarsherlock")
     compile project(":library")
 }
