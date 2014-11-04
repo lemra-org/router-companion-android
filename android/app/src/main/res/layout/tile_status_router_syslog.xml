@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tile_status_router_syslog"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tile_background_1"
+    android:orientation="horizontal">
+
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_router_syslog"-->
+    <!--android:background="@android:color/transparent"/>-->
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.74"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
+
+            <TextView
+                android:id="@+id/tile_status_router_syslog_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1.0"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Syslog"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_router_syslog_state"
+                android:layout_width="215dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="Enabled / Disabled"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="italic" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_router_syslog_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="Error placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="371dp">
+
+            <TextView
+                android:id="@+id/tile_status_router_syslog_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="11"
+                android:minLines="11" />
+
+        </ScrollView>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <!--&lt;!&ndash; Filter &ndash;&gt;-->
+            <!--<EditText-->
+            <!--android:id="@+id/tile_status_router_syslog_filter"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_columnSpan="2">-->
+            <!--<requestFocus />-->
+            <!--</EditText>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_marginLeft="8.0dip"-->
+            <!--android:layout_marginRight="8.0dip"-->
+            <!--android:text=" "/>-->
+
+            <!--<Button-->
+            <!--android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:checked="true"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:text="Filter" />-->
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_router_syslog_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Auto-refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_router_syslog_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text=" "
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_router_syslog_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip"
+            android:weightSum="1">
+
+            <!-- Filter -->
+            <EditText
+                android:id="@+id/tile_status_router_syslog_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.02">
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Filter"
+                android:textAppearance="?android:textAppearanceSmall" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>
