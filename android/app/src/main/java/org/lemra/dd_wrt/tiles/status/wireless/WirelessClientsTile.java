@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
@@ -20,7 +21,7 @@ public class WirelessClientsTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
 
-    public WirelessClientsTile(SherlockFragmentActivity parentFragmentActivity, Bundle arguments, Router router) {
+    public WirelessClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_clients, null);
     }
 

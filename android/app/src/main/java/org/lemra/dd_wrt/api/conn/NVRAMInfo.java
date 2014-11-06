@@ -1,5 +1,6 @@
 package org.lemra.dd_wrt.api.conn;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
@@ -59,10 +60,12 @@ public class NVRAMInfo extends Properties implements Serializable {
         return super.toString();
     }
 
+    @Nullable
     public Exception getException() {
         return exception;
     }
 
+    @NotNull
     public NVRAMInfo setException(@Nullable final Exception exception) {
         this.exception = exception;
         return this;

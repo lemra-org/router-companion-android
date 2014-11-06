@@ -37,19 +37,19 @@ public final class SSHUtils {
     public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
-        Session jschSession = null;
-        ChannelExec channelExec = null;
-        InputStream in = null;
-        InputStream err = null;
+        @Nullable Session jschSession = null;
+        @Nullable ChannelExec channelExec = null;
+        @Nullable InputStream in = null;
+        @Nullable InputStream err = null;
         try {
-            final String privKey = router.getPrivKey();
-            final JSch jsch = new JSch();
+            @Nullable final String privKey = router.getPrivKey();
+            @NotNull final JSch jsch = new JSch();
             if (privKey != null) {
                 jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
             }
             jschSession = jsch.getSession(router.getUsername(), router.getRemoteIpAddress(), router.getRemotePort());
             jschSession.setPassword(router.getPassword());
-            final Properties config = new Properties();
+            @NotNull final Properties config = new Properties();
             config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
             jschSession.setConfig(config);
             jschSession.connect(30000);
@@ -81,7 +81,7 @@ public final class SSHUtils {
     }
 
     @Nullable
-    public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, final String... fieldsToFetch) throws Exception {
+    public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, @Nullable final String... fieldsToFetch) throws Exception {
 
         if (router == null) {
             return null;

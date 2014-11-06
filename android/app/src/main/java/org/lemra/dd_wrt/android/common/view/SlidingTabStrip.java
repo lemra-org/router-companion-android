@@ -26,6 +26,9 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 @Deprecated
 class SlidingTabStrip extends LinearLayout {
 
@@ -39,31 +42,36 @@ class SlidingTabStrip extends LinearLayout {
     private static final float DEFAULT_DIVIDER_HEIGHT = 0.5f;
 
     private final int mBottomBorderThickness;
+    @NotNull
     private final Paint mBottomBorderPaint;
 
     private final int mSelectedIndicatorThickness;
+    @NotNull
     private final Paint mSelectedIndicatorPaint;
 
     private final int mDefaultBottomBorderColor;
 
+    @NotNull
     private final Paint mDividerPaint;
     private final float mDividerHeight;
+    @NotNull
     private final SimpleTabColorizer mDefaultTabColorizer;
     private int mSelectedPosition;
     private float mSelectionOffset;
+    @Nullable
     private SlidingTabLayout.TabColorizer mCustomTabColorizer;
 
-    SlidingTabStrip(Context context) {
+    SlidingTabStrip(@NotNull Context context) {
         this(context, null);
     }
 
-    SlidingTabStrip(Context context, AttributeSet attrs) {
+    SlidingTabStrip(@NotNull Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(false);
 
         final float density = getResources().getDisplayMetrics().density;
 
-        TypedValue outValue = new TypedValue();
+        @NotNull TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorForeground, outValue, true);
         final int themeForegroundColor = outValue.data;
 
@@ -134,11 +142,11 @@ class SlidingTabStrip extends LinearLayout {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NotNull Canvas canvas) {
         final int height = getHeight();
         final int childCount = getChildCount();
         final int dividerHeightPx = (int) (Math.min(Math.max(0f, mDividerHeight), 1f) * height);
-        final SlidingTabLayout.TabColorizer tabColorizer = mCustomTabColorizer != null
+        @NotNull final SlidingTabLayout.TabColorizer tabColorizer = mCustomTabColorizer != null
                 ? mCustomTabColorizer
                 : mDefaultTabColorizer;
 

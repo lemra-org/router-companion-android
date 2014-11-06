@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
+import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
 
 import java.util.Locale;
@@ -20,7 +21,7 @@ public class NavigationFragment extends SherlockFragment {
     public static final String ARG_SECTION_NUMBER = "section_number";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_item, container,
                 false);

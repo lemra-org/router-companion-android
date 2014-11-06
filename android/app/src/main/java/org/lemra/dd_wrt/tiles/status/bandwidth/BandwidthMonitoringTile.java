@@ -21,6 +21,8 @@ import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
 import com.google.common.base.Throwables;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
@@ -39,7 +41,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
     private final String iface;
 
-    public BandwidthMonitoringTile(SherlockFragmentActivity parentFragmentActivity, Bundle arguments, Router router, final String iface) {
+    public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router, final String iface) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
         this.iface = iface;
     }
@@ -48,6 +50,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
+            @Nullable
             @Override
             public NVRAMInfo loadInBackground() {
 
@@ -68,7 +71,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
                     //TODO
                     return null;
 
-                } catch (final Exception e) {
+                } catch (@NotNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -82,7 +85,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
+    public void onLoadFinished(Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
@@ -93,9 +96,9 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             //END FIXME
         }
 
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
-        final Exception exception = data.getException();
+        @Nullable final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -107,20 +110,20 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(this.iface);
 
-            final XYPlot mySimpleXYPlot = (XYPlot) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+            @NotNull final XYPlot mySimpleXYPlot = (XYPlot) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
 
             //TODO
             //TEST
             final int MAX = 40;
-            final Number[] x = new Number[MAX];
-            final Number[] y = new Number[MAX];
+            @NotNull final Number[] x = new Number[MAX];
+            @NotNull final Number[] y = new Number[MAX];
             for (int i = 0; i < MAX; i++) {
                 x[i] = i;
                 y[i] = Math.random() * MAX + Math.sin(i / MAX);
             }
 
             // create our series from our array of nums:
-            final XYSeries series2 = new SimpleXYSeries(
+            @NotNull final XYSeries series2 = new SimpleXYSeries(
                     Arrays.asList(x),
                     Arrays.asList(y),
                     "Bandwidth Usage");
@@ -137,17 +140,17 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             mySimpleXYPlot.getBorderPaint().setColor(Color.BLACK);
 
             // Create a formatter to use for drawing a series using LineAndPointRenderer:
-            LineAndPointFormatter series1Format = new LineAndPointFormatter(
+            @NotNull LineAndPointFormatter series1Format = new LineAndPointFormatter(
                     Color.rgb(0, 100, 0),                   // line color
                     Color.rgb(0, 100, 0),                   // point color
                     Color.rgb(100, 200, 0), null);                // fill color
 
             // setup our line fill paint to be a slightly transparent gradient:
-            Paint lineFill = new Paint();
+            @NotNull Paint lineFill = new Paint();
             lineFill.setAlpha(200);
             lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.GREEN, Shader.TileMode.MIRROR));
 
-            LineAndPointFormatter formatter = new LineAndPointFormatter(Color.rgb(0, 0, 0), Color.BLUE, Color.RED, null);
+            @NotNull LineAndPointFormatter formatter = new LineAndPointFormatter(Color.rgb(0, 0, 0), Color.BLUE, Color.RED, null);
             formatter.setFillPaint(lineFill);
             mySimpleXYPlot.getGraphWidget().setPaddingRight(2);
             mySimpleXYPlot.addSeries(series2, formatter);
