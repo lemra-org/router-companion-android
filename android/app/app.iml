@@ -79,6 +79,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 20 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -88,9 +89,9 @@
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidasync-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="androidplot-core-0.6.1" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-2.7.1" level="project" />
     <orderEntry type="library" exported="" name="ion-2.0.0" level="project" />
-    <orderEntry type="library" exported="" name="graphview-3.1.4" level="project" />
     <orderEntry type="library" exported="" name="acra-4.5.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-2.7.1" level="project" />

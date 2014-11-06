@@ -17,7 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.74"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -70,15 +71,23 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-
-        <LinearLayout
+        <!-- Graph Placeholder -->
+        <com.androidplot.xy.XYPlot
             android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            title="Bandwidth Usage"
+            android:layout_width="match_parent"
+            android:layout_height="177dp"
+            android:layout_marginLeft="0px"
+            android:layout_marginRight="0px" />
 
-            <!-- Graph Placeholder -->
-        </LinearLayout>
+        <!--<LinearLayout-->
+        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical">-->
+
+        <!---->
+        <!--</LinearLayout>-->
 
         <GridLayout
             android:layout_width="wrap_content"

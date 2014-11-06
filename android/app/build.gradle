@@ -35,7 +35,8 @@ dependencies {
     compile 'com.github.japgolly:svg-android:2.0.0'
     compile 'com.koushikdutta.ion:ion:2.0.0'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.jjoe64:graphview:3.1.4'
+//    compile 'com.jjoe64:graphview:3.1.4' //Removed because GraphView license is a bit restrictive
+    compile 'com.androidplot:androidplot-core:0.6.1'
 //    compile 'de.greenrobot:eventbus:2.2.1'
     compile 'com.koushikdutta.async:androidasync:2.0.0'
     compile 'com.googlecode.androidannotations:androidannotations:2.7.1'

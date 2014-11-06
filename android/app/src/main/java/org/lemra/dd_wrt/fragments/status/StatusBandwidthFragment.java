@@ -8,23 +8,15 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.common.base.Splitter;
-
 import org.jetbrains.annotations.Nullable;
-import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.fragments.DDWRTBaseFragment;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 import org.lemra.dd_wrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.lemra.dd_wrt.tiles.status.bandwidth.IfacesTile;
-import org.lemra.dd_wrt.utils.SSHUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by armel on 8/10/14.
@@ -54,53 +46,60 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
                     Log.d(LOG_TAG, "Init background loader for " + StatusBandwidthFragment.class + ": routerInfo=" +
                             router);
 
-                    //TODO
-                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(router,
-                            NVRAMInfo.LAN_IFNAME,
-                            NVRAMInfo.WAN_IFNAME,
-                            NVRAMInfo.LANDEVS);
+                    //TODO TEST
+                    return Arrays.<DDWRTTile>asList(
+                            new BandwidthMonitoringTile(getSherlockActivity(), args, router, "testIface1"),
+                            new BandwidthMonitoringTile(getSherlockActivity(), args, router, "testIface2")
+                    );
 
-                    if (nvramInfo == null) {
-                        return null;
-                    }
+                    //TODO END TEST
 
-                    final Set<String> ifacesConsidered = new HashSet<String>();
-
-                    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
-                    if (lanIfname != null) {
-                        ifacesConsidered.add(lanIfname);
-                    }
-
-                    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
-                    if (wanIfname != null) {
-                        ifacesConsidered.add(wanIfname);
-                    }
-
-                    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-                    if (landevs != null) {
-                        final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
-                        if (splitToList != null && !splitToList.isEmpty()) {
-                            for (final String landev : splitToList) {
-                                if (landev == null) {
-                                    continue;
-                                }
-                                ifacesConsidered.add(landev);
-                            }
-                        }
-                    }
-
-                    final List<DDWRTTile> tiles = new ArrayList<DDWRTTile>(ifacesConsidered.size());
-                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
-
-                    for (final String ifaceConsidered : ifacesConsidered) {
-                        tiles.add(new BandwidthMonitoringTile(sherlockActivity, args, router, ifaceConsidered));
-                    }
-
-                    if (tiles.isEmpty()) {
-                        return null;
-                    }
-
-                    return tiles;
+//                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(router,
+//                            NVRAMInfo.LAN_IFNAME,
+//                            NVRAMInfo.WAN_IFNAME,
+//                            NVRAMInfo.LANDEVS);
+//
+//                    if (nvramInfo == null) {
+//                        return null;
+//                    }
+//
+//                    final Set<String> ifacesConsidered = new HashSet<String>();
+//
+//                    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
+//                    if (lanIfname != null) {
+//                        ifacesConsidered.add(lanIfname);
+//                    }
+//
+//                    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
+//                    if (wanIfname != null) {
+//                        ifacesConsidered.add(wanIfname);
+//                    }
+//
+//                    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+//                    if (landevs != null) {
+//                        final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
+//                        if (splitToList != null && !splitToList.isEmpty()) {
+//                            for (final String landev : splitToList) {
+//                                if (landev == null) {
+//                                    continue;
+//                                }
+//                                ifacesConsidered.add(landev);
+//                            }
+//                        }
+//                    }
+//
+//                    final List<DDWRTTile> tiles = new ArrayList<DDWRTTile>(ifacesConsidered.size());
+//                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+//
+//                    for (final String ifaceConsidered : ifacesConsidered) {
+//                        tiles.add(new BandwidthMonitoringTile(sherlockActivity, args, router, ifaceConsidered));
+//                    }
+//
+//                    if (tiles.isEmpty()) {
+//                        return null;
+//                    }
+//
+//                    return tiles;
 
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -148,7 +147,7 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
      * </ul>
      *
      * @param loader The Loader that has finished.
-     * @param data   The data generated by the Loader.
+     * @param tiles   The data generated by the Loader.
      */
     @Override
     public void onLoadFinished(Loader<Collection<DDWRTTile>> loader, Collection<DDWRTTile> tiles) {
