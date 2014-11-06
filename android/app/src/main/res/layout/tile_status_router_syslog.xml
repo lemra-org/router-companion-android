@@ -85,6 +85,33 @@
 
         </ScrollView>
 
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip"
+            android:weightSum="1">
+
+            <!-- Filter -->
+            <EditText
+                android:id="@+id/tile_status_router_syslog_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.02">
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Filter"
+                android:textAppearance="?android:textAppearanceSmall" />
+
+        </LinearLayout>
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -147,33 +174,6 @@
                 android:visibility="gone" />
 
         </GridLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip"
-            android:weightSum="1">
-
-            <!-- Filter -->
-            <EditText
-                android:id="@+id/tile_status_router_syslog_filter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.02">
-
-                <requestFocus />
-            </EditText>
-
-            <Button
-                android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Filter"
-                android:textAppearance="?android:textAppearanceSmall" />
-
-        </LinearLayout>
-
 
     </LinearLayout>
 
