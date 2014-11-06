@@ -27,13 +27,16 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
     public static final Handler HANDLER = new Handler();
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
+    @NotNull
     protected final SherlockFragmentActivity mParentFragmentActivity;
+    @NotNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
     @Nullable
     protected final Router mRouter;
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
+    @Nullable
     protected ToggleButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
     private boolean doneLoading = false;
@@ -80,7 +83,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Override
     @Nullable
     public final Loader<T> onCreateLoader(int id, Bundle args) {
-        final Loader<T> loader = this.getLoader(id, args);
+        @Nullable final Loader<T> loader = this.getLoader(id, args);
         if (loader == null) {
             return null;
         }
@@ -105,12 +108,12 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
-    protected <T extends DDWRTTile<NVRAMInfo>> void doneWithLoaderInstance(final T tile, final Loader<NVRAMInfo> loader,
-                                                                           final int... additionalButtonsToMakeVisible) {
+    protected <T extends DDWRTTile<NVRAMInfo>> void doneWithLoaderInstance(final T tile, @NotNull final Loader<NVRAMInfo> loader,
+                                                                           @Nullable final int... additionalButtonsToMakeVisible) {
 
         this.setDoneLoading();
 
-        final ViewGroup viewGroupLayout = this.getViewGroupLayout();
+        @Nullable final ViewGroup viewGroupLayout = this.getViewGroupLayout();
         if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
             mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
             if (additionalButtonsToMakeVisible != null) {

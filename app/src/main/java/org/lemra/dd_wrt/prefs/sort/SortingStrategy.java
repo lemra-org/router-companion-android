@@ -33,9 +33,9 @@ public abstract class SortingStrategy {
                 tabsMap.put(tab.getTabTitle().toString(), tab);
             }
 
-            final DDWRTBaseFragment[] output = new DDWRTBaseFragment[tabsMap.size()];
+            @NotNull final DDWRTBaseFragment[] output = new DDWRTBaseFragment[tabsMap.size()];
             int j = 0;
-            for (Map.Entry<String, DDWRTBaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
+            for (@NotNull Map.Entry<String, DDWRTBaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
                 output[j++] = DDWRTBaseFragmentEntry.getValue();
             }
             return output;

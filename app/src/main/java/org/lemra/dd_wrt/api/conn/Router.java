@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.config.ConfigurationBase;
 
 import java.io.Serializable;
-import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -42,8 +41,9 @@ public class Router implements Serializable {
     @SerializedName("uuid")
     private String uuid;
 
-    public static Router loadFromPreferences(ConfigurationBase paramConfigurationBase, String paramString) {
-        final Router routerInfo = new Router();
+    @NotNull
+    public static Router loadFromPreferences(@NotNull ConfigurationBase paramConfigurationBase, String paramString) {
+        @NotNull final Router routerInfo = new Router();
 
         final SharedPreferences localSharedPreferences = paramConfigurationBase.getPreferences(paramString);
         routerInfo.uuid = localSharedPreferences.getString("uuid", UUID.randomUUID().toString());
@@ -166,6 +166,7 @@ public class Router implements Serializable {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
+    @NotNull
     public String toString() {
         return this.name;
     }

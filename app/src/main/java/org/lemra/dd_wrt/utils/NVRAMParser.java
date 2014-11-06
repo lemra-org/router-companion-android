@@ -2,6 +2,7 @@ package org.lemra.dd_wrt.utils;
 
 import com.google.common.base.Splitter;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 
@@ -14,7 +15,8 @@ public final class NVRAMParser {
 
     public static final Splitter SPLITTER = Splitter.on("=").trimResults().omitEmptyStrings();
 
-    private NVRAMParser() {}
+    private NVRAMParser() {
+    }
 
     @Nullable
     public static NVRAMInfo parseNVRAMOutput(@Nullable final String[] nvramLines) {
@@ -22,9 +24,9 @@ public final class NVRAMParser {
             return null;
         }
 
-        final NVRAMInfo nvramInfo = new NVRAMInfo();
+        @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-        for (final String nvramLine : nvramLines) {
+        for (@NotNull final String nvramLine : nvramLines) {
             final List<String> strings = SPLITTER.splitToList(nvramLine);
             if (strings.size() >= 2) {
                 nvramInfo.setProperty(strings.get(0), strings.get(1));

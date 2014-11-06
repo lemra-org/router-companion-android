@@ -1,5 +1,8 @@
 package org.lemra.dd_wrt.api;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ The 5th and 6th columns are dummy values designed to match the format used in /e
         return deviceType;
     }
 
+    @NotNull
     public ProcMountPoint setDeviceType(String deviceType) {
         this.deviceType = deviceType;
         return this;
@@ -35,6 +39,7 @@ The 5th and 6th columns are dummy values designed to match the format used in /e
         return mountPoint;
     }
 
+    @NotNull
     public ProcMountPoint setMountPoint(String mountPoint) {
         this.mountPoint = mountPoint;
         return this;
@@ -44,29 +49,35 @@ The 5th and 6th columns are dummy values designed to match the format used in /e
         return fsType;
     }
 
+    @NotNull
     public ProcMountPoint setFsType(String fsType) {
         this.fsType = fsType;
         return this;
     }
 
+    @NotNull
     public ProcMountPoint addPermission(String perm) {
         this.permissions.add(perm);
         return this;
     }
 
+    @NotNull
     public List<String> getPermissions() {
         return permissions;
     }
 
+    @NotNull
     public List<String> getOtherAttributes() {
         return otherAttributes;
     }
 
+    @NotNull
     public ProcMountPoint addOtherAttr(String attr) {
         this.otherAttributes.add(attr);
         return this;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ProcMountPoint{" +
@@ -79,11 +90,11 @@ The 5th and 6th columns are dummy values designed to match the format used in /e
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProcMountPoint that = (ProcMountPoint) o;
+        @NotNull ProcMountPoint that = (ProcMountPoint) o;
 
         if (deviceType != null ? !deviceType.equals(that.deviceType) : that.deviceType != null)
             return false;

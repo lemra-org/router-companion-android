@@ -20,6 +20,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 
@@ -33,6 +35,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     //TESTS
     private static final Router router = new Router();
+
     static {
         router.setRemoteIpAddress("172.17.17.1");
         router.setUsername("root");
@@ -53,6 +56,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 "------");
         router.setStrictHostKeyChecking(false);
     }
+
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -66,7 +70,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     //END TESTS
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
@@ -126,7 +130,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     @Override
     public boolean onOptionsItemSelected(
-            com.actionbarsherlock.view.MenuItem item) {
+            @NotNull com.actionbarsherlock.view.MenuItem item) {
 
         switch (item.getItemId()) {
 
@@ -258,6 +262,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     private class RefreshAsyncTask extends AsyncTask<Void, Void, Void> {
 
+        @Nullable
         @Override
         protected Void doInBackground(Void... voids) {
             Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "doInBackground");

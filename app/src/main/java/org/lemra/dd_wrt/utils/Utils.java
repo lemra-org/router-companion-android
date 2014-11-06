@@ -2,6 +2,7 @@ package org.lemra.dd_wrt.utils;
 
 import com.google.common.collect.Lists;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -18,14 +19,14 @@ public final class Utils {
     private Utils() {
     }
 
-    public static void readAll(BufferedReader bufferedReader, StringBuffer result) throws IOException {
+    public static void readAll(@NotNull BufferedReader bufferedReader, @NotNull StringBuffer result) throws IOException {
         for (String line; (line = bufferedReader.readLine()) != null; ) {
             result.append(line);
         }
     }
 
     @Nullable
-    public static String[] getLines(BufferedReader bufferedReader) throws IOException {
+    public static String[] getLines(@NotNull BufferedReader bufferedReader) throws IOException {
         final List<String> lines = Lists.newArrayList();
         for (String line; (line = bufferedReader.readLine()) != null; ) {
             lines.add(line);

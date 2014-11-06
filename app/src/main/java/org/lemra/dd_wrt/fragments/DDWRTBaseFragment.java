@@ -95,9 +95,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     protected TableLayout mTableLayout;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
+    @Nullable
     private List<DDWRTTile> fragmentTiles;
     @NotNull
     private DDWRTMainActivity ddwrtMainActivity;
+    @Nullable
     private Loader<T> mLoader;
 
     @Nullable
@@ -105,11 +107,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                                                 @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
                                                 @Nullable final Router router) {
         try {
-            final DDWRTBaseFragment fragment = clazz.newInstance()
+            @NotNull final DDWRTBaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
                     .setParentSectionTitle(parentSectionTitle);
 
-            Bundle args = new Bundle();
+            @NotNull Bundle args = new Bundle();
             args.putCharSequence(TAB_TITLE, tabTitle);
             args.putCharSequence(PARENT_SECTION_TITLE, parentSectionTitle);
             args.putString(FRAGMENT_CLASS, clazz.getCanonicalName());
@@ -135,12 +137,12 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
-        SortingStrategy sortingStrategyInstance = null;
-        Exception exception = null;
+        @Nullable SortingStrategy sortingStrategyInstance = null;
+        @Nullable Exception exception = null;
         try {
             sortingStrategyClass = Class.forName(sortingStrategy);
             sortingStrategyInstance = (SortingStrategy) sortingStrategyClass.newInstance();
-        } catch (final Exception e) {
+        } catch (@NotNull final Exception e) {
             e.printStackTrace();
             exception = e;
         }
@@ -153,7 +155,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         String parentSectionTitle;
 
-        final DDWRTBaseFragment[] tabsToSort;
+        @NotNull final DDWRTBaseFragment[] tabsToSort;
         switch (parentSectionNumber) {
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
@@ -300,6 +302,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     }
 
 
+    @NotNull
     public final DDWRTBaseFragment setParentSectionTitle(@NotNull final CharSequence parentSectionTitle) {
         this.mParentSectionTitle = parentSectionTitle;
         return this;
@@ -309,6 +312,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         return mTabTitle;
     }
 
+    @NotNull
     public final DDWRTBaseFragment setTabTitle(@NotNull final CharSequence tabTitle) {
         this.mTabTitle = tabTitle;
         return this;
@@ -352,6 +356,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
      *                           from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
      */
+    @NotNull
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return this.getLayout();
@@ -402,26 +407,26 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     @NotNull
     private ViewGroup getLayout() {
-        final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        @NotNull final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
                 .getDisplayMetrics());
         params.setMargins(margin, margin, margin, margin);
 
-        ViewGroup viewGroup = null;
+        @Nullable ViewGroup viewGroup = null;
 
         boolean atLeastOneTileAdded = false;
 
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
 
-            final LayoutInflater layoutInflater = getSherlockActivity().getLayoutInflater();
+            @NotNull final LayoutInflater layoutInflater = getSherlockActivity().getLayoutInflater();
             viewGroup = (ScrollView) layoutInflater.inflate(R.layout.base_tiles_container_scrollview, null);
 
-            final List<TableRow> rows = new ArrayList<TableRow>();
+            @NotNull final List<TableRow> rows = new ArrayList<TableRow>();
 
-            final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
+            @NotNull final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
                     TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
-                final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
+            for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
+                @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);
 
                 if (viewGroupLayout == null) {
@@ -434,7 +439,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                     ((ViewGroup) parent).removeView(viewGroupLayout);
                 }
 
-                final TableRow tableRow = new TableRow(getSherlockActivity());
+                @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
                 tableRow.setOnClickListener(ddwrtTile);
                 viewGroupLayout.setOnClickListener(ddwrtTile);
                 tableRow.setLayoutParams(tableRowParams);
@@ -460,7 +465,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //                tableLayout.setStretchAllColumns(true);
                 mTableLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-                for (final TableRow row : rows) {
+                for (@NotNull final TableRow row : rows) {
 //                    mTableLayout.removeView(row);
                     mTableLayout.addView(row);
                 }
@@ -472,7 +477,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         if (viewGroup == null || !atLeastOneTileAdded) {
             viewGroup = new FrameLayout(getSherlockActivity());
-            final TextView view = new TextView(getSherlockActivity());
+            @NotNull final TextView view = new TextView(getSherlockActivity());
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));
             view.setBackgroundResource(R.drawable.background_card);
@@ -489,19 +494,19 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     }
 
     public final void forceRefreshTiles() {
-        final List<DDWRTTile> tiles = this.getTiles(null);
+        @Nullable final List<DDWRTTile> tiles = this.getTiles(null);
         if (tiles == null) {
             return;
         }
 
         final List<DDWRTTile> tilesSubmitted = Lists.newArrayList();
 
-        for (final DDWRTTile tile : tiles) {
+        for (@NotNull final DDWRTTile tile : tiles) {
             tile.forceRefresh();
             tilesSubmitted.add(tile);
         }
 
-        for (final DDWRTTile tileSubmitted : tilesSubmitted) {
+        for (@NotNull final DDWRTTile tileSubmitted : tilesSubmitted) {
             while (!tileSubmitted.isDoneLoading()) {
                 Log.d(LOG_TAG, "Waiting for tile " + tileSubmitted + " to finish loading...");
                 try {
@@ -521,9 +526,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
      * @param args Any arguments supplied by the caller.
      * @return Return a new Loader instance that is ready to start loading.
      */
+    @Nullable
     @Override
     public final Loader<T> onCreateLoader(int id, Bundle args) {
-        final Loader<T> loader = this.getLoader(id, args);
+        @Nullable final Loader<T> loader = this.getLoader(id, args);
         this.mLoader = loader;
         if (mLoader == null) {
             return null;
@@ -532,6 +538,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         return mLoader;
     }
 
+    @Nullable
     protected Loader<T> getLoader(int id, Bundle args) {
         return null;
     }

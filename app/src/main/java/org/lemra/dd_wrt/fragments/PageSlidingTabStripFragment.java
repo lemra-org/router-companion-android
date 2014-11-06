@@ -32,6 +32,7 @@ public class PageSlidingTabStripFragment extends Fragment {
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String SORTING_STRATEGY = "sorting_strategy";
+    @Nullable
     private FragmentTabsAdapter mFragmentTabsAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
@@ -45,11 +46,12 @@ public class PageSlidingTabStripFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
+    @NotNull
     public static PageSlidingTabStripFragment newInstance(@NotNull final ViewPager.OnPageChangeListener onPageChangeListener,
                                                           int sectionNumber,
-                                                          @Nullable final Router router, SharedPreferences preferences) {
-        final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
-        Bundle args = new Bundle();
+                                                          @Nullable final Router router, @NotNull SharedPreferences preferences) {
+        @NotNull final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
+        @NotNull Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(SORTING_STRATEGY, preferences.getString("sortingStrategy", SortingStrategy.DEFAULT));
         args.putSerializable(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, router);
@@ -70,16 +72,16 @@ public class PageSlidingTabStripFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.pager, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view
+        @NotNull PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view
                 .findViewById(R.id.tabs);
         this.pager = (ViewPager) view.findViewById(R.id.pager);
         this.pager.setAdapter(mFragmentTabsAdapter);
@@ -98,11 +100,11 @@ public class PageSlidingTabStripFragment extends Fragment {
 
     public void refreshCurrentFragment() {
         if (this.pager != null && this.mFragmentTabsAdapter != null) {
-            final SherlockFragment tabFragment = this.mFragmentTabsAdapter.getItem(this.pager.getCurrentItem());
+            @Nullable final SherlockFragment tabFragment = this.mFragmentTabsAdapter.getItem(this.pager.getCurrentItem());
             if (!(tabFragment instanceof DDWRTBaseFragment)) {
                 return;
             }
-            final DDWRTBaseFragment fragment = (DDWRTBaseFragment) tabFragment;
+            @NotNull final DDWRTBaseFragment fragment = (DDWRTBaseFragment) tabFragment;
             fragment.forceRefreshTiles();
         }
     }
@@ -132,6 +134,7 @@ public class PageSlidingTabStripFragment extends Fragment {
             return this.tabs.length;
         }
 
+        @Nullable
         @Override
         public SherlockFragment getItem(int position) {
             if (this.tabs.length <= position) {
@@ -141,6 +144,7 @@ public class PageSlidingTabStripFragment extends Fragment {
             return this.tabs[position];
         }
 
+        @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
             if (this.tabs.length <= position) {
@@ -156,7 +160,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         }
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
             super.setPrimaryItem(container, position, object);
             // Hack to allow the non-primary fragments to start properly
             if (object != null) {

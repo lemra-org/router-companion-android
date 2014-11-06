@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
 import org.lemra.dd_wrt.api.conn.Router;
@@ -19,7 +20,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
 
-    public StatusSyslogTile(SherlockFragmentActivity parentFragmentActivity, Bundle arguments, Router router) {
+    public StatusSyslogTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
     }
 
