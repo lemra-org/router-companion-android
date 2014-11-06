@@ -47,6 +47,7 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String LANDEVS = "landevs";
     public static final String LAN_IFNAME = "lan_ifname";
     public static final String WAN_IFNAME = "wan_ifname";
+    public static final String SYSLOG = "syslog";
 
     @Nullable
     private Exception exception;
