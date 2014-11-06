@@ -1,20 +1,25 @@
 package org.lemra.dd_wrt.tiles.status.bandwidth;
 
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.androidplot.Plot;
+import com.androidplot.xy.LineAndPointFormatter;
+import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
 import com.google.common.base.Throwables;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.GraphViewStyle;
-import com.jjoe64.graphview.LineGraphView;
 
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.NVRAMInfo;
@@ -22,7 +27,8 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.lemra.dd_wrt.tiles.DDWRTTile;
 
-import static com.jjoe64.graphview.GraphView.GraphViewData;
+import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * Created by armel on 8/31/14.
@@ -101,26 +107,61 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(this.iface);
 
+            final XYPlot mySimpleXYPlot = (XYPlot) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+
             //TODO
             //TEST
-            // init example series data
-            GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[]{
-                    new GraphViewData(1, 2.0d)
-                    , new GraphViewData(2, 1.5d)
-                    , new GraphViewData(3, 2.5d)
-                    , new GraphViewData(4, 1.0d)
-            });
+            final int MAX = 40;
+            final Number[] x = new Number[MAX];
+            final Number[] y = new Number[MAX];
+            for (int i = 0; i < MAX; i++) {
+                x[i] = i;
+                y[i] = Math.random() * MAX + Math.sin(i / MAX);
+            }
 
-            GraphView graphView = new LineGraphView(
-                    this.layout.getContext() // context
-                    , "GraphViewDemo" // heading
-            );
-            graphView.getGraphViewStyle().setGridStyle(GraphViewStyle.GridStyle.HORIZONTAL);
-            graphView.addSeries(exampleSeries); // data
+            // create our series from our array of nums:
+            final XYSeries series2 = new SimpleXYSeries(
+                    Arrays.asList(x),
+                    Arrays.asList(y),
+                    "Bandwidth Usage");
 
-            ((LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder))
-                    .addView(graphView);
-            ;
+            mySimpleXYPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.WHITE);
+//            mySimpleXYPlot.getGraphWidget().getGridLinePaint().setColor(Color.BLACK);
+//            mySimpleXYPlot.getGraphWidget().getGridLinePaint().setPathEffect(new DashPathEffect(new float[]{1,1}, 1));
+            mySimpleXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.WHITE);
+            mySimpleXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.WHITE);
+
+            mySimpleXYPlot.setBorderStyle(Plot.BorderStyle.SQUARE, null, null);
+            mySimpleXYPlot.getBorderPaint().setStrokeWidth(1);
+            mySimpleXYPlot.getBorderPaint().setAntiAlias(false);
+            mySimpleXYPlot.getBorderPaint().setColor(Color.BLACK);
+
+            // Create a formatter to use for drawing a series using LineAndPointRenderer:
+            LineAndPointFormatter series1Format = new LineAndPointFormatter(
+                    Color.rgb(0, 100, 0),                   // line color
+                    Color.rgb(0, 100, 0),                   // point color
+                    Color.rgb(100, 200, 0), null);                // fill color
+
+            // setup our line fill paint to be a slightly transparent gradient:
+            Paint lineFill = new Paint();
+            lineFill.setAlpha(200);
+            lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.GREEN, Shader.TileMode.MIRROR));
+
+            LineAndPointFormatter formatter = new LineAndPointFormatter(Color.rgb(0, 0, 0), Color.BLUE, Color.RED, null);
+            formatter.setFillPaint(lineFill);
+            mySimpleXYPlot.getGraphWidget().setPaddingRight(2);
+            mySimpleXYPlot.addSeries(series2, formatter);
+
+            // draw a domain tick for each year:
+            mySimpleXYPlot.setDomainStep(XYStepMode.SUBDIVIDE, x.length);
+
+            // customize our domain/range labels
+            mySimpleXYPlot.setDomainLabel("X");
+            mySimpleXYPlot.setRangeLabel("Bandwidth (MBps)");
+
+            // get rid of decimal points in our range labels:
+            mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("0"));
+
             //END TEST
 
         }
