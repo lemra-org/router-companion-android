@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Armel S.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package org.lemra.dd_wrt.api;
 
 import org.jetbrains.annotations.NotNull;
@@ -7,16 +31,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by armel on 8/19/14.
+ * Information about a /proc/mount endpoint (as retrieved from the router)
  */
 public class ProcMountPoint {
 
     /*
     The 1st column specifies the device that is mounted.
-The 2nd column reveals the mount point.
-The 3rd column tells the file-system type.
-The 4th column tells you if it is mounted read-only (ro) or read-write (rw).
-The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
+    The 2nd column reveals the mount point.
+    The 3rd column tells the file-system type.
+    The 4th column tells you if it is mounted read-only (ro) or read-write (rw).
+    The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
      */
 
     private final List<String> permissions = new ArrayList<String>();
