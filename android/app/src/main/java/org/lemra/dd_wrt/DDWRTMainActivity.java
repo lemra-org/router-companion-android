@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Armel S.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package org.lemra.dd_wrt;
 
 import android.content.Context;
@@ -26,7 +50,9 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 
 /**
- * Created by armel on 8/9/14.
+ * Main Android Activity
+ * <p/>
+ * TODO Display a 'Routers Management' activity, where the user can CRUD routers. For now, we are using hard-coded connection parameters.
  */
 public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewPager.OnPageChangeListener {
 
@@ -41,18 +67,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         router.setUsername("root");
         router.setName("@home");
         router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
-//        router.setPassword("2315netgearOrange");
         router.setPrivKey("-----BEGIN DSA PRIVATE KEY-----\n" +
-                "MIIBuwIBAAKBgQDDbsDj7rujyw6GNMLCJ0Tv1/JvsLNdNeHGwNlSj/pjxD6yVxmX\n" +
-                "a/KDGaqvXWOWm+TW7ugPeocF2fl8DEC31yLfaY6GrjhyHozqmjut/RcwbLQYsLyp\n" +
-                "HB9XT4zd5ShV4fAXF1Unhg1RCa/yCKJkE3zI+8UZ3HfHv8vg0C1m3ryhNQIVAOk3\n" +
-                "G4IafJlRtyG1B3oO+uayDvH1AoGAU+tLC50aytDDBsqxKY/q2AWcLBoKDUr2DAY+\n" +
-                "5fb2m1Hl8A0/YWwiEISXCOReEkXjvPfUgZg3e3UMCED7ULEu5dGjFLNKaN4dmP6q\n" +
-                "C8NLKornh4tugk+geNq9qW9HmDwPEr2i8gAQxYPmSPCiKv3cW6wt0c3h7zyDfYPT\n" +
-                "Vrf1Cu0CgYBXoU4+bljVUxzXkBsqwdZgKckfp/mABgAz8nEcmvklLRiM0bbMBxtn\n" +
-                "4fQqkh1ENGrk8H+Rx6UNgaFdYg596gFCA8cSJiouwS+xBO8FT79DAeiLN5xTsH32\n" +
-                "7KzlIfgcsnniYZDLD9pS/x58G7/loUD9lH53JAa81THNwZeaaEaHwQIVAN8WSYc6\n" +
-                "JJuAZoyITiuIO2VDTsP4\n" +
+                "xxxx\n" +
                 "-----END DSA PRIVATE KEY-----");
         router.setStrictHostKeyChecking(false);
     }
