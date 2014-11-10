@@ -1,13 +1,13 @@
-*.class
+./android/**/*.class
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+./android/**/.mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
-*.ear
+./android/**/*.jar
+./android/**/*.war
+./android/**/*.ear
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-.idea
+./android/**/hs_err_pid*
+./android/.idea
