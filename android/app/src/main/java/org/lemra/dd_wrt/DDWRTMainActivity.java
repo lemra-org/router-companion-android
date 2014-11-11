@@ -43,11 +43,13 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
+import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
 
 /**
  * Main Android Activity
@@ -58,24 +60,24 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
+    DrawerLayout mDrawerLayout;
 
     //TESTS
-    private static final Router router = new Router();
-
-    static {
-        router.setRemoteIpAddress("172.17.17.1");
-        router.setUsername("root");
-        router.setName("@home");
-        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
-        router.setPrivKey("-----BEGIN DSA PRIVATE KEY-----\n" +
-                "xxxx\n" +
-                "-----END DSA PRIVATE KEY-----");
-        router.setStrictHostKeyChecking(false);
-    }
-
-    DrawerLayout mDrawerLayout;
+//    private static final Router router = new Router();
+//
+//    static {
+//        router.setRemoteIpAddress("172.17.17.1");
+//        router.setUsername("root");
+//        router.setName("@home");
+//        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
+//        router.setPrivKey("-----BEGIN DSA PRIVATE KEY-----\n" +
+//                "xxxx\n" +
+//                "-----END DSA PRIVATE KEY-----");
+//        router.setStrictHostKeyChecking(false);
+//    }
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    private Router mRouter = null;
     private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
     private SharedPreferences preferences;
@@ -88,6 +90,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final String json = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        if (json != null) {
+            this.mRouter = new Gson().fromJson(json, Router.class);
+        }
+
         preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
 
@@ -212,7 +220,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         Log.d(TAG, "selectItem @" + position);
 
         this.currentPageSlidingTabStripFragment =
-                PageSlidingTabStripFragment.newInstance(this, position, router, preferences);
+                PageSlidingTabStripFragment.newInstance(this, position, this.mRouter, preferences);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -264,6 +272,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     public void onPageScrollStateChanged(int state) {
         Log.d(TAG, "onPageScrollStateChanged (" + state + ")");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.mRouter = null;
     }
 
     // The click listener for ListView in the navigation drawer
