@@ -21,7 +21,6 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.lemra.dd_wrt">
 
@@ -31,22 +30,34 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--<android:uses-permission-->
+    <!--android:name="android.permission.WRITE_EXTERNAL_STORAGE"-->
+    <!--android:maxSdkVersion="18" />-->
+    <!--<android:uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--<android:uses-permission-->
+    <!--android:name="android.permission.READ_EXTERNAL_STORAGE"-->
+    <!--android:maxSdkVersion="18" />-->
+
     <application
-        android:name=".DDWRTApplication"
+        android:name="org.lemra.dd_wrt.DDWRTApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock">
         <activity
-            android:name=".DDWRTMainActivity"
+            android:name="org.lemra.dd_wrt.mgmt.RouterManagementActivity"
             android:label="@string/app_name">
-            <intent-filter>
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="org.lemra.dd_wrt.DDWRTMainActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="org.lemra.dd_wrt.mgmt.RouterManagementActivity" />
     </application>
 
 </manifest>
