@@ -79,7 +79,7 @@ import org.lemra.dd_wrt.fragments.setup.SetupBasicFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupDDNSFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupEoIPFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupIPv6Fragment;
-import org.lemra.dd_wrt.fragments.setup.SetupMACCloningFragment;
+import org.lemra.dd_wrt.fragments.setup.SetupMacCloningFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupNetworkingFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupRoutingFragment;
 import org.lemra.dd_wrt.fragments.setup.SetupVLANFragment;
@@ -210,7 +210,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                         resources.getString(R.string.setup_ipv6), router);
                 tabsToSort[2] = DDWRTBaseFragment.newInstance(SetupDDNSFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_ddns), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(SetupMACCloningFragment.class, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(SetupMacCloningFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_mac_cloning), router);
                 tabsToSort[4] = DDWRTBaseFragment.newInstance(SetupRoutingFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_routing), router);

@@ -21,7 +21,6 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   -->
-
 <resources>
 
     <string name="app_name">DD-WRT Companion</string>
@@ -39,7 +38,7 @@
     </string-array>
 
     <!-- Sections -->
-    <!--1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}-->
+    <!-- 1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo} -->
     <string name="status">Status</string>
     <string name="status_router">Router</string>
     <string name="status_wan">WAN</string>
@@ -70,7 +69,7 @@
     <string name="wireless_wl0">WL0</string>
     <string name="wireless_wl1">WL1</string>
 
-    <!--4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}-->
+    <!-- 4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver} -->
     <string name="services">Services</string>
     <string name="services_services">Services</string>
     <string name="services_freeradius">FreeRadius</string>
@@ -83,16 +82,16 @@
     <string name="services_adblocking">Adblocking</string>
     <string name="services_webserver">WebServer</string>
 
-    <!--5 = Security => {Firewall, VPN Passthrough}-->
+    <!-- 5 = Security => {Firewall, VPN Passthrough} -->
     <string name="security">Security</string>
     <string name="security_firewall">Firewall</string>
     <string name="security_vpn_passthrough">VPN Passthrough</string>
 
-    <!--6 = Access => {WAN}-->
+    <!-- 6 = Access => {WAN} -->
     <string name="access_restrictions">Access Restrictions</string>
     <string name="access_restrictions_wan">WAN Access</string>
 
-    <!--7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}-->
+    <!-- 7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS} -->
     <string name="nat_qos">NAT &amp; QoS</string>
     <string name="nat_qos_port_forwarding">Port Fwd</string>
     <string name="nat_qos_port_range_forwarding">Port Range Fwd</string>
@@ -101,7 +100,7 @@
     <string name="nat_qos_dmz">DMZ</string>
     <string name="nat_qos_qos">QoS</string>
 
-    <!--8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}-->
+    <!-- 8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup} -->
     <string name="admin_area">Admin Area</string>
     <string name="admin_area_mgmt">Management</string>
     <string name="admin_area_keep_alive">Keep Alive</string>
@@ -110,13 +109,10 @@
     <string name="admin_area_factory">Factory Defaults</string>
     <string name="admin_area_upgrade">Upgrade</string>
     <string name="admin_area_backup">Backup</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Save &amp; Apply</string>
-
     <string name="action_settings">Settings</string>
-
     <string name="no_data">No Data - Feature Coming Soon!</string>
     <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues so our monkeys can fix them all.</string>
     <string name="title">Title</string>
@@ -128,5 +124,7 @@
     <string name="menuitem_refresh">Refresh</string>
     <string name="menuitem_settings">Settings</string>
     <string name="status_dhcp">DHCP</string>
+    <string name="title_activity_router_management">RouterManagementActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
