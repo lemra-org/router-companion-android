@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * TODO
  */
-public class SetupMACCloningFragment extends DDWRTBaseFragment {
+public class SetupMacCloningFragment extends DDWRTBaseFragment {
 
     @Nullable
     @Override
