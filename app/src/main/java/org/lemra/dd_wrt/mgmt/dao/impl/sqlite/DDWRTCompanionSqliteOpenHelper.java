@@ -41,24 +41,22 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String ROUTER_PRIVKEY = \"fake-key\";
     public static final String ROUTER_PORT = "port";
     public static final String ROUTER_SSH_STRICT_HOST_KEY_CHECKING = "ssh_is_strict_host_key_checking";
-
-    private static final String DATABASE_NAME = "routers.db";
-    private static final int DATABASE_VERSION = 1;
-
     // Database creation sql statement
     private static final String DATABASE_CREATE = "CREATE TABLE " + TABLE_ROUTERS +
-            "(" +
-                COLUMN_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ROUTER_UUID + " VARCHAR(255) PRIMARY KEY NOT NULL, " +
+            " (" +
+            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            ROUTER_UUID + " TEXT NOT NULL UNIQUE, " +
                 ROUTER_NAME + " TEXT DEFAULT NULL, " +
-                ROUTER_IP + " VARCHAR(15) NOT NULL, " +
-                ROUTER_PROTOCOL + " VARCHAR(15) NOT NULL, " +
-                ROUTER_PORT + " INTEGER NOT NULL DEFAULT 22, " +
-                ROUTER_SSH_STRICT_HOST_KEY_CHECKING + " BOOLEAN NOT NULL DEFAULT FALSE, " +
+            ROUTER_IP + " TEXT NOT NULL, " +
+            ROUTER_PROTOCOL + " TEXT NOT NULL, " +
+            ROUTER_PORT + " INTEGER NOT NULL DEFAULT 22 CHECK(" + ROUTER_PORT + " > 0), " +
+            ROUTER_SSH_STRICT_HOST_KEY_CHECKING + " INTEGER NOT NULL DEFAULT 0, " +
                 ROUTER_USERNAME + " TEXT NOT NULL, " +
                 ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
                 ROUTER_PRIVKEY + " TEXT DEFAULT NULL" +
             ");";
+    private static final String DATABASE_NAME = "routers.db";
+    private static final int DATABASE_VERSION = 1;
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

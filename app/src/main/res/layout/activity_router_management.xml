@@ -32,32 +32,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.lemra.dd_wrt.mgmt.RouterManagementActivity">
 
-    <!--<TextView android:text="@string/hello_world" android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content" />-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/routersListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
-    <TextView
-        android:layout_width="fill_parent"
+    <ImageButton
+        android:id="@+id/router_list_add"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="Manage Routers" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:contentDescription="@string/router_add_new"
+        android:src="@drawable/ic_action_content_add" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
-
-        <!--<ListView-->
-            <!--android:id="@+id/routersListView"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1" />-->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/routersListView"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
 </RelativeLayout>

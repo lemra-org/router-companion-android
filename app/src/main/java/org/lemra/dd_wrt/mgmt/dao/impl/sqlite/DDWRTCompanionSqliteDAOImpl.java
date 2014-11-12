@@ -28,6 +28,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
@@ -38,9 +39,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.*;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_IP;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_NAME;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PASSWORD;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PORT;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PRIVKEY;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PROTOCOL;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_SSH_STRICT_HOST_KEY_CHECKING;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_USERNAME;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_UUID;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ROUTERS;
 
 public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
+
+    private static final String LOG_TAG = DDWRTCompanionSqliteDAOImpl.class.getSimpleName();
 
     private final DDWRTCompanionSqliteOpenHelper dbHelper;
 
@@ -63,33 +76,30 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     public Router createRouter(Router router) {
+        final String uuid = UUID.randomUUID().toString();
+
         ContentValues values = new ContentValues();
-        values.put(ROUTER_UUID, UUID.randomUUID().toString());
+        values.put(ROUTER_UUID, uuid);
         values.put(ROUTER_IP, router.getRemoteIpAddress());
         values.put(ROUTER_NAME, router.getName());
         values.put(ROUTER_PASSWORD, router.getPassword());
         values.put(ROUTER_PORT, router.getRemotePort());
         values.put(ROUTER_PRIVKEY, router.getPrivKey());
-        values.put(ROUTER_SSH_STRICT_HOST_KEY_CHECKING, router.isStrictHostKeyChecking());
+        values.put(ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
+                router.isStrictHostKeyChecking() ? 1 : 0);
         values.put(ROUTER_USERNAME, router.getUsername());
         values.put(ROUTER_PROTOCOL, router.getRouterConnectionProtocol().toString());
 
         long insertId = database.insert(TABLE_ROUTERS, null,
                 values);
+        Log.d(LOG_TAG, "createRouter(" + uuid + " => " + insertId + ")");
 
-        Cursor cursor = database.query(TABLE_ROUTERS,
-                allColumns, COLUMN_ID + " = " + insertId, null,
-                null, null, null);
-        cursor.moveToFirst();
-        Router newRouter = cursorToRouter(cursor);
-        cursor.close();
-        return newRouter;
+        return getRouter(uuid);
     }
 
     public void deleteRouter(String uuid) {
         System.out.println("Delete Router with uuid: " + uuid);
-        database.delete(TABLE_ROUTERS, ROUTER_UUID
-                + " = " + uuid, null);
+        database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
     }
 
     public List<Router> getAllRouters() {
@@ -98,25 +108,38 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         Cursor cursor = database.query(TABLE_ROUTERS,
                 allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Router router = cursorToRouter(cursor);
-            routers.add(router);
-            cursor.moveToNext();
+        try {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    Router router = cursorToRouter(cursor);
+                    routers.add(router);
+                    cursor.moveToNext();
+                }
+            }
+        } finally {
+            // make sure to close the cursor
+            cursor.close();
         }
-        // make sure to close the cursor 
-        cursor.close();
+
         return routers;
     }
 
     @Nullable
     public Router getRouter(String uuid) {
         final Cursor cursor = database.query(TABLE_ROUTERS,
-                allColumns, ROUTER_UUID + " = " + uuid, null, null, null, null);
-        cursor.moveToFirst();
-        Router router = cursorToRouter(cursor);
-        cursor.close();
-        return router;
+                allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, null);
+        try {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return cursorToRouter(cursor);
+            }
+
+        } finally {
+            cursor.close();
+        }
+
+        return null;
     }
 
     private Router cursorToRouter(Cursor cursor) {
