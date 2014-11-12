@@ -26,6 +26,8 @@ package org.lemra.dd_wrt.mgmt;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,7 +41,11 @@ import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.DDWRTMainActivity;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
+import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
+import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,23 +59,74 @@ public class RouterManagementActivity extends SherlockActivity implements OnItem
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
 
+    private DDWRTCompanionDAO dao;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_router_management);
 
-        final ArrayList<Router> routersRegistered = getRoutersRegistered();
+        //SQLite
+        this.dao = new DDWRTCompanionSqliteDAOImpl(this);
+        try {
+            this.dao.open();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
 
-        final ListView lv = (ListView) findViewById(R.id.routersListView);
-        lv.setAdapter(new RouterListBaseAdapter(this, routersRegistered));
+        final List<Router> routersRegistered = getRoutersRegistered();
 
-        lv.setOnItemClickListener(this);
-        lv.setOnItemLongClickListener(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.routersListView);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new RouterListRecycleViewAdapter(this, routersRegistered);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+//        final ListView lv = (ListView) findViewById(R.id.routersListView);
+//        lv.setAdapter(new RouterListBaseAdapter(this, routersRegistered));
+//        mRecyclerView.setOnClickListener(this);
+//        mRecyclerView.setOnItemClickListener(this);
+//        lv.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            this.dao.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        this.dao.close();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.dao.close();
+        super.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+        getSupportMenuInflater().inflate(R.menu.menu_router_management, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -81,34 +138,43 @@ public class RouterManagementActivity extends SherlockActivity implements OnItem
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.router_list_add) {
+            //TODO Open 'New router' form
+            Toast.makeText(getApplicationContext(),
+                    "[FIXME] : add NEW router",
+                    Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        if (id == R.id.router_list_refresh) {
+            //TODO Refresh list
+            Toast.makeText(getApplicationContext(),
+                    "[FIXME] : refresh list",
+                    Toast.LENGTH_LONG).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    //FIXME Remove - has been moved to RecyclerView
+    @Deprecated
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        //TODO
-        Object o = adapterView.getItemAtPosition(position);
-        Router fullObject = (Router) o;
-
+        //Opens up main activity with the router selected
         final Intent ddWrtMainIntent = new Intent(this, DDWRTMainActivity.class);
-        ddWrtMainIntent.putExtra(ROUTER_SELECTED, new Gson().toJson(fullObject));
-
+        ddWrtMainIntent.putExtra(ROUTER_SELECTED, ((Router) adapterView.getItemAtPosition(position)).getUuid());
         startActivity(ddWrtMainIntent);
-
-//        Toast.makeText(getApplicationContext(),
-//                "onItemClick: " + " " + fullObject.getName() + "(" + fullObject.getRemoteIpAddress() + ")",
-//                Toast.LENGTH_LONG).show();
     }
 
+    //FIXME Remove - has been moved to RecyclerView
+    @Deprecated
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
         //TODO Show popup menu: Edit, Delete
         Object o = adapterView.getItemAtPosition(position);
         Router fullObject = (Router) o;
+
         Toast.makeText(getApplicationContext(),
                 "onItemLongClick: " + " " + fullObject.getName() + "(" + fullObject.getRemoteIpAddress() + ")",
                 Toast.LENGTH_LONG).show();
@@ -116,23 +182,25 @@ public class RouterManagementActivity extends SherlockActivity implements OnItem
     }
 
     @NotNull
-    private ArrayList<Router> getRoutersRegistered() {
-        ArrayList<Router> results = new ArrayList<Router>();
+    private List<Router> getRoutersRegistered() {
+        return this.dao.getAllRouters();
 
-        //FIXME TESTS ONLY
-        //TODO Get items from SharedPreferences. If none registered, load activity for adding a new one
-        final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(33);
-
-        for (int i = 1; i <= 33; i++) {
-            final Router sr = new Router();
-            sr.setName("router #" + i);
-            sr.setRemoteIpAddress("172.17.17." + i);
-            sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
-            results.add(sr);
-        }
-        //FIXME TESTS
-
-        return results;
+//        ArrayList<Router> results = new ArrayList<Router>();
+//
+//        //FIXME TESTS ONLY
+//        //TODO Get items from SharedPreferences. If none registered, load activity for adding a new one
+//        final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(33);
+//
+//        for (int i = 1; i <= 33; i++) {
+//            final Router sr = new Router();
+//            sr.setName("router #" + i);
+//            sr.setRemoteIpAddress("172.17.17." + i);
+//            sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
+//            results.add(sr);
+//        }
+//        //FIXME TESTS
+//
+//        return results;
     }
 
     @NotNull
