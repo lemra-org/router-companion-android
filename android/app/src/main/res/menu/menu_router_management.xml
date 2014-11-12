@@ -33,12 +33,4 @@
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_refresh" />
 
-    <item
-        android:id="@+id/router_list_add"
-        android:alphabeticShortcut="n"
-        android:icon="@drawable/ic_action_content_add"
-        android:orderInCategory="2"
-        android:showAsAction="ifRoom"
-        android:title="@string/router_add_new" />
-
 </menu>
