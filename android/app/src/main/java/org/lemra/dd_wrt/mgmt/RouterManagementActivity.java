@@ -25,6 +25,7 @@
 package org.lemra.dd_wrt.mgmt;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,7 +33,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
@@ -49,7 +50,7 @@ import static org.lemra.dd_wrt.api.conn.Router.RouterConnectionProtocol.HTTPS;
 import static org.lemra.dd_wrt.api.conn.Router.RouterConnectionProtocol.SSH;
 
 
-public class RouterManagementActivity extends SherlockActivity implements View.OnClickListener, View.OnLongClickListener {
+public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
@@ -131,14 +132,6 @@ public class RouterManagementActivity extends SherlockActivity implements View.O
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.router_list_add) {
-            //TODO Open 'New router' form
-            Toast.makeText(getApplicationContext(),
-                    "[FIXME] : add NEW router",
-                    Toast.LENGTH_LONG).show();
-            return true;
-        }
-
         if (id == R.id.router_list_refresh) {
             //TODO Refresh list
             Toast.makeText(getApplicationContext(),
@@ -201,9 +194,8 @@ public class RouterManagementActivity extends SherlockActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        //TODO
-        Toast.makeText(getApplicationContext(),
-                "onClick: Add new router", Toast.LENGTH_LONG).show();
+        final DialogFragment addFragment = new RouterAddDialogFragment();
+        addFragment.show(getSupportFragmentManager(), "add_router");
     }
 
     @Override
