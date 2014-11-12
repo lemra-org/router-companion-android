@@ -21,6 +21,7 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   -->
+
 <resources>
 
     <string name="app_name">DD-WRT Companion</string>
@@ -36,6 +37,12 @@
         <item>NAT &amp; QoS</item>
         <item>Admin Area</item>
     </string-array>
+
+    <string-array name="router_connection_protocols_array">
+        <item>SSH</item>
+        <!--<item>HTTPS</item>-->
+    </string-array>
+    <string name="router_connection_proto_select">Select connection method</string>
 
     <!-- Sections -->
     <!-- 1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo} -->
@@ -128,5 +135,7 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="router_add_new">New</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_router">Add</string>
 
 </resources>
