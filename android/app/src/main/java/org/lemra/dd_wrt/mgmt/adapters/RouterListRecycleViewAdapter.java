@@ -43,63 +43,10 @@ import static org.lemra.dd_wrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
-        TextView routerName;
-        TextView routerIp;
-        TextView routerConnProto;
-        TextView routerUuid;
-
-        private final Context context;
-        private final View itemView;
-
-        public ViewHolder(Context context, View itemView) {
-            super(itemView);
-            this.context = context;
-            this.itemView = itemView;
-            this.itemView.setOnClickListener(this);
-            this.itemView.setOnLongClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (routerUuid == null) {
-                Toast.makeText(this.context,
-                        "Click on Unknown router - please refresh list or add a new one.",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            //Opens up main activity with the router selected
-            final Intent ddWrtMainIntent = new Intent(this.context, DDWRTMainActivity.class);
-            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid.getText());
-            this.context.startActivity(ddWrtMainIntent);
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            if (routerUuid == null) {
-                Toast.makeText(this.context,
-                        "Long click on Unknown router - please refresh list or add a new one.",
-                        Toast.LENGTH_LONG).show();
-                return false;
-            }
-            //TODO
-            Toast.makeText(this.context,
-                    "[onLongClick] router: " + routerUuid.getText(),
-                    Toast.LENGTH_LONG).show();
-            return false;
-        }
-    }
-
     private final List<Router> routersList;
+    private Context context;
 
 //    private LayoutInflater mInflater;
-
-    private Context context;
 
     public RouterListRecycleViewAdapter(Context context, List<Router> results) {
         routersList = results;
@@ -134,6 +81,63 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     @Override
     public int getItemCount() {
         return routersList.size();
+    }
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+
+        final TextView routerName;
+        final TextView routerIp;
+        final TextView routerConnProto;
+        final TextView routerUuid;
+
+        private final Context context;
+        private final View itemView;
+
+        public ViewHolder(Context context, View itemView) {
+            super(itemView);
+            this.context = context;
+            this.itemView = itemView;
+            this.itemView.setOnClickListener(this);
+            this.itemView.setOnLongClickListener(this);
+
+            this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
+            this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
+            this.routerConnProto = (TextView) this.itemView.findViewById(R.id.router_connection_protocol);
+            this.routerUuid = (TextView) this.itemView.findViewById(R.id.router_uuid);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (routerUuid == null) {
+                Toast.makeText(this.context,
+                        "Click on Unknown router - please refresh list or add a new one.",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            //Opens up main activity with the router selected
+            final Intent ddWrtMainIntent = new Intent(this.context, DDWRTMainActivity.class);
+            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid.getText());
+            this.context.startActivity(ddWrtMainIntent);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (routerUuid == null) {
+                Toast.makeText(this.context,
+                        "Long click on Unknown router - please refresh list or add a new one.",
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+            //TODO
+            Toast.makeText(this.context,
+                    "[onLongClick] router: " + routerUuid.getText(),
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
 }
