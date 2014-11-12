@@ -32,6 +32,14 @@
     android:paddingTop="10dip">
 
     <TextView
+        android:id="@+id/router_uuid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/router_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.lemra.dd_wrt.mgmt;
+package org.lemra.dd_wrt.mgmt.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -34,15 +34,15 @@ import android.widget.TextView;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RouterListBaseAdapter extends BaseAdapter {
 
-    private final ArrayList<Router> routersList;
+    private final List<Router> routersList;
 
     private LayoutInflater mInflater;
 
-    public RouterListBaseAdapter(Context context, ArrayList<Router> results) {
+    public RouterListBaseAdapter(Context context, List<Router> results) {
         routersList = results;
         mInflater = LayoutInflater.from(context);
     }
@@ -68,6 +68,7 @@ public class RouterListBaseAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.router_mgmt_layout_row_view, null);
             holder = new ViewHolder();
+            holder.routerUuid = (TextView) convertView.findViewById(R.id.router_uuid);
             holder.routerName = (TextView) convertView.findViewById(R.id.router_name);
             holder.routerIp = (TextView) convertView
                     .findViewById(R.id.router_ip_address);
@@ -78,11 +79,12 @@ public class RouterListBaseAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.routerName.setText(routersList.get(position).getName());
-        holder.routerIp.setText(routersList.get(position)
+        final Router routerAt = routersList.get(position);
+        holder.routerUuid.setText(routerAt.getUuid());
+        holder.routerName.setText(routerAt.getName());
+        holder.routerIp.setText(routerAt
                 .getRemoteIpAddress());
-        final Router.RouterConnectionProtocol routerConnectionProtocol = routersList.get(position).getRouterConnectionProtocol();
-        holder.routerConnProto.setText(routerConnectionProtocol != null ? routerConnectionProtocol.toString() : "N/A");
+        holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
 
         return convertView;
     }
@@ -91,5 +93,6 @@ public class RouterListBaseAdapter extends BaseAdapter {
         TextView routerName;
         TextView routerIp;
         TextView routerConnProto;
+        TextView routerUuid;
     }
 }

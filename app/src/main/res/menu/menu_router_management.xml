@@ -26,8 +26,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.lemra.dd_wrt.mgmt.RouterManagementActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings" />
+        android:id="@+id/router_list_refresh"
+        android:alphabeticShortcut="r"
+        android:icon="@drawable/ic_menu_refresh"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_refresh" />
+
+    <item
+        android:id="@+id/router_list_add"
+        android:alphabeticShortcut="n"
+        android:icon="@drawable/ic_action_content_add"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="@string/router_add_new" />
+
 </menu>

@@ -50,6 +50,10 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
+import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
+import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+
+import java.sql.SQLException;
 
 /**
  * Main Android Activity
@@ -61,6 +65,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
     DrawerLayout mDrawerLayout;
+
+    private DDWRTCompanionDAO dao;
 
     //TESTS
 //    private static final Router router = new Router();
@@ -90,14 +96,23 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final String json = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        if (json != null) {
-            this.mRouter = new Gson().fromJson(json, Router.class);
-        }
+//
+//        final String json = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+//        if (json != null) {
+//            this.mRouter = new Gson().fromJson(json, Router.class);
+//        }
 
         preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
+
+        //SQLite
+        this.dao = new DDWRTCompanionSqliteDAOImpl(this);
+        try {
+            this.dao.open();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+        this.mRouter = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
 
         mTitle = mDrawerTitle = getTitle();
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
@@ -143,6 +158,29 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
             selectItem(0);
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            this.dao.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        this.dao.close();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.dao.close();
+        this.mRouter = null;
+        super.onDestroy();
     }
 
     @Override
@@ -272,12 +310,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     public void onPageScrollStateChanged(int state) {
         Log.d(TAG, "onPageScrollStateChanged (" + state + ")");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.mRouter = null;
     }
 
     // The click listener for ListView in the navigation drawer
