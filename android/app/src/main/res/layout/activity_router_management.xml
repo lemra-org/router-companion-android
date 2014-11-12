@@ -48,10 +48,16 @@
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
-        <ListView
+        <!--<ListView-->
+            <!--android:id="@+id/routersListView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1" />-->
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/routersListView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     </LinearLayout>
 </RelativeLayout>
