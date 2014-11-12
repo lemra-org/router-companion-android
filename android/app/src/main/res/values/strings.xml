@@ -127,4 +127,6 @@
     <string name="title_activity_router_management">RouterManagementActivity</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="router_add_new">New</string>
+
 </resources>
