@@ -24,6 +24,7 @@
 
 package org.lemra.dd_wrt.mgmt;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -69,6 +70,21 @@ import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 public class RouterAddDialogFragment extends SherlockDialogFragment implements AdapterView.OnItemSelectedListener {
 
     private DDWRTCompanionDAO dao;
+    private RouterAddDialogListener mListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            mListener = (RouterAddDialogListener) activity;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(activity.toString()
+                    + " must implement NoticeDialogListener");
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -184,6 +200,7 @@ public class RouterAddDialogFragment extends SherlockDialogFragment implements A
     @Nullable
     private Router doCheckConnectionToRouter(AlertDialog d) throws Exception {
         final Router router = new Router();
+        router.setName(((EditText) d.findViewById(R.id.router_add_name)).getText().toString());
         router.setRemoteIpAddress(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString());
         router.setRemotePort(Integer.parseInt(((EditText) d.findViewById(R.id.router_add_port)).getText().toString()));
         router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(
@@ -305,6 +322,10 @@ public class RouterAddDialogFragment extends SherlockDialogFragment implements A
 
     }
 
+    public interface RouterAddDialogListener {
+        void onRouterAdd(SherlockDialogFragment dialog, boolean error);
+    }
+
     private class CheckRouterConnectionAsyncTask extends AsyncTask<AlertDialog, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
 
         private final String routerIpOrDns;
@@ -364,6 +385,10 @@ public class RouterAddDialogFragment extends SherlockDialogFragment implements A
                 } else {
                     displayMessage(getString(R.string.router_add_internal_error), Style.ALERT);
                 }
+            }
+
+            if (RouterAddDialogFragment.this.mListener != null) {
+                RouterAddDialogFragment.this.mListener.onRouterAdd(RouterAddDialogFragment.this, e != null);
             }
 
         }
