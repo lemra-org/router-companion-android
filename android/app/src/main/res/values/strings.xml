@@ -137,5 +137,12 @@
     <string name="router_add_new">New</string>
     <string name="cancel">Cancel</string>
     <string name="add_router">Add</string>
+    <string name="router_add_msg">Add a new router</string>
+    <string name="router_add_connection_unsuccessful">Could not connect to router</string>
+    <string name="router_add_ip_invalid">Invalid IP Address</string>
+    <string name="router_add_port_invalid">Invalid Port</string>
+    <string name="router_add_username_invalid">Please enter the SSH Username</string>
+    <string name="router_add_password_or_privkey_invalid">Please specify a password or a private key</string>
+    <string name="router_add_internal_error">Whoops - Internal Error. Sorry, try again later.</string>
 
 </resources>
