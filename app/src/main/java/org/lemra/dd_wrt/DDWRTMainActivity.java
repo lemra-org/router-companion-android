@@ -43,7 +43,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +50,6 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
-import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 
 import java.sql.SQLException;
 
@@ -65,9 +63,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
     DrawerLayout mDrawerLayout;
-
-    private DDWRTCompanionDAO dao;
-
     //TESTS
 //    private static final Router router = new Router();
 //
@@ -83,6 +78,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 //    }
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    private DDWRTCompanionDAO dao;
     private Router mRouter = null;
     private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
@@ -106,7 +102,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         setContentView(R.layout.activity_main);
 
         //SQLite
-        this.dao = new DDWRTCompanionSqliteDAOImpl(this);
+        this.dao = RouterManagementActivity.getDao(this);
         try {
             this.dao.open();
         } catch (SQLException e) {

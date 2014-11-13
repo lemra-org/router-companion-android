@@ -75,7 +75,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         dbHelper.close();
     }
 
-    public Router createRouter(Router router) {
+    public Router createOrUpdateRouter(Router router) {
         final String uuid = UUID.randomUUID().toString();
 
         ContentValues values = new ContentValues();
@@ -90,8 +90,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(ROUTER_USERNAME, router.getUsername());
         values.put(ROUTER_PROTOCOL, router.getRouterConnectionProtocol().toString());
 
-        long insertId = database.insert(TABLE_ROUTERS, null,
-                values);
+        long insertId = database.insertWithOnConflict(TABLE_ROUTERS, null,
+                values, SQLiteDatabase.CONFLICT_REPLACE);
+
         Log.d(LOG_TAG, "createRouter(" + uuid + " => " + insertId + ")");
 
         return getRouter(uuid);

@@ -90,6 +90,8 @@
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="ion-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-2.7.1" level="project" />
+    <orderEntry type="library" exported="" name="crouton-1.8.5" level="project" />
+    <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="acra-4.5.0" level="project" />
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="jsch-0.1.51" level="project" />
@@ -97,8 +99,8 @@
     <orderEntry type="library" exported="" name="androidasync-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidplot-core-0.6.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
-    <orderEntry type="library" exported="" name="svg-android-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-2.7.1" level="project" />
+    <orderEntry type="library" exported="" name="svg-android-2.0.0" level="project" />
     <orderEntry type="module" module-name="library" exported="" />
     <orderEntry type="module" module-name="actionbarsherlock" exported="" />
   </component>
