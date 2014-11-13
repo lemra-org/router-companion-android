@@ -27,92 +27,118 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/router_add_name"
+    <LinearLayout
+        android:id="@+id/router_add_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="16dp"
-        android:hint="Router Name"
-        android:inputType="text" />
+        android:orientation="vertical" />
 
-    <EditText
-        android:id="@+id/router_add_ip"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:hint="IP Address (e.g. 192.168.1.1)"
-        android:inputType="text" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/router_add_port"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:ems="10"
-        android:hint="Port"
-        android:inputType="numberSigned"
-        android:text="22" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/router_add_proto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:entries="@array/router_connection_protocols_array"
-        android:prompt="@string/router_connection_proto_select" />
+            <EditText
+                android:id="@+id/router_add_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="16dp"
+                android:hint="Router Name"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/router_add_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:hint="SSH Username (e.g. root)"
-        android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/router_add_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:hint="IP Address (e.g. 192.168.1.1 or my.router.domain.name)"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/router_add_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:hint="SSH Password (may be empty)"
-        android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/router_add_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:ems="10"
+                android:hint="Port"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="numberSigned"
+                android:text="22" />
 
-    <!-- TODO Add a file picker instead -->
-    <EditText
-        android:id="@+id/router_add_privkey"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:hint="Path to SSH Private key"
-        android:inputType="text" />
+            <Spinner
+                android:id="@+id/router_add_proto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:entries="@array/router_connection_protocols_array"
+                android:imeOptions="flagNoExtractUi"
+                android:prompt="@string/router_connection_proto_select" />
 
-    <CheckBox
-        android:id="@+id/router_add_is_strict_host_key_checking"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:text="Strict Host Key Checking" />
+            <EditText
+                android:id="@+id/router_add_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:hint="SSH Username (e.g. root)"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textPersonName" />
 
+            <EditText
+                android:id="@+id/router_add_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:hint="SSH Password (may be empty)"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textPassword" />
+
+            <!-- TODO Add a file picker instead -->
+            <EditText
+                android:id="@+id/router_add_privkey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:hint="Path to SSH Private key"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="text" />
+
+            <CheckBox
+                android:id="@+id/router_add_is_strict_host_key_checking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:imeOptions="flagNoExtractUi"
+                android:text="Strict Host Key Checking" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

@@ -21,6 +21,7 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.lemra.dd_wrt">
 
@@ -28,15 +29,12 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
+    <!-- To connect to the router -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!--<android:uses-permission-->
-    <!--android:name="android.permission.WRITE_EXTERNAL_STORAGE"-->
-    <!--android:maxSdkVersion="18" />-->
-    <!--<android:uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--<android:uses-permission-->
-    <!--android:name="android.permission.READ_EXTERNAL_STORAGE"-->
-    <!--android:maxSdkVersion="18" />-->
+    <!-- To get DhcpInfo, so as to default forms with the current gateway -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name="org.lemra.dd_wrt.DDWRTApplication"

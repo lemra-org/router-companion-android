@@ -36,7 +36,7 @@ public interface DDWRTCompanionDAO {
 
     public void close();
 
-    public Router createRouter(Router router);
+    public Router createOrUpdateRouter(Router router);
 
     public void deleteRouter(String uuid);
 
