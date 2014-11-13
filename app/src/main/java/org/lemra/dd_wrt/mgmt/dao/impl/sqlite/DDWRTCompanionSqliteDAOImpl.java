@@ -30,6 +30,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.common.base.Strings;
+
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
@@ -59,12 +61,36 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     // Database fields
     private SQLiteDatabase database;
-    private String[] allColumns = { COLUMN_ID, ROUTER_UUID, ROUTER_PROTOCOL,
-            ROUTER_IP, ROUTER_NAME, ROUTER_PASSWORD,
-            ROUTER_PORT, ROUTER_PRIVKEY, ROUTER_SSH_STRICT_HOST_KEY_CHECKING, ROUTER_USERNAME};
+    private String[] allColumns = {
+            COLUMN_ID,
+            ROUTER_UUID,
+            ROUTER_NAME,
+            ROUTER_IP,
+            ROUTER_PROTOCOL,
+            ROUTER_PORT,
+            ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
+            ROUTER_USERNAME,
+            ROUTER_PASSWORD,
+            ROUTER_PRIVKEY};
 
     public DDWRTCompanionSqliteDAOImpl(Context context) {
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
+    }
+
+    private static Router cursorToRouter(Cursor cursor) {
+
+        final Router router = new Router();
+        router.setUuid(cursor.getString(1));
+        router.setName(cursor.getString(2));
+        router.setRemoteIpAddress(cursor.getString(3));
+        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(cursor.getString(4)));
+        router.setRemotePort(cursor.getInt(5));
+        router.setStrictHostKeyChecking(cursor.getInt(6) == 1);
+        router.setUsername(cursor.getString(7));
+        router.setPassword(cursor.getString(8));
+        router.setPrivKey(cursor.getString(9));
+
+        return router;
     }
 
     public void open() throws SQLException {
@@ -76,7 +102,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     public Router createOrUpdateRouter(Router router) {
-        final String uuid = UUID.randomUUID().toString();
+        final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
+                UUID.randomUUID().toString() : router.getUuid());
 
         ContentValues values = new ContentValues();
         values.put(ROUTER_UUID, uuid);
@@ -141,21 +168,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
 
         return null;
-    }
-
-    private Router cursorToRouter(Cursor cursor) {
-
-        final Router router = new Router();
-        router.setUuid(cursor.getString(1));
-        router.setName(cursor.getString(2));
-        router.setRemoteIpAddress(cursor.getString(3));
-        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(cursor.getString(4)));
-        router.setRemotePort(cursor.getInt(5));
-        router.setStrictHostKeyChecking(cursor.getInt(6) == 1);
-        router.setUsername(cursor.getString(7));
-        router.setPassword(cursor.getString(8));
-
-        return router;
     }
 
 }

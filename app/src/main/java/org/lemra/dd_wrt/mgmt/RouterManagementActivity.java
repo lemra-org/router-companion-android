@@ -26,24 +26,27 @@ package org.lemra.dd_wrt.mgmt;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
-import org.lemra.dd_wrt.mgmt.dao.impl.test.DDWRTCompanionTestDAOImpl;
+import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 
 import java.sql.SQLException;
 
 
-public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener {
+public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener, RouterAddDialogFragment.RouterAddDialogListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
@@ -53,11 +56,12 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static DDWRTCompanionDAO getDao(Context context) {
-        //return new DDWRTCompanionSqliteDAOImpl(this);
+        return new DDWRTCompanionSqliteDAOImpl(context);
         //FIXME TESTS ONLY
-        return new DDWRTCompanionTestDAOImpl();
+//        return new DDWRTCompanionTestDAOImpl();
         //FIXME END TESTS
 
     }
@@ -80,6 +84,13 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.routers_list_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -98,10 +109,18 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     protected void onResume() {
         try {
             this.dao.open();
+            if (this.dao.getAllRouters().isEmpty()) {
+                openAddRouterForm();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         super.onResume();
+    }
+
+    private void openAddRouterForm() {
+        final DialogFragment addFragment = new RouterAddDialogFragment();
+        addFragment.show(getSupportFragmentManager(), "add_router");
     }
 
     @Override
@@ -131,10 +150,7 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.router_list_refresh) {
-            //TODO Refresh list
-            Toast.makeText(getApplicationContext(),
-                    "[FIXME] : refresh list",
-                    Toast.LENGTH_LONG).show();
+            this.mAdapter.notifyDataSetChanged();
             return true;
         }
 
@@ -143,13 +159,34 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
 
     @Override
     public void onClick(View view) {
-        final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), "add_router");
+        this.openAddRouterForm();
     }
 
     @Override
     public boolean onLongClick(View view) {
         this.onClick(view);
         return true;
+    }
+
+    @Override
+    public void onRouterAdd(SherlockDialogFragment dialog, boolean error) {
+        if (!error) {
+            this.mAdapter.notifyItemInserted(this.dao.getAllRouters().size() - 1);
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                mSwipeRefreshLayout.measure(1, 1);
+                //Issue with indicators not showing up. Workaround mentioned here: https://code.google.com/p/android/issues/detail?id=77712
+                mSwipeRefreshLayout.setProgressViewOffset(false, 0,
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 5000);
     }
 }
