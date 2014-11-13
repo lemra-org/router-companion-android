@@ -24,6 +24,10 @@
 
 package org.lemra.dd_wrt.utils;
 
+import android.app.AlertDialog;
+import android.content.Context;
+
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,5 +60,28 @@ public final class Utils {
             lines.add(line);
         }
         return lines.toArray(new String[lines.size()]);
+    }
+
+    @NotNull
+    public static AlertDialog buildAlertDialog(@NotNull final Context context, @Nullable final String title, @NotNull final String msg,
+                                               final boolean cancelable, final boolean cancelableOnTouchOutside) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        if (!Strings.isNullOrEmpty(title)) {
+            alertDialog.setTitle(title);
+        }
+        alertDialog.setMessage(msg);
+        alertDialog.setCancelable(cancelable);
+        alertDialog.setCanceledOnTouchOutside(cancelableOnTouchOutside);
+
+        return alertDialog;
+    }
+
+    @NotNull
+    public static String intToIp(final int i) {
+
+        return (i & 0xFF) + "." +
+                ((i >> 8) & 0xFF) + "." +
+                ((i >> 16) & 0xFF) + "." +
+                ((i >> 24) & 0xFF);
     }
 }

@@ -57,6 +57,28 @@ public final class SSHUtils {
     private SSHUtils() {
     }
 
+    public static void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
+        @Nullable Session jschSession = null;
+        try {
+            @Nullable final String privKey = router.getPrivKey();
+            @NotNull final JSch jsch = new JSch();
+            if (privKey != null) {
+                jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
+            }
+            jschSession = jsch.getSession(router.getUsername(), router.getRemoteIpAddress(), router.getRemotePort());
+            jschSession.setPassword(router.getPassword());
+            @NotNull final Properties config = new Properties();
+            config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
+            jschSession.setConfig(config);
+            jschSession.connect(connectTimeoutMillis);
+        } finally {
+            if (jschSession != null && jschSession.isConnected()) {
+                jschSession.disconnect();
+            }
+        }
+
+    }
+
     @Nullable
     public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");

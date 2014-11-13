@@ -24,30 +24,23 @@
 
 package org.lemra.dd_wrt.mgmt;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
-import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
-import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.lemra.dd_wrt.mgmt.dao.impl.test.DDWRTCompanionTestDAOImpl;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.lemra.dd_wrt.api.conn.Router.RouterConnectionProtocol.HTTPS;
-import static org.lemra.dd_wrt.api.conn.Router.RouterConnectionProtocol.SSH;
 
 
 public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener {
@@ -61,20 +54,25 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    public static DDWRTCompanionDAO getDao(Context context) {
+        //return new DDWRTCompanionSqliteDAOImpl(this);
+        //FIXME TESTS ONLY
+        return new DDWRTCompanionTestDAOImpl();
+        //FIXME END TESTS
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_router_management);
 
-        //SQLite
-        this.dao = new DDWRTCompanionSqliteDAOImpl(this);
+        this.dao = getDao(this);
         try {
             this.dao.open();
         } catch (SQLException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
-
-        final List<Router> routersRegistered = getRoutersRegistered();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.routersListView);
 
@@ -87,7 +85,7 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new RouterListRecycleViewAdapter(this, routersRegistered);
+        mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
 
         final ImageButton addNewButton = (ImageButton) findViewById(R.id.router_list_add);
@@ -141,55 +139,6 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @NotNull
-    private List<Router> getRoutersRegistered() {
-//        return this.dao.getAllRouters();
-
-        ArrayList<Router> results = new ArrayList<Router>();
-
-        //FIXME TESTS ONLY
-        //TODO Get items from SharedPreferences. If none registered, load activity for adding a new one
-        final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(33);
-
-        for (int i = 1; i <= 33; i++) {
-            final Router sr = new Router();
-            sr.setName("router #" + i);
-            sr.setRemoteIpAddress("172.17.17." + i);
-            sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
-            results.add(sr);
-        }
-        //FIXME TESTS
-
-        return results;
-    }
-
-    @NotNull
-    private List<Integer> getPrimeNumbersFromEratostheneSieve(final int up) {
-        final List<Integer> excluded = new ArrayList<Integer>();
-        for (int i = 2; i <= up; i++) {
-            if (excluded.contains(i)) {
-                continue;
-            }
-            for (int j = i + 1; j <= up; j++) {
-                if (j % i == 0) {
-                    excluded.add(j);
-                }
-            }
-        }
-
-        final List<Integer> primes = new ArrayList<Integer>();
-        for (int l = 1; l <= up; l++) {
-            if (excluded.contains(l)) {
-                continue;
-            }
-            primes.add(l);
-        }
-
-        Log.d(LOG_TAG, "primes: " + primes);
-
-        return primes;
     }
 
     @Override
