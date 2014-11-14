@@ -47,6 +47,7 @@ import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelp
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PASSWORD;
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PORT;
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PRIVKEY;
+import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PRIVKEY_PATH;
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PROTOCOL;
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_SSH_STRICT_HOST_KEY_CHECKING;
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_USERNAME;
@@ -71,7 +72,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
             ROUTER_USERNAME,
             ROUTER_PASSWORD,
-            ROUTER_PRIVKEY};
+            ROUTER_PRIVKEY,
+            ROUTER_PRIVKEY_PATH};
 
     public DDWRTCompanionSqliteDAOImpl(Context context) {
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
@@ -80,6 +82,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     private static Router cursorToRouter(Cursor cursor) {
 
         final Router router = new Router();
+        router.setId(cursor.getInt(0));
         router.setUuid(cursor.getString(1));
         router.setName(cursor.getString(2));
         router.setRemoteIpAddress(cursor.getString(3));
@@ -89,6 +92,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setUsername(cursor.getString(7));
         router.setPassword(cursor.getString(8));
         router.setPrivKey(cursor.getString(9));
+        router.setPrivkeyPath(cursor.getString(10));
 
         return router;
     }
@@ -112,6 +116,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(ROUTER_PASSWORD, router.getPassword());
         values.put(ROUTER_PORT, router.getRemotePort());
         values.put(ROUTER_PRIVKEY, router.getPrivKey());
+        values.put(ROUTER_PRIVKEY_PATH, router.getPrivkeyPath());
         values.put(ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
                 router.isStrictHostKeyChecking() ? 1 : 0);
         values.put(ROUTER_USERNAME, router.getUsername());

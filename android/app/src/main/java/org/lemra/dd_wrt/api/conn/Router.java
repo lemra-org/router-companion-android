@@ -58,6 +58,9 @@ public class Router implements Serializable {
     private String password;
     @Nullable
     private String privKey;
+    @Nullable
+    private String privkeyPath;
+    private int id = -1;
 
     private boolean strictHostKeyChecking = false;
 
@@ -191,9 +194,70 @@ public class Router implements Serializable {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
+
     @NotNull
     public String toString() {
         return this.name;
+    }
+
+    @Nullable
+    public String getPrivkeyPath() {
+        return privkeyPath;
+    }
+
+    public void setPrivkeyPath(@Nullable String privkeyPath) {
+        this.privkeyPath = privkeyPath;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Router router = (Router) o;
+
+        if (id != router.id) return false;
+        if (remotePort != router.remotePort) return false;
+        if (strictHostKeyChecking != router.strictHostKeyChecking) return false;
+        if (useDefault != router.useDefault) return false;
+        if (name != null ? !name.equals(router.name) : router.name != null) return false;
+        if (password != null ? !password.equals(router.password) : router.password != null)
+            return false;
+        if (privKey != null ? !privKey.equals(router.privKey) : router.privKey != null)
+            return false;
+        if (privkeyPath != null ? !privkeyPath.equals(router.privkeyPath) : router.privkeyPath != null)
+            return false;
+        if (!remoteIpAddress.equals(router.remoteIpAddress)) return false;
+        if (routerConnectionProtocol != router.routerConnectionProtocol) return false;
+        if (!username.equals(router.username)) return false;
+        if (!uuid.equals(router.uuid)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = routerConnectionProtocol.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + remoteIpAddress.hashCode();
+        result = 31 * result + remotePort;
+        result = 31 * result + username.hashCode();
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (privKey != null ? privKey.hashCode() : 0);
+        result = 31 * result + (privkeyPath != null ? privkeyPath.hashCode() : 0);
+        result = 31 * result + id;
+        result = 31 * result + (strictHostKeyChecking ? 1 : 0);
+        result = 31 * result + (useDefault ? 1 : 0);
+        result = 31 * result + uuid.hashCode();
+        return result;
     }
 
     public enum RouterConnectionProtocol {
@@ -235,5 +299,4 @@ public class Router implements Serializable {
             return defaultPassword;
         }
     }
-
 }

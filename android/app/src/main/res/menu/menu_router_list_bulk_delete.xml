@@ -23,10 +23,19 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_router_item_edit"
+        android:icon="@drawable/ic_action_editor_mode_edit"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_edit" />
+
     <item
         android:id="@+id/menu_router_list_delete"
         android:icon="@drawable/ic_action_remove"
-        android:orderInCategory="10"
+        android:orderInCategory="20"
         android:showAsAction="ifRoom"
         android:title="@string/action_remove" />
+
 </menu>
