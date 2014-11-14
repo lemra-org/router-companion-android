@@ -134,7 +134,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         List<Router> routers = new ArrayList<Router>();
 
         Cursor cursor = database.query(TABLE_ROUTERS,
-                allColumns, null, null, null, null, null);
+                allColumns, null, null, null, null, COLUMN_ID + " DESC");
 
         try {
             if (cursor.getCount() > 0) {
@@ -156,7 +156,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     @Nullable
     public Router getRouter(String uuid) {
         final Cursor cursor = database.query(TABLE_ROUTERS,
-                allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, null);
+                allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, COLUMN_ID + " DESC");
         try {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();

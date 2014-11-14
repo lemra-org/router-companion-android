@@ -37,26 +37,30 @@ import android.widget.ImageButton;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener, RouterAddDialogFragment.RouterAddDialogListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
-
+    boolean addRouterDialogOpen;
     private DDWRTCompanionDAO dao;
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Menu optionsMenu;
 
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
@@ -86,7 +90,8 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.routers_list_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(android.R.color.holo_blue_bright,
+        mSwipeRefreshLayout.setColorSchemeColors(
+                android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -109,7 +114,7 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     protected void onResume() {
         try {
             this.dao.open();
-            if (this.dao.getAllRouters().isEmpty()) {
+            if (!addRouterDialogOpen && this.dao.getAllRouters().isEmpty()) {
                 openAddRouterForm();
             }
         } catch (SQLException e) {
@@ -121,22 +126,26 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     private void openAddRouterForm() {
         final DialogFragment addFragment = new RouterAddDialogFragment();
         addFragment.show(getSupportFragmentManager(), "add_router");
+        addRouterDialogOpen = true;
     }
 
     @Override
     protected void onPause() {
         this.dao.close();
+        addRouterDialogOpen = false;
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         this.dao.close();
+        addRouterDialogOpen = false;
         super.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+        this.optionsMenu = menu;
         getSupportMenuInflater().inflate(R.menu.menu_router_management, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -150,11 +159,46 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.router_list_refresh) {
-            this.mAdapter.notifyDataSetChanged();
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doRefreshRoutersListWithSpinner(final RoutersListRefreshCause cause, final Integer position) {
+        setRefreshActionButtonState(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final List<Router> allRouters = RouterManagementActivity.this.dao.getAllRouters();
+                ((RouterListRecycleViewAdapter) RouterManagementActivity.this.mAdapter).setRoutersList(allRouters);
+                switch (cause) {
+                    case DATA_SET_CHANGED:
+                        RouterManagementActivity.this.mAdapter.notifyDataSetChanged();
+                        break;
+                    case INSERTED:
+                        RouterManagementActivity.this.mAdapter.notifyItemInserted(position);
+                        break;
+                    case REMOVED:
+                        RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
+                }
+                setRefreshActionButtonState(false);
+            }
+        }, 2000);
+    }
+
+    public void setRefreshActionButtonState(final boolean refreshing) {
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_list_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
     }
 
     @Override
@@ -171,7 +215,8 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     @Override
     public void onRouterAdd(SherlockDialogFragment dialog, boolean error) {
         if (!error) {
-            this.mAdapter.notifyItemInserted(this.dao.getAllRouters().size() - 1);
+            //Always added to the top
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 1);
         }
     }
 
@@ -188,5 +233,9 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 5000);
+    }
+
+    public enum RoutersListRefreshCause {
+        INSERTED, REMOVED, DATA_SET_CHANGED
     }
 }
