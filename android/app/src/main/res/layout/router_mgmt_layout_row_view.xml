@@ -35,17 +35,14 @@
         android:id="@+id/router_uuid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textStyle="bold"
         android:visibility="gone"/>
 
     <TextView
         android:id="@+id/router_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/ddwrt_green"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/ddwrt_green" />
 
     <TextView
         android:id="@+id/router_ip_address"
@@ -53,8 +50,14 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/router_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:id="@+id/router_connection_protocol"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
 
 </LinearLayout>
