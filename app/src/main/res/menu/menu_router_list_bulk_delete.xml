@@ -22,13 +22,11 @@
   ~ SOFTWARE.
   -->
 
-<resources>
-    <color name="primary">#9c27b0</color>
-    <color name="primary_dark">#4a148c</color>
-    <color name="white">#ffffff</color>
-    <color name="accent">#f50057</color>
-    <color name="ddwrt_purple">#a91991</color>
-    <color name="ddwrt_green">#009900</color>
-    <color name="background_window">#FFE5E5E5</color>
-
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_router_list_delete"
+        android:icon="@drawable/ic_action_remove"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_remove" />
+</menu>
