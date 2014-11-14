@@ -24,7 +24,9 @@
 
 package org.lemra.dd_wrt.mgmt;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -287,15 +289,32 @@ public class RouterManagementActivity
      * invocation should continue.
      */
     @Override
-    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+    public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem menuItem) {
         final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         switch (menuItem.getItemId()) {
             case R.id.menu_router_list_delete:
-                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
-                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-                    adapter.removeData(selectedItemPositions.get(i));
-                }
-                actionMode.finish();
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Delete Routers?")
+                        .setMessage("You'll lose those records!")
+                        .setCancelable(true)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                                for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
+                                    adapter.removeData(selectedItemPositions.get(itemPosition));
+                                }
+                                actionMode.finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+
                 return true;
             default:
                 return false;
