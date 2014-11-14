@@ -50,7 +50,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="16dp"
-                android:hint="Router Name"
+                android:hint="@string/router_add_name"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text" />
 
@@ -62,7 +62,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="IP Address (e.g. 192.168.1.1 or my.router.domain.name)"
+                android:hint="@string/router_add_dns_or_ip"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text" />
 
@@ -75,10 +75,10 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
                 android:ems="10"
-                android:hint="Port"
+                android:hint="@string/router_add_port"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberSigned"
-                android:text="22" />
+                android:text="@string/router_add_default_ssh_port" />
 
             <Spinner
                 android:id="@+id/router_add_proto"
@@ -97,7 +97,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="SSH Username (e.g. root)"
+                android:hint="@string/router_add_login"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="textPersonName" />
 
@@ -109,7 +109,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="SSH Password (may be empty)"
+                android:hint="@string/router_add_password_may_be_empty"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="textPassword" />
 
@@ -122,7 +122,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="Path to SSH Private key"
+                android:hint="@string/router_add_path_to_privkey"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text" />
 
@@ -135,7 +135,7 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
                 android:imeOptions="flagNoExtractUi"
-                android:text="Strict Host Key Checking" />
+                android:text="@string/router_add_strict_host_key_checking" />
 
         </LinearLayout>
 
