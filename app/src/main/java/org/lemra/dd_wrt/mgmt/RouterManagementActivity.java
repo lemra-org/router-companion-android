@@ -37,6 +37,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -316,6 +317,11 @@ public class RouterManagementActivity
                         }).create().show();
 
                 return true;
+            case R.id.menu_router_item_edit:
+                //TODO Open Edit DialogFragment
+                Toast.makeText(this, "Edit Router at pos #" + adapter.getSelectedItems().get(0), Toast.LENGTH_SHORT)
+                        .show();
+                return true;
             default:
                 return false;
         }
@@ -349,6 +355,12 @@ public class RouterManagementActivity
         adapter.toggleSelection(idx);
         String title = getString(R.string.selected_count, adapter.getSelectedItemCount());
         actionMode.setTitle(title);
+
+        //Show 'Edit' button only if one item is selected
+        final MenuItem editButton = actionMode.getMenu().getItem(0);
+        if (editButton != null) {
+            editButton.setVisible(adapter.getSelectedItemCount() == 1);
+        }
     }
 
     public enum RoutersListRefreshCause {
