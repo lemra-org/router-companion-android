@@ -28,10 +28,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -50,7 +48,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener, RouterAddDialogFragment.RouterAddDialogListener, SwipeRefreshLayout.OnRefreshListener {
+public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener, RouterAddDialogFragment.RouterAddDialogListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
@@ -59,7 +57,6 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private Menu optionsMenu;
 
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -87,14 +84,6 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.routers_list_container);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -218,21 +207,6 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 1);
         }
-    }
-
-    @Override
-    public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                mSwipeRefreshLayout.measure(1, 1);
-                //Issue with indicators not showing up. Workaround mentioned here: https://code.google.com/p/android/issues/detail?id=77712
-                mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        }, 5000);
     }
 
     public enum RoutersListRefreshCause {
