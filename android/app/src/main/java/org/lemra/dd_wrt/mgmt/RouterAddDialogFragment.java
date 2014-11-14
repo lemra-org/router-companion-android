@@ -109,7 +109,7 @@ public class RouterAddDialogFragment extends SherlockDialogFragment implements A
         builder
                 .setMessage(R.string.router_add_msg)
                 .setView(view)
-                // Add action buttons
+                        // Add action buttons
                 .setPositiveButton(R.string.add_router, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -158,37 +158,6 @@ public class RouterAddDialogFragment extends SherlockDialogFragment implements A
                         // Check connection to router ...
 
                         new CheckRouterConnectionAsyncTask(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
-
-//                        Router router = null;
-//                        AlertDialog checkingConnectionDialog = null;
-//                        try {
-//                            checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
-//                                    String.format("Hold on - checking connection to router '%s'...",
-//                                            ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()), false, false);
-//                            checkingConnectionDialog.show();
-//                            router = doCheckConnectionToRouter(d);
-//                        } catch (final Exception e) {
-//                            final Throwable rootCause = Throwables.getRootCause(e);
-//                            displayMessage(getString(R.string.router_add_connection_unsuccessful) +
-//                                            ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()),
-//                                    Style.ALERT);
-//                            validForm = false;
-//                        } finally {
-//                            if (checkingConnectionDialog != null) {
-//                                checkingConnectionDialog.cancel();
-//                            }
-//                        }
-//
-//                        if (validForm) {
-//                            //Register router
-//                            if (router != null) {
-//                                RouterAddDialogFragment.this.dao.createOrUpdateRouter(router);
-//                                dismiss();
-//                            } else {
-//                                displayMessage(getString(R.string.router_add_internal_error),
-//                                        Style.ALERT);
-//                            }
-//                        }
                     }
                     //else dialog stays open. 'Cancel' button can still close it.
                 }

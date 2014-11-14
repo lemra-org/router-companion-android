@@ -154,5 +154,6 @@
     <string name="router_add_name">Router Name</string>
     <string name="action_remove">Remove</string>
     <string name="selected_count">%1$s selected</string>
+    <string name="action_edit">Edit</string>
 
 </resources>
