@@ -152,5 +152,7 @@
     <string name="router_add_default_ssh_port">22</string>
     <string name="router_add_dns_or_ip">DNS or IP (e.g., 172.17.17.1 or routerlogin.net)</string>
     <string name="router_add_name">Router Name</string>
+    <string name="action_remove">Remove</string>
+    <string name="selected_count">%1$s selected</string>
 
 </resources>
