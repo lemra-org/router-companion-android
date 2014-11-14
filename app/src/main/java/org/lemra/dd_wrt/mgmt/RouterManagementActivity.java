@@ -28,14 +28,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import org.lemra.dd_wrt.R;
@@ -48,11 +53,17 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-public class RouterManagementActivity extends SherlockFragmentActivity implements View.OnClickListener, View.OnLongClickListener, RouterAddDialogFragment.RouterAddDialogListener {
+public class RouterManagementActivity
+        extends SherlockFragmentActivity
+        implements View.OnClickListener, RouterAddDialogFragment.RouterAddDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     boolean addRouterDialogOpen;
+    ActionMode actionMode;
+    GestureDetectorCompat gestureDetector;
+    int itemCount;
+    ImageButton addNewButton;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -72,6 +83,7 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_router_management);
 
+
         this.dao = getDao(this);
         try {
             this.dao.open();
@@ -85,17 +97,29 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        // allows for optimizations if all items are of the same size:
+        mRecyclerView.setHasFixedSize(true);
+
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
 
-        final ImageButton addNewButton = (ImageButton) findViewById(R.id.router_list_add);
+        /*
+         * onClickDetection is done in this Activity's onItemTouchListener
+         * with the help of a GestureDetector;
+         * Tip by Ian Lake on G+ in a comment to this post:
+         * https://plus.google.com/+LucasRocha/posts/37U8GWtYxDE
+         */
+        mRecyclerView.addOnItemTouchListener(this);
+        gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
+
+        addNewButton = (ImageButton) findViewById(R.id.router_list_add);
         addNewButton.setOnClickListener(this);
-        addNewButton.setOnLongClickListener(this);
 
     }
 
@@ -192,13 +216,27 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
 
     @Override
     public void onClick(View view) {
-        this.openAddRouterForm();
-    }
+        if (view.getId() == R.id.router_list_add) {
+            this.openAddRouterForm();
+        } else if (view.getId() == R.id.container_list_item) {
+            // item click
+            int idx = mRecyclerView.getChildPosition(view);
+            if (actionMode != null) {
+                myToggleSelection(idx);
+                return;
+            }
 
-    @Override
-    public boolean onLongClick(View view) {
-        this.onClick(view);
-        return true;
+            /*
+            DemoModel data = adapter.getItem(idx);
+            View innerContainer = view.findViewById(R.id.container_inner_item);
+            innerContainer.setViewName(Constants.NAME_INNER_CONTAINER + "_" + data.id);
+            Intent startIntent = new Intent(this, CardViewDemoActivity.class);
+            startIntent.putExtra(Constants.KEY_ID, data.id);
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, innerContainer, Constants.NAME_INNER_CONTAINER);
+            this.startActivity(startIntent, options.toBundle());
+             */
+        }
     }
 
     @Override
@@ -206,10 +244,116 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
         if (!error) {
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
+            mLayoutManager.scrollToPosition(0);
         }
+    }
+
+    /**
+     * Called when action mode is first created. The menu supplied will be used to
+     * generate action buttons for the action mode.
+     *
+     * @param actionMode ActionMode being created
+     * @param menu       Menu used to populate action buttons
+     * @return true if the action mode should be created, false if entering this
+     * mode should be aborted.
+     */
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        // Inflate a menu resource providing context menu items
+        MenuInflater inflater = actionMode.getMenuInflater();
+        inflater.inflate(R.menu.menu_router_list_bulk_delete, menu);
+        addNewButton.setVisibility(View.GONE);
+        return true;
+    }
+
+    /**
+     * Called to refresh an action mode's action menu whenever it is invalidated.
+     *
+     * @param actionMode ActionMode being prepared
+     * @param menu       Menu used to populate action buttons
+     * @return true if the menu or action mode was updated, false otherwise.
+     */
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        return false;
+    }
+
+    /**
+     * Called to report a user click on an action button.
+     *
+     * @param actionMode The current ActionMode
+     * @param menuItem   The item that was clicked
+     * @return true if this callback handled the event, false if the standard MenuItem
+     * invocation should continue.
+     */
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        switch (menuItem.getItemId()) {
+            case R.id.menu_router_list_delete:
+                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                    adapter.removeData(selectedItemPositions.get(i));
+                }
+                actionMode.finish();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Called when an action mode is about to be exited and destroyed.
+     *
+     * @param actionMode The current ActionMode being destroyed
+     */
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+        this.actionMode = null;
+        ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
+        addNewButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+        gestureDetector.onTouchEvent(motionEvent);
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+    }
+
+    private void myToggleSelection(int idx) {
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        adapter.toggleSelection(idx);
+        String title = getString(R.string.selected_count, adapter.getSelectedItemCount());
+        actionMode.setTitle(title);
     }
 
     public enum RoutersListRefreshCause {
         INSERTED, REMOVED, DATA_SET_CHANGED
+    }
+
+    private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+            onClick(view);
+            return super.onSingleTapConfirmed(e);
+        }
+
+        public void onLongPress(MotionEvent e) {
+            View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+            if (actionMode != null) {
+                return;
+            }
+            // Start the CAB using the ActionMode.Callback defined above
+            actionMode = startActionMode(RouterManagementActivity.this);
+            int idx = mRecyclerView.getChildPosition(view);
+            myToggleSelection(idx);
+            super.onLongPress(e);
+        }
     }
 }
