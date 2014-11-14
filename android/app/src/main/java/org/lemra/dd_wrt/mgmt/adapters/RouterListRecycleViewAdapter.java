@@ -26,12 +26,15 @@ package org.lemra.dd_wrt.mgmt.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.common.base.Strings;
 
 import org.lemra.dd_wrt.DDWRTMainActivity;
 import org.lemra.dd_wrt.R;
@@ -43,6 +46,7 @@ import static org.lemra.dd_wrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
 
+    public static final String EMPTY = "(empty)";
     private List<Router> routersList;
     private Context context;
 
@@ -76,7 +80,14 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final Router routerAt = routersList.get(position);
 
         holder.routerUuid.setText(routerAt.getUuid());
-        holder.routerName.setText(routerAt.getName() != null ? routerAt.getName() : "(empty)");
+        final String routerAtName = routerAt.getName();
+        if (Strings.isNullOrEmpty(routerAtName)) {
+            //Italic
+            holder.routerName.setText(EMPTY);
+            holder.routerName.setTypeface(null, Typeface.ITALIC);
+        } else {
+            holder.routerName.setText(routerAtName);
+        }
         holder.routerIp.setText(routerAt.getRemoteIpAddress());
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsername());
