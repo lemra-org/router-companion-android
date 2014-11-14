@@ -205,7 +205,7 @@ public class RouterManagementActivity extends SherlockFragmentActivity implement
     public void onRouterAdd(SherlockDialogFragment dialog, boolean error) {
         if (!error) {
             //Always added to the top
-            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 1);
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
         }
     }
 
