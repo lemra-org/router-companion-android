@@ -43,7 +43,7 @@ import static org.lemra.dd_wrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
 
-    private final List<Router> routersList;
+    private List<Router> routersList;
     private Context context;
 
 //    private LayoutInflater mInflater;
@@ -52,6 +52,10 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         routersList = results;
         this.context = context;
 //        mInflater = LayoutInflater.from(context);
+    }
+
+    public void setRoutersList(final List<Router> results) {
+        routersList = results;
     }
 
     @Override
@@ -72,10 +76,10 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final Router routerAt = routersList.get(position);
 
         holder.routerUuid.setText(routerAt.getUuid());
-        holder.routerName.setText(routerAt.getName());
-        holder.routerIp.setText(routerAt
-                .getRemoteIpAddress());
+        holder.routerName.setText(routerAt.getName() != null ? routerAt.getName() : "(empty)");
+        holder.routerIp.setText(routerAt.getRemoteIpAddress());
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
+        holder.routerUsername.setText(routerAt.getUsername());
     }
 
     @Override
@@ -92,6 +96,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final TextView routerIp;
         final TextView routerConnProto;
         final TextView routerUuid;
+        final TextView routerUsername;
 
         private final Context context;
         private final View itemView;
@@ -107,6 +112,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
             this.routerConnProto = (TextView) this.itemView.findViewById(R.id.router_connection_protocol);
             this.routerUuid = (TextView) this.itemView.findViewById(R.id.router_uuid);
+            this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
         }
 
         @Override
