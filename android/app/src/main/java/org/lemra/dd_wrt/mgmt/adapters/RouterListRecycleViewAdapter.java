@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import com.google.common.base.Strings;
 
+import org.jetbrains.annotations.NotNull;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
@@ -73,25 +74,26 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         routersList = results;
     }
 
+    @NotNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.router_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        ViewHolder vh = new ViewHolder(this.context, v);
+        @NotNull ViewHolder vh = new ViewHolder(this.context, v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Router routerAt = routersList.get(position);
 
         holder.routerUuid.setText(routerAt.getUuid());
-        final String routerAtName = routerAt.getName();
+        @NotNull final String routerAtName = routerAt.getName();
         if (Strings.isNullOrEmpty(routerAtName)) {
             //Italic
             holder.routerName.setText(EMPTY);
@@ -144,8 +146,9 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         }
     }
 
+    @NotNull
     public List<Integer> getSelectedItems() {
-        final List<Integer> items = new ArrayList<Integer>(selectedItems.size());
+        @NotNull final List<Integer> items = new ArrayList<Integer>(selectedItems.size());
         for (int i = 0; i < selectedItems.size(); i++) {
             items.add(selectedItems.keyAt(i));
         }
@@ -158,10 +161,15 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     public static class ViewHolder extends RecyclerView.ViewHolder {
 //                implements View.OnClickListener, View.OnLongClickListener {
 
+        @NotNull
         final TextView routerName;
+        @NotNull
         final TextView routerIp;
+        @NotNull
         final TextView routerConnProto;
+        @NotNull
         final TextView routerUuid;
+        @NotNull
         final TextView routerUsername;
 
         private final Context context;
