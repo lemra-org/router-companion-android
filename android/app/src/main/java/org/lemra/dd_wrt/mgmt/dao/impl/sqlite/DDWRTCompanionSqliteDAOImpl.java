@@ -31,14 +31,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
+import org.lemra.dd_wrt.utils.Utils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
@@ -57,9 +60,8 @@ import static org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelp
 public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     private static final String LOG_TAG = DDWRTCompanionSqliteDAOImpl.class.getSimpleName();
-
+    final Map<String, Integer> routersToIds = Maps.newConcurrentMap();
     private final DDWRTCompanionSqliteOpenHelper dbHelper;
-
     // Database fields
     private SQLiteDatabase database;
     private String[] allColumns = {
@@ -86,7 +88,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setUuid(cursor.getString(1));
         router.setName(cursor.getString(2));
         router.setRemoteIpAddress(cursor.getString(3));
-        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(cursor.getString(4)));
+        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol
+                .valueOf(cursor.getString(4)));
         router.setRemotePort(cursor.getInt(5));
         router.setStrictHostKeyChecking(cursor.getInt(6) == 1);
         router.setUsername(cursor.getString(7));
@@ -97,6 +100,14 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         return router;
     }
 
+    private void updateRouterIds() {
+        final List<Router> allRouters = this.getAllRouters();
+        int i = 0;
+        for (Router aRouter : allRouters) {
+            routersToIds.put(aRouter.getUuid(), i++);
+        }
+    }
+
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
@@ -105,10 +116,22 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         dbHelper.close();
     }
 
-    public Router createOrUpdateRouter(Router router) {
+    public Router insertRouter(Router router) {
         final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
                 UUID.randomUUID().toString() : router.getUuid());
+        long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
+        Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
+        return getRouter(uuid);
+    }
 
+    public Router updateRouter(Router router) {
+        final String uuid = router.getUuid();
+        final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
+        Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
+        return getRouter(uuid);
+    }
+
+    private ContentValues getContentValues(String uuid, Router router) {
         ContentValues values = new ContentValues();
         values.put(ROUTER_UUID, uuid);
         values.put(ROUTER_IP, router.getRemoteIpAddress());
@@ -121,13 +144,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 router.isStrictHostKeyChecking() ? 1 : 0);
         values.put(ROUTER_USERNAME, router.getUsername());
         values.put(ROUTER_PROTOCOL, router.getRouterConnectionProtocol().toString());
-
-        long insertId = database.insertWithOnConflict(TABLE_ROUTERS, null,
-                values, SQLiteDatabase.CONFLICT_REPLACE);
-
-        Log.d(LOG_TAG, "createRouter(" + uuid + " => " + insertId + ")");
-
-        return getRouter(uuid);
+        return values;
     }
 
     public void deleteRouter(String uuid) {
@@ -155,7 +172,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             cursor.close();
         }
 
-        return routers;
+        return Utils.dbIdsToPosition(routers);
     }
 
     @Nullable
@@ -165,7 +182,11 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         try {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                return cursorToRouter(cursor);
+                final Router router = cursorToRouter(cursor);
+                updateRouterIds();
+
+                router.setId(routersToIds.get(router.getUuid()));
+                return router;
             }
 
         } finally {

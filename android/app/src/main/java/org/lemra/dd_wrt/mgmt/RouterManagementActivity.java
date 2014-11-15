@@ -37,7 +37,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -55,10 +54,13 @@ import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import java.sql.SQLException;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 
 public class RouterManagementActivity
         extends SherlockFragmentActivity
-        implements View.OnClickListener, RouterAddDialogFragment.RouterAddDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
+        implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
@@ -145,6 +147,30 @@ public class RouterManagementActivity
         addRouterDialogOpen = true;
     }
 
+    private void openUpdateRouterForm(Router router) {
+        if (router != null) {
+            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
+            final Bundle args = new Bundle();
+            args.putString(ROUTER_SELECTED, router.getUuid());
+            updateFragment.setArguments(args);
+            updateFragment.show(getSupportFragmentManager(), "update_router");
+        } else {
+            Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
+        }
+    }
+
+    private void openDuplicateRouterForm(Router router) {
+        if (router != null) {
+            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
+            final Bundle args = new Bundle();
+            args.putString(ROUTER_SELECTED, router.getUuid());
+            copyFragment.setArguments(args);
+            copyFragment.show(getSupportFragmentManager(), "copy_router");
+        } else {
+            Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
+        }
+    }
+
     @Override
     protected void onPause() {
         this.dao.close();
@@ -198,6 +224,8 @@ public class RouterManagementActivity
                         break;
                     case REMOVED:
                         RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
+                    case UPDATED:
+                        RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
                 }
                 setRefreshActionButtonState(false);
             }
@@ -210,8 +238,10 @@ public class RouterManagementActivity
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+//                    addNewButton.setVisibility(View.GONE);
                 } else {
                     refreshItem.setActionView(null);
+//                    addNewButton.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -248,6 +278,15 @@ public class RouterManagementActivity
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
             mLayoutManager.scrollToPosition(0);
+        }
+    }
+
+    @Override
+    public void onRouterUpdated(SherlockDialogFragment dialog, int position, boolean error) {
+        if (!error) {
+            //Always added to the top
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
+            mLayoutManager.scrollToPosition(position);
         }
     }
 
@@ -296,7 +335,7 @@ public class RouterManagementActivity
             case R.id.menu_router_list_delete:
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle("Delete Routers?")
+                        .setTitle(String.format("Delete %s Router(s)?", adapter.getSelectedItemCount()))
                         .setMessage("You'll lose those records!")
                         .setCancelable(true)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -317,11 +356,22 @@ public class RouterManagementActivity
                         }).create().show();
 
                 return true;
-            case R.id.menu_router_item_edit:
-                //TODO Open Edit DialogFragment
-                Toast.makeText(this, "Edit Router at pos #" + adapter.getSelectedItems().get(0), Toast.LENGTH_SHORT)
-                        .show();
+            case R.id.menu_router_item_edit: {
+                final List<Router> routersList = ((RouterListRecycleViewAdapter) this.mAdapter).getRoutersList();
+                final Integer itemPos = adapter.getSelectedItems().get(0);
+                this.openUpdateRouterForm(
+                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
+                );
+            }
                 return true;
+            case R.id.menu_router_item_copy: {
+                final List<Router> routersList = ((RouterListRecycleViewAdapter) this.mAdapter).getRoutersList();
+                final Integer itemPos = adapter.getSelectedItems().get(0);
+                this.openDuplicateRouterForm(
+                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
+                );
+            }
+            return true;
             default:
                 return false;
         }
@@ -353,18 +403,29 @@ public class RouterManagementActivity
     private void myToggleSelection(int idx) {
         final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         adapter.toggleSelection(idx);
-        String title = getString(R.string.selected_count, adapter.getSelectedItemCount());
+        final int selectedItemCount = adapter.getSelectedItemCount();
+
+        String title = getString(R.string.selected_count, selectedItemCount);
         actionMode.setTitle(title);
 
         //Show 'Edit' button only if one item is selected
         final MenuItem editButton = actionMode.getMenu().getItem(0);
+        final boolean menuItemRelevantForOneItemSelectedOnly = (selectedItemCount == 1);
         if (editButton != null) {
-            editButton.setVisible(adapter.getSelectedItemCount() == 1);
+            editButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
+        }
+        final MenuItem copyButton = actionMode.getMenu().getItem(1);
+        if (copyButton != null) {
+            copyButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
+        }
+        final MenuItem deleteButton = actionMode.getMenu().getItem(2);
+        if (deleteButton != null) {
+            deleteButton.setVisible(selectedItemCount > 0);
         }
     }
 
     public enum RoutersListRefreshCause {
-        INSERTED, REMOVED, DATA_SET_CHANGED
+        INSERTED, REMOVED, DATA_SET_CHANGED, UPDATED
     }
 
     private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {

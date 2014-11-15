@@ -22,28 +22,30 @@
  * SOFTWARE.
  */
 
-package org.lemra.dd_wrt.mgmt.dao;
+package org.lemra.dd_wrt.mgmt;
 
-import org.jetbrains.annotations.Nullable;
-import org.lemra.dd_wrt.api.conn.Router;
+import org.jetbrains.annotations.NotNull;
+import org.lemra.dd_wrt.R;
 
-import java.sql.SQLException;
-import java.util.List;
+public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
-public interface DDWRTCompanionDAO {
+    @Override
+    protected CharSequence getDialogMessage() {
+        return getString(R.string.router_add_msg);
+    }
 
-    public void open() throws SQLException;
+    @Override
+    protected CharSequence getPositiveButtonMsg() {
+        return getString(R.string.add_router);
+    }
 
-    public void close();
+    @Override
+    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
+        mListener.onRouterAdd(this, error);
+    }
 
-    public Router insertRouter(Router router);
-
-    public Router updateRouter(Router router);
-
-    public void deleteRouter(String uuid);
-
-    public List<Router> getAllRouters();
-
-    @Nullable
-    public Router getRouter(String uuid);
+    @Override
+    protected boolean isUpdate() {
+        return false;
+    }
 }
