@@ -76,13 +76,13 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     nbRunsLoader++;
 
                     //TODO Test only
-                    final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
+                    @NotNull final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
                             "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
                             "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +
                             "Refrigerate roasted lobsters in a cooker with hollandaise sauce for about an hour to enhance their thickness." +
                             "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n" +
                             "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
                     nvramInfo.setProperty(SYSLOG, syslogData);
 
                     //END TESTS
@@ -102,7 +102,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
+    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 

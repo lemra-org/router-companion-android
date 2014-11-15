@@ -73,6 +73,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     protected abstract CharSequence getDialogMessage();
 
+    @org.jetbrains.annotations.Nullable
     protected abstract CharSequence getDialogTitle();
 
     protected abstract CharSequence getPositiveButtonMsg();
@@ -91,14 +92,15 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
     }
 
+    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        @NotNull AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         // Get the layout inflater
-        final LayoutInflater inflater = activity.getLayoutInflater();
+        @NotNull final LayoutInflater inflater = activity.getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
@@ -128,7 +130,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NotNull Activity activity) {
         super.onAttach(activity);
         // Verify that the host activity implements the callback interface
         try {
@@ -145,7 +147,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
+        @NotNull final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -196,8 +198,8 @@ public abstract class AbstractRouterMgmtDialogFragment
     }
 
     @Nullable
-    private Router doCheckConnectionToRouter(AlertDialog d) throws Exception {
-        final Router router = new Router();
+    private Router doCheckConnectionToRouter(@NotNull AlertDialog d) throws Exception {
+        @NotNull final Router router = new Router();
         final String uuid = ((EditText) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
@@ -226,8 +228,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         return router;
     }
 
-    private boolean validateForm(AlertDialog d) {
-        final EditText ipAddrView = (EditText) d.findViewById(R.id.router_add_ip);
+    private boolean validateForm(@NotNull AlertDialog d) {
+        @NotNull final EditText ipAddrView = (EditText) d.findViewById(R.id.router_add_ip);
 
         final Editable ipAddrViewText = ipAddrView.getText();
 
@@ -240,11 +242,11 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
 
         boolean validPort;
-        final EditText portView = (EditText) d.findViewById(R.id.router_add_port);
+        @NotNull final EditText portView = (EditText) d.findViewById(R.id.router_add_port);
         try {
             final String portStr = portView.getText().toString();
             validPort = (!isNullOrEmpty(portStr) && (Integer.parseInt(portStr) > 0));
-        } catch (final Exception e) {
+        } catch (@NotNull final Exception e) {
             e.printStackTrace();
             validPort = false;
         }
@@ -254,15 +256,15 @@ public abstract class AbstractRouterMgmtDialogFragment
             return false;
         }
 
-        final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
+        @NotNull final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
             displayMessage(getString(R.string.router_add_username_invalid), ALERT);
             sshUsernameView.requestFocus();
             return false;
         }
 
-        final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
-        final EditText sshPrivKeyView = (EditText) d.findViewById(R.id.router_add_privkey);
+        @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
+        @NotNull final EditText sshPrivKeyView = (EditText) d.findViewById(R.id.router_add_privkey);
 
         final boolean isPasswordEmpty = isNullOrEmpty(sshPasswordView.getText().toString());
         final boolean isPrivKeyEmpty = isNullOrEmpty(sshPrivKeyView.getText().toString());
@@ -279,7 +281,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         if (isNullOrEmpty(msg)) {
             return;
         }
-        final AlertDialog d = (AlertDialog) getDialog();
+        @NotNull final AlertDialog d = (AlertDialog) getDialog();
         Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView() : d.findViewById(R.id.router_add_notification_viewgroup))).show();
     }
 
@@ -296,11 +298,13 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     }
 
+    @org.jetbrains.annotations.Nullable
     protected abstract Router onPositiveButtonClickHandler(@NotNull final Router router);
 
     protected class CheckRouterConnectionAsyncTask extends AsyncTask<AlertDialog, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
 
         private final String routerIpOrDns;
+        @org.jetbrains.annotations.Nullable
         private AlertDialog checkingConnectionDialog = null;
 
         public CheckRouterConnectionAsyncTask(String routerIpOrDns) {
@@ -314,10 +318,11 @@ public abstract class AbstractRouterMgmtDialogFragment
             checkingConnectionDialog.show();
         }
 
+        @org.jetbrains.annotations.Nullable
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(AlertDialog... dialogs) {
-            Router result = null;
-            Exception exception = null;
+            @org.jetbrains.annotations.Nullable Router result = null;
+            @org.jetbrains.annotations.Nullable Exception exception = null;
             try {
                 result = doCheckConnectionToRouter(dialogs[0]);
             } catch (Exception e) {
@@ -328,20 +333,20 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
 
         @Override
-        protected void onPostExecute(CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
+        protected void onPostExecute(@NotNull CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
             if (checkingConnectionDialog != null) {
                 checkingConnectionDialog.cancel();
             }
 
             final Exception e = result.getException();
-            Router router = result.getResult();
+            @org.jetbrains.annotations.Nullable Router router = result.getResult();
             if (e != null) {
                 final Throwable rootCause = Throwables.getRootCause(e);
                 displayMessage(getString(R.string.router_add_connection_unsuccessful) +
                         ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), Style.ALERT);
             } else {
                 if (router != null) {
-                    AlertDialog daoAlertDialog = null;
+                    @org.jetbrains.annotations.Nullable AlertDialog daoAlertDialog = null;
                     try {
                         //Register or update router
                         daoAlertDialog = Utils.buildAlertDialog(getActivity(), null,

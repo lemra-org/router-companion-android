@@ -33,6 +33,7 @@ import android.util.Log;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
@@ -61,9 +62,11 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     private static final String LOG_TAG = DDWRTCompanionSqliteDAOImpl.class.getSimpleName();
     final Map<String, Integer> routersToIds = Maps.newConcurrentMap();
+    @NotNull
     private final DDWRTCompanionSqliteOpenHelper dbHelper;
     // Database fields
     private SQLiteDatabase database;
+    @NotNull
     private String[] allColumns = {
             COLUMN_ID,
             ROUTER_UUID,
@@ -81,9 +84,10 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
     }
 
-    private static Router cursorToRouter(Cursor cursor) {
+    @NotNull
+    private static Router cursorToRouter(@NotNull Cursor cursor) {
 
-        final Router router = new Router();
+        @NotNull final Router router = new Router();
         router.setId(cursor.getInt(0));
         router.setUuid(cursor.getString(1));
         router.setName(cursor.getString(2));
@@ -101,9 +105,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     private void updateRouterIds() {
-        final List<Router> allRouters = this.getAllRouters();
+        @NotNull final List<Router> allRouters = this.getAllRouters();
         int i = 0;
-        for (Router aRouter : allRouters) {
+        for (@NotNull Router aRouter : allRouters) {
             routersToIds.put(aRouter.getUuid(), i++);
         }
     }
@@ -116,23 +120,26 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         dbHelper.close();
     }
 
-    public Router insertRouter(Router router) {
-        final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
+    @Nullable
+    public Router insertRouter(@NotNull Router router) {
+        @NotNull final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
                 UUID.randomUUID().toString() : router.getUuid());
         long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
         Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
         return getRouter(uuid);
     }
 
-    public Router updateRouter(Router router) {
-        final String uuid = router.getUuid();
+    @Nullable
+    public Router updateRouter(@NotNull Router router) {
+        @NotNull final String uuid = router.getUuid();
         final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
         Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
         return getRouter(uuid);
     }
 
-    private ContentValues getContentValues(String uuid, Router router) {
-        ContentValues values = new ContentValues();
+    @NotNull
+    private ContentValues getContentValues(String uuid, @NotNull Router router) {
+        @NotNull ContentValues values = new ContentValues();
         values.put(ROUTER_UUID, uuid);
         values.put(ROUTER_IP, router.getRemoteIpAddress());
         values.put(ROUTER_NAME, router.getName());
@@ -152,8 +159,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
     }
 
+    @NotNull
     public List<Router> getAllRouters() {
-        List<Router> routers = new ArrayList<Router>();
+        @NotNull List<Router> routers = new ArrayList<Router>();
 
         Cursor cursor = database.query(TABLE_ROUTERS,
                 allColumns, null, null, null, null, COLUMN_ID + " DESC");
@@ -162,7 +170,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
-                    Router router = cursorToRouter(cursor);
+                    @NotNull Router router = cursorToRouter(cursor);
                     routers.add(router);
                     cursor.moveToNext();
                 }
@@ -182,7 +190,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         try {
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                final Router router = cursorToRouter(cursor);
+                @NotNull final Router router = cursorToRouter(cursor);
                 updateRouterIds();
 
                 router.setId(routersToIds.get(router.getUuid()));
