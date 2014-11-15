@@ -66,7 +66,7 @@ public final class Utils {
     @NotNull
     public static AlertDialog buildAlertDialog(@NotNull final Context context, @Nullable final String title, @NotNull final String msg,
                                                final boolean cancelable, final boolean cancelableOnTouchOutside) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        @NotNull final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         if (!Strings.isNullOrEmpty(title)) {
             alertDialog.setTitle(title);
         }
@@ -92,7 +92,7 @@ public final class Utils {
 
         int i = 0;
         for (final Router router : routersList) {
-            final Router r = new Router(router);
+            @NotNull final Router r = new Router(router);
             r.setId(i++);
             routers.add(r);
         }

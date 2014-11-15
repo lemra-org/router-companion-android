@@ -25,6 +25,7 @@
 package org.lemra.dd_wrt.mgmt;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
@@ -50,6 +51,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
         return false;
     }
 
+    @Nullable
     @Override
     protected Router onPositiveButtonClickHandler(@NotNull Router router) {
         return this.dao.insertRouter(router);

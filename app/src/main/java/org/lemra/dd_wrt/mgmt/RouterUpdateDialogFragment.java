@@ -32,11 +32,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
 public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment {
 
+    @Nullable
     private Router router;
 
     @Override
@@ -44,6 +46,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
         return getString(R.string.router_update_msg);
     }
 
+    @Nullable
     @Override
     protected CharSequence getDialogTitle() {
         return null;
@@ -75,7 +78,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
+        @NotNull final AlertDialog d = (AlertDialog) getDialog();
 
         if (router == null) {
             Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
@@ -93,7 +96,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName());
             ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress());
             ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()));
-            final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
+            @NotNull final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
             switch (router.getRouterConnectionProtocol()) {
                 case SSH:
                     protoDropdown.setSelection(0);
@@ -109,6 +112,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
         }
     }
 
+    @Nullable
     @Override
     protected Router onPositiveButtonClickHandler(@NotNull Router router) {
         return this.dao.updateRouter(router);

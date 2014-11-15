@@ -28,6 +28,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_ROUTERS = "routers";
@@ -47,13 +49,13 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             " (" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             ROUTER_UUID + " TEXT NOT NULL UNIQUE, " +
-                ROUTER_NAME + " TEXT DEFAULT NULL, " +
+            ROUTER_NAME + " TEXT DEFAULT NULL, " +
             ROUTER_IP + " TEXT NOT NULL, " +
             ROUTER_PROTOCOL + " TEXT NOT NULL, " +
             ROUTER_PORT + " INTEGER NOT NULL DEFAULT 22 CHECK(" + ROUTER_PORT + " > 0), " +
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING + " INTEGER NOT NULL DEFAULT 0, " +
-                ROUTER_USERNAME + " TEXT NOT NULL, " +
-                ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
+            ROUTER_USERNAME + " TEXT NOT NULL, " +
+            ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
             ROUTER_PRIVKEY + " TEXT DEFAULT NULL," +
             ROUTER_PRIVKEY_PATH + " TEXT DEFAULT NULL" +
             ");";
@@ -65,7 +67,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(@NotNull SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DATABASE_CREATE);
     }
 

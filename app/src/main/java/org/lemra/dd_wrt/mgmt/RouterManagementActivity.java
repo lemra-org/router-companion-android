@@ -45,6 +45,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -65,6 +67,7 @@ public class RouterManagementActivity
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     boolean addRouterDialogOpen;
+    @Nullable
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
     int itemCount;
@@ -75,6 +78,7 @@ public class RouterManagementActivity
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
 
+    @NotNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
         //FIXME TESTS ONLY
@@ -142,15 +146,15 @@ public class RouterManagementActivity
     }
 
     private void openAddRouterForm() {
-        final DialogFragment addFragment = new RouterAddDialogFragment();
+        @NotNull final DialogFragment addFragment = new RouterAddDialogFragment();
         addFragment.show(getSupportFragmentManager(), "add_router");
         addRouterDialogOpen = true;
     }
 
-    private void openUpdateRouterForm(Router router) {
+    private void openUpdateRouterForm(@Nullable Router router) {
         if (router != null) {
-            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
-            final Bundle args = new Bundle();
+            @NotNull final DialogFragment updateFragment = new RouterUpdateDialogFragment();
+            @NotNull final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             updateFragment.setArguments(args);
             updateFragment.show(getSupportFragmentManager(), "update_router");
@@ -159,10 +163,10 @@ public class RouterManagementActivity
         }
     }
 
-    private void openDuplicateRouterForm(Router router) {
+    private void openDuplicateRouterForm(@Nullable Router router) {
         if (router != null) {
-            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
-            final Bundle args = new Bundle();
+            @NotNull final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
+            @NotNull final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             copyFragment.setArguments(args);
             copyFragment.show(getSupportFragmentManager(), "copy_router");
@@ -193,7 +197,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull com.actionbarsherlock.view.MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -208,7 +212,7 @@ public class RouterManagementActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void doRefreshRoutersListWithSpinner(final RoutersListRefreshCause cause, final Integer position) {
+    private void doRefreshRoutersListWithSpinner(@NotNull final RoutersListRefreshCause cause, final Integer position) {
         setRefreshActionButtonState(true);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -248,7 +252,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(@NotNull View view) {
         if (view.getId() == R.id.router_list_add) {
             this.openAddRouterForm();
         } else if (view.getId() == R.id.container_list_item) {
@@ -300,7 +304,7 @@ public class RouterManagementActivity
      * mode should be aborted.
      */
     @Override
-    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+    public boolean onCreateActionMode(@NotNull ActionMode actionMode, Menu menu) {
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.menu_router_list_bulk_delete, menu);
@@ -329,8 +333,8 @@ public class RouterManagementActivity
      * invocation should continue.
      */
     @Override
-    public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem menuItem) {
-        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+    public boolean onActionItemClicked(@NotNull final ActionMode actionMode, @NotNull final MenuItem menuItem) {
+        @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         switch (menuItem.getItemId()) {
             case R.id.menu_router_list_delete:
                 new AlertDialog.Builder(this)
@@ -341,7 +345,7 @@ public class RouterManagementActivity
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
-                                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                                @NotNull final List<Integer> selectedItemPositions = adapter.getSelectedItems();
                                 for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
                                     adapter.removeData(selectedItemPositions.get(itemPosition));
                                 }
@@ -401,7 +405,7 @@ public class RouterManagementActivity
     }
 
     private void myToggleSelection(int idx) {
-        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         adapter.toggleSelection(idx);
         final int selectedItemCount = adapter.getSelectedItemCount();
 
@@ -430,13 +434,13 @@ public class RouterManagementActivity
 
     private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
+        public boolean onSingleTapConfirmed(@NotNull MotionEvent e) {
             View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             onClick(view);
             return super.onSingleTapConfirmed(e);
         }
 
-        public void onLongPress(MotionEvent e) {
+        public void onLongPress(@NotNull MotionEvent e) {
             View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             if (actionMode != null) {
                 return;

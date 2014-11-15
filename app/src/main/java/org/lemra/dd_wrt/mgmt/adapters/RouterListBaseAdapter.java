@@ -31,6 +31,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
@@ -42,7 +44,7 @@ public class RouterListBaseAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
 
-    public RouterListBaseAdapter(Context context, List<Router> results) {
+    public RouterListBaseAdapter(@NotNull Context context, List<Router> results) {
         routersList = results;
         mInflater = LayoutInflater.from(context);
     }
@@ -62,8 +64,9 @@ public class RouterListBaseAdapter extends BaseAdapter {
         return position;
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
+    public View getView(int position, @Nullable View convertView, ViewGroup viewGroup) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.router_mgmt_layout_row_view, null);

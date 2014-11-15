@@ -79,6 +79,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
     private DDWRTCompanionDAO dao;
+    @Nullable
     private Router mRouter = null;
     private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
