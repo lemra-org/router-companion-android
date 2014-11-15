@@ -62,7 +62,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
             sr.setName("router #" + i);
             sr.setRemoteIpAddress("172.17.17." + i);
             sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
-            this.createOrUpdateRouter(sr);
+            this.insertRouter(sr);
         }
     }
 
@@ -104,13 +104,25 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Router createOrUpdateRouter(Router router) {
+    public Router insertRouter(Router router) {
         Log.d(LOG_TAG, "createRouter(" + router + ")");
         if (isNullOrEmpty(router.getUuid())) {
             router.setUuid(UUID.randomUUID().toString());
         }
+        if (DB.containsKey(router.getUuid())) {
+            throw new IllegalArgumentException("Conflict!");
+        }
         DB.put(router.getUuid(), router);
 
+        return DB.get(router.getUuid());
+    }
+
+    @Override
+    public Router updateRouter(Router router) {
+        if (isNullOrEmpty(router.getUuid())) {
+            throw new IllegalArgumentException("UUID not specified for update");
+        }
+        DB.put(router.getUuid(), router);
         return DB.get(router.getUuid());
     }
 

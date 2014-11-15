@@ -69,6 +69,27 @@ public class Router implements Serializable {
     @SerializedName("uuid")
     private String uuid;
 
+    public Router() {
+    }
+
+    public Router(@Nullable final Router router) {
+        this();
+        if (router != null) {
+            this.id = router.id;
+            this.name = router.name;
+            this.uuid = router.uuid;
+            this.remoteIpAddress = router.remoteIpAddress;
+            this.remotePort = router.remotePort;
+            this.username = router.username;
+            this.password = router.password;
+            this.privKey = router.privKey;
+            this.privkeyPath = router.privkeyPath;
+            this.routerConnectionProtocol = router.routerConnectionProtocol;
+            this.strictHostKeyChecking = router.strictHostKeyChecking;
+            this.useDefault = router.useDefault;
+        }
+    }
+
     @NotNull
     public static Router loadFromPreferences(@NotNull ConfigurationBase paramConfigurationBase, String paramString) {
         @NotNull final Router routerInfo = new Router();

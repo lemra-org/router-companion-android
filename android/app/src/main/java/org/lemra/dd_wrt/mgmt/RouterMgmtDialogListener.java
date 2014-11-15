@@ -22,28 +22,13 @@
  * SOFTWARE.
  */
 
-package org.lemra.dd_wrt.mgmt.dao;
+package org.lemra.dd_wrt.mgmt;
 
-import org.jetbrains.annotations.Nullable;
-import org.lemra.dd_wrt.api.conn.Router;
+import com.actionbarsherlock.app.SherlockDialogFragment;
 
-import java.sql.SQLException;
-import java.util.List;
+public interface RouterMgmtDialogListener {
 
-public interface DDWRTCompanionDAO {
+    void onRouterAdd(SherlockDialogFragment dialog, boolean error);
 
-    public void open() throws SQLException;
-
-    public void close();
-
-    public Router insertRouter(Router router);
-
-    public Router updateRouter(Router router);
-
-    public void deleteRouter(String uuid);
-
-    public List<Router> getAllRouters();
-
-    @Nullable
-    public Router getRouter(String uuid);
+    void onRouterUpdated(SherlockDialogFragment dialog, int position, boolean error);
 }

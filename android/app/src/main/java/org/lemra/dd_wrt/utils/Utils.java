@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lemra.dd_wrt.api.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,5 +84,18 @@ public final class Utils {
                 ((i >> 8) & 0xFF) + "." +
                 ((i >> 16) & 0xFF) + "." +
                 ((i >> 24) & 0xFF);
+    }
+
+    @NotNull
+    public static List<Router> dbIdsToPosition(@NotNull final List<Router> routersList) {
+        final List<Router> routers = Lists.newArrayListWithCapacity(routersList.size());
+
+        int i = 0;
+        for (final Router router : routersList) {
+            final Router r = new Router(router);
+            r.setId(i++);
+            routers.add(r);
+        }
+        return routers;
     }
 }
