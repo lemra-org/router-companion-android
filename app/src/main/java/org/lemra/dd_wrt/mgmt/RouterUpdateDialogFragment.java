@@ -36,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment {
 
     @Nullable
@@ -61,6 +64,9 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
         if (position >= 0) {
             mListener.onRouterUpdated(this, position, error);
+        }
+        if (!error) {
+            Crouton.makeText(getActivity(), "Item updated", Style.CONFIRM).show();
         }
     }
 
