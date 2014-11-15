@@ -32,6 +32,13 @@
         android:title="@string/action_edit" />
 
     <item
+        android:id="@+id/menu_router_item_copy"
+        android:icon="@drawable/ic_action_content_content_copy"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_copy" />
+
+    <item
         android:id="@+id/menu_router_list_delete"
         android:icon="@drawable/ic_action_remove"
         android:orderInCategory="20"

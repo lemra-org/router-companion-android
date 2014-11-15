@@ -137,7 +137,9 @@
     <string name="router_add_new">New</string>
     <string name="cancel">Cancel</string>
     <string name="add_router">Add</string>
+    <string name="update_router">Update</string>
     <string name="router_add_msg">Add a new router</string>
+    <string name="router_update_msg">Update router</string>
     <string name="router_add_connection_unsuccessful">Could not connect to router</string>
     <string name="router_add_ip_invalid">Invalid IP Address</string>
     <string name="router_add_port_invalid">Invalid Port</string>
@@ -155,5 +157,6 @@
     <string name="action_remove">Remove</string>
     <string name="selected_count">%1$s selected</string>
     <string name="action_edit">Edit</string>
+    <string name="action_copy">Copy as new</string>
 
 </resources>
