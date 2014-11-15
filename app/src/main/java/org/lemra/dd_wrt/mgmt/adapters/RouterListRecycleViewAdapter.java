@@ -65,6 +65,10 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         selectedItems = new SparseBooleanArray();
     }
 
+    public List<Router> getRoutersList() {
+        return routersList;
+    }
+
     public void setRoutersList(final List<Router> results) {
         routersList = results;
     }
