@@ -29,6 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
     @Override
@@ -44,6 +47,9 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
     @Override
     protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
         mListener.onRouterAdd(this, error);
+        if (!error) {
+            Crouton.makeText(getActivity(), "Item copied as new", Style.CONFIRM).show();
+        }
     }
 
     @Override

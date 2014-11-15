@@ -27,6 +27,7 @@ package org.lemra.dd_wrt.mgmt;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -34,9 +35,11 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -47,11 +50,13 @@ import com.actionbarsherlock.view.MenuItem;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lemra.dd_wrt.DDWRTMainActivity;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.lemra.dd_wrt.utils.Utils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -257,22 +262,33 @@ public class RouterManagementActivity
             this.openAddRouterForm();
         } else if (view.getId() == R.id.container_list_item) {
             // item click
-            int idx = mRecyclerView.getChildPosition(view);
+            final int idx = mRecyclerView.getChildPosition(view);
             if (actionMode != null) {
                 myToggleSelection(idx);
                 return;
             }
 
-            /*
-            DemoModel data = adapter.getItem(idx);
-            View innerContainer = view.findViewById(R.id.container_inner_item);
-            innerContainer.setViewName(Constants.NAME_INNER_CONTAINER + "_" + data.id);
-            Intent startIntent = new Intent(this, CardViewDemoActivity.class);
-            startIntent.putExtra(Constants.KEY_ID, data.id);
-            ActivityOptions options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, innerContainer, Constants.NAME_INNER_CONTAINER);
-            this.startActivity(startIntent, options.toBundle());
-             */
+            final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+            alertDialog.show();
+            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //No action mode - normal mode => open up main activity for this router
+                    final List<Router> routersList = ((RouterListRecycleViewAdapter) mAdapter).getRoutersList();
+                    final Router router;
+                    if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
+                        Crouton.makeText(RouterManagementActivity.this,
+                                "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
+                        return;
+                    }
+                    final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
+                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, router.getUuid());
+                    RouterManagementActivity.this.startActivity(ddWrtMainIntent);
+                    alertDialog.cancel();
+                }
+            }, 2000);
+
         }
     }
 
@@ -307,7 +323,7 @@ public class RouterManagementActivity
     public boolean onCreateActionMode(@NotNull ActionMode actionMode, Menu menu) {
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = actionMode.getMenuInflater();
-        inflater.inflate(R.menu.menu_router_list_bulk_delete, menu);
+        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
         addNewButton.setVisibility(View.GONE);
         return true;
     }
@@ -337,9 +353,10 @@ public class RouterManagementActivity
         @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         switch (menuItem.getItemId()) {
             case R.id.menu_router_list_delete:
+                final int selectedItemCount = adapter.getSelectedItemCount();
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Delete %s Router(s)?", adapter.getSelectedItemCount()))
+                        .setTitle(String.format("Delete %s Router(s)?", selectedItemCount))
                         .setMessage("You'll lose those records!")
                         .setCancelable(true)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -350,6 +367,7 @@ public class RouterManagementActivity
                                     adapter.removeData(selectedItemPositions.get(itemPosition));
                                 }
                                 actionMode.finish();
+                                Crouton.makeText(RouterManagementActivity.this, selectedItemCount + " item(s) deleted", Style.CONFIRM).show();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -405,6 +423,9 @@ public class RouterManagementActivity
     }
 
     private void myToggleSelection(int idx) {
+        if (actionMode == null) {
+            return;
+        }
         @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         adapter.toggleSelection(idx);
         final int selectedItemCount = adapter.getSelectedItemCount();
