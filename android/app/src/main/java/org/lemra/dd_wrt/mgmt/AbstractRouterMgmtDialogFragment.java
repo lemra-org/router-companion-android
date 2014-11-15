@@ -281,7 +281,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         if (isNullOrEmpty(msg)) {
             return;
         }
-        @NotNull final AlertDialog d = (AlertDialog) getDialog();
+        @org.jetbrains.annotations.Nullable final AlertDialog d = (AlertDialog) getDialog();
         Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView() : d.findViewById(R.id.router_add_notification_viewgroup))).show();
     }
 
