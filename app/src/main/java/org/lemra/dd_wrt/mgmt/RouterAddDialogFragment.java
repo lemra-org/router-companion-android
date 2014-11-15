@@ -31,6 +31,7 @@ import android.net.wifi.WifiManager;
 import android.widget.EditText;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.R;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.utils.Utils;
@@ -43,6 +44,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         return getString(R.string.router_add_msg);
     }
 
+    @Nullable
     @Override
     protected CharSequence getDialogTitle() {
         return null;
@@ -62,25 +64,26 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
+        @NotNull final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
 
             //Fill the router IP Address with the current gateway address, if any
             try {
-                final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                @NotNull final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
                 if (wifiManager != null) {
                     final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                     if (dhcpInfo != null) {
                         ((EditText) d.findViewById(R.id.router_add_ip)).setText(Utils.intToIp(dhcpInfo.gateway));
                     }
                 }
-            } catch (final Exception e) {
+            } catch (@NotNull final Exception e) {
                 e.printStackTrace();
                 //No worries
             }
         }
     }
 
+    @Nullable
     @Override
     protected Router onPositiveButtonClickHandler(@NotNull Router router) {
         return this.dao.insertRouter(router);

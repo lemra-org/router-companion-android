@@ -55,10 +55,10 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
     }
 
     private void populateDB() {
-        final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(MAX_INIT_ENTRIES);
+        @NotNull final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(MAX_INIT_ENTRIES);
 
         for (int i = 1; i <= MAX_INIT_ENTRIES; i++) {
-            final Router sr = new Router();
+            @NotNull final Router sr = new Router();
             sr.setName("router #" + i);
             sr.setRemoteIpAddress("172.17.17." + i);
             sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
@@ -68,7 +68,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
 
     @NotNull
     private List<Integer> getPrimeNumbersFromEratostheneSieve(final int up) {
-        final List<Integer> excluded = new ArrayList<Integer>();
+        @NotNull final List<Integer> excluded = new ArrayList<Integer>();
         for (int i = 2; i <= up; i++) {
             if (excluded.contains(i)) {
                 continue;
@@ -80,7 +80,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
             }
         }
 
-        final List<Integer> primes = new ArrayList<Integer>();
+        @NotNull final List<Integer> primes = new ArrayList<Integer>();
         for (int l = 1; l <= up; l++) {
             if (excluded.contains(l)) {
                 continue;
@@ -104,7 +104,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Router insertRouter(Router router) {
+    public Router insertRouter(@NotNull Router router) {
         Log.d(LOG_TAG, "createRouter(" + router + ")");
         if (isNullOrEmpty(router.getUuid())) {
             router.setUuid(UUID.randomUUID().toString());
@@ -118,7 +118,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Router updateRouter(Router router) {
+    public Router updateRouter(@NotNull Router router) {
         if (isNullOrEmpty(router.getUuid())) {
             throw new IllegalArgumentException("UUID not specified for update");
         }

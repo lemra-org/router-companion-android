@@ -109,7 +109,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 

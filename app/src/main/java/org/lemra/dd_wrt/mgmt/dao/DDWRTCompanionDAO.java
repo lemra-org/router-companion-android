@@ -36,8 +36,10 @@ public interface DDWRTCompanionDAO {
 
     public void close();
 
+    @Nullable
     public Router insertRouter(Router router);
 
+    @Nullable
     public Router updateRouter(Router router);
 
     public void deleteRouter(String uuid);
