@@ -27,14 +27,11 @@ package org.lemra.dd_wrt.mgmt.dao;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface DDWRTCompanionDAO {
 
-    public void open() throws SQLException;
-
-    public void close();
+    public void destroy();
 
     @Nullable
     public Router insertRouter(Router router);
