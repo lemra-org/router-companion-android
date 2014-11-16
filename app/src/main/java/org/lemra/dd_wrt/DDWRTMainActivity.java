@@ -46,10 +46,12 @@ import com.actionbarsherlock.view.MenuItem;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lemra.dd_wrt.about.AboutDialog;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
+import org.lemra.dd_wrt.utils.Utils;
 
 /**
  * Main Android Activity
@@ -191,6 +193,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
             case R.id.action_settings:
                 //TODO Open Settings activity
                 Toast.makeText(this.getApplicationContext(), "Settings selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_donate:
+                Utils.openDonateActivity(this);
+                return true;
+            case R.id.action_about:
+                new AboutDialog(this).show();
                 return true;
 
         }
