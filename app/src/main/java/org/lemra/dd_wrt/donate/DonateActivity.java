@@ -55,7 +55,7 @@ public class DonateActivity extends SherlockFragmentActivity {
     /**
      * FIXME Flattr
      */
-    private static final String FLATTR_PROJECT_URL = "https://github.com/dschuermann/android-donations-lib/";
+    private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
     // FLATTR_URL without http:// !
     private static final String FLATTR_URL = "flattr.com/thing/712895/dschuermannandroid-donations-lib-on-GitHub";
 
