@@ -24,6 +24,8 @@
 
 
 
+
+
 apply plugin: 'com.android.application'
 
 android {
@@ -37,6 +39,16 @@ android {
         versionCode 1
         versionName getVersionName()
     }
+
+    productFlavors {
+        google {
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+        }
+        fdroid {
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+        }
+    }
+
     buildTypes {
         release {
             runProguard false
@@ -90,6 +102,7 @@ dependencies {
         // exclusion is not neccessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-    compile project(":actionbarsherlock")
-    compile project(":library")
+    compile project(':libraries:actionbarsherlock')
+    compile project(':libraries:pagerslidingtabstrip')
+    compile project(':libraries:Donations')
 }
