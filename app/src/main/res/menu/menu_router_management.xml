@@ -33,4 +33,26 @@
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_refresh" />
 
+    <item
+        android:id="@+id/router_list_donate"
+        android:alphabeticShortcut="d"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_donate" />
+
+    <item
+        android:id="@+id/router_list_settings"
+        android:alphabeticShortcut="s"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="3"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_settings" />
+
+    <item
+        android:id="@+id/router_list_about"
+        android:alphabeticShortcut="a"
+        android:orderInCategory="4"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_about" />
+
 </menu>

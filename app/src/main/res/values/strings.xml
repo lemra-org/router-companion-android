@@ -158,5 +158,7 @@
     <string name="selected_count">%1$s selected</string>
     <string name="action_edit">Edit</string>
     <string name="action_copy">Copy as new</string>
+    <string name="menuitem_donate">Donate</string>
+    <string name="menuitem_about">About</string>
 
 </resources>
