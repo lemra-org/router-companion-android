@@ -200,7 +200,7 @@ public class RouterManagementActivity
                 doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
                 return true;
             case R.id.router_list_donate:
-                Toast.makeText(this, "[TODO] RouterManagementActivity - Donate", Toast.LENGTH_SHORT).show();
+                Utils.openDonateActivity(this);
                 return true;
             case R.id.router_list_about:
                 new AboutDialog(this).show();

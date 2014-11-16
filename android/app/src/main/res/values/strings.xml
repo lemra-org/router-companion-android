@@ -27,6 +27,21 @@
     <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
+    <string-array name="donation_google_catalog_values">
+        <item>1 Euro</item>
+        <item>2 Euros</item>
+        <item>3 Euros</item>
+        <item>5 Euros</item>
+        <item>8 Euros</item>
+        <item>13 Euros</item>
+        <item>21 Euros</item>
+        <item>34 Euros</item>
+        <item>55 Euros</item>
+        <item>89 Euros</item>
+    </string-array>
+
+    <string name="donation_paypal_item">Donation</string>
+
     <string-array name="navigation_drawer_items_array">
         <item>Status</item>
         <item>Setup</item>
