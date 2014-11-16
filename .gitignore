@@ -3,6 +3,8 @@
 # Mobile Tools for Java (J2ME)
 ./android/**/.mtj.tmp/
 
+./android/libraries/**/build
+
 # Package Files #
 ./android/**/*.jar
 ./android/**/*.war
