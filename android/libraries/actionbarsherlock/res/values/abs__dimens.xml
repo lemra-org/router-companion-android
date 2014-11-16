@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2014 Armel S.
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+<resources>
+    <!-- Default height of an action bar. -->
+    <dimen name="abs__action_bar_default_height">48dip</dimen>
+    <!-- Vertical padding around action bar icons. -->
+    <dimen name="abs__action_bar_icon_vertical_padding">8dip</dimen>
+    <!-- Text size for action bar titles -->
+    <dimen name="abs__action_bar_title_text_size">18dp</dimen>
+    <!-- Text size for action bar subtitles -->
+    <dimen name="abs__action_bar_subtitle_text_size">14dp</dimen>
+    <!-- Top margin for action bar subtitles -->
+    <dimen name="abs__action_bar_subtitle_top_margin">-3dp</dimen>
+    <!-- Bottom margin for action bar subtitles -->
+    <dimen name="abs__action_bar_subtitle_bottom_margin">5dip</dimen>
+
+    <integer name="abs__max_action_buttons">2</integer>
+
+    <!-- Minimum width for an action button in the menu area of an action bar -->
+    <dimen name="abs__action_button_min_width">56dip</dimen>
+
+
+    <!-- Text padding for dropdown items -->
+    <dimen name="abs__dropdownitem_text_padding_left">8dip</dimen>
+
+    <!-- Text padding for dropdown items -->
+    <dimen name="abs__dropdownitem_text_padding_right">8dip</dimen>
+
+    <!-- Width of the icon in a dropdown list -->
+    <dimen name="abs__dropdownitem_icon_width">32dip</dimen>
+
+
+    <!-- Minimum width of the search view text entry area. -->
+    <dimen name="abs__search_view_text_min_width">160dip</dimen>
+
+    <!-- Preferred width of the search view. -->
+    <dimen name="abs__search_view_preferred_width">320dip</dimen>
+</resources>
