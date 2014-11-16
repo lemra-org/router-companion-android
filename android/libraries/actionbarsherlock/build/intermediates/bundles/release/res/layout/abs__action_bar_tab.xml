@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<view
+    style="?attr/actionBarTabStyle"
+    class="com.actionbarsherlock.internal.widget.ScrollingTabContainerView$TabView" /><!-- From: file:/Users/armel/Documents/Perso/PersonalProjects/mobile-dev/dd-wrt-companion/android/actionbarsherlock/res/layout/abs__action_bar_tab.xml -->
