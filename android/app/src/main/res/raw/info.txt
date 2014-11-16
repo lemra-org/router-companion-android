@@ -1,6 +1,6 @@
 <h3>DD-WRT Companion</h3>
-Version 1.0<br/><br/>
-Copyright (c) 2014 Armel S.<br/><br/>
+Version %VERSION_NAME%<br/><br/>
+Copyright &copy; 2014 Armel S.<br/><br/>
 
 <b><a href="http://apps.rm3l.org/ddwrt" target="_blank">http://apps.rm3l.org/ddwrt</a></b>
 <!--<b><a href="https://github.com/rm3l/ddwrt-companion/tree/master/android" target="_blank">https://github.com/rm3l/ddwrt-companion/tree/master/android</a></b>-->
