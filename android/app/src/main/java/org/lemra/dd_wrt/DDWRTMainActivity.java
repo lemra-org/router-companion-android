@@ -51,8 +51,6 @@ import org.lemra.dd_wrt.fragments.PageSlidingTabStripFragment;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 
-import java.sql.SQLException;
-
 /**
  * Main Android Activity
  * <p/>
@@ -104,11 +102,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
         this.mRouter = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
 
         mTitle = mDrawerTitle = getTitle();
@@ -158,24 +151,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     }
 
     @Override
-    protected void onResume() {
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        this.dao.close();
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
-        this.dao.close();
         this.mRouter = null;
         super.onDestroy();
     }

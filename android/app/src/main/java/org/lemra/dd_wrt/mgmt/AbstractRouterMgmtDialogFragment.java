@@ -56,7 +56,6 @@ import org.lemra.dd_wrt.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -85,11 +84,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         super.onCreate(savedInstanceState);
 
         this.dao = RouterManagementActivity.getDao(getActivity());
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
     }
 
     @NotNull
@@ -166,35 +160,6 @@ public abstract class AbstractRouterMgmtDialogFragment
 
             });
         }
-    }
-
-
-    @Override
-    public void onResume() {
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        this.dao.close();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        this.dao.close();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        this.dao.close();
-        super.onDismiss(dialog);
     }
 
     @Nullable

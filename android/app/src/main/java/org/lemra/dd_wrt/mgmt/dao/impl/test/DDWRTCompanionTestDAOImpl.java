@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -94,12 +93,7 @@ public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public void open() throws SQLException {
-        Log.d(LOG_TAG, "open");
-    }
-
-    @Override
-    public void close() {
+    public void destroy() {
         Log.d(LOG_TAG, "close");
     }
 

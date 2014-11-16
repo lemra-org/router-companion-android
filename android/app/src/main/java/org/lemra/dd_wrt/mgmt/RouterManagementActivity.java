@@ -58,7 +58,6 @@ import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 import org.lemra.dd_wrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.lemra.dd_wrt.utils.Utils;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -99,11 +98,6 @@ public class RouterManagementActivity
 
 
         this.dao = getDao(this);
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.routersListView);
 
@@ -139,13 +133,8 @@ public class RouterManagementActivity
 
     @Override
     protected void onResume() {
-        try {
-            this.dao.open();
-            if (!addRouterDialogOpen && this.dao.getAllRouters().isEmpty()) {
+        if (!addRouterDialogOpen && this.dao.getAllRouters().isEmpty()) {
                 openAddRouterForm();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         super.onResume();
     }
@@ -182,14 +171,12 @@ public class RouterManagementActivity
 
     @Override
     protected void onPause() {
-        this.dao.close();
         addRouterDialogOpen = false;
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        this.dao.close();
         addRouterDialogOpen = false;
         super.onDestroy();
     }
