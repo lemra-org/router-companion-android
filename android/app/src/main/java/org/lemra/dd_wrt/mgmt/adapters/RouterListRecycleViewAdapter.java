@@ -41,7 +41,6 @@ import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.RouterManagementActivity;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +56,6 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         routersList = results;
         this.context = context;
         this.dao = RouterManagementActivity.getDao(context);
-        try {
-            this.dao.open();
-        } catch (SQLException e) {
-            throw new IllegalStateException(e.getMessage(), e);
-        }
 
         selectedItems = new SparseBooleanArray();
     }
