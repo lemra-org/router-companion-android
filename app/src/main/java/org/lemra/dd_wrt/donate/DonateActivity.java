@@ -85,7 +85,6 @@ public class DonateActivity extends SherlockFragmentActivity {
                     PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
 
-
         ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
         ft.commit();
     }
