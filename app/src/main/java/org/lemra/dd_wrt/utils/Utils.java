@@ -26,6 +26,7 @@ package org.lemra.dd_wrt.utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -33,6 +34,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.api.conn.Router;
+import org.lemra.dd_wrt.donate.DonateActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,6 +77,11 @@ public final class Utils {
         alertDialog.setCanceledOnTouchOutside(cancelableOnTouchOutside);
 
         return alertDialog;
+    }
+
+    public static void openDonateActivity(@NotNull final Context context) {
+        final Intent donateIntent = new Intent(context, DonateActivity.class);
+        context.startActivity(donateIntent);
     }
 
     @NotNull

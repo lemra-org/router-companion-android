@@ -44,19 +44,27 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock">
+
         <activity
             android:name="org.lemra.dd_wrt.mgmt.RouterManagementActivity"
             android:label="@string/app_name">
-        <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="org.lemra.dd_wrt.DDWRTMainActivity"
             android:label="@string/app_name"
             android:parentActivityName="org.lemra.dd_wrt.mgmt.RouterManagementActivity" />
+
+        <activity
+            android:name="org.lemra.dd_wrt.donate.DonateActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="org.lemra.dd_wrt.mgmt.RouterManagementActivity" />
+
     </application>
 
 </manifest>
