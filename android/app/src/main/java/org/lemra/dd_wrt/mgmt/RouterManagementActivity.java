@@ -40,6 +40,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -52,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lemra.dd_wrt.DDWRTMainActivity;
 import org.lemra.dd_wrt.R;
+import org.lemra.dd_wrt.about.AboutDialog;
 import org.lemra.dd_wrt.api.conn.Router;
 import org.lemra.dd_wrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.lemra.dd_wrt.mgmt.dao.DDWRTCompanionDAO;
@@ -193,14 +195,22 @@ public class RouterManagementActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.router_list_refresh) {
-            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.router_list_refresh:
+                doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
+                return true;
+            case R.id.router_list_donate:
+                Toast.makeText(this, "[TODO] RouterManagementActivity - Donate", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.router_list_about:
+                new AboutDialog(this).show();
+                return true;
+            case R.id.router_list_settings:
+                Toast.makeText(this, "[TODO] RouterManagementActivity - Settings", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
