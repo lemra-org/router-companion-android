@@ -56,26 +56,12 @@ import org.lemra.dd_wrt.utils.Utils;
 /**
  * Main Android Activity
  * <p/>
- * TODO Display a 'Routers Management' activity, where the user can CRUD routers. For now, we are using hard-coded connection parameters.
  */
 public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewPager.OnPageChangeListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
     DrawerLayout mDrawerLayout;
-    //TESTS
-//    private static final Router router = new Router();
-//
-//    static {
-//        router.setRemoteIpAddress("172.17.17.1");
-//        router.setUsername("root");
-//        router.setName("@home");
-//        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.SSH);
-//        router.setPrivKey("-----\n" +
-//                "xxxx\n" +
-//                "------");
-//        router.setStrictHostKeyChecking(false);
-//    }
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
     private DDWRTCompanionDAO dao;
@@ -88,16 +74,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     private CharSequence mTitle;
     private String[] mDDWRTNavigationMenuSections;
     private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
-    //END TESTS
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//
-//        final String json = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-//        if (json != null) {
-//            this.mRouter = new Gson().fromJson(json, Router.class);
-//        }
 
         preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);

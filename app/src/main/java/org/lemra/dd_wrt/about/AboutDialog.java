@@ -32,6 +32,7 @@ import android.text.Html;
 import android.text.util.Linkify;
 import android.widget.TextView;
 
+import org.lemra.dd_wrt.BuildConfig;
 import org.lemra.dd_wrt.R;
 
 import java.io.BufferedReader;
@@ -41,6 +42,8 @@ import java.io.InputStreamReader;
 
 public class AboutDialog extends Dialog {
 
+    public static final String VERSION_CODE_INFO_TXT = "%VERSION_CODE%";
+    public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     private static Context mContext = null;
 
     public AboutDialog(Context context) {
@@ -76,14 +79,22 @@ public class AboutDialog extends Dialog {
         setContentView(R.layout.about);
 
         TextView tv = (TextView) findViewById(R.id.legal_text);
-        tv.setText(Html.fromHtml(readRawTextFile(R.raw.legal)));
-        tv.setLinkTextColor(Color.WHITE);
-        Linkify.addLinks(tv, Linkify.ALL);
+        final String legalTxtRaw = readRawTextFile(R.raw.legal);
+        if (legalTxtRaw != null) {
+            tv.setText(Html.fromHtml(legalTxtRaw));
+            tv.setLinkTextColor(Color.WHITE);
+            Linkify.addLinks(tv, Linkify.ALL);
+        }
 
         tv = (TextView) findViewById(R.id.info_text);
-        tv.setText(Html.fromHtml(readRawTextFile(R.raw.info)));
-        tv.setLinkTextColor(Color.WHITE);
-        Linkify.addLinks(tv, Linkify.ALL);
+        final String infoText = readRawTextFile(R.raw.info);
+        if (infoText != null) {
+            tv.setText(Html.fromHtml(infoText
+                    .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
+                    .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)));
+            tv.setLinkTextColor(Color.WHITE);
+            Linkify.addLinks(tv, Linkify.ALL);
+        }
     }
 
 }
