@@ -27,6 +27,7 @@ package org.lemra.dd_wrt.mgmt;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,11 +38,13 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.google.common.base.Throwables;
@@ -99,6 +102,24 @@ public abstract class AbstractRouterMgmtDialogFragment
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
         ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(this);
+//        ((EditText) view.findViewById(R.id.router_add_password))
+//                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//                    @Override
+//                    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+//                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                            boolean validForm = validateForm(d);
+//
+//                            if (validForm) {
+//                                // Check connection to router ...
+//
+//                                new CheckRouterConnectionAsyncTask(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
+//                            }
+//                            //else dialog stays open. 'Cancel' button can still close it.
+//                            return true;
+//                        }
+//                        return false;
+//                    }
+//                });
 
         builder
                 .setMessage(this.getDialogMessage())
@@ -141,7 +162,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        @NotNull final AlertDialog d = (AlertDialog) getDialog();
+        final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -200,9 +221,10 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         if (!(Patterns.IP_ADDRESS.matcher(ipAddrViewText).matches()
                 || Patterns.DOMAIN_NAME.matcher(ipAddrViewText).matches())) {
-            displayMessage(getString(R.string.router_add_ip_invalid) + ":" + ipAddrViewText,
+            displayMessage(getString(R.string.router_add_dns_or_ip_invalid) + ":" + ipAddrViewText,
                     ALERT);
             ipAddrView.requestFocus();
+            openKeyboard(ipAddrView);
             return false;
         }
 
@@ -217,7 +239,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
         if (!validPort) {
             displayMessage(getString(R.string.router_add_port_invalid) + ":" + portView.getText(), ALERT);
-            ipAddrView.requestFocus();
+            portView.requestFocus();
+            openKeyboard(portView);
             return false;
         }
 
@@ -225,6 +248,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
             displayMessage(getString(R.string.router_add_username_invalid), ALERT);
             sshUsernameView.requestFocus();
+            openKeyboard(sshUsernameView);
             return false;
         }
 
@@ -236,10 +260,20 @@ public abstract class AbstractRouterMgmtDialogFragment
         if (isPasswordEmpty && isPrivKeyEmpty) {
             displayMessage(getString(R.string.router_add_password_or_privkey_invalid), ALERT);
             sshPasswordView.requestFocus();
+            openKeyboard(sshPasswordView);
             return false;
         }
 
         return true;
+    }
+
+    private void openKeyboard(final TextView mTextView) {
+        final InputMethodManager imm = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            // only will trigger it if no physical keyboard is open
+            imm.showSoftInput(mTextView, 0);
+        }
     }
 
     private void displayMessage(final String msg, final Style style) {
