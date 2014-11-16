@@ -175,5 +175,6 @@
     <string name="action_copy">Copy as new</string>
     <string name="menuitem_donate">Donate</string>
     <string name="menuitem_about">About</string>
+    <string name="support_app">Support DD-WRT Companion</string>
 
 </resources>
