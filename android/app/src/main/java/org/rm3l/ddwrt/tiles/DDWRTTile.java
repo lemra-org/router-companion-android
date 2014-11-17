@@ -24,15 +24,20 @@
 
 package org.rm3l.ddwrt.tiles;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -41,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.api.conn.NVRAMInfo;
 import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.utils.Utils;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
@@ -177,4 +183,28 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         Log.d(getLogTag(), "onLoaderReset: loader=" + loader);
         loader.abandon();
     }
+
+    @Override
+    public final void onClick(View view) {
+        final Intent onClickIntent = getOnclickIntent();
+        if (onClickIntent != null) {
+            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                    String.format("Loading detailed view for '%s' ...", this.getClass().getSimpleName()), false, false);
+            alertDialog.show();
+            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mParentFragmentActivity.startActivity(onClickIntent);
+                    alertDialog.cancel();
+                }
+            }, 2000);
+        } else {
+            Toast.makeText(mParentFragmentActivity, String.format("Nothing to do - no onclickIntent available for '%s'",
+                    this.getClass().getSimpleName()), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Nullable
+    protected abstract Intent getOnclickIntent();
 }
