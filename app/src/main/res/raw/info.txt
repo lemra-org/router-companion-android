@@ -1,4 +1,4 @@
-<h3>DD-WRT Companion</h3>
+<h3>%APP_NAME%</h3>
 Version %VERSION_NAME%<br/><br/>
 Copyright &copy; 2014 Armel S.<br/><br/>
 
