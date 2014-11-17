@@ -30,6 +30,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,6 +101,8 @@ import org.lemra.dd_wrt.tiles.DDWRTTile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
 
@@ -113,6 +117,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
 
     private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
+
+    private static final AtomicInteger LOADERS_IDS = new AtomicInteger(1);
+    private final Map<Class<?>, Loader> loadersMap = Maps.newHashMap();
     @Nullable
     protected Router router;
     protected LinearLayout mLayout;
@@ -124,6 +131,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private DDWRTMainActivity ddwrtMainActivity;
     @Nullable
     private Loader<T> mLoader;
+    private Class<? extends DDWRTBaseFragment> mClazz;
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -133,6 +141,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             @NotNull final DDWRTBaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
                     .setParentSectionTitle(parentSectionTitle);
+            fragment.mClazz = clazz;
 
             @NotNull Bundle args = new Bundle();
             args.putCharSequence(TAB_TITLE, tabTitle);
@@ -394,13 +403,16 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //        setRetainInstance(true);
 
         // initiate the loaders to do the background work
-        getLoaderManager().initLoader(this.getId(), savedInstanceState, this);
+        loadersMap.put(this.mClazz, getLoaderManager().initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, this));
 
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
             final LoaderManager loaderManager = getLoaderManager();
-            int i = this.getId() + 10;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
-                loaderManager.initLoader(i++, savedInstanceState, ddwrtTile);
+                if (ddwrtTile == null) {
+                    continue;
+                }
+                loadersMap.put(ddwrtTile.getClass(),
+                        loaderManager.initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, ddwrtTile));
             }
         }
     }
@@ -416,24 +428,27 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
      */
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+
         final LoaderManager loaderManager = getLoaderManager();
-        if (this.mLoader != null) {
-            loaderManager.destroyLoader(this.mLoader.getId());
-        }
-        if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
-            for (int i = 0; i < this.fragmentTiles.size(); i++) {
-                loaderManager.destroyLoader(i);
+
+        for (Loader loader : loadersMap.values()) {
+            if (loader == null) {
+                continue;
             }
+            final int loaderId = loader.getId();
+            Log.d(LOG_TAG, "destroy loader #" + loaderId);
+            loaderManager.destroyLoader(loaderId);
         }
+
+        super.onDestroyView();
     }
 
     @NotNull
     private ViewGroup getLayout() {
         @NotNull final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-//                .getDisplayMetrics());
-//        params.setMargins(margin, margin, margin, margin);
+        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+                .getDisplayMetrics());
+        params.setMargins(margin, margin, margin, margin);
 
         @Nullable ViewGroup viewGroup = null;
 
