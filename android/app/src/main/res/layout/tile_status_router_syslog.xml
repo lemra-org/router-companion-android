@@ -55,6 +55,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="Syslog"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
