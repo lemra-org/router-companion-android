@@ -151,7 +151,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             }
         }
 
-        //Re-schedule it!
+//        Re-schedule it!
         HANDLER.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -159,7 +159,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             }
         }, TILE_REFRESH_MILLIS);
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader);
     }
 
     @Nullable
@@ -175,6 +175,6 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Override
     public final void onLoaderReset(Loader<T> loader) {
         Log.d(getLogTag(), "onLoaderReset: loader=" + loader);
-        loader = null;
+        loader.abandon();
     }
 }
