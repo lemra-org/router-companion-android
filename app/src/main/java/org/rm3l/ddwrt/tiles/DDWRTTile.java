@@ -200,6 +200,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 }
             }, 2000);
         } else {
+            //TODO TESTING ONLY - Remove this line prior to release
             Toast.makeText(mParentFragmentActivity, String.format("Nothing to do - no onclickIntent available for '%s'",
                     this.getClass().getSimpleName()), Toast.LENGTH_LONG).show();
         }
