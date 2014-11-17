@@ -53,6 +53,8 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.utils.Utils;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Main Android Activity
  * <p/>
@@ -87,6 +89,15 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
         this.mRouter = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
+
+        if (this.mRouter == null) {
+            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        final String routerName = this.mRouter.getName();
+        setTitle(isNullOrEmpty(routerName) ? this.mRouter.getRemoteIpAddress() : routerName);
 
         mTitle = mDrawerTitle = getTitle();
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
