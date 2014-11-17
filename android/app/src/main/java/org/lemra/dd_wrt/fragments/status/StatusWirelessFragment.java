@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableRow;
@@ -168,7 +169,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         Log.d(LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
         this.mIfaceTiles = tiles;
 
-        if (tiles == null || this.mTableLayout == null) {
+        if (tiles == null || this.mLayout == null) {
             return;
         }
 
@@ -186,13 +187,18 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             getSherlockActivity().getSupportLoaderManager().initLoader(l++, getArguments(), tile);
 
             //Add row for this iface
-            @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
-            tableRow.setOnClickListener(tile);
+            final CardView cardView = new CardView(getSherlockActivity());
+            cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
-            tableRow.setLayoutParams(tableRowParams);
-            tableRow.addView(tileViewGroupLayout);
+            cardView.addView(tileViewGroupLayout);
 
-            this.mTableLayout.addView(tableRow);
+//            @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
+//            tableRow.setOnClickListener(tile);
+//            tileViewGroupLayout.setOnClickListener(tile);
+//            tableRow.setLayoutParams(tableRowParams);
+//            tableRow.addView(tileViewGroupLayout);
+
+            this.mLayout.addView(cardView);
         }
     }
 
