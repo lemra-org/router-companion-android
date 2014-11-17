@@ -24,7 +24,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.lemra.dd_wrt.mgmt.RouterManagementActivity">
+    tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
     <item
         android:id="@+id/router_list_refresh"
         android:alphabeticShortcut="r"

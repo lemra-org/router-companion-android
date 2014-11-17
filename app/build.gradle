@@ -24,10 +24,6 @@
 
 
 
-
-
-
-
 apply plugin: 'com.android.application'
 
 android {
@@ -35,7 +31,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "org.lemra.dd_wrt"
+        applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
         targetSdkVersion 19
         // Fetch the version according to git latest tag and "how far are we from last tag"
