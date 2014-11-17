@@ -28,9 +28,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.TableRow;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -182,12 +182,9 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
         Log.d(LOG_TAG, "Done loading background task for " + StatusBandwidthFragment.class.getCanonicalName());
         this.mIfaceTiles = tiles;
 
-        if (tiles == null || this.mTableLayout == null) {
+        if (tiles == null || this.mLayout == null) {
             return;
         }
-
-        @NotNull final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
         int l = 500;
         for (@NotNull final DDWRTTile tile : tiles) {
@@ -200,13 +197,18 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
             getSherlockActivity().getSupportLoaderManager().initLoader(l++, getArguments(), tile);
 
             //Add row for this iface
-            @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
-            tableRow.setOnClickListener(tile);
+            final CardView cardView = new CardView(getSherlockActivity());
+            cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
-            tableRow.setLayoutParams(tableRowParams);
-            tableRow.addView(tileViewGroupLayout);
+            cardView.addView(tileViewGroupLayout);
+//
+//            @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
+//            tableRow.setOnClickListener(tile);
+//            tileViewGroupLayout.setOnClickListener(tile);
+//            tableRow.setLayoutParams(tableRowParams);
+//            tableRow.addView(tileViewGroupLayout);
 
-            this.mTableLayout.addView(tableRow);
+            this.mLayout.addView(cardView);
         }
     }
 
