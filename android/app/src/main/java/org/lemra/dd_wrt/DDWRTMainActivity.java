@@ -126,9 +126,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if (savedInstanceState == null) {
-            selectItem(0);
-        }
+//        if (savedInstanceState == null) {
+        selectItem(0);
+//        }
 
     }
 
