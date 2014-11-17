@@ -22,7 +22,7 @@
   ~ SOFTWARE.
   -->
 
-<org.lemra.dd_wrt.android.common.view.SlidingTabStrip xmlns:android="http://schemas.android.com/apk/res/android"
+<org.rm3l.ddwrt.android.common.view.SlidingTabStrip xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,7 +37,7 @@
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content" />-->
 
-    <org.lemra.dd_wrt.android.common.view.SlidingTabLayout
+    <org.rm3l.ddwrt.android.common.view.SlidingTabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -49,4 +49,4 @@
         android:layout_weight="1"
         android:background="@android:color/white" />
 
-</org.lemra.dd_wrt.android.common.view.SlidingTabStrip>
+</org.rm3l.ddwrt.android.common.view.SlidingTabStrip>

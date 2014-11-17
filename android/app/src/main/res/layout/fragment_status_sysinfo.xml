@@ -29,7 +29,7 @@
     android:orientation="vertical"
     android:visibility="visible">
 
-    <org.lemra.dd_wrt.android.common.view.SlidingTabLayout
+    <org.rm3l.ddwrt.android.common.view.SlidingTabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
