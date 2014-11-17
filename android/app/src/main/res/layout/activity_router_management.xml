@@ -36,7 +36,7 @@
         android:id="@+id/routersListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:scrollbars="none" />
 
     <ImageButton
         android:id="@+id/router_list_add"
