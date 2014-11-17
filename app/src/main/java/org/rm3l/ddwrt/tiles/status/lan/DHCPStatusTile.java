@@ -24,13 +24,13 @@
 
 package org.rm3l.ddwrt.tiles.status.lan;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Strings;
@@ -231,8 +231,10 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
+    @Nullable
     @Override
-    public void onClick(View view) {
-        Toast.makeText(this.mParentFragmentActivity, this.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
+    protected Intent getOnclickIntent() {
+        //TODO
+        return null;
     }
 }
