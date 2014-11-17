@@ -28,6 +28,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -36,9 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -116,7 +116,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
     @Nullable
     protected Router router;
-    protected TableLayout mTableLayout;
+    protected LinearLayout mLayout;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     @Nullable
@@ -445,10 +445,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             @NotNull final LayoutInflater layoutInflater = getSherlockActivity().getLayoutInflater();
             viewGroup = (ScrollView) layoutInflater.inflate(R.layout.base_tiles_container_scrollview, null);
 
-            @NotNull final List<TableRow> rows = new ArrayList<TableRow>();
+            @NotNull final List<CardView> cards = new ArrayList<CardView>();
 
-            @NotNull final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+//            CardView.LayoutParams cardViewLayoutParams = new LayoutParams();
+
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);
@@ -463,35 +463,34 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                     ((ViewGroup) parent).removeView(viewGroupLayout);
                 }
 
-                @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
-                tableRow.setOnClickListener(ddwrtTile);
-                viewGroupLayout.setOnClickListener(ddwrtTile);
-                tableRow.setLayoutParams(tableRowParams);
+                final CardView cardView = new CardView(getSherlockActivity());
+                cardView.setOnClickListener(ddwrtTile);
+//                cardView.setLayoutParams(cardViewLayoutParams);
+                cardView.addView(viewGroupLayout);
+//
+//                @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
+//                tableRow.setOnClickListener(ddwrtTile);
+//                viewGroupLayout.setOnClickListener(ddwrtTile);
+//                tableRow.setLayoutParams(tableRowParams);
+//
+//                tableRow.addView(viewGroupLayout);
 
-                tableRow.addView(viewGroupLayout);
-
-                rows.add(tableRow);
+                cards.add(cardView);
             }
 
-            atLeastOneTileAdded = (!rows.isEmpty());
+            atLeastOneTileAdded = (!cards.isEmpty());
 
-            Log.d(LOG_TAG, "atLeastOneTileAdded: " + atLeastOneTileAdded + ", rows: " + rows.size());
+            Log.d(LOG_TAG, "atLeastOneTileAdded: " + atLeastOneTileAdded + ", rows: " + cards.size());
 
             if (atLeastOneTileAdded) {
                 //Drop Everything
 //                viewGroup.removeAllViews();
 
-//                final TableLayout tableLayout = new TableLayout(getSherlockActivity());
+                mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
 
-                mTableLayout = (TableLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_table);
-
-//                tableLayout.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
-//                tableLayout.setStretchAllColumns(true);
-                mTableLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-                for (@NotNull final TableRow row : rows) {
+                for (@NotNull final CardView card : cards) {
 //                    mTableLayout.removeView(row);
-                    mTableLayout.addView(row);
+                    mLayout.addView(card);
                 }
 
             }
