@@ -30,7 +30,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.lemra.dd_wrt.mgmt.RouterManagementActivity">
+    tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/routersListView"

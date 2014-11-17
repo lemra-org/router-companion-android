@@ -23,7 +23,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.lemra.dd_wrt">
+    package="org.rm3l.ddwrt">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -38,7 +38,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:name="org.lemra.dd_wrt.DDWRTApplication"
+        android:name="org.rm3l.ddwrt.DDWRTApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
@@ -46,7 +46,7 @@
         android:theme="@style/Theme.Sherlock">
 
         <activity
-            android:name="org.lemra.dd_wrt.mgmt.RouterManagementActivity"
+            android:name="org.rm3l.ddwrt.mgmt.RouterManagementActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,12 +56,12 @@
         </activity>
 
         <activity
-            android:name="org.lemra.dd_wrt.DDWRTMainActivity"
+            android:name="org.rm3l.ddwrt.DDWRTMainActivity"
             android:label="@string/app_name"
-            android:parentActivityName="org.lemra.dd_wrt.mgmt.RouterManagementActivity" />
+            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
 
         <activity
-            android:name="org.lemra.dd_wrt.donate.DonateActivity"
+            android:name="org.rm3l.ddwrt.donate.DonateActivity"
             android:label="@string/support_app" />
 
     </application>
