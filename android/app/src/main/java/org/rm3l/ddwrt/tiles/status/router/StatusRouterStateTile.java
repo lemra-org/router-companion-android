@@ -54,33 +54,11 @@ import java.util.List;
 public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
     public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
-    //    Drawable icon;
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
 
     public StatusRouterStateTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
-//        // Parse the SVG file from the resource beforehand
-//        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.router);
-//            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-//            this.icon = svg.createPictureDrawable();
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
-//        }
     }
-//
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout linearLayout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_state, null);
-//        mToggleAutoRefreshButton = (ToggleButton) linearLayout.findViewById(R.id.tile_status_router_router_state_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//        return linearLayout;
-////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_state);
-////        imageView.setImageDrawable(this.icon);
-////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-////        return layout;
-//    }
 
     @Nullable
     @Override
