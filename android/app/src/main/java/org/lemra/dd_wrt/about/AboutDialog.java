@@ -44,6 +44,7 @@ public class AboutDialog extends Dialog {
 
     public static final String VERSION_CODE_INFO_TXT = "%VERSION_CODE%";
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
+    public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
     private static Context mContext = null;
 
     public AboutDialog(Context context) {
@@ -90,6 +91,7 @@ public class AboutDialog extends Dialog {
         final String infoText = readRawTextFile(R.raw.info);
         if (infoText != null) {
             tv.setText(Html.fromHtml(infoText
+                    .replaceAll(APP_NAME_INFO_TXT, mContext.getString(mContext.getApplicationInfo().labelRes))
                     .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
                     .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)));
             tv.setLinkTextColor(Color.WHITE);
