@@ -22,38 +22,45 @@
   ~ SOFTWARE.
   -->
 
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:stretchColumns="*">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="none">
 
-    <TableRow>
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_launcher" />
+        <TableRow>
 
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:gravity="center" />
-    </TableRow>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_launcher" />
 
-    <TableRow>
+            <TextView
+                android:id="@+id/info_text"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:gravity="center" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/legal_text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:layout_span="2"
-            android:textColor="#cccccc"
-            android:textSize="10dip"
-            android:textStyle="italic" />
-    </TableRow>
+        <TableRow>
 
-</TableLayout>
+            <TextView
+                android:id="@+id/legal_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dip"
+                android:layout_span="2"
+                android:textColor="#cccccc"
+                android:textSize="10dip"
+                android:textStyle="italic" />
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>
