@@ -54,6 +54,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="Space Usage"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
 

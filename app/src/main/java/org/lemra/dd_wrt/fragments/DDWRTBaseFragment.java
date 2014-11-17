@@ -30,7 +30,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -432,9 +431,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @NotNull
     private ViewGroup getLayout() {
         @NotNull final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-                .getDisplayMetrics());
-        params.setMargins(margin, margin, margin, margin);
+//        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+//                .getDisplayMetrics());
+//        params.setMargins(margin, margin, margin, margin);
 
         @Nullable ViewGroup viewGroup = null;
 
@@ -447,7 +446,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             @NotNull final List<CardView> cards = new ArrayList<CardView>();
 
-//            CardView.LayoutParams cardViewLayoutParams = new LayoutParams();
+            final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
@@ -465,15 +464,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
                 final CardView cardView = new CardView(getSherlockActivity());
                 cardView.setOnClickListener(ddwrtTile);
-//                cardView.setLayoutParams(cardViewLayoutParams);
+                cardView.setLayoutParams(cardViewLayoutParams);
                 cardView.addView(viewGroupLayout);
-//
-//                @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
-//                tableRow.setOnClickListener(ddwrtTile);
-//                viewGroupLayout.setOnClickListener(ddwrtTile);
-//                tableRow.setLayoutParams(tableRowParams);
-//
-//                tableRow.addView(viewGroupLayout);
 
                 cards.add(cardView);
             }
