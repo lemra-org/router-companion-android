@@ -59,35 +59,12 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
     public StatusRouterMemoryTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_mem, R.id.tile_status_router_router_mem_togglebutton);
-//        // Parse the SVG file from the resource beforehand
-//        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.memory);
-//            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-//            this.icon = svg.createPictureDrawable();
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
-//        }
     }
-//    Drawable icon;
 
     @NotNull
     private static String getGrepProcMemInfo(@NotNull final String item) {
         return "grep \"" + item + "\" /proc/meminfo ";
     }
-//
-//    @Nullable
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_mem, null);
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_mem_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//        return layout;
-////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_mem);
-////        imageView.setImageDrawable(this.icon);
-////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-////        return layout;
-//    }
 
     @Nullable
     @Override
@@ -128,7 +105,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (otherCmds != null && otherCmds.length >= 2) {
                         //Total
                         @Nullable String memTotal = null;
-                        List<String> strings = Splitter.on("MemTotal:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
+                        List<String> strings = Splitter.on("MemTotal:").omitEmptyStrings()
+                                .trimResults().splitToList(otherCmds[0].trim());
                         Log.d(LOG_TAG, "strings for MemTotal: " + strings);
                         if (strings != null && strings.size() >= 1) {
                             memTotal = strings.get(0);
@@ -138,7 +116,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
                         //Free
                         @Nullable String memFree = null;
-                        strings = Splitter.on("MemFree:         ").omitEmptyStrings().trimResults().splitToList(otherCmds[1]);
+                        strings = Splitter.on("MemFree:").omitEmptyStrings().trimResults()
+                                .splitToList(otherCmds[1].trim());
                         Log.d(LOG_TAG, "strings for MemFree: " + strings);
                         if (strings != null && strings.size() >= 1) {
                             memFree = strings.get(0);
@@ -157,6 +136,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
                         }
 
+                    }
+
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data!");
                     }
 
                     return nvramInfo;
