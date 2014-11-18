@@ -37,7 +37,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -198,11 +197,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                     mParentFragmentActivity.startActivity(onClickIntent);
                     alertDialog.cancel();
                 }
-            }, 2000);
-        } else {
-            //TODO TESTING ONLY - Remove this line prior to release
-            Toast.makeText(mParentFragmentActivity, String.format("Nothing to do - no onclickIntent available for '%s'",
-                    this.getClass().getSimpleName()), Toast.LENGTH_LONG).show();
+            }, 2500);
         }
     }
 

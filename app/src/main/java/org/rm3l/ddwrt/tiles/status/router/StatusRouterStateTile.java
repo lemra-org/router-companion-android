@@ -92,32 +92,42 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.ROUTER_NAME,
-                            NVRAMInfo.WAN_IPADDR,
-                            NVRAMInfo.MODEL,
-                            NVRAMInfo.DIST_TYPE,
-                            NVRAMInfo.LAN_IPADDR);
+                    @Nullable final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                    //Add FW, Kernel and Uptime
-                    @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a");
-                    if (otherCmds != null && otherCmds.length >= 2) {
-                        //Uptime
-                        final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
-                        if (strings != null && strings.size() > 0) {
-                            if (nvramInfo != null) {
+                    NVRAMInfo nvramInfoTmp = null;
+                    try {
+                        nvramInfoTmp =
+                                SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                        NVRAMInfo.ROUTER_NAME,
+                                        NVRAMInfo.WAN_IPADDR,
+                                        NVRAMInfo.MODEL,
+                                        NVRAMInfo.DIST_TYPE,
+                                        NVRAMInfo.LAN_IPADDR);
+                    } finally {
+                        if (nvramInfoTmp != null) {
+                            nvramInfo.putAll(nvramInfoTmp);
+                        }
+                        //Add FW, Kernel and Uptime
+                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a");
+                        if (otherCmds != null && otherCmds.length >= 2) {
+                            //Uptime
+                            final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
+                            if (strings != null && strings.size() > 0) {
                                 nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
+
                             }
-                        }
 
-                        //Kernel
-                        if (nvramInfo != null) {
+                            //Kernel
                             nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
+
+                            //Firmware
+                            //TODO
+
                         }
+                    }
 
-                        //Firmware
-                        //TODO
-
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data!");
                     }
 
                     return nvramInfo;
