@@ -118,11 +118,19 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.CPU_CLOCK_FREQ);
+                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                    if (nvramInfo != null) {
-                        final List<String> strings = Splitter.on(",")
+                    NVRAMInfo nvramInfoTmp = null;
+
+                    try {
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                NVRAMInfo.CPU_CLOCK_FREQ);
+                    } finally {
+                        if (nvramInfoTmp != null) {
+                            nvramInfo.putAll(nvramInfoTmp);
+                        }
+
+                        List<String> strings = Splitter.on(",")
                                 .omitEmptyStrings()
                                 .trimResults()
                                 .splitToList(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ));
@@ -130,34 +138,33 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         if (strings != null && strings.size() > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
                         }
-                    }
 
-                    @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                            GREP_MODEL_NAME_PROC_CPUINFO +
-                                    "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
-                    if (otherCmds != null && otherCmds.length >= 3) {
-                        //Model
-                        List<String> strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
-                        Log.d(LOG_TAG, "strings for model name: " + strings);
-                        if (strings != null && strings.size() >= 1) {
-                            if (nvramInfo != null) {
+                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                                GREP_MODEL_NAME_PROC_CPUINFO +
+                                        "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
+                        if (otherCmds != null && otherCmds.length >= 3) {
+                            //Model
+                            strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
+                            Log.d(LOG_TAG, "strings for model name: " + strings);
+                            if (strings != null && strings.size() >= 1) {
                                 nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
                             }
-                        }
 
-                        //Nb Cores
-                        if (nvramInfo != null) {
+                            //Nb Cores
                             nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[1]);
-                        }
 
-                        //Load Avg
-                        if (nvramInfo != null) {
+                            //Load Avg
                             strings = Splitter.on("load average: ").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
                             Log.d(LOG_TAG, "strings for load avg: " + strings);
                             if (strings != null && strings.size() >= 2) {
                                 nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE, strings.get(1));
                             }
+
                         }
+                    }
+
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data!");
                     }
 
                     return nvramInfo;
