@@ -59,18 +59,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
     public WirelessIfaceTile(@NotNull String iface, @NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         this.iface = iface;
+        ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
     }
-//
-//    public WirelessIfaceTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-//        super(parentFragmentActivity, arguments, router);
-//
-//        this.layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_iface, null);
-//        layout.setId(LinearLayout.generateViewId());
-//
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wireless_iface_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//
-//    }
 
     @Nullable
     @Override
@@ -185,8 +175,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
             }
-
-            ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
 
             //SSID
             @NotNull final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
