@@ -39,8 +39,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +55,8 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  *
@@ -128,11 +130,13 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
 
                     //FIXME TESTS
 
-                    for (int i = 0, j = 1; i <= 8; i++, j++) {
+                    for (int i = 1, j = i + 1; i <= 15; i++, j++) {
+                        final int randomI = new Random().nextInt(i);
+                        final int randomJ = new Random().nextInt(j);
                         devices
-                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", i, j))
-                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", i, j))
-                                        .setSystemName(String.format("Device %1$s-%2$s", i, j)));
+                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
+                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
+                                        .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
                     }
                     //FIXME END TESTS
 
@@ -212,7 +216,7 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
             final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
             clientsContainer.removeAllViews();
 
-            final List<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
+            final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             for (final Device device : devices) {
 
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
@@ -269,13 +273,13 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
 
     class Devices {
         @NotNull
-        private final List<Device> devices = Lists.newArrayList();
+        private final Set<Device> devices = Sets.newHashSet();
 
         @Nullable
         private Exception exception;
 
         @NotNull
-        public List<Device> getDevices() {
+        public Set<Device> getDevices() {
             return devices;
         }
 
@@ -285,11 +289,11 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         }
 
         @NotNull
-        public List<Device> getDevices(int max) {
+        public Set<Device> getDevices(int max) {
             return FluentIterable
                     .from(devices)
                     .limit(max)
-                    .toSortedList(COMPARATOR);
+                    .toSortedSet(COMPARATOR);
         }
 
         @NotNull
