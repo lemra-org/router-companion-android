@@ -43,7 +43,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.NVRAMInfo;
 import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -137,7 +136,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
-    protected <T extends DDWRTTile<NVRAMInfo>> void doneWithLoaderInstance(final T tile, @NotNull final Loader<NVRAMInfo> loader,
+    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
                                                                            @Nullable final int... additionalButtonsToMakeVisible) {
 
         this.setDoneLoading();
