@@ -250,7 +250,7 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         }
 
         if (exception != null) {
-            errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 

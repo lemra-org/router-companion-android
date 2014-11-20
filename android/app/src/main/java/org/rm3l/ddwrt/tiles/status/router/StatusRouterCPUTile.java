@@ -49,6 +49,8 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 /**
  *
  */
@@ -133,7 +135,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         List<String> strings = Splitter.on(",")
                                 .omitEmptyStrings()
                                 .trimResults()
-                                .splitToList(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ));
+                                .splitToList(nullToEmpty(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ)));
                         Log.d(LOG_TAG, "strings for cpu clock: " + strings);
                         if (strings != null && strings.size() > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
@@ -266,7 +268,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
         if (exception != null) {
             if (errorPlaceHolderView != null) {
-                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
