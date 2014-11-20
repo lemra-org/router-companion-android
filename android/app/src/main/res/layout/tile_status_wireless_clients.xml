@@ -44,7 +44,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
@@ -52,7 +52,7 @@
                 android:id="@+id/tile_status_wireless_clients_title"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
+                android:layout_weight="20.23"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="Clients"
@@ -63,7 +63,7 @@
         </LinearLayout>
 
         <View
-            android:layout_width="fill_parent"
+            android:layout_width="377dp"
             android:layout_height="1.0dip"
             android:layout_marginBottom="8.0dip"
             android:layout_marginTop="8.0dip"
@@ -83,12 +83,23 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <LinearLayout
+        <GridLayout
             android:id="@+id/tile_status_wireless_clients_layout_list_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="0.74"
+            android:columnCount="2"
             android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/tile_status_wireless_clients_show_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:text="Show more"
+            android:visibility="gone" />
 
         <GridLayout
             android:layout_width="wrap_content"
