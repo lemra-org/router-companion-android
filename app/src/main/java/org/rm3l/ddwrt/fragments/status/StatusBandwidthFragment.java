@@ -32,16 +32,24 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Splitter;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.api.conn.NVRAMInfo;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
+import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -56,8 +64,12 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        //TODO
-        return Arrays.<DDWRTTile>asList(new IfacesTile(getSherlockActivity(), savedInstanceState, router));
+//        return Arrays.<DDWRTTile>asList(new IfacesTile(getSherlockActivity(), savedInstanceState, router));
+        //TODO TEST
+        return Arrays.<DDWRTTile>asList(new IfacesTile(getSherlockActivity(), savedInstanceState, router),
+                new BandwidthMonitoringTile(getSherlockActivity(), savedInstanceState, router, "testiface1"),
+                new BandwidthMonitoringTile(getSherlockActivity(), savedInstanceState, router, "testiface2"));
+        //TODO END TEST
     }
 
     @Nullable
@@ -74,60 +86,52 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
                     Log.d(LOG_TAG, "Init background loader for " + StatusBandwidthFragment.class + ": routerInfo=" +
                             router);
 
-                    //TODO TEST
-                    return Arrays.<DDWRTTile>asList(
-                            new BandwidthMonitoringTile(getSherlockActivity(), args, router, "testIface1"),
-                            new BandwidthMonitoringTile(getSherlockActivity(), args, router, "testIface2")
-                    );
+                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(router,
+                            NVRAMInfo.LAN_IFNAME,
+                            NVRAMInfo.WAN_IFNAME,
+                            NVRAMInfo.LANDEVS);
 
-                    //TODO END TEST
+                    if (nvramInfo == null) {
+                        return null;
+                    }
 
-//                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(router,
-//                            NVRAMInfo.LAN_IFNAME,
-//                            NVRAMInfo.WAN_IFNAME,
-//                            NVRAMInfo.LANDEVS);
-//
-//                    if (nvramInfo == null) {
-//                        return null;
-//                    }
-//
-//                    final Set<String> ifacesConsidered = new HashSet<String>();
-//
-//                    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
-//                    if (lanIfname != null) {
-//                        ifacesConsidered.add(lanIfname);
-//                    }
-//
-//                    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
-//                    if (wanIfname != null) {
-//                        ifacesConsidered.add(wanIfname);
-//                    }
-//
-//                    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-//                    if (landevs != null) {
-//                        final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
-//                        if (splitToList != null && !splitToList.isEmpty()) {
-//                            for (final String landev : splitToList) {
-//                                if (landev == null) {
-//                                    continue;
-//                                }
-//                                ifacesConsidered.add(landev);
-//                            }
-//                        }
-//                    }
-//
-//                    final List<DDWRTTile> tiles = new ArrayList<DDWRTTile>(ifacesConsidered.size());
-//                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
-//
-//                    for (final String ifaceConsidered : ifacesConsidered) {
-//                        tiles.add(new BandwidthMonitoringTile(sherlockActivity, args, router, ifaceConsidered));
-//                    }
-//
-//                    if (tiles.isEmpty()) {
-//                        return null;
-//                    }
-//
-//                    return tiles;
+                    final Set<String> ifacesConsidered = new HashSet<String>();
+
+                    final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
+                    if (lanIfname != null) {
+                        ifacesConsidered.add(lanIfname);
+                    }
+
+                    final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
+                    if (wanIfname != null) {
+                        ifacesConsidered.add(wanIfname);
+                    }
+
+                    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+                    if (landevs != null) {
+                        final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
+                        if (splitToList != null && !splitToList.isEmpty()) {
+                            for (final String landev : splitToList) {
+                                if (landev == null) {
+                                    continue;
+                                }
+                                ifacesConsidered.add(landev);
+                            }
+                        }
+                    }
+
+                    final List<DDWRTTile> tiles = new ArrayList<DDWRTTile>(ifacesConsidered.size());
+                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+
+                    for (final String ifaceConsidered : ifacesConsidered) {
+                        tiles.add(new BandwidthMonitoringTile(sherlockActivity, args, router, ifaceConsidered));
+                    }
+
+                    if (tiles.isEmpty()) {
+                        return null;
+                    }
+
+                    return tiles;
 
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();

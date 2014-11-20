@@ -23,7 +23,7 @@
   -->
 
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_wireless_clients"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -139,4 +139,4 @@
         </GridLayout>
 
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

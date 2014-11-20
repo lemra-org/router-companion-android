@@ -25,6 +25,6 @@
 
 iptables -L counters -nxv | while read pkts bytes target prot opt in out source destination
 do
-    [ $source = "0.0.0.0/0" ] && echo in $destination $bytes
-    [ $destination = "0.0.0.0/0" ] && echo out $source $bytes
+    [ "$source" = "0.0.0.0/0" ] && echo in $destination $bytes
+    [ "$destination" = "0.0.0.0/0" ] && echo out $source $bytes
 done
