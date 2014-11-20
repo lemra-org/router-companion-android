@@ -42,16 +42,18 @@ public class Device implements Comparable<Device> {
         return alias;
     }
 
-    public void setAlias(String alias) {
+    public Device setAlias(String alias) {
         this.alias = alias;
+        return this;
     }
 
     public String getIpAddress() {
         return ipAddress;
     }
 
-    public void setIpAddress(String ipAddress) {
+    public Device setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+        return this;
     }
 
     public String getMacAddress() {
@@ -62,16 +64,18 @@ public class Device implements Comparable<Device> {
         return state;
     }
 
-    public void setState(State state) {
+    public Device setState(State state) {
         this.state = state;
+        return this;
     }
 
     public String getSystemName() {
         return systemName;
     }
 
-    public void setSystemName(String systemName) {
+    public Device setSystemName(String systemName) {
         this.systemName = systemName;
+        return this;
     }
 
     @Override
