@@ -95,13 +95,18 @@
             android:visibility="gone" />
 
         <!-- Graph Placeholder -->
-        <com.androidplot.xy.XYPlot
+        <!--<com.androidplot.xy.XYPlot-->
+        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
+        <!--title="Bandwidth Usage"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="177dp"-->
+        <!--android:layout_marginLeft="0px"-->
+        <!--android:layout_marginRight="0px" />-->
+        <LinearLayout
             android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-            title="Bandwidth Usage"
             android:layout_width="match_parent"
-            android:layout_height="177dp"
-            android:layout_marginLeft="0px"
-            android:layout_marginRight="0px" />
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
 
         <!--<LinearLayout-->
         <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
