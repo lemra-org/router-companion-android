@@ -29,7 +29,8 @@ package org.rm3l.ddwrt.utils;
  */
 public final class DDWRTCompanionConstants {
 
-    public static final long TILE_REFRESH_MILLIS = 90 * 1000l;
+    //FIXME Consider increasing this value prior to release
+    public static final long TILE_REFRESH_MILLIS = 15 * 1000l;
 
     private DDWRTCompanionConstants() {
     }
