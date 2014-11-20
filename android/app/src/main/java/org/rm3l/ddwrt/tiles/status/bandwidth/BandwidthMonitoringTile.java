@@ -132,9 +132,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
@@ -175,12 +173,12 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             // Now we create the renderer
             final XYSeriesRenderer renderer = new XYSeriesRenderer();
             renderer.setLineWidth(2);
-            renderer.setColor(Color.DKGRAY);
+            renderer.setColor(Color.LTGRAY);
             // Include low and max value
             renderer.setDisplayBoundingPoints(true);
             // we add point markers
-            renderer.setPointStyle(PointStyle.CIRCLE);
-            renderer.setPointStrokeWidth(3);
+            renderer.setPointStyle(PointStyle.POINT);
+            renderer.setPointStrokeWidth(1);
 
             final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
             mRenderer.addSeriesRenderer(renderer);
@@ -189,10 +187,10 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             // Disable Pan on two axis
             mRenderer.setPanEnabled(false, false);
             mRenderer.setYAxisMax(maxY + 10);
-            mRenderer.setYAxisMin(minY - 1);
-            mRenderer.setXAxisMin(minX - 1);
+            mRenderer.setYAxisMin(minY);
+            mRenderer.setXAxisMin(minX);
             mRenderer.setXAxisMax(maxX + 10);
-            mRenderer.setShowGrid(false); // we don't the grid
+            mRenderer.setShowGrid(false);
             mRenderer.setClickEnabled(false);
             mRenderer.setZoomEnabled(false);
 
