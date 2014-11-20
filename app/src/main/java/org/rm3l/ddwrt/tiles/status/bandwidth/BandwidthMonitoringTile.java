@@ -146,13 +146,31 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
 
-            final XYSeries series = new XYSeries("Bandwidth Usage for " + this.iface);
+            final XYSeries series = new XYSeries("Bandwidth Usage (MB): " + this.iface);
 
             //Add new point to the Circular Buffer
             points.add(new DataPoint(nbRunsLoader, this.getNextTestPoint()));
 
+            double maxX = 10;
+            double minX = 1;
+            double maxY = 10;
+            double minY = 1;
             for (final DataPoint point : points) {
-                series.add(point.getX(), point.getY());
+                final double x = point.getX();
+                final double y = point.getY();
+                series.add(x, y);
+                maxX = Math.max(maxX, x);
+                minX = Math.min(minX, x);
+                maxY = Math.max(maxY, y);
+                minY = Math.min(minY, y);
+            }
+
+            if (minX <= 0) {
+                minX = 1.;
+            }
+
+            if (minY <= 0) {
+                minY = 1.;
             }
 
             // Now we add our series
@@ -162,7 +180,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             // Now we create the renderer
             final XYSeriesRenderer renderer = new XYSeriesRenderer();
             renderer.setLineWidth(2);
-            renderer.setColor(Color.RED);
+            renderer.setColor(Color.GREEN);
             // Include low and max value
             renderer.setDisplayBoundingPoints(true);
             // we add point markers
@@ -175,11 +193,14 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
             // Disable Pan on two axis
             mRenderer.setPanEnabled(false, false);
-            mRenderer.setYAxisMax(35);
-            mRenderer.setYAxisMin(0);
+            mRenderer.setYAxisMax(maxY, Double.valueOf(maxY / minY).intValue());
+            mRenderer.setYAxisMin(minY);
+            mRenderer.setXAxisMin(minX);
+            mRenderer.setXAxisMax(maxX, Double.valueOf(maxX / minX).intValue());
             mRenderer.setShowGrid(false); // we don't the grid
 
             final GraphicalView chartView = ChartFactory.getLineChartView(mParentFragmentActivity, dataset, mRenderer);
+            chartView.repaint();
 
             graphPlaceHolder.addView(chartView, 0);
 
