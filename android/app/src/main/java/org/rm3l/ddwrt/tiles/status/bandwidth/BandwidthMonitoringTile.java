@@ -109,8 +109,10 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
         return LOG_TAG;
     }
 
+    //TODO TEST
     private double getNextTestPoint() {
-        return new Random().nextDouble() * 1024;
+        final double random = new Random().nextDouble() * 1024;
+        return random + Math.sin(random * Math.E);
     }
 
     @Override
@@ -142,6 +144,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             //TODO TEST
             //Add new point to the Circular Buffer
             points.add(new DataPoint(nbRunsLoader, this.getNextTestPoint()));
+            //TODO END TEST
 
             double maxX = 10;
             double minX = 1;
@@ -156,7 +159,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
                 maxY = Math.max(maxY, y);
                 minY = Math.min(minY, y);
             }
-            //TODO END TEST
 
             if (minX <= 0) {
                 minX = 1.;
