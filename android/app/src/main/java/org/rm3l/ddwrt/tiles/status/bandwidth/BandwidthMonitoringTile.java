@@ -201,7 +201,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             graphPlaceHolder.addView(chartView, 0);
 
-
         }
 
         if (exception != null) {
