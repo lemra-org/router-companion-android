@@ -193,6 +193,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             mRenderer.setXAxisMin(minX - 1);
             mRenderer.setXAxisMax(maxX + 10);
             mRenderer.setShowGrid(false); // we don't the grid
+            mRenderer.setClickEnabled(false);
+            mRenderer.setZoomEnabled(false);
 
             final GraphicalView chartView = ChartFactory.getLineChartView(mParentFragmentActivity, dataset, mRenderer);
             chartView.repaint();
