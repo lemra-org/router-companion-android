@@ -38,7 +38,7 @@ import org.acra.annotation.ReportsCrashes;
         formKey = \"fake-key\";
         mailTo = "apps+ddwrt@rm3l.org",
         mode = ReportingInteractionMode.DIALOG,
-        resDialogCommentPrompt = R.string.crash_toast_text,
+        resDialogText = R.string.crash_toast_text,
         resDialogOkToast = R.string.crash_ok_dialog_text
 )
 public class DDWRTApplication extends Application {
