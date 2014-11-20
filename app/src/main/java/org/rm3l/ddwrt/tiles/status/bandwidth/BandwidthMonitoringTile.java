@@ -55,13 +55,6 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.Random;
 
-//import com.androidplot.Plot;
-//import com.androidplot.xy.LineAndPointFormatter;
-//import com.androidplot.xy.SimpleXYSeries;
-//import com.androidplot.xy.XYPlot;
-//import com.androidplot.xy.XYSeries;
-//import com.androidplot.xy.XYStepMode;
-
 /**
  *
  */
@@ -70,7 +63,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
 
     private final String iface;
-    private final EvictingQueue<DataPoint> points = EvictingQueue.create(10);
+    private final EvictingQueue<DataPoint> points = EvictingQueue.create(100);
 
     public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router, final String iface) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
@@ -148,6 +141,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             final XYSeries series = new XYSeries("Bandwidth Usage (MB): " + this.iface);
 
+            //TODO TEST
             //Add new point to the Circular Buffer
             points.add(new DataPoint(nbRunsLoader, this.getNextTestPoint()));
 
@@ -164,6 +158,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
                 maxY = Math.max(maxY, y);
                 minY = Math.min(minY, y);
             }
+            //TODO END TEST
 
             if (minX <= 0) {
                 minX = 1.;
@@ -180,7 +175,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             // Now we create the renderer
             final XYSeriesRenderer renderer = new XYSeriesRenderer();
             renderer.setLineWidth(2);
-            renderer.setColor(Color.GREEN);
+            renderer.setColor(Color.DKGRAY);
             // Include low and max value
             renderer.setDisplayBoundingPoints(true);
             // we add point markers
@@ -193,10 +188,10 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
             // Disable Pan on two axis
             mRenderer.setPanEnabled(false, false);
-            mRenderer.setYAxisMax(maxY, Double.valueOf(maxY / minY).intValue());
-            mRenderer.setYAxisMin(minY);
-            mRenderer.setXAxisMin(minX);
-            mRenderer.setXAxisMax(maxX, Double.valueOf(maxX / minX).intValue());
+            mRenderer.setYAxisMax(maxY + 10);
+            mRenderer.setYAxisMin(minY - 1);
+            mRenderer.setXAxisMin(minX - 1);
+            mRenderer.setXAxisMax(maxX + 10);
             mRenderer.setShowGrid(false); // we don't the grid
 
             final GraphicalView chartView = ChartFactory.getLineChartView(mParentFragmentActivity, dataset, mRenderer);
@@ -204,60 +199,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             graphPlaceHolder.addView(chartView, 0);
 
-//            //TODO
-//            //TEST
-//            final int MAX = 40;
-//            @NotNull final Number[] x = new Number[MAX];
-//            @NotNull final Number[] y = new Number[MAX];
-//            for (int i = 0; i < MAX; i++) {
-//                x[i] = i;
-//                y[i] = Math.random() * MAX + Math.sin(i / MAX);
-//            }
-//
-//            // create our series from our array of nums:
-//            @NotNull final XYSeries series2 = new SimpleXYSeries(
-//                    Arrays.asList(x),
-//                    Arrays.asList(y),
-//                    "Bandwidth Usage");
-//
-//            mySimpleXYPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.WHITE);
-////            mySimpleXYPlot.getGraphWidget().getGridLinePaint().setColor(Color.BLACK);
-////            mySimpleXYPlot.getGraphWidget().getGridLinePaint().setPathEffect(new DashPathEffect(new float[]{1,1}, 1));
-//            mySimpleXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.WHITE);
-//            mySimpleXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.WHITE);
-//
-//            mySimpleXYPlot.setBorderStyle(Plot.BorderStyle.SQUARE, null, null);
-//            mySimpleXYPlot.getBorderPaint().setStrokeWidth(1);
-//            mySimpleXYPlot.getBorderPaint().setAntiAlias(false);
-//            mySimpleXYPlot.getBorderPaint().setColor(Color.BLACK);
-//
-//            // Create a formatter to use for drawing a series using LineAndPointRenderer:
-//            @NotNull LineAndPointFormatter series1Format = new LineAndPointFormatter(
-//                    Color.rgb(0, 100, 0),                   // line color
-//                    Color.rgb(0, 100, 0),                   // point color
-//                    Color.rgb(100, 200, 0), null);                // fill color
-//
-//            // setup our line fill paint to be a slightly transparent gradient:
-//            @NotNull Paint lineFill = new Paint();
-//            lineFill.setAlpha(200);
-//            lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.GREEN, Shader.TileMode.MIRROR));
-//
-//            @NotNull LineAndPointFormatter formatter = new LineAndPointFormatter(Color.rgb(0, 0, 0), Color.BLUE, Color.RED, null);
-//            formatter.setFillPaint(lineFill);
-//            mySimpleXYPlot.getGraphWidget().setPaddingRight(2);
-//            mySimpleXYPlot.addSeries(series2, formatter);
-//
-//            // draw a domain tick for each year:
-//            mySimpleXYPlot.setDomainStep(XYStepMode.SUBDIVIDE, x.length);
-//
-//            // customize our domain/range labels
-//            mySimpleXYPlot.setDomainLabel("X");
-//            mySimpleXYPlot.setRangeLabel("Bandwidth (MBps)");
-//
-//            // get rid of decimal points in our range labels:
-//            mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("0"));
-
-            //END TEST
 
         }
 
