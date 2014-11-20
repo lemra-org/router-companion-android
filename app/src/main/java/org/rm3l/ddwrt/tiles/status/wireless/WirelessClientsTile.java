@@ -31,7 +31,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -69,19 +68,6 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
     protected Loader<WirelessClientsTile.Devices> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<WirelessClientsTile.Devices>(this.mParentFragmentActivity) {
 
-            /*
-            String as[] = s.split(" ");
-                if(as.length >= 4 && "map".equals(as[0]))
-                {
-                    String s1 = as[1];
-                    String s2 = as[2];
-                    String s3 = as[3];
-                    Device device = devices.addDevice(s1);
-                    devices.setIpAddress(device, s2);
-                    if(!"*".equals(s3))
-                        device.setSystemName(s3);
-                }
-             */
             @Nullable
             @Override
             public WirelessClientsTile.Devices loadInBackground() {
@@ -128,6 +114,16 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                         }
 
                     }
+
+                    //FIXME TESTS
+
+                    for (int i = 0, j = 1; i <= 8; i++, j++) {
+                        devices
+                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", i, j))
+                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", i, j))
+                                        .setSystemName(String.format("Device %1$s-%2$s", i, j)));
+                    }
+                    //FIXME END TESTS
 
                     return devices;
 
@@ -199,34 +195,26 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //TODO
             final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
-//            clientsContainer.removeAllViews();
+            clientsContainer.removeAllViews();
 
-            final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             final List<Device> devices = data.getDevices();
             for (final Device device : devices) {
-                final CardView cardView = new CardView(mParentFragmentActivity);
-                cardView.setOnClickListener(this);
-                cardView.setLayoutParams(cardViewLayoutParams);
 
-                final LinearLayout deviceLayout = (LinearLayout) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
+                final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
 
-                final TextView deviceName = (TextView) deviceLayout.findViewById(R.id.tile_status_wireless_client_device_name);
+                final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 deviceName.setText(device.getName());
 
-                final TextView deviceMac = (TextView) deviceLayout.findViewById(R.id.tile_status_wireless_client_device_mac);
+                final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
                 deviceMac.setText(device.getMacAddress());
 
-                final TextView deviceIp = (TextView) deviceLayout.findViewById(R.id.tile_status_wireless_client_device_ip);
+                final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
                 deviceIp.setText(device.getIpAddress());
-
-                cardView.addView(deviceLayout);
 
                 clientsContainer.addView(cardView);
             }
@@ -234,10 +222,8 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         }
 
         if (exception != null) {
-            if (errorPlaceHolderView != null) {
-                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
-            }
+            errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
         doneWithLoaderInstance(this, loader,
@@ -280,6 +266,14 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         public Devices setException(Exception exception) {
             this.exception = exception;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return "Devices{" +
+                    "devices=" + devices +
+                    ", exception=" + exception +
+                    '}';
         }
     }
 }
