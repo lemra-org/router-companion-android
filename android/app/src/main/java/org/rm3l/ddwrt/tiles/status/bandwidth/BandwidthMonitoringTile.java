@@ -75,6 +75,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router, final String iface) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
         this.iface = iface;
+        ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(this.iface);
     }
 
     @Override
@@ -143,8 +144,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(this.iface);
-
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
 
             final XYSeries series = new XYSeries("Bandwidth Usage for " + this.iface);
@@ -152,7 +151,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             //Add new point to the Circular Buffer
             points.add(new DataPoint(nbRunsLoader, this.getNextTestPoint()));
 
-            for (DataPoint point : points) {
+            for (final DataPoint point : points) {
                 series.add(point.getX(), point.getY());
             }
 
