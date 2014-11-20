@@ -35,7 +35,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -80,7 +79,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                      @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
         this(parentFragmentActivity, arguments, router);
         if (layoutId != null) {
-            this.layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(layoutId, null);
+            this.layout = (ViewGroup) this.mParentFragmentActivity.getLayoutInflater().inflate(layoutId, null);
         }
         if (toggleRefreshButtonId != null) {
             this.mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(toggleRefreshButtonId);
