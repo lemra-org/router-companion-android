@@ -31,13 +31,16 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +53,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -57,7 +61,14 @@ import java.util.List;
  */
 public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> {
 
+    public static final Comparator<Device> COMPARATOR = new Comparator<Device>() {
+        @Override
+        public int compare(Device device, Device device2) {
+            return Ordering.natural().compare(device.getName(), device2.getName());
+        }
+    };
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
+    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 5;
 
     public WirelessClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_clients, null);
@@ -198,25 +209,42 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
-            //TODO
-            final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
+            final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
             clientsContainer.removeAllViews();
 
-            final List<Device> devices = data.getDevices();
+            final List<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             for (final Device device : devices) {
 
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
 
                 final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
-                deviceName.setText(device.getName());
+                final String name = device.getName();
+                if (name != null) {
+                    deviceName.setText(name);
+                }
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
-                deviceMac.setText(device.getMacAddress());
+                final String macAddress = device.getMacAddress();
+                if (macAddress != null) {
+                    deviceMac.setText(macAddress);
+                }
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
-                deviceIp.setText(device.getIpAddress());
+                final String ipAddress = device.getIpAddress();
+                if (ipAddress != null) {
+                    deviceIp.setText(ipAddress);
+                }
 
                 clientsContainer.addView(cardView);
+            }
+
+            final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
+            //Whether to display 'Show more' button
+            if (data.getDevicesCount() > MAX_CLIENTS_TO_SHOW_IN_TILE) {
+                showMore.setVisibility(View.VISIBLE);
+                showMore.setOnClickListener(this);
+            } else {
+                showMore.setVisibility(View.GONE);
             }
 
         }
@@ -249,6 +277,19 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         @NotNull
         public List<Device> getDevices() {
             return devices;
+        }
+
+        @NotNull
+        public int getDevicesCount() {
+            return devices.size();
+        }
+
+        @NotNull
+        public List<Device> getDevices(int max) {
+            return FluentIterable
+                    .from(devices)
+                    .limit(max)
+                    .toSortedList(COMPARATOR);
         }
 
         @NotNull
