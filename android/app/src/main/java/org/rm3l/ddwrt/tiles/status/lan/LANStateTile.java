@@ -210,10 +210,8 @@ lan_wins=
         }
 
         if (exception != null) {
-            if (errorPlaceHolderView != null) {
-                errorPlaceHolderView.setText(Throwables.getRootCause(exception).getMessage());
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
-            }
+            errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
         doneWithLoaderInstance(this, loader,
