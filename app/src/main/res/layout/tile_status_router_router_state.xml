@@ -112,28 +112,34 @@
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="3">
+            android:columnCount="4">
 
             <!-- Model -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="0"
                 android:text="Model"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="0"
                 android:text=" " />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_model"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="left"
+                android:layout_row="0"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="false"
@@ -144,22 +150,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="1"
                 android:text="Firmware"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="1"
                 android:text=" " />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_firmware"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="left"
+                android:layout_row="1"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="false"
@@ -170,22 +182,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="2"
                 android:text="Kernel"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="2"
                 android:text=" " />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_kernel"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="left"
+                android:layout_row="2"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="false"
@@ -196,22 +214,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="3"
                 android:text="LAN IP"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="3"
                 android:text=" " />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_lan_ip"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="left"
+                android:layout_row="3"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="false"
@@ -222,22 +246,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="5"
                 android:text="Uptime"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="5"
                 android:text=" " />
 
             <TextView
                 android:id="@+id/tile_status_router_router_state_uptime"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="left"
+                android:layout_row="5"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="false"
@@ -249,6 +279,8 @@
                 android:id="@+id/tile_status_router_router_state_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="6"
                 android:text="Auto-refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -257,9 +289,11 @@
                 android:id="@+id/tile_status_router_router_state_togglebutton_separator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_column="2"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
+                android:layout_row="6"
                 android:text=" "
                 android:visibility="gone" />
 
@@ -267,7 +301,9 @@
                 android:id="@+id/tile_status_router_router_state_togglebutton"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_column="3"
                 android:layout_gravity="start"
+                android:layout_row="6"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
