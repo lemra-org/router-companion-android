@@ -62,7 +62,16 @@
 
         <activity
             android:name="org.rm3l.ddwrt.donate.DonateActivity"
-            android:label="@string/support_app" />
+            android:excludeFromRecents="true"
+            android:label="@string/support_app"
+            android:launchMode="singleInstance" />
+
+        <activity
+            android:name="org.acra.CrashReportDialog"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Dialog" />
 
     </application>
 

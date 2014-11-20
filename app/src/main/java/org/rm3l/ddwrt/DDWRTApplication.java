@@ -38,6 +38,8 @@ import org.acra.annotation.ReportsCrashes;
         formKey = \"fake-key\";
         mailTo = "apps+ddwrt@rm3l.org",
         mode = ReportingInteractionMode.DIALOG,
+        resDialogTitle = R.string.app_name,
+        resDialogIcon = R.drawable.ic_action_alert_warning,
         resDialogText = R.string.crash_toast_text,
         resDialogOkToast = R.string.crash_ok_dialog_text
 )
