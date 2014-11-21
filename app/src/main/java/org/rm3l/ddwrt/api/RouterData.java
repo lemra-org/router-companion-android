@@ -22,31 +22,36 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt.fragments.status;
+package org.rm3l.ddwrt.api;
 
-import android.os.Bundle;
-
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
-import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
-import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+public abstract class RouterData<T> {
 
-/**
- *
- */
-public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTTile>> {
+    private T data;
 
     @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new IfacesTile(getSherlockActivity(), savedInstanceState, router),
-                new BandwidthMonitoringTile(getSherlockActivity(), savedInstanceState, router));
+    private Exception exception;
+
+    public T getData() {
+        return data;
     }
 
+    @NotNull
+    public RouterData<T> setData(final T data) {
+        this.data = data;
+        return this;
+    }
+
+    @Nullable
+    public Exception getException() {
+        return exception;
+    }
+
+    @NotNull
+    public RouterData<T> setException(Exception exception) {
+        this.exception = exception;
+        return this;
+    }
 }
