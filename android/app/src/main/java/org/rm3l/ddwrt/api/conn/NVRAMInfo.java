@@ -26,6 +26,7 @@ package org.rm3l.ddwrt.api.conn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.api.RouterData;
 
 import java.io.Serializable;
 import java.util.Properties;
@@ -34,7 +35,7 @@ import java.util.Properties;
  * Wrapper around NVRAM infos fetched from a given {@link org.rm3l.ddwrt.api.conn.Router}.
  * Comes in as a Properties object.
  */
-public class NVRAMInfo extends Properties implements Serializable {
+public class NVRAMInfo extends RouterData<Properties> implements Serializable {
 
     public static final String ROUTER_NAME = "router_name";
     public static final String WAN_IPADDR = "wan_ipaddr";
@@ -74,26 +75,44 @@ public class NVRAMInfo extends Properties implements Serializable {
     public static final String WAN_IFNAME = "wan_ifname";
     public static final String SYSLOG = "syslog";
 
-    @Nullable
-    private Exception exception;
-
     public NVRAMInfo() {
         super();
+        super.setData(new Properties());
+    }
+
+    public void setProperty(final String name, final String value) {
+        super.getData().setProperty(name, value);
+    }
+
+    @Nullable
+    public String getProperty(final String name) {
+        return this.getProperty(name, null);
+    }
+
+    @Nullable
+    public String getProperty(final String name, final String defaultValue) {
+        return super.getData().getProperty(name, defaultValue);
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         return super.toString();
-    }
-
-    @Nullable
-    public Exception getException() {
-        return exception;
     }
 
     @NotNull
     public NVRAMInfo setException(@Nullable final Exception exception) {
-        this.exception = exception;
+        super.setException(exception);
         return this;
+    }
+
+    public void putAll(NVRAMInfo nvramInfo) {
+        if (nvramInfo == null) {
+            return;
+        }
+        super.getData().putAll(nvramInfo.getData());
+    }
+
+    public boolean isEmpty() {
+        return super.getData().isEmpty();
     }
 }
