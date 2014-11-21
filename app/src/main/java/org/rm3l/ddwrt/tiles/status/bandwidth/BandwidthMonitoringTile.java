@@ -35,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
 
@@ -143,25 +144,21 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             //TODO TEST
             //Add new point to the Circular Buffer
-            points.add(new DataPoint(nbRunsLoader, this.getNextTestPoint()));
+            points.add(new DataPoint(System.currentTimeMillis(), this.getNextTestPoint()));
             //TODO END TEST
 
-            double maxX = 10;
-            double minX = 1;
+            long maxX = System.currentTimeMillis() + 5000;
+            long minX = System.currentTimeMillis() - 5000;
             double maxY = 10;
-            double minY = 1;
+            double minY = 1.;
             for (final DataPoint point : points) {
-                final double x = point.getX();
-                final double y = point.getY();
+                final long x = point.getTimestamp();
+                final double y = point.getValue();
                 series.add(x, y);
                 maxX = Math.max(maxX, x);
                 minX = Math.min(minX, x);
                 maxY = Math.max(maxY, y);
                 minY = Math.min(minY, y);
-            }
-
-            if (minX <= 0) {
-                minX = 1.;
             }
 
             if (minY <= 0) {
@@ -193,10 +190,16 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             mRenderer.setXAxisMin(minX);
             mRenderer.setXAxisMax(maxX + 10);
             mRenderer.setShowGrid(false);
-            mRenderer.setClickEnabled(false);
+            mRenderer.setClickEnabled(true);
             mRenderer.setZoomEnabled(false);
+            mRenderer.setPanEnabled(false);
+            mRenderer.setZoomRate(6.0f);
+            mRenderer.setShowLabels(true);
+            mRenderer.setFitLegend(true);
+            mRenderer.setInScroll(true);
 
-            final GraphicalView chartView = ChartFactory.getLineChartView(mParentFragmentActivity, dataset, mRenderer);
+            final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
+                    .getContext(), dataset, mRenderer, null);
             chartView.repaint();
 
             graphPlaceHolder.addView(chartView, 0);
@@ -204,7 +207,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
         }
 
         if (exception != null) {
-            errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
@@ -222,20 +225,20 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     }
 
     private class DataPoint {
-        private final double x;
-        private final double y;
+        private final long timestamp;
+        private final double value;
 
-        private DataPoint(double x, double y) {
-            this.x = x;
-            this.y = y;
+        private DataPoint(long timestamp, double value) {
+            this.timestamp = timestamp;
+            this.value = value;
         }
 
-        public double getX() {
-            return x;
+        public long getTimestamp() {
+            return timestamp;
         }
 
-        public double getY() {
-            return y;
+        public double getValue() {
+            return value;
         }
 
         @Override
@@ -245,19 +248,16 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
 
             DataPoint dataPoint = (DataPoint) o;
 
-            if (Double.compare(dataPoint.x, x) != 0) return false;
-            if (Double.compare(dataPoint.y, y) != 0) return false;
-
-            return true;
+            return Objects.equal(dataPoint.timestamp, timestamp)
+                    && Objects.equal(dataPoint.value, value);
         }
 
         @Override
         public int hashCode() {
             int result;
             long temp;
-            temp = Double.doubleToLongBits(x);
-            result = (int) (temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(y);
+            result = (int) (timestamp ^ (timestamp >>> 32));
+            temp = Double.doubleToLongBits(value);
             result = 31 * result + (int) (temp ^ (temp >>> 32));
             return result;
         }
@@ -265,8 +265,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
         @Override
         public String toString() {
             return "DataPoint{" +
-                    "x=" + x +
-                    ", y=" + y +
+                    "timestamp=" + timestamp +
+                    ", value=" + value +
                     '}';
         }
     }
