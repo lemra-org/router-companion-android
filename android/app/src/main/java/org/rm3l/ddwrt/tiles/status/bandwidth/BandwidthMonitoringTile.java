@@ -38,6 +38,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -49,38 +51,39 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.NVRAMInfo;
+import org.rm3l.ddwrt.api.None;
+import org.rm3l.ddwrt.api.RouterData;
 import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
 /**
  *
  */
-public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
+public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
+    public static final int MAX_DATA_POINTS = 10;
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
+    private final Random randomColorGen = new Random();
+    private final Map<String, Integer> colorsCache = Maps.newHashMap();
+    private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
 
-    private final String iface;
-    private final EvictingQueue<DataPoint> points = EvictingQueue.create(100);
-
-    public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router, final String iface) {
+    public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
-        this.iface = iface;
-        ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title)).setText(this.iface);
     }
 
     @Override
-    protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+    protected Loader<None> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
-            public NVRAMInfo loadInBackground() {
-
-                final String iface = BandwidthMonitoringTile.this.iface;
+            public None loadInBackground() {
 
                 try {
                     Log.d(LOG_TAG, "Init background loader for " + BandwidthMonitoringTile.class + ": routerInfo=" +
@@ -89,20 +92,83 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
                     if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                         //Skip run
                         Log.d(LOG_TAG, "Skip loader run");
-                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
 
+                    //Get ifaces and fetch data points for each of these ifaces
+                    fillIfacesDataPoints(getIfaces());
 
                     //TODO
                     return null;
 
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();
-                    return new NVRAMInfo().setException(e);
+                    return (None) new None().setException(e);
                 }
             }
         };
+    }
+
+    @NotNull
+    private Collection<String> getIfaces() throws Exception {
+
+        //TODO TEST
+        return Sets.newTreeSet(Arrays.asList("etho", "eth1", "eth4"));
+
+        //TODO TEST
+
+//        final Set<String> ifacesConsidered = Sets.newHashSet();
+//
+//        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+//                NVRAMInfo.LAN_IFNAME,
+//                NVRAMInfo.WAN_IFNAME,
+//                NVRAMInfo.LANDEVS);
+//
+//        if (nvramInfo == null) {
+//            return ifacesConsidered;
+//        }
+//
+//        final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
+//        if (lanIfname != null) {
+//            ifacesConsidered.add(lanIfname);
+//        }
+//
+//        final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
+//        if (wanIfname != null) {
+//            ifacesConsidered.add(wanIfname);
+//        }
+//
+//        final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+//        if (landevs != null) {
+//            final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
+//            if (splitToList != null && !splitToList.isEmpty()) {
+//                for (final String landev : splitToList) {
+//                    if (landev == null) {
+//                        continue;
+//                    }
+//                    ifacesConsidered.add(landev);
+//                }
+//            }
+//        }
+//
+//        return ifacesConsidered;
+
+    }
+
+    private void fillIfacesDataPoints(final Collection<String> ifaces) {
+
+        for (String iface : ifaces) {
+            fillIfaceDataPoint(iface);
+        }
+    }
+
+    public void fillIfaceDataPoint(@NotNull final String iface) {
+
+        //TODO TEST ONLY
+        bandwidthMonitoringIfaceData.addData(iface,
+                new DataPoint(System.currentTimeMillis(), this.getNextTestPoint()));
+        //TODO TEST ONLY
     }
 
     @Override
@@ -117,14 +183,14 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NotNull Loader<None> loader, @Nullable None data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         if (data == null) {
             //FIXME Just commented out for tests
-            data = new NVRAMInfo();
-//            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+            data = new None();
+//            data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
             //END FIXME
         }
 
@@ -139,48 +205,53 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             }
 
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
-
-            final XYSeries series = new XYSeries("Bandwidth Usage (MB): " + this.iface);
-
-            //TODO TEST
-            //Add new point to the Circular Buffer
-            points.add(new DataPoint(System.currentTimeMillis(), this.getNextTestPoint()));
-            //TODO END TEST
+            final Map<String, EvictingQueue<DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
 
             long maxX = System.currentTimeMillis() + 5000;
             long minX = System.currentTimeMillis() - 5000;
             double maxY = 10;
             double minY = 1.;
-            for (final DataPoint point : points) {
-                final long x = point.getTimestamp();
-                final double y = point.getValue();
-                series.add(x, y);
-                maxX = Math.max(maxX, x);
-                minX = Math.min(minX, x);
-                maxY = Math.max(maxY, y);
-                minY = Math.min(minY, y);
-            }
 
-            if (minY <= 0) {
-                minY = 1.;
-            }
-
-            // Now we add our series
             final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-            dataset.addSeries(series);
-
-            // Now we create the renderer
-            final XYSeriesRenderer renderer = new XYSeriesRenderer();
-            renderer.setLineWidth(2);
-            renderer.setColor(Color.LTGRAY);
-            // Include low and max value
-            renderer.setDisplayBoundingPoints(true);
-            // we add point markers
-            renderer.setPointStyle(PointStyle.POINT);
-            renderer.setPointStrokeWidth(1);
-
             final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-            mRenderer.addSeriesRenderer(renderer);
+
+            for (final Map.Entry<String, EvictingQueue<DataPoint>> entry : dataCircularBuffer.entrySet()) {
+                final String iface = entry.getKey();
+                final EvictingQueue<DataPoint> dataPoints = entry.getValue();
+                final XYSeries series = new XYSeries(iface);
+                for (final DataPoint point : dataPoints) {
+                    final long x = point.getTimestamp();
+                    final double y = point.getValue();
+                    series.add(x, y);
+                    maxX = Math.max(maxX, x);
+                    minX = Math.min(minX, x);
+                    maxY = Math.max(maxY, y);
+                    minY = Math.min(minY, y);
+                }
+                // Now we add our series
+                dataset.addSeries(series);
+
+                // Now we create the renderer
+                final XYSeriesRenderer renderer = new XYSeriesRenderer();
+                renderer.setLineWidth(2);
+
+                Integer ifaceColor = colorsCache.get(iface);
+                if (ifaceColor == null) {
+                    //Generate a Random Color, excluding 'white' (because graph background is already white)
+                    ifaceColor = Color.argb(255,
+                            randomColorGen.nextInt(255), randomColorGen.nextInt(255), randomColorGen.nextInt(255));
+                    colorsCache.put(iface, ifaceColor);
+                }
+                renderer.setColor(ifaceColor);
+                // Include low and max value
+                renderer.setDisplayBoundingPoints(true);
+                // we add point markers
+                renderer.setPointStyle(PointStyle.POINT);
+                renderer.setPointStrokeWidth(1);
+
+                mRenderer.addSeriesRenderer(renderer);
+            }
+
             // We want to avoid black border
             mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
             // Disable Pan on two axis
@@ -203,7 +274,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
             chartView.repaint();
 
             graphPlaceHolder.addView(chartView, 0);
-
         }
 
         if (exception != null) {
@@ -222,6 +292,25 @@ public class BandwidthMonitoringTile extends DDWRTTile<NVRAMInfo> {
     protected Intent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    class BandwidthMonitoringIfaceData extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
+
+        public BandwidthMonitoringIfaceData() {
+            super();
+            super.setData(Maps.<String, EvictingQueue<DataPoint>>newConcurrentMap());
+        }
+
+        public BandwidthMonitoringIfaceData addData(final String iface, final DataPoint point) {
+            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
+            final EvictingQueue<DataPoint> dataPointsForIface = data.get(iface);
+            if (dataPointsForIface == null) {
+                data.put(iface, EvictingQueue.<DataPoint>create(MAX_DATA_POINTS));
+            }
+            data.get(iface).add(point);
+            return this;
+        }
+
     }
 
     private class DataPoint {
