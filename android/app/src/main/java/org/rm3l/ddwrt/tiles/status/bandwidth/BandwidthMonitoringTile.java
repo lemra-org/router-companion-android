@@ -67,7 +67,7 @@ import java.util.Random;
  */
 public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
-    public static final int MAX_DATA_POINTS = 10;
+    public static final int MAX_DATA_POINTS = 50;
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
@@ -261,8 +261,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             mRenderer.setXAxisMin(minX);
             mRenderer.setXAxisMax(maxX + 10);
             mRenderer.setShowGrid(false);
-            mRenderer.setClickEnabled(true);
-            mRenderer.setZoomEnabled(false);
+            mRenderer.setClickEnabled(false);
+            mRenderer.setZoomEnabled(true);
             mRenderer.setPanEnabled(false);
             mRenderer.setZoomRate(6.0f);
             mRenderer.setShowLabels(true);
