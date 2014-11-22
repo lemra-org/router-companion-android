@@ -120,8 +120,7 @@
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="textPassword" />
 
-            <!-- TODO Add a file picker instead -->
-            <EditText
+            <Button
                 android:id="@+id/router_add_privkey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -129,9 +128,13 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="@string/router_add_path_to_privkey"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="text" />
+                android:hint="@string/router_add_path_to_privkey" />
+
+            <TextView
+                android:id="@+id/router_add_privkey_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <CheckBox
                 android:id="@+id/router_add_is_strict_host_key_checking"

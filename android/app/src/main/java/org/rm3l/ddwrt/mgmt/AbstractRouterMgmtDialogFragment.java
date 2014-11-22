@@ -24,23 +24,27 @@
 
 package org.rm3l.ddwrt.mgmt;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -49,7 +53,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.google.common.base.Throwables;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.api.conn.Router;
@@ -57,8 +61,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import java.io.IOException;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -70,6 +73,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         extends SherlockDialogFragment
         implements AdapterView.OnItemSelectedListener {
 
+    private static final String LOG_TAG = AbstractRouterMgmtDialogFragment.class.getSimpleName();
+    private static final int READ_REQUEST_CODE = 42;
     protected DDWRTCompanionDAO dao;
     private RouterMgmtDialogListener mListener;
 
@@ -102,24 +107,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
         ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(this);
-//        ((EditText) view.findViewById(R.id.router_add_password))
-//                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//                    @Override
-//                    public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-//                        if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                            boolean validForm = validateForm(d);
-//
-//                            if (validForm) {
-//                                // Check connection to router ...
-//
-//                                new CheckRouterConnectionAsyncTask(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
-//                            }
-//                            //else dialog stays open. 'Cancel' button can still close it.
-//                            return true;
-//                        }
-//                        return false;
-//                    }
-//                });
 
         builder
                 .setMessage(this.getDialogMessage())
@@ -144,6 +131,49 @@ public abstract class AbstractRouterMgmtDialogFragment
         return builder.create();
     }
 
+    /**
+     * Receive the result from a previous call to
+     * {@link #startActivityForResult(android.content.Intent, int)}.  This follows the
+     * related Activity API as described there in
+     * {@link android.app.Activity#onActivityResult(int, int, android.content.Intent)}.
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param resultData  An Intent, which can return result data to the caller
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                Log.i(LOG_TAG, "Uri: " + uri.toString());
+                final AlertDialog d = (AlertDialog) getDialog();
+                if (d != null) {
+                    final TextView privKeyPath = (TextView) d.findViewById(R.id.router_add_privkey_path);
+                    try {
+                        privKeyPath.setText(IOUtils
+                                .toString(this.getSherlockActivity().getContentResolver().openInputStream(uri)));
+                    } catch (IOException e) {
+                        displayMessage("Error: " + e.getMessage(), ALERT);
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onAttach(@NotNull Activity activity) {
         super.onAttach(activity);
@@ -164,21 +194,47 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
-            final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(new View.OnClickListener() {
 
+            d.findViewById(R.id.router_add_privkey).setOnClickListener(new View.OnClickListener() {
+                @TargetApi(Build.VERSION_CODES.KITKAT)
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
+                    //Open up file picker
+
+                    // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+                    // browser.
+                    final Intent intent = new Intent();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    } else {
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                    }
+
+                    // Filter to only show results that can be "opened", such as a
+                    // file (as opposed to a list of contacts or timezones)
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                    // search for all documents available via installed storage providers
+                    intent.setType("*/*");
+
+                    AbstractRouterMgmtDialogFragment.this.startActivityForResult(intent, READ_REQUEST_CODE);
+                }
+            });
+
+            d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Validate form
                     boolean validForm = validateForm(d);
 
                     if (validForm) {
-                        // Check connection to router ...
-
-                        new CheckRouterConnectionAsyncTask(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
+                        // Now check actual connection to router ...
+                        new CheckRouterConnectionAsyncTask(
+                                ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
                     }
                     //else dialog stays open. 'Cancel' button can still close it.
                 }
-
             });
         }
     }
@@ -200,12 +256,12 @@ public abstract class AbstractRouterMgmtDialogFragment
         router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
 
         final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
-        final String privkey = ((EditText) d.findViewById(R.id.router_add_privkey)).getText().toString();
+        final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();
         if (!isNullOrEmpty(password)) {
             router.setPassword(password);
         }
         if (!isNullOrEmpty(privkey)) {
-            router.setPrivKey(FileUtils.readFileToString(new File(privkey), Charset.defaultCharset()));
+            router.setPrivKey(privkey);
         }
 
         //This will throw an exception if connection could not be established!
@@ -252,17 +308,17 @@ public abstract class AbstractRouterMgmtDialogFragment
             return false;
         }
 
-        @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
-        @NotNull final EditText sshPrivKeyView = (EditText) d.findViewById(R.id.router_add_privkey);
-
-        final boolean isPasswordEmpty = isNullOrEmpty(sshPasswordView.getText().toString());
-        final boolean isPrivKeyEmpty = isNullOrEmpty(sshPrivKeyView.getText().toString());
-        if (isPasswordEmpty && isPrivKeyEmpty) {
-            displayMessage(getString(R.string.router_add_password_or_privkey_invalid), ALERT);
-            sshPasswordView.requestFocus();
-            openKeyboard(sshPasswordView);
-            return false;
-        }
+//        @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
+//        @NotNull final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
+//
+//        final boolean isPasswordEmpty = isNullOrEmpty(sshPasswordView.getText().toString());
+//        final boolean isPrivKeyEmpty = isNullOrEmpty(sshPrivKeyView.getText().toString());
+//        if (isPasswordEmpty && isPrivKeyEmpty) {
+//            displayMessage(getString(R.string.router_add_password_or_privkey_invalid), ALERT);
+//            sshPasswordView.requestFocus();
+//            openKeyboard(sshPasswordView);
+//            return false;
+//        }
 
         return true;
     }
