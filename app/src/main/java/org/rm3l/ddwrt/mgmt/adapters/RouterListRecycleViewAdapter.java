@@ -130,14 +130,19 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
      * underlying data set.
      *
      * @param position The index of the item to remove.
+     *
+     *@return the number of elements in the DB
      */
-    public void removeData(int position) {
+    public int removeData(int position) {
         final Router router = this.routersList.get(position);
         if (router != null) {
             dao.deleteRouter(router.getUuid());
-            setRoutersList(dao.getAllRouters());
+            final List<Router> allRouters = dao.getAllRouters();
+            setRoutersList(allRouters);
             notifyItemRemoved(position);
+            return allRouters.size();
         }
+        return dao.getAllRouters().size();
     }
 
     @NotNull
