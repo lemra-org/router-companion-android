@@ -55,7 +55,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -128,17 +127,17 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
 
                     }
 
-                    //FIXME TESTS
-
-                    for (int i = 1, j = i + 1; i <= 15; i++, j++) {
-                        final int randomI = new Random().nextInt(i);
-                        final int randomJ = new Random().nextInt(j);
-                        devices
-                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
-                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
-                                        .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
-                    }
-                    //FIXME END TESTS
+//                    //FIXME TESTS
+//
+//                    for (int i = 1, j = i + 1; i <= 15; i++, j++) {
+//                        final int randomI = new Random().nextInt(i);
+//                        final int randomJ = new Random().nextInt(j);
+//                        devices
+//                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
+//                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
+//                                        .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
+//                    }
+//                    //FIXME END TESTS
 
                     return devices;
 
