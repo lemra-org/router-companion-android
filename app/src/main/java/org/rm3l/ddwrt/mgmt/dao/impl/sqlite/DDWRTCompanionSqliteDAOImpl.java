@@ -50,7 +50,6 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PASSWORD;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PORT;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PRIVKEY;
-import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PRIVKEY_PATH;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PROTOCOL;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_SSH_STRICT_HOST_KEY_CHECKING;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_USERNAME;
@@ -76,8 +75,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
             ROUTER_USERNAME,
             ROUTER_PASSWORD,
-            ROUTER_PRIVKEY,
-            ROUTER_PRIVKEY_PATH};
+            ROUTER_PRIVKEY};
 
     public DDWRTCompanionSqliteDAOImpl(Context context) {
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
@@ -98,7 +96,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setUsername(cursor.getString(7));
         router.setPassword(cursor.getString(8));
         router.setPrivKey(cursor.getString(9));
-        router.setPrivkeyPath(cursor.getString(10));
 
         return router;
     }
@@ -159,7 +156,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(ROUTER_PASSWORD, router.getPassword());
         values.put(ROUTER_PORT, router.getRemotePort());
         values.put(ROUTER_PRIVKEY, router.getPrivKey());
-        values.put(ROUTER_PRIVKEY_PATH, router.getPrivkeyPath());
         values.put(ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
                 router.isStrictHostKeyChecking() ? 1 : 0);
         values.put(ROUTER_USERNAME, router.getUsername());

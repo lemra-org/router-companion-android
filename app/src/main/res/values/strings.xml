@@ -162,7 +162,7 @@
     <string name="router_add_username_invalid">Please enter the SSH Username</string>
     <string name="router_add_password_or_privkey_invalid">Please specify a password or a private key</string>
     <string name="router_add_internal_error">Whoops - Internal Error. Sorry, try again later.</string>
-    <string name="router_add_path_to_privkey">Path to SSH Private key</string>
+    <string name="router_add_path_to_privkey">Select SSH Private key (if any)</string>
     <string name="router_add_strict_host_key_checking">Strict Host Key Checking</string>
     <string name="router_add_password_may_be_empty">Password (may be empty)</string>
     <string name="router_add_login">Login (e.g., root)</string>

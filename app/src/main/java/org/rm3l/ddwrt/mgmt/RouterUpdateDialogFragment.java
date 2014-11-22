@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +113,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             }
             ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsername());
             ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPassword());
-            ((EditText) d.findViewById(R.id.router_add_privkey)).setText(router.getPrivKey());
+            ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKey());
             ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
                     .setChecked(router.isStrictHostKeyChecking());
         }
