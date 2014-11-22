@@ -58,8 +58,6 @@ public class Router implements Serializable {
     private String password;
     @Nullable
     private String privKey;
-    @Nullable
-    private String privkeyPath;
     private int id = -1;
 
     private boolean strictHostKeyChecking = false;
@@ -83,7 +81,6 @@ public class Router implements Serializable {
             this.username = router.username;
             this.password = router.password;
             this.privKey = \"fake-key\";
-            this.privkeyPath = router.privkeyPath;
             this.routerConnectionProtocol = router.routerConnectionProtocol;
             this.strictHostKeyChecking = router.strictHostKeyChecking;
             this.useDefault = router.useDefault;
@@ -221,15 +218,6 @@ public class Router implements Serializable {
         return this.name;
     }
 
-    @Nullable
-    public String getPrivkeyPath() {
-        return privkeyPath;
-    }
-
-    public void setPrivkeyPath(@Nullable String privkeyPath) {
-        this.privkeyPath = privkeyPath;
-    }
-
     public int getId() {
         return id;
     }
@@ -254,8 +242,6 @@ public class Router implements Serializable {
             return false;
         if (privKey != null ? !privKey.equals(router.privKey) : router.privKey != null)
             return false;
-        if (privkeyPath != null ? !privkeyPath.equals(router.privkeyPath) : router.privkeyPath != null)
-            return false;
         if (!remoteIpAddress.equals(router.remoteIpAddress)) return false;
         if (routerConnectionProtocol != router.routerConnectionProtocol) return false;
         if (!username.equals(router.username)) return false;
@@ -273,7 +259,6 @@ public class Router implements Serializable {
         result = 31 * result + username.hashCode();
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (privKey != null ? privKey.hashCode() : 0);
-        result = 31 * result + (privkeyPath != null ? privkeyPath.hashCode() : 0);
         result = 31 * result + id;
         result = 31 * result + (strictHostKeyChecking ? 1 : 0);
         result = 31 * result + (useDefault ? 1 : 0);

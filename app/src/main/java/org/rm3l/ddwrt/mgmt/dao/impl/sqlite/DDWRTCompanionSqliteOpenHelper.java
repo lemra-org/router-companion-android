@@ -41,7 +41,6 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String ROUTER_USERNAME = "username";
     public static final String ROUTER_PASSWORD = "password";
     public static final String ROUTER_PRIVKEY = \"fake-key\";
-    public static final String ROUTER_PRIVKEY_PATH = "privkey_path";
     public static final String ROUTER_PORT = "port";
     public static final String ROUTER_SSH_STRICT_HOST_KEY_CHECKING = "ssh_strict_host_key_checking";
     // Database creation sql statement
@@ -56,8 +55,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING + " INTEGER NOT NULL DEFAULT 0, " +
             ROUTER_USERNAME + " TEXT NOT NULL, " +
             ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
-            ROUTER_PRIVKEY + " TEXT DEFAULT NULL," +
-            ROUTER_PRIVKEY_PATH + " TEXT DEFAULT NULL" +
+            ROUTER_PRIVKEY + " TEXT DEFAULT NULL" +
             ");";
     private static final String DATABASE_NAME = "routers.db";
     private static final int DATABASE_VERSION = 1;
