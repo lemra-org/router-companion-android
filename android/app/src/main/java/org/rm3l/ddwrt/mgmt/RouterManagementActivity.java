@@ -87,10 +87,6 @@ public class RouterManagementActivity
     @NotNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
-        //FIXME TESTS ONLY
-//        return new DDWRTCompanionTestDAOImpl();
-        //FIXME END TESTS
-
     }
 
     @Override
@@ -235,7 +231,7 @@ public class RouterManagementActivity
                 }
                 setRefreshActionButtonState(false);
             }
-        }, 2000);
+        }, 1000);
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
@@ -360,10 +356,16 @@ public class RouterManagementActivity
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
                                 @NotNull final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                                int numberOfItems = -1;
                                 for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
-                                    adapter.removeData(selectedItemPositions.get(itemPosition));
+                                    numberOfItems = adapter.removeData(selectedItemPositions.get(itemPosition));
                                 }
                                 actionMode.finish();
+                                if (numberOfItems == 0) {
+                                    //All items dropped = open up 'Add Router' diaalog
+                                    RouterManagementActivity.this.openAddRouterForm();
+                                }
+
                                 Crouton.makeText(RouterManagementActivity.this, selectedItemCount + " item(s) deleted", Style.CONFIRM).show();
                             }
                         })
