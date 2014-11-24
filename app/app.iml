@@ -114,6 +114,7 @@
     <orderEntry type="library" exported="" name="crouton-1.8.5" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="acra-4.5.0" level="project" />
+    <orderEntry type="library" exported="" name="ckchangelog-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="jsch-0.1.51" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
