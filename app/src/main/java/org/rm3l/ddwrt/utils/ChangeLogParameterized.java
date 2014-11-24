@@ -22,34 +22,37 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt;
+package org.rm3l.ddwrt.utils;
 
-import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
-import org.acra.ACRA;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
+import com.google.common.base.Strings;
 
-/**
- * App Main Entry point.
- * Leverages ACRA for capturing eventual app crashes and sending the relevant metrics for further analysis.
- */
-@ReportsCrashes(
-        formKey = \"fake-key\";
-        mailTo = "apps+ddwrt@rm3l.org",
-        mode = ReportingInteractionMode.DIALOG,
-        resDialogTitle = R.string.app_name,
-        resDialogIcon = R.drawable.ic_action_alert_warning,
-        resDialogText = R.string.crash_toast_text,
-        resDialogOkToast = R.string.crash_ok_dialog_text
-)
-public class DDWRTApplication extends Application {
+import org.rm3l.ddwrt.BuildConfig;
+
+import de.cketti.library.changelog.ChangeLog;
+
+public class ChangeLogParameterized extends ChangeLog {
+
+    public ChangeLogParameterized(Context context) {
+        super(context);
+    }
+
+    public ChangeLogParameterized(Context context, String css) {
+        super(context, css);
+    }
+
+    public ChangeLogParameterized(Context context, SharedPreferences preferences, String css) {
+        super(context, preferences, css);
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-
-        // The following line triggers the initialization of ACRA
-        ACRA.init(this);
+    protected String getLog(boolean full) {
+        final String log = super.getLog(full);
+        if (Strings.isNullOrEmpty(log)) {
+            return log;
+        }
+        return log.replaceAll("%CURRENT_VERSION_CODE%", String.valueOf(BuildConfig.VERSION_CODE));
     }
 }
