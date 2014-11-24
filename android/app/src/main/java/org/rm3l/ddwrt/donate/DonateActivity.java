@@ -39,12 +39,12 @@ import org.sufficientlysecure.donations.DonationsFragment;
 public class DonateActivity extends SherlockFragmentActivity {
 
     /**
-     * FIXME Google
+     * Google
      */
-    private static final String GOOGLE_PUBKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg8bTVFK5zIg4FGYkHKKQ/j/iGZQlXU0qkAv2BA6epOX1ihbMz78iD4SmViJlECHN8bKMHxouRNd9pkmQKxwEBHg5/xDC/PHmSCXFx/gcY/xa4etA1CSfXjcsS9i94n+j0gGYUg69rNkp+p/09nO9sgfRTAQppTxtgKaXwpfKe1A8oqmDUfOnPzsEAG6ogQL6Svo6ynYLVKIvRPPhXkq+fp6sJ5YVT5Hr356yCXlM++G56Pk8Z+tPzNjjvGSSs/MsYtgFaqhPCsnKhb55xHkc8GJ9haq8k3PSqwMSeJHnGiDq5lzdmsjdmGkWdQq2jIhKlhMZMm5VQWn0T59+xjjIIwIDAQAB";
-    private static final String[] GOOGLE_CATALOG = new String[]{"ntpsync.donation.1",
-            "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5", "ntpsync.donation.8",
-            "ntpsync.donation.13"};
+    private static final String GOOGLE_PUBKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmOd0e3n5XgmOCL19uESJwDbWKKYE/8g4lZfQfoh6e604vHKUVu6wUPAe3ijIAZYa3KTsU3W3D24++e1HH5fyjYJ+J/2YR0PYmab5TuFKvMaK6X8GKyRlQhjfCBq19LIZ9gRsmjTLe8zDvoUcJuwzsKZ3J6d2z0y64vpvc+ZFNTpnYlmFyX1H2BQDyc2LR0l1IW7AhExlu4T5S6f1J7nDDvCjAQ0lVz5qakU/M+GDPffg8b+AnoB0+TTQJvOevNm10tiVhJmdaOw8gWeoPDFbdKDm+w7nBWOvOPtFwq2isj0urFl8kuP2rJqrwOIsUoo02r5I2KbuOXsbnTfobH6zRQIDAQAB";
+    private static final String[] GOOGLE_CATALOG = new String[]{
+            "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5", "ntpsync.donation.8",
+            "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34", "ntpsync.donation.55", "ntpsync.donation.89"};
 
     /**
      * PayPal
@@ -61,9 +61,9 @@ public class DonateActivity extends SherlockFragmentActivity {
 
 
     /**
-     * FIXME Bitcoin
+     * Bitcoin
      */
-    private static final String BITCOIN_ADDRESS = "1CXUJDMaXNed69U42okCxeMyiGHjboVw1j";
+    private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
 
     /**
      * Called when the activity is first created.
@@ -82,7 +82,7 @@ public class DonateActivity extends SherlockFragmentActivity {
                     null, false, null, null, false, null);
         } else {
             donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
-                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
+                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), false, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
 
         ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
