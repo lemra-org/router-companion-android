@@ -25,10 +25,16 @@
 package org.rm3l.ddwrt;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.google.common.base.Strings;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+
+import de.cketti.library.changelog.ChangeLog;
 
 /**
  * App Main Entry point.
@@ -51,5 +57,35 @@ public class DDWRTApplication extends Application {
 
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        //Changelog Popup
+        final ChangeLogParameterized cl = new ChangeLogParameterized(this);
+        if (cl.isFirstRun()) {
+            cl.getLogDialog().show();
+        }
+    }
+}
+
+class ChangeLogParameterized extends ChangeLog {
+
+    public ChangeLogParameterized(Context context) {
+        super(context);
+    }
+
+    public ChangeLogParameterized(Context context, String css) {
+        super(context, css);
+    }
+
+    public ChangeLogParameterized(Context context, SharedPreferences preferences, String css) {
+        super(context, preferences, css);
+    }
+
+    @Override
+    protected String getLog(boolean full) {
+        final String log = super.getLog(full);
+        if (Strings.isNullOrEmpty(log)) {
+            return log;
+        }
+        return log.replaceAll("%CURRENT_VERSION_CODE%", String.valueOf(BuildConfig.VERSION_CODE));
     }
 }

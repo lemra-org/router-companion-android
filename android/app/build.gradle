@@ -26,6 +26,8 @@
 
 
 
+
+
 apply plugin: 'com.android.application'
 
 android {
@@ -62,7 +64,8 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            //FIXME Change DONATIONS_GOOGLE to false prior to fdroid release
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
     }
 
@@ -107,6 +110,7 @@ dependencies {
         // exclusion is not neccessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
+    compile 'de.cketti.library.changelog:ckchangelog:1.2.1'
     compile project(':libraries:actionbarsherlock')
     compile project(':libraries:pagerslidingtabstrip')
     compile project(':libraries:Donations')
