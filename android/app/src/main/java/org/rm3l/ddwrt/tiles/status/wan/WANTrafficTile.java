@@ -266,7 +266,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         }
 
         if (exception != null) {
-            errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
