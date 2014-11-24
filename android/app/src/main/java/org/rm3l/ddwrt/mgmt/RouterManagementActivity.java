@@ -263,8 +263,18 @@ public class RouterManagementActivity
         } else if (view.getId() == R.id.container_list_item) {
             // item click
             final int idx = mRecyclerView.getChildPosition(view);
+            final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
             if (actionMode != null) {
+                final int previousSelectedItemCount = adapter.getSelectedItemCount();
                 myToggleSelection(idx);
+                //Set background color, depending on whether this is a selection or a de-selection
+                if (adapter.getSelectedItemCount() == previousSelectedItemCount - 1) {
+                    //De-selection: remove background
+                    view.setBackgroundResource(android.R.color.transparent);
+                } else if (adapter.getSelectedItemCount() == previousSelectedItemCount + 1) {
+                    //Selection: apply background
+                    view.setBackgroundResource(android.R.color.background_light);
+                } //other cases should not occur (as this is a single selection)
                 return;
             }
 
@@ -275,7 +285,7 @@ public class RouterManagementActivity
                 @Override
                 public void run() {
                     //No action mode - normal mode => open up main activity for this router
-                    final List<Router> routersList = ((RouterListRecycleViewAdapter) mAdapter).getRoutersList();
+                    final List<Router> routersList = adapter.getRoutersList();
                     final Router router;
                     if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
                         Crouton.makeText(RouterManagementActivity.this,
@@ -462,16 +472,18 @@ public class RouterManagementActivity
     private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(@NotNull MotionEvent e) {
-            View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             onClick(view);
             return super.onSingleTapConfirmed(e);
         }
 
         public void onLongPress(@NotNull MotionEvent e) {
-            View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             if (actionMode != null) {
                 return;
             }
+            //Item long-pressed: set background
+            view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
             // Start the CAB using the ActionMode.Callback defined above
             actionMode = startActionMode(RouterManagementActivity.this);
             int idx = mRecyclerView.getChildPosition(view);
