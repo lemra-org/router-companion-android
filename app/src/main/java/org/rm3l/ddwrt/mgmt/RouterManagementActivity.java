@@ -429,7 +429,17 @@ public class RouterManagementActivity
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
         this.actionMode = null;
-        ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
+        //Reset background for selected items
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        final List<Integer> selectedItems = adapter.getSelectedItems();
+        for (final Integer selectedItem : selectedItems) {
+            final View childAt;
+            if (selectedItem == null || (childAt = mRecyclerView.getLayoutManager().getChildAt(selectedItem)) == null) {
+                continue;
+            }
+            childAt.setBackgroundResource(android.R.color.transparent);
+        }
+        adapter.clearSelections();
         addNewButton.setVisibility(View.VISIBLE);
     }
 
