@@ -268,13 +268,19 @@ public class RouterManagementActivity
                 final int previousSelectedItemCount = adapter.getSelectedItemCount();
                 myToggleSelection(idx);
                 //Set background color, depending on whether this is a selection or a de-selection
-                if (adapter.getSelectedItemCount() == previousSelectedItemCount - 1) {
+                final int currentSelectedItemCount = adapter.getSelectedItemCount();
+                if (currentSelectedItemCount == previousSelectedItemCount - 1) {
                     //De-selection: remove background
                     view.setBackgroundResource(android.R.color.transparent);
-                } else if (adapter.getSelectedItemCount() == previousSelectedItemCount + 1) {
+                } else if (currentSelectedItemCount == previousSelectedItemCount + 1) {
                     //Selection: apply background
                     view.setBackgroundResource(android.R.color.background_light);
                 } //other cases should not occur (as this is a single selection)
+
+                //Now hide ActionMode if selected items count falls to 0
+                if (currentSelectedItemCount == 0) {
+                    actionMode.finish();
+                }
                 return;
             }
 
