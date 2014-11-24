@@ -430,16 +430,14 @@ public class RouterManagementActivity
     public void onDestroyActionMode(ActionMode actionMode) {
         this.actionMode = null;
         //Reset background for selected items
-        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
-        final List<Integer> selectedItems = adapter.getSelectedItems();
-        for (final Integer selectedItem : selectedItems) {
+        for (int i = 0; i < this.dao.getAllRouters().size(); i++) {
             final View childAt;
-            if (selectedItem == null || (childAt = mRecyclerView.getLayoutManager().getChildAt(selectedItem)) == null) {
+            if ((childAt = mRecyclerView.getLayoutManager().getChildAt(i)) == null) {
                 continue;
             }
             childAt.setBackgroundResource(android.R.color.transparent);
         }
-        adapter.clearSelections();
+        ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
         addNewButton.setVisibility(View.VISIBLE);
     }
 
