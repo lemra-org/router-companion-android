@@ -58,6 +58,7 @@ import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.rm3l.ddwrt.utils.ChangeLogParameterized;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
@@ -126,6 +127,12 @@ public class RouterManagementActivity
 
         addNewButton = (ImageButton) findViewById(R.id.router_list_add);
         addNewButton.setOnClickListener(this);
+
+        //Changelog Popup
+        final ChangeLogParameterized cl = new ChangeLogParameterized(this);
+        if (cl.isFirstRun()) {
+            cl.getLogDialog().show();
+        }
 
     }
 
