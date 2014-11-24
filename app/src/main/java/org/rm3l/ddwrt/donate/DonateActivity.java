@@ -39,12 +39,12 @@ import org.sufficientlysecure.donations.DonationsFragment;
 public class DonateActivity extends SherlockFragmentActivity {
 
     /**
-     * FIXME Google
+     * Google
      */
     private static final String GOOGLE_PUBKEY = \"fake-key\";
-    private static final String[] GOOGLE_CATALOG = new String[]{"ntpsync.donation.1",
-            "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5", "ntpsync.donation.8",
-            "ntpsync.donation.13"};
+    private static final String[] GOOGLE_CATALOG = new String[]{
+            "ntpsync.donation.1", "ntpsync.donation.2", "ntpsync.donation.3", "ntpsync.donation.5", "ntpsync.donation.8",
+            "ntpsync.donation.13", "ntpsync.donation.21", "ntpsync.donation.34", "ntpsync.donation.55", "ntpsync.donation.89"};
 
     /**
      * PayPal
@@ -61,9 +61,9 @@ public class DonateActivity extends SherlockFragmentActivity {
 
 
     /**
-     * FIXME Bitcoin
+     * Bitcoin
      */
-    private static final String BITCOIN_ADDRESS = "1CXUJDMaXNed69U42okCxeMyiGHjboVw1j";
+    private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
 
     /**
      * Called when the activity is first created.
@@ -82,7 +82,7 @@ public class DonateActivity extends SherlockFragmentActivity {
                     null, false, null, null, false, null);
         } else {
             donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
-                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
+                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), false, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
 
         ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
