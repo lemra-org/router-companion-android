@@ -268,7 +268,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
         if (exception != null) {
             if (errorPlaceHolderView != null) {
-                errorPlaceHolderView.setText(exception.getClass().getSimpleName() + ": " + Throwables.getRootCause(exception).getMessage());
+                errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
         }
