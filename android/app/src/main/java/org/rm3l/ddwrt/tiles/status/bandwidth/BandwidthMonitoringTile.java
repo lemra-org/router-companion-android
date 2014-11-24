@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Maps;
@@ -53,14 +54,20 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.api.None;
 import org.rm3l.ddwrt.api.RouterData;
+import org.rm3l.ddwrt.api.conn.NVRAMInfo;
 import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  *
@@ -99,8 +106,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     //Get ifaces and fetch data points for each of these ifaces
                     fillIfacesDataPoints(getIfaces());
 
-                    //TODO
-                    return null;
+                    return new None();
 
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();
@@ -113,46 +119,46 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     @NotNull
     private Collection<String> getIfaces() throws Exception {
 
-        //TODO TEST
-        return Sets.newTreeSet(Arrays.asList("etho", "eth1", "eth4"));
+        if (DDWRTCompanionConstants.TEST_MODE) {
+            //FIXME TEST MODE
+            return Sets.newTreeSet(Arrays.asList("wlan0", "lan1", "eth2"));
+        }
 
-        //TODO TEST
+        final Set<String> ifacesConsidered = Sets.newHashSet();
 
-//        final Set<String> ifacesConsidered = Sets.newHashSet();
-//
-//        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-//                NVRAMInfo.LAN_IFNAME,
-//                NVRAMInfo.WAN_IFNAME,
-//                NVRAMInfo.LANDEVS);
-//
-//        if (nvramInfo == null) {
-//            return ifacesConsidered;
-//        }
-//
-//        final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
-//        if (lanIfname != null) {
-//            ifacesConsidered.add(lanIfname);
-//        }
-//
-//        final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
-//        if (wanIfname != null) {
-//            ifacesConsidered.add(wanIfname);
-//        }
-//
-//        final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-//        if (landevs != null) {
-//            final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
-//            if (splitToList != null && !splitToList.isEmpty()) {
-//                for (final String landev : splitToList) {
-//                    if (landev == null) {
-//                        continue;
-//                    }
-//                    ifacesConsidered.add(landev);
-//                }
-//            }
-//        }
-//
-//        return ifacesConsidered;
+        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                NVRAMInfo.LAN_IFNAME,
+                NVRAMInfo.WAN_IFNAME,
+                NVRAMInfo.LANDEVS);
+
+        if (nvramInfo == null) {
+            return ifacesConsidered;
+        }
+
+        final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
+        if (lanIfname != null) {
+            ifacesConsidered.add(lanIfname);
+        }
+
+        final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
+        if (wanIfname != null) {
+            ifacesConsidered.add(wanIfname);
+        }
+
+        final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+        if (landevs != null) {
+            final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
+            if (splitToList != null && !splitToList.isEmpty()) {
+                for (final String landev : splitToList) {
+                    if (landev == null) {
+                        continue;
+                    }
+                    ifacesConsidered.add(landev);
+                }
+            }
+        }
+
+        return ifacesConsidered;
 
     }
 
@@ -165,10 +171,15 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public void fillIfaceDataPoint(@NotNull final String iface) {
 
-        //TODO TEST ONLY
-        bandwidthMonitoringIfaceData.addData(iface,
-                new DataPoint(System.currentTimeMillis(), this.getNextTestPoint()));
-        //TODO TEST ONLY
+        if (DDWRTCompanionConstants.TEST_MODE) {
+            //FIXME TEST MODE
+            final double random = new Random().nextDouble() * 1024;
+
+            bandwidthMonitoringIfaceData.addData(iface,
+                    new DataPoint(System.currentTimeMillis(), random * Math.sqrt(random * Math.E)));
+        }
+
+        //FIXME Add real data down this line
     }
 
     @Override
@@ -176,22 +187,13 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         return LOG_TAG;
     }
 
-    //TODO TEST
-    private double getNextTestPoint() {
-        final double random = new Random().nextDouble() * 1024;
-        return random + Math.sin(random * Math.E);
-    }
-
     @Override
     public void onLoadFinished(@NotNull Loader<None> loader, @Nullable None data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        if (data == null) {
-            //FIXME Just commented out for tests
-            data = new None();
-//            data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
-            //END FIXME
+        if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
+            data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
         }
 
         @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
@@ -279,6 +281,11 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         if (exception != null) {
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
+        } else {
+            if (bandwidthMonitoringIfaceData.getData().isEmpty()) {
+                errorPlaceHolderView.setText("Error: No Data!");
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
         }
 
         doneWithLoaderInstance(this, loader,
@@ -294,7 +301,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         return null;
     }
 
-    class BandwidthMonitoringIfaceData extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
+    private class BandwidthMonitoringIfaceData extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
 
         public BandwidthMonitoringIfaceData() {
             super();
@@ -310,7 +317,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             data.get(iface).add(point);
             return this;
         }
-
     }
 
     private class DataPoint {

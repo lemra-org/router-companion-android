@@ -32,6 +32,9 @@ public final class DDWRTCompanionConstants {
     //FIXME Consider increasing this value prior to release
     public static final long TILE_REFRESH_MILLIS = 20 * 1000l;
 
+    //FIXME Update prior to release
+    public static final boolean TEST_MODE = true;
+
     private DDWRTCompanionConstants() {
     }
 }

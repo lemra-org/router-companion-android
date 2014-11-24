@@ -50,11 +50,13 @@ import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -95,6 +97,21 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                     }
                     nbRunsLoader++;
 
+                    final WirelessClientsTile.Devices devices = new WirelessClientsTile.Devices();
+
+                    if (DDWRTCompanionConstants.TEST_MODE) {
+                        //FIXME TEST MODE
+                        for (int i = 1, j = i + 1; i <= 15; i++, j++) {
+                            final int randomI = new Random().nextInt(i);
+                            final int randomJ = new Random().nextInt(j);
+                            devices
+                                    .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
+                                            .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
+                                            .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
+                        }
+                        return devices;
+                    }
+
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
                             "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"map\",$1,$3 ,$2}'",
                             "awk '{print \"map\",$2,$3,$4}' /tmp/dnsmasq.leases",
@@ -107,7 +124,6 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                         return null;
                     }
 
-                    final WirelessClientsTile.Devices devices = new WirelessClientsTile.Devices();
 
                     for (final String stdoutLine : output) {
                         if ("done".equals(stdoutLine)) {
@@ -126,18 +142,6 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                         }
 
                     }
-
-//                    //FIXME TESTS
-//
-//                    for (int i = 1, j = i + 1; i <= 15; i++, j++) {
-//                        final int randomI = new Random().nextInt(i);
-//                        final int randomJ = new Random().nextInt(j);
-//                        devices
-//                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
-//                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
-//                                        .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
-//                    }
-//                    //FIXME END TESTS
 
                     return devices;
 
