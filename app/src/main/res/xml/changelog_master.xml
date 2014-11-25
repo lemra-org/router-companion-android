@@ -26,7 +26,7 @@
     <release
         version="0.1.2"
         versioncode="%CURRENT_VERSION_CODE%">
-        <change>Add encryption support</change>
+        <change>Add data encryption support</change>
     </release>
     <release
         version="0.1.1"
