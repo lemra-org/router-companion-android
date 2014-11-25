@@ -53,11 +53,11 @@ public class DonateActivity extends SherlockFragmentActivity {
     private static final String PAYPAL_CURRENCY_CODE = "EUR";
 
     /**
-     * FIXME Flattr
+     * Flattr
      */
     private static final String FLATTR_PROJECT_URL = "https://github.com/rm3l/ddwrt-companion";
     // FLATTR_URL without http:// !
-    private static final String FLATTR_URL = "flattr.com/thing/712895/dschuermannandroid-donations-lib-on-GitHub";
+    private static final String FLATTR_URL = "flattr.com/thing/320749440571624a971910e970a638d7";
 
 
     /**
@@ -76,13 +76,14 @@ public class DonateActivity extends SherlockFragmentActivity {
 
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         final DonationsFragment donationsFragment;
+
         if (BuildConfig.DONATIONS_GOOGLE) {
             donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                     getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
                     null, false, null, null, false, null);
         } else {
             donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
-                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), false, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
+                    PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
 
         ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
