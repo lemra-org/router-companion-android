@@ -28,6 +28,8 @@
 
 
 
+
+
 apply plugin: 'com.android.application'
 
 android {
@@ -64,8 +66,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
-            //FIXME Change DONATIONS_GOOGLE to false prior to fdroid release
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }
     }
 
