@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt.api;
+package org.rm3l.ddwrt.resources;
 
 /**
  * None data type: Data encapsulated is <code>null</code>

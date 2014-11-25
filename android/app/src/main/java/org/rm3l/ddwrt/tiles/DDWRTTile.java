@@ -42,7 +42,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
@@ -136,7 +136,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
-                                                                           @Nullable final int... additionalButtonsToMakeVisible) {
+                                                                @Nullable final int... additionalButtonsToMakeVisible) {
 
         this.setDoneLoading();
 

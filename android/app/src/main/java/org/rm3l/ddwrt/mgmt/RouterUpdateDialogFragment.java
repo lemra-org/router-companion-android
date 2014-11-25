@@ -35,7 +35,7 @@ import android.widget.Toast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.resources.conn.Router;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -111,9 +111,9 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
                 default:
                     break;
             }
-            ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsername());
-            ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPassword());
-            ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKey());
+            ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain());
+            ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain());
+            ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
             ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
                     .setChecked(router.isStrictHostKeyChecking());
         }

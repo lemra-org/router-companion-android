@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt.api.conn;
+package org.rm3l.ddwrt.resources.conn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.resources.Encrypted;
 
 import java.io.Serializable;
 
@@ -36,7 +37,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class Router implements Serializable {
+public class Router extends Encrypted implements Serializable {
 
     /**
      * the router UUID
@@ -142,20 +143,32 @@ public class Router implements Serializable {
     /**
      * @return the username
      */
-    @Nullable
+    @NotNull
     public String getUsername() {
         return username;
+    }
+
+    /**
+     * @return the unencrypted username
+     */
+    @Nullable
+    public String getUsernamePlain() {
+        return d(username);
     }
 
     /**
      * Set the username
      *
      * @param username the username to set
+     * @param  encrypt whether to encrypt data.
+     *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
+     *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
      */
     @NotNull
-    public Router setUsername(@NotNull final String username) {
-        this.username = username;
+    public Router setUsername(@NotNull final String username, final boolean encrypt) {
+        //noinspection ConstantConditions
+        this.username = encrypt ? e(username) : username;
         return this;
     }
 
@@ -168,14 +181,25 @@ public class Router implements Serializable {
     }
 
     /**
+     * @return the password
+     */
+    @Nullable
+    public String getPasswordPlain() {
+        return password != null ? d(password) : null;
+    }
+
+    /**
      * Set the password
      *
      * @param password the password to set
+     * @param  encrypt whether to encrypt data.
+     *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
+     *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
      */
     @NotNull
-    public Router setPassword(@Nullable final String password) {
-        this.password = password;
+    public Router setPassword(@Nullable final String password, final boolean encrypt) {
+        this.password = encrypt ? e(password) : password;
         return this;
     }
 
@@ -267,14 +291,25 @@ public class Router implements Serializable {
     }
 
     /**
+     * @return the decrypted privKey
+     */
+    @Nullable
+    public String getPrivKeyPlain() {
+        return privKey != null ? d(privKey) : null;
+    }
+
+    /**
      * Set the privKey
      *
      * @param privKey the privKey to set
+     * @param  encrypt whether to encrypt data.
+     *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
+     *                 is known to be encrypted (e.g., when retrieved from the B)
      * @return this object
      */
     @NotNull
-    public Router setPrivKey(@Nullable final String privKey) {
-        this.privKey = privKey;
+    public Router setPrivKey(@Nullable final String privKey, final boolean encrypt) {
+        this.privKey = encrypt ? e(privKey) : privKey;
         return this;
     }
 

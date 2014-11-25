@@ -35,8 +35,8 @@ import com.jcraft.jsch.Session;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.NVRAMInfo;
-import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -60,13 +60,13 @@ public final class SSHUtils {
     public static void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
         @Nullable Session jschSession = null;
         try {
-            @Nullable final String privKey = router.getPrivKey();
+            @Nullable final String privKey = router.getPrivKeyPlain();
             @NotNull final JSch jsch = new JSch();
             if (privKey != null) {
                 jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
             }
-            jschSession = jsch.getSession(router.getUsername(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(router.getPassword());
+            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+            jschSession.setPassword(router.getPasswordPlain());
             @NotNull final Properties config = new Properties();
             config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
             jschSession.setConfig(config);
@@ -88,13 +88,13 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable final String privKey = router.getPrivKey();
+            @Nullable final String privKey = router.getPrivKeyPlain();
             @NotNull final JSch jsch = new JSch();
             if (privKey != null) {
                 jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
             }
-            jschSession = jsch.getSession(router.getUsername(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(router.getPassword());
+            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+            jschSession.setPassword(router.getPasswordPlain());
             @NotNull final Properties config = new Properties();
             config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
             jschSession.setConfig(config);

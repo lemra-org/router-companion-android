@@ -25,7 +25,7 @@
 package org.rm3l.ddwrt.mgmt.dao;
 
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.util.List;
 
