@@ -26,27 +26,31 @@ package org.rm3l.ddwrt.exceptions;
 
 import android.support.v4.content.AsyncTaskLoader;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * By default, auto-refresh is enabled on all tiles. But this exception is raised whenever the user
  * explicitly disables a given auto-refresh flag for a given tile.
  * In this case, the {@link AsyncTaskLoader} still runs but does not do anything upon each run.
  * <p/>
  * TODO Find a way to properly stop/reschedule {@link AsyncTaskLoader}s
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class DDWRTTileAutoRefreshNotAllowedException extends DDWRTCompanionException {
 
     public DDWRTTileAutoRefreshNotAllowedException() {
     }
 
-    public DDWRTTileAutoRefreshNotAllowedException(String detailMessage) {
+    public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage) {
         super(detailMessage);
     }
 
-    public DDWRTTileAutoRefreshNotAllowedException(String detailMessage, Throwable throwable) {
+    public DDWRTTileAutoRefreshNotAllowedException(@Nullable String detailMessage, @Nullable Throwable throwable) {
         super(detailMessage, throwable);
     }
 
-    public DDWRTTileAutoRefreshNotAllowedException(Throwable throwable) {
+    public DDWRTTileAutoRefreshNotAllowedException(@Nullable Throwable throwable) {
         super(throwable);
     }
 }

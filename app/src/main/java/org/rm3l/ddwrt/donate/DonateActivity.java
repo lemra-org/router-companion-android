@@ -36,6 +36,11 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.sufficientlysecure.donations.DonationsFragment;
 
+/**
+ * Donation Activity: leverages the <a href="https://github.com/dschuermann/android-donations-lib" target="_blank">android-donations-lib</a> library.
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ */
 public class DonateActivity extends SherlockFragmentActivity {
 
     /**
@@ -99,8 +104,8 @@ public class DonateActivity extends SherlockFragmentActivity {
      * the Fragment like in startActivityForResult(). Thus we need to propagate manually to our Fragment.
      *
      * @param requestCode the request code
-     * @param resultCode the result code
-     * @param data the data we got in return
+     * @param resultCode  the result code
+     * @param data        the data we got in return
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

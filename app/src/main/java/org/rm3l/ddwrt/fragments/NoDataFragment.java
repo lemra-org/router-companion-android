@@ -32,7 +32,9 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import java.util.List;
 
 /**
- * TODO
+ * No-Data Fragment
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class NoDataFragment extends DDWRTBaseFragment {
     @Nullable
