@@ -33,8 +33,8 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.donate.DonateActivity;
+import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -31,8 +31,8 @@ import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.ArrayList;
@@ -41,8 +41,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.ddwrt.api.conn.Router.RouterConnectionProtocol.HTTPS;
-import static org.rm3l.ddwrt.api.conn.Router.RouterConnectionProtocol.SSH;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterConnectionProtocol.HTTPS;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterConnectionProtocol.SSH;
 
 public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 

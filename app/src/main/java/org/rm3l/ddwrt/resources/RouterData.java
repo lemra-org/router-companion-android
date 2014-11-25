@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt.api;
+package org.rm3l.ddwrt.resources;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

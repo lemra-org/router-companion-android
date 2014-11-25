@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package org.rm3l.ddwrt.api.conn;
+package org.rm3l.ddwrt.resources.conn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.RouterData;
+import org.rm3l.ddwrt.resources.RouterData;
 
 import java.io.Serializable;
 import java.util.Properties;
