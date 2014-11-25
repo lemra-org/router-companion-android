@@ -33,7 +33,7 @@ import android.widget.EditText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;

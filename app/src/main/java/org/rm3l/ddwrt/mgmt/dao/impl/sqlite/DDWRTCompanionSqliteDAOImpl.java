@@ -35,8 +35,8 @@ import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
@@ -93,9 +93,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 .valueOf(cursor.getString(4)));
         router.setRemotePort(cursor.getInt(5));
         router.setStrictHostKeyChecking(cursor.getInt(6) == 1);
-        router.setUsername(cursor.getString(7));
-        router.setPassword(cursor.getString(8));
-        router.setPrivKey(cursor.getString(9));
+        router.setUsername(cursor.getString(7), false);
+        router.setPassword(cursor.getString(8), false);
+        router.setPrivKey(cursor.getString(9), false);
 
         return router;
     }

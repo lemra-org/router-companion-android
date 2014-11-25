@@ -37,9 +37,9 @@ import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +97,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         }
         holder.routerIp.setText(routerAt.getRemoteIpAddress());
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
-        holder.routerUsername.setText(routerAt.getUsername());
+        holder.routerUsername.setText(routerAt.getUsernamePlain());
     }
 
     @Override
