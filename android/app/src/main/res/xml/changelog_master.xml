@@ -26,6 +26,11 @@
     <release
         version="0.1.0"
         versioncode="%CURRENT_VERSION_CODE%">
-        <change>Totally new and shiny version</change>
+        <change>Various UI improvements</change>
+    </release>
+    <release
+        version="0.0.1"
+        versioncode="001">
+        <change>Initial Release</change>
     </release>
 </changelog>
