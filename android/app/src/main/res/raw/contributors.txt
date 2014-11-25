@@ -1,0 +1,6 @@
+<h2>Special Thanks to:</h2>
+<ul>
+<li>- Evariste K. (translation fixes)</li>
+<li>- ...</li>
+<li>- All of you supporting this app!
+</ul>
