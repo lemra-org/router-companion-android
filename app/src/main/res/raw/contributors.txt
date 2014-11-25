@@ -1,6 +1,7 @@
-<h2>Special Thanks to:</h2>
+<h2>Credits</h2>
 <ul>
-<li>- Evariste K. (translation fixes)</li>
-<li>- ...</li>
-<li>- All of you supporting this app!
+<li>- <a href="http://www.rm3l.org/" target="_blank">Armel S.</a> (original author)</li><br/>
+<li>- Evariste K. (translation fixes)</li><br/>
+<li>- ...</li><br/>
+<li>- All of you supporting this app!</li><br/>
 </ul>
