@@ -15,4 +15,6 @@ android/**/hs_err_pid*
 android/.idea
 android/actionbarsherlock
 **/*.iml
+android/local.properties
+
 
