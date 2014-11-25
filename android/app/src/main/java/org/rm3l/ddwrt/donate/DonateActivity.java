@@ -34,7 +34,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.sufficientlysecure.donations.DonationsFragment;
 
 public class DonateActivity extends SherlockFragmentActivity {
 
@@ -65,6 +64,8 @@ public class DonateActivity extends SherlockFragmentActivity {
      */
     private static final String BITCOIN_ADDRESS = "3NuYX1cWymrCNdMEF11fzyj2dcYvH4zniR";
 
+    private static final String DONATIONS_FRAGMENT = "donationsFragment";
+
     /**
      * Called when the activity is first created.
      */
@@ -75,18 +76,20 @@ public class DonateActivity extends SherlockFragmentActivity {
         setContentView(R.layout.donations_activity);
 
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        final DonationsFragment donationsFragment;
+        final DonateFragment donationsFragment;
 
         if (BuildConfig.DONATIONS_GOOGLE) {
-            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
+            //Activate Google Play In-App Billing solely
+            donationsFragment = DonateFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                     getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
                     null, false, null, null, false, null);
         } else {
-            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, false, null, null, null, true, PAYPAL_USER,
+            donationsFragment = DonateFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
+                    getResources().getStringArray(R.array.donation_google_catalog_values), true, PAYPAL_USER,
                     PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
 
-        ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
+        ft.replace(R.id.donations_activity_container, donationsFragment, DONATIONS_FRAGMENT);
         ft.commit();
     }
 
@@ -94,16 +97,16 @@ public class DonateActivity extends SherlockFragmentActivity {
      * Needed for Google Play In-app Billing. It uses startIntentSenderForResult(). The result is not propagated to
      * the Fragment like in startActivityForResult(). Thus we need to propagate manually to our Fragment.
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the request code
+     * @param resultCode the result code
+     * @param data the data we got in return
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment fragment = fragmentManager.findFragmentByTag("donationsFragment");
+        final Fragment fragment = fragmentManager.findFragmentByTag(DONATIONS_FRAGMENT);
         if (fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
