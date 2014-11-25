@@ -24,8 +24,13 @@
 
 <changelog>
     <release
-        version="0.1.0"
+        version="0.1.2"
         versioncode="%CURRENT_VERSION_CODE%">
+        <change>Add encryption support</change>
+    </release>
+    <release
+        version="0.1.1"
+        versioncode="011">
         <change>Various UI improvements</change>
     </release>
     <release
