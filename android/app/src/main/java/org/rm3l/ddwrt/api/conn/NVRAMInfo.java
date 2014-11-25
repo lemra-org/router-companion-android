@@ -32,8 +32,10 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * Wrapper around NVRAM infos fetched from a given {@link org.rm3l.ddwrt.api.conn.Router}.
- * Comes in as a Properties object.
+ * Wrapper around NVRAM info fetched from a given {@link Router}.
+ * Data comes in as a Properties object.
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class NVRAMInfo extends RouterData<Properties> implements Serializable {
 
@@ -75,43 +77,90 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String WAN_IFNAME = "wan_ifname";
     public static final String SYSLOG = "syslog";
 
+    /**
+     * Default constructor: initialized an empty Properties set
+     */
     public NVRAMInfo() {
         super();
         super.setData(new Properties());
     }
 
-    public void setProperty(final String name, final String value) {
+    /**
+     * Set a property
+     *
+     * @param name  the property name
+     * @param value the property value
+     */
+    @SuppressWarnings("ConstantConditions")
+    public void setProperty(@NotNull final String name, @NotNull final String value) {
         super.getData().setProperty(name, value);
     }
 
+    /**
+     * Get a property value
+     *
+     * @param name the property name
+     * @return the property value
+     */
     @Nullable
-    public String getProperty(final String name) {
+    @SuppressWarnings("ConstantConditions")
+    public String getProperty(@NotNull final String name) {
         return this.getProperty(name, null);
     }
 
+    /**
+     * Get a property value, defaulting to another value if none was found
+     *
+     * @param name         the property name
+     * @param defaultValue the default value to return if none was found
+     * @return the property value
+     */
     @Nullable
-    public String getProperty(final String name, final String defaultValue) {
+    @SuppressWarnings("ConstantConditions")
+    public String getProperty(@NotNull final String name, @Nullable final String defaultValue) {
         return super.getData().getProperty(name, defaultValue);
     }
 
+    /**
+     * @return the string representation
+     */
+    @NotNull
     @Override
     public String toString() {
         return super.toString();
     }
 
+    /**
+     * Set an exception
+     *
+     * @param exception the exception to set
+     * @return the current object
+     */
     @NotNull
     public NVRAMInfo setException(@Nullable final Exception exception) {
         super.setException(exception);
         return this;
     }
 
-    public void putAll(NVRAMInfo nvramInfo) {
+    /**
+     * Import from an NVRAMInfo properties
+     *
+     * @param nvramInfo the nvram info properties to import
+     */
+    @SuppressWarnings("ConstantConditions")
+    public void putAll(@Nullable final NVRAMInfo nvramInfo) {
         if (nvramInfo == null) {
             return;
         }
         super.getData().putAll(nvramInfo.getData());
     }
 
+    /**
+     * Check whether the current properties set is empty
+     *
+     * @return <code>true</code> if the properties are empty, <code>false</code> otherwise
+     */
+    @SuppressWarnings("ConstantConditions")
     public boolean isEmpty() {
         return super.getData().isEmpty();
     }

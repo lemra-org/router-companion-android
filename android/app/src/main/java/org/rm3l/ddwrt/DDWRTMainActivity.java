@@ -67,9 +67,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    @NotNull
     private DDWRTCompanionDAO dao;
-    @Nullable
-    private Router mRouter = null;
+    @NotNull
+    private String mRouterUuid;
     private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
     private SharedPreferences preferences;
@@ -88,16 +89,18 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
-        this.mRouter = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
+        final Router router = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
 
-        if (this.mRouter == null) {
+        if (router == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        final String routerName = this.mRouter.getName();
-        setTitle(isNullOrEmpty(routerName) ? this.mRouter.getRemoteIpAddress() : routerName);
+        final String routerName = router.getName();
+        setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
+
+        this.mRouterUuid = router.getUuid();
 
         mTitle = mDrawerTitle = getTitle();
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
@@ -156,7 +159,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     @Override
     protected void onDestroy() {
-        this.mRouter = null;
+        this.mRouterUuid = null;
         super.onDestroy();
     }
 
@@ -245,7 +248,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         this.mPosition = position;
 
         this.currentPageSlidingTabStripFragment =
-                PageSlidingTabStripFragment.newInstance(this, position, this.mRouter, preferences);
+                PageSlidingTabStripFragment.newInstance(this, position, this.mRouterUuid, preferences);
 
         getSupportFragmentManager()
                 .beginTransaction()

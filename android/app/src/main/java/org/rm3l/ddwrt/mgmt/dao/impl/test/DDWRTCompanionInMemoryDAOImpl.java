@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +44,16 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.api.conn.Router.RouterConnectionProtocol.HTTPS;
 import static org.rm3l.ddwrt.api.conn.Router.RouterConnectionProtocol.SSH;
 
-public class DDWRTCompanionTestDAOImpl implements DDWRTCompanionDAO {
+public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     public static final int MAX_INIT_ENTRIES = 35;
-    private static final String LOG_TAG = DDWRTCompanionTestDAOImpl.class.getSimpleName();
+    private static final String LOG_TAG = DDWRTCompanionInMemoryDAOImpl.class.getSimpleName();
     private final Map<String, Router> DB = Maps.newHashMap();
 
-    public DDWRTCompanionTestDAOImpl() {
-        populateDB();
+    public DDWRTCompanionInMemoryDAOImpl() {
+        if (DDWRTCompanionConstants.TEST_MODE) {
+            populateDB();
+        }
     }
 
     private void populateDB() {

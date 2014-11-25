@@ -24,23 +24,28 @@
 
 package org.rm3l.ddwrt.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Base DDWRT Companion exception
+ * Abstract Base DDWRT Companion exception
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class DDWRTCompanionException extends RuntimeException {
+public abstract class DDWRTCompanionException extends RuntimeException {
 
     public DDWRTCompanionException() {
+        super();
     }
 
-    public DDWRTCompanionException(String detailMessage) {
+    public DDWRTCompanionException(@Nullable final String detailMessage) {
         super(detailMessage);
     }
 
-    public DDWRTCompanionException(String detailMessage, Throwable throwable) {
+    public DDWRTCompanionException(@Nullable final String detailMessage, @Nullable final Throwable throwable) {
         super(detailMessage, throwable);
     }
 
-    public DDWRTCompanionException(Throwable throwable) {
+    public DDWRTCompanionException(@Nullable final Throwable throwable) {
         super(throwable);
     }
 }

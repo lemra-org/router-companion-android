@@ -27,31 +27,74 @@ package org.rm3l.ddwrt.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Abstract Router Data type, encapsulating the actual data and an exception, if any
+ *
+ * @param <T> the data type
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ */
 public abstract class RouterData<T> {
 
+    /**
+     * The data wrapped
+     */
+    @Nullable
     private T data;
 
+    /**
+     * The exception wrapped
+     */
     @Nullable
     private Exception exception;
 
+    /**
+     * @return the data wrapped
+     */
+    @Nullable
     public T getData() {
         return data;
     }
 
+    /**
+     * Set the data
+     *
+     * @param data the data to set
+     * @return this object
+     */
     @NotNull
     public RouterData<T> setData(final T data) {
         this.data = data;
         return this;
     }
 
+    /**
+     * @return the exception
+     */
     @Nullable
     public Exception getException() {
         return exception;
     }
 
+    /**
+     * Set the exception
+     *
+     * @param exception the exception to set
+     * @return this object
+     */
     @NotNull
     public RouterData<T> setException(Exception exception) {
         this.exception = exception;
         return this;
+    }
+
+    /**
+     * @return the string representation
+     */
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "data=" + data +
+                ", exception=" + exception +
+                '}';
     }
 }
