@@ -42,14 +42,14 @@ import com.astuetz.PagerSlidingTabStrip;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 
 /**
  * Page Sliding fragment
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class PageSlidingTabStripFragment extends Fragment {
-
+public class PageSlidingTabStripFragment extends SherlockFragment {
 
     public static final String TAG = PageSlidingTabStripFragment.class
             .getSimpleName();
@@ -61,9 +61,6 @@ public class PageSlidingTabStripFragment extends Fragment {
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
     @Nullable
-    private Router router;
-
-    @Nullable
     private ViewPager pager;
 
     /**
@@ -73,14 +70,13 @@ public class PageSlidingTabStripFragment extends Fragment {
     @NotNull
     public static PageSlidingTabStripFragment newInstance(@NotNull final ViewPager.OnPageChangeListener onPageChangeListener,
                                                           int sectionNumber,
-                                                          @Nullable final Router router, @NotNull SharedPreferences preferences) {
+                                                          @Nullable final String routerUuid, @NotNull SharedPreferences preferences) {
         @NotNull final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         @NotNull Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(SORTING_STRATEGY, preferences.getString("sortingStrategy", SortingStrategy.DEFAULT));
-        args.putSerializable(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, router);
+        args.putString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
-        fragment.router = router;
         fragment.mOnPageChangeListener = onPageChangeListener;
         return fragment;
     }
@@ -92,7 +88,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         mFragmentTabsAdapter = new FragmentTabsAdapter(getArguments().getInt(ARG_SECTION_NUMBER),
                 getChildFragmentManager(), getResources(),
                 SortingStrategy.class.getPackage().getName() + "." + getArguments().getString(SORTING_STRATEGY),
-                this.router);
+                getArguments().getString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO));
     }
 
     @Override
@@ -111,15 +107,6 @@ public class PageSlidingTabStripFragment extends Fragment {
         this.pager.setAdapter(mFragmentTabsAdapter);
         this.pager.setOnPageChangeListener(this.mOnPageChangeListener);
         tabs.setViewPager(this.pager);
-    }
-
-    @Nullable
-    public Router getRouter() {
-        return router;
-    }
-
-    public void setRouter(@Nullable Router router) {
-        this.router = router;
     }
 
     public void refreshCurrentFragment() {
@@ -142,15 +129,15 @@ public class PageSlidingTabStripFragment extends Fragment {
         private final int parentSectionNumber;
 
         @Nullable
-        private final Router router;
+        private final String routerUuid;
 
         public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
-                                   @Nullable final Router router) {
+                                   @Nullable final String routerUuid) {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.router = router;
-            this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, router);
+            this.routerUuid = routerUuid;
+            this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
         @Override

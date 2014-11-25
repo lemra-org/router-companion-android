@@ -24,62 +24,126 @@
 
 package org.rm3l.ddwrt.api;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+/**
+ * Device Type: represents a device reported as a Client (Wireless/DHCP/...)
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ */
 public class Device implements Comparable<Device> {
 
+    @NotNull
     private final String macAddress;
+
+    @Nullable
     private String alias;
+
+    @Nullable
     private String ipAddress;
+
+    @Nullable
     private State state = State.UNKNOWN;
+
+    @Nullable
     private String systemName;
 
-    public Device(String macAddress) {
+    /**
+     * Constructor
+     *
+     * @param macAddress the device MAC
+     */
+    public Device(@NotNull final String macAddress) {
         this.macAddress = macAddress;
     }
 
+    /**
+     * @return the alias
+     */
+    @Nullable
     public String getAlias() {
         return alias;
     }
 
-    public Device setAlias(String alias) {
+    /**
+     * Set the alias
+     *
+     * @param alias the alias to set
+     * @return this object
+     */
+    @NotNull
+    public Device setAlias(@Nullable final String alias) {
         this.alias = alias;
         return this;
     }
 
+    /**
+     * @return the IP
+     */
+    @Nullable
     public String getIpAddress() {
         return ipAddress;
     }
 
-    public Device setIpAddress(String ipAddress) {
+    /**
+     * Set the IP
+     *
+     * @param ipAddress the IP to set
+     * @return this object
+     */
+    @NotNull
+    public Device setIpAddress(@Nullable final String ipAddress) {
         this.ipAddress = ipAddress;
         return this;
     }
 
+    /**
+     * @return the MAC
+     */
+    @NotNull
     public String getMacAddress() {
         return macAddress;
     }
 
+    /**
+     * @return the state
+     */
+    @Nullable
     public State getState() {
         return state;
     }
 
-    public Device setState(State state) {
+    /**
+     * Set the state
+     *
+     * @param state the state to set
+     * @return this object
+     */
+    @NotNull
+    public Device setState(@Nullable final State state) {
         this.state = state;
         return this;
     }
 
+    /**
+     * @return the system name
+     */
+    @Nullable
     public String getSystemName() {
         return systemName;
     }
 
-    public Device setSystemName(String systemName) {
+    @NotNull
+    public Device setSystemName(@Nullable final String systemName) {
         this.systemName = systemName;
         return this;
     }
 
     @Override
-    public int compareTo(Device device) {
+    public int compareTo(@NotNull final Device device) {
         if (this.alias == null) {
             if (device.alias == null) {
                 return 0;
@@ -109,9 +173,9 @@ public class Device implements Comparable<Device> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Device device = (Device) o;
+        final Device device = (Device) o;
 
-        if (macAddress != null ? !macAddress.equals(device.macAddress) : device.macAddress != null)
+        if (!macAddress.equals(device.macAddress))
             return false;
 
         return true;
@@ -119,18 +183,23 @@ public class Device implements Comparable<Device> {
 
     @Override
     public int hashCode() {
-        return macAddress != null ? macAddress.hashCode() : 0;
+        return macAddress.hashCode();
     }
 
     public boolean isEnabled() {
         return this.state != State.DISABLED;
     }
 
+    @NotNull
     public String toString() {
         return "Device[alias=" + this.alias + ",mac=" + this.macAddress + ",ip=" + this.ipAddress + "]";
     }
 
     enum State {
-        UNKNOWN, ENABLED, DISABLED;
+        UNKNOWN,
+
+        ENABLED,
+
+        DISABLED;
     }
 }

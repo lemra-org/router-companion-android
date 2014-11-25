@@ -24,22 +24,26 @@
 
 package org.rm3l.ddwrt.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Indicates a lack of data from the remote router
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class DDWRTNoDataException extends DDWRTCompanionException {
     public DDWRTNoDataException() {
     }
 
-    public DDWRTNoDataException(String detailMessage) {
+    public DDWRTNoDataException(@Nullable String detailMessage) {
         super(detailMessage);
     }
 
-    public DDWRTNoDataException(String detailMessage, Throwable throwable) {
+    public DDWRTNoDataException(@Nullable String detailMessage, @Nullable Throwable throwable) {
         super(detailMessage, throwable);
     }
 
-    public DDWRTNoDataException(Throwable throwable) {
+    public DDWRTNoDataException(@Nullable Throwable throwable) {
         super(throwable);
     }
 }

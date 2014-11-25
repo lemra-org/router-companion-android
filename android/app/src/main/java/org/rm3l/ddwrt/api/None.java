@@ -24,5 +24,10 @@
 
 package org.rm3l.ddwrt.api;
 
+/**
+ * None data type: Data encapsulated is <code>null</code>
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
+ */
 public class None extends RouterData<Void> {
 }

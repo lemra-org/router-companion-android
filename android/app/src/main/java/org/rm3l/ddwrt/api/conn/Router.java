@@ -24,206 +24,316 @@
 
 package org.rm3l.ddwrt.api.conn;
 
-import android.content.SharedPreferences;
-
-import com.google.gson.annotations.SerializedName;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.config.ConfigurationBase;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * Encapsulates everything needed to establish a connection to a given router.
+ * <p/>
  * Connections can be either SSH-based or HTTP(S)-based.
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class Router implements Serializable {
 
-    private static final String REMOTE_IP_ADDRESS = "ipAddress";
-    private static final String REMOTE_PORT = "port";
+    /**
+     * the router UUID
+     */
     @NotNull
-    @SerializedName("channel")
-    private RouterConnectionProtocol routerConnectionProtocol;
-    @NotNull
-    @SerializedName("router_name")
+    private String uuid;
+
+    /**
+     * the internal id (in DB)
+     */
+    private int id = -1;
+
+    /**
+     * the router name
+     */
+    @Nullable
     private String name;
+
+    /**
+     * the connection protocol
+     */
+    @NotNull
+    private RouterConnectionProtocol routerConnectionProtocol;
+
+    /**
+     * the router IP or DNS
+     */
     @NotNull
     private String remoteIpAddress;
-    private int remotePort = 22;
-    @Nullable
+
+    /**
+     * the port to connect on
+     */
+    private int remotePort = -1;
+
+    /**
+     * the login username
+     */
+    @NotNull
     private String username;
+
+    /**
+     * the password
+     */
     @Nullable
     private String password;
+
+    /**
+     * the private key, applicable only if connection channel is SSH
+     */
     @Nullable
     private String privKey;
-    private int id = -1;
 
     private boolean strictHostKeyChecking = false;
 
-    private boolean useDefault = true;
-    @NotNull
-    @SerializedName("uuid")
-    private String uuid;
-
+    /**
+     * Default constructor
+     */
     public Router() {
     }
 
+    /**
+     * Constructor
+     *
+     * @param router the router to copy
+     */
     public Router(@Nullable final Router router) {
         this();
         if (router != null) {
             this.id = router.id;
             this.name = router.name;
             this.uuid = router.uuid;
+            this.routerConnectionProtocol = router.routerConnectionProtocol;
             this.remoteIpAddress = router.remoteIpAddress;
             this.remotePort = router.remotePort;
             this.username = router.username;
             this.password = router.password;
             this.privKey = router.privKey;
-            this.routerConnectionProtocol = router.routerConnectionProtocol;
             this.strictHostKeyChecking = router.strictHostKeyChecking;
-            this.useDefault = router.useDefault;
         }
     }
 
-    @NotNull
-    public static Router loadFromPreferences(@NotNull ConfigurationBase paramConfigurationBase, String paramString) {
-        @NotNull final Router routerInfo = new Router();
-
-        final SharedPreferences localSharedPreferences = paramConfigurationBase.getPreferences(paramString);
-        routerInfo.uuid = localSharedPreferences.getString("uuid", UUID.randomUUID().toString());
-        routerInfo.routerConnectionProtocol = RouterConnectionProtocol.valueOf(localSharedPreferences.getString("channel",
-                RouterConnectionProtocol.SSH.toString()));
-        routerInfo.name = localSharedPreferences.getString("router_name", "DD-WRT Router");
-        routerInfo.remoteIpAddress = localSharedPreferences.getString("ipAddress", "192.168.1.1");
-        routerInfo.remotePort = localSharedPreferences.getInt("port", -1) <= 0 ?
-                (RouterConnectionProtocol.SSH.equals(routerInfo.routerConnectionProtocol) ? 22 :
-                        (RouterConnectionProtocol.HTTP.equals(routerInfo.routerConnectionProtocol) ? 80 : 443)) :
-                localSharedPreferences.getInt("port", 0);
-        routerInfo.useDefault = localSharedPreferences.getBoolean("useDefault", true);
-        routerInfo.username = routerInfo.useDefault ? routerInfo.routerConnectionProtocol.defaultUsername :
-                localSharedPreferences.getString("username", null);
-        routerInfo.password = routerInfo.useDefault ? routerInfo.routerConnectionProtocol.defaultPassword :
-                localSharedPreferences.getString("password", null);
-
-        return routerInfo;
-    }
-
+    /**
+     * @return the RouterConnectionProtocol
+     */
     @NotNull
     public RouterConnectionProtocol getRouterConnectionProtocol() {
         return routerConnectionProtocol;
     }
 
-    public void setRouterConnectionProtocol(@NotNull RouterConnectionProtocol routerConnectionProtocol) {
+    /**
+     * Set the RouterConnectionProtocol
+     *
+     * @param routerConnectionProtocol the RouterConnectionProtocol to set
+     * @return this object
+     */
+    @NotNull
+    public Router setRouterConnectionProtocol(@NotNull final RouterConnectionProtocol routerConnectionProtocol) {
         this.routerConnectionProtocol = routerConnectionProtocol;
+        return this;
     }
 
+    /**
+     * @return the username
+     */
     @Nullable
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(@Nullable String username) {
+    /**
+     * Set the username
+     *
+     * @param username the username to set
+     * @return this object
+     */
+    @NotNull
+    public Router setUsername(@NotNull final String username) {
         this.username = username;
+        return this;
     }
 
+    /**
+     * @return the password
+     */
     @Nullable
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(@Nullable String password) {
-        this.password = password;
-    }
-
-    public boolean isUseDefault() {
-        return useDefault;
-    }
-
-    public void setUseDefault(boolean useDefault) {
-        this.useDefault = useDefault;
-    }
-
+    /**
+     * Set the password
+     *
+     * @param password the password to set
+     * @return this object
+     */
     @NotNull
+    public Router setPassword(@Nullable final String password) {
+        this.password = password;
+        return this;
+    }
+
+    /**
+     * @return the name
+     */
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(@NotNull String name) {
+    /**
+     * Set the name
+     *
+     * @param name the name to set
+     * @return this object
+     */
+    @NotNull
+    public Router setName(@Nullable final String name) {
         this.name = name;
+        return this;
     }
 
+    /**
+     * @return the remoteIpAddress
+     */
     @NotNull
     public String getRemoteIpAddress() {
         return remoteIpAddress;
     }
 
-    public void setRemoteIpAddress(@NotNull String remoteIpAddress) {
+    /**
+     * Set the remoteIpAddress
+     *
+     * @param remoteIpAddress the remoteIpAddress to set
+     * @return this object
+     */
+    @NotNull
+    public Router setRemoteIpAddress(@NotNull final String remoteIpAddress) {
         this.remoteIpAddress = remoteIpAddress;
+        return this;
     }
 
+    /**
+     * @return the remotePort, if any, or the default port for the routerConnectionProtocol
+     */
     public int getRemotePort() {
-        return remotePort;
+        return remotePort <= 0 ? this.routerConnectionProtocol.getDefaultPort() : remotePort;
     }
 
-    public void setRemotePort(int remotePort) {
+    /**
+     * Set the remotePort
+     *
+     * @param remotePort the remotePort to set
+     * @return this object
+     */
+    @NotNull
+    public Router setRemotePort(final int remotePort) {
         this.remotePort = remotePort;
+        return this;
     }
 
+    /**
+     * @return the uuid
+     */
     @NotNull
     public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(@NotNull String uuid) {
+    /**
+     * Set the uuid
+     *
+     * @param uuid the uuid to set
+     * @return this object
+     */
+    @NotNull
+    public Router setUuid(@NotNull final String uuid) {
         this.uuid = uuid;
+        return this;
     }
 
-    public void saveToPreferences(@NotNull final ConfigurationBase paramConfigurationBase) {
-        paramConfigurationBase
-                .getPreferences(this.uuid)
-                .edit()
-                .putString("uuid", this.uuid)
-                .putString("channel", this.routerConnectionProtocol.channel)
-                .putString("router_name", this.name)
-                .putString("ipAddress", this.remoteIpAddress)
-                .putInt("port", this.remotePort)
-                .putBoolean("useDefault", this.useDefault)
-                .putString("username", this.username)
-                .putString("password", this.password)
-                .commit();
-    }
-
+    /**
+     * @return the privKey
+     */
     @Nullable
     public String getPrivKey() {
         return privKey;
     }
 
-    public void setPrivKey(@Nullable String privKey) {
+    /**
+     * Set the privKey
+     *
+     * @param privKey the privKey to set
+     * @return this object
+     */
+    @NotNull
+    public Router setPrivKey(@Nullable final String privKey) {
         this.privKey = privKey;
+        return this;
     }
 
+    /**
+     * @return whether the strictHostKeyChecking flag is on or off
+     */
     public boolean isStrictHostKeyChecking() {
         return strictHostKeyChecking;
     }
 
-    public void setStrictHostKeyChecking(boolean strictHostKeyChecking) {
+    /**
+     * Set the strictHostKeyChecking
+     *
+     * @param strictHostKeyChecking the strictHostKeyChecking to set
+     * @return this object
+     */
+    @NotNull
+    public Router setStrictHostKeyChecking(final boolean strictHostKeyChecking) {
         this.strictHostKeyChecking = strictHostKeyChecking;
+        return this;
     }
 
-
+    /**
+     * @return the Router string representation
+     */
+    @Override
     @NotNull
     public String toString() {
-        return this.name;
+        return "Router{" +
+                "routerConnectionProtocol=" + routerConnectionProtocol +
+                ", name='" + name + '\'' +
+                ", remoteIpAddress='" + remoteIpAddress + '\'' +
+                ", remotePort=" + remotePort +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", privKey='" + privKey + '\'' +
+                ", id=" + id +
+                ", strictHostKeyChecking=" + strictHostKeyChecking +
+                ", uuid='" + uuid + '\'' +
+                '}';
     }
 
+    /**
+     * @return the internal DB id
+     */
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    /**
+     * Set the internal DB id
+     *
+     * @param id the internal DB id to set
+     * @return this object
+     */
+    @NotNull
+    public Router setId(int id) {
         this.id = id;
+        return this;
     }
 
     @Override
@@ -236,7 +346,6 @@ public class Router implements Serializable {
         if (id != router.id) return false;
         if (remotePort != router.remotePort) return false;
         if (strictHostKeyChecking != router.strictHostKeyChecking) return false;
-        if (useDefault != router.useDefault) return false;
         if (name != null ? !name.equals(router.name) : router.name != null) return false;
         if (password != null ? !password.equals(router.password) : router.password != null)
             return false;
@@ -261,48 +370,79 @@ public class Router implements Serializable {
         result = 31 * result + (privKey != null ? privKey.hashCode() : 0);
         result = 31 * result + id;
         result = 31 * result + (strictHostKeyChecking ? 1 : 0);
-        result = 31 * result + (useDefault ? 1 : 0);
         result = 31 * result + uuid.hashCode();
         return result;
     }
 
+    /**
+     * RouterConnectionProtocol enum
+     */
     public enum RouterConnectionProtocol {
-        SSH("ssh", "root", "ddwrt"),
 
-        HTTP("http", "admin", ""),
+        SSH("ssh", 22, "root", ""),
 
-        HTTPS("https", "admin", "");
+        HTTP("http", 80, "admin", null),
+
+        HTTPS("https", 443, "admin", null);
 
         @NotNull
-        final String channel;
+        private final String channel;
+
+        private final int defaultPort;
 
         @Nullable
-        final String defaultUsername;
+        private final String defaultUsername;
 
         @Nullable
-        final String defaultPassword;
+        private final String defaultPassword;
 
-        RouterConnectionProtocol(@NotNull final String channel,
-                                 @Nullable final String defaultUsername,
-                                 @Nullable final String defaultPassword) {
+        /**
+         * Constructor
+         *
+         * @param channel         the channel
+         * @param defaultPort     the default port
+         * @param defaultUsername the default username
+         * @param defaultPassword the default password
+         */
+        private RouterConnectionProtocol(@NotNull final String channel,
+                                         final int defaultPort,
+                                         @Nullable final String defaultUsername,
+                                         @Nullable final String defaultPassword) {
             this.channel = channel;
+            this.defaultPort = defaultPort;
             this.defaultUsername = defaultUsername;
             this.defaultPassword = defaultPassword;
         }
 
+        /**
+         * @return the channel
+         */
         @NotNull
         public String getChannel() {
             return channel;
         }
 
+        /**
+         * @return the defaultUsername
+         */
         @Nullable
         public String getDefaultUsername() {
             return defaultUsername;
         }
 
+        /**
+         * @return the defaultPassword
+         */
         @Nullable
         public String getDefaultPassword() {
             return defaultPassword;
+        }
+
+        /**
+         * @return the defaultPort
+         */
+        public int getDefaultPort() {
+            return defaultPort;
         }
     }
 }
