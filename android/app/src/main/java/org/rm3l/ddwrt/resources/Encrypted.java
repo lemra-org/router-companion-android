@@ -144,7 +144,7 @@ public class Encrypted {
             return null;
         }
 
-        final Exception e;
+        Exception e;
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
@@ -189,7 +189,7 @@ public class Encrypted {
             return null;
         }
 
-        final Exception e;
+        Exception e;
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
