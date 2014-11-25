@@ -308,9 +308,6 @@ public class Router implements Serializable {
                 ", name='" + name + '\'' +
                 ", remoteIpAddress='" + remoteIpAddress + '\'' +
                 ", remotePort=" + remotePort +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", privKey='" + privKey + '\'' +
                 ", id=" + id +
                 ", strictHostKeyChecking=" + strictHostKeyChecking +
                 ", uuid='" + uuid + '\'' +
