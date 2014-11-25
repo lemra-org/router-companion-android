@@ -108,6 +108,7 @@
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="annotations-12.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="pagerslidingtabstrip-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="ion-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-2.7.1" level="project" />
@@ -115,6 +116,7 @@
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
     <orderEntry type="library" exported="" name="acra-4.5.0" level="project" />
     <orderEntry type="library" exported="" name="ckchangelog-1.2.1" level="project" />
+    <orderEntry type="library" exported="" name="actionbarsherlock-4.4.0" level="project" />
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="jsch-0.1.51" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
@@ -123,9 +125,7 @@
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-2.7.1" level="project" />
     <orderEntry type="library" exported="" name="svg-android-2.0.0" level="project" />
-    <orderEntry type="module" module-name="pagerslidingtabstrip" exported="" />
     <orderEntry type="module" module-name="Donations" exported="" />
-    <orderEntry type="module" module-name="actionbarsherlock" exported="" />
   </component>
 </module>
 

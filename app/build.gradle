@@ -24,12 +24,9 @@
 
 
 
-
-
-
-
-
-
+/**
+ * Gradle build file
+ */
 apply plugin: 'com.android.application'
 
 android {
@@ -39,7 +36,7 @@ android {
     defaultConfig {
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 21
         // Fetch the version according to git latest tag and "how far are we from last tag"
         def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
         def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
@@ -56,16 +53,22 @@ android {
                 versionPatch.toInteger() * 1000 +
                 versionBuild.toInteger()
 
-        // Friendly print the version output to the Gradle console
+        // For debugging, friendly print the version output to the Gradle console
         printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
                 "- NAME: " + versionName + "\n----------------------------\n")
     }
 
+    /**
+     * Flavors: this is because apps uploaded to Play Store will certainly be banned if
+     * they contain link to billing platforms other than Google
+     */
     productFlavors {
         google {
+            //PlayStore app will contain an In-App Billing link to Google Play
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
+            //F-Droid (pure OSS) will contain links to Paypal, Flattr, and Bitcoin only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }
     }
@@ -78,41 +81,39 @@ android {
     }
 }
 
+//Other external repositories, to be used besides jcenter
 repositories {
-//    mavenCentral()
     maven {
         url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
     }
 }
 
+//Dependencies
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
-    compile 'com.jcraft:jsch:0.1.51'
-    compile 'ch.acra:acra:4.5.0'
-    compile 'com.intellij:annotations:12.0'
-    compile 'com.github.japgolly:svg-android:2.0.0'
+    compile 'com.jcraft:jsch:0.1.51' //For SSH connections
+    compile 'ch.acra:acra:4.5.0' //For app errors handling and reporting
+    compile 'com.intellij:annotations:12.0' //@NotNull and @Nullable useful annotations
+    compile 'com.github.japgolly:svg-android:2.0.0' //SVG Android (not used for now)
     compile 'com.koushikdutta.ion:ion:2.0.0'
     compile 'com.google.code.gson:gson:2.3'
-//    compile 'com.jjoe64:graphview:3.1.4' //Removed because GraphView license is a bit restrictive
-//    compile 'com.androidplot:androidplot-core:0.6.1'
     compile group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
 //    compile 'de.greenrobot:eventbus:2.2.1'
     compile 'com.koushikdutta.async:androidasync:2.0.0'
     compile 'com.googlecode.androidannotations:androidannotations:2.7.1'
-//    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-//    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:recyclerview-v7:21.0.+'
+    //Crouton notification lib
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
-        // exclusion is not neccessary, but generally a good idea.
+        // exclusion is not necessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-    compile 'de.cketti.library.changelog:ckchangelog:1.2.1'
-    compile project(':libraries:actionbarsherlock')
-    compile project(':libraries:pagerslidingtabstrip')
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'de.cketti.library.changelog:ckchangelog:1.2.1' //Changelog dialogs
     compile project(':libraries:Donations')
 }
