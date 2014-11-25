@@ -28,7 +28,7 @@ import com.google.common.base.Splitter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.api.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.List;
 

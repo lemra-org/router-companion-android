@@ -49,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminBackupFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
@@ -98,6 +97,7 @@ import org.rm3l.ddwrt.fragments.wireless.WirelessSecurityFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.ArrayList;

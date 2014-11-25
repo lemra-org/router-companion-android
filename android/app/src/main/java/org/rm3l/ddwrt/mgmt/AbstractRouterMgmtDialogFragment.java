@@ -56,8 +56,8 @@ import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.api.conn.Router;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -252,16 +252,16 @@ public abstract class AbstractRouterMgmtDialogFragment
         router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(
                 (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
         ));
-        router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString());
+        router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
         router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
 
         final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
         final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();
         if (!isNullOrEmpty(password)) {
-            router.setPassword(password);
+            router.setPassword(password, true);
         }
         if (!isNullOrEmpty(privkey)) {
-            router.setPrivKey(privkey);
+            router.setPrivKey(privkey, true);
         }
 
         //This will throw an exception if connection could not be established!

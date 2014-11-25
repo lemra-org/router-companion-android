@@ -24,13 +24,15 @@
 
 
 
+
+
 /**
  * Gradle build file
  */
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 21
     buildToolsVersion "20.0.0"
 
     defaultConfig {
@@ -93,6 +95,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'commons-codec:commons-codec:1.10'
     compile 'com.jcraft:jsch:0.1.51' //For SSH connections
     compile 'ch.acra:acra:4.5.0' //For app errors handling and reporting
     compile 'com.intellij:annotations:12.0' //@NotNull and @Nullable useful annotations
