@@ -95,6 +95,7 @@ import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessSecurityFragment;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -108,6 +109,8 @@ import static android.widget.FrameLayout.LayoutParams;
 
 /**
  * Abstract base fragment
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements LoaderManager.LoaderCallbacks<T> {
 
@@ -120,9 +123,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     private static final AtomicInteger LOADERS_IDS = new AtomicInteger(1);
     private final Map<Class<?>, Loader> loadersMap = Maps.newHashMap();
-    @Nullable
-    protected Router router;
+
     protected LinearLayout mLayout;
+    protected Router router;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     @Nullable
@@ -136,7 +139,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
                                                 @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
-                                                @Nullable final Router router) {
+                                                @Nullable final String router) {
         try {
             @NotNull final DDWRTBaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
@@ -147,10 +150,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             args.putCharSequence(TAB_TITLE, tabTitle);
             args.putCharSequence(PARENT_SECTION_TITLE, parentSectionTitle);
             args.putString(FRAGMENT_CLASS, clazz.getCanonicalName());
-            args.putSerializable(ROUTER_CONNECTION_INFO, router);
+            args.putString(ROUTER_CONNECTION_INFO, router);
             fragment.setArguments(args);
-
-            fragment.router = router;
 
             return fragment;
 
@@ -165,7 +166,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @NotNull
     public static DDWRTBaseFragment[] getFragments(@NotNull final Resources resources, int parentSectionNumber,
                                                    String sortingStrategy,
-                                                   @Nullable final Router router) {
+                                                   @Nullable final String router) {
         Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
@@ -367,6 +368,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
         this.fragmentTiles = this.getTiles(savedInstanceState);
     }
 

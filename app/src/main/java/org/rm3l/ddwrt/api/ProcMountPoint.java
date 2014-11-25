@@ -32,6 +32,8 @@ import java.util.List;
 
 /**
  * Information about a /proc/mount endpoint (as retrieved from the router)
+ *
+ * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class ProcMountPoint {
 
@@ -43,10 +45,19 @@ public class ProcMountPoint {
     The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
      */
 
+    @NotNull
     private final List<String> permissions = new ArrayList<String>();
+
+    @NotNull
     private final List<String> otherAttributes = new ArrayList<String>();
+
+    @Nullable
     private String deviceType;
+
+    @Nullable
     private String mountPoint;
+
+    @Nullable
     private String fsType;
 
     public String getDeviceType() {
@@ -54,7 +65,7 @@ public class ProcMountPoint {
     }
 
     @NotNull
-    public ProcMountPoint setDeviceType(String deviceType) {
+    public ProcMountPoint setDeviceType(final String deviceType) {
         this.deviceType = deviceType;
         return this;
     }
@@ -64,7 +75,7 @@ public class ProcMountPoint {
     }
 
     @NotNull
-    public ProcMountPoint setMountPoint(String mountPoint) {
+    public ProcMountPoint setMountPoint(final String mountPoint) {
         this.mountPoint = mountPoint;
         return this;
     }
@@ -74,13 +85,13 @@ public class ProcMountPoint {
     }
 
     @NotNull
-    public ProcMountPoint setFsType(String fsType) {
+    public ProcMountPoint setFsType(final String fsType) {
         this.fsType = fsType;
         return this;
     }
 
     @NotNull
-    public ProcMountPoint addPermission(String perm) {
+    public ProcMountPoint addPermission(final String perm) {
         this.permissions.add(perm);
         return this;
     }
@@ -96,7 +107,7 @@ public class ProcMountPoint {
     }
 
     @NotNull
-    public ProcMountPoint addOtherAttr(String attr) {
+    public ProcMountPoint addOtherAttr(@NotNull final String attr) {
         this.otherAttributes.add(attr);
         return this;
     }
@@ -114,7 +125,7 @@ public class ProcMountPoint {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -125,9 +136,9 @@ public class ProcMountPoint {
         if (fsType != null ? !fsType.equals(that.fsType) : that.fsType != null) return false;
         if (mountPoint != null ? !mountPoint.equals(that.mountPoint) : that.mountPoint != null)
             return false;
-        if (otherAttributes != null ? !otherAttributes.equals(that.otherAttributes) : that.otherAttributes != null)
+        if (!otherAttributes.equals(that.otherAttributes))
             return false;
-        if (permissions != null ? !permissions.equals(that.permissions) : that.permissions != null)
+        if (!permissions.equals(that.permissions))
             return false;
 
         return true;
@@ -138,8 +149,8 @@ public class ProcMountPoint {
         int result = deviceType != null ? deviceType.hashCode() : 0;
         result = 31 * result + (mountPoint != null ? mountPoint.hashCode() : 0);
         result = 31 * result + (fsType != null ? fsType.hashCode() : 0);
-        result = 31 * result + (permissions != null ? permissions.hashCode() : 0);
-        result = 31 * result + (otherAttributes != null ? otherAttributes.hashCode() : 0);
+        result = 31 * result + permissions.hashCode();
+        result = 31 * result + otherAttributes.hashCode();
         return result;
     }
 }
