@@ -97,6 +97,14 @@ public class AboutDialog extends Dialog {
             tv.setLinkTextColor(Color.WHITE);
             Linkify.addLinks(tv, Linkify.ALL);
         }
+
+        tv = (TextView) findViewById(R.id.contributors);
+        final String contributorsTxt = readRawTextFile(R.raw.contributors);
+        if (contributorsTxt != null) {
+            tv.setText(Html.fromHtml(contributorsTxt));
+            tv.setLinkTextColor(Color.WHITE);
+            Linkify.addLinks(tv, Linkify.ALL);
+        }
     }
 
 }
