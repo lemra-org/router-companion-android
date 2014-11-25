@@ -26,6 +26,8 @@
 
 
 
+
+
 /**
  * Gradle build file
  */
@@ -66,20 +68,26 @@ android {
      */
     productFlavors {
         google {
-            //PlayStore app will contain an In-App Billing link to Google Play
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
-            //F-Droid (pure OSS) will contain links to Paypal, Flattr, and Bitcoin only
+            //F-Droid (pure OSS) will contain links to Google Play IAB, Paypal, Flattr, and Bitcoin
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
