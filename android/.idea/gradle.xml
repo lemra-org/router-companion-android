@@ -11,8 +11,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/libraries" />
             <option value="$PROJECT_DIR$/libraries/Donations" />
-            <option value="$PROJECT_DIR$/libraries/actionbarsherlock" />
-            <option value="$PROJECT_DIR$/libraries/pagerslidingtabstrip" />
           </set>
         </option>
       </GradleProjectSettings>

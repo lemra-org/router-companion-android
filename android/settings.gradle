@@ -22,4 +22,6 @@
  * SOFTWARE.
  */
 
-include ':app', ':libraries:actionbarsherlock', ':libraries:pagerslidingtabstrip', ':libraries:Donations'
+
+
+include ':app', ':libraries:Donations'
