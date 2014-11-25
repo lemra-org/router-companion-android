@@ -53,6 +53,7 @@ public class Encrypted {
 
     private static final String LOG_TAG = Encrypted.class.getSimpleName();
 
+    //TODO Look for a better way to encrypt data
     private static final String PRIVATE_SET_INT = "novells sky#yes ";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
     private static final String AES = "AES";
