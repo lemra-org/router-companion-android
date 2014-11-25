@@ -34,6 +34,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.sufficientlysecure.donations.DonationsFragment;
 
 public class DonateActivity extends SherlockFragmentActivity {
 
@@ -76,15 +77,15 @@ public class DonateActivity extends SherlockFragmentActivity {
         setContentView(R.layout.donations_activity);
 
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        final DonateFragment donationsFragment;
+        final DonationsFragment donationsFragment;
 
         if (BuildConfig.DONATIONS_GOOGLE) {
             //Activate Google Play In-App Billing solely
-            donationsFragment = DonateFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
+            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                     getResources().getStringArray(R.array.donation_google_catalog_values), false, null, null,
                     null, false, null, null, false, null);
         } else {
-            donationsFragment = DonateFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
+            donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, true, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                     getResources().getStringArray(R.array.donation_google_catalog_values), true, PAYPAL_USER,
                     PAYPAL_CURRENCY_CODE, getString(R.string.donation_paypal_item), true, FLATTR_PROJECT_URL, FLATTR_URL, true, BITCOIN_ADDRESS);
         }
