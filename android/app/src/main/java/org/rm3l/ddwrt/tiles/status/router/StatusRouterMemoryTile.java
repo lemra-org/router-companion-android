@@ -215,7 +215,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
             //Total
             @NotNull final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
             if (memTotalView != null) {
-                memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL, "N/A"));
+                memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL));
             }
 
             //Model
