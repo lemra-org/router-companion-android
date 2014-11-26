@@ -24,18 +24,21 @@
 
 <changelog>
     <release
-        version="0.1.0"
+        version="0.1.1-76"
         versioncode="%CURRENT_VERSION_CODE%">
+        <change>UI Refactoring</change>
+        <change>Performance enhancements</change>
+        <change>Bug Fixes</change>
+    </release>
+    <release
+        version="0.1.0-75"
+        versioncode="10075">
         <change>Add data encryption support</change>
+        <change>Big Refactoring</change>
     </release>
     <release
-        version="0.0.9"
-        versioncode="009">
-    <change>Various UI improvements</change>
-    </release>
-    <release
-        version="0.0.8"
-        versioncode="008">
+        version="0.1.0-0"
+        versioncode="10000">
     <change>Initial Release</change>
     </release>
 </changelog>
