@@ -73,6 +73,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
 
 public abstract class AbstractRouterMgmtDialogFragment
         extends SherlockDialogFragment
@@ -177,13 +178,27 @@ public abstract class AbstractRouterMgmtDialogFragment
                      * move to the first row in the Cursor, get the data,
                      * and display it.
                      */
-                    int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    final int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    final int sizeIndex = uriCursor.getColumnIndex(OpenableColumns.SIZE);
+
                     uriCursor.moveToFirst();
 
-                    //Replace button hint message with file name
+                    //File size in bytes
+                    final long fileSize = uriCursor.getLong(sizeIndex);
                     final String filename = uriCursor.getString(nameIndex);
+
+                    //Check file size
+                    if (fileSize > MAX_PRIVKEY_SIZE_BYTES) {
+                        displayMessage(String
+                                .format("File '%s' too big (%sB). Limit is %s", filename, fileSize, (MAX_PRIVKEY_SIZE_BYTES / 1000l) + "KB"), ALERT);
+                        return;
+                    }
+
+                    //Replace button hint message with file name
+                    final Button fileSelectorButton = (Button) d.findViewById(R.id.router_add_privkey);
+                    final CharSequence fileSelectorOriginalHint = fileSelectorButton.getHint();
                     if (!Strings.isNullOrEmpty(filename)) {
-                        ((Button) d.findViewById(R.id.router_add_privkey)).setHint(filename);
+                        fileSelectorButton.setHint(filename);
                     }
 
                     //Set file actual content in hidden field
@@ -193,6 +208,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                     } catch (IOException e) {
                         displayMessage("Error: " + e.getMessage(), ALERT);
                         e.printStackTrace();
+                        fileSelectorButton.setHint(fileSelectorOriginalHint);
                     }
                 }
             }
