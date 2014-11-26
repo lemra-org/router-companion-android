@@ -1,6 +1,14 @@
 DD-WRT Companion
 ===============
 
+TL;DR
+-------
+This mobile DD-WRT Companion lets you connect to, monitor and manage your DD-WRT routers on the go. 
+It requires SSHd to be enabled on the router (and maybe external access if your router is behind a NAT network). It works with both private key and password based authentication methods.
+
+Introduction
+-------
+
 The overall rationale behind this repository is to provide building blocks for OpenSource mobile apps dedicated to manage various routers and embedded devices with various firmwares.
 I started this project as a means for myself to get started with native apps on most mobile operating systems.
 
@@ -9,7 +17,7 @@ At this time, I am targetting [DD-WRT](http://www.dd-wrt.com) routers, but the i
 DD-WRT is a Linux based alternative OpenSource firmware suitable for a great variety of WLAN routers and embedded systems. 
 
 This mobile DD-WRT Companion lets you connect to, monitor and manage your DD-WRT routers on the go. 
-It requires SSHd to be enabled on the router (and maybe external access if your router is behind a NAT network), and works with both private key and password based authentication methods.
+It requires SSHd to be enabled on the router (and maybe external access if your router is behind a NAT network). It works with both private key and password based authentication methods.
 
 Supported Platforms
 -------
