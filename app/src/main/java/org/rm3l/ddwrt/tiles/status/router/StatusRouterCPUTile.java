@@ -63,29 +63,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
     public StatusRouterCPUTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
-        // Parse the SVG file from the resource beforehand
-//        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.cpu);
-//            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-//            this.icon = svg.createPictureDrawable();
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
-//        }
     }
-//
-//    @Nullable
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_cpu, null);
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_cpu_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//        return layout;
-////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_cpu);
-////        imageView.setImageDrawable(this.icon);
-////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-////        return layout;
-//    }
 
     @Nullable
     @Override
@@ -243,7 +221,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             @NotNull final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
             if (cpuSpeedView != null) {
                 final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
-                cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? "N/A" : (property + " MHz"));
+                cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
             }
 
             //Model
