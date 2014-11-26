@@ -26,7 +26,8 @@
     android:id="@+id/tile_status_wan_config"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -53,7 +54,7 @@
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Configuration"
+                android:text="@string/wan_config_configuration"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
@@ -76,7 +77,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="Error placeholder"
+            android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -90,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Connection Type"
+                android:text="@string/wan_config_connection_type"
                 android:textStyle="bold" />
 
             <TextView
@@ -99,25 +100,24 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_connection_type"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- 3G Signal (displayed only if connection type is 3g) -->
             <TextView
                 android:id="@+id/tile_status_wan_config_3g_signal_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Connection Type"
+                android:text="@string/wan_config_connection_type"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -128,26 +128,25 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_3g_signal"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic"
+                android:text="@string/loading"
                 android:visibility="gone" />
 
             <!-- Connection Uptime -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Connection Uptime"
+                android:text="@string/wan_config_connection_uptime"
                 android:textStyle="bold" />
 
             <TextView
@@ -156,24 +155,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_connection_uptime"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- WAN MAC -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAN MAC"
+                android:text="@string/wan_config_wan_mac"
                 android:textStyle="bold" />
 
             <TextView
@@ -182,24 +180,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_wan_mac"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- WAN IP -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAN IP"
+                android:text="@string/wan_config_wan_ip"
                 android:textStyle="bold" />
 
             <TextView
@@ -208,25 +205,24 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_wan_ip"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
 
             <!-- WAN Subnet Mask -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Subnet Mask"
+                android:text="@string/wan_config_subnet_mask"
                 android:textStyle="bold" />
 
             <TextView
@@ -235,24 +231,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_subnet_mask"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- GW -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gateway"
+                android:text="@string/wan_config_gateway"
                 android:textStyle="bold" />
 
             <TextView
@@ -261,24 +256,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_subnet_gateway"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Comma-separated list of DNSs -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DNS"
+                android:text="@string/wan_config_dns"
                 android:textStyle="bold" />
 
             <TextView
@@ -287,25 +281,24 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_config_dns"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Auto-refresh -->
             <TextView
                 android:id="@+id/tile_status_wan_config_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto-refresh"
+                android:text="@string/auto_refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -316,7 +309,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <ToggleButton
