@@ -221,7 +221,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             //WAN IP
             @NotNull final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
             if (wanIpView != null) {
-                wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
+                wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR));
             }
 
             @NotNull final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
