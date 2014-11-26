@@ -28,13 +28,16 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -45,12 +48,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
@@ -155,16 +160,36 @@ public abstract class AbstractRouterMgmtDialogFragment
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            Uri uri = null;
+            Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
                 Log.i(LOG_TAG, "Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
                 if (d != null) {
+
+                    final ContentResolver contentResolver = this.getSherlockActivity().getContentResolver();
+
+                    final Cursor uriCursor =
+                            contentResolver.query(uri, null, null, null, null);
+
+                    /*
+                     * Get the column indexes of the data in the Cursor,
+                     * move to the first row in the Cursor, get the data,
+                     * and display it.
+                     */
+                    int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    uriCursor.moveToFirst();
+
+                    //Replace button hint message with file name
+                    final String filename = uriCursor.getString(nameIndex);
+                    if (!Strings.isNullOrEmpty(filename)) {
+                        ((Button) d.findViewById(R.id.router_add_privkey)).setHint(filename);
+                    }
+
+                    //Set file actual content in hidden field
                     final TextView privKeyPath = (TextView) d.findViewById(R.id.router_add_privkey_path);
                     try {
-                        privKeyPath.setText(IOUtils
-                                .toString(this.getSherlockActivity().getContentResolver().openInputStream(uri)));
+                        privKeyPath.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
                     } catch (IOException e) {
                         displayMessage("Error: " + e.getMessage(), ALERT);
                         e.printStackTrace();
