@@ -74,6 +74,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
+import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
 public abstract class AbstractRouterMgmtDialogFragment
         extends SherlockDialogFragment
@@ -190,7 +191,9 @@ public abstract class AbstractRouterMgmtDialogFragment
                     //Check file size
                     if (fileSize > MAX_PRIVKEY_SIZE_BYTES) {
                         displayMessage(String
-                                .format("File '%s' too big (%sB). Limit is %s", filename, fileSize, (MAX_PRIVKEY_SIZE_BYTES / 1000l) + "KB"), ALERT);
+                                .format("File '%s' too big (%s). Limit is %s", filename,
+                                        toHumanReadableByteCount(fileSize),
+                                        toHumanReadableByteCount(MAX_PRIVKEY_SIZE_BYTES)), ALERT);
                         return;
                     }
 
