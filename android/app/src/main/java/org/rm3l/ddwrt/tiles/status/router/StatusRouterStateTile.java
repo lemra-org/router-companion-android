@@ -25,6 +25,7 @@
 package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -203,7 +204,15 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             //Router Name
             @NotNull final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
             if (routerNameView != null) {
-                routerNameView.setText(data.getProperty(NVRAMInfo.ROUTER_NAME, "N/A"));
+                final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
+                final boolean routerNameNull = (routerName == null);
+                String routerNameToSet = routerName;
+                if (routerNameNull) {
+                    routerNameToSet = "(empty)";
+                }
+                routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
+
+                routerNameView.setText(routerNameToSet);
             }
 
             //We can change the action bar title
@@ -243,6 +252,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         }
 
         if (exception != null) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
