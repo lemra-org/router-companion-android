@@ -26,7 +26,8 @@
     android:id="@+id/tile_status_lan_status"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -36,7 +37,7 @@
     <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.74"
         android:orientation="vertical">
@@ -53,7 +54,7 @@
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="LAN Status"
+                android:text="@string/lan_status"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
@@ -76,7 +77,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="Error placeholder"
+            android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -90,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MAC"
+                android:text="@string/lan_status_mac"
                 android:textStyle="bold" />
 
             <TextView
@@ -99,24 +100,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_lan_status_mac"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- IP -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IP"
+                android:text="@string/lan_status_ip"
                 android:textStyle="bold" />
 
             <TextView
@@ -125,24 +125,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_lan_status_ip"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Subnet Mask -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Subnet Mask"
+                android:text="@string/lan_status_subnet_mask"
                 android:textStyle="bold" />
 
             <TextView
@@ -151,24 +150,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_lan_status_subnet_mask"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- GW -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gateway"
+                android:text="@string/lan_status_gateway"
                 android:textStyle="bold" />
 
             <TextView
@@ -177,18 +175,17 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_lan_status_gateway"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!--&lt;!&ndash; Comma-separated list of DNSs &ndash;&gt;-->
             <!--<TextView-->
@@ -213,7 +210,7 @@
             <!--android:ellipsize="end"-->
             <!--android:gravity="left"-->
             <!--android:singleLine="false"-->
-            <!--android:text="Loading..."-->
+            <!--android:text="@string/loading"-->
             <!--android:textStyle="italic" />-->
 
             <!-- Auto-refresh -->
@@ -221,7 +218,7 @@
                 android:id="@+id/tile_status_lan_status_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto-refresh"
+                android:text="@string/auto_refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -232,7 +229,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <ToggleButton

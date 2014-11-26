@@ -26,7 +26,8 @@
     android:id="@+id/tile_status_router_syslog"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -54,7 +55,7 @@
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Syslog"
+                android:text="@string/syslog"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
@@ -63,13 +64,12 @@
                 android:id="@+id/tile_status_router_syslog_state"
                 android:layout_width="215dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="true"
-                android:text="Enabled / Disabled"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textStyle="italic" />
+                android:text="@string/enabled_disabled"
+                android:textAppearance="?android:textAppearanceSmall" />
 
 
         </LinearLayout>
@@ -90,7 +90,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="Error placeholder"
+            android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -130,7 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Filter"
+                android:text="@string/filter"
                 android:textAppearance="?android:textAppearanceSmall" />
 
         </LinearLayout>
@@ -140,38 +140,12 @@
             android:layout_height="wrap_content"
             android:columnCount="3">
 
-            <!--&lt;!&ndash; Filter &ndash;&gt;-->
-            <!--<EditText-->
-            <!--android:id="@+id/tile_status_router_syslog_filter"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_columnSpan="2">-->
-            <!--<requestFocus />-->
-            <!--</EditText>-->
-
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginLeft="8.0dip"-->
-            <!--android:layout_marginRight="8.0dip"-->
-            <!--android:text=" "/>-->
-
-            <!--<Button-->
-            <!--android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:checked="true"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:text="Filter" />-->
-
             <!-- Auto-refresh -->
             <TextView
                 android:id="@+id/tile_status_router_syslog_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto-refresh"
+                android:text="@string/auto_refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -182,7 +156,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <ToggleButton
