@@ -34,6 +34,7 @@ public final class DDWRTCompanionConstants {
 
     //FIXME Update prior to release
     public static final boolean TEST_MODE = true;
+    public static final long MAX_PRIVKEY_SIZE_BYTES = 500 * 1000l;
 
     private DDWRTCompanionConstants() {
     }
