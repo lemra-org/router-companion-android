@@ -24,7 +24,7 @@
 
 <changelog>
     <release
-        version="0.1.1-76"
+        version="0.1.1-3"
         versioncode="%CURRENT_VERSION_CODE%">
         <change>UI Refactoring</change>
         <change>Performance enhancements</change>
