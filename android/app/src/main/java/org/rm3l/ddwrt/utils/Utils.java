@@ -31,6 +31,7 @@ import android.content.Intent;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.donate.DonateActivity;
@@ -105,4 +106,9 @@ public final class Utils {
         }
         return routers;
     }
+
+    public static String toHumanReadableByteCount(final long sizeInBytes) {
+        return FileUtils.byteCountToDisplaySize(sizeInBytes);
+    }
+
 }
