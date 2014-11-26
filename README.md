@@ -9,7 +9,7 @@ At this time, I am targetting [DD-WRT](http://www.dd-wrt.com) routers, but the i
 DD-WRT is a Linux based alternative OpenSource firmware suitable for a great variety of WLAN routers and embedded systems. 
 
 This mobile DD-WRT Companion lets you connect to, monitor and manage your DD-WRT routers on the go. 
-It requires SSHd to be enabled on the router, and works with both private key and password based authentication methods.
+It requires SSHd to be enabled on the router (and maybe external access if your router is behind a NAT network), and works with both private key and password based authentication methods.
 
 Supported Platforms
 -------
