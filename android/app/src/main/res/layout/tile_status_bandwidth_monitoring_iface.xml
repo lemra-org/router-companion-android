@@ -26,7 +26,8 @@
     android:id="@+id/tile_status_bandwidth_monitoring"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -36,15 +37,15 @@
     <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="0.74"
         android:orientation="vertical"
         android:weightSum="1">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:paddingTop="4.0dip">
 
             <TextView
@@ -54,23 +55,10 @@
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Bandwidth Usage (MB)"
+                android:text="@string/bandwidth_usage_mb"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_bandwidth_monitoring_ssid"-->
-            <!--android:layout_width="215dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="left"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="Fetching SSID..."-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:textColor="@color/ddwrt_green"-->
-            <!--android:textStyle="italic" />-->
 
         </LinearLayout>
 
@@ -90,33 +78,16 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="Error placeholder"
+            android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <!-- Graph Placeholder -->
-        <!--<com.androidplot.xy.XYPlot-->
-        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
-        <!--title="Bandwidth Usage"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="177dp"-->
-        <!--android:layout_marginLeft="0px"-->
-        <!--android:layout_marginRight="0px" />-->
         <LinearLayout
             android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-
-        <!--<LinearLayout-->
-        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical">-->
-
-        <!---->
-        <!--</LinearLayout>-->
 
         <GridLayout
             android:layout_width="wrap_content"
@@ -128,7 +99,7 @@
                 android:id="@+id/tile_status_bandwidth_monitoring_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto-refresh"
+                android:text="@string/auto_refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -139,7 +110,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <ToggleButton

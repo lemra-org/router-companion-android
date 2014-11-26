@@ -26,7 +26,8 @@
     android:id="@+id/tile_status_wan_traffic"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -36,7 +37,7 @@
     <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.74"
         android:orientation="vertical">
@@ -53,7 +54,7 @@
                 android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Total Traffic"
+                android:text="@string/wan_traffic_total_traffic"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
                 android:textStyle="bold" />
@@ -76,7 +77,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="Error placeholder"
+            android:text="@string/error_placeholder"
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -90,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAN Interface"
+                android:text="@string/wan_traffic_wan_iface"
                 android:textStyle="bold" />
 
             <TextView
@@ -99,24 +100,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_traffic_iface"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Ingress -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ingress (MBytes)"
+                android:text="@string/wan_config_ingress_mbytes"
                 android:textStyle="bold" />
 
             <TextView
@@ -125,24 +125,23 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_traffic_ingress"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Egress -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Egress (MBytes)"
+                android:text="@string/wan_traffic_egress_mbytes"
                 android:textStyle="bold" />
 
             <TextView
@@ -151,25 +150,24 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" " />
+                android:text="@string/one_space" />
 
             <TextView
                 android:id="@+id/tile_status_wan_traffic_egress"
                 android:layout_width="292dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="start"
                 android:singleLine="false"
-                android:text="Loading..."
-                android:textStyle="italic" />
+                android:text="@string/loading"/>
 
             <!-- Auto-refresh -->
             <TextView
                 android:id="@+id/tile_status_wan_traffic_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auto-refresh"
+                android:text="@string/auto_refresh"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -180,7 +178,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="8.0dip"
                 android:layout_marginRight="8.0dip"
-                android:text=" "
+                android:text="@string/one_space"
                 android:visibility="gone" />
 
             <ToggleButton
