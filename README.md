@@ -1,8 +1,10 @@
 DD-WRT Companion
 ===============
 
-The overall rationale behind this repository is to provide building blocks for Open-Source mobile apps dedicated to manage various routers with various firmwares. 
-At this time, we target DD-WRT routers, but the implementation aims at being flexible enough to support other firmwares (Tomato, OpenWRT, ...) and their variants.
+The overall rationale behind this repository is to provide building blocks for Open-Source mobile apps dedicated to manage various routers with various firmwares.
+I started this project as a means for myself to get started with native apps on most mobile operating systems.
+
+At this time, I am targetting DD-WRT routers, but the implementation aims at being flexible enough to support other firmwares (Tomato, OpenWRT, ...) and their variants.
 
 This mobile DD-WRT Companion lets you connect to, monitor and manage your DD-WRT routers. 
 It requires SSHd to be enabled on the router, and works with both private key and password-based authentication methods.
@@ -19,6 +21,3 @@ Supported Platforms
 * Ubuntu Touch OS (coming soon)
 * Tizen (coming soon)
 * Freebox OS (coming soon)
-
-
-
