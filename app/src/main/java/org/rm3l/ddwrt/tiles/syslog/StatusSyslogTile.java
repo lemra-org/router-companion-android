@@ -35,6 +35,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -84,6 +85,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
                     nvramInfo.setProperty(SYSLOG, syslogData);
+                    nvramInfo.setProperty("syslog_enabled", "true");
 
                     //END TESTS
                     return nvramInfo;
@@ -122,18 +124,38 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            ((TextView) this.layout.findViewById(R.id.tile_status_router_syslog_content))
-                    .setText(data.getProperty(SYSLOG, "N/A"));
+            final boolean isSyslogEnabled = BooleanUtils.toBoolean(data.getProperty("syslog_enabled"));
+
+            final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
+            final CharSequence enabledDisabled = syslogState.getText();
+            syslogState.setText(enabledDisabled.toString()
+                    .replaceAll(((isSyslogEnabled ? "Dis" : "En") + "abled"), ""));
+
+            final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
+            final View filterEditText = this.layout.findViewById(R.id.tile_status_router_syslog_filter);
+            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+            if (isSyslogEnabled) {
+                ((TextView) syslogContentView)
+                        .setText(data.getProperty(SYSLOG, "N/A"));
+                syslogContentView.setVisibility(View.VISIBLE);
+                filterEditText.setVisibility(View.VISIBLE);
+                filterButton.setVisibility(View.VISIBLE);
+            } else {
+                syslogContentView.setVisibility(View.GONE);
+                filterEditText.setVisibility(View.GONE);
+                filterButton.setVisibility(View.GONE);
+            }
 
         }
 
         if (exception != null) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
         doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
+                R.id.tile_status_router_syslog_togglebutton_title, R.id.tile_status_router_syslog_togglebutton);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
