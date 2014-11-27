@@ -1,5 +1,4 @@
-<h2>Credits</h2>
-<a href="http://www.rm3l.org/" target="_blank">Armel S.</a> (original author) 
-&#8226; Evariste K. (translation fixes) 
-&#8226; ... 
+<h3>Credits</h3>
+<a href="http://www.rm3l.org/" target="_blank">Armel S.</a> (main author)
+&#8226; Evariste K. (translation fixes)
 &#8226; All of you supporting this app!
