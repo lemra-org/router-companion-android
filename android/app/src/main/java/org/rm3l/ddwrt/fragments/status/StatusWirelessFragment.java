@@ -44,6 +44,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Arrays;
@@ -82,6 +83,14 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
                             router);
 
+                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+
+                    if (DDWRTCompanionConstants.TEST_MODE) {
+                        return Arrays.<DDWRTTile>asList(new WirelessIfaceTile("eth0.test", sherlockActivity, args, router),
+                                new WirelessIfaceTile("eth1.test", sherlockActivity, args, router),
+                                new WirelessIfaceTile("eth2.test", sherlockActivity, args, router));
+                    }
+
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
                             NVRAMInfo.LANDEVS);
 
@@ -100,7 +109,6 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     }
 
                     final List<DDWRTTile> tiles = Lists.newArrayList();
-                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
 
                     for (@Nullable final String landev : splitToList) {
                         if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {

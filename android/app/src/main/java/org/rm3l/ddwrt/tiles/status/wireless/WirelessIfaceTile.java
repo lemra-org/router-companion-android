@@ -44,7 +44,10 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+
+import java.util.Random;
 
 /**
  *
@@ -83,6 +86,21 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    if (DDWRTCompanionConstants.TEST_MODE) {
+                        return new NVRAMInfo()
+                                .setProperty(WIRELESS_IFACE, wlIface)
+                                .setProperty(wlIface + "_radio", String.valueOf(new Random().nextInt()))
+                                .setProperty(wlIface + "_mode", "Mode")
+                                .setProperty(wlIface + "_hwaddr", "hw:ad:dr:rd:da:wh")
+                                .setProperty(wlIface + "_ifname", wlIface + " ifname")
+                                .setProperty(wlIface + "_net_mode", "ng-only")
+                                .setProperty(wlIface + "_ssid", "SSID")
+                                .setProperty(wlIface + "_channel", String.valueOf(new Random().nextInt(100)))
+                                .setProperty(wlIface + "_txpwr", String.valueOf(new Random().nextInt(100)))
+                                .setProperty(wlIface + "_rate", String.valueOf(new Random().nextInt(100)))
+                                .setProperty(wlIface + "_akm", "psk psk2");
+                    }
 
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
                             wlIface + "_radio",
