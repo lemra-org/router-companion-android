@@ -38,15 +38,14 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -62,7 +61,7 @@ import java.util.Set;
 /**
  *
  */
-public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> {
+public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
     public static final Comparator<Device> COMPARATOR = new Comparator<Device>() {
         @Override
@@ -79,39 +78,41 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
 
     @Nullable
     @Override
-    protected Loader<WirelessClientsTile.Devices> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<WirelessClientsTile.Devices>(this.mParentFragmentActivity) {
+    protected Loader<ClientDevices> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<ClientDevices>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
-            public WirelessClientsTile.Devices loadInBackground() {
+            public ClientDevices loadInBackground() {
+
+                Log.d(LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
+                        mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+
+                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                    //Skip run
+                    Log.d(LOG_TAG, "Skip loader run");
+                    return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                }
+                nbRunsLoader++;
+
+                final ClientDevices devices = new ClientDevices();
+
+                if (DDWRTCompanionConstants.TEST_MODE) {
+                    //FIXME TEST MODE
+                    for (int i = 1, j = i + 1; i <= 15; i++, j++) {
+                        final int randomI = new Random().nextInt(i);
+                        final int randomJ = new Random().nextInt(j);
+                        devices
+                                .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
+                                        .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
+                                        .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
+                    }
+                    Log.d(LOG_TAG, "wireless client devices: " + devices);
+                    return devices;
+                    //FIXME END TEST MODE
+                }
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
-
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
-                        return new WirelessClientsTile.Devices().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    nbRunsLoader++;
-
-                    final WirelessClientsTile.Devices devices = new WirelessClientsTile.Devices();
-
-                    if (DDWRTCompanionConstants.TEST_MODE) {
-                        //FIXME TEST MODE
-                        for (int i = 1, j = i + 1; i <= 15; i++, j++) {
-                            final int randomI = new Random().nextInt(i);
-                            final int randomJ = new Random().nextInt(j);
-                            devices
-                                    .addDevice(new Device(String.format("A%1$s:B%1$s:C%1$s:D%2$s:E%2$s:F%2$s", randomI, randomJ))
-                                            .setIpAddress(String.format("172.17.1%1$s.2%2$s", randomI, randomJ))
-                                            .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
-                        }
-                        return devices;
-                    }
-
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
                             "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"map\",$1,$3 ,$2}'",
                             "awk '{print \"map\",$2,$3,$4}' /tmp/dnsmasq.leases",
@@ -146,8 +147,8 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
                     return devices;
 
                 } catch (@NotNull final Exception e) {
-                    e.printStackTrace();
-                    return new WirelessClientsTile.Devices().setException(e);
+                    Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
+                    return new ClientDevices().setException(e);
                 }
             }
         };
@@ -199,11 +200,11 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(Loader<WirelessClientsTile.Devices> loader, WirelessClientsTile.Devices data) {
+    public void onLoadFinished(Loader<ClientDevices> loader, ClientDevices data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        if (data == null) {
-            data = new WirelessClientsTile.Devices().setException(new DDWRTNoDataException("No Data!"));
+        if (data == null || data.getDevices().isEmpty()) {
+            data = new ClientDevices().setException(new DDWRTNoDataException("No Data!"));
         }
 
         @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_clients_error);
@@ -274,54 +275,4 @@ public class WirelessClientsTile extends DDWRTTile<WirelessClientsTile.Devices> 
         return null;
     }
 
-    class Devices {
-        @NotNull
-        private final Set<Device> devices = Sets.newHashSet();
-
-        @Nullable
-        private Exception exception;
-
-        @NotNull
-        public Set<Device> getDevices() {
-            return devices;
-        }
-
-        @NotNull
-        public int getDevicesCount() {
-            return devices.size();
-        }
-
-        @NotNull
-        public Set<Device> getDevices(int max) {
-            return FluentIterable
-                    .from(devices)
-                    .limit(max)
-                    .toSortedSet(COMPARATOR);
-        }
-
-        @NotNull
-        public Devices addDevice(Device device) {
-            this.devices.add(device);
-            return this;
-        }
-
-        @Nullable
-        public Exception getException() {
-            return exception;
-        }
-
-        @NotNull
-        public Devices setException(Exception exception) {
-            this.exception = exception;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "Devices{" +
-                    "devices=" + devices +
-                    ", exception=" + exception +
-                    '}';
-        }
-    }
 }

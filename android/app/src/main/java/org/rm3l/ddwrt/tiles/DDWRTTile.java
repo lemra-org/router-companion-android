@@ -45,8 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
-
 /**
  * Abstract DDWRT Tile
  */
@@ -155,12 +153,12 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
 
 //        Re-schedule it!
-        HANDLER.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
-            }
-        }, TILE_REFRESH_MILLIS);
+//        HANDLER.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
+//            }
+//        }, TILE_REFRESH_MILLIS);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader);
     }
