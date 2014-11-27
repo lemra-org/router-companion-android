@@ -36,7 +36,7 @@ Below are some screenshots of the overall app look n' feel and behaviour. As thi
 
 APKs
 --------
-* [v0.1.1-alpha.1f677ad](https://github.com/rm3l/ddwrt-companion/releases/download/0.1.1-alpha.1f677ad/ddwrt-companion-android_20141127-snapshot.apk) 
+* Nov 27, 2014: [v0.1.1-alpha.1f677ad](https://github.com/rm3l/ddwrt-companion/releases/download/0.1.1-alpha.1f677ad/ddwrt-companion-android_20141127-snapshot.apk) 
 
 External libs used in this project
 --------
