@@ -24,9 +24,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tile_status_bandwidth_monitoring"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <!--<ImageView-->
@@ -60,6 +59,19 @@
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_bandwidth_monitoring_ssid"-->
+            <!--android:layout_width="215dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:ellipsize="end"-->
+            <!--android:gravity="left"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Fetching SSID..."-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:textColor="@color/ddwrt_green"-->
+            <!--android:textStyle="italic" />-->
+
         </LinearLayout>
 
         <View
@@ -83,11 +95,28 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
+        <!-- Graph Placeholder -->
+        <!--<com.androidplot.xy.XYPlot-->
+        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
+        <!--title="Bandwidth Usage"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="177dp"-->
+        <!--android:layout_marginLeft="0px"-->
+        <!--android:layout_marginRight="0px" />-->
         <LinearLayout
             android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical">-->
+
+        <!---->
+        <!--</LinearLayout>-->
 
         <GridLayout
             android:layout_width="wrap_content"
