@@ -31,3 +31,11 @@ Supported Platforms
 * Ubuntu Touch OS (coming soon)
 * Tizen (coming soon)
 * Freebox OS (coming soon)
+
+Contribute
+--------
+If you are willing to contribute (for a platform specific dev or translations), you can fork this repo and make pull requests. I will merge your changes back into the main project as quickly as possible.
+
+You can also report any issues you noticed, either via the app or via the [issues](https://github.com/rm3l/ddwrt-companion/issues) section.
+
+Donations are also welcome, via the app menus.
