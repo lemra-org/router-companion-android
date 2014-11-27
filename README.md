@@ -38,4 +38,4 @@ If you are willing to contribute (for a platform specific dev or translations), 
 
 You can also report any issues you noticed, either via the app or via the [issues](https://github.com/rm3l/ddwrt-companion/issues) section.
 
-Donations are also welcome, via the app menus.
+To help support this project, donations are also welcome, via the app menus.
