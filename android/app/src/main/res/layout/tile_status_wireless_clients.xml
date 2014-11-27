@@ -27,7 +27,6 @@
     android:id="@+id/tile_status_wireless_clients"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:baselineAligned="false"
     android:orientation="horizontal">
 
     <!--<ImageView-->
@@ -103,7 +102,7 @@
             android:visibility="gone" />
 
         <GridLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="3">
 
