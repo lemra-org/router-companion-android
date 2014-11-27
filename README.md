@@ -21,3 +21,14 @@ External libs used in this project
 * [achartengine](https://code.google.com/p/achartengine/)
 * [android-donations-lib](https://github.com/dschuermann/android-donations-lib)
 * and others listed in the [dependencies](app/build.gradle)
+
+
+Contribute
+--------
+If you are willing to contribute (for a platform specific dev or translations), you can fork this repo and make pull requests. I will merge your changes back into the main project as quickly as possible.
+
+You can also report any issues you noticed, either via the app or via the [issues](https://github.com/rm3l/ddwrt-companion/issues) section.
+
+To help support this project, donations are also welcome, via the app menus, or by clicking on the link below:
+
+<a href='https://pledgie.com/campaigns/27531'><img alt='Click here to lend your support to: DD-WRT Companion and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/27531.png?skin_name=chrome' border='0' ></a>
