@@ -39,7 +39,7 @@
 
     <LinearLayout
         android:id="@+id/tile_status_wireless_clients_layout_container"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.74"
         android:orientation="vertical">
@@ -86,8 +86,9 @@
 
         <GridLayout
             android:id="@+id/tile_status_wireless_clients_layout_list_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.74"
             android:columnCount="2"
             android:orientation="vertical" />
 
