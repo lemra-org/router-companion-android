@@ -36,7 +36,7 @@ Below are some screenshots of the overall app look n' feel and behaviour. As thi
 
 Parent Project
 --------
-See the [parent project](https://github.com/rm3l/ddwrt-companion-android) for the rationale behing this app.
+See the [parent project](https://github.com/rm3l/ddwrt-companion) for the rationale behing this app.
 
 APKs
 --------
