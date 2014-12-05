@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2014 Armel S.
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tile_status_wireless_clients"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="8.0dip"-->
+    <!--android:id="@+id/ic_tile_status_wan_config"-->
+    <!--android:background="@android:color/transparent"/>-->
+
+    <LinearLayout
+        android:id="@+id/tile_status_wireless_clients_layout_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.74"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="4.0dip">
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_title"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="20.23"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/clients"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="377dp"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/tile_status_wireless_clients_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <GridLayout
+            android:id="@+id/tile_status_wireless_clients_layout_list_container"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.74"
+            android:columnCount="2"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/tile_status_wireless_clients_show_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:text="@string/show_more"
+            android:visibility="gone" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_togglebutton_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auto_refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space"
+                android:visibility="gone" />
+
+            <ToggleButton
+                android:id="@+id/tile_status_wireless_clients_togglebutton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+        </GridLayout>
+
+    </LinearLayout>
+</LinearLayout>

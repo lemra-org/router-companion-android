@@ -1,0 +1,4 @@
+This software is provided "as is" under the MIT License (MIT), just in the hope that it would be useful.&nbsp;
+It is provided without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement.
+<br/>
+The authors are NOT liable for any damage incurred from use of this software!

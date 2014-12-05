@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2014 Armel S.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<resources>
+    <item name="action_bar_activity_content" type="id" />
+    <item name="action_date" type="id" />
+    <item name="action_menu_divider" type="id" />
+    <item name="action_menu_presenter" type="id" />
+    <item name="group_audio_tracks" type="id" />
+    <item name="group_bouquets" type="id" />
+    <item name="group_stream_quality" type="id" />
+    <item name="group_subtitle_tracks" type="id" />
+    <item name="home" type="id" />
+    <item name="notification_sync" type="id" />
+    <item name="progress_circular" type="id" />
+    <item name="progress_horizontal" type="id" />
+    <item name="tag_date" type="id" />
+    <item name="tag_holder" type="id" />
+    <item name="tag_item" type="id" />
+    <item name="tag_row_index" type="id" />
+    <item name="action_bar_root" type="id">false</item>
+    <item name="action_bar_container" type="id">false</item>
+    <item name="action_bar" type="id">false</item>
+    <item name="action_context_bar" type="id">false</item>
+    <item name="split_action_bar" type="id">false</item>
+    <item name="action_bar_overlay_layout" type="id">false</item>
+    <item name="top_action_bar" type="id">false</item>
+    <item name="up" type="id">false</item>
+    <item name="action_bar_title" type="id">false</item>
+    <item name="action_bar_subtitle" type="id">false</item>
+    <item name="action_mode_close_button" type="id">false</item>
+    <item name="activity_chooser_view_content" type="id">false</item>
+    <item name="expand_activities_button" type="id">false</item>
+    <item name="image" type="id">false</item>
+    <item name="default_activity_button" type="id">false</item>
+    <item name="list_item" type="id">false</item>
+    <item name="icon" type="id">false</item>
+    <item name="title" type="id">false</item>
+    <item name="expanded_menu" type="id">false</item>
+    <item name="checkbox" type="id">false</item>
+    <item name="shortcut" type="id">false</item>
+    <item name="radio" type="id">false</item>
+    <item name="edit_query" type="id">false</item>
+    <item name="search_bar" type="id">false</item>
+    <item name="search_badge" type="id">false</item>
+    <item name="search_button" type="id">false</item>
+    <item name="search_edit_frame" type="id">false</item>
+    <item name="search_mag_icon" type="id">false</item>
+    <item name="search_plate" type="id">false</item>
+    <item name="search_src_text" type="id">false</item>
+    <item name="search_close_btn" type="id">false</item>
+    <item name="submit_area" type="id">false</item>
+    <item name="search_go_btn" type="id">false</item>
+    <item name="search_voice_btn" type="id">false</item>
+    <item name="container" type="id">false</item>
+    <item name="drawer" type="id">false</item>
+    <item name="content_root" type="id">false</item>
+    <item name="menu_drawer" type="id">false</item>
+    <item name="menu" type="id">false</item>
+    <item name="tabs" type="id">false</item>
+    <item name="pager" type="id">false</item>
+    <item name="progressBar" type="id">false</item>
+    <item name="tiles_container" type="id">false</item>
+    <item name="imageView_text" type="id">false</item>
+    <item name="imageView_router" type="id">false</item>
+    <item name="imageView_backside" type="id">false</item>
+    <item name="quickContactBadge" type="id">false</item>
+    <item name="textView_name" type="id">false</item>
+    <item name="textView_number" type="id">false</item>
+    <item name="textView_date" type="id">false</item>
+    <item name="button_call" type="id">false</item>
+    <item name="imageView_icon" type="id">false</item>
+    <item name="content" type="id">false</item>
+    <item name="textView_channel" type="id">false</item>
+    <item name="textView_title" type="id">false</item>
+    <item name="textView_type" type="id">false</item>
+    <item name="layout_overlay_ui" type="id">false</item>
+    <item name="textView_start" type="id">false</item>
+    <item name="textView_end" type="id">false</item>
+    <item name="textView_disk_usage" type="id">false</item>
+    <item name="button_eject" type="id">false</item>
+    <item name="textView_size" type="id">false</item>
+    <item name="textView_remaining_time" type="id">false</item>
+    <item name="button_context" type="id">false</item>
+    <item name="textView_new" type="id">false</item>
+    <item name="imageView_check" type="id">false</item>
+    <item name="textView_description" type="id">false</item>
+    <item name="textView_info" type="id">false</item>
+    <item name="textView_details" type="id">false</item>
+    <item name="textView_uri" type="id">false</item>
+    <item name="textView_vendor" type="id">false</item>
+    <item name="textView_mac" type="id">false</item>
+    <item name="imageView_play_indicator" type="id">false</item>
+    <item name="textView_machines" type="id">false</item>
+    <item name="view_period" type="id">false</item>
+    <item name="textView_state" type="id">false</item>
+    <item name="switch_enabled" type="id">false</item>
+    <item name="textView_comment" type="id">false</item>
+    <item name="textView_port" type="id">false</item>
+    <item name="textView_ip" type="id">false</item>
+    <item name="layout_frame" type="id">false</item>
+    <item name="textView_subtitle" type="id">false</item>
+    <item name="channel" type="id">false</item>
+    <item name="programs" type="id">false</item>
+    <item name="textView_time" type="id">false</item>
+    <item name="layout_summary" type="id">false</item>
+    <item name="imageView_summary" type="id">false</item>
+    <item name="textView_summary" type="id">false</item>
+    <item name="textView_read_count" type="id">false</item>
+    <item name="textView_expire" type="id">false</item>
+    <item name="textView_url" type="id">false</item>
+    <item name="titleDivider" type="id">false</item>
+    <item name="button_downloads" type="id">false</item>
+    <item name="button_file_browser" type="id">false</item>
+    <item name="button_call_logs" type="id">false</item>
+    <item name="button_router_state" type="id">false</item>
+    <item name="button_parental_control" type="id">false</item>
+    <item name="button_photo_sync" type="id">false</item>
+    <item name="planningPreview" type="id">false</item>
+    <item name="sectionHeader" type="id">false</item>
+    <item name="textView_total" type="id">false</item>
+    <item name="textView_progress" type="id">false</item>
+    <item name="textView_ul_progress" type="id">false</item>
+    <item name="textView_download_rate" type="id">false</item>
+    <item name="textView_upload_rate" type="id">false</item>
+    <item name="textView_path" type="id">false</item>
+    <item name="textView_error" type="id">false</item>
+    <item name="button_pause" type="id">false</item>
+    <item name="button_resume" type="id">false</item>
+    <item name="button_remove" type="id">false</item>
+    <item name="button_erase" type="id">false</item>
+    <item name="textView" type="id">false</item>
+    <item name="button_authorize" type="id">false</item>
+    <item name="imageView" type="id">false</item>
+    <item name="progressBar_horizontal" type="id">false</item>
+    <item name="listView_playlist" type="id">false</item>
+    <item name="progress" type="id">false</item>
+    <item name="controls" type="id">false</item>
+    <item name="seekBar" type="id">false</item>
+    <item name="button_loop" type="id">false</item>
+    <item name="button_shuffle" type="id">false</item>
+    <item name="button_prev" type="id">false</item>
+    <item name="button_toggle" type="id">false</item>
+    <item name="button_next" type="id">false</item>
+    <item name="button_stop" type="id">false</item>
+    <item name="section_label" type="id">false</item>
+    <item name="editText_dest_ip" type="id">false</item>
+    <item name="button_pick_host" type="id">false</item>
+    <item name="editText_src_ip" type="id">false</item>
+    <item name="spinner_protocole" type="id">false</item>
+    <item name="editText_src_port_start" type="id">false</item>
+    <item name="editText_src_port_end" type="id">false</item>
+    <item name="editText_dest_port" type="id">false</item>
+    <item name="editText_comment" type="id">false</item>
+    <item name="layout_epg" type="id">false</item>
+    <item name="programGrid" type="id">false</item>
+    <item name="progressContainer" type="id">false</item>
+    <item name="listContainer" type="id">false</item>
+    <item name="fragment_state" type="id">false</item>
+    <item name="fragment_hosts" type="id">false</item>
+    <item name="fragment_now_on_tv" type="id">false</item>
+    <item name="fragment_disks" type="id">false</item>
+    <item name="fragment_call_logs" type="id">false</item>
+    <item name="fragment_downloads" type="id">false</item>
+    <item name="surfaceView_video" type="id">false</item>
+    <item name="surfaceView_subtitles" type="id">false</item>
+    <item name="progressBar_loading" type="id">false</item>
+    <item name="listView_program" type="id">false</item>
+    <item name="progress_channel_list" type="id">false</item>
+    <item name="button_menu" type="id">false</item>
+    <item name="videoFrame" type="id">false</item>
+    <item name="videoView" type="id">false</item>
+    <item name="videoRatio" type="id">false</item>
+    <item name="layout_download" type="id">false</item>
+    <item name="textView_status" type="id">false</item>
+    <item name="spinner" type="id">false</item>
+    <item name="editText_ip" type="id">false</item>
+    <item name="button_validate" type="id">false</item>
+    <item name="button_router" type="id">false</item>
+    <item name="imageView_router_icon" type="id">false</item>
+    <item name="textView_router_name" type="id">false</item>
+    <item name="textView_router_details" type="id">false</item>
+    <item name="button_tv" type="id">false</item>
+    <item name="button_epg" type="id">false</item>
+    <item name="button_tv_records" type="id">false</item>
+    <item name="button_lan" type="id">false</item>
+    <item name="button_settings" type="id">false</item>
+    <item name="spinner_filter_mode" type="id">false</item>
+    <item name="layout_planning_config" type="id">false</item>
+    <item name="button_planning" type="id">false</item>
+    <item name="layout_forced_config" type="id">false</item>
+    <item name="spinner_forced_state" type="id">false</item>
+    <item name="layout_temporary_config" type="id">false</item>
+    <item name="spinner_temporary_duration" type="id">false</item>
+    <item name="numberPicker_start" type="id">false</item>
+    <item name="numberPicker_end" type="id">false</item>
+    <item name="spinner_state" type="id">false</item>
+    <item name="internalEmpty" type="id">false</item>
+    <item name="button_play" type="id">false</item>
+    <item name="editText_login" type="id">false</item>
+    <item name="editText_password" type="id">false</item>
+    <item name="spinner_ip" type="id">false</item>
+    <item name="textView_category" type="id">false</item>
+    <item name="scrollView_summary" type="id">false</item>
+    <item name="button_watch" type="id">false</item>
+    <item name="button_record" type="id">false</item>
+    <item name="datePicker" type="id">false</item>
+    <item name="timePicker_start" type="id">false</item>
+    <item name="timePicker_end" type="id">false</item>
+    <item name="spinner_channel" type="id">false</item>
+    <item name="button_date" type="id">false</item>
+    <item name="button_duration" type="id">false</item>
+    <item name="editText_title" type="id">false</item>
+    <item name="editText_subtitle" type="id">false</item>
+    <item name="spinner_quality" type="id">false</item>
+    <item name="spinner_type" type="id">false</item>
+    <item name="textView_count" type="id">false</item>
+    <item name="textView_last_call_1" type="id">false</item>
+    <item name="textView_last_call_2" type="id">false</item>
+    <item name="textView_last_call_3" type="id">false</item>
+    <item name="textView_ongoing" type="id">false</item>
+    <item name="textView_seeding" type="id">false</item>
+    <item name="textView_connection_state" type="id">false</item>
+    <item name="textView_wifi" type="id">false</item>
+    <item name="textView_hosts" type="id">false</item>
+    <item name="textureView_video" type="id">false</item>
+    <item name="splash_alt" type="id">false</item>
+    <item name="action_refresh" type="id">false</item>
+    <item name="action_filter" type="id">false</item>
+    <item name="action_filter_all" type="id">false</item>
+    <item name="action_filter_incoming" type="id">false</item>
+    <item name="action_filter_outgoing" type="id">false</item>
+    <item name="action_filter_missed" type="id">false</item>
+    <item name="action_add" type="id">false</item>
+    <item name="action_rename" type="id">false</item>
+    <item name="action_remove" type="id">false</item>
+    <item name="action_done" type="id">false</item>
+    <item name="action_select_periods" type="id">false</item>
+    <item name="menu_delete" type="id">false</item>
+    <item name="menu_mark_as_read" type="id">false</item>
+    <item name="menu_mark_as_unread" type="id">false</item>
+    <item name="menu_remove" type="id">false</item>
+    <item name="menu_remove_and_delete" type="id">false</item>
+    <item name="menu_pause" type="id">false</item>
+    <item name="menu_resume" type="id">false</item>
+    <item name="menu_download" type="id">false</item>
+    <item name="menu_fetch" type="id">false</item>
+    <item name="menu_rename" type="id">false</item>
+    <item name="menu_copy" type="id">false</item>
+    <item name="menu_move" type="id">false</item>
+    <item name="menu_share" type="id">false</item>
+    <item name="menu_cast" type="id">false</item>
+    <item name="menu_open_with" type="id">false</item>
+    <item name="menu_force_port" type="id">false</item>
+    <item name="menu_force_api_version" type="id">false</item>
+    <item name="menu_stop" type="id">false</item>
+    <item name="menu_archive" type="id">false</item>
+    <item name="action_folder" type="id">false</item>
+    <item name="action_new" type="id">false</item>
+    <item name="action_remove_done" type="id">false</item>
+    <item name="action_pause_all" type="id">false</item>
+    <item name="action_resume_all" type="id">false</item>
+    <item name="action_settings" type="id">false</item>
+    <item name="action_new_folder" type="id">false</item>
+    <item name="action_paste" type="id">false</item>
+    <item name="action_sort" type="id">false</item>
+    <item name="action_sort_alpha" type="id">false</item>
+    <item name="action_sort_date" type="id">false</item>
+    <item name="action_tasks" type="id">false</item>
+    <item name="action_share_links" type="id">false</item>
+    <item name="action_cast" type="id">false</item>
+    <item name="action_share" type="id">false</item>
+    <item name="action_open" type="id">false</item>
+    <item name="action_download" type="id">false</item>
+    <item name="action_info" type="id">false</item>
+    <item name="action_overlay" type="id">false</item>
+    <item name="action_router_list" type="id">false</item>
+    <item name="action_channels" type="id">false</item>
+    <item name="action_video_overlay" type="id">false</item>
+    <item name="action_archive_all" type="id">false</item>
+    <item name="action_subtitles" type="id">false</item>
+    <item name="action_subtitles_none" type="id">false</item>
+    <item name="action_audiotracks" type="id">false</item>
+    <item name="action_audiotracks_none" type="id">false</item>
+</resources>
