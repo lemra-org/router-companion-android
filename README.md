@@ -34,6 +34,10 @@ Below are some screenshots of the overall app look n' feel and behaviour. As thi
         <img width="30%" src="http://www.rm3l.org/apps/ddwrt-companion/screenshots/11.png" alt="About" title="About"/>
 </div>
 
+Parent Project
+--------
+See the [parent project](https://github.com/rm3l/ddwrt-companion-android) for the rationale behing this app.
+
 APKs
 --------
 * Nov 27, 2014: [v0.1.1-alpha.1f677ad](https://github.com/rm3l/ddwrt-companion/releases/download/0.1.1-alpha.1f677ad/ddwrt-companion-android_20141127-snapshot.apk) 
