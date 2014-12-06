@@ -22,12 +22,6 @@
  * SOFTWARE.
  */
 
-
-
-
-
-
-
 /**
  * Gradle build file
  */
@@ -151,7 +145,6 @@ dependencies {
         exclude group: 'com.google.android', module: 'support-v4'
     }
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'de.cketti.library.changelog:ckchangelog:1.2.1' //Changelog dialogs
     compile project(':libraries:Donations')
 }

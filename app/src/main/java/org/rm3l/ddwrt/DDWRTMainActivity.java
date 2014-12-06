@@ -249,8 +249,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content,
-                        PageSlidingTabStripFragment.newInstance(this, position, this.mRouterUuid, preferences),
-                        position + "@" + TAG).commit();
+                        PageSlidingTabStripFragment
+                                .newInstance(this, position, this.mRouterUuid, preferences))
+                .commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }

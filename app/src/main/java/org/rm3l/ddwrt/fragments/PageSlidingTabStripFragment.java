@@ -27,7 +27,6 @@ package org.rm3l.ddwrt.fragments;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -107,13 +106,12 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.mPager = (ViewPager) view.findViewById(R.id.viewPager);
-        this.mPager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
-        this.mPager.setAdapter(mFragmentTabsAdapter);
-        this.mPager.setOnPageChangeListener(this.mOnPageChangeListener);
+        mPager = (ViewPager) view.findViewById(R.id.viewPager);
+        mPager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
+        mPager.setAdapter(mFragmentTabsAdapter);
+        mPager.setOnPageChangeListener(mOnPageChangeListener);
 
-        mSlidingTabLayout = (SlidingTabLayout) view
-                .findViewById(R.id.tabs);
+        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setViewPager(this.mPager);
     }
 
@@ -172,14 +170,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             return tab.getTabTitle();
         }
 
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
-            super.setPrimaryItem(container, position, object);
-            // Hack to allow the non-primary fragments to start properly
-            if (object != null) {
-                ((Fragment) object).setUserVisibleHint(false);
-            }
-        }
+//        @Override
+//        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
+//            super.setPrimaryItem(container, position, object);
+//            // Hack to allow the non-primary fragments to start properly
+//            if (object != null) {
+//                ((Fragment) object).setUserVisibleHint(false);
+//            }
+//        }
 
     }
 

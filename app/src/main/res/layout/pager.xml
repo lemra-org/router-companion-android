@@ -48,10 +48,10 @@
     <!--tools:context=".MainActivity" />-->
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1"
-        android:background="@android:color/white"
+        android:background="@android:color/transparent"
         tools:context=".MainActivity" />
 
 
