@@ -192,7 +192,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-                tabsToSort = new DDWRTBaseFragment[7];
+                tabsToSort = new DDWRTBaseFragment[6];
                 tabsToSort[0] = DDWRTBaseFragment.newInstance(StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
                 tabsToSort[1] = DDWRTBaseFragment.newInstance(StatusWANFragment.class, parentSectionTitle,
