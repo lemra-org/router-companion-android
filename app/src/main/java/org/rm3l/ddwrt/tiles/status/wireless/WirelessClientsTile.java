@@ -70,7 +70,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         }
     };
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
-    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 5;
+    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 15;
 
     public WirelessClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_wireless_clients, null);
