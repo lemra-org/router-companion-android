@@ -104,6 +104,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         @NotNull PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view
                 .findViewById(R.id.tabs);
         this.pager = (ViewPager) view.findViewById(R.id.pager);
+        this.pager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
         this.pager.setAdapter(mFragmentTabsAdapter);
         this.pager.setOnPageChangeListener(this.mOnPageChangeListener);
         tabs.setViewPager(this.pager);
@@ -128,15 +129,11 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         private final Resources resources;
         private final int parentSectionNumber;
 
-        @Nullable
-        private final String routerUuid;
-
         public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
                                    @Nullable final String routerUuid) {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.routerUuid = routerUuid;
             this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
