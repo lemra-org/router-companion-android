@@ -4,6 +4,8 @@
 **/.mtj.tmp/
 
 libraries/**/build
+build
+.gradle
 
 # Package Files #
 **/*.jar
