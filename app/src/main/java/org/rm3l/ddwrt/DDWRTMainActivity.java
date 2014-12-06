@@ -140,12 +140,14 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         final Integer savedPosition;
-        if (savedInstanceState == null || (savedPosition = savedInstanceState.getInt(SAVE_ITEM_SELECTED)) == null) {
-            selectItem(0);
-        } else {
-            selectItem(savedPosition);
+        int position = 0;
+        if (savedInstanceState != null && (savedPosition = savedInstanceState.getInt(SAVE_ITEM_SELECTED)) != null) {
+            position = savedPosition;
         }
-
+        mDrawerList.performItemClick(
+                mDrawerList.getChildAt(position),
+                position,
+                mDrawerList.getAdapter().getItemId(position));
     }
 
     @Override
@@ -248,7 +250,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 .beginTransaction()
                 .replace(R.id.content,
                         PageSlidingTabStripFragment.newInstance(this, position, this.mRouterUuid, preferences),
-                        PageSlidingTabStripFragment.TAG).commit();
+                        position + "@" + TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }

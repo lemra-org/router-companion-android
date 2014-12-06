@@ -61,7 +61,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
     @Nullable
-    private ViewPager pager;
+    private ViewPager mPager;
 
     /**
      * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
@@ -107,14 +107,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.pager = (ViewPager) view.findViewById(R.id.viewPager);
-        this.pager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
-        this.pager.setAdapter(mFragmentTabsAdapter);
-        this.pager.setOnPageChangeListener(this.mOnPageChangeListener);
+        this.mPager = (ViewPager) view.findViewById(R.id.viewPager);
+        this.mPager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
+        this.mPager.setAdapter(mFragmentTabsAdapter);
+        this.mPager.setOnPageChangeListener(this.mOnPageChangeListener);
 
         mSlidingTabLayout = (SlidingTabLayout) view
                 .findViewById(R.id.tabs);
-        mSlidingTabLayout.setViewPager(this.pager);
+        mSlidingTabLayout.setViewPager(this.mPager);
     }
 
     private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
@@ -138,14 +138,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             return this.tabs.length;
         }
 
-        /**
-         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
-         * same object as the {@link View} added to the {@link ViewPager}.
-         */
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return o == view;
-        }
+//        /**
+//         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
+//         * same object as the {@link View} added to the {@link ViewPager}.
+//         */
+//        @Override
+//        public boolean isViewFromObject(View view, Object o) {
+//            return o == view;
+//        }
 
         @Nullable
         @Override
