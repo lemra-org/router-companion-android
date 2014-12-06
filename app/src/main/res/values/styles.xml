@@ -31,7 +31,7 @@
 
     <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
 
-    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
+    <style name="AppBaseTheme" parent="android:Theme.Light"/>
 
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowBackground">@color/background_window</item>
@@ -41,6 +41,18 @@
     <style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:icon">@drawable/ic_launcher_actionbar</item>
         <item name="android:background">#FF666666</item>
+    </style>
+
+    <!-- Misc -->
+    <style name="TabIndicator" />
+
+    <!-- Transparent Action Bar -->
+    <style name="TransparentActionBar" parent="">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="TranslucentActionBar" parent="">
+        <item name="android:background">@color/translucent_actionbar_background</item>
     </style>
 
     <!--<style name="BackGroundImageView">-->

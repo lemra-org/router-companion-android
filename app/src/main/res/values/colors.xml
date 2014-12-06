@@ -42,4 +42,8 @@
     <color name="background_window">#FFE5E5E5</color>
     <color name="tab_background">@color/theme_primary</color>
     <color name="tab_selected_strip">@color/theme_accent_1</color>
+
+    <color name="translucent_actionbar_background">#cc3f51b5</color>
+    <color name="translucent_statusbar_background">#cc3f51b5</color>
+
 </resources>

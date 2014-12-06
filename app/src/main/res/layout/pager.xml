@@ -36,6 +36,7 @@
 
     <com.android.common.view.SlidingTabLayout
         android:id="@+id/tabs"
+        android:background="@color/tab_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
