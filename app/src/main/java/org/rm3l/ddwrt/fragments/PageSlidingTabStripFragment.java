@@ -141,14 +141,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             return this.tabs.length;
         }
 
-//        /**
-//         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
-//         * same object as the {@link View} added to the {@link ViewPager}.
-//         */
-//        @Override
-//        public boolean isViewFromObject(View view, Object o) {
-//            return o == view;
-//        }
+        /**
+         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
+         * same object as the {@link View} added to the {@link ViewPager}.
+         */
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
+        }
 
         @Nullable
         @Override
