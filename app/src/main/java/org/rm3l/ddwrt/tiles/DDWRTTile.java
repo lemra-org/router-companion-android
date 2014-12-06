@@ -66,7 +66,6 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected ToggleButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
-    private boolean doneLoading = false;
 
     public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragmentActivity = parentFragmentActivity;
@@ -114,22 +113,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         if (loader == null) {
             return null;
         }
-        this.doneLoading = false;
         loader.forceLoad();
         return loader;
-    }
-
-    public final void forceRefresh() {
-        this.doneLoading = false;
-        this.onCreateLoader(-1, null);
-    }
-
-    private void setDoneLoading() {
-        this.doneLoading = true;
-    }
-
-    public final boolean isDoneLoading() {
-        return this.doneLoading;
     }
 
     @Nullable
@@ -137,8 +122,6 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
                                                                 @Nullable final int... additionalButtonsToMakeVisible) {
-
-        this.setDoneLoading();
 
         @Nullable final ViewGroup viewGroupLayout = this.getViewGroupLayout();
         if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {

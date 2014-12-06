@@ -43,7 +43,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import org.jetbrains.annotations.NotNull;
@@ -532,32 +531,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         viewGroup.setLayoutParams(params);
 
         return viewGroup;
-
-    }
-
-    public final void forceRefreshTiles() {
-        @Nullable final List<DDWRTTile> tiles = this.getTiles(null);
-        if (tiles == null) {
-            return;
-        }
-
-        final List<DDWRTTile> tilesSubmitted = Lists.newArrayList();
-
-        for (@NotNull final DDWRTTile tile : tiles) {
-            tile.forceRefresh();
-            tilesSubmitted.add(tile);
-        }
-
-        for (@NotNull final DDWRTTile tileSubmitted : tilesSubmitted) {
-            while (!tileSubmitted.isDoneLoading()) {
-                Log.d(LOG_TAG, "Waiting for tile " + tileSubmitted + " to finish loading...");
-                try {
-                    Thread.sleep(5000l);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
     }
 

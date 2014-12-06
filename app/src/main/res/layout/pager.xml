@@ -22,24 +22,37 @@
   ~ SOFTWARE.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.astuetz.PagerSlidingTabStrip
+    <!--<com.astuetz.PagerSlidingTabStrip-->
+    <!--android:id="@+id/tabs"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dip"-->
+    <!--android:background="@drawable/background_tabs" />-->
+
+    <com.android.common.view.SlidingTabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:background="@drawable/background_tabs" />
+        android:layout_height="wrap_content" />
 
+    <!--<android.support.v4.view.ViewPager-->
+    <!--android:id="@+id/pager"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_above="@+id/colors"-->
+    <!--android:layout_below="@+id/tabs"-->
+    <!--tools:context=".MainActivity" />-->
     <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/colors"
-        android:layout_below="@+id/tabs"
+        android:id="@+id/viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:background="@android:color/white"
         tools:context=".MainActivity" />
 
 
-</RelativeLayout>
+</LinearLayout>

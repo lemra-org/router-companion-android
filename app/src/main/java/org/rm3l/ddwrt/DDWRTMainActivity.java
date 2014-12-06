@@ -27,7 +27,6 @@ package org.rm3l.ddwrt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -63,7 +62,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
-    private static final String REFRESH_ASYNC_TASK_LOG_TAG = RefreshAsyncTask.class.getSimpleName();
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -71,13 +69,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     private DDWRTCompanionDAO dao;
     @NotNull
     private String mRouterUuid;
-    private RefreshAsyncTask mCurrentRefreshAsyncTask;
     private Menu optionsMenu;
     private SharedPreferences preferences;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mDDWRTNavigationMenuSections;
-    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
+    //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
 
     @Override
@@ -247,13 +244,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         }
         this.mPosition = position;
 
-        this.currentPageSlidingTabStripFragment =
-                PageSlidingTabStripFragment.newInstance(this, position, this.mRouterUuid, preferences);
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content,
-                        this.currentPageSlidingTabStripFragment,
+                        PageSlidingTabStripFragment.newInstance(this, position, this.mRouterUuid, preferences),
                         PageSlidingTabStripFragment.TAG).commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);
@@ -282,9 +276,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected (" + position + ")");
-        if (this.mCurrentRefreshAsyncTask != null) {
-            this.mCurrentRefreshAsyncTask.cancel(true);
-        }
     }
 
     /**
@@ -312,46 +303,4 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         }
     }
 
-    private class RefreshAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Nullable
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "doInBackground");
-            if (!this.isCancelled()) {
-                setRefreshActionButtonState(true);
-                //Request refresh of current tab tiles
-                if (DDWRTMainActivity.this.currentPageSlidingTabStripFragment != null) {
-                    DDWRTMainActivity.this.currentPageSlidingTabStripFragment.refreshCurrentFragment();
-                }
-                Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "doInBackground DONE");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onPostExecute");
-            //Finish by resetting flag to false
-            setRefreshActionButtonState(false);
-        }
-
-        @Override
-        protected void onCancelled(Void aVoid) {
-            super.onCancelled(aVoid);
-            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onCancelled(aVoid)");
-            //Finish by resetting flag to false
-            setRefreshActionButtonState(false);
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            Log.d(REFRESH_ASYNC_TASK_LOG_TAG, "onCancelled()");
-            //Finish by resetting flag to false
-            setRefreshActionButtonState(false);
-        }
-    }
 }

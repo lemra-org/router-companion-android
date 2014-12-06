@@ -37,7 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.astuetz.PagerSlidingTabStrip;
+import com.android.common.view.SlidingTabLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,6 +62,12 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
 
     @Nullable
     private ViewPager pager;
+
+    /**
+     * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
+     * above, but is designed to give continuous feedback to the user when scrolling.
+     */
+    private SlidingTabLayout mSlidingTabLayout;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -101,24 +107,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        @NotNull PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view
-                .findViewById(R.id.tabs);
-        this.pager = (ViewPager) view.findViewById(R.id.pager);
+        this.pager = (ViewPager) view.findViewById(R.id.viewPager);
         this.pager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
         this.pager.setAdapter(mFragmentTabsAdapter);
         this.pager.setOnPageChangeListener(this.mOnPageChangeListener);
-        tabs.setViewPager(this.pager);
-    }
 
-    public void refreshCurrentFragment() {
-        if (this.pager != null && this.mFragmentTabsAdapter != null) {
-            @Nullable final SherlockFragment tabFragment = this.mFragmentTabsAdapter.getItem(this.pager.getCurrentItem());
-            if (!(tabFragment instanceof DDWRTBaseFragment)) {
-                return;
-            }
-            @NotNull final DDWRTBaseFragment fragment = (DDWRTBaseFragment) tabFragment;
-            fragment.forceRefreshTiles();
-        }
+        mSlidingTabLayout = (SlidingTabLayout) view
+                .findViewById(R.id.tabs);
+        mSlidingTabLayout.setViewPager(this.pager);
     }
 
     private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
@@ -140,6 +136,15 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         @Override
         public int getCount() {
             return this.tabs.length;
+        }
+
+        /**
+         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
+         * same object as the {@link View} added to the {@link ViewPager}.
+         */
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
         }
 
         @Nullable
