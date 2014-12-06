@@ -113,6 +113,11 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setViewPager(this.mPager);
+        mSlidingTabLayout.setCustomTabView(R.color.tab_text_color, android.R.id.text1);
+        mSlidingTabLayout.setSelectedIndicatorColors(
+                getResources().getColor(R.color.tab_selected_strip));
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(this.mPager);
     }
 
     private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
