@@ -46,7 +46,6 @@ External libs used in this project
 --------
 
 * [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock)
-* [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip)
 * [Crouton](https://github.com/keyboardsurfer/Crouton)
 * [achartengine](https://code.google.com/p/achartengine/)
 * [android-donations-lib](https://github.com/dschuermann/android-donations-lib)
