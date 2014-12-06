@@ -33,6 +33,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -44,8 +45,13 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.SSHUtils;
+
+import java.util.Random;
 
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 
 /**
  *
@@ -53,6 +59,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
+    public static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull("");
 
     public StatusSyslogTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
         super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
@@ -76,16 +83,37 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    //TODO Test only
-                    @NotNull final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
-                            "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
-                            "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +
-                            "Refrigerate roasted lobsters in a cooker with hollandaise sauce for about an hour to enhance their thickness." +
-                            "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n" +
-                            "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
-                    nvramInfo.setProperty(SYSLOG, syslogData);
-                    nvramInfo.setProperty("syslog_enabled", "true");
+                    if (DDWRTCompanionConstants.TEST_MODE) {
+                        //TODO Test only
+                        @NotNull final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
+                                "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
+                                "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +
+                                "Refrigerate roasted lobsters in a cooker with hollandaise sauce for about an hour to enhance their thickness." +
+                                "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n" +
+                                "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
+                        nvramInfo.setProperty(SYSLOG, syslogData);
+                        nvramInfo.setProperty(SYSLOGD_ENABLE,String.valueOf(new Random().nextInt()));
+                    } else {
+                        NVRAMInfo nvramInfoTmp = null;
+                        try {
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter, SYSLOGD_ENABLE);
+                        } finally {
+                            if (nvramInfoTmp != null) {
+                                nvramInfo.putAll(nvramInfoTmp);
+                            }
+
+                            String[] logs = null;
+                            try {
+                                //Get last 10 lines
+                                logs = SSHUtils.getManualProperty(mRouter, "tail -n 10 /tmp/var/log/messages");
+                            } finally {
+                                if (logs != null) {
+                                    nvramInfo.setProperty(SYSLOG, LOGS_JOINER.join(logs));
+                                }
+                            }
+                        }
+                    }
 
                     //END TESTS
                     return nvramInfo;
@@ -124,19 +152,19 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            final boolean isSyslogEnabled = BooleanUtils.toBoolean(data.getProperty("syslog_enabled"));
+            final boolean isSyslogEnabled = "1".equals(data.getProperty(SYSLOGD_ENABLE));
 
             final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
-            final CharSequence enabledDisabled = syslogState.getText();
-            syslogState.setText(enabledDisabled.toString()
-                    .replaceAll(((isSyslogEnabled ? "Dis" : "En") + "abled"), ""));
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final View filterEditText = this.layout.findViewById(R.id.tile_status_router_syslog_filter);
             final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+            syslogState.setText(isSyslogEnabled ? "Enabled" : "Disabled");
+
             if (isSyslogEnabled) {
-                ((TextView) syslogContentView)
-                        .setText(data.getProperty(SYSLOG, "N/A"));
+                final TextView logTextView = (TextView) syslogContentView;
+                logTextView
+                        .setText(logTextView.getText() + "\n" + data.getProperty(SYSLOG, ""));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
                 filterButton.setVisibility(View.VISIBLE);

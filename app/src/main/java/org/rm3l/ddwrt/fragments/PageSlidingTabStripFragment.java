@@ -27,6 +27,7 @@ package org.rm3l.ddwrt.fragments;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -141,15 +142,6 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             return this.tabs.length;
         }
 
-        /**
-         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
-         * same object as the {@link View} added to the {@link ViewPager}.
-         */
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return o == view;
-        }
-
         @Nullable
         @Override
         public SherlockFragment getItem(int position) {
@@ -175,14 +167,14 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             return tab.getTabTitle();
         }
 
-//        @Override
-//        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
-//            super.setPrimaryItem(container, position, object);
-//            // Hack to allow the non-primary fragments to start properly
-//            if (object != null) {
-//                ((Fragment) object).setUserVisibleHint(false);
-//            }
-//        }
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, @Nullable Object object) {
+            super.setPrimaryItem(container, position, object);
+            // Hack to allow the non-primary fragments to start properly
+            if (object != null) {
+                ((Fragment) object).setUserVisibleHint(false);
+            }
+        }
 
     }
 

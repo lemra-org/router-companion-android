@@ -33,7 +33,7 @@ public final class DDWRTCompanionConstants {
     public static final long TILE_REFRESH_MILLIS = 20 * 1000l;
 
     //FIXME Update prior to release
-    public static final boolean TEST_MODE = true;
+    public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
 
     private DDWRTCompanionConstants() {
