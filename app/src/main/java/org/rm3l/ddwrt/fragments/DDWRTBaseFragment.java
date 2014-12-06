@@ -205,8 +205,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                         resources.getString(R.string.status_bandwidth), router);
                 tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_sysinfo), router);
+//                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.status_sysinfo), router);
                 break;
             case 1:
                 parentSectionTitle = resources.getString(R.string.setup);
