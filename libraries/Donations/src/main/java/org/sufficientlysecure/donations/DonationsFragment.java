@@ -1,58 +1,44 @@
 /*
- * The MIT License (MIT)
+ * Copyright (C) 2011-2013 Dominik Schürmann <dominik@dominikschuermann.de>
  *
- * Copyright (c) 2014 Armel S.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.sufficientlysecure.donations;
 
+import android.content.ActivityNotFoundException;
+import android.view.*;
+import android.widget.*;
+
+import org.sufficientlysecure.donations.google.util.IabHelper;
+import org.sufficientlysecure.donations.google.util.IabResult;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.webkit.WebView;
-import android.webkit.WebView.HitTestResult;
 import android.webkit.WebViewClient;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.webkit.WebView.HitTestResult;
 
-import org.sufficientlysecure.donations.google.util.IabHelper;
-import org.sufficientlysecure.donations.google.util.IabResult;
+import android.content.DialogInterface;
+
 import org.sufficientlysecure.donations.google.util.Purchase;
 
 public class DonationsFragment extends Fragment {
@@ -81,63 +67,31 @@ public class DonationsFragment extends Fragment {
     // http://developer.android.com/google/play/billing/billing_testing.html
     private static final String[] CATALOG_DEBUG = new String[]{"android.test.purchased",
             "android.test.canceled", "android.test.refunded", "android.test.item_unavailable"};
+
+    private Spinner mGoogleSpinner;
+    private TextView mFlattrUrlTextView;
+
+    // Google Play helper object
+    private IabHelper mHelper;
+
     protected boolean mDebug = false;
+
     protected boolean mGoogleEnabled = false;
     protected String mGooglePubkey = "";
     protected String[] mGgoogleCatalog = new String[]{};
     protected String[] mGoogleCatalogValues = new String[]{};
+
     protected boolean mPaypalEnabled = false;
     protected String mPaypalUser = "";
     protected String mPaypalCurrencyCode = "";
     protected String mPaypalItemName = "";
+
     protected boolean mFlattrEnabled = false;
     protected String mFlattrProjectUrl = "";
     protected String mFlattrUrl = "";
+
     protected boolean mBitcoinEnabled = false;
     protected String mBitcoinAddress = "";
-    private Spinner mGoogleSpinner;
-    private TextView mFlattrUrlTextView;
-    // Google Play helper object
-    private IabHelper mHelper;
-    // Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            if (mDebug)
-                Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            if (result.isSuccess()) {
-                if (mDebug)
-                    Log.d(TAG, "Consumption successful. Provisioning.");
-            }
-            if (mDebug)
-                Log.d(TAG, "End consumption flow.");
-        }
-    };
-    // Callback for when a purchase is finished
-    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            if (mDebug)
-                Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            if (result.isSuccess()) {
-                if (mDebug)
-                    Log.d(TAG, "Purchase successful.");
-
-                // directly consume in-app purchase, so that people can donate multiple times
-                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-
-                // show thanks openDialog
-                openDialog(android.R.drawable.ic_dialog_info, R.string.donations__thanks_dialog_title,
-                        getString(R.string.donations__thanks_dialog));
-            }
-        }
-    };
 
     /**
      * Instantiate DonationsFragment.
@@ -393,6 +347,47 @@ public class DonationsFragment extends Fragment {
                     0, mPurchaseFinishedListener, null);
         }
     }
+
+    // Callback for when a purchase is finished
+    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            if (mDebug)
+                Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
+
+            if (result.isSuccess()) {
+                if (mDebug)
+                    Log.d(TAG, "Purchase successful.");
+
+                // directly consume in-app purchase, so that people can donate multiple times
+                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+
+                // show thanks openDialog
+                openDialog(android.R.drawable.ic_dialog_info, R.string.donations__thanks_dialog_title,
+                        getString(R.string.donations__thanks_dialog));
+            }
+        }
+    };
+
+    // Called when consumption is complete
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+        public void onConsumeFinished(Purchase purchase, IabResult result) {
+            if (mDebug)
+                Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null) return;
+
+            if (result.isSuccess()) {
+                if (mDebug)
+                    Log.d(TAG, "Consumption successful. Provisioning.");
+            }
+            if (mDebug)
+                Log.d(TAG, "End consumption flow.");
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
