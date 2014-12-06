@@ -73,7 +73,6 @@ public class RouterManagementActivity
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
-    boolean addRouterDialogOpen;
     @Nullable
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
@@ -136,18 +135,9 @@ public class RouterManagementActivity
 
     }
 
-    @Override
-    protected void onResume() {
-        if (!addRouterDialogOpen && this.dao.getAllRouters().isEmpty()) {
-            openAddRouterForm();
-        }
-        super.onResume();
-    }
-
     private void openAddRouterForm() {
         @NotNull final DialogFragment addFragment = new RouterAddDialogFragment();
         addFragment.show(getSupportFragmentManager(), "add_router");
-        addRouterDialogOpen = true;
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {
@@ -172,18 +162,6 @@ public class RouterManagementActivity
         } else {
             Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
         }
-    }
-
-    @Override
-    protected void onPause() {
-        addRouterDialogOpen = false;
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        addRouterDialogOpen = false;
-        super.onDestroy();
     }
 
     @Override
