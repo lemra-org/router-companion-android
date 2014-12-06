@@ -431,9 +431,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Override
     public void onDestroyView() {
 
+        super.onDestroyView();
+
         final LoaderManager loaderManager = getLoaderManager();
 
-        for (Loader loader : loadersMap.values()) {
+        for (final Loader loader : loadersMap.values()) {
             if (loader == null) {
                 continue;
             }
@@ -442,7 +444,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             loaderManager.destroyLoader(loaderId);
         }
 
-        super.onDestroyView();
+        loadersMap.clear();
+
     }
 
     @NotNull
@@ -566,7 +569,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         if (mLoader == null) {
             return null;
         }
-        mLoader.forceLoad();
+//        mLoader.forceLoad();
         return mLoader;
     }
 
