@@ -44,9 +44,8 @@ public class StatusDHCPFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         return Arrays.<DDWRTTile>asList(
-                new DHCPStatusTile(sherlockActivity, savedInstanceState, this.router)
+                new DHCPStatusTile(this, savedInstanceState, this.router)
         );
     }
 }

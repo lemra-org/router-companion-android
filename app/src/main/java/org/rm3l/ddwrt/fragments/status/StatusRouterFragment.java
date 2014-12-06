@@ -26,8 +26,6 @@ package org.rm3l.ddwrt.fragments.status;
 
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -47,12 +45,11 @@ public class StatusRouterFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         return Arrays.<DDWRTTile>asList(
-                new StatusRouterStateTile(sherlockActivity, savedInstanceState, this.router),
-                new StatusRouterCPUTile(sherlockActivity, savedInstanceState, this.router),
-                new StatusRouterMemoryTile(sherlockActivity, savedInstanceState, this.router),
-                new StatusRouterSpaceUsageTile(sherlockActivity, savedInstanceState, this.router)
+                new StatusRouterStateTile(this, savedInstanceState, this.router),
+                new StatusRouterCPUTile(this, savedInstanceState, this.router),
+                new StatusRouterMemoryTile(this, savedInstanceState, this.router),
+                new StatusRouterSpaceUsageTile(this, savedInstanceState, this.router)
         );
     }
 }

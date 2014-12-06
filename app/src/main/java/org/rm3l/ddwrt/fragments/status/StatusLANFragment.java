@@ -47,12 +47,11 @@ public class StatusLANFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         return Arrays.<DDWRTTile>asList(
-                new LANStateTile(sherlockActivity, savedInstanceState, this.router),
-                new LANClientsTile(sherlockActivity, savedInstanceState, this.router),
-                new DHCPStatusTile(sherlockActivity, savedInstanceState, this.router),
-                new DHCPClientsTile(sherlockActivity, savedInstanceState, this.router)
+                new LANStateTile(this, savedInstanceState, this.router),
+                new LANClientsTile(this, savedInstanceState, this.router),
+                new DHCPStatusTile(this, savedInstanceState, this.router),
+                new DHCPClientsTile(this, savedInstanceState, this.router)
         );
     }
 }

@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -61,8 +62,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
 //    Drawable icon;
 
-    public StatusRouterCPUTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
+    public StatusRouterCPUTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
     }
 
     @Nullable

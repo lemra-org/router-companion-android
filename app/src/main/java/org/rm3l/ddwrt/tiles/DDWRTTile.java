@@ -28,6 +28,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -38,6 +39,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +58,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NotNull
     protected final SherlockFragmentActivity mParentFragmentActivity;
+    @NotNull final SherlockFragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
@@ -67,18 +70,19 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected ToggleButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
 
-    public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments, @Nullable Router router) {
-        this.mParentFragmentActivity = parentFragmentActivity;
+    public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
+        this.mParentFragment = parentFragment;
+        this.mParentFragmentActivity = this.mParentFragment.getSherlockActivity();
         this.mRouter = router;
-        this.mSupportLoaderManager = this.mParentFragmentActivity.getSupportLoaderManager();
+        this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
         this.mFragmentArguments = arguments;
     }
 
-    public DDWRTTile(@NotNull final SherlockFragmentActivity parentFragmentActivity, @NotNull final Bundle arguments,
+    public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments,
                      @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
-        this(parentFragmentActivity, arguments, router);
+        this(parentFragment, arguments, router);
         if (layoutId != null) {
-            this.layout = (ViewGroup) this.mParentFragmentActivity.getLayoutInflater().inflate(layoutId, null);
+            this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
         if (toggleRefreshButtonId != null) {
             this.mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(toggleRefreshButtonId);

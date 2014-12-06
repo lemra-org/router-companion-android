@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -60,34 +61,10 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
 
-//    Drawable icon;
+    public StatusRouterSpaceUsageTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
 
-    public StatusRouterSpaceUsageTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
-//        // Parse the SVG file from the resource beforehand
-//        try {
-//            final SVG svg = SVGParser.getSVGFromResource(this.mParentFragmentActivity.getResources(), R.raw.disk);
-//            // Get a drawable from the parsed SVG and set it as the drawable for the ImageView
-//            this.icon = svg.createPictureDrawable();
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//            this.icon = this.mParentFragmentActivity.getResources().getDrawable(R.drawable.ic_icon_state);
-//        }
     }
-//
-//    @Nullable
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_router_router_space_usage, null);
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_router_router_space_usage_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//
-//        return layout;
-////        final ImageView imageView = (ImageView) layout.findViewById(R.id.ic_tile_status_router_router_space_usage);
-////        imageView.setImageDrawable(this.icon);
-////        imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-////        return layout;
-//    }
 
     @Nullable
     @Override

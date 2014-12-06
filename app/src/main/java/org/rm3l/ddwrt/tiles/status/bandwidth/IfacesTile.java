@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
 
@@ -53,8 +54,8 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = IfacesTile.class.getSimpleName();
 
-    public IfacesTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
+    public IfacesTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
     }
 
     @Override

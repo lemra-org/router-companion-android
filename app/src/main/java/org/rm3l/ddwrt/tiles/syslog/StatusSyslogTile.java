@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
@@ -61,8 +62,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     public static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull("");
 
-    public StatusSyslogTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
+    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
     }
 
     @Override
@@ -85,7 +86,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
                     if (DDWRTCompanionConstants.TEST_MODE) {
-                        //TODO Test only
                         @NotNull final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
                                 "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
                                 "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +
@@ -115,7 +115,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
-                    //END TESTS
                     return nvramInfo;
 
                 } catch (@NotNull final Exception e) {
@@ -152,14 +151,15 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
 
-            final boolean isSyslogEnabled = "1".equals(data.getProperty(SYSLOGD_ENABLE));
+            final String syslogdEnabledPropertyValue = data.getProperty(SYSLOGD_ENABLE);
+            final boolean isSyslogEnabled = "1".equals(syslogdEnabledPropertyValue);
 
             final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final View filterEditText = this.layout.findViewById(R.id.tile_status_router_syslog_filter);
             final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
-            syslogState.setText(isSyslogEnabled ? "Enabled" : "Disabled");
+            syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
             if (isSyslogEnabled) {
                 final TextView logTextView = (TextView) syslogContentView;

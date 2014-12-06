@@ -44,8 +44,7 @@ public class StatusSyslogFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         return Arrays.<DDWRTTile>asList(
-                new StatusSyslogTile(sherlockActivity, savedInstanceState, this.router));
+                new StatusSyslogTile(this, savedInstanceState, this.router));
     }
 }

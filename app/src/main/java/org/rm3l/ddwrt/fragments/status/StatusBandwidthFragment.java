@@ -45,8 +45,8 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
-                new IfacesTile(getSherlockActivity(), savedInstanceState, router),
-                new BandwidthMonitoringTile(getSherlockActivity(), savedInstanceState, router));
+                new IfacesTile(this, savedInstanceState, router),
+                new BandwidthMonitoringTile(this, savedInstanceState, router));
     }
 
 }

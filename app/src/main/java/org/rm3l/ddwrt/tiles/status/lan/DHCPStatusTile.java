@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -53,19 +54,9 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = DHCPStatusTile.class.getSimpleName();
 
-    public DHCPStatusTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_lan_dhcp_status, R.id.tile_status_lan_dhcp_status_togglebutton);
+    public DHCPStatusTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_lan_dhcp_status, R.id.tile_status_lan_dhcp_status_togglebutton);
     }
-//
-//    @Nullable
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_lan_dhcp_status, null);
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_lan_dhcp_status_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//
-//        return layout;
-//    }
 
     @Nullable
     @Override

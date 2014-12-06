@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
 
@@ -52,19 +53,9 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
 
-    public WANConfigTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
+    public WANConfigTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
     }
-//
-//    @Nullable
-//    @Override
-//    public ViewGroup getViewGroupLayout() {
-//        final LinearLayout layout = (LinearLayout) this.mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wan_config, null);
-//        mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(R.id.tile_status_wan_config_togglebutton);
-//        mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-//
-//        return layout;
-//    }
 
     @Nullable
     @Override

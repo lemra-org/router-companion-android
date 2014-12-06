@@ -45,10 +45,9 @@ public class StatusWANFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         return Arrays.<DDWRTTile>asList(
-                new WANConfigTile(sherlockActivity, savedInstanceState, this.router),
-                new WANTrafficTile(sherlockActivity, savedInstanceState, this.router)
+                new WANConfigTile(this, savedInstanceState, this.router),
+                new WANTrafficTile(this, savedInstanceState, this.router)
         );
     }
 }

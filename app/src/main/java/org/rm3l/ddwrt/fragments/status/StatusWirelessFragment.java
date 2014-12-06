@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -66,7 +67,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         //This is basically made up of a single tile, but other dynamic tiles will be appended to the existing view
         //TODO
-        return Arrays.<DDWRTTile>asList(new WirelessClientsTile(getSherlockActivity(), savedInstanceState, router));
+        return Arrays.<DDWRTTile>asList(new WirelessClientsTile(this, savedInstanceState, router));
     }
 
     @Nullable
@@ -83,12 +84,12 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
                             router);
 
-                    final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+                    final SherlockFragment parentFragment= StatusWirelessFragment.this;
 
                     if (DDWRTCompanionConstants.TEST_MODE) {
-                        return Arrays.<DDWRTTile>asList(new WirelessIfaceTile("eth0.test", sherlockActivity, args, router),
-                                new WirelessIfaceTile("eth1.test", sherlockActivity, args, router),
-                                new WirelessIfaceTile("eth2.test", sherlockActivity, args, router));
+                        return Arrays.<DDWRTTile>asList(new WirelessIfaceTile("eth0.test", parentFragment, args, router),
+                                new WirelessIfaceTile("eth1.test", parentFragment, args, router),
+                                new WirelessIfaceTile("eth2.test", parentFragment, args, router));
                     }
 
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
@@ -114,7 +115,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                         if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
                             continue;
                         }
-                        tiles.add(new WirelessIfaceTile(landev, sherlockActivity, args, router));
+                        tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
 
                     }
 

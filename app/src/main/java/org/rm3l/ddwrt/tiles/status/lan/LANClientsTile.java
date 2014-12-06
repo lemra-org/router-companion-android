@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +45,8 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = LANClientsTile.class.getSimpleName();
 
 
-    public LANClientsTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, @Nullable Router router) {
-        super(parentFragmentActivity, arguments, router, null, null);
+    public LANClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, null, null);
     }
 
     @Nullable

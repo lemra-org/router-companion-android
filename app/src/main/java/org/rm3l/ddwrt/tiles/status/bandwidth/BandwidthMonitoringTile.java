@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
@@ -80,8 +81,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
     private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
 
-    public BandwidthMonitoringTile(@NotNull SherlockFragmentActivity parentFragmentActivity, @NotNull Bundle arguments, Router router) {
-        super(parentFragmentActivity, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
+    public BandwidthMonitoringTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
     @Override
