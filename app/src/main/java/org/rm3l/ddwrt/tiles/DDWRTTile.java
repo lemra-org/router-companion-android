@@ -113,11 +113,10 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Override
     @Nullable
     public final Loader<T> onCreateLoader(int id, Bundle args) {
-        @Nullable final Loader<T> loader = this.getLoader(id, args);
-        if (loader == null) {
-            return null;
+        final Loader<T> loader = this.getLoader(id, args);
+        if (loader != null) {
+            loader.forceLoad();
         }
-        loader.forceLoad();
         return loader;
     }
 

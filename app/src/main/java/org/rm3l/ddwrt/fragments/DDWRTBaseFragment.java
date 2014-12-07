@@ -101,7 +101,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
@@ -122,7 +124,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     //    private static final AtomicInteger LOADERS_IDS = new AtomicInteger(1);
 //    private final Map<Class<?>, Loader> loadersMap = Maps.newHashMap();
-    private final Multimap<Class<?>, Loader> loaders = ArrayListMultimap.create();
+    private final Map<Integer, Loader> loaders = new HashMap<>();
 
     protected LinearLayout mLayout;
     protected Router router;
@@ -132,8 +134,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private List<DDWRTTile> fragmentTiles;
     @NotNull
     private DDWRTMainActivity ddwrtMainActivity;
-    @Nullable
-    private Loader<T> mLoader;
     private Class<? extends DDWRTBaseFragment> mClazz;
 
     protected static final AtomicInteger LOADERS_IDS = new AtomicInteger(1);
@@ -407,7 +407,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //        setRetainInstance(true);
 
         // initiate the loaders to do the background work
-        loaders.put(this.mClazz, getLoaderManager().initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, this));
+        int nextLoaderId = LOADERS_IDS.getAndIncrement();
+        loaders.put(nextLoaderId, getLoaderManager().restartLoader(nextLoaderId, savedInstanceState, this));
 
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
             final LoaderManager loaderManager = getLoaderManager();
@@ -415,8 +416,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 if (ddwrtTile == null) {
                     continue;
                 }
-                loaders.put(this.mClazz,
-                        loaderManager.initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, ddwrtTile));
+                nextLoaderId = LOADERS_IDS.getAndIncrement();
+                loaders.put(nextLoaderId,
+                        loaderManager.restartLoader(nextLoaderId, savedInstanceState, ddwrtTile));
+
             }
         }
     }
@@ -437,11 +440,12 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         final LoaderManager loaderManager = this.getLoaderManager();
 
-        for (final Loader loader : loaders.values()) {
-            if (loader == null) {
+        for (final Map.Entry<Integer, Loader> loaderEntry : loaders.entrySet()) {
+            Integer loaderId;
+            if ((loaderId = loaderEntry.getKey()) == null
+                    || loaderEntry.getValue() == null) {
                 continue;
             }
-            final int loaderId = loader.getId();
             Log.d(LOG_TAG, "destroy loader #" + loaderId);
             loaderManager.destroyLoader(loaderId);
         }
@@ -538,13 +542,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Nullable
     @Override
     public final Loader<T> onCreateLoader(int id, Bundle args) {
-        @Nullable final Loader<T> loader = this.getLoader(id, args);
-        this.mLoader = loader;
-        if (mLoader == null) {
-            return null;
+        final Loader<T> loader = this.getLoader(id, args);
+        if (loader != null) {
+            loader.forceLoad();
         }
-        mLoader.forceLoad();
-        return mLoader;
+        return loader;
     }
 
     @Nullable

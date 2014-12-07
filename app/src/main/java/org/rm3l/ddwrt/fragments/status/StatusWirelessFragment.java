@@ -66,7 +66,6 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         //This is basically made up of a single tile, but other dynamic tiles will be appended to the existing view
-        //TODO
         return Arrays.<DDWRTTile>asList(new WirelessClientsTile(this, savedInstanceState, router));
     }
 
@@ -199,6 +198,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
             this.mLayout.addView(cardView);
         }
+
+
     }
 
     /**
