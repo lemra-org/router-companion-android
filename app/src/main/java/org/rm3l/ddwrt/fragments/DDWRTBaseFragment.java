@@ -102,6 +102,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
 
@@ -134,6 +135,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Nullable
     private Loader<T> mLoader;
     private Class<? extends DDWRTBaseFragment> mClazz;
+
+    protected static final AtomicInteger LOADERS_IDS = new AtomicInteger(1);
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -404,9 +407,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //        setRetainInstance(true);
 
         // initiate the loaders to do the background work
-        int loaderId = 1;
-        loaders.put(this.mClazz, getLoaderManager().initLoader(loaderId++, savedInstanceState, this));
-//        loadersMap.put(this.mClazz, getLoaderManager().initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, this));
+        loaders.put(this.mClazz, getLoaderManager().initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, this));
 
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
             final LoaderManager loaderManager = getLoaderManager();
@@ -414,10 +415,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 if (ddwrtTile == null) {
                     continue;
                 }
-//                loadersMap.put(ddwrtTile.getClass(),
-//                        loaderManager.initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, ddwrtTile));
-                loaders.put(ddwrtTile.getClass(),
-                        loaderManager.initLoader(loaderId++, savedInstanceState, ddwrtTile));
+                loaders.put(this.mClazz,
+                        loaderManager.initLoader(LOADERS_IDS.getAndIncrement(), savedInstanceState, ddwrtTile));
             }
         }
     }
@@ -446,11 +445,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             Log.d(LOG_TAG, "destroy loader #" + loaderId);
             loaderManager.destroyLoader(loaderId);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
         loaders.clear();
     }
 

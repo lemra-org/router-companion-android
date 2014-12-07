@@ -182,10 +182,6 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             return;
         }
 
-        @NotNull final TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-
-        int l = 100;
         for (@NotNull final DDWRTTile tile : tiles) {
             @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
@@ -193,19 +189,13 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             }
 
             //Init loaders for these tiles
-            getSherlockActivity().getSupportLoaderManager().initLoader(l++, getArguments(), tile);
+            getLoaderManager().initLoader(LOADERS_IDS.getAndIncrement(), getArguments(), tile);
 
             //Add row for this iface
             final CardView cardView = new CardView(getSherlockActivity());
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
             cardView.addView(tileViewGroupLayout);
-
-//            @NotNull final TableRow tableRow = new TableRow(getSherlockActivity());
-//            tableRow.setOnClickListener(tile);
-//            tileViewGroupLayout.setOnClickListener(tile);
-//            tableRow.setLayoutParams(tableRowParams);
-//            tableRow.addView(tileViewGroupLayout);
 
             this.mLayout.addView(cardView);
         }
@@ -237,7 +227,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         super.onDestroyView();
         if (mIfaceTiles != null) {
             int l = 100;
-            final LoaderManager supportLoaderManager = getSherlockActivity().getSupportLoaderManager();
+            final LoaderManager supportLoaderManager = getLoaderManager();
             for (int i = l; i < l + mIfaceTiles.size(); i++) {
                 supportLoaderManager.destroyLoader(i);
             }
