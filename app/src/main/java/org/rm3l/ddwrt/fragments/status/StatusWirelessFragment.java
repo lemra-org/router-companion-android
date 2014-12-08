@@ -47,6 +47,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -188,8 +189,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             }
 
             //Init loaders for these tiles
-            getLoaderManager()
-                    .initLoader(this.fragmentTiles != null ? (this.fragmentTiles.size()+2) : 2, null, tile);
+            getLoaderManager().initLoader(Utils.getNextLoaderId(), null, tile);
 
             //Add row for this iface
             final CardView cardView = new CardView(getSherlockActivity());

@@ -48,7 +48,13 @@ public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
 
+    private static int nextLoaderId = 1;
+
     private Utils() {
+    }
+
+    public static int getNextLoaderId() {
+        return nextLoaderId++;
     }
 
     public static void readAll(@NotNull BufferedReader bufferedReader, @NotNull StringBuffer result) throws IOException {

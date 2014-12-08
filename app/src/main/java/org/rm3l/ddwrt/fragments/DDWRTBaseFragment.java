@@ -101,6 +101,8 @@ import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,7 +131,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     @Nullable
-    protected Map<DDWRTTile, Integer> fragmentTiles; //fragment tiles and the ID they are assigned
+    private List<DDWRTTile> fragmentTiles; //fragment tiles and the ID they are assigned
     @NotNull
     private DDWRTMainActivity ddwrtMainActivity;
     private Class<? extends DDWRTBaseFragment> mClazz;
@@ -367,15 +369,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
-        final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
-        if (tiles != null) {
-            this.fragmentTiles = Maps.newLinkedHashMap();
-            int i = 1;
-            for (final DDWRTTile tile : tiles) {
-                //noinspection ConstantConditions
-                this.fragmentTiles.put(tile, i++);
-            }
-        }
+        this.fragmentTiles = this.getTiles(savedInstanceState);
     }
 
     /**
@@ -418,39 +412,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         Log.d(LOG_TAG, "fragmentTiles: " + this.fragmentTiles);
 
         if (this.fragmentTiles != null) {
-            for (final Map.Entry<DDWRTTile, Integer> entry : fragmentTiles.entrySet()) {
-                final DDWRTTile ddwrtTile = entry.getKey();
-                final Integer loaderId = entry.getValue();
-                if (ddwrtTile == null || loaderId == null) {
+            for (final DDWRTTile ddwrtTile : fragmentTiles) {
+                if (ddwrtTile == null) {
                     continue;
                 }
-                loaderManager.initLoader(loaderId, null, ddwrtTile);
-            }
-        }
-    }
-
-    /**
-     * Called when the view previously created by {@link #onCreateView} has
-     * been detached from the fragment.  The next time the fragment needs
-     * to be displayed, a new view will be created.  This is called
-     * after {@link #onStop()} and before {@link #onDestroy()}.  It is called
-     * <em>regardless</em> of whether {@link #onCreateView} returned a
-     * non-null view.  Internally it is called after the view's state has
-     * been saved but before it has been removed from its parent.
-     */
-    @Override
-    public void onDestroyView() {
-
-        super.onDestroyView();
-
-        final LoaderManager loaderManager = this.getLoaderManager();
-
-        loaderManager.destroyLoader(0);
-
-        if (fragmentTiles != null) {
-            for (final Integer loaderId : fragmentTiles.values()) {
-                Log.d(LOG_TAG, "destroy loader #" + loaderId);
-                loaderManager.destroyLoader(loaderId);
+                loaderManager.initLoader(Utils.getNextLoaderId(), null, ddwrtTile);
             }
         }
     }
@@ -475,7 +441,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 
-            for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles.keySet()) {
+            for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);
 
