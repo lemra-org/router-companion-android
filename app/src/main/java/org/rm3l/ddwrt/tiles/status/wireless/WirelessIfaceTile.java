@@ -24,6 +24,7 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -32,6 +33,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -282,6 +284,15 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+            final Context parentContext = this.mParentFragmentActivity;
+            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    Toast.makeText(parentContext,
+                            Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 

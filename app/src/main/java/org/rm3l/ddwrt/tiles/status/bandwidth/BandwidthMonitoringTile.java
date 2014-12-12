@@ -24,6 +24,7 @@
 
 package org.rm3l.ddwrt.tiles.status.bandwidth;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -50,6 +52,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -74,6 +77,10 @@ import java.util.Set;
  *
  */
 public class BandwidthMonitoringTile extends DDWRTTile<None> {
+
+    //TODO TESTS ONLY
+    private static final boolean BW_MONIT_TEST = true;
+    //END TESTS ONLY
 
     public static final int MAX_DATA_POINTS = 50;
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
@@ -121,7 +128,9 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     @NotNull
     private Collection<String> getIfaces() throws Exception {
 
-        if (DDWRTCompanionConstants.TEST_MODE) {
+        //TODO TESTS: Real ifaces for DD-WRT Routers
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if (DDWRTCompanionConstants.TEST_MODE && (this.mRouter == null || !StringUtils.containsIgnoreCase(this.mRouter.getName(), "ddwrt"))) {
             //FIXME TEST MODE
             return Sets.newTreeSet(Arrays.asList("wlan0", "lan1", "eth2"));
         }
@@ -173,7 +182,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public void fillIfaceDataPoint(@NotNull final String iface) {
 
-        if (DDWRTCompanionConstants.TEST_MODE) {
+        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST ) {
             //FIXME TEST MODE
             final double random = new Random().nextDouble() * 1024;
 
@@ -284,6 +293,15 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+            final Context parentContext = this.mParentFragmentActivity;
+            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    Toast.makeText(parentContext,
+                            Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         } else {
             if (bandwidthMonitoringIfaceData.getData().isEmpty()) {

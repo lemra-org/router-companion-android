@@ -24,6 +24,7 @@
 
 package org.rm3l.ddwrt.tiles.syslog;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -31,6 +32,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -159,14 +161,15 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
+            final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
-                final TextView logTextView = (TextView) syslogContentView;
                 logTextView
                         .setText(logTextView.getText() + "\n" + data.getProperty(SYSLOG, ""));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
                 filterButton.setVisibility(View.VISIBLE);
             } else {
+                logTextView.setText(null);
                 syslogContentView.setVisibility(View.GONE);
                 filterEditText.setVisibility(View.GONE);
                 filterButton.setVisibility(View.GONE);
@@ -177,6 +180,15 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+            final Context parentContext = this.mParentFragmentActivity;
+            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    Toast.makeText(parentContext,
+                            Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
