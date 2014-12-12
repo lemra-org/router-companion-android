@@ -204,9 +204,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             final String wanIface = data
@@ -214,49 +212,43 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
             //Iface Name
             @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
-            if (wanIfaceView != null) {
-                wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "N/A" : wanIface);
-            }
+            wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "N/A" : wanIface);
 
             @NotNull final TextView wanIngressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
-            if (wanIngressView != null) {
-                String text;
-                final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
-                try {
-                    final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
-                    if (wanRcvMBytes < 0.) {
-                        text = "N/A";
-                    } else {
-                        text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                    }
-
-                } catch (@NotNull final NumberFormatException nfe) {
+            String text;
+            final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
+            try {
+                final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
+                if (wanRcvMBytes < 0.) {
                     text = "N/A";
+                } else {
+                    text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
                 }
-                wanIngressView.setText(text);
+
+            } catch (@NotNull final NumberFormatException nfe) {
+                text = "N/A";
             }
+            wanIngressView.setText(text);
 
             @NotNull final TextView wanEgressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
-            if (wanEgressView != null) {
-                String text;
-                final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
-                try {
-                    final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
-                    if (wanXmitMBytes < 0.) {
-                        text = "N/A";
-                    } else {
-                        text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                    }
-
-                } catch (@NotNull final NumberFormatException nfe) {
+            final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
+            try {
+                final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
+                if (wanXmitMBytes < 0.) {
                     text = "N/A";
+                } else {
+                    text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
                 }
-                wanEgressView.setText(text);
+
+            } catch (@NotNull final NumberFormatException nfe) {
+                text = "N/A";
             }
+            wanEgressView.setText(text);
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

@@ -163,83 +163,66 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //Connection Type
             @NotNull final TextView wanConnTypeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
-            if (wanConnTypeView != null) {
-                final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "N/A");
-                @NotNull final String wanConnectionTypeManual;
+            final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "N/A");
+            @NotNull final String wanConnectionTypeManual;
 
-                if ("ppoe".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "PPoE";
-                } else if ("3g".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "3G/UMTS";
+            if ("ppoe".equalsIgnoreCase(wanProto)) {
+                wanConnectionTypeManual = "PPoE";
+            } else if ("3g".equalsIgnoreCase(wanProto)) {
+                wanConnectionTypeManual = "3G/UMTS";
 
-                    //Unhide 3g signal text
-                    @NotNull final TextView wan3gSignalFieldView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
-                    @NotNull final TextView wan3gSignalSeparatorView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
-                    @NotNull final TextView wan3gSignalView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
-                    if (wan3gSignalFieldView != null && wan3gSignalSeparatorView != null && wan3gSignalView != null) {
-                        wan3gSignalFieldView.setVisibility(View.VISIBLE);
-                        wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
-                        wan3gSignalView.setVisibility(View.VISIBLE);
-                        wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "N/A"));
-                    }
+                //Unhide 3g signal text
+                @NotNull final TextView wan3gSignalFieldView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_field);
+                @NotNull final TextView wan3gSignalSeparatorView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal_separator);
+                @NotNull final TextView wan3gSignalView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_3g_signal);
+                wan3gSignalFieldView.setVisibility(View.VISIBLE);
+                wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
+                wan3gSignalView.setVisibility(View.VISIBLE);
+                wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "N/A"));
 
-                } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "Heartbeat Signal";
-                } else if ("disabled".equalsIgnoreCase(wanProto)) {
-                    wanConnectionTypeManual = "*Disabled*";
-                } else {
-                    wanConnectionTypeManual = wanProto.toUpperCase();
-                }
-
-                wanConnTypeView.setText(wanConnectionTypeManual);
+            } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
+                wanConnectionTypeManual = "Heartbeat Signal";
+            } else if ("disabled".equalsIgnoreCase(wanProto)) {
+                wanConnectionTypeManual = "*Disabled*";
+            } else {
+                wanConnectionTypeManual = (wanProto != null ? wanProto.toUpperCase() : "N/A");
             }
+
+            wanConnTypeView.setText(wanConnectionTypeManual);
 
             //Connection Uptime
             @NotNull final TextView wanUptimeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
-            if (wanUptimeView != null) {
-                wanUptimeView.setText(data.getProperty("wan_connection_uptime", "N/A"));
-            }
+            wanUptimeView.setText(data.getProperty("wan_connection_uptime", "N/A"));
 
             //MAC
             @NotNull final TextView wanMacView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
-            if (wanMacView != null) {
-                wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "N/A"));
-            }
+            wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "N/A"));
 
             //IP
             @NotNull final TextView wanIPView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
-            if (wanIPView != null) {
-                wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
-            }
+            wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
 
             //Subnet
             @NotNull final TextView wanSubnetView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
-            if (wanSubnetView != null) {
-                wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "N/A"));
-            }
+            wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "N/A"));
 
             //Gateway
             @NotNull final TextView wanGatewayView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
-            if (wanGatewayView != null) {
-                wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "N/A"));
-            }
+            wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "N/A"));
 
             //DNS
             @NotNull final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
-            if (wanDNSView != null) {
-                wanDNSView.setText(data.getProperty(NVRAMInfo.WAN_DNS, "N/A").replaceAll(" ", ", "));
-            }
-
+            final String property = data.getProperty(NVRAMInfo.WAN_DNS, "N/A");
+            wanDNSView.setText(property != null ? property.replaceAll(" ", ", ") : "N/A");
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

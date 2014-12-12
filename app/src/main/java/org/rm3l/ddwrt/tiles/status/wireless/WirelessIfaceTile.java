@@ -190,117 +190,97 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //SSID
             @NotNull final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
-            if (ssidView != null) {
-                ssidView.setText(data.getProperty(this.iface + "_ssid", "SSID N/A"));
-            }
+            ssidView.setText(data.getProperty(this.iface + "_ssid", "SSID N/A"));
 
             //Ifname
             @NotNull final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
-            if (ifnameView != null) {
-                ifnameView.setText(data.getProperty(this.iface + "_ifname", "N/A"));
-            }
+            ifnameView.setText(data.getProperty(this.iface + "_ifname", "N/A"));
 
             //MAC
             @NotNull final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
-            if (hwAddrView != null) {
-                hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "N/A"));
-            }
+            hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "N/A"));
 
             //Radio
             @NotNull final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
-            if (radioView != null) {
-                radioView.setEnabled(false);
-                radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio")));
-            }
+            radioView.setEnabled(false);
+            radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio")));
 
             //Mode
             @NotNull final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
-            if (modeView != null) {
-                modeView.setText(data.getProperty(this.iface + "_mode", "N/A").toUpperCase());
-            }
+            String property = data.getProperty(this.iface + "_mode", "N/A");
+            modeView.setText(property != null ? property.toUpperCase() : "N/A");
 
             //Net Mode
             @NotNull final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
-            if (netModeView != null) {
-                final String netmode = data.getProperty(this.iface + "_net_mode");
-                String mode = "N/A";
-                if ("disabled".equalsIgnoreCase(netmode)) {
-                    mode = "Disabled";
-                } else if ("mixed".equalsIgnoreCase(netmode)) {
-                    mode = "Mixed";
-                } else if ("g-only".equalsIgnoreCase(netmode)) {
-                    mode = "G-Only";
-                } else if ("b-only".equalsIgnoreCase(netmode)) {
-                    mode = "B-Only";
-                } else if ("a-only".equalsIgnoreCase(netmode)) {
-                    mode = "A-Only";
-                } else if ("n-only".equalsIgnoreCase(netmode)) {
-                    mode = "N-Only";
-                } else if ("ng-only".equalsIgnoreCase(netmode)) {
-                    mode = "NG-Only";
-                } else if ("n5-only".equalsIgnoreCase(netmode)) {
-                    mode = "N-Only (5GHz)";
-                } else if (netmode != null) {
-                    mode = netmode;
-                }
-
-                netModeView.setText(mode);
+            final String netmode = data.getProperty(this.iface + "_net_mode");
+            String mode = "N/A";
+            if ("disabled".equalsIgnoreCase(netmode)) {
+                mode = "Disabled";
+            } else if ("mixed".equalsIgnoreCase(netmode)) {
+                mode = "Mixed";
+            } else if ("g-only".equalsIgnoreCase(netmode)) {
+                mode = "G-Only";
+            } else if ("b-only".equalsIgnoreCase(netmode)) {
+                mode = "B-Only";
+            } else if ("a-only".equalsIgnoreCase(netmode)) {
+                mode = "A-Only";
+            } else if ("n-only".equalsIgnoreCase(netmode)) {
+                mode = "N-Only";
+            } else if ("ng-only".equalsIgnoreCase(netmode)) {
+                mode = "NG-Only";
+            } else if ("n5-only".equalsIgnoreCase(netmode)) {
+                mode = "N-Only (5GHz)";
+            } else if (netmode != null) {
+                mode = netmode;
             }
+
+            netModeView.setText(mode);
 
             //Channel
             @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
-            if (channelView != null) {
-                channelView.setText(data.getProperty(this.iface + "_channel", "N/A"));
-            }
+            channelView.setText(data.getProperty(this.iface + "_channel", "N/A"));
 
             //Rate
             @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
-            if (rateView != null) {
-                rateView.setText(data.getProperty(this.iface + "_rate", "N/A"));
-            }
+            rateView.setText(data.getProperty(this.iface + "_rate", "N/A"));
 
             //TX Power
             @NotNull final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
-            if (xmitView != null) {
-                xmitView.setText(data.getProperty(this.iface + "_txpwr", "N/A"));
-            }
+            xmitView.setText(data.getProperty(this.iface + "_txpwr", "N/A"));
 
             //Encryption
             @NotNull final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
-            if (encryptionView != null) {
-                final String akm = data.getProperty(this.iface + "_akm");
-                @NotNull String encryption = "N/A";
-                if ("psk".equalsIgnoreCase(akm)) {
-                    encryption = "WPA Pre-shared Key";
-                } else if ("wpa".equalsIgnoreCase(akm)) {
-                    encryption = "WPA RADIUS";
-                } else if ("psk2".equalsIgnoreCase(akm)) {
-                    encryption = "WPA2 Pre-shared Key";
-                } else if ("wpa2".equalsIgnoreCase(akm)) {
-                    encryption = "WPA2 RADIUS";
-                } else if ("psk psk2".equalsIgnoreCase(akm)) {
-                    encryption = "WPA2 Pre-shared Key Mixed";
-                } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
-                    encryption = "WPA RADIUS Mixed";
-                } else if ("radius".equalsIgnoreCase(akm)) {
-                    encryption = "RADIUS";
-                } else if ("wep".equalsIgnoreCase(akm)) {
-                    encryption = "WEP";
-                }
-
-                encryptionView.setText(encryption);
+            final String akm = data.getProperty(this.iface + "_akm");
+            @NotNull String encryption = "N/A";
+            if ("psk".equalsIgnoreCase(akm)) {
+                encryption = "WPA Pre-shared Key";
+            } else if ("wpa".equalsIgnoreCase(akm)) {
+                encryption = "WPA RADIUS";
+            } else if ("psk2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 Pre-shared Key";
+            } else if ("wpa2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 RADIUS";
+            } else if ("psk psk2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 Pre-shared Key Mixed";
+            } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
+                encryption = "WPA RADIUS Mixed";
+            } else if ("radius".equalsIgnoreCase(akm)) {
+                encryption = "RADIUS";
+            } else if ("wep".equalsIgnoreCase(akm)) {
+                encryption = "WEP";
             }
+
+            encryptionView.setText(encryption);
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

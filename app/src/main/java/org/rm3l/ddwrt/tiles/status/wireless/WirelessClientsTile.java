@@ -234,9 +234,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
                 final String macAddress = device.getMacAddress();
-                if (macAddress != null) {
-                    deviceMac.setText(macAddress);
-                }
+                deviceMac.setText(macAddress);
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
                 final String ipAddress = device.getIpAddress();
@@ -258,7 +256,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

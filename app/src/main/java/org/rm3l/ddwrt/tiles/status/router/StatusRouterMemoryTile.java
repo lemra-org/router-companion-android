@@ -129,6 +129,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         //Mem used
                         @Nullable String memUsed = null;
                         if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
+                            //noinspection ConstantConditions
                             memUsed = Long.toString(
                                     Long.parseLong(memTotal.replaceAll(" kB", "")) - Long.parseLong(memFree.replaceAll(" kB", "")))
                                     + " kB";
@@ -208,32 +209,25 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //Total
             @NotNull final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
-            if (memTotalView != null) {
-                memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL));
-            }
+            memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL));
 
             //Model
             @NotNull final TextView memFreeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
-            if (memFreeView != null) {
-                memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "N/A"));
-            }
+            memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "N/A"));
 
             //Cores Count
             @NotNull final TextView memUsedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
-            if (memUsedView != null) {
-                memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
-            }
+            memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

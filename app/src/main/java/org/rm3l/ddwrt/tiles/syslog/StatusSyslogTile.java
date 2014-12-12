@@ -146,9 +146,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             final String syslogdEnabledPropertyValue = data.getProperty(SYSLOGD_ENABLE);
@@ -176,7 +174,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);

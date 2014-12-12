@@ -112,31 +112,24 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //LAN
             @NotNull final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
-            if (lanIfaceView != null) {
-                lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "N/A"));
-            }
+            lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "N/A"));
 
             //WAN
             @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
-            if (wanIfaceView != null) {
-                wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "N/A"));
-            }
+            wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "N/A"));
 
             //Wireless
             @NotNull final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
-            if (wlIfaceView != null) {
-                wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "N/A"));
-            }
+            wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "N/A"));
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

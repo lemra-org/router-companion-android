@@ -197,62 +197,46 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //Router Name
             @NotNull final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
-            if (routerNameView != null) {
-                final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
-                final boolean routerNameNull = (routerName == null);
-                String routerNameToSet = routerName;
-                if (routerNameNull) {
-                    routerNameToSet = "(empty)";
-                }
-                routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
-
-                routerNameView.setText(routerNameToSet);
+            final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
+            final boolean routerNameNull = (routerName == null);
+            String routerNameToSet = routerName;
+            if (routerNameNull) {
+                routerNameToSet = "(empty)";
             }
+            routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
+
+            routerNameView.setText(routerNameToSet);
 
             //We can change the action bar title
 //        this.layout.getSupportActionBar().setTitle((String) data);
 
             //WAN IP
             @NotNull final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
-            if (wanIpView != null) {
-                wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR));
-            }
+            wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR));
 
             @NotNull final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
-            if (routerModelView != null) {
-                routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "N/A"));
-            }
+            routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "N/A"));
 
             @NotNull final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
-            if (lanIpView != null) {
-                lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
-            }
+            lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
 
             @NotNull final TextView fwView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
-            if (fwView != null) {
-                fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "N/A"));
-            }
+            fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "N/A"));
 
             @NotNull final TextView kernelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
-            if (kernelView != null) {
-                kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "N/A"));
-            }
+            kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "N/A"));
 
             @NotNull final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
-            if (uptimeView != null) {
-                uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
-            }
+            uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);

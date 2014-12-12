@@ -254,32 +254,25 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //NVRAM
             @NotNull final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
-            if (nvramSpaceView != null) {
-                nvramSpaceView.setText(data.getProperty("nvram_space", "N/A"));
-            }
+            nvramSpaceView.setText(data.getProperty("nvram_space", "N/A"));
 
             //NVRAM
             @NotNull final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
-            if (cifsSpaceView != null) {
-                cifsSpaceView.setText(data.getProperty("cifs_space", "N/A"));
-            }
+            cifsSpaceView.setText(data.getProperty("cifs_space", "N/A"));
 
             //NVRAM
             @NotNull final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
-            if (jffsView != null) {
-                jffsView.setText(data.getProperty("jffs_space", "N/A"));
-            }
+            jffsView.setText(data.getProperty("jffs_space", "N/A"));
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

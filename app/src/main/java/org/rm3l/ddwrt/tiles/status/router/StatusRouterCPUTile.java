@@ -213,43 +213,32 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //Model
             @NotNull final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
-            if (cpuSpeedView != null) {
-                final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
-                cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
-            }
+            final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
+            cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
 
             //Model
             @NotNull final TextView cpuModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
-            if (cpuModelView != null) {
-                cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "N/A"));
-            }
+            cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "N/A"));
 
             //Cores Count
             @NotNull final TextView cpuCountView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
-            if (cpuCountView != null) {
-                cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "N/A"));
-            }
+            cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "N/A"));
 
             //Load Avg
             @NotNull final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
-            if (loadAvgView != null) {
-                loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
-            }
+            loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
 
         }
 
-        if (exception != null) {
-            if (errorPlaceHolderView != null) {
-                errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
-            }
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
+            errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+            errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
         doneWithLoaderInstance(this, loader,

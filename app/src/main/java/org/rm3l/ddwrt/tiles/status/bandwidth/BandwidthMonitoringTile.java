@@ -79,6 +79,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
+    @NotNull
     private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
 
     public BandwidthMonitoringTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
@@ -193,6 +194,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        //noinspection ConstantConditions
         if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
         }
@@ -279,7 +281,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             graphPlaceHolder.addView(chartView, 0);
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         } else {
@@ -311,6 +314,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
         public BandwidthMonitoringIfaceData addData(final String iface, final DataPoint point) {
             final Map<String, EvictingQueue<DataPoint>> data = super.getData();
+            @SuppressWarnings("ConstantConditions")
             final EvictingQueue<DataPoint> dataPointsForIface = data.get(iface);
             if (dataPointsForIface == null) {
                 data.put(iface, EvictingQueue.<DataPoint>create(MAX_DATA_POINTS));

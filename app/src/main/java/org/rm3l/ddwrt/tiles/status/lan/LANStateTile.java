@@ -169,38 +169,29 @@ lan_wins=
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //MAC Address
             @NotNull final TextView macView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
-            if (macView != null) {
-                macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "N/A"));
-            }
+            macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "N/A"));
 
             //IP Address
             @NotNull final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
-            if (ipView != null) {
-                ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
-            }
+            ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
 
             //Subnet Mask
             @NotNull final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
-            if (maskView != null) {
-                maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
-            }
+            maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
 
             //GW
             @NotNull final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
-            if (gwView != null) {
-                gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
-            }
+            gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }

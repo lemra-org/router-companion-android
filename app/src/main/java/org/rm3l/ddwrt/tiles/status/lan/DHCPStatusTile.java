@@ -155,38 +155,32 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
-                if (errorPlaceHolderView != null) {
-                    errorPlaceHolderView.setVisibility(View.GONE);
-                }
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //Server Status
             @NotNull final TextView dhcpServerView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
-            if (dhcpServerView != null) {
-                final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
-                @NotNull final String lanProtoTxt;
-                if (lanProto == null) {
-                    lanProtoTxt = "N/A";
-                } else if ("dhcp".equalsIgnoreCase(lanProto)) {
-                    lanProtoTxt = "Enabled";
-                } else {
-                    lanProtoTxt = "Disabled";
-                }
-                dhcpServerView.setText(lanProtoTxt);
+            final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
+            @NotNull final String lanProtoTxt;
+            if (lanProto == null) {
+                lanProtoTxt = "N/A";
+            } else if ("dhcp".equalsIgnoreCase(lanProto)) {
+                lanProtoTxt = "Enabled";
+            } else {
+                lanProtoTxt = "Disabled";
             }
+            dhcpServerView.setText(lanProtoTxt);
 
             //Daemon
             @NotNull final TextView dhcpDaemonView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
-            if (dhcpDaemonView != null) {
-                final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
-                @NotNull final String dhcpDnsmasqTxt;
-                if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
-                    dhcpDnsmasqTxt = "DNSMasq";
-                } else {
-                    dhcpDnsmasqTxt = "N/A";
-                }
-                dhcpDaemonView.setText(dhcpDnsmasqTxt);
+            final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
+            @NotNull final String dhcpDnsmasqTxt;
+            if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
+                dhcpDnsmasqTxt = "DNSMasq";
+            } else {
+                dhcpDnsmasqTxt = "N/A";
             }
+            dhcpDaemonView.setText(dhcpDnsmasqTxt);
 
             //FIXME Start IP
 //            final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
@@ -201,15 +195,14 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 //            }
 
             @NotNull final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
-            if (clientLeaseView != null) {
-                final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
-                clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "N/A" :
-                        (dhcpClientLeaseTime + " min"));
-            }
+            final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
+            clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "N/A" :
+                    (dhcpClientLeaseTime + " min"));
 
         }
 
-        if (exception != null) {
+        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            //noinspection ThrowableResultOfMethodCallIgnored
             errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
