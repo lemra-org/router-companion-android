@@ -25,7 +25,9 @@
 package org.rm3l.ddwrt.tiles;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -58,6 +60,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NotNull
     protected final SherlockFragmentActivity mParentFragmentActivity;
+    @Nullable
+    protected final SharedPreferences mParentFragmentPreferences;
     @NotNull final SherlockFragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
@@ -73,6 +77,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getSherlockActivity();
+        this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
+                    .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
         this.mFragmentArguments = arguments;
@@ -88,6 +94,11 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             this.mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(toggleRefreshButtonId);
             if (this.mToggleAutoRefreshButton != null) {
                 this.mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
+                if (this.mParentFragmentPreferences != null) {
+                    this.mToggleAutoRefreshButton.setChecked(
+                            this.mParentFragmentPreferences.getBoolean(getAutoRefreshPreferenceKey(), true)
+                    );
+                }
             }
         }
     }
@@ -96,6 +107,15 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public final void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         Log.d(LOG_TAG, this.getClass() + "#onCheckedChanged: isChecked=" + isChecked);
         this.mAutoRefreshToggle = isChecked;
+        if (this.mParentFragmentPreferences != null) {
+            final SharedPreferences.Editor editor = this.mParentFragmentPreferences.edit();
+            editor.putBoolean(getAutoRefreshPreferenceKey(), this.mAutoRefreshToggle);
+            editor.apply();
+        }
+    }
+
+    private String getAutoRefreshPreferenceKey() {
+        return this.getClass().getCanonicalName()+"::autoRefresh";
     }
 
     @Nullable
