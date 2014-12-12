@@ -205,14 +205,17 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
-            errorPlaceHolderView.setText("Error: " + Throwables.getRootCause(exception).getMessage());
+            final Throwable rootCause = Throwables.getRootCause(exception);
+            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
             final Context parentContext = this.mParentFragmentActivity;
             errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     //noinspection ThrowableResultOfMethodCallIgnored
-                    Toast.makeText(parentContext,
-                            Throwables.getRootCause(exception).getMessage(), Toast.LENGTH_LONG).show();
+                    if (rootCause != null) {
+                        Toast.makeText(parentContext,
+                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
