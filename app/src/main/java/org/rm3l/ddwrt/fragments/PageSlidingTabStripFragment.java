@@ -56,11 +56,11 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String SORTING_STRATEGY = "sorting_strategy";
-    @Nullable
+    @NotNull
     private FragmentTabsAdapter mFragmentTabsAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
-    @Nullable
+    @NotNull
     private ViewPager mPager;
 
     /**
@@ -108,7 +108,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mPager = (ViewPager) view.findViewById(R.id.viewPager);
-        mPager.setOffscreenPageLimit(1); //disable pre-loading of prev and next pages
+        mPager.setOffscreenPageLimit(mFragmentTabsAdapter.getCount()-1);
         mPager.setAdapter(mFragmentTabsAdapter);
         mPager.setOnPageChangeListener(mOnPageChangeListener);
 
