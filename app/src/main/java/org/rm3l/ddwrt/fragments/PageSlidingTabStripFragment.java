@@ -82,11 +82,6 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         @NotNull final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         @NotNull Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(SORTING_STRATEGY,
-                routerUuid != null ?
-                        fragment.getSherlockActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE)
-                                .getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT) :
-                        SortingStrategy.DEFAULT);
         args.putString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
         fragment.mOnPageChangeListener = onPageChangeListener;
@@ -97,10 +92,18 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mFragmentTabsAdapter = new FragmentTabsAdapter(getArguments().getInt(ARG_SECTION_NUMBER),
+
+        final String routerUuid = getArguments().getString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO);
+        final SharedPreferences sharedPreferences = getSherlockActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+
+        mFragmentTabsAdapter = new FragmentTabsAdapter(
+                getArguments().getInt(ARG_SECTION_NUMBER),
                 getChildFragmentManager(), getResources(),
-                SortingStrategy.class.getPackage().getName() + "." + getArguments().getString(SORTING_STRATEGY),
-                getArguments().getString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO));
+                String.format("%s.%s",
+                        SortingStrategy.class.getPackage().getName(),
+                        sharedPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT)
+                ),
+                routerUuid);
     }
 
     @Override
