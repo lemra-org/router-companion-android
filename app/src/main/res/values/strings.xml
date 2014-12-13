@@ -248,5 +248,7 @@
     <string name="ntp_summer_time">Summer Time (DST)</string>
     <string name="ntp_timezone">Time Zone</string>
     <string name="ntp_client">NTP Client</string>
+    <string name="time_settings">Time Settings</string>
+    <string name="loading_current_date">Loading current date...</string>
 
 </resources>

@@ -105,6 +105,11 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
+
+                        final String[] currentDate = SSHUtils.getManualProperty(mRouter, "date");
+                        if (currentDate != null && currentDate.length > 0) {
+                            nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, currentDate[0]);
+                        }
                     }
 
                     if (nvramInfo.isEmpty()) {
@@ -151,6 +156,10 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
+
+            //Current Date
+            ((TextView) this.layout.findViewById(R.id.tile_status_time_current_date))
+                    .setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "N/A"));
 
             //NTP Client
             final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
