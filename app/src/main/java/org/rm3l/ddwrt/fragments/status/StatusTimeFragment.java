@@ -28,14 +28,15 @@ import android.os.Bundle;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.time.StatusTimeTile;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class StatusTimeFragment extends DDWRTBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        //TODO
-        return null;
+        return Arrays.<DDWRTTile> asList(new StatusTimeTile(this, savedInstanceState, this.router));
     }
 }

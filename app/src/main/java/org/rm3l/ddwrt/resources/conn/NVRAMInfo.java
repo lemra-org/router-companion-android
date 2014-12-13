@@ -77,6 +77,11 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String WAN_IFNAME = "wan_ifname";
     public static final String SYSLOG = "syslog";
     public static final String SYSLOGD_ENABLE = "syslogd_enable";
+    public static final String NTP_ENABLE = "ntp_enable";
+    public static final String NTP_MODE = "ntp_mode";
+    public static final String NTP_SERVER = "ntp_server";
+    public static final String TIME_ZONE = "time_zone";
+    public static final String DAYLIGHT_TIME = "daylight_time";
 
     /**
      * Default constructor: initialized an empty Properties set

@@ -244,5 +244,9 @@
     <string name="bw_lan">LAN</string>
     <string name="bw_wireless">Wireless</string>
     <string name="bw_wan">WAN</string>
+    <string name="ntp_time_server">Time Server</string>
+    <string name="ntp_summer_time">Summer Time (DST)</string>
+    <string name="ntp_timezone">Time Zone</string>
+    <string name="ntp_client">NTP Client</string>
 
 </resources>
