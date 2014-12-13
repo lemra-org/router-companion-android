@@ -70,7 +70,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @NotNull
     private String mRouterUuid;
     private Menu optionsMenu;
-    private SharedPreferences preferences;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mDDWRTNavigationMenuSections;
@@ -81,7 +80,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        preferences = getSharedPreferences(TAG, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
 
         //SQLite
@@ -250,7 +248,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 .beginTransaction()
                 .replace(R.id.content,
                         PageSlidingTabStripFragment
-                                .newInstance(this, position, this.mRouterUuid, preferences))
+                                .newInstance(this, position, this.mRouterUuid))
                 .commit();
 
         mDrawerLayout.closeDrawer(mDrawerList);

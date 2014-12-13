@@ -24,6 +24,7 @@
 
 package org.rm3l.ddwrt.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 /**
  * Page Sliding fragment
@@ -76,11 +78,15 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
     @NotNull
     public static PageSlidingTabStripFragment newInstance(@NotNull final ViewPager.OnPageChangeListener onPageChangeListener,
                                                           int sectionNumber,
-                                                          @Nullable final String routerUuid, @NotNull SharedPreferences preferences) {
+                                                          @Nullable final String routerUuid) {
         @NotNull final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         @NotNull Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(SORTING_STRATEGY, preferences.getString("sortingStrategy", SortingStrategy.DEFAULT));
+        args.putString(SORTING_STRATEGY,
+                routerUuid != null ?
+                        fragment.getSherlockActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE)
+                                .getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT) :
+                        SortingStrategy.DEFAULT);
         args.putString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
         fragment.mOnPageChangeListener = onPageChangeListener;

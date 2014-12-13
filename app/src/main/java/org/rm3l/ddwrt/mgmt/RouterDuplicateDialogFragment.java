@@ -24,13 +24,23 @@
 
 package org.rm3l.ddwrt.mgmt;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
+import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
@@ -45,9 +55,18 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
+    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, Router router, boolean error) {
         mListener.onRouterAdd(this, error);
         if (!error) {
+            if (router != null) {
+                //Add default preferences values
+                final SharedPreferences sharedPreferences = this.getSherlockActivity()
+                        .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);
+                editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
+                editor.apply();
+            }
             Crouton.makeText(getActivity(), "Item copied as new", Style.CONFIRM).show();
         }
     }

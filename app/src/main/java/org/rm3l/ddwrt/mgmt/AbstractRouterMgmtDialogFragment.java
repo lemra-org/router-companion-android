@@ -92,7 +92,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     protected abstract CharSequence getPositiveButtonMsg();
 
-    protected abstract void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error);
+    protected abstract void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -465,9 +465,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
             if (AbstractRouterMgmtDialogFragment.this.mListener != null) {
                 AbstractRouterMgmtDialogFragment.this.onPositiveButtonActionSuccess(
-                        AbstractRouterMgmtDialogFragment.this.mListener,
-                        router != null ? router.getId() : -1,
-                        e != null);
+                        AbstractRouterMgmtDialogFragment.this.mListener, router, e != null);
             }
 
         }

@@ -26,18 +26,27 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.widget.EditText;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
+import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 
 public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
@@ -59,9 +68,19 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
+    protected void onPositiveButtonActionSuccess(@NotNull final RouterMgmtDialogListener mListener,
+                                                 @Nullable final Router router, final boolean error) {
         mListener.onRouterAdd(this, error);
         if (!error) {
+            if (router != null) {
+                //Add default preferences values
+                final SharedPreferences sharedPreferences = this.getSherlockActivity()
+                        .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);
+                editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
+                editor.apply();
+            }
             Crouton.makeText(getActivity(), "Item added", Style.CONFIRM).show();
         }
     }
@@ -71,21 +90,18 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
         @NotNull final AlertDialog d = (AlertDialog) getDialog();
-        if (d != null) {
-
-            //Fill the router IP Address with the current gateway address, if any
-            try {
-                @NotNull final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-                if (wifiManager != null) {
-                    final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                    if (dhcpInfo != null) {
-                        ((EditText) d.findViewById(R.id.router_add_ip)).setText(Utils.intToIp(dhcpInfo.gateway));
-                    }
+        //Fill the router IP Address with the current gateway address, if any
+        try {
+            @NotNull final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+            if (wifiManager != null) {
+                final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                if (dhcpInfo != null) {
+                    ((EditText) d.findViewById(R.id.router_add_ip)).setText(Utils.intToIp(dhcpInfo.gateway));
                 }
-            } catch (@NotNull final Exception e) {
-                e.printStackTrace();
-                //No worries
             }
+        } catch (@NotNull final Exception e) {
+            e.printStackTrace();
+            //No worries
         }
     }
 

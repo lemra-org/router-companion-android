@@ -47,6 +47,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
@@ -160,15 +161,19 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             }
         }
 
+        final long refreshDelay = (this.mParentFragmentPreferences != null ?
+                this.mParentFragmentPreferences.
+                        getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS) : TILE_REFRESH_MILLIS);
+
 //        Re-schedule it!
         HANDLER.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
             }
-        }, TILE_REFRESH_MILLIS);
+        }, refreshDelay);
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader);
+        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader + "\n->delay: "+refreshDelay+"ms");
     }
 
     @Nullable

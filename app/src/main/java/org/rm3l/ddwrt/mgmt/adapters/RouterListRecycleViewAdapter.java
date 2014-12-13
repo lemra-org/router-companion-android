@@ -137,6 +137,11 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final Router router = this.routersList.get(position);
         if (router != null) {
             dao.deleteRouter(router.getUuid());
+            //Drop SharedPreferences for this item too
+            this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                    .edit().clear().commit();
+
+            //Now refresh list
             final List<Router> allRouters = dao.getAllRouters();
             setRoutersList(allRouters);
             notifyItemRemoved(position);

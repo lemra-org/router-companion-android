@@ -62,7 +62,8 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, int position, boolean error) {
+    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error) {
+        final int position = (router != null ? router.getId() : -1);
         if (position >= 0) {
             mListener.onRouterUpdated(this, position, error);
         }
