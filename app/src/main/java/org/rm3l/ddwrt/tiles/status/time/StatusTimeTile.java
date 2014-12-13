@@ -171,10 +171,12 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             if (timezone == null || timezone.isEmpty()) {
                 tzValue = "N/A";
             } else {
-                tzValue = "UTC"+(timezone
-                        .replaceAll(".25", ":15")
-                        .replaceAll(".5", ":30")
-                        .replaceAll(".75", ":45"));
+                tzValue = "UTC"+(timezone.contains(".") ?
+                        timezone
+                            .replaceAll(".25", ":15")
+                            .replaceAll(".5", ":30")
+                            .replaceAll(".75", ":45") :
+                        (timezone + ":00"));
             }
             ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_timezone)).setText(tzValue);
 
