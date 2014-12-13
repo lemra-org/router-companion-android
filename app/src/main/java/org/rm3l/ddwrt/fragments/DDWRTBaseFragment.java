@@ -90,6 +90,7 @@ import org.rm3l.ddwrt.fragments.status.StatusLANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusRouterFragment;
 import org.rm3l.ddwrt.fragments.status.StatusSysinfoFragment;
 import org.rm3l.ddwrt.fragments.status.StatusSyslogFragment;
+import org.rm3l.ddwrt.fragments.status.StatusTimeFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
@@ -193,23 +194,26 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-                tabsToSort = new DDWRTBaseFragment[6];
+                tabsToSort = new DDWRTBaseFragment[7];
                 tabsToSort[0] = DDWRTBaseFragment.newInstance(StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
                 tabsToSort[1] = DDWRTBaseFragment.newInstance(StatusWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 tabsToSort[2] = DDWRTBaseFragment.newInstance(StatusLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_lan), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusTimeFragment.class, parentSectionTitle,
+                        resources.getString(R.string.status_time), router);
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_bandwidth), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
 //                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.status_sysinfo), router);
                 break;
-            case 1:
+//            case 1: TODO Remove me
+            case 99:
                 parentSectionTitle = resources.getString(R.string.setup);
                 //2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP}
                 tabsToSort = new DDWRTBaseFragment[8];
@@ -230,7 +234,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[7] = DDWRTBaseFragment.newInstance(SetupEoIPFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_eoip), router);
                 break;
-            case 2:
+            case 1:
                 parentSectionTitle = resources.getString(R.string.wireless);
                 //3 = Wireless => {Basic, Radius, Security, MAC Filter, WL0, WL1, ...}
                 tabsToSort = new DDWRTBaseFragment[4];
@@ -243,7 +247,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[3] = DDWRTBaseFragment.newInstance(WirelessMACFilteringFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_mac_filter), router);
                 break;
-            case 3:
+            case 2:
                 parentSectionTitle = resources.getString(R.string.services);
                 //4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
                 tabsToSort = new DDWRTBaseFragment[10];
@@ -268,7 +272,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_webserver), router);
                 break;
-            case 4:
+            case 3:
                 //5 = Security => {Firewall, VPN Passthrough}
                 parentSectionTitle = resources.getString(R.string.security);
                 tabsToSort = new DDWRTBaseFragment[2];
@@ -277,14 +281,14 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[1] = DDWRTBaseFragment.newInstance(SecurityVPNPassthroughFragment.class, parentSectionTitle,
                         resources.getString(R.string.security_vpn_passthrough), router);
                 break;
-            case 5:
+            case 4:
                 //6 = Access => {WAN}
                 parentSectionTitle = resources.getString(R.string.access_restrictions);
                 tabsToSort = new DDWRTBaseFragment[1];
                 tabsToSort[0] = DDWRTBaseFragment.newInstance(AccessWANAccessFragment.class, parentSectionTitle,
                         resources.getString(R.string.access_restrictions_wan), router);
                 break;
-            case 6:
+            case 5:
                 parentSectionTitle = resources.getString(R.string.nat_qos);
                 //7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}
                 tabsToSort = new DDWRTBaseFragment[6];
@@ -301,7 +305,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[5] = DDWRTBaseFragment.newInstance(NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
                 break;
-            case 7:
+            case 6:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 //8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
                 tabsToSort = new DDWRTBaseFragment[7];

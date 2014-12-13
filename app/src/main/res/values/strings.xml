@@ -44,7 +44,7 @@
 
     <string-array name="navigation_drawer_items_array">
         <item>Status</item>
-        <item>Setup</item>
+        <!--<item>Setup</item>-->
         <item>Wireless</item>
         <item>Services</item>
         <item>Security</item>
@@ -65,6 +65,7 @@
     <string name="status_router">Router</string>
     <string name="status_wan">WAN</string>
     <string name="status_lan">LAN</string>
+    <string name="status_time">Time</string>
     <string name="status_wireless">Wireless</string>
     <string name="status_bandwidth">Bandwidth</string>
     <string name="status_syslog">Syslog</string>
