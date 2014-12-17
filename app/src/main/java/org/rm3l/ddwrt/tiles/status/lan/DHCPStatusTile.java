@@ -36,9 +36,11 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.net.util.SubnetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -49,12 +51,20 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.List;
+
 /**
  *
  */
 public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = DHCPStatusTile.class.getSimpleName();
+    public static final String DHCP_END_IP = "dhcp_end_ip";
+    public static final String DHCP_START_IP = "dhcp_start_ip";
+    public static final Splitter IP_ADDR_SPLITTER = Splitter
+            .on(".")
+            .omitEmptyStrings()
+            .trimResults();
 
     public DHCPStatusTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_lan_dhcp_status, R.id.tile_status_lan_dhcp_status_togglebutton);
@@ -80,12 +90,81 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.LAN_PROTO,
-                            NVRAMInfo.DHCP_DNSMASQ,
-                            NVRAMInfo.DHCP_START,
-                            NVRAMInfo.DHCP_NUM,
-                            NVRAMInfo.DHCP_LEASE);
+                    @Nullable final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+                    NVRAMInfo nvramInfoTmp = null;
+                    try {
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                NVRAMInfo.LAN_PROTO,
+                                NVRAMInfo.DHCP_DNSMASQ,
+                                NVRAMInfo.DHCP_START,
+                                NVRAMInfo.DHCP_NUM,
+                                NVRAMInfo.DHCP_LEASE,
+                                NVRAMInfo.LAN_IPADDR,
+                                NVRAMInfo.LAN_NETMASK);
+                    } finally {
+                        if (nvramInfoTmp != null) {
+                            nvramInfo.putAll(nvramInfoTmp);
+                        }
+
+                        //Manually compute Start and End IP Addresses
+                        final String lanAddr = nvramInfo.getProperty(NVRAMInfo.LAN_IPADDR);
+                        final String dhcpStart = nvramInfo.getProperty(NVRAMInfo.DHCP_START);
+
+                        String dhcpStartIp = null;
+                        if (dhcpStart != null && lanAddr != null) {
+                            final List<String> lowAddressSplit = IP_ADDR_SPLITTER
+                                    .splitToList(lanAddr);
+                            if (lowAddressSplit != null && lowAddressSplit.size() >= 3) {
+                                dhcpStartIp = String.format("%s.%s.%s.%s",
+                                        lowAddressSplit.get(0),
+                                        lowAddressSplit.get(1),
+                                        lowAddressSplit.get(2),
+                                        dhcpStart);
+                                nvramInfo.setProperty(DHCP_START_IP, dhcpStartIp);
+                            }
+                        }
+
+                        final String dhcpHostCountStr = nvramInfo.getProperty(NVRAMInfo.DHCP_NUM);
+                        final String netmask = nvramInfo.getProperty(NVRAMInfo.LAN_NETMASK);
+                        if (netmask != null) {
+                            if (dhcpStartIp != null) {
+                                final SubnetUtils subnetUtils = new SubnetUtils(dhcpStartIp, netmask);
+                                final SubnetUtils.SubnetInfo subnetInfo = subnetUtils.getInfo();
+
+                                if (dhcpHostCountStr != null) {
+                                    try {
+                                        final int dhcpHostCount = Integer.parseInt(dhcpHostCountStr);
+                                        final String[] allAddresses = subnetInfo.getAllAddresses();
+                                        //Compute number of hosts between low ip and dhcp_start ip
+                                        if (allAddresses != null) {
+                                            int distFromLowIpToStartIp = 0;
+                                            for (String address : allAddresses) {
+                                                if (address.equals(dhcpStartIp)) {
+                                                    break;
+                                                }
+                                                distFromLowIpToStartIp++;
+                                            }
+                                            //Then get end address, starting from DHCP Start IP
+                                            if (allAddresses.length >= distFromLowIpToStartIp+dhcpHostCount) {
+                                                nvramInfo.setProperty(DHCP_END_IP, allAddresses[distFromLowIpToStartIp+dhcpHostCount - 1]);
+                                            }
+                                        }
+
+                                    } catch (final NumberFormatException nfe) {
+                                        //No worries
+                                        nfe.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data!");
+                    }
+
+                    return nvramInfo;
 
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();
@@ -184,17 +263,13 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             }
             dhcpDaemonView.setText(dhcpDnsmasqTxt);
 
-            //FIXME Start IP
-//            final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
-//            if (maskView != null) {
-//                maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
-//            }
+            //Start IP
+            ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_start_ip))
+                    .setText(data.getProperty(DHCP_START_IP, "N/A"));
 
-            //FIXME End IP
-//            final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
-//            if (gwView != null) {
-//                gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
-//            }
+            //End IP
+            ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_end_ip))
+                    .setText(data.getProperty(DHCP_END_IP, "N/A"));
 
             @NotNull final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
             final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
@@ -222,7 +297,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         }
 
         doneWithLoaderInstance(this, loader,
-                R.id.tile_status_lan_status_togglebutton_title, R.id.tile_status_lan_status_togglebutton_separator);
+                R.id.tile_status_lan_dhcp_status_togglebutton_title, R.id.tile_status_lan_dhcp_status_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
