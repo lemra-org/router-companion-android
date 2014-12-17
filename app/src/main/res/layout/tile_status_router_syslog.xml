@@ -98,17 +98,18 @@
 
         <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="100dp">
+            android:layout_height="385dp">
 
             <TextView
                 android:id="@+id/tile_status_router_syslog_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
-                android:maxLines="30"/>
+                android:maxLines="200"
+                android:background="@color/abs__background_holo_dark"
+                android:textColor="@color/abs__background_holo_light"/>
 
         </ScrollView>
-
 
         <LinearLayout
             android:layout_width="fill_parent"
