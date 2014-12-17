@@ -263,5 +263,6 @@
     <string name="feedback_reply_close">Close</string>
     <string name="feedback_reply_rate">Rate!</string>
     <string name="feedback_reply_title">Message from the Developer</string>
+    <string name="syslog_filter_hint">Filter output here...</string>
 
 </resources>

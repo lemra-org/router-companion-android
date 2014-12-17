@@ -159,7 +159,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final View filterEditText = this.layout.findViewById(R.id.tile_status_router_syslog_filter);
-            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+//            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
             final TextView logTextView = (TextView) syslogContentView;
@@ -168,12 +168,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 logTextView.append("\n" + data.getProperty(SYSLOG, ""));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
-                filterButton.setVisibility(View.VISIBLE);
+//                filterButton.setVisibility(View.VISIBLE);
             } else {
                 logTextView.setText(null);
                 syslogContentView.setVisibility(View.GONE);
                 filterEditText.setVisibility(View.GONE);
-                filterButton.setVisibility(View.GONE);
+//                filterButton.setVisibility(View.GONE);
             }
 
         }
