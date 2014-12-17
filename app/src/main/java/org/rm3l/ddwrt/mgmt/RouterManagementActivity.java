@@ -48,12 +48,14 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
@@ -83,6 +85,8 @@ public class RouterManagementActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
+
+    private FeedbackDialog mFeedbackDialog;
 
     @NotNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -133,6 +137,14 @@ public class RouterManagementActivity
             cl.getLogDialog().show();
         }
 
+        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFeedbackDialog.dismiss();
     }
 
     private void openAddRouterForm() {
@@ -188,6 +200,9 @@ public class RouterManagementActivity
                 return true;
             case R.id.router_list_settings:
                 Toast.makeText(this, "[TODO] RouterManagementActivity - Settings", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.router_list_feedback:
+                mFeedbackDialog.show();
                 return true;
             default:
                 break;

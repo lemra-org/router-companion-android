@@ -34,11 +34,12 @@
         android:title="@string/menuitem_refresh" />
 
     <item
-        android:id="@+id/router_list_donate"
-        android:alphabeticShortcut="d"
+        android:id="@+id/router_list_feedback"
+        android:alphabeticShortcut="f"
+        android:icon="@drawable/ic_action_action_thumbs_up_down"
         android:orderInCategory="2"
         android:showAsAction="ifRoom"
-        android:title="@string/menuitem_donate" />
+        android:title="@string/feedback" />
 
     <item
         android:id="@+id/router_list_settings"
@@ -49,9 +50,17 @@
         android:title="@string/menuitem_settings" />
 
     <item
+        android:id="@+id/router_list_donate"
+        android:alphabeticShortcut="d"
+        android:orderInCategory="4"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuitem_donate"
+        />
+
+    <item
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_about" />
 

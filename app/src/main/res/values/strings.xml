@@ -251,5 +251,6 @@
     <string name="ntp_client">NTP Client</string>
     <string name="time_settings">Time Settings</string>
     <string name="loading_current_date">Loading current date...</string>
+    <string name="feedback">Feedback</string>
 
 </resources>

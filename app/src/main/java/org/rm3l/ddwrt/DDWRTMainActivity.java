@@ -42,10 +42,12 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -75,6 +77,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     private String[] mDDWRTNavigationMenuSections;
     //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
+
+    private FeedbackDialog mFeedbackDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +150,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 mDrawerList.getChildAt(position),
                 position,
                 mDrawerList.getAdapter().getItemId(position));
+
+        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
     }
 
     @Override
@@ -155,9 +161,16 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mFeedbackDialog.dismiss();
+    }
+
+    @Override
     protected void onDestroy() {
-        this.mRouterUuid = null;
         super.onDestroy();
+        this.mRouterUuid = null;
+        mFeedbackDialog.dismiss();
     }
 
     @Override
@@ -179,7 +192,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 } else {
                     mDrawerLayout.openDrawer(mDrawerList);
                 }
-                break;
+                return true;
             }
             case R.id.action_refresh:
                 Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
@@ -190,7 +203,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 //                }
 //                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
 //                this.mCurrentRefreshAsyncTask.execute();
-                break;
+                return true;
 
             case R.id.action_settings:
                 //TODO Open Settings activity
@@ -202,6 +215,11 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
             case R.id.action_about:
                 new AboutDialog(this).show();
                 return true;
+            case R.id.action_feedback:
+                mFeedbackDialog.show();
+                return true;
+            default:
+                break;
 
         }
 

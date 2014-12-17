@@ -23,18 +23,7 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<item-->
-    <!--android:id="@+id/file"-->
-    <!--android:title="File">-->
-    <!--<menu>-->
-    <!--<item-->
-    <!--android:id="@+id/create_new"-->
-    <!--android:title="New" />-->
-    <!--<item-->
-    <!--android:id="@+id/open"-->
-    <!--android:title="Open" />-->
-    <!--</menu>-->
-    <!--</item>-->
+
     <item
         android:id="@+id/action_refresh"
         android:alphabeticShortcut="r"
@@ -44,24 +33,32 @@
         android:title="@string/menuitem_refresh" />
 
     <item
+        android:id="@+id/action_feedback"
+        android:alphabeticShortcut="f"
+        android:icon="@drawable/ic_action_action_thumbs_up_down"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="@string/feedback" />
+
+    <item
         android:id="@+id/action_settings"
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_settings" />
 
     <item
         android:id="@+id/action_donate"
         android:alphabeticShortcut="d"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_donate" />
 
     <item
         android:id="@+id/action_about"
         android:alphabeticShortcut="a"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_about" />
 

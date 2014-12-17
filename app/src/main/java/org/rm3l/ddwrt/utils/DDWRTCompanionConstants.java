@@ -32,6 +32,16 @@ public final class DDWRTCompanionConstants {
     //FIXME Consider increasing this value prior to release
     public static final long TILE_REFRESH_MILLIS = 20 * 1000l;
 
+    //This is only used to check feedback submitted by end-users
+    public static final String PUBKEY = \"fake-key\";
+            "AY5ab5Nbu" +
+            "6fMj7xRnc" +
+            "dGgoNSvYM" +
+            "BT6B42r2p" +
+            "bp/mABgAz" +
+            "8" +
+            "I";
+
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
