@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,6 +76,8 @@ public class RouterManagementActivity
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
+    public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
+    public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
     @Nullable
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
@@ -139,6 +142,10 @@ public class RouterManagementActivity
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
+       if (mAdapter.getItemCount() == 0) {
+           this.openAddRouterForm();
+       }
+
     }
 
     @Override
@@ -147,9 +154,29 @@ public class RouterManagementActivity
         mFeedbackDialog.dismiss();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Dismiss existing dialog fragments, if any
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+        if (fragment instanceof DialogFragment) {
+            ((DialogFragment) fragment).dismiss();
+        }
+
+        fragment = getSupportFragmentManager().findFragmentByTag(UPDATE_ROUTER_FRAGMENT_TAG);
+        if (fragment instanceof DialogFragment) {
+            ((DialogFragment) fragment).dismiss();
+        }
+    }
+
     private void openAddRouterForm() {
+        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+        if (addRouter instanceof DialogFragment) {
+            ((DialogFragment) addRouter).dismiss();
+        }
         @NotNull final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), "add_router");
+        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {
@@ -158,7 +185,7 @@ public class RouterManagementActivity
             @NotNull final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             updateFragment.setArguments(args);
-            updateFragment.show(getSupportFragmentManager(), "update_router");
+            updateFragment.show(getSupportFragmentManager(), UPDATE_ROUTER_FRAGMENT_TAG);
         } else {
             Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
         }
