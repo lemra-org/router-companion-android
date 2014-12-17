@@ -141,7 +141,7 @@
     <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues, so our monkeys can fix them all.</string>
     <string name="crash_ok_dialog_text">Select your favorite email client to review and report the issue. We\'ll look into the issue as soon as possible. Thank you very much.</string>
     <string name="title">Title</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="tile_status_router_router_state_title">Router State</string>
     <string name="router_state_tile_dl_rate">DL</string>
     <string name="router_state_tile_ul_rate">UL</string>
@@ -196,7 +196,7 @@
     <string name="wan_traffic_total_traffic">Total Traffic</string>
     <string name="clients">Clients</string>
     <string name="show_more">Show more</string>
-    <string name="fetching_ssid">Fetching SSID...</string>
+    <string name="fetching_ssid">Fetching SSID…</string>
     <string name="wireless_iface_iface">Interface</string>
     <string name="wireless_iface_radio">Radio</string>
     <string name="wireless_iface_mac">MAC Address</string>
@@ -209,8 +209,8 @@
     <string name="syslog">Syslog</string>
     <string name="enabled_disabled">Enabled Disabled</string>
     <string name="filter">Filter</string>
-    <string name="loading_router_name">Loading Router Name...</string>
-    <string name="fetching_wan_ip">Fetching WAN IP...</string>
+    <string name="loading_router_name">Loading Router Name…</string>
+    <string name="fetching_wan_ip">Fetching WAN IP…</string>
     <string name="router_state_model">Model</string>
     <string name="router_state_firmware">Firmware</string>
     <string name="router_state_kernel">Kernel</string>
@@ -221,10 +221,10 @@
     <string name="router_space_cifs">CIFS</string>
     <string name="router_space_jffs2">JFFS2</string>
     <string name="memory">Memory</string>
-    <string name="loading_total">Loading total...</string>
+    <string name="loading_total">Loading total…</string>
     <string name="router_mem_free">Free</string>
     <string name="router_mem_used">Used</string>
-    <string name="loading_clock">Loading Clock...</string>
+    <string name="loading_clock">Loading Clock…</string>
     <string name="router_cpu_cpu">CPU</string>
     <string name="router_cpu_cpu_model">CPU Model</string>
     <string name="router_cpu_cpu_cores">CPU Cores</string>
@@ -250,7 +250,18 @@
     <string name="ntp_timezone">Time Zone</string>
     <string name="ntp_client">NTP Client</string>
     <string name="time_settings">Time Settings</string>
-    <string name="loading_current_date">Loading current date...</string>
+    <string name="loading_current_date">Loading current date…</string>
     <string name="feedback">Feedback</string>
+    <string name="feedback_send">Send</string>
+    <string name="feedback_cancel">Cancel</string>
+    <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello? \\nWe would love to hear from you.</string>
+    <string name="feedback_dialog_comments_text">Type your valuable comments here…</string>
+    <string name="feedback_toast_msg">Thank you - we\'ll get back to you as soon as possible!</string>
+    <string name="feedback_bug">Bug</string>
+    <string name="feedback_idea">Idea</string>
+    <string name="feedback_question">Question</string>
+    <string name="feedback_reply_close">Close</string>
+    <string name="feedback_reply_rate">Rate!</string>
+    <string name="feedback_reply_title">Message from the Developer</string>
 
 </resources>

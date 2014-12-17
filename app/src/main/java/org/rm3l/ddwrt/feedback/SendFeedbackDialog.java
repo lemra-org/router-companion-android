@@ -24,6 +24,7 @@
 package org.rm3l.ddwrt.feedback;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import org.jetbrains.annotations.NotNull;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 public class SendFeedbackDialog {
@@ -44,28 +46,28 @@ public class SendFeedbackDialog {
     private final FeedbackDialog mFeedbackDialog;
 
     public SendFeedbackDialog(@NotNull final Context context) {
-//
+
+        final Resources resources = context.getResources();
         final FeedbackSettings feedbackSettings = new FeedbackSettings();
 
         //SUBMIT-CANCEL BUTTONS
-        feedbackSettings.setCancelButtonText("No");
-        feedbackSettings.setSendButtonText("Send");
+        feedbackSettings.setCancelButtonText(resources.getString(R.string.feedback_cancel));
+        feedbackSettings.setSendButtonText(resources.getString(R.string.feedback_send));
 
 //        //DIALOG TEXT
-//        feedbackSettings.setText("Hey, would you like to give us some feedback so that we can improve your experience?");
-//        feedbackSettings.setYourComments("Type your question here...");
-//        feedbackSettings.setTitle("Feedback Dialog Title");
+        feedbackSettings.setText(resources.getString(R.string.feedback_dialog_text));
+        feedbackSettings.setYourComments(resources.getString(R.string.feedback_dialog_comments_text));
+        feedbackSettings.setTitle(resources.getString(R.string.feedback));
 //
 //        //TOAST MESSAGE
-//        feedbackSettings.setToast("Thank you so much!");
-//        feedbackSettings.setToastDuration(Toast.LENGTH_SHORT);  // Default
+        feedbackSettings.setToast(resources.getString(R.string.feedback_toast_msg));
         feedbackSettings.setToastDuration(Toast.LENGTH_LONG);
 //
 //        //RADIO BUTTONS
 //        feedbackSettings.setRadioButtons(false); // Disables radio buttons
-        feedbackSettings.setBugLabel("Bug");
-        feedbackSettings.setIdeaLabel("Idea");
-        feedbackSettings.setQuestionLabel("Question");
+        feedbackSettings.setBugLabel(resources.getString(R.string.feedback_bug));
+        feedbackSettings.setIdeaLabel(resources.getString(R.string.feedback_idea));
+        feedbackSettings.setQuestionLabel(resources.getString(R.string.feedback_question));
 
 //        //RADIO BUTTONS ORIENTATION AND GRAVITY
 //        feedbackSettings.setOrientation(LinearLayout.HORIZONTAL); // Default
@@ -78,9 +80,9 @@ public class SendFeedbackDialog {
         feedbackSettings.setModal(true); //Default is false
 //
 //        //DEVELOPER REPLIES
-//        feedbackSettings.setReplyTitle("Message from the Developer");
-//        feedbackSettings.setReplyCloseButtonText("Close");
-//        feedbackSettings.setReplyRateButtonText("RATE!");
+        feedbackSettings.setReplyTitle(resources.getString(R.string.feedback_reply_title));
+        feedbackSettings.setReplyCloseButtonText(resources.getString(R.string.feedback_reply_close));
+        feedbackSettings.setReplyRateButtonText(resources.getString(R.string.feedback_reply_rate));
 //
 //        //DEVELOPER CUSTOM MESSAGE (NOT SEEN BY THE END USER)
         feedbackSettings.setDeveloperMessage(DDWRTCompanionConstants.PUBKEY);
