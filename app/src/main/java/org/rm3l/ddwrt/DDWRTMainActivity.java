@@ -169,7 +169,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.mRouterUuid = null;
         mFeedbackDialog.dismiss();
     }
 

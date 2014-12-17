@@ -35,6 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
+/**
+ * Feedback dialog and settings wrapper
+ */
 public class SendFeedbackDialog {
 
     /**
