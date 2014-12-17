@@ -90,7 +90,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @Nullable final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
