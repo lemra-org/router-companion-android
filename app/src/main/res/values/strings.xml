@@ -254,7 +254,7 @@
     <string name="feedback">Feedback</string>
     <string name="feedback_send">Send</string>
     <string name="feedback_cancel">Cancel</string>
-    <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello? \\nWe would love to hear from you.</string>
+    <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello?\nWe would love to hear from you.</string>
     <string name="feedback_dialog_comments_text">Type your valuable comments here…</string>
     <string name="feedback_toast_msg">Thank you - we\'ll get back to you as soon as possible!</string>
     <string name="feedback_bug">Bug</string>
