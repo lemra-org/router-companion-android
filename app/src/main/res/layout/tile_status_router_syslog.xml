@@ -42,36 +42,38 @@
         android:layout_weight="0.74"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
             <TextView
                 android:id="@+id/tile_status_router_syslog_title"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1.0"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="@string/syslog"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"/>
 
             <TextView
                 android:id="@+id/tile_status_router_syslog_state"
-                android:layout_width="215dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:singleLine="true"
-                android:textAppearance="?android:textAppearanceSmall" />
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/ddwrt_green"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"/>
 
-
-        </LinearLayout>
+        </RelativeLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -95,13 +97,15 @@
             android:visibility="gone" />
 
         <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="371dp">
+            android:layout_width="fill_parent"
+            android:layout_height="100dp">
 
             <TextView
                 android:id="@+id/tile_status_router_syslog_content"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:maxLines="30"/>
 
         </ScrollView>
 
@@ -117,10 +121,9 @@
                 android:id="@+id/tile_status_router_syslog_filter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.02">
-
-                <requestFocus />
-            </EditText>
+                android:layout_weight="1.02"
+                android:inputType="textFilter"
+                android:textColor="@color/primary_dark"/>
 
             <Button
                 android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"

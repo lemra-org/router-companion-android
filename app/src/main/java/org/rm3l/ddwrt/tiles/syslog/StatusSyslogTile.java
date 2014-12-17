@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -163,8 +164,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
-                logTextView
-                        .setText(logTextView.getText() + "\n" + data.getProperty(SYSLOG, ""));
+                logTextView.setMovementMethod(new ScrollingMovementMethod());
+                logTextView.append("\n" + data.getProperty(SYSLOG, ""));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
                 filterButton.setVisibility(View.VISIBLE);
