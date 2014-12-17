@@ -2,6 +2,7 @@
 &#8226; Evariste K. (translation fixes)
 &#8226; All of you supporting this app!
 <br/>
+<br/>
 
 <b><em>Third-party libs</em></b>:
 <a href="https://github.com/JakeWharton/ActionBarSherlock" target="_blank">ActionBarSherlock</a>
