@@ -277,7 +277,11 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onClick(@NotNull View view) {
+    public void onClick(@Nullable View view) {
+        if (view == null) {
+            return;
+        }
+
         if (view.getId() == R.id.router_list_add) {
             this.openAddRouterForm();
         } else if (view.getId() == R.id.container_list_item) {
