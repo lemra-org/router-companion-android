@@ -195,8 +195,13 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             final CardView cardView = new CardView(getSherlockActivity());
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
+
+            //Remove view prior to adding it again to parent
+            cardView.removeView(tileViewGroupLayout);
             cardView.addView(tileViewGroupLayout);
 
+            //Remove view prior to adding it again to parent
+            this.mLayout.removeView(cardView);
             this.mLayout.addView(cardView);
         }
 
