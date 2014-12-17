@@ -49,6 +49,7 @@ External libs used in this project
 * [Crouton](https://github.com/keyboardsurfer/Crouton)
 * [achartengine](https://code.google.com/p/achartengine/)
 * [android-donations-lib](https://github.com/dschuermann/android-donations-lib)
+* [android-feedback](http://www.android-feedback.com/)
 * and others listed in the [dependencies](app/build.gradle)
 
 
