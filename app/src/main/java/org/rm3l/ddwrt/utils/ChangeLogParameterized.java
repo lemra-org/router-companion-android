@@ -55,4 +55,10 @@ public class ChangeLogParameterized extends ChangeLog {
         }
         return log.replaceAll("%CURRENT_VERSION_CODE%", String.valueOf(BuildConfig.VERSION_CODE));
     }
+
+    public void handlePositiveButtonClick() {
+        //From: https://github.com/cketti/ckChangeLog/blob/master/ckChangeLog/src/main/java/de/cketti/library/changelog/ChangeLog.java#L284
+        // Action executed on click on PositiveButton: save the current version code as "last version code".
+        updateVersionInPreferences();
+    }
 }

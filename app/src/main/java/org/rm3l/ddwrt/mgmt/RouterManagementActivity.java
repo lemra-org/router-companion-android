@@ -88,7 +88,7 @@ public class RouterManagementActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
-
+    private ChangeLogParameterized mChangelogDialog;
     private FeedbackDialog mFeedbackDialog;
 
     @NotNull
@@ -134,29 +134,49 @@ public class RouterManagementActivity
         addNewButton = (ImageButton) findViewById(R.id.router_list_add);
         addNewButton.setOnClickListener(this);
 
-        //Changelog Popup
-        final ChangeLogParameterized cl = new ChangeLogParameterized(this);
-        if (cl.isFirstRun()) {
-            cl.getLogDialog().show();
-        }
-
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
-       if (mAdapter.getItemCount() == 0) {
-           this.openAddRouterForm();
-       }
+        //Changelog Popup
+        mChangelogDialog = new ChangeLogParameterized(this);
+        if (mChangelogDialog.isFirstRun()) {
+            final AlertDialog clLogDialog = mChangelogDialog.getLogDialog();
+            if (mAdapter.getItemCount() == 0) {
+                //Override click on Positive Button, so we can display the 'Add Router' Dialog when user closes the ChangeLog popup
+                clLogDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Call initial onclick listener
+                        mChangelogDialog.handlePositiveButtonClick();
+                        RouterManagementActivity.this.initOpenAddRouterFormIfNecessary();
+                    }
+                });
+            }
+            clLogDialog.show();
+        } else {
+            initOpenAddRouterFormIfNecessary();
+        }
 
+    }
+
+    private void initOpenAddRouterFormIfNecessary() {
+        if (mAdapter.getItemCount() == 0) {
+            this.openAddRouterForm();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mFeedbackDialog.dismiss();
+        mChangelogDialog.getLogDialog().dismiss();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        mFeedbackDialog.dismiss();
+        mChangelogDialog.getLogDialog().dismiss();
 
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
