@@ -140,6 +140,7 @@ public class RouterManagementActivity
         mChangelogDialog = new ChangeLogParameterized(this);
         if (mChangelogDialog.isFirstRun()) {
             final AlertDialog clLogDialog = mChangelogDialog.getLogDialog();
+            clLogDialog.show();
             if (mAdapter.getItemCount() == 0) {
                 //Override click on Positive Button, so we can display the 'Add Router' Dialog when user closes the ChangeLog popup
                 clLogDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -151,7 +152,6 @@ public class RouterManagementActivity
                     }
                 });
             }
-            clLogDialog.show();
         } else {
             initOpenAddRouterFormIfNecessary();
         }
