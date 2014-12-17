@@ -112,21 +112,31 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
                         //Add FW, Kernel and Uptime
-                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a");
-                        if (otherCmds != null && otherCmds.length >= 2) {
-                            //Uptime
-                            final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
-                            if (strings != null && strings.size() > 0) {
-                                nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
+                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a", "cat /tmp/loginprompt");
+                        if (otherCmds != null) {
+                            if (otherCmds.length >= 3) {
+                                //Uptime
+                                final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
+                                if (strings != null && strings.size() > 0) {
+                                    nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
+
+                                }
+
+                                //Kernel
+                                nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
+
+                                //Firmware
+                                //TODO Relying on loginprompt, since there is no easy way to get the info
+                                final String firmVer = otherCmds[2];
+                                String firmReleaseAndBuildNumber = null;
+                                if (otherCmds.length >= 4) {
+                                    firmReleaseAndBuildNumber = otherCmds[3];
+                                }
+
+                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, firmVer +
+                                        (firmReleaseAndBuildNumber != null ? (" - " + firmReleaseAndBuildNumber) : ""));
 
                             }
-
-                            //Kernel
-                            nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
-
-                            //Firmware
-                            //TODO
-
                         }
                     }
 
