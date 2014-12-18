@@ -208,7 +208,7 @@
     <string name="wireless_iface_encryption">Encryption</string>
     <string name="syslog">Syslog</string>
     <string name="enabled_disabled">Enabled Disabled</string>
-    <string name="filter">Filter</string>
+    <string name="find">Find</string>
     <string name="loading_router_name">Loading Router Name…</string>
     <string name="fetching_wan_ip">Fetching WAN IP…</string>
     <string name="router_state_model">Model</string>
@@ -263,6 +263,7 @@
     <string name="feedback_reply_close">Close</string>
     <string name="feedback_reply_rate">Rate!</string>
     <string name="feedback_reply_title">Message from the Developer</string>
-    <string name="syslog_filter_hint">Filter output here...</string>
+    <string name="syslog_filter_hint">Search…</string>
+    <string name="clear">Clear</string>
 
 </resources>

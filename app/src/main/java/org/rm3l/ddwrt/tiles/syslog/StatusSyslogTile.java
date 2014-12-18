@@ -26,21 +26,27 @@ package org.rm3l.ddwrt.tiles.syslog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -53,9 +59,13 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
  *
@@ -63,7 +73,10 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
-    public static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull("");
+    private static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
+    private static final String FONT_COLOR_YELLOW_HTML = "<font color='yellow'>";
+    private static final String SLASH_FONT_HTML = "</font>";
+    private static final String LAST_SEARCH = "lastSearch";
 
     public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
@@ -158,22 +171,107 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
-            final View filterEditText = this.layout.findViewById(R.id.tile_status_router_syslog_filter);
-//            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+            final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
+            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+            final View clearButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_clear_button);
+
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
             final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
-                logTextView.append("\n" + data.getProperty(SYSLOG, ""));
+
+                filterEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        filterButton.setEnabled(!isNullOrEmpty(filterEditText.getText().toString()));
+                    }
+                });
+
+                //Highlight textToFind for new log lines
+                String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
+                //noinspection ConstantConditions
+                Spanned newSyslogSpan = new SpannableString(newSyslog);
+
+                final SharedPreferences sharedPreferences = this.mParentFragmentPreferences;
+                final String existingSearch = sharedPreferences != null ?
+                        sharedPreferences.getString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+                if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
+                    filterEditText.setText(existingSearch);
+                    //noinspection ConstantConditions
+                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+                }
+
+                logTextView.append(new SpannableStringBuilder()
+                        .append(Html.fromHtml("<br/>"))
+                        .append(newSyslogSpan));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
-//                filterButton.setVisibility(View.VISIBLE);
+                filterButton.setVisibility(View.VISIBLE);
+                clearButton.setVisibility(View.VISIBLE);
+
+                clearButton.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       //Reset everything
+                       filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
+                       //Highlight text in textview
+                       final String currentText = logTextView.getText().toString();
+
+                       logTextView.setText(currentText
+                               .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                               .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
+
+                       if (sharedPreferences != null) {
+                           final SharedPreferences.Editor editor = sharedPreferences.edit();
+                           editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
+                           editor.apply();
+                       }
+                   }
+               });
+
+                filterButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String textToFind = filterEditText.getText().toString();
+                        if (isNullOrEmpty(textToFind)) {
+                            //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
+                            return;
+                        }
+                        if (sharedPreferences != null) {
+                            if (textToFind.equalsIgnoreCase(existingSearch)) {
+                                //No need to go further as this is already the string we are looking for
+                                return;
+                            }
+                            final SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), textToFind);
+                            editor.apply();
+                        }
+                        //Highlight text in textview
+                        final String currentText = logTextView.getText().toString();
+
+                        logTextView.setText(findAndHighlightOutput(currentText
+                                .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                                .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+                    }
+                });
             } else {
                 logTextView.setText(null);
                 syslogContentView.setVisibility(View.GONE);
                 filterEditText.setVisibility(View.GONE);
-//                filterButton.setVisibility(View.GONE);
+                filterButton.setVisibility(View.GONE);
+                clearButton.setVisibility(View.GONE);
             }
 
         }
@@ -200,6 +298,14 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 R.id.tile_status_router_syslog_togglebutton_title, R.id.tile_status_router_syslog_togglebutton);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+    }
+
+    @NotNull
+    private Spanned findAndHighlightOutput(@NotNull final CharSequence text, @NotNull final String textToFind) {
+        final Matcher matcher = Pattern.compile("(" + Pattern.quote(textToFind) + ")", Pattern.CASE_INSENSITIVE)
+                                    .matcher(text);
+        return Html.fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_YELLOW_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
+                .replaceAll(Pattern.quote("\n"), Matcher.quoteReplacement("<br/>")));
     }
 
     @Nullable

@@ -115,8 +115,12 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
     }
 
-    private String getAutoRefreshPreferenceKey() {
-        return this.getClass().getCanonicalName()+"::autoRefresh";
+    protected String getAutoRefreshPreferenceKey() {
+        return getFormattedPrefKey("autoRefresh");
+    }
+
+    protected String getFormattedPrefKey(@NotNull final String scope) {
+        return this.getClass().getCanonicalName()+"::"+scope;
     }
 
     @Nullable

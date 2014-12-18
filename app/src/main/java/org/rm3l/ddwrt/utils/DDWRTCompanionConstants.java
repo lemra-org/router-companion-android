@@ -47,6 +47,7 @@ public final class DDWRTCompanionConstants {
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
     public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
+    public static final String EMPTY_STRING = "";
 
     private DDWRTCompanionConstants() {
     }
