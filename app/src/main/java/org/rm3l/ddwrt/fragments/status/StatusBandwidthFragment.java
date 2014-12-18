@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
+import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthWANMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class StatusBandwidthFragment extends DDWRTBaseFragment<Collection<DDWRTT
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
                 new IfacesTile(this, savedInstanceState, router),
-                new BandwidthMonitoringTile(this, savedInstanceState, router));
+                new BandwidthWANMonitoringTile(this, savedInstanceState, router));
     }
 
 }

@@ -37,13 +37,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -52,47 +50,43 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.None;
-import org.rm3l.ddwrt.resources.RouterData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 /**
  *
  */
-public class BandwidthMonitoringTile extends DDWRTTile<None> {
+public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
-    //TODO TESTS ONLY
-    private static final boolean BW_MONIT_TEST = true;
-    //END TESTS ONLY
+    private static final String LOG_TAG = BandwidthWANMonitoringTile.class.getSimpleName();
 
-    public static final int MAX_DATA_POINTS = 50;
-    private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
     @NotNull
-    private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
+    private final BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+            new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
 
-    public BandwidthMonitoringTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    private String wanIface;
+
+    public BandwidthWANMonitoringTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
+    @Nullable
     @Override
     protected Loader<None> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
@@ -112,8 +106,85 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     }
                     nbRunsLoader++;
 
-                    //Get ifaces and fetch data points for each of these ifaces
-                    fillIfacesDataPoints(getIfaces());
+                    //Start by getting information about the WAN iface name
+                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_DEFAULT);
+                    if (nvRamInfoFromRouter == null) {
+                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+                    }
+
+                    wanIface = nvRamInfoFromRouter
+                            .getProperty(NVRAMInfo.WAN_DEFAULT);
+
+                    if (Strings.isNullOrEmpty(wanIface)) {
+                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+                    }
+
+                    @Nullable final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
+                        return null;
+                    }
+
+                    String netDevWanIface = netDevWanIfaces[0];
+                    if (netDevWanIface == null) {
+                        return null;
+                    }
+
+                    netDevWanIface = netDevWanIface.replaceAll(wanIface + ":", "");
+
+                    final List<String> netDevWanIfaceList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(netDevWanIface);
+                    if (netDevWanIfaceList == null || netDevWanIfaceList.size() <= 15) {
+                        return null;
+                    }
+
+                    final long timestamp = System.currentTimeMillis();
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_bytes", netDevWanIfaceList.get(0));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_packets", netDevWanIfaceList.get(1));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_errs", netDevWanIfaceList.get(2));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_drop", netDevWanIfaceList.get(3));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_fifo", netDevWanIfaceList.get(4));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_frame", netDevWanIfaceList.get(5));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_compressed", netDevWanIfaceList.get(6));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_multicast", netDevWanIfaceList.get(7));
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_bytes", netDevWanIfaceList.get(8));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_packets", netDevWanIfaceList.get(9));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_errs", netDevWanIfaceList.get(10));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_drop", netDevWanIfaceList.get(11));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_fifo", netDevWanIfaceList.get(12));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls", netDevWanIfaceList.get(13));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
+                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
+
+                    //Ingress
+                    double wanRcvMBytes;
+                    final String wanRcvBytes = nvRamInfoFromRouter.getProperty(wanIface + "_rcv_bytes", "-1");
+                    try {
+                        wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
+                        if (wanRcvMBytes >= 0.) {
+                            wanRcvMBytes = new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                            bandwidthMonitoringIfaceData.addData("IN", new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvMBytes));
+                        }
+                    } catch (@NotNull final NumberFormatException nfe) {
+                        return null;
+                    }
+                    nvRamInfoFromRouter.setProperty(wanIface + "_ingress_MB", Double.toString(wanRcvMBytes));
+
+                    //Egress
+                    double wanXmitMBytes;
+                    final String wanXmitBytes = nvRamInfoFromRouter.getProperty(wanIface + "_xmit_bytes", "-1");
+                    try {
+                        wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
+                        if (wanXmitMBytes >= 0.) {
+                            wanXmitMBytes = new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                            bandwidthMonitoringIfaceData.addData("OUT", new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitMBytes));
+                        }
+
+                    } catch (@NotNull final NumberFormatException nfe) {
+                        return null;
+                    }
+
+                    nvRamInfoFromRouter.setProperty(wanIface + "_egress_MB", Double.toString(wanXmitMBytes));
 
                     return new None();
 
@@ -125,82 +196,21 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         };
     }
 
-    @NotNull
-    private Collection<String> getIfaces() throws Exception {
-
-        //TODO TESTS: Real ifaces for DD-WRT Routers
-        //noinspection PointlessBooleanExpression,ConstantConditions
-        if (DDWRTCompanionConstants.TEST_MODE && (this.mRouter == null || !StringUtils.containsIgnoreCase(this.mRouter.getName(), "ddwrt"))) {
-            //FIXME TEST MODE
-            return Sets.newTreeSet(Arrays.asList("wlan0", "lan1", "eth2"));
-        }
-
-        final Set<String> ifacesConsidered = Sets.newHashSet();
-
-        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                NVRAMInfo.LAN_IFNAME,
-                NVRAMInfo.WAN_IFNAME,
-                NVRAMInfo.LANDEVS);
-
-        if (nvramInfo == null) {
-            return ifacesConsidered;
-        }
-
-        final String lanIfname = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAME);
-        if (lanIfname != null) {
-            ifacesConsidered.add(lanIfname);
-        }
-
-        final String wanIfname = nvramInfo.getProperty(NVRAMInfo.WAN_IFNAME);
-        if (wanIfname != null) {
-            ifacesConsidered.add(wanIfname);
-        }
-
-        final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-        if (landevs != null) {
-            final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
-            if (splitToList != null && !splitToList.isEmpty()) {
-                for (final String landev : splitToList) {
-                    if (landev == null) {
-                        continue;
-                    }
-                    ifacesConsidered.add(landev);
-                }
-            }
-        }
-
-        return ifacesConsidered;
-
-    }
-
-    private void fillIfacesDataPoints(final Collection<String> ifaces) {
-
-        for (String iface : ifaces) {
-            fillIfaceDataPoint(iface);
-        }
-    }
-
-    public void fillIfaceDataPoint(@NotNull final String iface) {
-
-        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST ) {
-            //FIXME TEST MODE
-            final double random = new Random().nextDouble() * 1024;
-
-            bandwidthMonitoringIfaceData.addData(iface,
-                    new DataPoint(System.currentTimeMillis(), random * Math.sqrt(random * Math.E)));
-        }
-
-        //FIXME Add real data down this line
-    }
-
+    @Nullable
     @Override
     protected String getLogTag() {
         return LOG_TAG;
     }
 
+    @Nullable
     @Override
-    public void onLoadFinished(@NotNull Loader<None> loader, @Nullable None data) {
-        //Set tiles
+    protected Intent getOnclickIntent() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<None> loader, None data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         //noinspection ConstantConditions
@@ -218,8 +228,12 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
+            ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title))
+                    .setText(this.mParentFragmentActivity.getResources()
+                            .getString(R.string.bandwidth_usage_mb) + ": " + wanIface);
+
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
-            final Map<String, EvictingQueue<DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
+            final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
 
             long maxX = System.currentTimeMillis() + 5000;
             long minX = System.currentTimeMillis() - 5000;
@@ -229,11 +243,11 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
             final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
 
-            for (final Map.Entry<String, EvictingQueue<DataPoint>> entry : dataCircularBuffer.entrySet()) {
+            for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
                 final String iface = entry.getKey();
-                final EvictingQueue<DataPoint> dataPoints = entry.getValue();
+                final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
                 final XYSeries series = new XYSeries(iface);
-                for (final DataPoint point : dataPoints) {
+                for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
                     final long x = point.getTimestamp();
                     final double y = point.getValue();
                     series.add(x, y);
@@ -319,76 +333,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
-    @Nullable
-    @Override
-    protected Intent getOnclickIntent() {
-        //TODO
-        return null;
-    }
 
-    public static class BandwidthMonitoringIfaceData extends RouterData<Map<String, EvictingQueue<DataPoint>>> {
 
-        public BandwidthMonitoringIfaceData() {
-            super();
-            super.setData(Maps.<String, EvictingQueue<DataPoint>>newConcurrentMap());
-        }
-
-        public BandwidthMonitoringIfaceData addData(final String iface, final DataPoint point) {
-            final Map<String, EvictingQueue<DataPoint>> data = super.getData();
-            @SuppressWarnings("ConstantConditions")
-            final EvictingQueue<DataPoint> dataPointsForIface = data.get(iface);
-            if (dataPointsForIface == null) {
-                data.put(iface, EvictingQueue.<DataPoint>create(MAX_DATA_POINTS));
-            }
-            data.get(iface).add(point);
-            return this;
-        }
-    }
-
-    public static class DataPoint {
-        private final long timestamp;
-        private final double value;
-
-        public DataPoint(long timestamp, double value) {
-            this.timestamp = timestamp;
-            this.value = value;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public double getValue() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            DataPoint dataPoint = (DataPoint) o;
-
-            return Objects.equal(dataPoint.timestamp, timestamp)
-                    && Objects.equal(dataPoint.value, value);
-        }
-
-        @Override
-        public int hashCode() {
-            int result;
-            long temp;
-            result = (int) (timestamp ^ (timestamp >>> 32));
-            temp = Double.doubleToLongBits(value);
-            result = 31 * result + (int) (temp ^ (temp >>> 32));
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "DataPoint{" +
-                    "timestamp=" + timestamp +
-                    ", value=" + value +
-                    '}';
-        }
-    }
 }
