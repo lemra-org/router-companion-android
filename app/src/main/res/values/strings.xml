@@ -265,5 +265,6 @@
     <string name="feedback_reply_title">Message from the Developer</string>
     <string name="syslog_filter_hint">Search…</string>
     <string name="clear">Clear</string>
+    <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
 
 </resources>

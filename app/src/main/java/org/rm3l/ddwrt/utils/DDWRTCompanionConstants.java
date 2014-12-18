@@ -49,6 +49,11 @@ public final class DDWRTCompanionConstants {
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String EMPTY_STRING = "";
 
+    public String[] mMonth = new String[] {
+            "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
+    };
+
     private DDWRTCompanionConstants() {
     }
 }
