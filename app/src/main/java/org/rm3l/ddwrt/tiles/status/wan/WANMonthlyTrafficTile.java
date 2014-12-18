@@ -38,7 +38,10 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +56,8 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +71,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
     public static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
 
-    private final Multimap<String, Double> traffData = ArrayListMultimap.create(36, 2);
+    private final Table<String, Integer, ArrayList<Double>> traffData = HashBasedTable.create(36, 31);
 
     public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
@@ -134,10 +139,13 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                         if (yearlyTraffDataList == null || yearlyTraffDataList.isEmpty()) {
                             continue;
                         }
+
+                        int dayNum = 0;
                         for (final String dailyInOutTraffData : yearlyTraffDataList) {
                             if (StringUtils.contains(dailyInOutTraffData, "[")) {
                                 continue;
                             }
+                            dayNum++;
                             final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
                             if (dailyInOutTraffDataList == null || dailyInOutTraffDataList.size() < 2) {
                                 continue;
@@ -145,8 +153,10 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                             final String inTraff = dailyInOutTraffDataList.get(0);
                             final String outTraff = dailyInOutTraffDataList.get(1);
 
-                            traffData.put(month, Double.parseDouble(inTraff));
-                            traffData.put(month, Double.parseDouble(outTraff));
+                            traffData.put(month, dayNum, Lists.newArrayList(
+                                    Double.parseDouble(inTraff), Double.parseDouble(outTraff)
+                            ));
+
                         }
                     }
 
