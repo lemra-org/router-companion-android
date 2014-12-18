@@ -163,7 +163,8 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                         wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
                         if (wanRcvMBytes >= 0.) {
                             wanRcvMBytes = new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                            bandwidthMonitoringIfaceData.addData("IN", new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvMBytes));
+                            bandwidthMonitoringIfaceData.addData("IN",
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvMBytes));
                         }
                     } catch (@NotNull final NumberFormatException nfe) {
                         return null;
@@ -177,7 +178,8 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                         wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
                         if (wanXmitMBytes >= 0.) {
                             wanXmitMBytes = new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                            bandwidthMonitoringIfaceData.addData("OUT", new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitMBytes));
+                            bandwidthMonitoringIfaceData.addData("OUT",
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitMBytes));
                         }
 
                     } catch (@NotNull final NumberFormatException nfe) {
