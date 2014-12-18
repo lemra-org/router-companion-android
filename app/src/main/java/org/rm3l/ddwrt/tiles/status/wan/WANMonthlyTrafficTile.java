@@ -31,6 +31,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,8 +57,10 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +74,10 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
     public static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
 
+    @NotNull
     private final Table<String, Integer, ArrayList<Double>> traffData = HashBasedTable.create(36, 31);
+
+    private String monthDisplayed;
 
     public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
@@ -80,6 +86,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
+
+        //TODO Add Ctrl Button Listeners here
 
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
@@ -214,7 +222,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
-            //TODO Display bar charts over here!
+            this.renderTraffDateForMonth(new SimpleDateFormat("MM-yyyy").format(new Date()));
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -244,6 +252,46 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+
+    }
+
+    private void renderTraffDateForMonth(@NotNull final String monthFormatted) {
+
+        final View first = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_first);
+        final View previous = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
+        final View current = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
+        final View next = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
+        final View last = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_last);
+
+        try {
+            //Activate Ctrl Buttons
+            first.setEnabled(false);
+            previous.setEnabled(false);
+            current.setEnabled(false);
+            next.setEnabled(false);
+            last.setEnabled(false);
+
+            final Map<Integer, ArrayList<Double>> dailyTraffMap = traffData.row(monthFormatted);
+
+            @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder);
+
+            if (dailyTraffMap == null || dailyTraffMap.isEmpty()) {
+                //TODO Replace graphPlaceHolder with a textview with "No Data"
+                return;
+            }
+
+            this.monthDisplayed = monthFormatted;
+
+            //TODO Display In/Out bar charts over here
+
+        } finally {
+            //Activate Ctrl Buttons
+            first.setEnabled(true);
+            previous.setEnabled(true);
+            current.setEnabled(true);
+            next.setEnabled(true);
+            last.setEnabled(true);
+        }
 
     }
 }

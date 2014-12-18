@@ -266,5 +266,10 @@
     <string name="syslog_filter_hint">Search…</string>
     <string name="clear">Clear</string>
     <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
+    <string name="first_sign"><![CDATA[<<]]></string>
+    <string name="previous_sign"><![CDATA[<]]></string>
+    <string name="current_month">Curr</string>
+    <string name="next_sign"><![CDATA[>]]></string>
+    <string name="last_sign"><![CDATA[>>]]></string>
 
 </resources>

@@ -89,6 +89,53 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/first_sign"
+                android:enabled="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/previous_sign"
+                android:enabled="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_month"
+                android:enabled="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next_sign"
+                android:enabled="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_last"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/last_sign"
+                android:enabled="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+            </LinearLayout>
+
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
