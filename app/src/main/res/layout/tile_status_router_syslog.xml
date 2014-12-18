@@ -98,7 +98,7 @@
 
         <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="385dp">
+            android:layout_height="246dp">
 
             <TextView
                 android:id="@+id/tile_status_router_syslog_content"
@@ -124,9 +124,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.02"
                 android:inputType="textFilter"
-                android:textColor="@color/primary_dark"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:hint="@string/syslog_filter_hint"/>
+                android:hint="@string/syslog_filter_hint"
+                android:drawableBottom="@android:color/holo_blue_dark"/>
 
         </LinearLayout>
 
