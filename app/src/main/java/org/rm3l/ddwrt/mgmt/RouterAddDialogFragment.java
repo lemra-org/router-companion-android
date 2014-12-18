@@ -92,7 +92,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         @NotNull final AlertDialog d = (AlertDialog) getDialog();
         //Fill the router IP Address with the current gateway address, if any
         try {
-            @NotNull final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+            final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null) {
                 final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
                 if (dhcpInfo != null) {
