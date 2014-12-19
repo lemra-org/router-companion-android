@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -61,8 +62,8 @@ public abstract class AbstractDDWRTSettingsActivity extends SherlockActivity {
                     }
                 }
 
-            } else {
-                // For all other preferences, set the summary to the value's
+            } else if (!(preference instanceof CheckBoxPreference)) {
+                // For all other preferences (but CheckBoxPreferences), set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
