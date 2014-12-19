@@ -272,5 +272,6 @@
     <string name="next_sign"><![CDATA[>]]></string>
     <string name="last_sign"><![CDATA[>>]]></string>
     <string name="display">Display</string>
+    <string name="pref_title_tab_sorting_strategy">Tab Sorting Strategy</string>
 
 </resources>

@@ -14,16 +14,13 @@
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+    <string-array name="pref_sorting_strategy_titles">
+        <item>DDWRT Style</item>
+        <item>Natural Order</item>
     </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+    <string-array name="pref_sorting_strategy_values">
+        <item>DDWRTSortingStrategy</item>
+        <item>NaturalOrderSortingStrategy</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->
@@ -31,21 +28,23 @@
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
+        <item>10 seconds</item>
+        <item>30 seconds</item>
+        <item>90 seconds</item>
+        <item>5 minutes</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
         <item>Never</item>
     </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
+    <integer-array name="pref_sync_frequency_values">
+        <item>10000</item>
+        <item>30000</item>
+        <item>90000</item>
+        <item>300000</item>
+        <item>900000</item>
+        <item>1800000</item>
         <item>-1</item>
-    </string-array>
+    </integer-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
