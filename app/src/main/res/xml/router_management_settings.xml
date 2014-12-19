@@ -10,7 +10,8 @@
             android:title="Connection Check"
             android:summary="Always check actual connection prior to adding or updating an entry"
             android:key="alwaysCheckConnection"
-            android:enabled="true"/>
+            android:enabled="true"
+            android:defaultValue="true"/>
 
     </PreferenceCategory>
 

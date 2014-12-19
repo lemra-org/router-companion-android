@@ -30,6 +30,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
@@ -102,6 +103,9 @@ public class RouterManagementActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_router_management);
 
+        //Default values are not set by default
+        //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
+        PreferenceManager.setDefaultValues(this, R.xml.router_management_settings, false);
 
         this.dao = getDao(this);
 
