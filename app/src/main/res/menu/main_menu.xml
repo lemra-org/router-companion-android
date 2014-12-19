@@ -24,13 +24,13 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/action_refresh"
-        android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_menu_refresh"
-        android:orderInCategory="1"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_refresh" />
+    <!--<item-->
+        <!--android:id="@+id/action_refresh"-->
+        <!--android:alphabeticShortcut="r"-->
+        <!--android:icon="@drawable/ic_menu_refresh"-->
+        <!--android:orderInCategory="1"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/menuitem_refresh" />-->
 
     <item
         android:id="@+id/action_feedback"

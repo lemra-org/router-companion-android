@@ -25,6 +25,7 @@
 package org.rm3l.ddwrt;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -193,20 +195,23 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 }
                 return true;
             }
-            case R.id.action_refresh:
-                Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
-                //FIXME Refresh all tiles currently visible
-                setRefreshActionButtonState(true);
-//                if (this.mCurrentRefreshAsyncTask != null) {
-//                    this.mCurrentRefreshAsyncTask.cancel(true);
-//                }
-//                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
-//                this.mCurrentRefreshAsyncTask.execute();
-                return true;
+//            case R.id.action_refresh:
+//                //Disabled for now
+//                Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
+//                //FIXME Refresh all tiles currently visible
+//                setRefreshActionButtonState(true);
+////                if (this.mCurrentRefreshAsyncTask != null) {
+////                    this.mCurrentRefreshAsyncTask.cancel(true);
+////                }
+////                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
+////                this.mCurrentRefreshAsyncTask.execute();
+//                return true;
 
             case R.id.action_settings:
-                //TODO Open Settings activity
-                Toast.makeText(this.getApplicationContext(), "Settings selected", Toast.LENGTH_SHORT).show();
+                //Open Settings activity for this item
+                final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
+                ddWrtMainIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, this.mRouterUuid);
+                this.startActivity(ddWrtMainIntent);
                 return true;
             case R.id.action_donate:
                 Utils.openDonateActivity(this);

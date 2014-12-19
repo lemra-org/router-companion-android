@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ The MIT License (MIT)
   ~
   ~ Copyright (c) 2014 Armel S.
@@ -20,10 +21,9 @@
   ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.rm3l.ddwrt">
+    package="org.rm3l.ddwrt" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -37,48 +37,59 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
-        android:name="org.rm3l.ddwrt.DDWRTApplication"
+        android:name=".DDWRTApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock">
-
+        android:theme="@style/Theme.Sherlock" >
         <activity
-            android:name="org.rm3l.ddwrt.mgmt.RouterManagementActivity"
-            android:label="@string/app_name">
+            android:name=".mgmt.RouterManagementActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.rm3l.ddwrt.DDWRTMainActivity"
+            android:name=".DDWRTMainActivity"
             android:label="@string/app_name"
-            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
-
+            android:parentActivityName=".mgmt.RouterManagementActivity" />
         <activity
-            android:name="org.rm3l.ddwrt.donate.DonateActivity"
+            android:name=".donate.DonateActivity"
             android:excludeFromRecents="true"
             android:label="@string/support_app"
             android:launchMode="singleInstance" />
-
         <activity
             android:name="org.acra.CrashReportDialog"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Dialog" />
-
-        <activity android:name="org.achartengine.GraphicalActivity"
+        <activity
+            android:name="org.achartengine.GraphicalActivity"
             android:excludeFromRecents="true"
             android:label="Chart"
             android:launchMode="singleInstance"
-            android:parentActivityName=".DDWRTMainActivity"/>
-
+            android:parentActivityName=".DDWRTMainActivity" />
+        <activity
+            android:name=".settings.RouterSettingsActivity"
+            android:label="@string/title_activity_router_settings"
+            android:parentActivityName=".DDWRTMainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
     </application>
 
 </manifest>
