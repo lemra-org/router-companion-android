@@ -134,6 +134,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"
                 android:text="@string/find"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:enabled="true"/>
 
             <Button
@@ -141,6 +142,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tile_status_router_syslog_send_filter_clear_button"
                 android:text="@string/clear"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:enabled="true"/>
 
         </LinearLayout>
