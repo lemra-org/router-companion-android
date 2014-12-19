@@ -15,7 +15,7 @@
     <string name="pref_default_display_name">John Smith</string>
 
     <string-array name="pref_sorting_strategy_titles">
-        <item>DDWRT Style</item>
+        <item>DD-WRT Style</item>
         <item>Natural Order</item>
     </string-array>
     <string-array name="pref_sorting_strategy_values">
@@ -36,7 +36,7 @@
         <item>30 minutes</item>
         <item>Never</item>
     </string-array>
-    <integer-array name="pref_sync_frequency_values">
+    <string-array name="pref_sync_frequency_values">
         <item>10000</item>
         <item>30000</item>
         <item>90000</item>
@@ -44,7 +44,7 @@
         <item>900000</item>
         <item>1800000</item>
         <item>-1</item>
-    </integer-array>
+    </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 

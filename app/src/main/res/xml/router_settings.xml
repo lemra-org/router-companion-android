@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- General -->
+    <PreferenceCategory
+        android:title="General"
+        android:key="@string/pref_header_general">
+
+        <ListPreference
+            android:key="sortingStrategy"
+            android:title="@string/pref_title_tab_sorting_strategy"
+            android:defaultValue="DDWRTSortingStrategy"
+            android:entries="@array/pref_sorting_strategy_titles"
+            android:entryValues="@array/pref_sorting_strategy_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+    </PreferenceCategory>
+
+    <!-- Data & Sync -->
+    <PreferenceCategory
+        android:title="Data &amp; Sync"
+        android:key="@string/pref_header_data_sync">
+
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:key="syncIntervalMillis"
+            android:title="@string/pref_title_sync_frequency"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:defaultValue="30000"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
