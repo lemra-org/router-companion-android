@@ -24,20 +24,24 @@
 
 package org.rm3l.ddwrt;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -52,9 +56,16 @@ import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+
+import java.util.List;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -66,6 +77,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
+    public static final int ROUTER_SETTINGS_ACTIVITY_CODE = 1;
+    public static final String IS_SORTING_STRATEGY_CHANGED = "isSortingStrategyChanged";
+
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -81,6 +95,11 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     private int mPosition = 0;
 
     private FeedbackDialog mFeedbackDialog;
+
+    private String mCurrentSortingStrategy;
+
+    @NotNull
+    private SharedPreferences mPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +121,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
 
         this.mRouterUuid = router.getUuid();
+
+        this.mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
 
         mTitle = mDrawerTitle = getTitle();
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
@@ -154,6 +175,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 mDrawerList.getAdapter().getItemId(position));
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+
+        //Load from Shared Preferences
+        this.mCurrentSortingStrategy = this.mPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,"");
     }
 
     @Override
@@ -211,7 +235,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 //Open Settings activity for this item
                 final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
                 ddWrtMainIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, this.mRouterUuid);
-                this.startActivity(ddWrtMainIntent);
+                this.startActivityForResult(ddWrtMainIntent, ROUTER_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.action_donate:
                 Utils.openDonateActivity(this);
@@ -228,6 +252,31 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == ROUTER_SETTINGS_ACTIVITY_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                if (!this.mCurrentSortingStrategy
+                        .equals(this.mPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,""))) {
+                    //Reload UI
+                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                            startActivity(getIntent());
+                            alertDialog.cancel();
+                        }
+                    }, 2000);
+                }
+            }
+        }
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
