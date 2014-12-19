@@ -103,7 +103,6 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/one_space"
-                android:textColor="@color/ddwrt_green"
                 android:textStyle="bold" />
 
             <Button
@@ -112,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/display"
                 android:visibility="gone"
+                android:textColor="@color/ddwrt_green"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         </LinearLayout>

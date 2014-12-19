@@ -113,7 +113,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             public void afterTextChanged(Editable s) {
                 final String toDisplay = monthYearTextViewToDisplay.getText().toString();
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
-                        .setEnabled(SIMPLE_DATE_FORMAT.format(new Date()).equals(toDisplay));
+                        .setEnabled(!SIMPLE_DATE_FORMAT.format(new Date()).equals(toDisplay));
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
                         .setVisibility(isNullOrEmpty(toDisplay) ? View.GONE : View.VISIBLE);
             }
