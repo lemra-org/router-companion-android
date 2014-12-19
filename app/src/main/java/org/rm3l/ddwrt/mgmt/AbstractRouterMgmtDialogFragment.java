@@ -63,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -308,9 +309,12 @@ public abstract class AbstractRouterMgmtDialogFragment
             router.setPrivKey(privkey, true);
         }
 
-        //This will throw an exception if connection could not be established!
-        SSHUtils.checkConnection(router, 10000);
-
+        //Check for flag preference
+        if (getSherlockActivity().getPreferences(Context.MODE_PRIVATE)
+                .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true)) {
+            //This will throw an exception if connection could not be established!
+            SSHUtils.checkConnection(router, 10000);
+        }
         return router;
     }
 

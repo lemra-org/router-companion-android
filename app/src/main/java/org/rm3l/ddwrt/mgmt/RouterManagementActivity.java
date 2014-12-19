@@ -61,6 +61,7 @@ import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.ChangeLogParameterized;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -246,7 +247,7 @@ public class RouterManagementActivity
                 new AboutDialog(this).show();
                 return true;
             case R.id.router_list_settings:
-                Toast.makeText(this, "[TODO] RouterManagementActivity - Settings", Toast.LENGTH_SHORT).show();
+                this.startActivity(new Intent(this, RouterManagementSettingsActivity.class));
                 return true;
             case R.id.router_list_feedback:
                 mFeedbackDialog.show();

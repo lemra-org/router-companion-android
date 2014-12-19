@@ -37,13 +37,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <android:uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
 
     <application
         android:name=".DDWRTApplication"
@@ -64,7 +60,11 @@
         <activity
             android:name=".DDWRTMainActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".mgmt.RouterManagementActivity" />
+            android:parentActivityName=".mgmt.RouterManagementActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
+        </activity>
         <activity
             android:name=".donate.DonateActivity"
             android:excludeFromRecents="true"
@@ -81,7 +81,12 @@
             android:excludeFromRecents="true"
             android:label="Chart"
             android:launchMode="singleInstance"
-            android:parentActivityName=".DDWRTMainActivity" />
+            android:parentActivityName=".DDWRTMainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
         <activity
             android:name=".settings.RouterSettingsActivity"
             android:label="@string/title_activity_router_settings"
@@ -90,6 +95,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
+
+        <activity
+            android:name=".settings.RouterManagementSettingsActivity"
+            android:label="@string/title_activity_router_settings"
+            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
+        </activity>
+
     </application>
 
 </manifest>

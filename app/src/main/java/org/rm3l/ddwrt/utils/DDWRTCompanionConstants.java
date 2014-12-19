@@ -48,6 +48,7 @@ public final class DDWRTCompanionConstants {
     public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String EMPTY_STRING = "";
+    public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
 
     public String[] mMonth = new String[] {
             "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
