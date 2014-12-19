@@ -34,7 +34,8 @@
         <item>5 minutes</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
-        <item>Never</item>
+        <!-- TODO Never will be relevant when a 'Refresh' button will be available -->
+        <!--<item>Never</item>-->
     </string-array>
     <string-array name="pref_sync_frequency_values">
         <item>10000</item>
@@ -43,7 +44,7 @@
         <item>300000</item>
         <item>900000</item>
         <item>1800000</item>
-        <item>-1</item>
+        <!--<item>-1</item>-->
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
