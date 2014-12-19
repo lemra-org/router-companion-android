@@ -271,5 +271,6 @@
     <string name="current_month">Curr</string>
     <string name="next_sign"><![CDATA[>]]></string>
     <string name="last_sign"><![CDATA[>>]]></string>
+    <string name="display">Display</string>
 
 </resources>

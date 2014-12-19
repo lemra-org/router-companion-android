@@ -73,6 +73,12 @@
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Dialog" />
 
+        <activity android:name="org.achartengine.GraphicalActivity"
+            android:excludeFromRecents="true"
+            android:label="Chart"
+            android:launchMode="singleInstance"
+            android:parentActivityName=".DDWRTMainActivity"/>
+
     </application>
 
 </manifest>

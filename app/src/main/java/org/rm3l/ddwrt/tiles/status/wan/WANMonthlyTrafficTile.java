@@ -24,13 +24,18 @@
 
 package org.rm3l.ddwrt.tiles.status.wan;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,6 +43,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
@@ -64,6 +70,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +80,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  *
  */
@@ -80,22 +89,40 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
-    public static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
+    private static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
 
     @NotNull
     private final Table<String, Integer, ArrayList<Double>> traffData = HashBasedTable.create(36, 31);
 
-    private String monthDisplayed;
-
     public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
+        final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
+        monthYearTextViewToDisplay.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                final String toDisplay = monthYearTextViewToDisplay.getText().toString();
+                WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
+                        .setEnabled(SIMPLE_DATE_FORMAT.format(new Date()).equals(toDisplay));
+                WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
+                        .setVisibility(isNullOrEmpty(toDisplay) ? View.GONE : View.VISIBLE);
+            }
+        });
     }
 
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-
-        //TODO Add Ctrl Button Listeners here
 
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
@@ -104,6 +131,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
+
                     Log.d(LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -212,7 +240,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 if (!"1".equals(data.getProperty("ttraff_enable"))) {
                     preliminaryCheckException = new IllegalStateException("Traffic monitoring disabled!");
                 } else if (traffData.isEmpty()) {
-                    preliminaryCheckException = new DDWRTNoDataException("No Data!");
+                    preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
             }
         }
 
@@ -226,7 +254,85 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         if (exception == null) {
             errorPlaceHolderView.setVisibility(View.GONE);
-            this.renderTraffDateForMonth(new SimpleDateFormat("MM-yyyy").format(new Date()));
+
+            final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
+            final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
+
+            final Date currentDate = new Date();
+            final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
+                    SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
+
+            final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
+
+            //TODO Load last value from preferences
+            monthYearDisplayed.setText(currentMonthYear);
+
+            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent intent = WANMonthlyTrafficTile.this.renderTraffDateForMonth(monthYearDisplayed.getText().toString());
+                    if (intent == null) {
+                        Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
+                                String.format("No traffic data for '%s'", monthYearDisplayed.getText()), Toast.LENGTH_SHORT).show();
+                    } else {
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                String.format("Loading traffic data for '%s'", monthYearDisplayed.getText()), false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                WANMonthlyTrafficTile.this.mParentFragmentActivity.startActivity(intent);
+                                alertDialog.cancel();
+                            }
+                        }, 2500);
+                    }
+                }
+            });
+
+            currentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    monthYearDisplayed.setText(SIMPLE_DATE_FORMAT.format(currentDate));
+                }
+            });
+
+            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
+                    if (currentYearMonth.length < 2) {
+                        return;
+                    }
+
+                    final int currentMonth = currentYearMonth[1];
+                    final int currentYear = currentYearMonth[0];
+
+                    final int previousMonth = currentMonth-1;
+                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear-1)) : (previousMonth + "-" + currentYear));
+
+                    monthYearDisplayed.setText(previousMonthYear);
+                }
+            });
+
+            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
+                    if (currentYearMonth.length < 2) {
+                        return;
+                    }
+
+                    final int currentMonth = currentYearMonth[1];
+                    final int currentYear = currentYearMonth[0];
+                    final int nextMonth = currentMonth+1;
+                    final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear+1)) :
+                            (((nextMonth <= 9) ? ("0" + nextMonth) : nextMonth) + "-" + currentYear));
+
+                    monthYearDisplayed.setText(nextMonthYear);
+                }
+            });
         }
 
 //        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -261,118 +367,99 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             }
         }
 
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+        doneWithLoaderInstance(this, loader);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
     }
 
-    private void renderTraffDateForMonth(@NotNull final String monthFormatted) {
+    @NotNull
+    private int[] getCurrentYearAndMonth(final Date currentDate, final String monthYearDisplayed) {
+        final int[] currentYearAndMonth = new int[2];
+
+        String monthDisplayed = null;
+        String yearDisplayed = null;
+        final List<String> monthYearTextViewSplit = Splitter.on("-").omitEmptyStrings().splitToList(monthYearDisplayed);
+        if (monthYearTextViewSplit != null && monthYearTextViewSplit.size() >= 2) {
+            monthDisplayed = monthYearTextViewSplit.get(0);
+            yearDisplayed = monthYearTextViewSplit.get(1);
+        }
+
+        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ? new SimpleDateFormat("yyyy").format(currentDate) : yearDisplayed);
+        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ? new SimpleDateFormat("MM").format(currentDate) : monthDisplayed);
+
+        return currentYearAndMonth;
+    }
+
+    private Intent renderTraffDateForMonth(@NotNull final String monthFormatted) {
 
         Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted);
 
-        final View first = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_first);
-        final View previous = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
-        final View current = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
-        final View next = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
-        final View last = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_last);
+        final Map<Integer, ArrayList<Double>> dailyTraffMap = traffData.row(monthFormatted);
 
-        try {
-            //Activate Ctrl Buttons
-            first.setEnabled(false);
-            previous.setEnabled(false);
-            current.setEnabled(false);
-            next.setEnabled(false);
-            last.setEnabled(false);
-
-            final Map<Integer, ArrayList<Double>> dailyTraffMap = traffData.row(monthFormatted);
-
-            @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder);
-
-            if (dailyTraffMap == null || dailyTraffMap.isEmpty()) {
-                //TODO Replace graphPlaceHolder with a textview with "No Data"
-                return;
-            }
-
-            Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted + " / dailyTraffMap=" + dailyTraffMap);
-
-            this.monthDisplayed = monthFormatted;
-
-            //TODO TEST Display In/Out bar charts over here
-            int[] x = { 0,1,2,3,4,5,6,7 };
-
-            int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
-            int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
-
-            // Creating an  XYSeries for Income
-            XYSeries incomeSeries = new XYSeries("Income");
-            // Creating an  XYSeries for Expense
-            XYSeries expenseSeries = new XYSeries("Expense");
-            // Adding data to Income and Expense Series
-            for(int i=0;i<x.length;i++){
-                incomeSeries.add(i,income[i]);
-                expenseSeries.add(i,expense[i]);
-            }
-
-            // Creating a dataset to hold each series
-            XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-            // Adding Income Series to the dataset
-            dataset.addSeries(incomeSeries);
-            // Adding Expense Series to dataset
-            dataset.addSeries(expenseSeries);
-
-            // Creating XYSeriesRenderer to customize incomeSeries
-            XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
-            incomeRenderer.setColor(Color.rgb(130, 130, 230));
-            incomeRenderer.setFillPoints(true);
-            incomeRenderer.setLineWidth(2);
-            incomeRenderer.setDisplayChartValues(true);
-
-            // Creating XYSeriesRenderer to customize expenseSeries
-            XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
-            expenseRenderer.setColor(Color.rgb(220, 80, 80));
-            expenseRenderer.setFillPoints(true);
-            expenseRenderer.setLineWidth(2);
-            expenseRenderer.setDisplayChartValues(true);
-
-            // Creating a XYMultipleSeriesRenderer to customize the whole chart
-            XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-            multiRenderer.setXLabels(0);
-            multiRenderer.setChartTitle("Income vs Expense Chart");
-            multiRenderer.setXTitle("Year 2012");
-            multiRenderer.setYTitle("Amount in Dollars");
-            multiRenderer.setZoomButtonsVisible(true);
-            for(int i=0; i< x.length;i++){
-                multiRenderer.addXTextLabel(i, String.valueOf(i));
-            }
-
-            // Adding incomeRenderer and expenseRenderer to multipleRenderer
-            // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
-            // should be same
-            multiRenderer.addSeriesRenderer(incomeRenderer);
-            multiRenderer.addSeriesRenderer(expenseRenderer);
-
-            final GraphicalView chartView = ChartFactory.getBarChartView(graphPlaceHolder
-                    .getContext(), dataset, multiRenderer, BarChart.Type.DEFAULT);
-            chartView.repaint();
-
-            graphPlaceHolder.addView(chartView, 0);
-            //TODO END TEST
-
-        } finally {
-            //Activate Ctrl Buttons
-            first.setVisibility(View.VISIBLE);
-            first.setEnabled(true);
-            previous.setVisibility(View.VISIBLE);
-            previous.setEnabled(true);
-            current.setVisibility(View.VISIBLE);
-            current.setEnabled(true);
-            next.setVisibility(View.VISIBLE);
-            next.setEnabled(true);
-            last.setVisibility(View.VISIBLE);
-            last.setEnabled(true);
+        if (dailyTraffMap == null || dailyTraffMap.isEmpty()) {
+            return null;
         }
+
+        Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted + " / dailyTraffMap=" + dailyTraffMap);
+
+        //TODO TEST Display In/Out bar charts over here
+        int[] x = { 0,1,2,3,4,5,6,7 };
+
+        int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
+        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
+
+        // Creating an  XYSeries for Income
+        XYSeries incomeSeries = new XYSeries("Income");
+        // Creating an  XYSeries for Expense
+        XYSeries expenseSeries = new XYSeries("Expense");
+        // Adding data to Income and Expense Series
+        for(int i=0;i<x.length;i++){
+            incomeSeries.add(i,income[i]);
+            expenseSeries.add(i,expense[i]);
+        }
+
+        // Creating a dataset to hold each series
+        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+        // Adding Income Series to the dataset
+        dataset.addSeries(incomeSeries);
+        // Adding Expense Series to dataset
+        dataset.addSeries(expenseSeries);
+
+        // Creating XYSeriesRenderer to customize incomeSeries
+        XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
+        incomeRenderer.setColor(Color.rgb(130, 130, 230));
+        incomeRenderer.setFillPoints(true);
+        incomeRenderer.setLineWidth(2);
+        incomeRenderer.setDisplayChartValues(true);
+
+        // Creating XYSeriesRenderer to customize expenseSeries
+        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
+        expenseRenderer.setColor(Color.rgb(220, 80, 80));
+        expenseRenderer.setFillPoints(true);
+        expenseRenderer.setLineWidth(2);
+        expenseRenderer.setDisplayChartValues(true);
+
+        // Creating a XYMultipleSeriesRenderer to customize the whole chart
+        XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+        multiRenderer.setXLabels(0);
+        multiRenderer.setChartTitle("Traffic Data for '" + monthFormatted + "'");
+        multiRenderer.setXTitle("Days");
+        multiRenderer.setYTitle("Traffic (MB)");
+        multiRenderer.setZoomButtonsVisible(true);
+        for(int i=0; i< x.length;i++){
+            multiRenderer.addXTextLabel(i, String.valueOf(i));
+        }
+
+        // Adding incomeRenderer and expenseRenderer to multipleRenderer
+        // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
+        // should be same
+        multiRenderer.addSeriesRenderer(incomeRenderer);
+        multiRenderer.addSeriesRenderer(expenseRenderer);
+
+        return ChartFactory.getBarChartIntent(this.mParentFragmentActivity, dataset, multiRenderer, BarChart.Type.DEFAULT);
+        //TODO END TEST
+
 
     }
 }
