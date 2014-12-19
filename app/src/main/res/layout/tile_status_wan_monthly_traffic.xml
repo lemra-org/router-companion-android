@@ -100,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/first_sign"
                 android:enabled="false"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <Button
@@ -107,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/previous_sign"
-                android:enabled="false"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <Button
@@ -115,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/current_month"
-                android:enabled="false"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <Button
@@ -123,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_sign"
-                android:enabled="false"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <Button
@@ -131,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/last_sign"
-                android:enabled="false"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             </LinearLayout>

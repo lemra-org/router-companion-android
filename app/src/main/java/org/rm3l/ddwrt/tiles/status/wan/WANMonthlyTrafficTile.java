@@ -26,6 +26,7 @@ package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -44,6 +45,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.BarChart;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -216,14 +224,19 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         @Nullable final Exception exception = data.getException();
 
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
-            }
-
+        if (exception == null) {
+            errorPlaceHolderView.setVisibility(View.GONE);
             this.renderTraffDateForMonth(new SimpleDateFormat("MM-yyyy").format(new Date()));
         }
+
+//        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+//
+//            if (exception == null) {
+//                errorPlaceHolderView.setVisibility(View.GONE);
+//            }
+//
+//            this.renderTraffDateForMonth(new SimpleDateFormat("MM-yyyy").format(new Date()));
+//        }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
@@ -257,6 +270,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     private void renderTraffDateForMonth(@NotNull final String monthFormatted) {
 
+        Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted);
+
         final View first = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_first);
         final View previous = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
         final View current = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
@@ -280,16 +295,82 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 return;
             }
 
+            Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted + " / dailyTraffMap=" + dailyTraffMap);
+
             this.monthDisplayed = monthFormatted;
 
-            //TODO Display In/Out bar charts over here
+            //TODO TEST Display In/Out bar charts over here
+            int[] x = { 0,1,2,3,4,5,6,7 };
+
+            int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
+            int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
+
+            // Creating an  XYSeries for Income
+            XYSeries incomeSeries = new XYSeries("Income");
+            // Creating an  XYSeries for Expense
+            XYSeries expenseSeries = new XYSeries("Expense");
+            // Adding data to Income and Expense Series
+            for(int i=0;i<x.length;i++){
+                incomeSeries.add(i,income[i]);
+                expenseSeries.add(i,expense[i]);
+            }
+
+            // Creating a dataset to hold each series
+            XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+            // Adding Income Series to the dataset
+            dataset.addSeries(incomeSeries);
+            // Adding Expense Series to dataset
+            dataset.addSeries(expenseSeries);
+
+            // Creating XYSeriesRenderer to customize incomeSeries
+            XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
+            incomeRenderer.setColor(Color.rgb(130, 130, 230));
+            incomeRenderer.setFillPoints(true);
+            incomeRenderer.setLineWidth(2);
+            incomeRenderer.setDisplayChartValues(true);
+
+            // Creating XYSeriesRenderer to customize expenseSeries
+            XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
+            expenseRenderer.setColor(Color.rgb(220, 80, 80));
+            expenseRenderer.setFillPoints(true);
+            expenseRenderer.setLineWidth(2);
+            expenseRenderer.setDisplayChartValues(true);
+
+            // Creating a XYMultipleSeriesRenderer to customize the whole chart
+            XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+            multiRenderer.setXLabels(0);
+            multiRenderer.setChartTitle("Income vs Expense Chart");
+            multiRenderer.setXTitle("Year 2012");
+            multiRenderer.setYTitle("Amount in Dollars");
+            multiRenderer.setZoomButtonsVisible(true);
+            for(int i=0; i< x.length;i++){
+                multiRenderer.addXTextLabel(i, String.valueOf(i));
+            }
+
+            // Adding incomeRenderer and expenseRenderer to multipleRenderer
+            // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
+            // should be same
+            multiRenderer.addSeriesRenderer(incomeRenderer);
+            multiRenderer.addSeriesRenderer(expenseRenderer);
+
+            final GraphicalView chartView = ChartFactory.getBarChartView(graphPlaceHolder
+                    .getContext(), dataset, multiRenderer, BarChart.Type.DEFAULT);
+            chartView.repaint();
+
+            graphPlaceHolder.addView(chartView, 0);
+            //TODO END TEST
 
         } finally {
             //Activate Ctrl Buttons
+            first.setVisibility(View.VISIBLE);
             first.setEnabled(true);
+            previous.setVisibility(View.VISIBLE);
             previous.setEnabled(true);
+            current.setVisibility(View.VISIBLE);
             current.setEnabled(true);
+            next.setVisibility(View.VISIBLE);
             next.setEnabled(true);
+            last.setVisibility(View.VISIBLE);
             last.setEnabled(true);
         }
 
