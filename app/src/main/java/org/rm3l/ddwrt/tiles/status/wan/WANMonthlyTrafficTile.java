@@ -309,7 +309,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     final int currentYear = currentYearMonth[0];
 
                     final int previousMonth = currentMonth-1;
-                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear-1)) : (previousMonth + "-" + currentYear));
+                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear-1)) :
+                            (((previousMonth <= 9) ? ("0" + previousMonth) : previousMonth) + "-" + currentYear));
 
                     monthYearDisplayed.setText(previousMonthYear);
                 }
@@ -334,15 +335,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 }
             });
         }
-
-//        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-//
-//            if (exception == null) {
-//                errorPlaceHolderView.setVisibility(View.GONE);
-//            }
-//
-//            this.renderTraffDateForMonth(new SimpleDateFormat("MM-yyyy").format(new Date()));
-//        }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored
