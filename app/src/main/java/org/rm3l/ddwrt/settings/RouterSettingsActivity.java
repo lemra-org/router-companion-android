@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.settings;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -75,6 +76,14 @@ public class RouterSettingsActivity extends SherlockActivity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
 
+    }
+
+    @Override
+    public void finish() {
+        final Intent data = new Intent();
+        setResult(RESULT_OK, data);
+
+        super.finish();
     }
 
     /**
