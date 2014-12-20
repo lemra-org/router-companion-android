@@ -26,5 +26,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <solid android:color="#88cccccc" />
         </shape>
     </item>
-    <item android:drawable="@*android:color/transparent" />
+    <item android:drawable="@android:color/transparent" />
 </selector>

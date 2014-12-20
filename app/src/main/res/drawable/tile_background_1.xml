@@ -28,7 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:left="8.0dip"
                 android:right="8.0dip"
                 android:top="8.0dip" />
-            <solid android:color="@*android:color/transparent" />
+            <solid android:color="@android:color/transparent" />
         </shape>
     </item>
     <item
@@ -56,7 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:left="4.0dip"
                 android:right="4.0dip"
                 android:top="4.0dip" />
-            <solid android:color="@*android:color/transparent" />
+            <solid android:color="@android:color/transparent" />
         </shape>
     </item>
 </layer-list>
