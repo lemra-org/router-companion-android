@@ -476,7 +476,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
         final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
         multiRenderer.setXLabels(i);
-        multiRenderer.setXAxisMin(1);
         multiRenderer.setChartTitle("Traffic Data for '" + monthFormatted + "'");
         multiRenderer.setXTitle("Days");
         multiRenderer.setYTitle("Traffic (MB)");
