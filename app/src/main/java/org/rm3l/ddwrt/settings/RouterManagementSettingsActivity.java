@@ -23,14 +23,21 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
 
 public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
+
+    @Override
+    public SharedPreferences getSharedPreferences(String name, int mode) {
+        return super.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, mode);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

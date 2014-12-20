@@ -23,6 +23,7 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -30,7 +31,6 @@ import android.net.Uri;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
@@ -39,6 +39,8 @@ import com.actionbarsherlock.app.SherlockActivity;
 import org.rm3l.ddwrt.R;
 
 import java.util.Map;
+
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public abstract class AbstractDDWRTSettingsActivity extends SherlockActivity {
 
@@ -109,8 +111,10 @@ public abstract class AbstractDDWRTSettingsActivity extends SherlockActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(preference.getContext());
+        final SharedPreferences sharedPreferences = preference.getContext()
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+//        final SharedPreferences sharedPreferences = PreferenceManager
+//                .getDefaultSharedPreferences(preference.getContext());
         final Map<String, ?> preferencesMap = sharedPreferences.getAll();
 
         final Object value = preferencesMap.get(preference.getKey());

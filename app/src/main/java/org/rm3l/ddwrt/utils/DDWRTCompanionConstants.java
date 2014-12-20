@@ -24,6 +24,8 @@
 
 package org.rm3l.ddwrt.utils;
 
+import org.rm3l.ddwrt.BuildConfig;
+
 /**
  * App Constants
  */
@@ -54,6 +56,8 @@ public final class DDWRTCompanionConstants {
             "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
             "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
     };
+
+    public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
 
     private DDWRTCompanionConstants() {
     }

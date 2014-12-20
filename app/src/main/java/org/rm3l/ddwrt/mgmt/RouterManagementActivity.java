@@ -42,7 +42,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -64,6 +63,7 @@ import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.ChangeLogParameterized;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
@@ -105,7 +105,8 @@ public class RouterManagementActivity
 
         //Default values are not set by default
         //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
-        PreferenceManager.setDefaultValues(this, R.xml.router_management_settings, false);
+        PreferenceManager.setDefaultValues(this, DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE, R.xml.router_management_settings, false);
 
         this.dao = getDao(this);
 

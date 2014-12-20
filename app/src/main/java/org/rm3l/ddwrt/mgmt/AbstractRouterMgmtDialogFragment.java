@@ -37,7 +37,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -61,11 +60,9 @@ import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -76,6 +73,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
 import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
@@ -279,8 +278,8 @@ public abstract class AbstractRouterMgmtDialogFragment
                         // Now check actual connection to router ...
                         new CheckRouterConnectionAsyncTask(
                                 ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
-                                getSherlockActivity().getSharedPreferences(DDWRTMainActivity.class.getPackage().getName(), Context.MODE_PRIVATE)
-                                        .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
+                                getSherlockActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                                        .getBoolean(ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
                              .execute(d);
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
