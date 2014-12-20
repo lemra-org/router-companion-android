@@ -62,5 +62,5 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Contact Info: Armel Soro <apps+ddwrt AT rm3l DOT org>
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
