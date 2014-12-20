@@ -216,6 +216,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         this.optionsMenu = menu;
         getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+        if (!BuildConfig.DONATIONS) {
+            final MenuItem item = menu.findItem(R.id.action_donate);
+            if (item != null) {
+                item.setVisible(false);
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

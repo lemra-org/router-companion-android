@@ -135,6 +135,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private DDWRTMainActivity ddwrtMainActivity;
     private Class<? extends DDWRTBaseFragment> mClazz;
 
+    private final List<Integer> loaderIdsInUse = Lists.newArrayList();
+
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
                                                 @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
@@ -405,11 +407,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //        // this is really important in order to save the state across screen
 //        // configuration changes for example
 //        setRetainInstance(true);
-
-        initLoaders();
     }
-
-    private final List<Integer> loaderIdsInUse = Lists.newArrayList();
 
     private void initLoaders() {
         // initiate the loaders to do the background work
@@ -425,11 +423,25 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 if (ddwrtTile == null) {
                     continue;
                 }
-                final int nextLoaderId = Utils.getNextLoaderId();
+                final int nextLoaderId = Long.valueOf(Utils.getNextLoaderId()).intValue();
                 loaderManager.initLoader(nextLoaderId, null, ddwrtTile);
                 loaderIdsInUse.add(nextLoaderId);
             }
         }
+    }
+
+    private void stopLoaders() {
+        final LoaderManager loaderManager = getLoaderManager();
+        for (final Integer loaderIdInUse : loaderIdsInUse) {
+            loaderManager.destroyLoader(loaderIdInUse);
+        }
+        loaderIdsInUse.clear();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initLoaders();
     }
 
     @Override
@@ -441,11 +453,19 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Override
     public void onPause() {
         super.onPause();
+        stopLoaders();
+    }
 
-        final LoaderManager loaderManager = getLoaderManager();
-        for (final Integer loaderIdInUse : loaderIdsInUse) {
-            loaderManager.destroyLoader(loaderIdInUse);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopLoaders();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopLoaders();
     }
 
     @NotNull

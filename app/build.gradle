@@ -86,10 +86,12 @@ android {
      */
     productFlavors {
         google {
+            buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
+            buildConfigField "boolean", "DONATIONS", "false"
             //F-Droid (pure OSS) will contain links to Google Play IAB, Paypal, Flattr, and Bitcoin
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }

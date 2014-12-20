@@ -51,6 +51,7 @@ import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
@@ -231,6 +232,12 @@ public class RouterManagementActivity
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         this.optionsMenu = menu;
         getSupportMenuInflater().inflate(R.menu.menu_router_management, menu);
+        if (!BuildConfig.DONATIONS) {
+            final MenuItem item = menu.findItem(R.id.router_list_donate);
+            if (item != null) {
+                item.setVisible(false);
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
