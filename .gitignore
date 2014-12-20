@@ -29,6 +29,8 @@ libraries/**/build
 build
 .gradle
 
+**/*.apk
+
 # Package Files #
 **/*.jar
 **/*.war
