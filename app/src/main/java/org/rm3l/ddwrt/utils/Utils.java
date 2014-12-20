@@ -46,12 +46,12 @@ public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
 
-    private static int nextLoaderId = 1;
+    private static long nextLoaderId = 1;
 
     private Utils() {
     }
 
-    public static int getNextLoaderId() {
+    public static long getNextLoaderId() {
         return nextLoaderId++;
     }
 

@@ -186,7 +186,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             }
 
             //Init loaders for these tiles
-            getLoaderManager().initLoader(Utils.getNextLoaderId(), null, tile);
+            getLoaderManager().initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
 
             //Add row for this iface
             final CardView cardView = new CardView(getSherlockActivity());
