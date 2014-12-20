@@ -21,3 +21,8 @@
 #
 
 /build
+
+*.apk
+
+manifest-merger-fdroid-release-report.txt
+manifest-merger-google-release-report.txt
