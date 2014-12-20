@@ -61,6 +61,7 @@ import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
+import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -278,7 +279,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                         // Now check actual connection to router ...
                         new CheckRouterConnectionAsyncTask(
                                 ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
-                                PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                                getSherlockActivity().getSharedPreferences(DDWRTMainActivity.class.getPackage().getName(), Context.MODE_PRIVATE)
                                         .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
                              .execute(d);
                     }
