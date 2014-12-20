@@ -431,9 +431,14 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             if (dailyTraffMapEntryValue == null || dailyTraffMapEntryValue.size() < 2) {
                 continue;
             }
+            final Double in = dailyTraffMapEntryValue.get(0);
+            final Double out = dailyTraffMapEntryValue.get(1);
+            if (in == null || in <= 0. || out == null || out <= 0.) {
+                continue;
+            }
             days[i] = dailyTraffMapEntry.getKey();
-            inData[i] =  dailyTraffMapEntryValue.get(0);
-            outData[i] =  dailyTraffMapEntryValue.get(1);
+            inData[i] = in;
+            outData[i] = out;
             i++;
         }
 
@@ -442,26 +447,26 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         // Creating an  XYSeries for Outbound
         final XYSeries outboundSeries = new XYSeries("Outbound");
         // Adding data to In and Out Series
-        for(int j = 0; j < days.length; j++){
+        for(int j = 0; j < i; j++){
             inboundSeries.add(j, inData[j]);
             outboundSeries.add(j, outData[j]);
         }
 
         // Creating a dataset to hold each series
         final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        // Adding Income Series to the dataset
+        // Adding inbound Series to the dataset
         dataset.addSeries(inboundSeries);
-        // Adding Expense Series to dataset
+        // Adding outbound Series to dataset
         dataset.addSeries(outboundSeries);
 
-        // Creating XYSeriesRenderer to customize incomeSeries
+        // Creating XYSeriesRenderer to customize inboundSeries
         final XYSeriesRenderer inboundRenderer = new XYSeriesRenderer();
         inboundRenderer.setColor(Color.rgb(130, 130, 230));
         inboundRenderer.setFillPoints(true);
         inboundRenderer.setLineWidth(2);
         inboundRenderer.setDisplayChartValues(true);
 
-        // Creating XYSeriesRenderer to customize expenseSeries
+        // Creating XYSeriesRenderer to customize outboundSeries
         final XYSeriesRenderer outboundRenderer = new XYSeriesRenderer();
         outboundRenderer.setColor(Color.rgb(220, 80, 80));
         outboundRenderer.setFillPoints(true);
@@ -470,14 +475,18 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
         final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-        multiRenderer.setXLabels(0);
+        multiRenderer.setXLabels(i);
+        multiRenderer.setXAxisMin(1);
         multiRenderer.setChartTitle("Traffic Data for '" + monthFormatted + "'");
         multiRenderer.setXTitle("Days");
         multiRenderer.setYTitle("Traffic (MB)");
         multiRenderer.setZoomButtonsVisible(true);
-        for(int k = 0; k < days.length; k++) {
-            multiRenderer.addXTextLabel(k, String.valueOf(k));
+        for (int k = 0; k < i; k++) {
+            multiRenderer.addXTextLabel(k, String.valueOf(days[k]));
         }
+//        for(int k = 0; k < days.length; k++) {
+//            multiRenderer.addXTextLabel(k, String.valueOf(k));
+//        }
 
         // Adding inboundRenderer and outboundRenderer to multipleRenderer
         // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
