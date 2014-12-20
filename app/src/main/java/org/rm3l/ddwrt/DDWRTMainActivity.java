@@ -57,6 +57,7 @@ import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
+import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -68,6 +69,9 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 /**
  * Main Android Activity
@@ -181,6 +185,21 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         //Load from Shared Preferences
         this.mCurrentSortingStrategy = this.mPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,"");
         this.mCurrentSyncInterval = this.mPreferences.getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, -1l);
+
+        //Recreate Default Preferences if they are no longer available
+        final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
+        final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval <= 0l);
+        if (putDefaultSortingStrategy || putDefaultSyncInterval) {
+            //Add default preferences values
+            final SharedPreferences.Editor editor = this.mPreferences.edit();
+            if (putDefaultSortingStrategy) {
+                editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
+            }
+            if (putDefaultSyncInterval) {
+                editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);
+            }
+            editor.apply();
+        }
     }
 
     @Override
