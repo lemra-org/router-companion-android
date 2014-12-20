@@ -408,10 +408,17 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //        // configuration changes for example
 //        setRetainInstance(true);
 
+        initLoaders();
+    }
+
+    private final List<Integer> loaderIdsInUse = Lists.newArrayList();
+
+    private void initLoaders() {
         // initiate the loaders to do the background work
         final LoaderManager loaderManager = getLoaderManager();
 
         loaderManager.initLoader(0, null, this);
+        loaderIdsInUse.add(0);
 
         Log.d(LOG_TAG, "fragmentTiles: " + this.fragmentTiles);
 
@@ -420,8 +427,26 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 if (ddwrtTile == null) {
                     continue;
                 }
-                loaderManager.initLoader(Utils.getNextLoaderId(), null, ddwrtTile);
+                final int nextLoaderId = Utils.getNextLoaderId();
+                loaderManager.initLoader(nextLoaderId, null, ddwrtTile);
+                loaderIdsInUse.add(nextLoaderId);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initLoaders();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        final LoaderManager loaderManager = getLoaderManager();
+        for (final Integer loaderIdInUse : loaderIdsInUse) {
+            loaderManager.destroyLoader(loaderIdInUse);
         }
     }
 
