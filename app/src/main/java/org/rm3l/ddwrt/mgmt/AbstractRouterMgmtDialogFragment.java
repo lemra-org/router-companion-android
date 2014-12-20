@@ -37,6 +37,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -277,8 +278,9 @@ public abstract class AbstractRouterMgmtDialogFragment
                         // Now check actual connection to router ...
                         new CheckRouterConnectionAsyncTask(
                                 ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
-                                getSherlockActivity().getPreferences(Context.MODE_PRIVATE)
-                                        .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true)).execute(d);
+                                PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                                        .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
+                             .execute(d);
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
                 }
