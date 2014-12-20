@@ -90,7 +90,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     private final Table<String, Integer, ArrayList<Double>> traffData = HashBasedTable.create(36, 31);
 
     public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
+        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
         final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
         monthYearTextViewToDisplay.addTextChangedListener(new TextWatcher() {
             @Override
@@ -251,22 +251,27 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         @Nullable final Exception exception = data.getException();
 
+        final View displayButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button);
+        final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
+        final View previousButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
+        final View nextButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
+        final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
+
+        final View[] ctrlViews = new View[] {monthYearDisplayed, displayButton, currentButton, previousButton, nextButton};
+
         if (exception == null) {
             errorPlaceHolderView.setVisibility(View.GONE);
 
-            final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
             final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
 
             final Date currentDate = new Date();
             final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
                     SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
 
-            final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
-
             //TODO Load last value from preferences
             monthYearDisplayed.setText(currentMonthYear);
 
-            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button).setOnClickListener(new View.OnClickListener() {
+            displayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Intent intent = WANMonthlyTrafficTile.this.renderTraffDateForMonth(monthYearDisplayed.getText().toString());
@@ -296,7 +301,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 }
             });
 
-            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous).setOnClickListener(new View.OnClickListener() {
+            previousButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
@@ -307,15 +312,15 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     final int currentMonth = currentYearMonth[1];
                     final int currentYear = currentYearMonth[0];
 
-                    final int previousMonth = currentMonth-1;
-                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear-1)) :
+                    final int previousMonth = currentMonth - 1;
+                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear - 1)) :
                             (((previousMonth <= 9) ? ("0" + previousMonth) : previousMonth) + "-" + currentYear));
 
                     monthYearDisplayed.setText(previousMonthYear);
                 }
             });
 
-            this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next).setOnClickListener(new View.OnClickListener() {
+            nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -326,13 +331,15 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                     final int currentMonth = currentYearMonth[1];
                     final int currentYear = currentYearMonth[0];
-                    final int nextMonth = currentMonth+1;
-                    final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear+1)) :
+                    final int nextMonth = currentMonth + 1;
+                    final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear + 1)) :
                             (((nextMonth <= 9) ? ("0" + nextMonth) : nextMonth) + "-" + currentYear));
 
                     monthYearDisplayed.setText(nextMonthYear);
                 }
             });
+
+            setVisibility(ctrlViews, View.VISIBLE);
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -351,17 +358,26 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 }
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
+            setVisibility(ctrlViews, View.GONE);
         } else {
             if (traffData.isEmpty()) {
                 errorPlaceHolderView.setText("Error: No Data!");
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                setVisibility(ctrlViews, View.GONE);
             }
         }
 
-        doneWithLoaderInstance(this, loader);
+        doneWithLoaderInstance(this, loader,
+                R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
+    }
+
+    private static void setVisibility(@NotNull final View[] views, final int visibility) {
+        for (final View view : views) {
+            view.setVisibility(visibility);
+        }
     }
 
     @NotNull
