@@ -123,6 +123,10 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
 
+        if (nbRunsLoader <= 0 || mAutoRefreshToggle) {
+            setLoadingViewVisibility(View.VISIBLE);
+        }
+
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
@@ -140,8 +144,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                         throw new DDWRTTileAutoRefreshNotAllowedException();
                     }
                     nbRunsLoader++;
-
-                    setLoadingViewVisibility(View.VISIBLE);
 
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -418,63 +420,73 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted + " / dailyTraffMap=" + dailyTraffMap);
 
-        //TODO TEST Display In/Out bar charts over here
-        int[] x = { 0,1,2,3,4,5,6,7 };
+        final int size = dailyTraffMap.size();
+        final int[] days = new int[size];
+        final double[] inData = new double[size];
+        final double[] outData = new double[size];
 
-        int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
-        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
+        int i = 0;
+        for (final Map.Entry<Integer, ArrayList<Double>> dailyTraffMapEntry : dailyTraffMap.entrySet()) {
+            final ArrayList<Double> dailyTraffMapEntryValue = dailyTraffMapEntry.getValue();
+            if (dailyTraffMapEntryValue == null || dailyTraffMapEntryValue.size() < 2) {
+                continue;
+            }
+            days[i] = dailyTraffMapEntry.getKey();
+            inData[i] =  dailyTraffMapEntryValue.get(0);
+            outData[i] =  dailyTraffMapEntryValue.get(1);
+            i++;
+        }
 
-        // Creating an  XYSeries for Income
-        XYSeries incomeSeries = new XYSeries("Income");
-        // Creating an  XYSeries for Expense
-        XYSeries expenseSeries = new XYSeries("Expense");
-        // Adding data to Income and Expense Series
-        for(int i=0;i<x.length;i++){
-            incomeSeries.add(i,income[i]);
-            expenseSeries.add(i,expense[i]);
+        // Creating an  XYSeries for Inbound
+        final XYSeries inboundSeries = new XYSeries("Inbound");
+        // Creating an  XYSeries for Outbound
+        final XYSeries outboundSeries = new XYSeries("Outbound");
+        // Adding data to In and Out Series
+        for(int j = 0; j < days.length; j++){
+            inboundSeries.add(j, inData[j]);
+            outboundSeries.add(j, outData[j]);
         }
 
         // Creating a dataset to hold each series
-        XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+        final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         // Adding Income Series to the dataset
-        dataset.addSeries(incomeSeries);
+        dataset.addSeries(inboundSeries);
         // Adding Expense Series to dataset
-        dataset.addSeries(expenseSeries);
+        dataset.addSeries(outboundSeries);
 
         // Creating XYSeriesRenderer to customize incomeSeries
-        XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
-        incomeRenderer.setColor(Color.rgb(130, 130, 230));
-        incomeRenderer.setFillPoints(true);
-        incomeRenderer.setLineWidth(2);
-        incomeRenderer.setDisplayChartValues(true);
+        final XYSeriesRenderer inboundRenderer = new XYSeriesRenderer();
+        inboundRenderer.setColor(Color.rgb(130, 130, 230));
+        inboundRenderer.setFillPoints(true);
+        inboundRenderer.setLineWidth(2);
+        inboundRenderer.setDisplayChartValues(true);
 
         // Creating XYSeriesRenderer to customize expenseSeries
-        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
-        expenseRenderer.setColor(Color.rgb(220, 80, 80));
-        expenseRenderer.setFillPoints(true);
-        expenseRenderer.setLineWidth(2);
-        expenseRenderer.setDisplayChartValues(true);
+        final XYSeriesRenderer outboundRenderer = new XYSeriesRenderer();
+        outboundRenderer.setColor(Color.rgb(220, 80, 80));
+        outboundRenderer.setFillPoints(true);
+        outboundRenderer.setLineWidth(2);
+        outboundRenderer.setDisplayChartValues(true);
 
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
-        XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
+        final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
         multiRenderer.setXLabels(0);
         multiRenderer.setChartTitle("Traffic Data for '" + monthFormatted + "'");
         multiRenderer.setXTitle("Days");
         multiRenderer.setYTitle("Traffic (MB)");
         multiRenderer.setZoomButtonsVisible(true);
-        for(int i=0; i< x.length;i++){
-            multiRenderer.addXTextLabel(i, String.valueOf(i));
+        for(int k = 0; k < days.length; k++) {
+            multiRenderer.addXTextLabel(k, String.valueOf(k));
         }
 
-        // Adding incomeRenderer and expenseRenderer to multipleRenderer
+        // Adding inboundRenderer and outboundRenderer to multipleRenderer
         // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
         // should be same
-        multiRenderer.addSeriesRenderer(incomeRenderer);
-        multiRenderer.addSeriesRenderer(expenseRenderer);
+        multiRenderer.addSeriesRenderer(inboundRenderer);
+        multiRenderer.addSeriesRenderer(outboundRenderer);
 
-        return ChartFactory.getBarChartIntent(this.mParentFragmentActivity, dataset, multiRenderer, BarChart.Type.DEFAULT);
-        //TODO END TEST
-
+        return ChartFactory.getBarChartIntent(this.mParentFragmentActivity, dataset,
+                multiRenderer, BarChart.Type.DEFAULT);
 
     }
 }
