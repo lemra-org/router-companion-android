@@ -91,7 +91,7 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
-            buildConfigField "boolean", "DONATIONS", "false"
+            buildConfigField "boolean", "DONATIONS", "true"
             //F-Droid (pure OSS) will contain links to Google Play IAB, Paypal, Flattr, and Bitcoin
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }

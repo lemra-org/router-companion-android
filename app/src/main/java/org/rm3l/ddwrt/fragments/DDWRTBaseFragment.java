@@ -135,7 +135,13 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     private DDWRTMainActivity ddwrtMainActivity;
     private Class<? extends DDWRTBaseFragment> mClazz;
 
-    private final List<Integer> loaderIdsInUse = Lists.newArrayList();
+    private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
+
+    protected boolean mLoaderStopped = true;
+
+    public void setLoaderStopped(boolean mLoaderStopped) {
+        this.mLoaderStopped = mLoaderStopped;
+    }
 
     @Nullable
     public static DDWRTBaseFragment newInstance(@NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -414,7 +420,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         final LoaderManager loaderManager = getLoaderManager();
 
         loaderManager.initLoader(0, null, this);
-        loaderIdsInUse.add(0);
+        this.setLoaderStopped(false);
+        loaderIdsInUse.put(0, this);
 
         Log.d(LOG_TAG, "fragmentTiles: " + this.fragmentTiles);
 
@@ -425,15 +432,23 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 }
                 final int nextLoaderId = Long.valueOf(Utils.getNextLoaderId()).intValue();
                 loaderManager.initLoader(nextLoaderId, null, ddwrtTile);
-                loaderIdsInUse.add(nextLoaderId);
+                ddwrtTile.setLoaderStopped(false);
+                loaderIdsInUse.put(nextLoaderId, ddwrtTile);
             }
         }
     }
 
     private void stopLoaders() {
         final LoaderManager loaderManager = getLoaderManager();
-        for (final Integer loaderIdInUse : loaderIdsInUse) {
-            loaderManager.destroyLoader(loaderIdInUse);
+        for (final Map.Entry<Integer, Object> loaderIdInUse : loaderIdsInUse.entrySet()) {
+            loaderManager.destroyLoader(loaderIdInUse.getKey());
+            final Object value = loaderIdInUse.getValue();
+            if (value == this) {
+                //Mark this as stopped
+                this.setLoaderStopped(true);
+            } else if (value instanceof DDWRTTile) {
+                ((DDWRTTile) value).setLoaderStopped(true);
+            }
         }
         loaderIdsInUse.clear();
     }

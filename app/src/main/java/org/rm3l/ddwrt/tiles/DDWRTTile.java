@@ -102,6 +102,12 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
     }
 
+    private boolean mLoaderStopped = true;
+
+    public void setLoaderStopped(boolean mLoaderStopped) {
+        this.mLoaderStopped = mLoaderStopped;
+    }
+
     @Override
     public final void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         Log.d(LOG_TAG, this.getClass() + "#onCheckedChanged: isChecked=" + isChecked);
@@ -167,15 +173,18 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 this.mParentFragmentPreferences.
                         getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS) : TILE_REFRESH_MILLIS);
 
-//        Re-schedule it!
-        HANDLER.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
-            }
-        }, refreshDelay);
+        if (!this.mLoaderStopped) {
+//        Re-schedule it if loader has not been stopped!
+            HANDLER.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
+                }
+            }, refreshDelay);
+        }
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader + "\n->delay: "+refreshDelay+"ms");
+        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader +
+                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: "+refreshDelay+"ms");
     }
 
     @Nullable
