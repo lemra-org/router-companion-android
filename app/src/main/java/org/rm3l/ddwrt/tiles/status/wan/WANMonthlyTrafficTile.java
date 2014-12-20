@@ -141,8 +141,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_month_loading).setVisibility(View.VISIBLE);
-
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
