@@ -276,9 +276,11 @@ public abstract class AbstractRouterMgmtDialogFragment
                     if (validForm) {
                         // Now check actual connection to router ...
                         new CheckRouterConnectionAsyncTask(
-                                ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString()).execute(d);
+                                ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
+                                getSherlockActivity().getPreferences(Context.MODE_PRIVATE)
+                                        .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true)).execute(d);
                     }
-                    //else dialog stays open. 'Cancel' button can still close it.
+                    ///else dialog stays open. 'Cancel' button can still close it.
                 }
             });
         }
@@ -286,6 +288,15 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     @Nullable
     private Router doCheckConnectionToRouter(@NotNull AlertDialog d) throws Exception {
+        @NotNull final Router router = buildRouter(d);
+
+        //This will throw an exception if connection could not be established!
+        SSHUtils.checkConnection(router, 10000);
+
+        return router;
+    }
+
+    private static Router buildRouter(AlertDialog d) {
         @NotNull final Router router = new Router();
         final String uuid = ((EditText) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
@@ -307,13 +318,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
         if (!isNullOrEmpty(privkey)) {
             router.setPrivKey(privkey, true);
-        }
-
-        //Check for flag preference
-        if (getSherlockActivity().getPreferences(Context.MODE_PRIVATE)
-                .getBoolean(DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY, true)) {
-            //This will throw an exception if connection could not be established!
-            SSHUtils.checkConnection(router, 10000);
         }
         return router;
     }
@@ -409,21 +413,28 @@ public abstract class AbstractRouterMgmtDialogFragment
         private final String routerIpOrDns;
         @org.jetbrains.annotations.Nullable
         private AlertDialog checkingConnectionDialog = null;
+        private boolean checkActualConnection;
 
-        public CheckRouterConnectionAsyncTask(String routerIpOrDns) {
+        public CheckRouterConnectionAsyncTask(String routerIpOrDns, boolean checkActualConnection) {
             this.routerIpOrDns = routerIpOrDns;
+            this.checkActualConnection = checkActualConnection;
         }
 
         @Override
         protected void onPreExecute() {
-            checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
-                    String.format("Hold on - checking connection to router '%s'...", routerIpOrDns), false, false);
-            checkingConnectionDialog.show();
+            if (checkActualConnection) {
+                checkingConnectionDialog = Utils.buildAlertDialog(getActivity(), null,
+                        String.format("Hold on - checking connection to router '%s'...", routerIpOrDns), false, false);
+                checkingConnectionDialog.show();
+            }
         }
 
         @org.jetbrains.annotations.Nullable
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(AlertDialog... dialogs) {
+            if (!checkActualConnection) {
+                return new CheckRouterConnectionAsyncTaskResult<>(buildRouter(dialogs[0]), null);
+            }
             @org.jetbrains.annotations.Nullable Router result = null;
             @org.jetbrains.annotations.Nullable Exception exception = null;
             try {
@@ -432,7 +443,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                 e.printStackTrace();
                 exception = e;
             }
-            return new CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>(result, exception);
+            return new CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<>(result, exception);
         }
 
         @Override
