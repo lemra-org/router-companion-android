@@ -454,12 +454,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        initLoaders();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         initLoaders();
