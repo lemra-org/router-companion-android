@@ -124,6 +124,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
 
     private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
+    public static final String STATE_LOADER_IDS = "loaderIds";
 
     protected LinearLayout mLayout;
     protected Router router;
@@ -379,6 +380,22 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
+        Log.d(LOG_TAG, "onCreate() loaderIdsInUse: " + loaderIdsInUse);
+        if (savedInstanceState != null) {
+            final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
+            Log.d(LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
+            if (loaderIdsSaved != null) {
+                //Destroy existing IDs, if any, as new loaders will get created in onResume()
+                final LoaderManager loaderManager = getLoaderManager();
+                for (final Integer loaderId : loaderIdsSaved) {
+                    if (loaderId == null) {
+                        continue;
+                    }
+                    loaderManager.destroyLoader(loaderId);
+                }
+            }
+        }
+        this.loaderIdsInUse.clear();
         this.fragmentTiles = this.getTiles(savedInstanceState);
     }
 
@@ -454,27 +471,38 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //save the loader ids on file
+        outState.putIntegerArrayList(STATE_LOADER_IDS,
+                Lists.newArrayList(loaderIdsInUse.keySet()));
+
+        super.onSaveInstanceState(outState);
+    }
+
+
+
+    @Override
     public void onResume() {
-        super.onResume();
         initLoaders();
+        super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         stopLoaders();
+        super.onPause();
     }
 
     @Override
     public void onStop() {
-        super.onStop();
         stopLoaders();
+        super.onStop();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         stopLoaders();
+        super.onDestroy();
     }
 
     @NotNull
