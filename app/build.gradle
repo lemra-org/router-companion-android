@@ -26,9 +26,9 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
-
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -54,7 +54,6 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
-
     defaultConfig {
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
@@ -79,7 +78,6 @@ android {
         printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
                 "- NAME: " + versionName + "\n----------------------------\n")
     }
-
     /**
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
      * they contain link to billing platforms other than Google
@@ -96,20 +94,17 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     //Those files, from Apache Commons lib cause build errors
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
-
     lintOptions {
         abortOnError false
     }
@@ -124,21 +119,20 @@ repositories {
 
 //Dependencies
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-    
+    compile fileTree(include: '*.jar', dir: 'libs')
     //For SSH connections
-     //For app errors handling and reporting
-     //@NotNull and @Nullable useful annotations
-     //SVG Android (not used for now)
-    compile group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
-//    compile 'de.greenrobot:eventbus:2.2.1'
+    //For app errors handling and reporting
+    //@NotNull and @Nullable useful annotations
+    //SVG Android (not used for now)
+    compile 'org.achartengine:achartengine:1.2.0'
+    //    compile 'de.greenrobot:eventbus:2.2.1'
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     //Crouton notification lib
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         // exclusion is not necessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-     //Changelog dialogs
+    //Changelog dialogs
     compile project(':libraries:Donations')
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
