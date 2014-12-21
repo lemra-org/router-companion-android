@@ -23,10 +23,72 @@
 /**
  * Gradle build file
  */
+import groovy.swing.SwingBuilder
+
 apply plugin: 'com.android.application'
+
+//Prompt for keystore file and password (same for private key and store file)
+// Will take care of prompting via console or via a dialog form (if no console available, which
+// can be the case if building with Android Studio, or with gradle daemon mode)
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(':app:assembleRelease') ||
+            taskGraph.hasTask(':app:assembleFdroidRelease') ||
+            taskGraph.hasTask(':app:assembleGoogleRelease')) {
+        def password = ''
+        def storeFile = null
+        if (System.console() == null) {
+            new SwingBuilder().edt {
+                dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                    vbox { // Put everything below each other
+                        label(text: "Please select keystore file:")
+                        def fileInput = fileChooser()
+                        label(text: "Please enter passphrase:")
+                        def input = passwordField()
+                        button(defaultButton: true, text: 'OK', actionPerformed: {
+                            storeFile = fileInput.selectedFile
+                            password = new String(input.password)
+                            dispose()
+                        })
+                    }
+                }
+            }
+        } else {
+            storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
+            storeFile = new File(storeFile)
+            password = System.console().readPassword("\nPlease enter signing config password: ")
+            password = new String(password)
+        }
+
+        if (storeFile == null || !storeFile.exists()) {
+            throw new InvalidUserDataException("Keystore path not specified or file does not exist")
+        }
+
+        if (password.size() <= 0) {
+            throw new InvalidUserDataException("You must enter the password to proceed.")
+        }
+
+        // For debugging, friendly print the version output to the Gradle console
+        printf("\n-------- SIGNING CONFIG --------\n" +
+                "- storeFile.absolutePath: [" + storeFile.absolutePath +
+                "]\n----------------------------\n")
+
+        android.signingConfigs.release.storeFile = storeFile
+        android.signingConfigs.release.storePassword = password
+        android.signingConfigs.release.keyPassword = password
+    }
+}
 
 android {
 
+    signingConfigs {
+        release {
+            keyAlias 'DDWRTCompanionAndroidKey'
+            //User will be prompted for the parameters below, if 'assemble*Release' tasks
+            keyPassword ''
+            storeFile file('/dev/null')
+            storePassword ''
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
     sourceSets {
@@ -84,11 +146,13 @@ android {
      */
     productFlavors {
         google {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
         }
         fdroid {
+            //Enable 'Donations' menu item
             buildConfigField "boolean", "DONATIONS", "true"
             //F-Droid (pure OSS) will contain links to Google Play IAB, Paypal, Flattr, and Bitcoin
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
@@ -98,6 +162,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     //Those files, from Apache Commons lib cause build errors
@@ -108,6 +173,7 @@ android {
     lintOptions {
         abortOnError false
     }
+
 }
 
 //Other external repositories, to be used besides jcenter
@@ -120,19 +186,12 @@ repositories {
 //Dependencies
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    //For SSH connections
-    //For app errors handling and reporting
-    //@NotNull and @Nullable useful annotations
-    //SVG Android (not used for now)
     compile 'org.achartengine:achartengine:1.2.0'
-    //    compile 'de.greenrobot:eventbus:2.2.1'
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
     //Crouton notification lib
     compile('de.keyboardsurfer.android.widget:crouton:1.8.5@aar') {
         // exclusion is not necessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-    //Changelog dialogs
     compile project(':libraries:Donations')
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
