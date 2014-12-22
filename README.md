@@ -58,7 +58,7 @@ Below are some screenshots of the overall app look n' feel and behaviour. As thi
         <img height="0" width="8px"/>
         <img width="30%" src="http://www.rm3l.org/apps/ddwrt-companion/screenshots/8.png" alt="Donations" title="Donations"/>
         <img height="0" width="8px"/>
-        <img width="30%" src="http://www.rm3l.org/apps/ddwrt-companion/screenshots/11.png" alt="About" title="About"/>
+        <!--<img width="30%" src="http://www.rm3l.org/apps/ddwrt-companion/screenshots/11.png" alt="About" title="About"/>-->
 </div>
 
 Parent Project
