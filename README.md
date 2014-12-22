@@ -20,12 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-DD-WRT Companion for android (Alpha version - Work in progress)
+DD-WRT Companion for android
 -------
 
 Had you ever tried to use the DD-WRT web interface on an Android device, you should have noticed how impractical it is to navigate with.
 
 This app aims at making DD-WRT devices management and monitoring a breeze, right from you Android-powered device.
+
+<a href="https://play.google.com/store/apps/details?id=org.rm3l.ddwrt">
+  <img alt="Get it on Google Play"
+       src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
+</a>
 
 Screenshots
 --------
