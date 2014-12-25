@@ -67,7 +67,7 @@ See the [parent project](https://github.com/rm3l/ddwrt-companion) for the ration
 
 APKs
 --------
-* Dec 22,2014 [v1.0.0](https://github.com/rm3l/ddwrt-companion-android/releases/download/1.0.0/ddwrt-companion_fdroid-release-100016.apk)
+* Dec 22, 2014: [v1.0.0](https://github.com/rm3l/ddwrt-companion-android/releases/download/1.0.0/ddwrt-companion_fdroid-release-100016.apk)
 * ~~Nov 27, 2014: [v0.1.1-alpha.1f677ad](https://github.com/rm3l/ddwrt-companion/releases/download/0.1.1-alpha.1f677ad/ddwrt-companion-android_20141127-snapshot.apk)~~
 
 External libs used in this project
