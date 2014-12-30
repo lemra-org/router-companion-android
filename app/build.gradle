@@ -78,6 +78,17 @@ gradle.taskGraph.whenReady { taskGraph ->
     }
 }
 
+def getVersionName(String flavorName) {
+    // Fetch the version according to git latest tag and "how far are we from last tag"
+    def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
+    def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
+    def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
+    def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+
+    // Return the version name
+    "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash-$flavorName)"
+}
+
 android {
 
     signingConfigs {
@@ -124,10 +135,11 @@ android {
         def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
         def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
         def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
-        def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
+//        def gitCommitHash = "git -C ${rootDir} rev-parse --short HEAD".execute().text.trim()
 
         // Set the version name
-        versionName "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash)"
+        versionName getVersionName("default")
+//        versionName "$versionMajor.$versionMinor.$versionPatch ($gitCommitHash)"
 
         // Turn the version name into a version code
         //noinspection GroovyAssignabilityCheck
@@ -175,6 +187,12 @@ android {
     }
 
 }
+
+//Automate the way version name is built for each flavor
+android.productFlavors.each { flavor ->
+    flavor.versionName = getVersionName(flavor.name)
+}
+
 
 //Other external repositories, to be used besides jcenter
 repositories {
