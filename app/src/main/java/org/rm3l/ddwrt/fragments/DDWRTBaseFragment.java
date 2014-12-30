@@ -220,7 +220,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //                        resources.getString(R.string.status_sysinfo), router);
                 break;
 //            case 1: TODO Remove me
-            case 99:
+            case 101:
                 parentSectionTitle = resources.getString(R.string.setup);
                 //2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP}
                 tabsToSort = new DDWRTBaseFragment[8];
@@ -241,7 +241,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[7] = DDWRTBaseFragment.newInstance(SetupEoIPFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_eoip), router);
                 break;
-            case 1:
+            case 102:
+//            case 1:
                 parentSectionTitle = resources.getString(R.string.wireless);
                 //3 = Wireless => {Basic, Radius, Security, MAC Filter, WL0, WL1, ...}
                 tabsToSort = new DDWRTBaseFragment[4];
@@ -254,30 +255,35 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 tabsToSort[3] = DDWRTBaseFragment.newInstance(WirelessMACFilteringFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_mac_filter), router);
                 break;
-            case 2:
+            case 1:
+//            case 2:
                 parentSectionTitle = resources.getString(R.string.services);
                 //4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
-                tabsToSort = new DDWRTBaseFragment[10];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_services), router);
-                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_freeradius), router);
-                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_ppoe), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
+                tabsToSort = new DDWRTBaseFragment[1];
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_vpn), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_usb), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_nas), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_hostspot), router);
-                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_sip), router);
-                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_adblocking), router);
-                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_webserver), router);
+
+//                tabsToSort = new DDWRTBaseFragment[10];
+//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_services), router);
+//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_freeradius), router);
+//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_ppoe), router);
+//                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_vpn), router);
+//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_usb), router);
+//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_nas), router);
+//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_hostspot), router);
+//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_sip), router);
+//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_adblocking), router);
+//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.services_webserver), router);
                 break;
             case 3:
                 //5 = Security => {Firewall, VPN Passthrough}

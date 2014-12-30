@@ -44,9 +44,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string-array name="navigation_drawer_items_array">
         <item>Status</item>
         <!--NOT NEEDED ANYMORE <item>Setup</item>-->
-        <!-- THE FOLLOWING SECTIONS ARE TEMPORARILY DISABLED - THEY WILL BE REACTIVATED SOON -->
         <!--<item>Wireless</item>-->
-        <!--<item>Services</item>-->
+        <item>Services</item>
         <!--<item>Security</item>-->
         <!--<item>Access</item>-->
         <!--<item>NAT &amp; QoS</item>-->
