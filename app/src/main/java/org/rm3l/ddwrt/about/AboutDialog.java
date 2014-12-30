@@ -39,6 +39,10 @@ import org.rm3l.ddwrt.R;
 
 import java.io.IOException;
 
+import static android.text.util.Linkify.EMAIL_ADDRESSES;
+import static android.text.util.Linkify.MAP_ADDRESSES;
+import static android.text.util.Linkify.WEB_URLS;
+
 /**
  * About Dialog: fills in the dialog with text retrieved from a given raw file
  * (some of them are parameterized)
@@ -51,9 +55,11 @@ public class AboutDialog extends Dialog {
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
 
-    private static final String ABOUT_TITLE = "About";
-
     private final Context mContext;
+
+    private static final int[] BIT_FIELDS_TO_LINKIFY = new int[] {
+        EMAIL_ADDRESSES, MAP_ADDRESSES, WEB_URLS
+    };
 
     /**
      * Constructor
@@ -63,7 +69,7 @@ public class AboutDialog extends Dialog {
     public AboutDialog(@NotNull final Context context) {
         super(context);
         mContext = context;
-        super.setTitle(ABOUT_TITLE);
+        super.setTitle(mContext.getString(R.string.menuitem_about));
     }
 
     /**
@@ -75,7 +81,9 @@ public class AboutDialog extends Dialog {
     private static void setTextContentAndLinkify(@NotNull final TextView textView, @NotNull final String text) {
         textView.setText(Html.fromHtml(text));
         textView.setLinkTextColor(Color.WHITE);
-        Linkify.addLinks(textView, Linkify.ALL);
+        for (final int bitFieldToLinkify : BIT_FIELDS_TO_LINKIFY) {
+            Linkify.addLinks(textView, bitFieldToLinkify);
+        }
     }
 
     /**
