@@ -203,13 +203,17 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     protected void onPause() {
         super.onPause();
-        mFeedbackDialog.dismiss();
+        if (mFeedbackDialog != null) {
+            mFeedbackDialog.dismiss();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mFeedbackDialog.dismiss();
+        if (mFeedbackDialog != null) {
+            mFeedbackDialog.dismiss();
+        }
     }
 
     @Override
@@ -264,6 +268,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                 new AboutDialog(this).show();
                 return true;
             case R.id.action_feedback:
+                if (mFeedbackDialog == null) {
+                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+                }
                 mFeedbackDialog.show();
                 return true;
             default:
