@@ -543,6 +543,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
                 cardView.addView(viewGroupLayout);
+                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                cardView.setPreventCornerOverlap(true);
+                //Add padding in API v21+ as well to have the same measurements with previous versions.
+                cardView.setUseCompatPadding(true);
 
                 cards.add(cardView);
             }
