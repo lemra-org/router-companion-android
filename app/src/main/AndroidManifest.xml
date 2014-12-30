@@ -29,12 +29,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.android.vending.BILLING" />
+    <!-- This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
+        and the F-Droid version will not feature Google In-App Billng -->
+    <!--<uses-permission android:name="com.android.vending.BILLING" />-->
 
     <!-- To get DhcpInfo, so as to default forms with the current gateway -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!-- TODO Are these permissions really needed? -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
