@@ -176,30 +176,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
-//            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
             final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
-
-//                filterEditText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                        filterButton.setEnabled(!isNullOrEmpty(filterEditText.getText().toString()));
-//                    }
-//                });
 
                 //Highlight textToFind for new log lines
                 String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
@@ -221,7 +203,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         .append(newSyslogSpan));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
-//                filterButton.setVisibility(View.VISIBLE);
 
                 filterEditText.setOnTouchListener(new View.OnTouchListener() {
                     @Override

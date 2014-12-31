@@ -261,7 +261,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="feedback_reply_close">Close</string>
     <string name="feedback_reply_rate">Rate!</string>
     <string name="feedback_reply_title">Message from the Developer</string>
-    <string name="syslog_filter_hint">Search…</string>
+    <string name="syslog_filter_hint">   Search…</string>
     <string name="clear">Clear</string>
     <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
     <string name="first_sign"><![CDATA[<<]]></string>
