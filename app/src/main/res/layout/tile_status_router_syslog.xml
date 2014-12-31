@@ -126,23 +126,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textColor="@android:color/holo_blue_dark"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:hint="@string/syslog_filter_hint"
-                android:drawableBottom="@android:color/holo_blue_dark"/>
+                android:drawableBottom="@android:color/holo_blue_dark"
+                android:drawableRight="@drawable/abs__ic_clear_holo_light"
+                android:drawableEnd="@drawable/abs__ic_clear_holo_light"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageButton
                 android:id="@+id/tile_status_router_syslog_send_filter_cmd_button"
                 android:text="@string/find"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:enabled="true"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tile_status_router_syslog_send_filter_clear_button"
-                android:text="@string/clear"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:enabled="true"/>
+                android:layout_width="42dp"
+                android:layout_height="36dp"
+                android:contentDescription="@string/find"
+                android:enabled="true"
+                android:src="@android:drawable/ic_menu_search" />
 
         </LinearLayout>
 

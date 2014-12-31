@@ -27,6 +27,7 @@ package org.rm3l.ddwrt.tiles.syslog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -38,6 +39,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -173,7 +175,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
             final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
-            final View clearButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_clear_button);
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
@@ -219,27 +220,37 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
                 filterButton.setVisibility(View.VISIBLE);
-                clearButton.setVisibility(View.VISIBLE);
 
-                clearButton.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-                       //Reset everything
-                       filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
-                       //Highlight text in textview
-                       final String currentText = logTextView.getText().toString();
+                filterEditText.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        final int DRAWABLE_LEFT = 0;
+                        final int DRAWABLE_TOP = 1;
+                        final int DRAWABLE_RIGHT = 2;
+                        final int DRAWABLE_BOTTOM = 3;
 
-                       logTextView.setText(currentText
-                               .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                               .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
+                        if(event.getAction() == MotionEvent.ACTION_UP) {
+                            if(event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                                //Reset everything
+                                filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
+                                //Highlight text in textview
+                                final String currentText = logTextView.getText().toString();
 
-                       if (sharedPreferences != null) {
-                           final SharedPreferences.Editor editor = sharedPreferences.edit();
-                           editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
-                           editor.apply();
-                       }
-                   }
-               });
+                                logTextView.setText(currentText
+                                        .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                                        .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
+
+                                if (sharedPreferences != null) {
+                                    final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
+                                    editor.apply();
+                                }
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
 
                 filterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -271,7 +282,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 syslogContentView.setVisibility(View.GONE);
                 filterEditText.setVisibility(View.GONE);
                 filterButton.setVisibility(View.GONE);
-                clearButton.setVisibility(View.GONE);
             }
 
         }
