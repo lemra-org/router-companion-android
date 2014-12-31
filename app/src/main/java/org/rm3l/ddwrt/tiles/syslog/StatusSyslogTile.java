@@ -39,8 +39,10 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -174,7 +176,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
-            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
+//            final View filterButton = this.layout.findViewById(R.id.tile_status_router_syslog_send_filter_cmd_button);
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
@@ -182,22 +184,22 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             if (isSyslogEnabled) {
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
 
-                filterEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        filterButton.setEnabled(!isNullOrEmpty(filterEditText.getText().toString()));
-                    }
-                });
+//                filterEditText.addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//                        filterButton.setEnabled(!isNullOrEmpty(filterEditText.getText().toString()));
+//                    }
+//                });
 
                 //Highlight textToFind for new log lines
                 String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
@@ -219,7 +221,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         .append(newSyslogSpan));
                 syslogContentView.setVisibility(View.VISIBLE);
                 filterEditText.setVisibility(View.VISIBLE);
-                filterButton.setVisibility(View.VISIBLE);
+//                filterButton.setVisibility(View.VISIBLE);
 
                 filterEditText.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -252,36 +254,41 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
 
-                filterButton.setOnClickListener(new View.OnClickListener() {
+                filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                     @Override
-                    public void onClick(View v) {
-                        final String textToFind = filterEditText.getText().toString();
-                        if (isNullOrEmpty(textToFind)) {
-                            //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
-                            return;
-                        }
-                        if (sharedPreferences != null) {
-                            if (textToFind.equalsIgnoreCase(existingSearch)) {
-                                //No need to go further as this is already the string we are looking for
-                                return;
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                            final String textToFind = filterEditText.getText().toString();
+                            if (isNullOrEmpty(textToFind)) {
+                                //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
+                                return true;
                             }
-                            final SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), textToFind);
-                            editor.apply();
-                        }
-                        //Highlight text in textview
-                        final String currentText = logTextView.getText().toString();
+                            if (sharedPreferences != null) {
+                                if (textToFind.equalsIgnoreCase(existingSearch)) {
+                                    //No need to go further as this is already the string we are looking for
+                                    return true;
+                                }
+                                final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString(StatusSyslogTile.this.getFormattedPrefKey(LAST_SEARCH), textToFind);
+                                editor.apply();
+                            }
+                            //Highlight text in textview
+                            final String currentText = logTextView.getText().toString();
 
-                        logTextView.setText(findAndHighlightOutput(currentText
-                                .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+                            logTextView.setText(findAndHighlightOutput(currentText
+                                    .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                                    .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+
+                            return true;
+                        }
+                        return false;
                     }
                 });
+
             } else {
                 logTextView.setText(null);
                 syslogContentView.setVisibility(View.GONE);
                 filterEditText.setVisibility(View.GONE);
-                filterButton.setVisibility(View.GONE);
             }
 
         }
