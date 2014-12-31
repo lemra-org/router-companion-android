@@ -33,7 +33,8 @@ apply plugin: 'com.android.application'
 gradle.taskGraph.whenReady { taskGraph ->
     if (taskGraph.hasTask(':app:assembleRelease') ||
             taskGraph.hasTask(':app:assembleFdroidRelease') ||
-            taskGraph.hasTask(':app:assembleGoogleRelease')) {
+            taskGraph.hasTask(':app:assembleGoogleRelease') ||
+            taskGraph.hasTask(':app:assembleAmazonRelease')) {
         def password = ''
         def storeFile = null
         if (System.console() == null) {
