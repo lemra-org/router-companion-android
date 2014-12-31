@@ -37,7 +37,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_launcher"
+                android:src="@drawable/ddwrt_companion_logo"
                 android:contentDescription="@string/app_name" />
 
             <TextView
