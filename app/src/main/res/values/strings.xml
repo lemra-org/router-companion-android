@@ -49,7 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item>Security</item>-->
         <!--<item>Access</item>-->
         <!--<item>NAT &amp; QoS</item>-->
-        <!--<item>Admin Area</item>-->
+        <item>Admin Area</item>
     </string-array>
 
     <string-array name="router_connection_protocols_array">
