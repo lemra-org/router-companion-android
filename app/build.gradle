@@ -167,7 +167,7 @@ android {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
         }
         // For FOSS version only
         fdroid {
