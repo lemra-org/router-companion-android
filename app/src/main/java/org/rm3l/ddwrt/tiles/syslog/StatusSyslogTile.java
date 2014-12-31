@@ -201,8 +201,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 logTextView.append(new SpannableStringBuilder()
                         .append(Html.fromHtml("<br/>"))
                         .append(newSyslogSpan));
-                syslogContentView.setVisibility(View.VISIBLE);
-                filterEditText.setVisibility(View.VISIBLE);
 
                 filterEditText.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -266,12 +264,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
 
-            } else {
-                logTextView.setText(null);
-                syslogContentView.setVisibility(View.GONE);
-                filterEditText.setVisibility(View.GONE);
             }
-
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
