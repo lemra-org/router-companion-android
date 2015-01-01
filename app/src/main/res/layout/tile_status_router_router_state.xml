@@ -73,20 +73,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"/>
 
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_router_router_state_wan_ip"-->
-            <!--android:textColor="@color/ddwrt_green"-->
-            <!--android:textStyle="italic"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:gravity="left"-->
-            <!--android:text="Fetching WAN IP..."-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:singleLine="true"-->
-            <!--android:ellipsize="end"/>-->
-
         </RelativeLayout>
 
         <View
@@ -111,7 +97,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="4">
 
@@ -293,10 +279,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space"
                 android:visibility="gone" />
 
-            <ToggleButton
-                android:id="@+id/tile_status_router_router_state_togglebutton"
-                android:layout_width="fill_parent"
+            <Switch
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:thumb="@drawable/switch_bg"
+                android:track="@drawable/track_bg"
+                android:id="@+id/tile_status_router_router_state_togglebutton"
                 android:layout_column="3"
                 android:layout_gravity="start"
                 android:layout_row="6"
