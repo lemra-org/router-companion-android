@@ -8,27 +8,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Map.Entry;
 
 public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMDataRecyclerViewAdapter.ViewHolder> {
 
     private final Context context;
     private final NVRAMInfo nvramInfo;
-    private final List<Entry<Object,Object>> entryList;
+    private final List<Entry<Object,Object>> entryList = new ArrayList<>();
 
     public NVRAMDataRecyclerViewAdapter(Context context, NVRAMInfo nvramInfo) {
         this.context = context;
         this.nvramInfo = nvramInfo;
-        //noinspection ConstantConditions
-        this.entryList = Lists.newArrayList(this.nvramInfo.getData().entrySet());
+        this.setEntryList(this.nvramInfo);
     }
 
     public List<Entry<Object, Object>> getEntryList() {
@@ -38,7 +41,12 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     public void setEntryList(@NotNull final NVRAMInfo nvramInfo) {
         this.entryList.clear();
         //noinspection ConstantConditions
-        this.entryList.addAll(nvramInfo.getData().entrySet());
+        for (final Entry<Object,Object> entry : nvramInfo.getData().entrySet()) {
+            if (entry.getKey() == null || isNullOrEmpty(entry.getKey().toString())) {
+                continue;
+            }
+            this.entryList.add(entry);
+        }
     }
 
     @Override
@@ -58,8 +66,9 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         // - replace the contents of the view with that element
         final Entry<Object, Object> entryAt = entryList.get(position);
 
-        holder.key.setText((String) entryAt.getKey());
-        holder.value.setText((String) entryAt.getValue());
+        holder.key.setText(entryAt.getKey().toString());
+        final Object value = entryAt.getValue();
+        holder.value.setText(nullToEmpty(value != null ? value.toString() : null));
     }
 
     @Override

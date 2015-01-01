@@ -31,6 +31,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -391,8 +393,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
      *                           a previous saved state, this is the state.
      */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setHasOptionsMenu(true);
+
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
         Log.d(LOG_TAG, "onCreate() loaderIdsInUse: " + loaderIdsInUse);
         if (savedInstanceState != null) {

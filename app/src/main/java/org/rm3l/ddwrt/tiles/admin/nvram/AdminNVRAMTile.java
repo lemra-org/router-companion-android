@@ -24,12 +24,14 @@ package org.rm3l.ddwrt.tiles.admin.nvram;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,16 +96,32 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
                 popup.setOnMenuItemClickListener(AdminNVRAMTile.this);
                 final MenuInflater inflater = popup.getMenuInflater();
-                inflater.inflate(R.menu.tile_admin_nvram_options, popup.getMenu());
+
+                final Menu menu = popup.getMenu();
+
+                inflater.inflate(R.menu.tile_admin_nvram_options, menu);
+
+                //Disable menu item from preference
+                final int currentSort;
+                if (mParentFragmentPreferences != null) {
+                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), R.id.tile_admin_nvram_sort_default);
+                } else {
+                    currentSort = R.id.tile_admin_nvram_sort_default;
+                }
+                final MenuItem currentSortMenuItem = menu.findItem(currentSort);
+                if (currentSortMenuItem != null) {
+                    currentSortMenuItem.setEnabled(false);
+                }
 
                 // Locate MenuItem with ShareActionProvider
-                MenuItem item = popup.getMenu().findItem(R.id.tile_admin_nvram_share);
+                final MenuItem shareMenuItem = menu.findItem(R.id.tile_admin_nvram_share);
 
                 // Fetch and store ShareActionProvider
-                mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+                mShareActionProvider = (ShareActionProvider) shareMenuItem.getActionProvider();
 
                 popup.show();
             }
+
         });
 
         //Handle for Search EditText
@@ -119,33 +137,48 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.archive:
-//                archive(item);
-//                return true;
-//            case R.id.delete:
-//                delete(item);
-//                return true;
-//            default:
-//                return false;
-//        }
-        //TODO
-        return false;
-    }
+        final int itemId = item.getItemId();
+        //Store current value in preferences
+        switch(itemId) {
+            case R.id.tile_admin_nvram_sort_default:
+            case R.id.tile_admin_nvram_sort_asc:
+            case R.id.tile_admin_nvram_sort_desc:
+                //Store in preferences if any
+                final Integer currentSort;
+                if (mParentFragmentPreferences != null) {
+                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), -1);
+                } else {
+                    currentSort = null;
+                }
+                if (currentSort != null && currentSort != itemId) {
+                    //Store in preferences
+                    final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+                    editor.putInt(getFormattedPrefKey("sort"), itemId);
+                    editor.apply();
+                }
+                item.setEnabled(false);
+                break;
+            default:
+                break;
+        }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.tile_admin_nvram_sort_default:
-//            case R.id.tile_admin_nvram_sort_asc:
-//            case R.id.tile_admin_nvram_sort_desc:
-//            case R.id.tile_admin_nvram_sort:
-//                item.setChecked(!item.isChecked());
-//                return true;
-//            default:
-//                return false;
-//        }
-//    }
+        //TODO - Do action depending on item id
+        switch(itemId) {
+            case R.id.tile_admin_nvram_sort_default:
+                break;
+            case R.id.tile_admin_nvram_sort_asc:
+                break;
+            case R.id.tile_admin_nvram_sort_desc:
+                break;
+            case R.id.tile_admin_nvram_share:
+                break;
+            default:
+                break;
+        }
+
+        return false;
+
+    }
 
     @Nullable
     @Override
