@@ -74,7 +74,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 99;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, null);
+        super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
     }
 
     @Nullable
