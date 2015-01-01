@@ -83,24 +83,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
-            android:id="@+id/tile_status_wireless_clients_layout_list_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
-            android:orientation="vertical" />
-
-        <Button
-            android:id="@+id/tile_status_wireless_clients_show_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:text="@string/show_more"
-            android:visibility="gone" />
-
-        <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="3">
@@ -136,6 +118,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
         </GridLayout>
+
+        <GridLayout
+            android:id="@+id/tile_status_wireless_clients_layout_list_container"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.74"
+            android:columnCount="2"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/tile_status_wireless_clients_show_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:text="@string/show_more"
+            android:visibility="gone" />
+
 
     </LinearLayout>
 </LinearLayout>

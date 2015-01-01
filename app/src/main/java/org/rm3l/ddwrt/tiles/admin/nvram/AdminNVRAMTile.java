@@ -30,7 +30,11 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,17 +50,23 @@ import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
-public class AdminNVRAMTile extends DDWRTTile<None> {
+import java.util.List;
+
+public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
+    public static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
 
     private final RecyclerView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
 
     private final NVRAMInfo mNvramInfo;
+
+    private ShareActionProvider mShareActionProvider;
 
     public AdminNVRAMTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
@@ -76,7 +86,66 @@ public class AdminNVRAMTile extends DDWRTTile<None> {
         // specify an adapter (see also next example)
         mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, mNvramInfo);
         mRecyclerView.setAdapter(mAdapter);
+
+        //Create Options Menu
+        layout.findViewById(R.id.tile_admin_nvram_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(AdminNVRAMTile.this);
+                final MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.tile_admin_nvram_options, popup.getMenu());
+
+                // Locate MenuItem with ShareActionProvider
+                MenuItem item = popup.getMenu().findItem(R.id.tile_admin_nvram_share);
+
+                // Fetch and store ShareActionProvider
+                mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+                popup.show();
+            }
+        });
+
+        //Handle for Search EditText
     }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        //TODO
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.archive:
+//                archive(item);
+//                return true;
+//            case R.id.delete:
+//                delete(item);
+//                return true;
+//            default:
+//                return false;
+//        }
+        //TODO
+        return false;
+    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.tile_admin_nvram_sort_default:
+//            case R.id.tile_admin_nvram_sort_asc:
+//            case R.id.tile_admin_nvram_sort_desc:
+//            case R.id.tile_admin_nvram_sort:
+//                item.setChecked(!item.isChecked());
+//                return true;
+//            default:
+//                return false;
+//        }
+//    }
 
     @Nullable
     @Override
@@ -109,6 +178,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> {
                         if (nvramInfoTmp != null) {
                             mNvramInfo.putAll(nvramInfoTmp);
                         }
+
+                        final String[] nvramSize = SSHUtils.getManualProperty(mRouter, "nvram show 2>&1 1>/dev/null");
+                        if (nvramSize != null && nvramSize.length > 0) {
+                            final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
+                                    .splitToList(nvramSize[0]);
+                            if (nvramUsageList != null && !nvramUsageList.isEmpty()) {
+                                mNvramInfo.setProperty(NVRAM_SIZE, nvramUsageList.get(0));
+                            }
+                        }
+
                     }
 
                     if (mNvramInfo.isEmpty()) {
@@ -151,6 +230,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> {
         @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
 
         @Nullable final Exception exception = data.getException();
+
+        //NVRAM
+        ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
+                .setText(mNvramInfo.getProperty(NVRAM_SIZE, "N/A"));
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 

@@ -60,6 +60,7 @@ import java.util.Map;
 public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
+    public static final Splitter NVRAM_SIZE_SPLITTER = Splitter.on("size: ").omitEmptyStrings().trimResults();
 
     public StatusRouterSpaceUsageTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
@@ -101,7 +102,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     @Nullable String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
-                        final List<String> nvramUsageList = Splitter.on("size: ").omitEmptyStrings().trimResults()
+                        final List<String> nvramUsageList = NVRAM_SIZE_SPLITTER
                                 .splitToList(catProcMounts[0]);
                         if (nvramUsageList != null && !nvramUsageList.isEmpty()) {
                             nvramInfo.setProperty("nvram_space", nvramUsageList.get(0));

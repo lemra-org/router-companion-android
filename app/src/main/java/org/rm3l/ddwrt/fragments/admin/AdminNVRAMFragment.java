@@ -24,7 +24,10 @@ package org.rm3l.ddwrt.fragments.admin;
 
 import android.os.Bundle;
 
+import com.actionbarsherlock.view.MenuItem;
+
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.admin.nvram.AdminNVRAMTile;
@@ -44,6 +47,20 @@ public class AdminNVRAMFragment extends DDWRTBaseFragment {
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile> asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.tile_admin_nvram_sort_default:
+            case R.id.tile_admin_nvram_sort_asc:
+            case R.id.tile_admin_nvram_sort_desc:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

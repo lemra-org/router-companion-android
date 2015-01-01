@@ -273,7 +273,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="display">Display</string>
     <string name="pref_title_tab_sorting_strategy">Tab Sorting Strategy</string>
     <string name="no_nvram_data">No NVRAM data</string>
-    <string name="nvram">Non-volatile RAM)</string>
+    <string name="nvram">Non-volatile RAM</string>
     <string name="loading_nvram_data">Loading NVRAM Data</string>
+    <string name="menu">Menu</string>
+    <string name="sort">Sort</string>
+    <string name="size">Size</string>
 
 </resources>
