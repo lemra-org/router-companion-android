@@ -20,28 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:paddingBottom="10dip"
-    android:paddingLeft="10dip"
-    android:paddingRight="10dip"
-    android:paddingTop="10dip">
-
-    <TextView
-        android:id="@+id/nvram_key"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/holo_blue_dark" />
-
-    <TextView
-        android:id="@+id/nvram_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="false"
-        android:maxLines="5"/>
-
-</LinearLayout>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@drawable/track_disable" />
+    <item android:drawable="@drawable/track_default" />
+</selector>

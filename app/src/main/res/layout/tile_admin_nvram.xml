@@ -85,31 +85,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="3">
 
             <!-- Filter -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"/>
-
             <EditText
                 android:id="@+id/tile_admin_nvram_filter"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="start"
                 android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
                 android:textColor="@android:color/holo_blue_dark"
                 android:hint="@string/syslog_filter_hint"
@@ -139,16 +125,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space"
                 android:visibility="gone" />
 
-            <ToggleButton
-                android:id="@+id/tile_admin_nvram_togglebutton"
-                android:layout_width="fill_parent"
+            <Switch
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:thumb="@drawable/switch_bg"
+                android:track="@drawable/track_bg"
+                android:id="@+id/tile_admin_nvram_togglebutton"
                 android:layout_gravity="start"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
-                android:textOn="ON"
-                android:visibility="gone" />
+                android:textOn="ON"/>
+
+            <!--<Switch-->
+                <!--android:id="@+id/tile_admin_nvram_togglebutton"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="start"-->
+                <!--android:checked="true"-->
+                <!--android:thumb="@drawable/switch_bg"-->
+                <!--android:track="@drawable/track_bg"-->
+                <!--android:layout_marginTop="7dp"-->
+                <!--android:layout_marginBottom="15dp"-->
+                <!--android:textAppearance="?android:textAppearanceSmall"-->
+                <!--android:textOff="OFF"-->
+                <!--android:textOn="ON"-->
+                <!--android:visibility="gone" />-->
 
             <!-- Size -->
             <TextView

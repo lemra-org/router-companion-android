@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
 
-    <style name="AppBaseTheme" parent="android:Theme.Light"/>
+    <style name="AppBaseTheme" parent="android:Theme.Holo"/>
 
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowBackground">@color/background_window</item>

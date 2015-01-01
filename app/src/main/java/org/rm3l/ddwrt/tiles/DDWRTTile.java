@@ -36,6 +36,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -70,7 +71,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
     @Nullable
-    protected ToggleButton mToggleAutoRefreshButton = null;
+    protected CompoundButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
 
     public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
@@ -90,7 +91,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
         if (toggleRefreshButtonId != null) {
-            this.mToggleAutoRefreshButton = (ToggleButton) layout.findViewById(toggleRefreshButtonId);
+            this.mToggleAutoRefreshButton = (CompoundButton) layout.findViewById(toggleRefreshButtonId);
             if (this.mToggleAutoRefreshButton != null) {
                 this.mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
                 if (this.mParentFragmentPreferences != null) {
