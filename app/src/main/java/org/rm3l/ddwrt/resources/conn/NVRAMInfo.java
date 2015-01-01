@@ -92,6 +92,14 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     }
 
     /**
+     * Clear all properties
+     */
+    @SuppressWarnings("ConstantConditions")
+    public void clear() {
+        super.getData().clear();
+    }
+
+    /**
      * Set a property
      *
      * @param name  the property name

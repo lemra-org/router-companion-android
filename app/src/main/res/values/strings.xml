@@ -128,6 +128,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="admin_area_keep_alive">Keep Alive</string>
     <string name="admin_area_cmds">Commands</string>
     <string name="admin_area_wol">WOL</string>
+    <string name="admin_area_nvram">NVRAM</string>
     <string name="admin_area_factory">Factory Defaults</string>
     <string name="admin_area_upgrade">Upgrade</string>
     <string name="admin_area_backup">Backup</string>
@@ -271,5 +272,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="last_sign"><![CDATA[>>]]></string>
     <string name="display">Display</string>
     <string name="pref_title_tab_sorting_strategy">Tab Sorting Strategy</string>
+    <string name="no_nvram_data">No NVRAM data</string>
+    <string name="nvram">Non-volatile RAM)</string>
+    <string name="loading_nvram_data">Loading NVRAM Data</string>
 
 </resources>

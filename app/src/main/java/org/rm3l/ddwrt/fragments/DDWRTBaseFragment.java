@@ -55,6 +55,7 @@ import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminFactoryDefaultsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminKeepAliveFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminManagementFragment;
+import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminUpgradeFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminWOLFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
@@ -323,9 +324,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //            case 6:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 //8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-                tabsToSort = new DDWRTBaseFragment[1];
+                tabsToSort = new DDWRTBaseFragment[2];
                 tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_cmds), router);
+                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminNVRAMFragment.class, parentSectionTitle,
+                        resources.getString(R.string.admin_area_nvram), router);
 //                tabsToSort = new DDWRTBaseFragment[7];
 //                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_mgmt), router);
