@@ -51,7 +51,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:theme="@style/Theme.Sherlock" >
         <activity
             android:name=".mgmt.RouterManagementActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -61,7 +62,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".DDWRTMainActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".mgmt.RouterManagementActivity">
+            android:parentActivityName=".mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
@@ -70,19 +72,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".donate.DonateActivity"
             android:excludeFromRecents="true"
             android:label="@string/support_app"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="org.acra.CrashReportDialog"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Dialog" />
+            android:theme="@android:style/Theme.Dialog"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="org.achartengine.GraphicalActivity"
             android:excludeFromRecents="true"
             android:label="Chart"
             android:launchMode="singleInstance"
-            android:parentActivityName=".DDWRTMainActivity" >
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
@@ -91,7 +96,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".settings.RouterSettingsActivity"
             android:label="@string/title_activity_router_settings"
-            android:parentActivityName=".DDWRTMainActivity" >
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
@@ -100,7 +106,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".settings.RouterManagementSettingsActivity"
             android:label="@string/title_activity_router_settings"
-            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity" >
+            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
