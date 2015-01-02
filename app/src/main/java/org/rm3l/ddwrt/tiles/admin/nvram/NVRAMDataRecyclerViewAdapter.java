@@ -12,6 +12,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
@@ -28,18 +29,25 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
     private final Context context;
     private final List<Entry<Object,Object>> entryList = new ArrayList<>();
+    private Map<Object, Object> nvramInfo;
 
     public NVRAMDataRecyclerViewAdapter(Context context, NVRAMInfo nvramInfo) {
         this.context = context;
+        //noinspection ConstantConditions
         this.setEntryList(nvramInfo.getData());
     }
 
-    public List<Entry<Object, Object>> getEntryList() {
-        return entryList;
+    @Nullable
+    public Map<Object, Object> getNvramInfo() {
+        return nvramInfo;
     }
 
     public void setEntryList(@NotNull final Map<Object, Object> nvramInfo) {
         this.entryList.clear();
+        this.nvramInfo = nvramInfo;
+        //Not needed at this point - so make sure value has been read prior to calling this method
+        nvramInfo.remove(AdminNVRAMTile.NVRAM_SIZE);
+        this.nvramInfo = nvramInfo;
         //noinspection ConstantConditions
         for (final Entry<Object,Object> entry : nvramInfo.entrySet()) {
             if (entry.getKey() == null || isNullOrEmpty(entry.getKey().toString())) {

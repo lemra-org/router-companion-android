@@ -31,10 +31,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -43,6 +47,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -55,19 +60,22 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SortedMap;
 import java.util.TreeMap;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
     public static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
+    private static final String LAST_SEARCH = "lastSearch";
     public static final Comparator<Object> COMPARATOR_STRING_CASE_INSENSITIVE = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
@@ -99,6 +107,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             return o2.toString().compareToIgnoreCase(o1.toString());
         }
     };
+    public static final String SORT = "sort";
 
     private final RecyclerView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
@@ -143,7 +152,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 //Disable menu item from preference
                 final int currentSort;
                 if (mParentFragmentPreferences != null) {
-                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), R.id.tile_admin_nvram_sort_default);
+                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), R.id.tile_admin_nvram_sort_default);
                 } else {
                     currentSort = R.id.tile_admin_nvram_sort_default;
                 }
@@ -164,6 +173,149 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         });
 
         //Handle for Search EditText
+        final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_admin_nvram_filter);
+        //Initialize with existing search data
+        filterEditText.setText(mParentFragmentPreferences != null ?
+                mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING) : EMPTY_STRING);
+
+        filterEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        //'Clear' button - clear data, and reset everything out
+                        //Reset everything
+                        filterEditText.setText(EMPTY_STRING);
+
+                        final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
+                        //Update adapter in the preferences
+                        if (mParentFragmentPreferences != null) {
+                            final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
+                            if (currentSort <= 0) {
+                                mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
+                            } else {
+                                switch (currentSort) {
+                                    case R.id.tile_admin_nvram_sort_asc:
+                                        //asc
+                                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                        break;
+                                    case R.id.tile_admin_nvram_sort_desc:
+                                        //desc
+                                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                        break;
+                                    case R.id.tile_admin_nvram_sort_default:
+                                    default:
+                                        mNvramInfoToDisplay = new HashMap<>();
+                                        break;
+                                }
+                                mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                            }
+                        } else {
+                            mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
+                        }
+
+                        ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+                        mAdapter.notifyDataSetChanged();
+
+                        if (mParentFragmentPreferences != null) {
+                            final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+                            editor.putString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
+                            editor.apply();
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    final String textToFind = filterEditText.getText().toString();
+                    if (isNullOrEmpty(textToFind)) {
+                        //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
+                        return true;
+                    }
+                    final String existingSearch = mParentFragmentPreferences != null ?
+                            mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+                    if (mParentFragmentPreferences != null) {
+                        if (textToFind.equalsIgnoreCase(existingSearch)) {
+                            //No need to go further as this is already the string we are looking for
+                            return true;
+                        }
+                        final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+                        editor.putString(getFormattedPrefKey(LAST_SEARCH), textToFind);
+                        editor.apply();
+                    }
+
+                    //Filter out (and sort by user-preference)
+                    final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
+                    //Update adapter in the preferences
+                    final Map<Object, Object> mNvramInfoToDisplayCopy;
+                    if (mParentFragmentPreferences != null) {
+                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
+                        if (currentSort <= 0) {
+                            mNvramInfoToDisplayCopy = new HashMap<>(mNvramInfoDefaultSortingData);
+                        } else {
+                            switch (currentSort) {
+                                case R.id.tile_admin_nvram_sort_asc:
+                                    //asc
+                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_desc:
+                                    //desc
+                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_default:
+                                default:
+                                    mNvramInfoToDisplayCopy = new HashMap<>();
+                                    break;
+                            }
+                            //noinspection ConstantConditions
+                            for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
+                                final Object key = entry.getKey();
+                                final Object value = entry.getValue();
+                                if (key == null || value == null) {
+                                    continue;
+                                }
+                                if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
+                                    mNvramInfoToDisplayCopy.put(key,value);
+                                }
+                            }
+                        }
+                    } else {
+                        mNvramInfoToDisplayCopy = new HashMap<>();
+                        //noinspection ConstantConditions
+                        for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
+                            final Object key = entry.getKey();
+                            final Object value = entry.getValue();
+                            if (key == null || value == null) {
+                                continue;
+                            }
+                            if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
+                                mNvramInfoToDisplayCopy.put(key,value);
+                            }
+                        }
+                    }
+
+                    ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+                    mAdapter.notifyDataSetChanged();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     // Call to update the share intent
@@ -185,14 +337,14 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 //Store in preferences if any
                 final Integer currentSort;
                 if (mParentFragmentPreferences != null) {
-                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), -1);
+                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
                 } else {
                     currentSort = null;
                 }
                 if (currentSort != null && currentSort != itemId) {
                     //Store in preferences
                     final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                    editor.putInt(getFormattedPrefKey("sort"), itemId);
+                    editor.putInt(getFormattedPrefKey(SORT), itemId);
                     editor.apply();
                 }
                 item.setEnabled(false);
@@ -201,35 +353,65 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 break;
         }
 
-        boolean notifyDatasetChanged = false;
-        final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
-        switch(itemId) {
-            case R.id.tile_admin_nvram_sort_default:
-                mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
-                notifyDatasetChanged = true;
-                break;
-            case R.id.tile_admin_nvram_sort_asc:
-                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
-                notifyDatasetChanged = true;
-                break;
-            case R.id.tile_admin_nvram_sort_desc:
-                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
-                notifyDatasetChanged = true;
-                break;
-            case R.id.tile_admin_nvram_share:
-                //TODO Share action
-                break;
-            default:
-                break;
-        }
+        if (itemId != R.id.tile_admin_nvram_share) {
+            Map<Object, Object> mNvramInfoToDisplayCopy = null;
 
-        if (notifyDatasetChanged) {
-            mNvramInfoToDisplay.remove(NVRAM_SIZE);
-            //noinspection ConstantConditions
-            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
-            mAdapter.notifyDataSetChanged();
+            boolean notifyDatasetChanged = false;
+
+            //Filter out by search and sort preferences
+            final String textToFind = mParentFragmentPreferences != null ?
+                    mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+            if (isNullOrEmpty(textToFind)) {
+                //Filter on while dataset
+                final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
+                switch (itemId) {
+                    case R.id.tile_admin_nvram_sort_default:
+                        mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
+                        notifyDatasetChanged = true;
+                        break;
+                    case R.id.tile_admin_nvram_sort_asc:
+                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                        mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                        notifyDatasetChanged = true;
+                        break;
+                    case R.id.tile_admin_nvram_sort_desc:
+                        mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                        mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                        notifyDatasetChanged = true;
+                        break;
+                    default:
+                        break;
+                }
+                mNvramInfoToDisplayCopy = mNvramInfoToDisplay;
+            } else {
+                //Already filtered data
+                final Map<Object, Object> adapterNvramInfo = ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
+                switch (itemId) {
+                    case R.id.tile_admin_nvram_sort_default:
+                        mNvramInfoToDisplayCopy = new HashMap<>(adapterNvramInfo);
+                        notifyDatasetChanged = true;
+                        break;
+                    case R.id.tile_admin_nvram_sort_asc:
+                        mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                        mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
+                        notifyDatasetChanged = true;
+                        break;
+                    case R.id.tile_admin_nvram_sort_desc:
+                        mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                        mNvramInfoToDisplayCopy.putAll(adapterNvramInfo);
+                        notifyDatasetChanged = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (mNvramInfoToDisplayCopy != null && notifyDatasetChanged) {
+                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+                mAdapter.notifyDataSetChanged();
+            }
+        } else {
+            //TODO Share action
         }
 
         return false;
@@ -288,7 +470,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
                     final Properties defaultNVRAMInfo = mNvramInfoDefaultSorting.getData();
                     if (mParentFragmentPreferences != null) {
-                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), -1);
+                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
                         if (currentSort <= 0) {
                             mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
                         } else {
@@ -360,8 +542,59 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
-            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
-            mAdapter.notifyDataSetChanged();
+
+            //Filter out by search and sort preferences
+            final String textToFind = mParentFragmentPreferences != null ?
+                    mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+            if (isNullOrEmpty(textToFind)) {
+                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+                mAdapter.notifyDataSetChanged();
+            } else {
+
+                //Filter out (and sort by user-preference)
+                final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
+                //Update adapter in the preferences
+                final Map<Object, Object> mNvramInfoToDisplayCopy;
+                if (mParentFragmentPreferences != null) {
+                    final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
+                    if (currentSort <= 0) {
+                        mNvramInfoToDisplayCopy = new HashMap<>(mNvramInfoDefaultSortingData);
+                    } else {
+                        switch (currentSort) {
+                            case R.id.tile_admin_nvram_sort_asc:
+                                //asc
+                                mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                break;
+                            case R.id.tile_admin_nvram_sort_desc:
+                                //desc
+                                mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                break;
+                            case R.id.tile_admin_nvram_sort_default:
+                            default:
+                                mNvramInfoToDisplayCopy = new HashMap<>();
+                                break;
+                        }
+                        //noinspection ConstantConditions
+                        for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
+                            final Object key = entry.getKey();
+                            final Object value = entry.getValue();
+                            if (key == null || value == null) {
+                                continue;
+                            }
+                            if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
+                                mNvramInfoToDisplayCopy.put(key, value);
+                            }
+                        }
+                    }
+                } else {
+                    mNvramInfoToDisplayCopy = mNvramInfoToDisplay;
+                }
+
+                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+                mAdapter.notifyDataSetChanged();
+            }
+
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
