@@ -25,8 +25,10 @@ package org.rm3l.ddwrt.tiles.admin.nvram;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,12 +63,20 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -108,6 +119,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
     };
     public static final String SORT = "sort";
+    public static final Joiner.MapJoiner PROPERTIES_JOINER_TO_FILE = Joiner.on('\n').withKeyValueSeparator("=");
 
     private final RecyclerView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
@@ -326,6 +338,34 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
     }
 
+    private void setShareFile(File file) {
+        if (mShareActionProvider == null) {
+            return;
+        }
+
+        final Uri uriForFile = FileProvider
+                .getUriForFile(mParentFragmentActivity, "org.rm3l.fileprovider", file);
+
+        mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
+            @Override
+            public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+                mParentFragmentActivity
+                        .grantUriPermission(intent.getComponent().getPackageName(),
+                                uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                return true;
+            }
+        });
+
+        final Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.setData(uriForFile);
+        sendIntent.setType("text/plain");
+        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        setShareIntent(sendIntent);
+
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         final int itemId = item.getItemId();
@@ -411,11 +451,47 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 mAdapter.notifyDataSetChanged();
             }
         } else {
-            //TODO Share action
+            //Share action
+            final Map<Object, Object> nvramInfo = ((NVRAMDataRecyclerViewAdapter) mAdapter).getNvramInfo();
+            if (nvramInfo == null || nvramInfo.isEmpty()) {
+                Crouton.makeText(mParentFragmentActivity, "Nothing to share!", Style.ALERT).show();
+                return true;
+            }
+
+            Exception exception = null;
+            File file = new File(mParentFragmentActivity.getCacheDir(),
+                    String.format("nvram_data_%s_%s_%s.txt",
+                            mRouter.getUuid(), mRouter.getName(), mRouter.getRemoteIpAddress()));
+            OutputStream outputStream = null;
+            try {
+                outputStream = new BufferedOutputStream(new FileOutputStream(file, false));
+                outputStream.write(PROPERTIES_JOINER_TO_FILE.join(nvramInfo).getBytes());
+            } catch (IOException e) {
+                exception = e;
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (exception != null) {
+                Crouton.makeText(mParentFragmentActivity,
+                        "Error while trying to share file - please try again later",
+                        Style.ALERT).show();
+                return true;
+            }
+
+            setShareFile(file);
+
+            return true;
         }
 
         return false;
-
     }
 
     @Nullable
@@ -521,6 +597,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     public void onLoadFinished(Loader<None> loader, None data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
 
         if (data == null || mNvramInfoToDisplay.isEmpty()) {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));

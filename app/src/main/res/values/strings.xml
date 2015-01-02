@@ -278,5 +278,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="menu">Menu</string>
     <string name="sort">Sort</string>
     <string name="size">Size</string>
+    <string name="share">Share</string>
+    <string name="sort_z_a"><![CDATA[Sort Z->A]]></string>
+    <string name="sort_a_z"><![CDATA[Sort A->Z]]></string>
+    <string name="sort_default">Default Sorting</string>
 
 </resources>

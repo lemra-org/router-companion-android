@@ -29,28 +29,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:icon="@android:drawable/ic_menu_sort_alphabetically"
             android:orderInCategory="1"
             android:showAsAction="ifRoom"
-            android:title="Sort Default" />
+            android:title="@string/sort_default" />
 
         <item
             android:id="@+id/tile_admin_nvram_sort_asc"
             android:icon="@android:drawable/ic_menu_sort_alphabetically"
-            android:orderInCategory="1"
+            android:orderInCategory="2"
             android:showAsAction="ifRoom"
-            android:title="Sort A->Z" />
+            android:title="@string/sort_a_z" />
 
         <item
             android:id="@+id/tile_admin_nvram_sort_desc"
-            android:orderInCategory="1"
+            android:orderInCategory="3"
             android:showAsAction="ifRoom"
-            android:title="Sort Z->A" />
+            android:title="@string/sort_z_a" />
     </group>
 
     <item
         android:id="@+id/tile_admin_nvram_share"
         android:icon="@android:drawable/ic_menu_share"
-        android:orderInCategory="10"
+        android:orderInCategory="4"
         android:showAsAction="ifRoom"
-        android:title="Share"
+        android:title="@string/share"
         android:actionProviderClass="android.widget.ShareActionProvider" />
 
 </menu>
