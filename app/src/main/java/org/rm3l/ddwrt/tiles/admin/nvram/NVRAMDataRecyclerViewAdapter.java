@@ -16,7 +16,9 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -25,23 +27,21 @@ import static java.util.Map.Entry;
 public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMDataRecyclerViewAdapter.ViewHolder> {
 
     private final Context context;
-    private final NVRAMInfo nvramInfo;
     private final List<Entry<Object,Object>> entryList = new ArrayList<>();
 
     public NVRAMDataRecyclerViewAdapter(Context context, NVRAMInfo nvramInfo) {
         this.context = context;
-        this.nvramInfo = nvramInfo;
-        this.setEntryList(this.nvramInfo);
+        this.setEntryList(nvramInfo.getData());
     }
 
     public List<Entry<Object, Object>> getEntryList() {
         return entryList;
     }
 
-    public void setEntryList(@NotNull final NVRAMInfo nvramInfo) {
+    public void setEntryList(@NotNull final Map<Object, Object> nvramInfo) {
         this.entryList.clear();
         //noinspection ConstantConditions
-        for (final Entry<Object,Object> entry : nvramInfo.getData().entrySet()) {
+        for (final Entry<Object,Object> entry : nvramInfo.entrySet()) {
             if (entry.getKey() == null || isNullOrEmpty(entry.getKey().toString())) {
                 continue;
             }

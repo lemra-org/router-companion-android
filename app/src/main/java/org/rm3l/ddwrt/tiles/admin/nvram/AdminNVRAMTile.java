@@ -55,24 +55,63 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
     public static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
+    public static final Comparator<Object> COMPARATOR_STRING_CASE_INSENSITIVE = new Comparator<Object>() {
+        @Override
+        public int compare(Object o1, Object o2) {
+            if (o1 == o2) {
+                return 0;
+            }
+            if (o1 == null) {
+                return -1;
+            }
+            if (o2 == null) {
+                return 1;
+            }
+            return o1.toString().compareToIgnoreCase(o2.toString());
+        }
+    };
+
+    public static final Comparator<Object> COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE = new Comparator<Object>() {
+        @Override
+        public int compare(Object o1, Object o2) {
+            if (o1 == o2) {
+                return 0;
+            }
+            if (o1 == null) {
+                return 1;
+            }
+            if (o2 == null) {
+                return -1;
+            }
+            return o2.toString().compareToIgnoreCase(o1.toString());
+        }
+    };
 
     private final RecyclerView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
 
-    private final NVRAMInfo mNvramInfo;
+    private final NVRAMInfo mNvramInfoDefaultSorting;
+    private Map<Object, Object> mNvramInfoToDisplay = new HashMap<>();
 
     private ShareActionProvider mShareActionProvider;
 
     public AdminNVRAMTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
-        this.mNvramInfo = new NVRAMInfo();
+        this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.tile_admin_nvram_ListView);
 
         // use this setting to improve performance if you know that changes
@@ -86,7 +125,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, mNvramInfo);
+        mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, mNvramInfoDefaultSorting);
         mRecyclerView.setAdapter(mAdapter);
 
         //Create Options Menu
@@ -162,18 +201,35 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 break;
         }
 
-        //TODO - Do action depending on item id
+        boolean notifyDatasetChanged = false;
+        final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
         switch(itemId) {
             case R.id.tile_admin_nvram_sort_default:
+                mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
+                notifyDatasetChanged = true;
                 break;
             case R.id.tile_admin_nvram_sort_asc:
+                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                notifyDatasetChanged = true;
                 break;
             case R.id.tile_admin_nvram_sort_desc:
+                mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                mNvramInfoToDisplay.putAll(mNvramInfoDefaultSortingData);
+                notifyDatasetChanged = true;
                 break;
             case R.id.tile_admin_nvram_share:
+                //TODO Share action
                 break;
             default:
                 break;
+        }
+
+        if (notifyDatasetChanged) {
+            mNvramInfoToDisplay.remove(NVRAM_SIZE);
+            //noinspection ConstantConditions
+            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+            mAdapter.notifyDataSetChanged();
         }
 
         return false;
@@ -200,7 +256,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     }
                     nbRunsLoader++;
 
-                    mNvramInfo.clear();
+                    mNvramInfoToDisplay.clear();
+                    mNvramInfoDefaultSorting.clear();
 
                     NVRAMInfo nvramInfoTmp = null;
 
@@ -209,7 +266,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                                 SSHUtils.getNVRamInfoFromRouter(mRouter);
                     } finally {
                         if (nvramInfoTmp != null) {
-                            mNvramInfo.putAll(nvramInfoTmp);
+                            mNvramInfoDefaultSorting.putAll(nvramInfoTmp);
                         }
 
                         final String[] nvramSize = SSHUtils.getManualProperty(mRouter, "nvram show 2>&1 1>/dev/null");
@@ -217,14 +274,43 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
                                     .splitToList(nvramSize[0]);
                             if (nvramUsageList != null && !nvramUsageList.isEmpty()) {
-                                mNvramInfo.setProperty(NVRAM_SIZE, nvramUsageList.get(0));
+                                mNvramInfoDefaultSorting.setProperty(NVRAM_SIZE, nvramUsageList.get(0));
                             }
                         }
 
                     }
 
-                    if (mNvramInfo.isEmpty()) {
+                    if (mNvramInfoDefaultSorting.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
+                    }
+
+                    //Now apply sorting here (as per user-preferences)
+
+                    final Properties defaultNVRAMInfo = mNvramInfoDefaultSorting.getData();
+                    if (mParentFragmentPreferences != null) {
+                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey("sort"), -1);
+                        if (currentSort <= 0) {
+                            mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
+                        } else {
+                            switch (currentSort) {
+                                case R.id.tile_admin_nvram_sort_asc:
+                                    //asc
+                                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                    mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_desc:
+                                    //desc
+                                    mNvramInfoToDisplay = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                    mNvramInfoToDisplay.putAll(defaultNVRAMInfo);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_default:
+                                default:
+                                    mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
+                                    break;
+                            }
+                        }
+                    } else {
+                        mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
                     }
 
                     return new None();
@@ -254,7 +340,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        if (data == null || mNvramInfo.isEmpty()) {
+        if (data == null || mNvramInfoToDisplay.isEmpty()) {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
         }
 
@@ -265,15 +351,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         @Nullable final Exception exception = data.getException();
 
         //NVRAM
+        final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);
         ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
-                .setText(mNvramInfo.getProperty(NVRAM_SIZE, "N/A"));
+                .setText(nvramSize != null ? nvramSize.toString(): "N/A");
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
-            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfo);
+            ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
             mAdapter.notifyDataSetChanged();
         }
 
