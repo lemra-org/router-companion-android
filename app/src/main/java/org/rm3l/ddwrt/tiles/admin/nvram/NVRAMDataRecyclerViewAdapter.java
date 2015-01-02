@@ -1,6 +1,9 @@
 package org.rm3l.ddwrt.tiles.admin.nvram;
 
 import android.content.Context;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,17 +11,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +29,11 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     private final Context context;
     private final List<Entry<Object,Object>> entryList = new ArrayList<>();
     private Map<Object, Object> nvramInfo;
+    private final FragmentManager fragmentManager;
 
-    public NVRAMDataRecyclerViewAdapter(Context context, NVRAMInfo nvramInfo) {
+    public NVRAMDataRecyclerViewAdapter(FragmentActivity context, NVRAMInfo nvramInfo) {
         this.context = context;
+        this.fragmentManager = context.getSupportFragmentManager();
         //noinspection ConstantConditions
         this.setEntryList(nvramInfo.getData());
     }
@@ -65,7 +65,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                 .inflate(R.layout.tile_admin_nvram_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        @NotNull ViewHolder vh = new ViewHolder(this.context, v);
+        @NotNull ViewHolder vh = new ViewHolder(this.context, this.fragmentManager, v);
         return vh;
     }
 
@@ -78,6 +78,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         holder.key.setText(entryAt.getKey().toString());
         final Object value = entryAt.getValue();
         holder.value.setText(nullToEmpty(value != null ? value.toString() : null));
+        holder.position = position;
     }
 
     @Override
@@ -88,8 +89,10 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
+
+        private static final String EDIT_NVRAM_DATA_FRAGMENT_TAG = "edit_nvram_data_fragment_tag";
 
         @NotNull
         final TextView key;
@@ -97,12 +100,16 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         @NotNull
         final TextView value;
 
+        int position;
+
         private final Context context;
         private final View itemView;
+        private final FragmentManager fragmentManager;
 
-        public ViewHolder(Context context, View itemView) {
+        public ViewHolder(Context context, FragmentManager fragmentManager, View itemView) {
             super(itemView);
             this.context = context;
+            this.fragmentManager = fragmentManager;
             this.itemView = itemView;
             this.itemView.setOnClickListener(this);
 
@@ -114,8 +121,11 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         public void onClick(View v) {
             //TODO
             Toast.makeText(this.context,
-                    "[FIXME] Edit nvram with key '" + key.getText()+"'",
+                    "[FIXME] Edit nvram with key '" + key.getText()+"' @" + position,
                     Toast.LENGTH_LONG).show();
+            @NotNull final DialogFragment editFragment =
+                    EditNVRAMKeyValueDialogFragment.newInstance(NVRAMDataRecyclerViewAdapter.this, position, key.getText(), value.getText());
+            editFragment.show(fragmentManager, EDIT_NVRAM_DATA_FRAGMENT_TAG);
         }
 
     }

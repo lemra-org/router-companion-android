@@ -237,4 +237,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.2'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'de.cketti.library.changelog:ckchangelog:1.2.1'
+    compile 'com.cocosw:undobar:1.+@aar'
 }

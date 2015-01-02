@@ -282,5 +282,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="sort_z_a"><![CDATA[Sort Z->A]]></string>
     <string name="sort_a_z"><![CDATA[Sort A->Z]]></string>
     <string name="sort_default">Default Sorting</string>
+    <string name="update">Update</string>
+    <string name="edit_nvram">Edit NVRAM variable</string>
+    <string name="key">Key</string>
+    <string name="value">Value</string>
+    <string name="nvram_var_value">NVRAM Variable Value</string>
 
 </resources>
