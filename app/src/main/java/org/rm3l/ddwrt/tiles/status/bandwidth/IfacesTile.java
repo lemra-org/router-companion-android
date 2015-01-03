@@ -59,6 +59,11 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_bandwidth_ifaces_title;
+    }
+
+    @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 

@@ -68,6 +68,11 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
         daylightMap.put("10", "3rd Sun Oct - 3rd Sun Feb");
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_time_title;
+    }
+
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {

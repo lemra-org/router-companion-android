@@ -150,6 +150,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         return loader;
     }
 
+    public abstract int getTileTitleViewId();
+
     @Nullable
     protected abstract Loader<T> getLoader(int id, Bundle args);
 

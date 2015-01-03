@@ -92,6 +92,11 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     }
 
     @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_bandwidth_monitoring_title;
+    }
+
+    @Override
     protected Loader<None> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
 

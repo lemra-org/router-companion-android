@@ -66,6 +66,11 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_router_cpu_title;
+    }
+
     @Nullable
     @Override
     protected String getLogTag() {

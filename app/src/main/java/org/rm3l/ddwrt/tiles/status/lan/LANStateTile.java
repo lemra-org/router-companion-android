@@ -57,6 +57,11 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_lan_status, R.id.tile_status_lan_status_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_lan_status_title;
+    }
+
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {

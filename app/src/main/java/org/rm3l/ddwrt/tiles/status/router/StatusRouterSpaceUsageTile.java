@@ -67,6 +67,11 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_router_space_usage_title;
+    }
+
     @Nullable
     @Override
     protected String getLogTag() {

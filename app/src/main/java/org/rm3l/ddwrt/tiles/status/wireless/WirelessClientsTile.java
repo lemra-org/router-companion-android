@@ -82,6 +82,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_wireless_clients_title;
+    }
+
     @Nullable
     @Override
     protected Loader<ClientDevices> getLoader(int id, Bundle args) {

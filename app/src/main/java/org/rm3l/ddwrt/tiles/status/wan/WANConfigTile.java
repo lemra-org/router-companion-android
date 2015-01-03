@@ -60,6 +60,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_wan_config_title;
+    }
+
     @Nullable
     @Override
     protected String getLogTag() {

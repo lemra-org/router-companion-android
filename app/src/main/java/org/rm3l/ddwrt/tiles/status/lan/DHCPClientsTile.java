@@ -43,7 +43,14 @@ public class DHCPClientsTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
 
     public DHCPClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        //TODO
         super(parentFragment, arguments, router, null, null);
+    }
+
+    @Override
+    public int getTileTitleViewId() {
+        //TODO
+        return -1;
     }
 
     @Nullable

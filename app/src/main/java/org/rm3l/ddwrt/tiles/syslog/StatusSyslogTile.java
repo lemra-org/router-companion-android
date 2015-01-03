@@ -101,6 +101,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_syslog_title;
+    }
+
+    @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 

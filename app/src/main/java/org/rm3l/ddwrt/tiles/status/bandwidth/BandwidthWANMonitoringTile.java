@@ -83,6 +83,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_bandwidth_monitoring_title;
+    }
+
     @Nullable
     @Override
     protected Loader<None> getLoader(int id, Bundle args) {

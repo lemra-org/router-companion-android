@@ -62,6 +62,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem, R.id.tile_status_router_router_mem_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_router_mem_title;
+    }
+
     @NotNull
     private static String getGrepProcMemInfo(@NotNull final String item) {
         return "grep \"" + item + "\" /proc/meminfo ";

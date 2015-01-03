@@ -62,6 +62,11 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_router_state_title;
+    }
+
     @Nullable
     @Override
     protected String getLogTag() {

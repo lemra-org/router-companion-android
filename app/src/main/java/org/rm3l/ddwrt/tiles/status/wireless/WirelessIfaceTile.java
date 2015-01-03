@@ -66,6 +66,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_wireless_iface_title;
+    }
+
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {

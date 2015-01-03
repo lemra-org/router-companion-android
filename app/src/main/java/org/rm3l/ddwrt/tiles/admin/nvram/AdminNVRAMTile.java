@@ -346,6 +346,11 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_admin_nvram_title;
+    }
+
     // Call to update the share intent
     private void setShareIntent(Intent shareIntent) {
         //TODO

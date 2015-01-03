@@ -28,8 +28,10 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -182,10 +184,23 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             return;
         }
 
+        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+
+        final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
+        final boolean isThemeLight = (themeBackgroundColor == sherlockActivity.getResources().getColor(R.color.cardview_light_background));
+
         for (@NotNull final DDWRTTile tile : tiles) {
             @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
                 continue;
+            }
+
+            if (isThemeLight) {
+                final View titleView = tileViewGroupLayout.findViewById(tile.getTileTitleViewId());
+                if (titleView instanceof TextView) {
+                    ((TextView) titleView)
+                            .setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                }
             }
 
             tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
@@ -194,9 +209,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             getLoaderManager().initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
 
             //Add row for this iface
-            final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
             final CardView cardView = new CardView(sherlockActivity);
-            cardView.setCardBackgroundColor(getThemeBackgroundColor(sherlockActivity, router.getUuid()));
+            cardView.setCardBackgroundColor(themeBackgroundColor);
 
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);

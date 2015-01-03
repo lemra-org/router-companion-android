@@ -42,6 +42,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -535,14 +536,19 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         boolean atLeastOneTileAdded = false;
 
+        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
 
-            @NotNull final LayoutInflater layoutInflater = getSherlockActivity().getLayoutInflater();
+            @NotNull final LayoutInflater layoutInflater = sherlockActivity.getLayoutInflater();
             viewGroup = (ScrollView) layoutInflater.inflate(R.layout.base_tiles_container_scrollview, null);
 
             @NotNull final List<CardView> cards = new ArrayList<CardView>();
 
             final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+            final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
+
+            final boolean isThemeLight = (themeBackgroundColor == sherlockActivity.getResources().getColor(R.color.cardview_light_background));
 
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
@@ -550,6 +556,11 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
                 if (viewGroupLayout == null) {
                     continue;
+                }
+
+                if (isThemeLight) {
+                    ((TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId()))
+                            .setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
                 }
 
                 //Detach this from Parent
@@ -560,10 +571,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
                 viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-                final CardView cardView = new CardView(getSherlockActivity());
+                final CardView cardView = new CardView(sherlockActivity);
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
-                cardView.setCardBackgroundColor(getThemeBackgroundColor(getSherlockActivity(), router.getUuid()));
+                cardView.setCardBackgroundColor(themeBackgroundColor);
                 //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                 cardView.setPreventCornerOverlap(true);
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
@@ -595,8 +606,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         }
 
         if (viewGroup == null || !atLeastOneTileAdded) {
-            viewGroup = new FrameLayout(getSherlockActivity());
-            @NotNull final TextView view = new TextView(getSherlockActivity());
+            viewGroup = new FrameLayout(sherlockActivity);
+            @NotNull final TextView view = new TextView(sherlockActivity);
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));
             view.setBackgroundResource(R.drawable.background_card);

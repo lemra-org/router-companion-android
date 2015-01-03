@@ -117,6 +117,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         });
     }
 
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_wan_monthly_traffic_title;
+    }
+
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {

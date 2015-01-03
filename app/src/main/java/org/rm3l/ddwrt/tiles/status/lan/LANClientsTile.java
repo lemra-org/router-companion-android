@@ -44,7 +44,14 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
 
 
     public LANClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        //TODO
         super(parentFragment, arguments, router, null, null);
+    }
+
+    @Override
+    public int getTileTitleViewId() {
+        //TODO
+        return -1;
     }
 
     @Nullable
