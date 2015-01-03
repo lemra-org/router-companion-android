@@ -47,8 +47,11 @@ public final class DDWRTCompanionConstants {
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
     public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
+    public static final String THEMING_PREF = "theming";
     public static final String EMPTY_STRING = "";
     public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
+
+    public static final long DEFAULT_THEME = 31l;
 
     public String[] mMonth = new String[] {
             "Jan", "Feb" , "Mar", "Apr", "May", "Jun",

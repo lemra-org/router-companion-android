@@ -113,6 +113,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
+import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 
 /**
  * Abstract base fragment
@@ -557,14 +558,18 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                     ((ViewGroup) parent).removeView(viewGroupLayout);
                 }
 
+                viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+
                 final CardView cardView = new CardView(getSherlockActivity());
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
-                cardView.addView(viewGroupLayout);
+                cardView.setCardBackgroundColor(getThemeBackgroundColor(getSherlockActivity(), router.getUuid()));
                 //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                 cardView.setPreventCornerOverlap(true);
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
+
+                cardView.addView(viewGroupLayout);
 
                 cards.add(cardView);
             }

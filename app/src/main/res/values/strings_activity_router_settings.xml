@@ -26,6 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
+    <string name="pref_header_theming">Theming</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
@@ -68,6 +69,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>900000</item>
         <item>1800000</item>
         <!--<item>-1</item>-->
+    </string-array>
+
+    <string-array name="pref_theme_titles">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="pref_theme_values">
+        <item>30</item>
+        <item>31</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>

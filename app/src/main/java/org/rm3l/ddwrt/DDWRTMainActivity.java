@@ -61,8 +61,10 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 /**
@@ -95,6 +97,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     private String mCurrentSortingStrategy;
 
     private long mCurrentSyncInterval;
+
+    private long mCurrentTheme;
 
     @NotNull
     private SharedPreferences mPreferences;
@@ -175,13 +179,15 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
         //Load from Shared Preferences
-        this.mCurrentSortingStrategy = this.mPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,"");
-        this.mCurrentSyncInterval = this.mPreferences.getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, -1l);
+        this.mCurrentSortingStrategy = this.mPreferences.getString(SORTING_STRATEGY_PREF,"");
+        this.mCurrentSyncInterval = this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
+        this.mCurrentTheme = this.mPreferences.getLong(THEMING_PREF, -1l);
 
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
         final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval <= 0l);
-        if (putDefaultSortingStrategy || putDefaultSyncInterval) {
+        final boolean putDefaultTheme = (this.mCurrentTheme <= 0l);
+        if (putDefaultSortingStrategy || putDefaultSyncInterval || putDefaultTheme) {
             //Add default preferences values
             final SharedPreferences.Editor editor = this.mPreferences.edit();
             if (putDefaultSortingStrategy) {
@@ -189,6 +195,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
             }
             if (putDefaultSyncInterval) {
                 editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);
+            }
+            if (putDefaultTheme) {
+                editor.putLong(THEMING_PREF, DEFAULT_THEME);
             }
             editor.apply();
         }
@@ -287,9 +296,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         if (requestCode == ROUTER_SETTINGS_ACTIVITY_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                if (this.mCurrentSyncInterval != this.mPreferences.getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF,-1l) ||
+                if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF,-1l) ||
+                        this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
                         !this.mCurrentSortingStrategy
-                        .equals(this.mPreferences.getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,""))) {
+                        .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF,""))) {
                     //Reload UI
                     final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
                     alertDialog.show();

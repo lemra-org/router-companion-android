@@ -27,17 +27,23 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * General utilities
@@ -49,6 +55,23 @@ public final class Utils {
     private static long nextLoaderId = 1;
 
     private Utils() {
+    }
+
+    private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
+
+    static {
+        colorToTheme.put(R.color.cardview_light_background, 30); //Light
+        colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
+    }
+
+    public static int getThemeBackgroundColor(@NotNull final Context context, @NotNull final String routerUuid) {
+        final long theme = context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
+        final BiMap<Integer, Integer> colorToThemeInverse = colorToTheme.inverse();
+        Integer color = colorToThemeInverse.get(Long.valueOf(theme).intValue());
+        if (color == null) {
+            color = colorToThemeInverse.get(Long.valueOf(DEFAULT_THEME).intValue());
+        }
+        return context.getResources().getColor(color);
     }
 
     public static long getNextLoaderId() {

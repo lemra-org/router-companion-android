@@ -22,6 +22,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Theming -->
+    <PreferenceCategory
+        android:title="Theming"
+        android:key="@string/pref_header_theming">
+
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:key="theming"
+            android:title="@string/pref_title_theme"
+            android:entries="@array/pref_theme_titles"
+            android:entryValues="@array/pref_theme_values"
+            android:defaultValue="31"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+    </PreferenceCategory>
+
     <!-- General -->
     <PreferenceCategory
         android:title="General"

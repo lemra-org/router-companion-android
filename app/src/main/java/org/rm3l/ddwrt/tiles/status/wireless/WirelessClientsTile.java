@@ -62,6 +62,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
+
 /**
  *
  */
@@ -231,11 +233,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
             final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
             clientsContainer.removeAllViews();
+            clientsContainer.setBackgroundColor(mParentFragmentActivity.getResources().getColor(android.R.color.transparent));
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
+            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
             for (final Device device : devices) {
 
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
+                cardView.setCardBackgroundColor(themeBackgroundColor);
 
                 final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();

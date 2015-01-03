@@ -38,6 +38,7 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -50,6 +51,8 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 
 /**
  *
@@ -185,11 +188,16 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                 continue;
             }
 
+            tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+
             //Init loaders for these tiles
             getLoaderManager().initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
 
             //Add row for this iface
-            final CardView cardView = new CardView(getSherlockActivity());
+            final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+            final CardView cardView = new CardView(sherlockActivity);
+            cardView.setCardBackgroundColor(getThemeBackgroundColor(sherlockActivity, router.getUuid()));
+
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
 

@@ -36,6 +36,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -110,6 +111,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
             bindPreferenceSummaryToValue(findPreference(SYNC_INTERVAL_MILLIS_PREF));
+            bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
         }
 
     }
