@@ -80,173 +80,186 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <!-- MAC -->
-            <TextView
+            <GridLayout
+                android:id="@+id/tile_status_lan_status_gridLayout"
+                android:visibility="gone"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3">
+
+                <!-- MAC -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lan_status_mac"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_lan_status_mac"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- IP -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lan_status_ip"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_lan_status_ip"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Subnet Mask -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lan_status_subnet_mask"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_lan_status_subnet_mask"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- GW -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lan_status_gateway"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_lan_status_gateway"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!--&lt;!&ndash; Comma-separated list of DNSs &ndash;&gt;-->
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Local DNS"-->
+                <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text=" " />-->
+
+                <!--<TextView-->
+                <!--android:id="@+id/tile_status_lan_status_dns"-->
+                <!--android:layout_width="292dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="left"-->
+                <!--android:ellipsize="end"-->
+                <!--android:gravity="left"-->
+                <!--android:singleLine="false"-->
+                <!--android:text="@string/loading"-->
+                <!--android:textStyle="italic" />-->
+
+                <!-- Auto-refresh -->
+                <TextView
+                    android:id="@+id/tile_status_lan_status_togglebutton_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_refresh"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tile_status_lan_status_togglebutton_separator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"
+                    android:visibility="gone" />
+
+                <Switch
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:thumb="@drawable/switch_bg"
+                    android:track="@drawable/track_bg"
+                    android:id="@+id/tile_status_lan_status_togglebutton"
+                    android:layout_gravity="start"
+                    android:checked="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textOff="OFF"
+                    android:textOn="ON"
+                    android:visibility="gone" />
+
+            </GridLayout>
+            <ProgressBar
+                android:id="@+id/tile_status_lan_status_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lan_status_mac"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_lan_status_mac"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- IP -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lan_status_ip"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_lan_status_ip"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Subnet Mask -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lan_status_subnet_mask"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_lan_status_subnet_mask"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- GW -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lan_status_gateway"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_lan_status_gateway"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!--&lt;!&ndash; Comma-separated list of DNSs &ndash;&gt;-->
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Local DNS"-->
-            <!--android:textStyle="bold" />-->
-
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginLeft="8.0dip"-->
-            <!--android:layout_marginRight="8.0dip"-->
-            <!--android:text=" " />-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_lan_status_dns"-->
-            <!--android:layout_width="292dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="left"-->
-            <!--android:singleLine="false"-->
-            <!--android:text="@string/loading"-->
-            <!--android:textStyle="italic" />-->
-
-            <!-- Auto-refresh -->
-            <TextView
-                android:id="@+id/tile_status_lan_status_togglebutton_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/auto_refresh"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tile_status_lan_status_togglebutton_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"
-                android:visibility="gone" />
-
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:thumb="@drawable/switch_bg"
-                android:track="@drawable/track_bg"
-                android:id="@+id/tile_status_lan_status_togglebutton"
-                android:layout_gravity="start"
-                android:checked="true"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:visibility="gone" />
-
-        </GridLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

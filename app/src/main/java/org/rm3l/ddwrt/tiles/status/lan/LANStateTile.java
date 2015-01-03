@@ -77,21 +77,6 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    /*
-                    lan_domain=home
-lan_gateway=0.0.0.0
-lan_hwaddr=C4:04:15:5B:B2:0E
-lan_hwnames=
-lan_ifname=br0
-lan_ifnames=vlan1 vlan2 eth1 eth2
-lan_ipaddr=172.17.17.1
-lan_lease=86400
-lan_netmask=255.255.255.0
-lan_proto=dhcp
-lan_stp=0
-lan_wins=
-                     */
-
                     return SSHUtils.getNVRamInfoFromRouter(mRouter,
                             NVRAMInfo.LAN_IPADDR,
                             NVRAMInfo.LAN_DOMAIN,
@@ -157,6 +142,11 @@ lan_wins=
     public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        layout.findViewById(R.id.tile_status_lan_status_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_lan_status_gridLayout)
+                .setVisibility(View.VISIBLE);
 
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
