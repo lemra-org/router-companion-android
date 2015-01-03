@@ -212,6 +212,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
     public void onLoadFinished(Loader<None> loader, None data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder)
+                .setVisibility(View.VISIBLE);
+
         //noinspection ConstantConditions
         if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));

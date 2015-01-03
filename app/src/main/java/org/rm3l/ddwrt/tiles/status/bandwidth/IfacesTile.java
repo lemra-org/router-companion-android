@@ -101,6 +101,11 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_bandwidth_ifaces_gridLayout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }

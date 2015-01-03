@@ -136,11 +136,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </GridLayout>
 
-        <LinearLayout
-            android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical" />
+
+            <ProgressBar
+                android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>
