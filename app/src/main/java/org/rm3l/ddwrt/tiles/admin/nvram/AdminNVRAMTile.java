@@ -146,7 +146,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, mNvramInfoDefaultSorting);
+        mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, router, mNvramInfoDefaultSorting);
         mRecyclerView.setAdapter(mAdapter);
 
         //Create Options Menu
@@ -296,7 +296,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
                                 final Object key = entry.getKey();
                                 final Object value = entry.getValue();
-                                if (key == null || value == null) {
+                                if (key == null) {
                                     continue;
                                 }
                                 if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
@@ -310,7 +310,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
                             final Object key = entry.getKey();
                             final Object value = entry.getValue();
-                            if (key == null || value == null) {
+                            if (key == null) {
                                 continue;
                             }
                             if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
@@ -657,7 +657,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
                             final Object key = entry.getKey();
                             final Object value = entry.getValue();
-                            if (key == null || value == null) {
+                            if (key == null) {
                                 continue;
                             }
                             if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {

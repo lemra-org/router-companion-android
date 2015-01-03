@@ -24,29 +24,38 @@ package org.rm3l.ddwrt.tiles.admin.nvram;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.cocosw.undobar.UndoBarController;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
+import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 
 public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
 
     private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
 
-    private static final String POSITION = "position";
-    private static final String KEY = \"fake-key\";
-    private static final String VALUE = "value";
+    public static final String POSITION = "position";
+    public static final String KEY = \"fake-key\";
+    public static final String VALUE = "value";
 
     private int mPosition;
     private CharSequence mKey;
@@ -93,8 +102,8 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
                 .setMessage("NVRAM is the permanent settings storage. This includes: " +
                         "i) settings that you normally change using Web Interface, and " +
                         "ii) settings for user Startup Scripts. \n" +
-                        "Some variables may not be editable at all. \n\n" +
-                        "* DO NOT EDIT UNLESS YOU KNOW WHAT YOU ARE DOING! *")
+                        "Variables edited will be persisted in NVRAM. \n\n" +
+                        "* SO DO NOT EDIT UNLESS YOU KNOW WHAT YOU ARE DOING! *")
                 .setIcon(android.R.drawable.stat_sys_warning)
                 .setView(view)
                 // Add action buttons
@@ -136,16 +145,43 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
             d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO
                     //Validate data
-                    final String value = ((EditText) d.findViewById(R.id.tile_admin_nvram_edit_value)).getText().toString();
+                    final EditText editText = (EditText) d.findViewById(R.id.tile_admin_nvram_edit_value);
+                    final Editable newValue = editText.getText();
+
+                    if (mValue != null && StringUtils.equals(newValue.toString(), mValue.toString())) {
+                        //Crouton
+                        Crouton.makeText(getActivity(), "No change", ALERT,
+                                (ViewGroup) (d.findViewById(R.id.tile_admin_nvram_edit_notification_viewgroup))).show();
+                        editText.requestFocus();
+                        //Open Keyboard
+                        final InputMethodManager imm = (InputMethodManager) getActivity()
+                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            // only will trigger it if no physical keyboard is open
+                            imm.showSoftInput(editText, 0);
+                        }
+                        return;
+                    }
+
+                    final CharSequence variableKey = \"fake-key\";
+
+                    final Bundle token = new Bundle();
+                    token.putInt(POSITION, mPosition);
+                    token.putCharSequence(VALUE, newValue);
+                    token.putCharSequence(KEY, variableKey);
 
                     //nvram set data changed
+                    new UndoBarController.UndoBar(getSherlockActivity())
+                            .message(String.format("Variable '%s' will be updated", variableKey))
+                            .listener(nvramDataRecyclerViewAdapter)
+                            .token(token)
+                            .show();
 
-                    Toast.makeText(getSherlockActivity(), "Positive Button clicked", Toast.LENGTH_SHORT).show();
                     d.cancel();
                 }
             });
         }
     }
+
 }

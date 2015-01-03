@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.utils;
 import android.util.Log;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
@@ -77,6 +78,53 @@ public final class SSHUtils {
 
     }
 
+    public static int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
+            throws Exception {
+
+        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+
+        @Nullable Session jschSession = null;
+        @Nullable ChannelExec channelExec = null;
+        @Nullable InputStream in = null;
+        @Nullable InputStream err = null;
+        try {
+            @Nullable final String privKey = \"fake-key\";
+            @NotNull final JSch jsch = new JSch();
+            if (privKey != null) {
+                jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
+            }
+            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+            jschSession.setPassword(router.getPasswordPlain());
+            @NotNull final Properties config = new Properties();
+            config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
+            jschSession.setConfig(config);
+            jschSession.connect(30000);
+
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+
+            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+            channelExec.setInputStream(null);
+            in = channelExec.getInputStream();
+            err = channelExec.getErrStream();
+            channelExec.connect();
+
+            //FIXME does not return the actual status
+//            return channelExec.getExitStatus();
+            return 0;
+
+        } finally {
+            Closeables.closeQuietly(in);
+            Closeables.closeQuietly(err);
+            if (channelExec != null) {
+                channelExec.disconnect();
+            }
+            if (jschSession != null) {
+                jschSession.disconnect();
+            }
+        }
+
+    }
+
     @Nullable
     public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
@@ -105,19 +153,16 @@ public final class SSHUtils {
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
             channelExec.connect();
-//
-//            final int exitStatus = channelExec.getExitStatus();
-//            Log.d(TAG, "channelExec.getExitStatus(): " + exitStatus);
 
             return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
 
         } finally {
             Closeables.closeQuietly(in);
             Closeables.closeQuietly(err);
-            if (channelExec != null && channelExec.isConnected()) {
+            if (channelExec != null) {
                 channelExec.disconnect();
             }
-            if (jschSession != null && jschSession.isConnected()) {
+            if (jschSession != null) {
                 jschSession.disconnect();
             }
         }

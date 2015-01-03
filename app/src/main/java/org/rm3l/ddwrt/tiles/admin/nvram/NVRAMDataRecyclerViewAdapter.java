@@ -1,6 +1,11 @@
 package org.rm3l.ddwrt.tiles.admin.nvram;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -11,28 +16,43 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
+import com.google.common.collect.ImmutableMap;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static java.util.Map.Entry;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.KEY;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.POSITION;
+import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.VALUE;
 
-public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMDataRecyclerViewAdapter.ViewHolder> {
+public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMDataRecyclerViewAdapter.ViewHolder>
+        implements UndoBarController.AdvancedUndoListener {
 
-    private final Context context;
+    private final FragmentActivity context;
     private final List<Entry<Object,Object>> entryList = new ArrayList<>();
     private Map<Object, Object> nvramInfo;
     private final FragmentManager fragmentManager;
+    private final Router router;
 
-    public NVRAMDataRecyclerViewAdapter(FragmentActivity context, NVRAMInfo nvramInfo) {
+    public NVRAMDataRecyclerViewAdapter(FragmentActivity context, Router router, NVRAMInfo nvramInfo) {
         this.context = context;
+        this.router = router;
         this.fragmentManager = context.getSupportFragmentManager();
         //noinspection ConstantConditions
         this.setEntryList(nvramInfo.getData());
@@ -86,6 +106,26 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         return entryList.size();
     }
 
+    @Override
+    public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
+        //Update entry in remote router, and notify item changed
+        if (parcelable instanceof Bundle) {
+            //Background task
+            new EditNVRAMVariableTask().execute((Bundle) parcelable);
+        }
+
+    }
+
+    @Override
+    public void onClear(@NonNull Parcelable[] parcelables) {
+        //Nothing to do
+    }
+
+    @Override
+    public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
+        //Nothing to do
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -119,14 +159,77 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         @Override
         public void onClick(View v) {
-            //TODO
-            Toast.makeText(this.context,
-                    "[FIXME] Edit nvram with key '" + key.getText()+"' @" + position,
-                    Toast.LENGTH_LONG).show();
             @NotNull final DialogFragment editFragment =
                     EditNVRAMKeyValueDialogFragment.newInstance(NVRAMDataRecyclerViewAdapter.this, position, key.getText(), value.getText());
             editFragment.show(fragmentManager, EDIT_NVRAM_DATA_FRAGMENT_TAG);
         }
 
+    }
+
+    private void displayMessage(String msg, Style style) {
+        makeText(context, msg, style).show();
+    }
+
+    private class EditNVRAMVariableTask extends AsyncTask<Bundle, Void, EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {
+
+        @Override
+        protected EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence> doInBackground(Bundle... params) {
+            final Bundle token = params[0];
+            final int position = token.getInt(POSITION);
+            final CharSequence key = token.getCharSequence(KEY);
+            final CharSequence value = token.getCharSequence(VALUE);
+
+            Exception exception = null;
+
+            try {
+                final int exitStatus = SSHUtils
+                        .runCommands(router, String.format("nvram set %s=\"%s\"", key, value), "nvram commit");
+                if (exitStatus == 0) {
+                    //Notify item changed
+                    nvramInfo.put(key, value);
+                    notifyItemChanged(position);
+                } else {
+                    throw new IllegalStateException();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                exception = e;
+            }
+
+            return new EditNVRAMVariableTask.EditNVRAMVariableTaskResult<>(key, exception);
+        }
+
+        @Override
+        protected void onPostExecute(EditNVRAMVariableTaskResult<CharSequence> result) {
+            final Exception exception = result.getException();
+            try {
+                if (exception == null) {
+                    displayMessage("Variable '" + result.getResult() + "' updated", Style.CONFIRM);
+                } else {
+                    displayMessage("Variable '" + result.getResult() + "' NOT updated" +
+                            (exception.getMessage() != null ? (": " + exception.getMessage()) : ""), Style.ALERT);
+                }
+            } catch (Exception e) {
+                //No worries
+            }
+        }
+
+        class EditNVRAMVariableTaskResult<T> {
+            private final T result;
+            private final Exception exception;
+
+            private EditNVRAMVariableTaskResult(T result, Exception exception) {
+                this.result = result;
+                this.exception = exception;
+            }
+
+            public T getResult() {
+                return result;
+            }
+
+            public Exception getException() {
+                return exception;
+            }
+        }
     }
 }
