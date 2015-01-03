@@ -48,7 +48,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="true"
                 android:text="@string/space_usage"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
                 android:textStyle="bold" />
 
         </LinearLayout>

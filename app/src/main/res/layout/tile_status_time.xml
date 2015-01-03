@@ -53,7 +53,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="true"
                 android:text="@string/time_settings"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
                 android:textStyle="bold"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"/>
