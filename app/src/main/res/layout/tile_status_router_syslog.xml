@@ -114,7 +114,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="313dp">
+            android:layout_height="313dp"
+            android:id="@+id/tile_status_router_syslog_content_scrollview">
 
             <RelativeLayout
                 android:layout_width="match_parent"

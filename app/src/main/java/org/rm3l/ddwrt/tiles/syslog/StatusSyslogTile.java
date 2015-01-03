@@ -208,10 +208,18 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
-                logTextView.setMovementMethod(new ScrollingMovementMethod());
 
                 //Highlight textToFind for new log lines
-                String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
+                final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
+
+                //Hide container if no data at all (no existing data, and incoming data is empty too)
+                layout.findViewById(R.id.tile_status_router_syslog_content_scrollview)
+                        .setVisibility((isNullOrEmpty(logTextView.getText().toString())
+                                && isNullOrEmpty(newSyslog)) ?
+                            View.GONE : View.VISIBLE);
+
+                logTextView.setMovementMethod(new ScrollingMovementMethod());
+
                 //noinspection ConstantConditions
                 Spanned newSyslogSpan = new SpannableString(newSyslog);
 
