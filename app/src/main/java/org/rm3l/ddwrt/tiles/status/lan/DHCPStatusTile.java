@@ -223,6 +223,12 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_lan_dhcp_status_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_lan_dhcp_status_gridLayout)
+                .setVisibility(View.VISIBLE);
+
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
