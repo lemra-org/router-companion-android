@@ -234,7 +234,8 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
             ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title))
                     .setText(this.mParentFragmentActivity.getResources()
-                            .getString(R.string.bandwidth_usage_mb) + ": " + wanIface);
+                            .getString(R.string.bandwidth_usage_mb) + (!Strings.isNullOrEmpty(wanIface) ?
+                            (": " + wanIface) : ""));
 
             @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
             final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
