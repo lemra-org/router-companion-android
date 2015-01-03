@@ -87,15 +87,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textStyle="bold"
                 android:visibility="gone" />
 
-            <TextView
+            <ProgressBar
                 android:id="@+id/tile_status_wan_monthly_month_loading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/theme_accent_1"
-                android:text="@string/loading"
-                android:textStyle="bold" />
+                android:gravity="center"/>
+
+            <!--<TextView-->
+                <!--android:id="@+id/tile_status_wan_monthly_month_loading"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:gravity="center"-->
+                <!--android:textColor="@color/theme_accent_1"-->
+                <!--android:text="@string/loading"-->
+                <!--android:textStyle="bold" />-->
         </LinearLayout>
 
         <LinearLayout
