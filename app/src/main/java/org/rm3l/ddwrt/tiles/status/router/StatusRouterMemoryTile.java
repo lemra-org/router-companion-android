@@ -198,6 +198,15 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_router_router_mem_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_mem_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_mem_total)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_router_router_mem_grid_layout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
