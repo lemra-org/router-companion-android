@@ -179,6 +179,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_wireless_iface_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wireless_iface_gridlayout)
+                .setVisibility(View.VISIBLE);
+
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
