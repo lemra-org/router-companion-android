@@ -222,11 +222,21 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 final String existingSearch = sharedPreferences != null ?
                         sharedPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
 
-                if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
-                    filterEditText.setText(existingSearch);
-                    //noinspection ConstantConditions
-                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+                if (!isNullOrEmpty(existingSearch)) {
+                    if (isNullOrEmpty(filterEditText.getText().toString())) {
+                        filterEditText.setText(existingSearch);
+                    }
+                    if (!isNullOrEmpty(newSyslog)) {
+                        //noinspection ConstantConditions
+                        newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+                    }
                 }
+
+//                if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
+//                    filterEditText.setText(existingSearch);
+//                    //noinspection ConstantConditions
+//                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+//                }
 
                 if (isNullOrEmpty(logTextView.getText().toString()) && isNullOrEmpty(newSyslog)) {
                     scrollView.setVisibility(View.INVISIBLE);
