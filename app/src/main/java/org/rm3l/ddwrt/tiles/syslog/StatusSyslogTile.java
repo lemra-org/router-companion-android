@@ -215,6 +215,19 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 //Hide container if no data at all (no existing data, and incoming data is empty too)
                 final View scrollView = layout.findViewById(R.id.tile_status_router_syslog_content_scrollview);
 
+                //noinspection ConstantConditions
+                Spanned newSyslogSpan = new SpannableString(newSyslog);
+
+                final SharedPreferences sharedPreferences = this.mParentFragmentPreferences;
+                final String existingSearch = sharedPreferences != null ?
+                        sharedPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+                if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
+                    filterEditText.setText(existingSearch);
+                    //noinspection ConstantConditions
+                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+                }
+
                 if (isNullOrEmpty(logTextView.getText().toString()) && isNullOrEmpty(newSyslog)) {
                     scrollView.setVisibility(View.INVISIBLE);
                 } else {
@@ -222,85 +235,72 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                     logTextView.setMovementMethod(new ScrollingMovementMethod());
 
-                    //noinspection ConstantConditions
-                    Spanned newSyslogSpan = new SpannableString(newSyslog);
-
-                    final SharedPreferences sharedPreferences = this.mParentFragmentPreferences;
-                    final String existingSearch = sharedPreferences != null ?
-                            sharedPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
-
-                    if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
-                        filterEditText.setText(existingSearch);
-                        //noinspection ConstantConditions
-                        newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
-                    }
-
                     logTextView.append(new SpannableStringBuilder()
                             .append(Html.fromHtml("<br/>"))
                             .append(newSyslogSpan));
+                }
 
-                    filterEditText.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            final int DRAWABLE_LEFT = 0;
-                            final int DRAWABLE_TOP = 1;
-                            final int DRAWABLE_RIGHT = 2;
-                            final int DRAWABLE_BOTTOM = 3;
+                filterEditText.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        final int DRAWABLE_LEFT = 0;
+                        final int DRAWABLE_TOP = 1;
+                        final int DRAWABLE_RIGHT = 2;
+                        final int DRAWABLE_BOTTOM = 3;
 
-                            if (event.getAction() == MotionEvent.ACTION_UP) {
-                                if (event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                                    //Reset everything
-                                    filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
-                                    //Highlight text in textview
-                                    final String currentText = logTextView.getText().toString();
-
-                                    logTextView.setText(currentText
-                                            .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                            .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
-
-                                    if (sharedPreferences != null) {
-                                        final SharedPreferences.Editor editor = sharedPreferences.edit();
-                                        editor.putString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
-                                        editor.apply();
-                                    }
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
-                    });
-
-                    filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                                final String textToFind = filterEditText.getText().toString();
-                                if (isNullOrEmpty(textToFind)) {
-                                    //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
-                                    return true;
-                                }
-                                if (sharedPreferences != null) {
-                                    if (textToFind.equalsIgnoreCase(existingSearch)) {
-                                        //No need to go further as this is already the string we are looking for
-                                        return true;
-                                    }
-                                    final SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString(getFormattedPrefKey(LAST_SEARCH), textToFind);
-                                    editor.apply();
-                                }
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            if (event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                                //Reset everything
+                                filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
                                 //Highlight text in textview
                                 final String currentText = logTextView.getText().toString();
 
-                                logTextView.setText(findAndHighlightOutput(currentText
+                                logTextView.setText(currentText
                                         .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                        .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+                                        .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
 
+                                if (sharedPreferences != null) {
+                                    final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
+                                    editor.apply();
+                                }
                                 return true;
                             }
-                            return false;
                         }
-                    });
-                }
+                        return false;
+                    }
+                });
+
+                filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                            final String textToFind = filterEditText.getText().toString();
+                            if (isNullOrEmpty(textToFind)) {
+                                //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
+                                return true;
+                            }
+                            if (sharedPreferences != null) {
+                                if (textToFind.equalsIgnoreCase(existingSearch)) {
+                                    //No need to go further as this is already the string we are looking for
+                                    return true;
+                                }
+                                final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString(getFormattedPrefKey(LAST_SEARCH), textToFind);
+                                editor.apply();
+                            }
+                            //Highlight text in textview
+                            final String currentText = logTextView.getText().toString();
+
+                            logTextView.setText(findAndHighlightOutput(currentText
+                                    .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                                    .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+
+                            return true;
+                        }
+                        return false;
+                    }
+                });
 
             }
         }
