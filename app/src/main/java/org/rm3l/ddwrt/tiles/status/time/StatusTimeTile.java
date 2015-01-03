@@ -138,8 +138,17 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
-//Set tiles
+        //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        layout.findViewById(R.id.tile_status_time_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_time_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_time_current_date)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_time_grid_layout)
+                .setVisibility(View.VISIBLE);
 
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));

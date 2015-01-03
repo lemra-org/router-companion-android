@@ -118,10 +118,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_status_router_router_cpu_grid_layout"
+                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:visibility="gone">
+                android:columnCount="3">
 
                 <!-- Model -->
                 <TextView

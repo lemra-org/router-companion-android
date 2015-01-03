@@ -58,19 +58,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"/>
 
-            <TextView
-                android:id="@+id/tile_status_time_current_date"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="true"
-                android:text="@string/loading_current_date"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/ddwrt_green"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:layout_gravity="start"
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/tile_status_time_current_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="true"
+                    android:text="@string/loading_current_date"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/ddwrt_green"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"/>
+
+                <ProgressBar
+                    android:id="@+id/tile_status_time_header_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -95,147 +112,160 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <!-- NTP Client -->
-            <TextView
+            <GridLayout
+                android:id="@+id/tile_status_time_grid_layout"
+                android:visibility="gone"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3">
+
+                <!-- NTP Client -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ntp_client"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_time_ntp_client"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Timezone -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ntp_timezone"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"/>
+
+                <TextView
+                    android:id="@+id/tile_status_time_ntp_timezone"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Summer Time (DST) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ntp_summer_time"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_time_summertime"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- NTP Server -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ntp_time_server"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_time_time_server"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Auto-refresh -->
+                <TextView
+                    android:id="@+id/tile_status_time_togglebutton_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_refresh"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tile_status_time_togglebutton_separator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"
+                    android:visibility="gone" />
+
+                <Switch
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:thumb="@drawable/switch_bg"
+                    android:track="@drawable/track_bg"
+                    android:id="@+id/tile_status_time_togglebutton"
+                    android:layout_gravity="start"
+                    android:checked="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textOff="OFF"
+                    android:textOn="ON"
+                    android:visibility="gone" />
+
+            </GridLayout>
+            <ProgressBar
+                android:id="@+id/tile_status_time_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ntp_client"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_time_ntp_client"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Timezone -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ntp_timezone"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"/>
-
-            <TextView
-                android:id="@+id/tile_status_time_ntp_timezone"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Summer Time (DST) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ntp_summer_time"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_time_summertime"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- NTP Server -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ntp_time_server"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_time_time_server"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Auto-refresh -->
-            <TextView
-                android:id="@+id/tile_status_time_togglebutton_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/auto_refresh"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tile_status_time_togglebutton_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"
-                android:visibility="gone" />
-
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:thumb="@drawable/switch_bg"
-                android:track="@drawable/track_bg"
-                android:id="@+id/tile_status_time_togglebutton"
-                android:layout_gravity="start"
-                android:checked="true"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:visibility="gone" />
-
-        </GridLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>
