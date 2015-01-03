@@ -216,7 +216,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 layout.findViewById(R.id.tile_status_router_syslog_content_scrollview)
                         .setVisibility((isNullOrEmpty(logTextView.getText().toString())
                                 && isNullOrEmpty(newSyslog)) ?
-                            View.GONE : View.VISIBLE);
+                            View.INVISIBLE : View.VISIBLE);
 
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
 
