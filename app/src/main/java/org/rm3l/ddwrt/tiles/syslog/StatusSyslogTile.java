@@ -82,8 +82,22 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
 
-    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    @Nullable
+    private final String mGrep;
+
+    private static final int MAX_LOG_LINES = 15;
+
+    private final boolean mDisplayStatus;
+
+    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments,
+                            @Nullable final String tileTitle, final boolean displayStatus, Router router, @Nullable final String grep) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
+        this.mGrep = grep;
+        this.mDisplayStatus = displayStatus;
+        if (!isNullOrEmpty(tileTitle)) {
+        ((TextView) layout.findViewById(R.id.tile_status_router_syslog_title))
+                .setText(tileTitle);
+        }
     }
 
     @Override
@@ -125,8 +139,10 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                             String[] logs = null;
                             try {
-                                //Get last 10 lines
-                                logs = SSHUtils.getManualProperty(mRouter, "tail -n 10 /tmp/var/log/messages");
+                                //Get last log lines
+                                logs = SSHUtils.getManualProperty(mRouter,
+                                        String.format("tail -n %d /tmp/var/log/messages %s",
+                                                MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "":" | grep -i -E \"" + mGrep + "\""));
                             } finally {
                                 if (logs != null) {
                                     nvramInfo.setProperty(SYSLOG, LOGS_JOINER.join(logs));
@@ -164,7 +180,6 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         layout.findViewById(R.id.tile_status_router_syslog_content)
                 .setVisibility(View.VISIBLE);
 
-
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
@@ -188,6 +203,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
+
+            syslogState.setVisibility(mDisplayStatus ? View.VISIBLE : View.GONE);
 
             final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {

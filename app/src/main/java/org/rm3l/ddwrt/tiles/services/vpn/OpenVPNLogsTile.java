@@ -19,29 +19,20 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-
-package org.rm3l.ddwrt.fragments.services;
+package org.rm3l.ddwrt.tiles.services.vpn;
 
 import android.os.Bundle;
 
-import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
-import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNLogsTile;
+import com.actionbarsherlock.app.SherlockFragment;
+
+import org.jetbrains.annotations.NotNull;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.syslog.StatusSyslogTile;
 
-import java.util.Arrays;
-import java.util.List;
+public class OpenVPNLogsTile extends StatusSyslogTile {
 
-/**
- * TODO
- */
-public class ServicesVPNFragment extends DDWRTBaseFragment {
-
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new OpenVPNLogsTile(this, savedInstanceState, this.router));
+    public OpenVPNLogsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+        super(parentFragment, arguments, "OpenVPN logs", false, router, "openvpn");
     }
+
 }
