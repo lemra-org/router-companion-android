@@ -248,8 +248,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:thumb="@drawable/switch_bg"
-                    android:track="@drawable/track_bg"
                     android:id="@+id/tile_status_time_togglebutton"
                     android:layout_gravity="start"
                     android:checked="true"
