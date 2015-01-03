@@ -21,6 +21,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 This software is provided "as is" under the terms of the GNU General Public License (GPLv3),
 just in the hope that it will be useful.&nbsp;
-It is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+It is distributed WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 <br/>
-The authors are NOT liable for any damage incurred from use of this software!
+See the GNU General Public License for more details.
