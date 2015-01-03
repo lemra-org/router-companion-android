@@ -38,10 +38,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string-array name="pref_sorting_strategy_titles">
         <item>DD-WRT Style</item>
         <item>Natural Order</item>
+        <item>Reverse Natural Order</item>
     </string-array>
     <string-array name="pref_sorting_strategy_values">
         <item>DDWRTSortingStrategy</item>
         <item>NaturalOrderSortingStrategy</item>
+        <item>ReverseNaturalOrderSortingStrategy</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->
