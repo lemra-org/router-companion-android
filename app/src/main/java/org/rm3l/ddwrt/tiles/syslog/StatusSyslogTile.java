@@ -189,7 +189,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
-            final EditText logTextView = (EditText) syslogContentView;
+            final TextView logTextView = (TextView) syslogContentView;
             if (isSyslogEnabled) {
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
 

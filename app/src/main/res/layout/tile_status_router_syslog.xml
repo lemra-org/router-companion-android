@@ -120,8 +120,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Trick to have this automatically scroll to the end: replace TextView with EditText -->
-                <EditText
+                <TextView
                     android:id="@+id/tile_status_router_syslog_content"
                     android:visibility="gone"
                     android:layout_width="wrap_content"
@@ -129,11 +128,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:gravity="bottom"
                     android:maxLines="200"
                     android:background="@color/abs__background_holo_dark"
-                    android:textColor="@color/abs__background_holo_light"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"/>
+                    android:textColor="@color/abs__background_holo_light"/>
 
                 <ProgressBar
                     android:id="@+id/tile_status_router_syslog_content_loading_view"
