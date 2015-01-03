@@ -28,13 +28,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_wan_config"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:id="@+id/tile_status_wireless_clients_layout_container"
         android:layout_width="wrap_content"
@@ -83,6 +76,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
+            android:id="@+id/tile_status_wireless_clients_togglebutton_container"
+            android:visibility="gone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="3">
@@ -124,13 +119,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </GridLayout>
 
-        <GridLayout
-            android:id="@+id/tile_status_wireless_clients_layout_list_container"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
-            android:orientation="vertical" />
+            android:layout_weight="0.74">
+
+            <GridLayout
+                android:id="@+id/tile_status_wireless_clients_layout_list_container"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="0.74"
+                android:columnCount="2"
+                android:orientation="vertical" />
+
+            <ProgressBar
+                android:id="@+id/tile_status_wireless_clients_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
 
         <Button
             android:id="@+id/tile_status_wireless_clients_show_more"

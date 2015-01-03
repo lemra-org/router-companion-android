@@ -204,6 +204,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     public void onLoadFinished(Loader<ClientDevices> loader, ClientDevices data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_wireless_clients_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
+                .setVisibility(View.VISIBLE);
+
+
         if (data == null || data.getDevices().isEmpty()) {
             data = new ClientDevices().setException(new DDWRTNoDataException("No Data!"));
         }
