@@ -28,13 +28,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="horizontal"
     android:baselineAligned="false">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_router_router_space_usage"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,123 +74,136 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <!-- NVRAM -->
-            <TextView
+            <GridLayout
+                android:id="@+id/tile_status_router_router_space_usage_gridLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:visibility="gone">
+
+                <!-- NVRAM -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_space_nvram"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_nvram"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- CIFS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_space_cifs"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_cifs"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+
+                <!-- JFFS2 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_space_jffs2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_jffs2"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Auto-refresh -->
+                <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_togglebutton_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_refresh"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_togglebutton_separator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"
+                    android:visibility="gone" />
+
+                <Switch
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:thumb="@drawable/switch_bg"
+                    android:track="@drawable/track_bg"
+                    android:id="@+id/tile_status_router_router_space_usage_togglebutton"
+                    android:layout_gravity="start"
+                    android:checked="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textOff="OFF"
+                    android:textOn="ON"
+                    android:visibility="gone" />
+
+            </GridLayout>
+            <ProgressBar
+                android:id="@+id/tile_status_router_router_space_usage_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/router_space_nvram"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_space_usage_nvram"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- CIFS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/router_space_cifs"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_space_usage_cifs"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-
-            <!-- JFFS2 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/router_space_jffs2"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_space_usage_jffs2"
-                android:layout_width="292dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Auto-refresh -->
-            <TextView
-                android:id="@+id/tile_status_router_router_space_usage_togglebutton_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/auto_refresh"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_space_usage_togglebutton_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"
-                android:visibility="gone" />
-
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:thumb="@drawable/switch_bg"
-                android:track="@drawable/track_bg"
-                android:id="@+id/tile_status_router_router_space_usage_togglebutton"
-                android:layout_gravity="start"
-                android:checked="true"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:visibility="gone" />
-
-        </GridLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

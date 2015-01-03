@@ -245,6 +245,11 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_router_router_space_usage_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_space_usage_gridLayout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
