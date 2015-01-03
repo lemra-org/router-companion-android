@@ -155,6 +155,16 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_router_syslog_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_syslog_content_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_syslog_state)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_router_syslog_content)
+                .setVisibility(View.VISIBLE);
+
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
@@ -179,7 +189,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
-            final TextView logTextView = (TextView) syslogContentView;
+            final EditText logTextView = (EditText) syslogContentView;
             if (isSyslogEnabled) {
                 logTextView.setMovementMethod(new ScrollingMovementMethod());
 

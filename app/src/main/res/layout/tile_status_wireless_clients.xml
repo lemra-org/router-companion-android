@@ -119,27 +119,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </GridLayout>
 
-        <RelativeLayout
+        <GridLayout
+            android:id="@+id/tile_status_wireless_clients_layout_list_container"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.74">
-
-            <GridLayout
-                android:id="@+id/tile_status_wireless_clients_layout_list_container"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="0.74"
-                android:columnCount="2"
-                android:orientation="vertical" />
-
-            <ProgressBar
-                android:id="@+id/tile_status_wireless_clients_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-        </RelativeLayout>
+            android:layout_weight="0.74"
+            android:columnCount="2"
+            android:orientation="vertical" />
 
         <Button
             android:id="@+id/tile_status_wireless_clients_show_more"
@@ -150,6 +137,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:gravity="center"
             android:text="@string/show_more"
             android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/tile_status_wireless_clients_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
 
 
     </LinearLayout>
