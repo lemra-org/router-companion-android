@@ -193,6 +193,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_wan_traffic_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wan_traffic_gridLayout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
