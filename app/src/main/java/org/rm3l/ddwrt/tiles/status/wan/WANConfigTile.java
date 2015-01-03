@@ -207,6 +207,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_wan_config_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wan_config_gridLayout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
