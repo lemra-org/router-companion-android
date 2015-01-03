@@ -86,9 +86,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
+            android:id="@+id/tile_admin_nvram_toolbar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3">
+            android:columnCount="3"
+            android:visibility="gone">
 
             <!-- Filter -->
             <EditText

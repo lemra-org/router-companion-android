@@ -97,7 +97,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         holder.key.setText(entryAt.getKey().toString());
         final Object value = entryAt.getValue();
-        holder.value.setText(nullToEmpty(value != null ? value.toString() : null));
+        holder.value.setText(nullToEmpty(value != null ? value.toString() : ""));
         holder.position = position;
     }
 

@@ -49,6 +49,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -130,8 +132,15 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     private ShareActionProvider mShareActionProvider;
 
+    private final BiMap<Integer,Integer> sortIds = HashBiMap.create();
+
     public AdminNVRAMTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
+
+        sortIds.put(R.id.tile_admin_nvram_sort_default, 11);
+        sortIds.put(R.id.tile_admin_nvram_sort_asc, 12);
+        sortIds.put(R.id.tile_admin_nvram_sort_desc, 13);
+
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.tile_admin_nvram_ListView);
 
@@ -162,12 +171,17 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 inflater.inflate(R.menu.tile_admin_nvram_options, menu);
 
                 //Disable menu item from preference
-                final int currentSort;
+                Integer currentSort = null;
                 if (mParentFragmentPreferences != null) {
-                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), R.id.tile_admin_nvram_sort_default);
-                } else {
+                    currentSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT),
+                                    sortIds.get(R.id.tile_admin_nvram_sort_default)));
+                }
+
+                if (currentSort == null) {
                     currentSort = R.id.tile_admin_nvram_sort_default;
                 }
+
                 final MenuItem currentSortMenuItem = menu.findItem(currentSort);
                 if (currentSortMenuItem != null) {
                     currentSortMenuItem.setEnabled(false);
@@ -207,8 +221,9 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
                         //Update adapter in the preferences
                         if (mParentFragmentPreferences != null) {
-                            final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
-                            if (currentSort <= 0) {
+                            final Integer currentSort = sortIds.inverse()
+                                    .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+                            if (currentSort == null || currentSort <= 0) {
                                 mNvramInfoToDisplay = new HashMap<>(mNvramInfoDefaultSortingData);
                             } else {
                                 switch (currentSort) {
@@ -274,8 +289,9 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     //Update adapter in the preferences
                     final Map<Object, Object> mNvramInfoToDisplayCopy;
                     if (mParentFragmentPreferences != null) {
-                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
-                        if (currentSort <= 0) {
+                        final Integer currentSort = sortIds.inverse()
+                                .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+                        if (currentSort == null || currentSort <= 0) {
                             mNvramInfoToDisplayCopy = new HashMap<>(mNvramInfoDefaultSortingData);
                         } else {
                             switch (currentSort) {
@@ -374,20 +390,22 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             case R.id.tile_admin_nvram_sort_default:
             case R.id.tile_admin_nvram_sort_asc:
             case R.id.tile_admin_nvram_sort_desc:
+                item.setEnabled(false);
                 //Store in preferences if any
                 final Integer currentSort;
                 if (mParentFragmentPreferences != null) {
-                    currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
+                    currentSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
                 } else {
                     currentSort = null;
                 }
-                if (currentSort != null && currentSort != itemId) {
-                    //Store in preferences
+
+                if (mParentFragmentPreferences != null && (currentSort == null || currentSort != itemId)) {
+                    //No pref on file or different pref on file => store in preferences
                     final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                    editor.putInt(getFormattedPrefKey(SORT), itemId);
+                    editor.putInt(getFormattedPrefKey(SORT), sortIds.get(itemId));
                     editor.apply();
                 }
-                item.setEnabled(false);
                 break;
             default:
                 break;
@@ -546,8 +564,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
                     final Properties defaultNVRAMInfo = mNvramInfoDefaultSorting.getData();
                     if (mParentFragmentPreferences != null) {
-                        final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
-                        if (currentSort <= 0) {
+                        final Integer currentSort = sortIds.inverse().get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+                        if (currentSort == null || currentSort <= 0) {
                             mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
                         } else {
                             switch (currentSort) {
@@ -599,6 +617,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_admin_nvram_toolbar).setVisibility(View.VISIBLE);
 
         if (data == null || mNvramInfoToDisplay.isEmpty()) {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
@@ -635,9 +654,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 //Update adapter in the preferences
                 final Map<Object, Object> mNvramInfoToDisplayCopy;
                 if (mParentFragmentPreferences != null) {
-                    final int currentSort = mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1);
-                    if (currentSort <= 0) {
-                        mNvramInfoToDisplayCopy = new HashMap<>(mNvramInfoDefaultSortingData);
+                    final Integer currentSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+                    if (currentSort == null || currentSort <= 0) {
+                        mNvramInfoToDisplayCopy = new HashMap<>();
                     } else {
                         switch (currentSort) {
                             case R.id.tile_admin_nvram_sort_asc:
@@ -653,20 +673,22 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                                 mNvramInfoToDisplayCopy = new HashMap<>();
                                 break;
                         }
-                        //noinspection ConstantConditions
-                        for (Map.Entry<Object, Object> entry : mNvramInfoDefaultSortingData.entrySet()) {
-                            final Object key = entry.getKey();
-                            final Object value = entry.getValue();
-                            if (key == null) {
-                                continue;
-                            }
-                            if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
-                                mNvramInfoToDisplayCopy.put(key, value);
-                            }
-                        }
                     }
                 } else {
-                    mNvramInfoToDisplayCopy = mNvramInfoToDisplay;
+                    mNvramInfoToDisplayCopy = new HashMap<>();
+                }
+
+                //noinspection ConstantConditions
+                for (Map.Entry<Object, Object> entry :
+                        (mParentFragmentPreferences == null ? mNvramInfoToDisplay : mNvramInfoDefaultSortingData).entrySet()) {
+                    final Object key = entry.getKey();
+                    final Object value = entry.getValue();
+                    if (key == null) {
+                        continue;
+                    }
+                    if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
+                        mNvramInfoToDisplayCopy.put(key, value);
+                    }
                 }
 
                 ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
