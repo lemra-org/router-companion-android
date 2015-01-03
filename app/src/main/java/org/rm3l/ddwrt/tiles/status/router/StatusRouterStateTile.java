@@ -196,6 +196,15 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_router_router_state_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_state_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_state_gridLayout)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_router_router_state_header_layout)
+                .setVisibility(View.VISIBLE);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
