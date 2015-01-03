@@ -59,18 +59,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textColor="#000000"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_speed"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="true"
-                android:text="@string/loading_clock"
-                android:textAppearance="?android:textAppearanceSmall" />
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="true"
+                    android:text="@string/loading_clock"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:visibility="gone"/>
+
+                <ProgressBar
+                    android:id="@+id/tile_status_router_router_cpu_speed_header_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -95,143 +112,156 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <GridLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="3">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <!-- Model -->
-            <TextView
+            <GridLayout
+                android:id="@+id/tile_status_router_router_cpu_grid_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:visibility="gone">
+
+                <!-- Model -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_cpu_cpu_model"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_model"
+                    android:layout_width="254dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Cores -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_cpu_cpu_cores"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_cores"
+                    android:layout_width="254dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Load Avg -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/router_cpu_load_avg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_load_avg"
+                    android:layout_width="254dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+
+                <!-- Temperature-->
+                <!--<TextView-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Temperature" />-->
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text=":" />-->
+                <!--<TextView-->
+                <!--android:id="@+id/tile_status_router_router_cpu_lan_ip"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="right" />-->
+
+
+                <!-- Auto-refresh -->
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_togglebutton_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_refresh"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_togglebutton_separator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space"
+                    android:visibility="gone" />
+
+                <Switch
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:thumb="@drawable/switch_bg"
+                    android:track="@drawable/track_bg"
+                    android:id="@+id/tile_status_router_router_cpu_togglebutton"
+                    android:layout_gravity="start"
+                    android:checked="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textOff="OFF"
+                    android:textOn="ON"
+                    android:visibility="gone" />
+
+            </GridLayout>
+            <ProgressBar
+                android:id="@+id/tile_status_router_router_cpu_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/router_cpu_cpu_model"
-                android:textStyle="bold" />
+                android:layout_centerInParent="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_model"
-                android:layout_width="254dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Cores -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/router_cpu_cpu_cores"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_cores"
-                android:layout_width="254dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-            <!-- Load Avg -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/router_cpu_load_avg"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_load_avg"
-                android:layout_width="254dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="false"
-                android:text="@string/loading"/>
-
-
-            <!-- Temperature-->
-            <!--<TextView-->
-            <!--android:textStyle="bold"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Temperature" />-->
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginLeft="8.0dip"-->
-            <!--android:layout_marginRight="8.0dip"-->
-            <!--android:text=":" />-->
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_router_router_cpu_lan_ip"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="right" />-->
-
-
-            <!-- Auto-refresh -->
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_togglebutton_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/auto_refresh"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_togglebutton_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8.0dip"
-                android:layout_marginRight="8.0dip"
-                android:text="@string/one_space"
-                android:visibility="gone" />
-
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:thumb="@drawable/switch_bg"
-                android:track="@drawable/track_bg"
-                android:id="@+id/tile_status_router_router_cpu_togglebutton"
-                android:layout_gravity="start"
-                android:checked="true"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:visibility="gone" />
-
-        </GridLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

@@ -203,6 +203,16 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
+        layout.findViewById(R.id.tile_status_router_router_cpu_speed_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_cpu_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_router_router_cpu_speed)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_router_router_cpu_grid_layout)
+                .setVisibility(View.VISIBLE);
+
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
