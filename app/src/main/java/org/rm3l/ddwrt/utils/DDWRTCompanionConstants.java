@@ -57,6 +57,8 @@ public final class DDWRTCompanionConstants {
 
     public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
 
+    public static final String MAC_OUI_SEARCH_URL = "http://standards.ieee.org/cgi-bin/ouisearch?";
+
     private DDWRTCompanionConstants() {
     }
 }

@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Ordering;
 
@@ -250,6 +253,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     deviceIp.setText(ipAddress);
                 }
 
+                cardView.setOnClickListener(new DeviceOnClickListener(device));
+
                 clientsContainer.addView(cardView);
             }
 
@@ -293,6 +298,38 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     protected Intent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    private class DeviceOnClickListener implements View.OnClickListener {
+
+        @NotNull
+        private final Device device;
+
+        private DeviceOnClickListener(@NotNull final Device device) {
+            this.device = device;
+        }
+
+        @Override
+        public void onClick(View v) {
+            //Open WebView with MAC OUI Search: http://standards.ieee.org/cgi-bin/ouisearch?f0-b4-79
+            final String macAddress = device.getMacAddress();
+            if (Strings.isNullOrEmpty(macAddress)) {
+                return;
+            }
+
+            final String manufacturerPart = macAddress
+                    .toUpperCase()
+                    .substring(0, 8)
+                    .replaceAll(":", "-");
+
+            final WebView webView = new WebView(mParentFragmentActivity);
+            webView.loadUrl(String.format("%s%s", DDWRTCompanionConstants.MAC_OUI_SEARCH_URL, manufacturerPart));
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(mParentFragmentActivity);
+            dialog.setView(webView);
+            dialog.setPositiveButton("Close", null);
+            dialog.setTitle("OUI Lookup Tool");
+            dialog.show();
+        }
     }
 
 }
