@@ -73,6 +73,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String LANDEVS = "landevs";
     public static final String LAN_IFNAME = "lan_ifname";
     public static final String WAN_IFNAME = "wan_ifname";
+    public static final String WAN_IFACE = "wan_iface";
     public static final String SYSLOG = "syslog";
     public static final String SYSLOGD_ENABLE = "syslogd_enable";
     public static final String NTP_ENABLE = "ntp_enable";

@@ -90,13 +90,13 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                     //TODO
                     //Start by getting information about the WAN iface name
-                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_DEFAULT);
+                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_IFACE);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
 
                     final String wanIface = nvRamInfoFromRouter
-                            .getProperty(NVRAMInfo.WAN_DEFAULT);
+                            .getProperty(NVRAMInfo.WAN_IFACE);
 
                     if (Strings.isNullOrEmpty(wanIface)) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
@@ -218,7 +218,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             }
 
             final String wanIface = data
-                    .getProperty(NVRAMInfo.WAN_DEFAULT);
+                    .getProperty(NVRAMInfo.WAN_IFACE);
 
             //Iface Name
             @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);

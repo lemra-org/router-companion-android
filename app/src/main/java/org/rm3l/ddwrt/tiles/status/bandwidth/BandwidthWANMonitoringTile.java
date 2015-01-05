@@ -109,13 +109,13 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     nbRunsLoader++;
 
                     //Start by getting information about the WAN iface name
-                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_DEFAULT);
+                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_IFACE);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
 
                     wanIface = nvRamInfoFromRouter
-                            .getProperty(NVRAMInfo.WAN_DEFAULT);
+                            .getProperty(NVRAMInfo.WAN_IFACE);
 
                     if (Strings.isNullOrEmpty(wanIface)) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
