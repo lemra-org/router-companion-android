@@ -55,6 +55,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -187,7 +188,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
 
         final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
-        final boolean isThemeLight = (themeBackgroundColor == sherlockActivity.getResources().getColor(R.color.cardview_light_background));
+        final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
 
         for (@NotNull final DDWRTTile tile : tiles) {
             @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();

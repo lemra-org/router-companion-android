@@ -74,6 +74,16 @@ public final class Utils {
         return context.getResources().getColor(color);
     }
 
+    public static boolean isThemeLight(@NotNull final Context context, @NotNull final String routerUuid) {
+        return (getThemeBackgroundColor(context, routerUuid) ==
+                context.getResources().getColor(R.color.cardview_light_background));
+    }
+
+    public static boolean isThemeLight(@NotNull final Context context, final int themeBackgroundColor) {
+        return (themeBackgroundColor ==
+                context.getResources().getColor(R.color.cardview_light_background));
+    }
+
     public static long getNextLoaderId() {
         return nextLoaderId++;
     }

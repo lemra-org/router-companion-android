@@ -115,6 +115,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  * Abstract base fragment
@@ -548,7 +549,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
 
-            final boolean isThemeLight = (themeBackgroundColor == sherlockActivity.getResources().getColor(R.color.cardview_light_background));
+            final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
 
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
