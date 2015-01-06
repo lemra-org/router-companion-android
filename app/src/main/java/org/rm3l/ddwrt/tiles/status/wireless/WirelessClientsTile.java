@@ -96,16 +96,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
-        //Determine broadcast address
-        try {
-            final InetAddress broadcastAddress = Utils.getBroadcastAddress((WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE));
-            if (broadcastAddress != null) {
-                mBroadcastAddress = broadcastAddress.getHostAddress();
-            }
-        } catch (@NotNull final Exception e) {
-            e.printStackTrace();
-            //No worries
-        }
     }
 
     @Override
@@ -124,6 +114,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 Log.d(LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
                         mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+
+                //Determine broadcast address at each run (because that might change if connected to another network)
+                try {
+                    final InetAddress broadcastAddress = Utils.getBroadcastAddress((WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE));
+                    if (broadcastAddress != null) {
+                        mBroadcastAddress = broadcastAddress.getHostAddress();
+                    }
+                } catch (@NotNull final Exception e) {
+                    e.printStackTrace();
+                    //No worries
+                }
 
                 if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                     //Skip run
