@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.utils;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
@@ -57,7 +59,7 @@ public final class NVRAMParser {
             if (size == 1) {
                 nvramInfo.setProperty(strings.get(0), EMPTY_STRING);
             } else if (size >= 2) {
-                nvramInfo.setProperty(strings.get(0), strings.get(1));
+                nvramInfo.setProperty(strings.get(0), nullToEmpty(strings.get(1)));
             }
         }
 
