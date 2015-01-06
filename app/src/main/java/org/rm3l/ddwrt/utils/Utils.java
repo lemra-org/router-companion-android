@@ -26,6 +26,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -41,6 +43,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -142,6 +145,24 @@ public final class Utils {
                 ((i >> 8) & 0xFF) + "." +
                 ((i >> 16) & 0xFF) + "." +
                 ((i >> 24) & 0xFF);
+    }
+
+    @Nullable
+    public static InetAddress getBroadcastAddress(@Nullable final WifiManager wifiManager) throws IOException {
+        if (wifiManager == null) {
+            return null;
+        }
+        final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        if (dhcpInfo == null) {
+            return null;
+        }
+        final int broadcast = (dhcpInfo.ipAddress & dhcpInfo.netmask)
+                | ~dhcpInfo.netmask;
+        final byte[] quads = new byte[4];
+        for (int k = 0; k < 4; k++) {
+            quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
+        }
+        return InetAddress.getByAddress(quads);
     }
 
     @NotNull

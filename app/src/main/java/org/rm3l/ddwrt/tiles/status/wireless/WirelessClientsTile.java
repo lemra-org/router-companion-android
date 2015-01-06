@@ -24,21 +24,27 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -55,14 +61,22 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.WoLUtils;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -78,8 +92,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 99;
 
+    private String mBroadcastAddress;
+
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
+        //Determine broadcast address
+        try {
+            final InetAddress broadcastAddress = Utils.getBroadcastAddress((WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE));
+            if (broadcastAddress != null) {
+                mBroadcastAddress = broadcastAddress.getHostAddress();
+            }
+        } catch (@NotNull final Exception e) {
+            e.printStackTrace();
+            //No worries
+        }
     }
 
     @Override
@@ -221,8 +247,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
                 .setVisibility(View.VISIBLE);
 
-
-        if (data == null || data.getDevices().isEmpty()) {
+        if (data == null ||
+                (data.getDevices().isEmpty() &&
+                        !(data.getException() instanceof DDWRTTileAutoRefreshNotAllowedException))) {
             data = new ClientDevices().setException(new DDWRTNoDataException("No Data!"));
         }
 
@@ -245,7 +272,36 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             for (final Device device : devices) {
 
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
+
+                //Create Options Menu
+                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
+
+                if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+                    //Set menu background to white
+                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+                }
+
+                tileMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                        popup.setOnMenuItemClickListener(new DeviceOnMenuItemClickListener(device));
+                        final MenuInflater inflater = popup.getMenuInflater();
+
+                        final Menu menu = popup.getMenu();
+
+                        inflater.inflate(R.menu.tile_status_wireless_client_options, menu);
+
+                        popup.show();
+                    }
+                });
+
                 cardView.setCardBackgroundColor(themeBackgroundColor);
+
+                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                cardView.setPreventCornerOverlap(true);
+                //Add padding in API v21+ as well to have the same measurements with previous versions.
+                cardView.setUseCompatPadding(true);
 
                 final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();
@@ -308,6 +364,52 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     protected Intent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    private class DeviceOnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        @NotNull
+        private final Device device;
+
+        private DeviceOnMenuItemClickListener(@NotNull final Device device) {
+            this.device = device;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch(item.getItemId()) {
+                case R.id.tile_status_wireless_client_wol:
+                    final String deviceName = nullToEmpty(device.getName());
+                    final String macAddress = device.getMacAddress();
+                    new AlertDialog.Builder(mParentFragmentActivity)
+                            .setIcon(R.drawable.ic_action_alert_warning)
+                            .setTitle(String.format("Wake up %s (%s)", deviceName, macAddress))
+                            .setMessage(String.format("This lets you turn on a computer via the network.\n" +
+                                            "For this to work properly:\n" +
+                                            "- '%s' (%s) must support Wake-on-LAN. You can enable it in the BIOS.\n" +
+                                            "- '%s' (%s) and this mobile device must be on the same network. To wake over the Internet, " +
+                                            "you must forward packets from any port you want to the computer you wish to wake.",
+                                    deviceName, macAddress, deviceName, macAddress))
+                            .setCancelable(true)
+                            .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialogInterface, final int i) {
+                                    //Send Magic Packet
+                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Cancelled - nothing more to do!
+                                }
+                            }).create().show();
+                    return true;
+                default:
+                    break;
+            }
+            return false;
+        }
     }
 
     private class DeviceOnClickListener implements View.OnClickListener {

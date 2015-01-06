@@ -27,6 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardPreventCornerOverlap="true"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,20 +45,30 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:textColor="@color/ddwrt_green" />
+                android:textColor="@color/ddwrt_green"/>
 
-            <TextView
-                android:id="@+id/tile_status_wireless_client_device_mac"
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+                android:contentDescription="@string/menu"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:id="@+id/tile_status_wireless_client_device_menu"/>
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_mac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_ip"

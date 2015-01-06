@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tile_status_wireless_client_wol"
+        android:icon="@android:drawable/ic_menu_send"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="Wake on LAN"/>
+</menu>
