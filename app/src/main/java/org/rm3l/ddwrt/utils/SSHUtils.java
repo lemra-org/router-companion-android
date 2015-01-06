@@ -78,9 +78,8 @@ public final class SSHUtils {
 
     }
 
-    public static int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
+    public static int runCommands(@NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
             throws Exception {
-
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         @Nullable Session jschSession = null;
@@ -102,7 +101,7 @@ public final class SSHUtils {
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
-            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+            channelExec.setCommand(commandsJoiner.join(cmdToExecute));
             channelExec.setInputStream(null);
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
@@ -123,6 +122,11 @@ public final class SSHUtils {
             }
         }
 
+    }
+
+    public static int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
+            throws Exception {
+        return runCommands(router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
     @Nullable

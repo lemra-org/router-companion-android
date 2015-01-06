@@ -362,7 +362,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     // Call to update the share intent
     private void setShareIntent(Intent shareIntent) {
-        //TODO
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }

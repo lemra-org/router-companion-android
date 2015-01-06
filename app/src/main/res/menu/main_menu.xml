@@ -23,40 +23,67 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<item-->
-        <!--android:id="@+id/action_refresh"-->
-        <!--android:alphabeticShortcut="r"-->
-        <!--android:icon="@drawable/ic_menu_refresh"-->
-        <!--android:orderInCategory="1"-->
-        <!--android:showAsAction="ifRoom"-->
-        <!--android:title="@string/menuitem_refresh" />-->
-
     <item
-        android:id="@+id/action_feedback"
-        android:alphabeticShortcut="f"
-        android:icon="@drawable/ic_action_action_thumbs_up_down"
-        android:orderInCategory="2"
+        android:id="@+id/action_ddwrt_actions"
+        android:alphabeticShortcut="a"
+        android:icon="@drawable/ic_action_action"
+        android:orderInCategory="1"
         android:showAsAction="ifRoom"
-        android:title="@string/feedback" />
+        android:title="@string/menuitem_actions" >
+
+        <menu>
+
+            <item
+                android:id="@+id/action_ddwrt_actions_reboot_router"
+                android:alphabeticShortcut="R"
+                android:orderInCategory="1"
+                android:showAsAction="ifRoom"
+                android:title="@string/menuitem_actions_reboot_router" />
+
+            <item
+                android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
+                android:alphabeticShortcut="D"
+                android:orderInCategory="2"
+                android:showAsAction="ifRoom"
+                android:title="@string/menuitem_actions_restore_factory_defaults"/>
+
+            <!-- TODO Disabled for now -->
+            <item
+                android:id="@+id/action_ddwrt_actions_firmware_upgrade"
+                android:alphabeticShortcut="U"
+                android:orderInCategory="3"
+                android:showAsAction="ifRoom"
+                android:title="@string/menuitem_actions_upgrade_firmware"
+                android:enabled="false"/>
+        </menu>
+    </item>
 
     <item
         android:id="@+id/action_settings"
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
-        android:orderInCategory="3"
+        android:orderInCategory="2"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_settings" />
 
     <item
         android:id="@+id/action_donate"
         android:alphabeticShortcut="d"
-        android:orderInCategory="4"
+        android:orderInCategory="3"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_donate" />
 
     <item
+        android:id="@+id/action_feedback"
+        android:alphabeticShortcut="f"
+        android:icon="@drawable/ic_action_action_thumbs_up_down"
+        android:orderInCategory="4"
+        android:showAsAction="ifRoom"
+        android:title="@string/feedback" />
+
+    <item
         android:id="@+id/action_about"
-        android:alphabeticShortcut="a"
+        android:alphabeticShortcut="A"
         android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_about" />

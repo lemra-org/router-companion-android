@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
@@ -120,6 +125,14 @@ public final class Utils {
     public static void openDonateActivity(@NotNull final Context context) {
         final Intent donateIntent = new Intent(context, DonateActivity.class);
         context.startActivity(donateIntent);
+    }
+
+    public static void displayMessage(@NotNull final Activity activity, final String msg, final Style style) {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                makeText(activity, msg, style).show();
+            }
+        });
     }
 
     @NotNull

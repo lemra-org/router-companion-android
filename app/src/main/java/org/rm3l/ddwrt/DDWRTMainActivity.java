@@ -24,11 +24,14 @@ package org.rm3l.ddwrt;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -45,11 +48,17 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.cocosw.undobar.UndoBarController;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.actions.RebootRouterAction;
+import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -57,8 +66,9 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
@@ -67,16 +77,19 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
+
 /**
  * Main Android Activity
  * <p/>
  */
-public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewPager.OnPageChangeListener {
+public class DDWRTMainActivity extends SherlockFragmentActivity
+        implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
     public static final int ROUTER_SETTINGS_ACTIVITY_CODE = 1;
     public static final String IS_SORTING_STRATEGY_CHANGED = "isSortingStrategyChanged";
+    public static final String ROUTER_ACTION = "ROUTER_ACTION";
 
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
@@ -103,6 +116,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @NotNull
     private SharedPreferences mPreferences;
 
+    @NotNull
+    private Router mRouter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +139,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
 
         this.mRouterUuid = router.getUuid();
+        this.mRouter = router;
 
         this.mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
 
@@ -242,6 +259,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     public boolean onOptionsItemSelected(
             @NotNull com.actionbarsherlock.view.MenuItem item) {
 
+        final String routerName = mRouter.getName();
+        final String displayName = isNullOrEmpty(routerName) ? mRouter.getRemoteIpAddress() : routerName;
+
         switch (item.getItemId()) {
 
             case android.R.id.home: {
@@ -281,6 +301,74 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
                     mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
                 }
                 mFeedbackDialog.show();
+                return true;
+            case R.id.action_ddwrt_actions_reboot_router:
+
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Reboot '%s'", displayName))
+                        .setMessage(String.format("Are you sure you wish to continue?\n'%s' will be rebooted, " +
+                                "and you might have to wait some time before connection is re-established.", displayName))
+                        .setCancelable(true)
+                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                final Bundle token = new Bundle();
+                                token.putString(ROUTER_ACTION, RouterAction.REBOOT.toString());
+
+                                new UndoBarController.UndoBar(DDWRTMainActivity.this)
+                                    .message(String.format("Router '%s' will be rebooted",
+                                            displayName))
+                                    .listener(DDWRTMainActivity.this)
+                                    .token(token)
+                                    .show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+
+                return true;
+            case R.id.action_ddwrt_actions_restore_factory_defaults:
+
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Reset '%s'", displayName))
+                        .setMessage(String.format("Are you sure you wish to continue?\n" +
+                                "This will erase the entire NVRAM, thus resetting all settings back to factory defaults. " +
+                                "All of your settings will be erased and '%s' will be rebooted. " +
+                                "You might have to wait some time before connection is re-established.\n\n" +
+                                "[CAUTION]\n" +
+                                "- After resetting DD-WRT, you need to login with the default user name \"root\" and default password \"admin\".\n" +
+                                "- Some devices may not boot properly after being reset. In this case, you will have to reflash them.", displayName))
+                        .setCancelable(true)
+                        .setPositiveButton("I understand and I wish to proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                final Bundle token = new Bundle();
+                                token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.toString());
+
+                                new UndoBarController.UndoBar(DDWRTMainActivity.this)
+                                        .message(String.format("Router '%s' will be reset",
+                                                displayName))
+                                        .listener(DDWRTMainActivity.this)
+                                        .token(token)
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+
+                return true;
+            case R.id.action_ddwrt_actions_firmware_upgrade:
+                //TODO
                 return true;
             default:
                 break;
@@ -401,6 +489,59 @@ public class DDWRTMainActivity extends SherlockFragmentActivity implements ViewP
     @Override
     public void onPageScrollStateChanged(int state) {
         Log.d(TAG, "onPageScrollStateChanged (" + state + ")");
+    }
+
+    @Override
+    public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
+        //Nothing to do
+    }
+
+    @Override
+    public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
+        if (parcelable instanceof Bundle) {
+            final Bundle token = (Bundle) parcelable;
+            final String routerAction = token.getString(ROUTER_ACTION);
+            Log.d(TAG, "routerAction: [" + routerAction + "]");
+            if (isNullOrEmpty(routerAction)) {
+                return;
+            }
+            try {
+                switch (RouterAction.valueOf(routerAction)) {
+                    case REBOOT:
+                        new RebootRouterAction(this).execute(mRouter);
+                        break;
+                    case RESTORE_FACTORY_DEFAULTS:
+                        new RestoreRouterDefaultsAction(this).execute(mRouter);
+                        break;
+                    case UPGRADE_FIRMWARE:
+                        //TODO
+                        break;
+                    default:
+                        break;
+                }
+            } catch (IllegalArgumentException | NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onClear(@NonNull Parcelable[] parcelables) {
+        //Nothing to do
+    }
+
+    @Override
+    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router) {
+        Utils.displayMessage(this,
+                String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                Style.CONFIRM);
+    }
+
+    @Override
+    public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+        Utils.displayMessage(this,
+                String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                Style.ALERT);
     }
 
     // The click listener for ListView in the navigation drawer
