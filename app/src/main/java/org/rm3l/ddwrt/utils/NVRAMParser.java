@@ -30,12 +30,14 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.List;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+
 /**
  * Parser utilities for manipulating result of remote command execution
  */
 public final class NVRAMParser {
 
-    public static final Splitter SPLITTER = Splitter.on("=").trimResults().omitEmptyStrings();
+    public static final Splitter SPLITTER = Splitter.on("=").trimResults();
 
     private NVRAMParser() {
     }
@@ -48,9 +50,13 @@ public final class NVRAMParser {
 
         @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
+        int size;
         for (@NotNull final String nvramLine : nvramLines) {
             final List<String> strings = SPLITTER.splitToList(nvramLine);
-            if (strings.size() >= 2) {
+            size = strings.size();
+            if (size == 1) {
+                nvramInfo.setProperty(strings.get(0), EMPTY_STRING);
+            } else if (size >= 2) {
                 nvramInfo.setProperty(strings.get(0), strings.get(1));
             }
         }
