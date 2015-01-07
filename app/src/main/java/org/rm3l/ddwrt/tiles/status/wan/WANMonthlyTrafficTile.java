@@ -42,6 +42,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
@@ -424,9 +425,14 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             return null;
         }
 
-        final SortedMap<Integer, ArrayList<Double>> dailyTraffMap = new TreeMap<>(traffData.row(monthFormatted));
+        final ImmutableMap<Integer, ArrayList<Double>> row = traffData.row(monthFormatted);
+        if (row == null) {
+            return null;
+        }
 
-        if (dailyTraffMap == null || dailyTraffMap.isEmpty()) {
+        final SortedMap<Integer, ArrayList<Double>> dailyTraffMap = new TreeMap<>(row);
+
+        if (dailyTraffMap.isEmpty()) {
             return null;
         }
 
