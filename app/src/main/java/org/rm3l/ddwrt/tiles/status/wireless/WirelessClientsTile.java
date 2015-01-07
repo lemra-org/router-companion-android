@@ -71,6 +71,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -93,9 +94,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 99;
 
     private String mBroadcastAddress;
+    private String mCurrentIpAddress;
+
+    //Generate a random string, to use as discriminator for determining dhcp clients
+    private final String MAP_KEYWORD;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
+        MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     }
 
     @Override
@@ -117,7 +123,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 //Determine broadcast address at each run (because that might change if connected to another network)
                 try {
-                    final InetAddress broadcastAddress = Utils.getBroadcastAddress((WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE));
+                    final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
+
+                    mCurrentIpAddress = Utils.intToIp(wifiManager.getConnectionInfo().getIpAddress());
+
+                    final InetAddress broadcastAddress = Utils.getBroadcastAddress(wifiManager);
                     if (broadcastAddress != null) {
                         mBroadcastAddress = broadcastAddress.getHostAddress();
                     }
@@ -152,9 +162,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 try {
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
-                            "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"map\",$1,$3 ,$2}'",
-                            "awk '{print \"map\",$2,$3,$4}' /tmp/dnsmasq.leases",
-                            "awk 'NR>1{print \"map\",$4,$1,\"*\"}' /proc/net/arp",
+                            "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
+                                    MAP_KEYWORD +
+                                    "\",$1,$3 ,$2}'",
+                            "awk '{print \"" +
+                                    MAP_KEYWORD +
+                                    "\",$2,$3,$4}' /tmp/dnsmasq.leases",
+                            "awk 'NR>1{print \"" +
+                                    MAP_KEYWORD +
+                                    "\",$4,$1,\"*\"}' /proc/net/arp",
                             "echo done");
 
                     Log.d(LOG_TAG, "output: " + (output == null ? "NULL" : Arrays.toString(output)));
@@ -169,7 +185,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                             break;
                         }
                         final List<String> as = Splitter.on(" ").splitToList(stdoutLine);
-                        if (as != null && as.size() >= 4 && "map".equals(as.get(0))) {
+                        if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
                             final Device device = new Device(as.get(1));
                             device.setIpAddress(as.get(2));
 
@@ -270,6 +286,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
+            final boolean isThemeLight = isThemeLight(mParentFragmentActivity, mRouter.getUuid());
             for (final Device device : devices) {
 
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
@@ -277,10 +294,43 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 //Create Options Menu
                 final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
 
-                if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+                if (!isThemeLight) {
                     //Set menu background to white
                     tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
                 }
+
+                cardView.setCardBackgroundColor(themeBackgroundColor);
+
+                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                cardView.setPreventCornerOverlap(true);
+                //Add padding in API v21+ as well to have the same measurements with previous versions.
+                cardView.setUseCompatPadding(true);
+
+                final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
+                final String name = device.getName();
+                deviceName.setText(name);
+
+                final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
+                final String macAddress = device.getMacAddress();
+                deviceMac.setText(macAddress);
+
+                final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
+                final String ipAddress = device.getIpAddress();
+                final boolean isThisDevice = (ipAddress != null && ipAddress.equals(mCurrentIpAddress));
+                deviceIp.setText(ipAddress);
+                if (isThisDevice) {
+                    final View thisDevice = cardView.findViewById(R.id.tile_status_wireless_client_device_this);
+                    if (isThemeLight) {
+                        //Set text color to blue
+                        ((TextView) thisDevice)
+                                .setTextColor(mParentFragmentActivity.getResources().getColor(R.color.blue));
+                    }
+                    thisDevice.setVisibility(View.VISIBLE);
+                }
+
+                cardView.setOnClickListener(new DeviceOnClickListener(device));
+
+                clientsContainer.addView(cardView);
 
                 tileMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -293,36 +343,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                         inflater.inflate(R.menu.tile_status_wireless_client_options, menu);
 
+                        if (isThisDevice) {
+                            //WOL not needed as this is the current device
+                            menu.findItem(R.id.tile_status_wireless_client_wol).setEnabled(false);
+                        }
+
                         popup.show();
                     }
                 });
-
-                cardView.setCardBackgroundColor(themeBackgroundColor);
-
-                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                cardView.setPreventCornerOverlap(true);
-                //Add padding in API v21+ as well to have the same measurements with previous versions.
-                cardView.setUseCompatPadding(true);
-
-                final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
-                final String name = device.getName();
-                if (name != null) {
-                    deviceName.setText(name);
-                }
-
-                final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
-                final String macAddress = device.getMacAddress();
-                deviceMac.setText(macAddress);
-
-                final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
-                final String ipAddress = device.getIpAddress();
-                if (ipAddress != null) {
-                    deviceIp.setText(ipAddress);
-                }
-
-                cardView.setOnClickListener(new DeviceOnClickListener(device));
-
-                clientsContainer.addView(cardView);
             }
 
             final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);

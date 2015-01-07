@@ -190,6 +190,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
         final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
 
+        int idx = 1;
         for (@NotNull final DDWRTTile tile : tiles) {
             @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
@@ -221,8 +222,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             cardView.addView(tileViewGroupLayout);
 
             //Remove view prior to adding it again to parent
-            this.mLayout.removeView(cardView);
-            this.mLayout.addView(cardView);
+            this.mLayout.addView(cardView, idx++);
         }
 
 

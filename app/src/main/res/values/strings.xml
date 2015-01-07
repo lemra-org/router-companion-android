@@ -292,5 +292,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="menuitem_actions_reboot_router">Reboot Router</string>
     <string name="menuitem_actions_restore_factory_defaults">Restore Factory Defaults</string>
     <string name="menuitem_actions_upgrade_firmware">Upgrade Firmware</string>
+    <string name="you">YOU</string>
 
 </resources>
