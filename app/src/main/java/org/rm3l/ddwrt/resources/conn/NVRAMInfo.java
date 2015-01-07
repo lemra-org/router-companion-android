@@ -83,6 +83,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String DAYLIGHT_TIME = "daylight_time";
     public static final String CURRENT_DATE = "current_date";
     public static final String WAN_CONNECTION_UPTIME = "wan_connection_uptime";
+    public static final String TTRAFF_ENABLE = "ttraff_enable";
 
     /**
      * Default constructor: initialized an empty Properties set

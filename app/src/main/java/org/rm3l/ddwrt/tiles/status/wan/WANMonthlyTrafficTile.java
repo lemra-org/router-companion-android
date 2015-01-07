@@ -42,6 +42,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 
@@ -71,6 +72,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -84,8 +87,9 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     private static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
 
-    @NotNull
-    private final Table<String, Integer, ArrayList<Double>> traffData = HashBasedTable.create(36, 31);
+    private ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
+
+    private ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
     public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
@@ -162,7 +166,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                     }
 
-                    traffData.clear();
+                    traffDataTableBuilder = ImmutableTable.builder();
 
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
@@ -190,12 +194,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                             continue;
                         }
 
-                        int dayNum = 0;
+                        int dayNum = 1;
                         for (final String dailyInOutTraffData : yearlyTraffDataList) {
                             if (StringUtils.contains(dailyInOutTraffData, "[")) {
                                 continue;
                             }
-                            dayNum++;
                             final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
                             if (dailyInOutTraffDataList == null || dailyInOutTraffDataList.size() < 2) {
                                 continue;
@@ -203,12 +206,14 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                             final String inTraff = dailyInOutTraffDataList.get(0);
                             final String outTraff = dailyInOutTraffDataList.get(1);
 
-                            traffData.put(month, dayNum, Lists.newArrayList(
+                            traffDataTableBuilder.put(month, dayNum++, Lists.newArrayList(
                                     Double.parseDouble(inTraff), Double.parseDouble(outTraff)
                             ));
 
                         }
                     }
+
+                    traffData = traffDataTableBuilder.build();
 
                     return nvramInfo;
 
@@ -249,9 +254,9 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             preliminaryCheckException = new DDWRTNoDataException("No Data!");
         } else //noinspection ThrowableResultOfMethodCallIgnored
             if (data.getException() == null) {
-                if (!"1".equals(data.getProperty("ttraff_enable"))) {
+                if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
                     preliminaryCheckException = new IllegalStateException("Traffic monitoring disabled!");
-                } else if (traffData.isEmpty()) {
+                } else if (traffData == null || traffData.isEmpty()) {
                     preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
             }
         }
@@ -373,7 +378,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             errorPlaceHolderView.setVisibility(View.VISIBLE);
             setVisibility(ctrlViews, View.GONE);
         } else {
-            if (traffData.isEmpty()) {
+            if (traffData == null || traffData.isEmpty()) {
                 errorPlaceHolderView.setText("Error: No Data!");
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 setVisibility(ctrlViews, View.GONE);
@@ -415,7 +420,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted);
 
-        final Map<Integer, ArrayList<Double>> dailyTraffMap = traffData.row(monthFormatted);
+        if (traffData == null) {
+            return null;
+        }
+
+        final SortedMap<Integer, ArrayList<Double>> dailyTraffMap = new TreeMap<>(traffData.row(monthFormatted));
 
         if (dailyTraffMap == null || dailyTraffMap.isEmpty()) {
             return null;
