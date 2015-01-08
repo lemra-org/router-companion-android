@@ -61,11 +61,23 @@ public final class SSHUtils {
         try {
             @Nullable final String privKey = \"fake-key\";
             @NotNull final JSch jsch = new JSch();
-            if (privKey != null) {
-                jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
+
+            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+            final String passwordPlain = router.getPasswordPlain();
+            switch (sshAuthenticationMethod) {
+                case PUBLIC_PRIVATE_KEY:
+                    if (privKey != null) {
+                        //noinspection ConstantConditions
+                        jsch.addIdentity(router.getUuid(), privKey.getBytes(), null,
+                                isNullOrEmpty(passwordPlain) ? null : passwordPlain.getBytes());
+                    }
+                    break;
+                default:
+                    break;
             }
+
             jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(router.getPasswordPlain());
+            jschSession.setPassword(passwordPlain);
             @NotNull final Properties config = new Properties();
             config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
             jschSession.setConfig(config);

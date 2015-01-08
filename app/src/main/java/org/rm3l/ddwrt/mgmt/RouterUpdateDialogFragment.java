@@ -24,8 +24,8 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,28 +94,45 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             return;
         }
 
-        if (d != null) {
-            //This is an update - fill the form with the items fetched from the Router selected
-            if (isUpdate()) {
-                ((EditText) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
-            }
-            ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName());
-            ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress());
-            ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()));
-            @NotNull final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
-            switch (router.getRouterConnectionProtocol()) {
-                case SSH:
-                    protoDropdown.setSelection(0);
-                    break;
-                default:
-                    break;
-            }
-            ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain());
-            ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain());
-            ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
-            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
-                    .setChecked(router.isStrictHostKeyChecking());
+        //This is an update - fill the form with the items fetched from the Router selected
+        if (isUpdate()) {
+            ((EditText) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
         }
+        ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName());
+        ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress());
+        ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()));
+        @NotNull final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
+        switch (router.getRouterConnectionProtocol()) {
+            case SSH:
+                protoDropdown.setSelection(0);
+                break;
+            default:
+                break;
+        }
+        ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain());
+        ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain());
+        ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
+
+        final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+        if (sshAuthenticationMethod != null) {
+            switch (sshAuthenticationMethod) {
+                case NONE:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_none))
+                            .setChecked(true);
+                    break;
+                case PASSWORD:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_password))
+                            .setChecked(true);
+                    break;
+                case PUBLIC_PRIVATE_KEY:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_privkey))
+                            .setChecked(true);
+                    break;
+            }
+        }
+//            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
+//                    .setChecked(router.isStrictHostKeyChecking());
+
     }
 
     @Nullable

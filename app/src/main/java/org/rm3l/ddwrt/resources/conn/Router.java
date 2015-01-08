@@ -28,6 +28,8 @@ import org.rm3l.ddwrt.resources.Encrypted;
 
 import java.io.Serializable;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Encapsulates everything needed to establish a connection to a given router.
  * <p/>
@@ -404,6 +406,17 @@ public class Router extends Encrypted implements Serializable {
         return result;
     }
 
+    @NotNull
+    public SSHAuthenticationMethod getSshAuthenticationMethod() {
+        if (!isNullOrEmpty(privKey)) {
+            return SSHAuthenticationMethod.PUBLIC_PRIVATE_KEY;
+        }
+        if (!isNullOrEmpty(password)) {
+            return SSHAuthenticationMethod.PASSWORD;
+        }
+        return SSHAuthenticationMethod.NONE;
+    }
+
     /**
      * RouterConnectionProtocol enum
      */
@@ -474,5 +487,11 @@ public class Router extends Encrypted implements Serializable {
         public int getDefaultPort() {
             return defaultPort;
         }
+    }
+
+    public enum SSHAuthenticationMethod {
+        NONE,
+        PASSWORD,
+        PUBLIC_PRIVATE_KEY;
     }
 }

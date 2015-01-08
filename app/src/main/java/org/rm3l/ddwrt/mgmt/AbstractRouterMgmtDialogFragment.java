@@ -47,8 +47,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -114,6 +114,50 @@ public abstract class AbstractRouterMgmtDialogFragment
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
         ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(this);
+
+        ((RadioGroup) view.findViewById(R.id.router_add_ssh_auth_method))
+                .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        final View privkeyHdrView = view.findViewById(R.id.router_add_privkey_hdr);
+                        final Button privkeyView = (Button) view.findViewById(R.id.router_add_privkey);
+                        final TextView privkeyPathView = (TextView) view.findViewById(R.id.router_add_privkey_path);
+                        final TextView pwdHdrView = (TextView) view.findViewById(R.id.router_add_password_hdr);
+                        final EditText pwdView = (EditText) view.findViewById(R.id.router_add_password);
+
+                        switch (checkedId) {
+                            case R.id.router_add_ssh_auth_method_none:
+                                privkeyPathView.setText(null);
+                                privkeyHdrView.setVisibility(View.GONE);
+                                privkeyView.setVisibility(View.GONE);
+                                pwdHdrView.setVisibility(View.GONE);
+                                pwdView.setText(null);
+                                pwdView.setVisibility(View.GONE);
+                                break;
+                            case R.id.router_add_ssh_auth_method_password:
+                                privkeyPathView.setText(null);
+                                privkeyHdrView.setVisibility(View.GONE);
+                                privkeyView.setVisibility(View.GONE);
+                                pwdHdrView.setText("Password");
+                                pwdHdrView.setVisibility(View.VISIBLE);
+                                pwdView.setVisibility(View.VISIBLE);
+                                pwdView.setHint("e.g., 'default' (may be empty) ");
+                                break;
+                            case R.id.router_add_ssh_auth_method_privkey:
+                                pwdView.setText(null);
+                                pwdHdrView.setText("Passphrase (if applicable)");
+                                pwdHdrView.setVisibility(View.VISIBLE);
+                                pwdView.setVisibility(View.VISIBLE);
+                                pwdView.setHint("Key passphrase, if applicable");
+                                privkeyHdrView.setVisibility(View.VISIBLE);
+                                privkeyView.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
 
         builder
                 .setMessage(this.getDialogMessage())
@@ -309,7 +353,8 @@ public abstract class AbstractRouterMgmtDialogFragment
                 (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
         ));
         router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
-        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
+//        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
+        router.setStrictHostKeyChecking(false);
 
         final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
         final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();

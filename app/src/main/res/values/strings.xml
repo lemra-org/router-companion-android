@@ -165,7 +165,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="router_add_internal_error">Whoops - Internal Error. Sorry, try again later.</string>
     <string name="router_add_path_to_privkey">Select SSH Private key (if any)</string>
     <string name="router_add_strict_host_key_checking">Strict Host Key Checking</string>
-    <string name="router_add_password_may_be_empty">Password (may be empty)</string>
+    <string name="router_add_password_may_be_empty">Password or key passphrase (may be empty)</string>
     <string name="router_add_login">Login (e.g., root)</string>
     <string name="router_add_port">Port (e.g., 22)</string>
     <string name="router_add_default_ssh_port">22</string>
