@@ -38,6 +38,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.widget.TextView.BufferType.EDITABLE;
+import static android.widget.TextView.BufferType.NORMAL;
+
 public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment {
 
     @Nullable
@@ -88,19 +91,17 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
 
         if (router == null) {
             Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
-            if (d != null) {
-                d.cancel();
-            }
+            d.cancel();
             return;
         }
 
         //This is an update - fill the form with the items fetched from the Router selected
         if (isUpdate()) {
-            ((EditText) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
+            ((TextView) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
         }
-        ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName());
-        ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress());
-        ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()));
+        ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName(), EDITABLE);
+        ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress(), EDITABLE);
+        ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()), EDITABLE);
         @NotNull final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
         switch (router.getRouterConnectionProtocol()) {
             case SSH:
@@ -109,26 +110,24 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             default:
                 break;
         }
-        ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain());
-        ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain());
+        ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain(), EDITABLE);
+        ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain(), EDITABLE);
         ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
 
         final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-        if (sshAuthenticationMethod != null) {
-            switch (sshAuthenticationMethod) {
-                case NONE:
-                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_none))
-                            .setChecked(true);
-                    break;
-                case PASSWORD:
-                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_password))
-                            .setChecked(true);
-                    break;
-                case PUBLIC_PRIVATE_KEY:
-                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_privkey))
-                            .setChecked(true);
-                    break;
-            }
+        switch (sshAuthenticationMethod) {
+            case NONE:
+                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_none))
+                        .setChecked(true);
+                break;
+            case PASSWORD:
+                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_password))
+                        .setChecked(true);
+                break;
+            case PUBLIC_PRIVATE_KEY:
+                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_privkey))
+                        .setChecked(true);
+                break;
         }
 //            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
 //                    .setChecked(router.isStrictHostKeyChecking());

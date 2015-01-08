@@ -43,7 +43,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:orientation="vertical">
 
             <!-- UUID -->
-            <EditText
+            <TextView
                 android:id="@+id/router_add_uuid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,7 +80,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/router_add_ip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:hint="e.g., 192.168.1.254 or myrouter.dyndns.com"
@@ -116,7 +116,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/router_add_port"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:ems="10"
@@ -137,7 +137,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/router_add_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:text="root"
@@ -196,7 +196,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/router_add_privkey"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:hint="@string/router_add_path_to_privkey"
@@ -220,7 +220,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/router_add_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:hint="Password or key passphrase, if applicable"
@@ -229,16 +229,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
-            <!--<CheckBox-->
-                <!--android:id="@+id/router_add_is_strict_host_key_checking"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="16dp"-->
-                <!--android:layout_marginLeft="4dp"-->
-                <!--android:layout_marginRight="4dp"-->
-                <!--android:layout_marginTop="4dp"-->
-                <!--android:imeOptions="flagNoExtractUi"-->
-                <!--android:text="@string/router_add_strict_host_key_checking" />-->
+            <!-- Hidden for now - does not seem to work -->
+            <CheckBox
+                android:id="@+id/router_add_is_strict_host_key_checking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/router_add_strict_host_key_checking"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

@@ -52,35 +52,54 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class SSHUtils {
 
     private static final String TAG = SSHUtils.class.getSimpleName();
+    public static final String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
+    public static final String YES = "yes";
+    public static final String NO = "no";
 
     private SSHUtils() {
+    }
+
+    @Nullable
+    private static Session getSSHSession(@NotNull final Router router) throws Exception {
+        @Nullable final String privKey = \"fake-key\";
+        @NotNull final JSch jsch = new JSch();
+
+        final String passwordPlain = router.getPasswordPlain();
+        final Session jschSession;
+
+        final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+        switch (sshAuthenticationMethod) {
+            case PUBLIC_PRIVATE_KEY:
+                    //noinspection ConstantConditions
+                jsch.addIdentity(router.getUuid(),
+                        !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
+                        null,
+                        !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
+                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                break;
+            case PASSWORD:
+                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                jschSession.setPassword(passwordPlain);
+                break;
+            default:
+                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                break;
+        }
+
+        @NotNull final Properties config = new Properties();
+        config.put(STRICT_HOST_KEY_CHECKING, router.isStrictHostKeyChecking() ? YES : NO);
+        jschSession.setConfig(config);
+
+        return jschSession;
     }
 
     public static void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
         @Nullable Session jschSession = null;
         try {
-            @Nullable final String privKey = \"fake-key\";
-            @NotNull final JSch jsch = new JSch();
-
-            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-            final String passwordPlain = router.getPasswordPlain();
-            switch (sshAuthenticationMethod) {
-                case PUBLIC_PRIVATE_KEY:
-                    if (privKey != null) {
-                        //noinspection ConstantConditions
-                        jsch.addIdentity(router.getUuid(), privKey.getBytes(), null,
-                                isNullOrEmpty(passwordPlain) ? null : passwordPlain.getBytes());
-                    }
-                    break;
-                default:
-                    break;
+            jschSession = getSSHSession(router);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
-
-            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(passwordPlain);
-            @NotNull final Properties config = new Properties();
-            config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
-            jschSession.setConfig(config);
             jschSession.connect(connectTimeoutMillis);
         } finally {
             if (jschSession != null && jschSession.isConnected()) {
@@ -99,16 +118,10 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable final String privKey = \"fake-key\";
-            @NotNull final JSch jsch = new JSch();
-            if (privKey != null) {
-                jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
+            jschSession = getSSHSession(router);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
-            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(router.getPasswordPlain());
-            @NotNull final Properties config = new Properties();
-            config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
-            jschSession.setConfig(config);
             jschSession.connect(30000);
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
@@ -150,16 +163,10 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable final String privKey = \"fake-key\";
-            @NotNull final JSch jsch = new JSch();
-            if (privKey != null) {
-                jsch.addIdentity(router.getUuid(), privKey.getBytes(), null, null);
+            jschSession = getSSHSession(router);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
-            jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-            jschSession.setPassword(router.getPasswordPlain());
-            @NotNull final Properties config = new Properties();
-            config.put("StrictHostKeyChecking", router.isStrictHostKeyChecking() ? "yes" : "no");
-            jschSession.setConfig(config);
             jschSession.connect(30000);
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");

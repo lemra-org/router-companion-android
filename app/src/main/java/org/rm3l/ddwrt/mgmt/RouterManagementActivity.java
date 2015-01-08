@@ -547,11 +547,14 @@ public class RouterManagementActivity
         }
 
         public void onLongPress(@NotNull MotionEvent e) {
-            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             if (actionMode != null) {
                 return;
             }
+            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             //Item long-pressed: set background
+            if (view == null) {
+                return;
+            }
             view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
             // Start the CAB using the ActionMode.Callback defined above
             actionMode = startActionMode(RouterManagementActivity.this);

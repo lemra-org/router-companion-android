@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -146,6 +147,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 break;
                             case R.id.router_add_ssh_auth_method_privkey:
                                 pwdView.setText(null);
+                                privkeyView.setHint(getString(R.string.router_add_path_to_privkey));
                                 pwdHdrView.setText("Passphrase (if applicable)");
                                 pwdHdrView.setVisibility(View.VISIBLE);
                                 pwdView.setVisibility(View.VISIBLE);
@@ -342,7 +344,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     private static Router buildRouter(AlertDialog d) {
         @NotNull final Router router = new Router();
-        final String uuid = ((EditText) d.findViewById(R.id.router_add_uuid)).getText().toString();
+        final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
         }
@@ -353,8 +355,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                 (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
         ));
         router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
-//        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
-        router.setStrictHostKeyChecking(false);
+        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
 
         final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
         final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();
