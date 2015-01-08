@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.utils;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -39,7 +40,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
  */
 public final class NVRAMParser {
 
-    public static final Splitter SPLITTER = Splitter.on("=").trimResults();
+    public static final Splitter SPLITTER = Splitter.on("=")
+            .limit(2).trimResults();
 
     private NVRAMParser() {
     }
@@ -49,11 +51,35 @@ public final class NVRAMParser {
         if (nvramLines == null || nvramLines.length == 0) {
             return null;
         }
+//
+//        final String[] copy = new String[nvramLines.length];
+//
+//        int i = 0;
+//        while (i < nvramLines.length) {
+//            final String nvramLine = nvramLines[i];
+//            if (StringUtils.startsWith(nvramLine, "sshd_rsa_host_key")) {
+//                final StringBuilder sb = new StringBuilder();
+//                for (int j = i; j < nvramLines.length; j++) {
+//                    final String line = nvramLines[j];
+//                    sb.append(line).append("\n");
+//                    if (StringUtils.contains(line, "-----END RSA PRIVATE KEY-----")) {
+//                        break;
+//                    }
+//                }
+//                copy[i] = sb.toString();
+//            } else {
+//                copy[i] = nvramLine;
+//            }
+//            i++;
+//        }
 
         @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
         int size;
-        for (@NotNull final String nvramLine : nvramLines) {
+        for (final String nvramLine : nvramLines) {
+            if (nvramLine == null) {
+                continue;
+            }
             final List<String> strings = SPLITTER.splitToList(nvramLine);
             size = strings.size();
             if (size == 1) {

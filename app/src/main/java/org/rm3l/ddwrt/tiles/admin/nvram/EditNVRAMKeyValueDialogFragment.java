@@ -102,8 +102,8 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
                 .setMessage("NVRAM is the permanent settings storage. This includes: " +
                         "i) settings that you normally change using Web Interface, and " +
                         "ii) settings for user Startup Scripts. \n" +
-                        "Variables edited will be persisted in NVRAM. \n\n" +
-                        "* SO DO NOT EDIT UNLESS YOU KNOW WHAT YOU ARE DOING! *")
+                        "Variables edited here will be persisted in NVRAM right away. \n\n" +
+                        "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
                 .setIcon(android.R.drawable.stat_sys_warning)
                 .setView(view)
                 // Add action buttons
@@ -140,7 +140,7 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
                             .setTypeface(null, hasFocus ? Typeface.BOLD_ITALIC : Typeface.NORMAL);
                 }
             });
-            valueEditText.setText(this.mValue);
+            valueEditText.setText(this.mValue, TextView.BufferType.EDITABLE);
 
             d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override

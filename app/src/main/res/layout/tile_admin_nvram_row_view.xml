@@ -42,6 +42,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="false"
-        android:maxLines="5"/>
+        android:maxLines="10"/>
 
 </LinearLayout>

@@ -27,11 +27,13 @@ import android.util.Log;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ObjectArrays;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -45,6 +47,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
  * SSH Utilities
@@ -55,6 +58,7 @@ public final class SSHUtils {
     public static final String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
     public static final String YES = "yes";
     public static final String NO = "no";
+    public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
 
     private SSHUtils() {
     }
@@ -199,19 +203,64 @@ public final class SSHUtils {
             return null;
         }
 
+        boolean getMultiOutput = false;
         final List<String> grep = Lists.newArrayList();
-        if (fieldsToFetch != null) {
+        if (fieldsToFetch == null || fieldsToFetch.length == 0) {
+            getMultiOutput = true;
+        } else {
             for (final String fieldToFetch : fieldsToFetch) {
                 if (isNullOrEmpty(fieldToFetch)) {
                     continue;
+                }
+                if (StringUtils.containsIgnoreCase(fieldToFetch, "sshd_rsa_host_key")) {
+                    getMultiOutput = true;
                 }
                 grep.add("^" + fieldToFetch + "=.*");
             }
         }
 
-        return NVRAMParser.parseNVRAMOutput(SSHUtils.getManualProperty(router,
+        final String[] nvramShow = SSHUtils.getManualProperty(router,
                 "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
-                        Joiner.on("|").join(grep) + "\""))));
+                        Joiner.on("|").join(grep) + "\"")));
+        final String[] sshdRsaHostKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, "nvram get sshd_rsa_host_key") : null;
+        final String[] sshdDsaHostKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, "nvram get sshd_dss_host_key") : null;
+
+        //Fix multi-line output for sshd_rsa_host_key
+        final String[] sshdRsaHostKeyFixed =
+                new String[] {
+                        "sshd_rsa_host_key=" + (sshdRsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdRsaHostKey) : EMPTY_STRING),
+                        "sshd_dss_host_key=" + (sshdDsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdDsaHostKey) : EMPTY_STRING)};
+
+        String[] outputArray = null;
+        if (nvramShow != null) {
+            outputArray = new String[nvramShow.length + sshdRsaHostKeyFixed.length];
+            int k = 0;
+            for (final String sshdHostKeyFixed : sshdRsaHostKeyFixed) {
+                if (isNullOrEmpty(sshdHostKeyFixed)) {
+                    continue;
+                }
+                outputArray[k++] = sshdHostKeyFixed;
+            }
+            for (int j = 0; j < nvramShow.length; j++) {
+                boolean skip = false;
+                final String nvramAtPositionJ = nvramShow[j];
+                for (final String aSshdRsaHostKeyFixed : sshdRsaHostKeyFixed) {
+                    if (StringUtils.contains(aSshdRsaHostKeyFixed, nvramAtPositionJ)) {
+                        skip = true;
+                        break;
+                    }
+                }
+                if (skip) {
+                    continue;
+                }
+                outputArray[k] = nvramAtPositionJ;
+                k++;
+            }
+        }
+
+        return NVRAMParser.parseNVRAMOutput(outputArray);
     }
 
 }
