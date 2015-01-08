@@ -451,7 +451,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             }
             final Double in = dailyTraffMapEntryValue.get(0);
             final Double out = dailyTraffMapEntryValue.get(1);
-            if (in == null || in <= 0. || out == null || out <= 0.) {
+            if (in == null || out == null) {
                 continue;
             }
             days[i] = dailyTraffMapEntry.getKey();
