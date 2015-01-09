@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -107,7 +106,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                            getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                            mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
                     if (otherCmds != null && otherCmds.length >= 2) {
                         //Total
                         @Nullable String memTotal = null;

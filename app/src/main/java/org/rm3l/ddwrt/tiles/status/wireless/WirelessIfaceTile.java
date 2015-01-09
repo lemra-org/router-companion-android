@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +108,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            wlIface + "_radio",
+                            mGlobalPreferences, wlIface + "_radio",
                             wlIface + "_mode",
                             wlIface + "_hwaddr",
                             wlIface + "_ifname",

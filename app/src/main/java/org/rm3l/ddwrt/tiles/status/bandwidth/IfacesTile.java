@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +82,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                     nbRunsLoader++;
 
                     return SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.LAN_IFNAME,
+                            mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
                             NVRAMInfo.WAN_IFNAME,
                             NVRAMInfo.LANDEVS);
 

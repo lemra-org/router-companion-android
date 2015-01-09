@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -102,7 +101,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
                     try {
                         nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            NVRAMInfo.WAN_PROTO,
+                                mGlobalPreferences, NVRAMInfo.WAN_PROTO,
                             NVRAMInfo.WAN_3_G_SIGNAL,
                             NVRAMInfo.WAN_HWADDR,
                             NVRAMInfo.WAN_LEASE,
@@ -116,7 +115,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Connection Uptime is stored in /tmp/.wanuptime and sys uptime from /proc/uptime
-                        final String[] uptimes = SSHUtils.getManualProperty(mRouter, "cat /tmp/.wanuptime; echo; cat /proc/uptime");
+                        final String[] uptimes = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /tmp/.wanuptime; echo; cat /proc/uptime");
                         if (uptimes != null && uptimes.length > 1) {
                             final String wanUptimeStr = uptimes[0];
 

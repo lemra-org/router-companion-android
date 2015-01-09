@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -105,7 +104,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mRouter,
-                                        NVRAMInfo.ROUTER_NAME,
+                                        mGlobalPreferences, NVRAMInfo.ROUTER_NAME,
                                         NVRAMInfo.WAN_IPADDR,
                                         NVRAMInfo.MODEL,
                                         NVRAMInfo.DIST_TYPE,
@@ -115,7 +114,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
                         //Add FW, Kernel and Uptime
-                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, "uptime", "uname -a", "cat /tmp/loginprompt");
+                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "uptime", "uname -a", "cat /tmp/loginprompt");
                         if (otherCmds != null) {
                             if (otherCmds.length >= 3) {
                                 //Uptime

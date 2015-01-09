@@ -21,16 +21,12 @@
  */
 package org.rm3l.ddwrt.actions;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.Utils;
-
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * Abstract Router Action async task
@@ -40,10 +36,13 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
 
     @Nullable private final RouterActionListener listener;
     @NotNull private final RouterAction routerAction;
+    @NotNull protected final SharedPreferences globalSharedPreferences;
 
-    protected AbstractRouterAction(@Nullable final RouterActionListener listener, @NotNull final RouterAction routerAction) {
+    protected AbstractRouterAction(@Nullable final RouterActionListener listener, @NotNull final RouterAction routerAction,
+                                   @NotNull final SharedPreferences globalSharedPreferences) {
         this.listener = listener;
         this.routerAction = routerAction;
+        this.globalSharedPreferences = globalSharedPreferences;
     }
 
     @Override

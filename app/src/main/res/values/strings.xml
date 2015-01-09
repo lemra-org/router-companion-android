@@ -161,6 +161,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="router_add_dns_or_ip_invalid">Invalid DNS name or IP Address</string>
     <string name="router_add_port_invalid">Invalid Port</string>
     <string name="router_add_username_invalid">Please enter the SSH Username</string>
+    <string name="router_add_password_invalid">Please enter the Password</string>
+    <string name="router_add_privkey_invalid">Please specify the Private Key</string>
     <string name="router_add_password_or_privkey_invalid">Please specify a password or a private key</string>
     <string name="router_add_internal_error">Whoops - Internal Error. Sorry, try again later.</string>
     <string name="router_add_path_to_privkey">Select SSH Private key (if any)</string>

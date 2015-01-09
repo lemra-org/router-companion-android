@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -90,7 +89,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                     //TODO
                     //Start by getting information about the WAN iface name
-                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, NVRAMInfo.WAN_IFACE);
+                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
@@ -102,7 +101,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
 
-                    @Nullable final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    @Nullable final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
                     if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
                         return null;
                     }

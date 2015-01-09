@@ -53,7 +53,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -552,13 +551,13 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
                     try {
                         nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mRouter);
+                                SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences);
                     } finally {
                         if (nvramInfoTmp != null) {
                             mNvramInfoDefaultSorting.putAll(nvramInfoTmp);
                         }
 
-                        final String[] nvramSize = SSHUtils.getManualProperty(mRouter, "nvram show 2>&1 1>/dev/null");
+                        final String[] nvramSize = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "nvram show 2>&1 1>/dev/null");
                         if (nvramSize != null && nvramSize.length > 0) {
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
                                     .splitToList(nvramSize[0]);

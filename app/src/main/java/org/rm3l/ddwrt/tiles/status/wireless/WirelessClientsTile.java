@@ -64,7 +64,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.WoLUtils;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -72,8 +71,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-
-import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
@@ -162,7 +159,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 try {
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
-                            "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
+                            mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
                             "awk '{print \"" +

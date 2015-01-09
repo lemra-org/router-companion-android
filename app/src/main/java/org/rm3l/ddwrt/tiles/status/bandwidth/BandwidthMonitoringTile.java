@@ -35,7 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -141,7 +140,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         final Set<String> ifacesConsidered = Sets.newHashSet();
 
         final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                NVRAMInfo.LAN_IFNAME,
+                mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
                 NVRAMInfo.WAN_IFNAME,
                 NVRAMInfo.LANDEVS);
 

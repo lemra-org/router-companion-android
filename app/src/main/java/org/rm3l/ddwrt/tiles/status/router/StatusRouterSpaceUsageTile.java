@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -103,7 +102,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     @NotNull final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
 
                     @Nullable final String[] catProcMounts = SSHUtils.getManualProperty(mRouter,
-                            "nvram show 2>&1 1>/dev/null", "cat /proc/mounts");
+                            mGlobalPreferences, "nvram show 2>&1 1>/dev/null", "cat /proc/mounts");
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     @Nullable String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
@@ -170,7 +169,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
                     for (final String itemToDf : itemsToDf) {
                         @Nullable final String[] itemToDfResult = SSHUtils.getManualProperty(mRouter,
-                                "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
+                                mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
                         Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem = Splitter.on(" ").omitEmptyStrings().trimResults()

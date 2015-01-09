@@ -66,12 +66,14 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
@@ -118,6 +120,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     private SharedPreferences mPreferences;
 
     @NotNull
+    private SharedPreferences mGlobalPreferences;
+
+    @NotNull
     private Router mRouter;
 
     @Override
@@ -143,6 +148,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         this.mRouter = router;
 
         this.mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
+        this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
         mTitle = mDrawerTitle = getTitle();
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
@@ -513,10 +519,10 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case REBOOT:
-                        new RebootRouterAction(this).execute(mRouter);
+                        new RebootRouterAction(this, mGlobalPreferences).execute(mRouter);
                         break;
                     case RESTORE_FACTORY_DEFAULTS:
-                        new RestoreRouterDefaultsAction(this).execute(mRouter);
+                        new RestoreRouterDefaultsAction(this, mGlobalPreferences).execute(mRouter);
                         break;
                     case UPGRADE_FIRMWARE:
                         //TODO

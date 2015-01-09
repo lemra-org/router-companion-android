@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -29,12 +30,18 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.HostKey;
+import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 
@@ -42,8 +49,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
@@ -89,14 +101,28 @@ public final class SSHUtils {
         }
     }
 
+    public static synchronized void destroySession(@NotNull final String uuid) {
+        try {
+            sshSessionsCache.remove(uuid);
+        } catch (final Exception e) {
+            //No worries
+            e.printStackTrace();
+        }
+    }
+
     @Nullable
-    private static synchronized Session getSSHSession(@NotNull final Router router) throws Exception {
+    private static synchronized Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
+                                                      @NotNull final Router router,
+                                                      @Nullable final Integer connectTimeout) throws Exception {
 
         final String uuid = router.getUuid();
 
         final Session sessionCached = sshSessionsCache.get(uuid);
 
         if (sessionCached != null) {
+            if (!sessionCached.isConnected()) {
+                sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+            }
             return sessionCached;
         }
 
@@ -120,31 +146,53 @@ public final class SSHUtils {
                 jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
                 jschSession.setPassword(passwordPlain);
                 break;
+//            case NONE:
+//                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+//                jschSession.setPassword(DDWRTCompanionConstants.EMPTY_STRING);
+//                break;
             default:
                 jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
                 break;
         }
 
+        final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
+        jsch.setHostKeyRepository(SharedPreferencesBasedHostKeyRepository.getInstance(globalSharedPreferences));
+
         @NotNull final Properties config = new Properties();
-        config.put(STRICT_HOST_KEY_CHECKING, router.isStrictHostKeyChecking() ? YES : NO);
+        config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
         jschSession.setConfig(config);
+
+        jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
         sshSessionsCache.put(uuid, jschSession);
 
         return sshSessionsCache.get(uuid);
     }
 
-    public static synchronized void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
-        @Nullable Session jschSession = getSSHSession(router);
-        if (jschSession == null) {
-            throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-        }
-        if (!jschSession.isConnected()) {
-            jschSession.connect(connectTimeoutMillis);
+    public static synchronized void checkConnection(@NotNull SharedPreferences globalSharedPreferences,
+                                                    @NotNull final Router router, final int connectTimeoutMillis) throws Exception {
+        // This is used that for a temporary connection check
+        // at this point, we can just make a copy of the existing router and assign it a random UUID
+        final Router routerCopy = new Router(router);
+        final String tempUuid = UUID.randomUUID().toString();
+        try {
+            routerCopy.setUuid(tempUuid);
+
+            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(connectTimeoutMillis);
+            }
+        } finally {
+            //Now drop from LRU Cache
+            sshSessionsCache.remove(tempUuid);
         }
     }
 
-    public static synchronized int runCommands(@NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
+    public static synchronized int runCommands(@NotNull SharedPreferences globalSharedPreferences,
+                                               @NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
@@ -152,7 +200,7 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable Session jschSession = getSSHSession(router);
+            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -182,20 +230,21 @@ public final class SSHUtils {
 
     }
 
-    public static synchronized int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
+    public static synchronized int runCommands(@NotNull SharedPreferences globalSharedPreferences,
+                                               @NotNull final Router router, @NotNull final String... cmdToExecute)
             throws Exception {
-        return runCommands(router, Joiner.on(" && ").skipNulls(), cmdToExecute);
+        return runCommands(globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
     @Nullable
-    public static synchronized String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
+    public static synchronized String[] getManualProperty(@NotNull final Router router, SharedPreferences globalPreferences, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable Session jschSession = getSSHSession(router);
+            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -224,7 +273,7 @@ public final class SSHUtils {
     }
 
     @Nullable
-    public static synchronized NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, @Nullable final String... fieldsToFetch) throws Exception {
+    public static synchronized NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... fieldsToFetch) throws Exception {
 
         if (router == null) {
             return null;
@@ -247,12 +296,12 @@ public final class SSHUtils {
         }
 
         final String[] nvramShow = SSHUtils.getManualProperty(router,
-                "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
+                globalPreferences, "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
                         Joiner.on("|").join(grep) + "\"")));
         final String[] sshdRsaHostKey = \"fake-key\";
-                SSHUtils.getManualProperty(router, "nvram get sshd_rsa_host_key") : null;
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_rsa_host_key") : null;
         final String[] sshdDsaHostKey = \"fake-key\";
-                SSHUtils.getManualProperty(router, "nvram get sshd_dss_host_key") : null;
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_dss_host_key") : null;
 
         //Fix multi-line output for sshd_rsa_host_key
         final String[] sshdRsaHostKeyFixed =
@@ -288,6 +337,152 @@ public final class SSHUtils {
         }
 
         return NVRAMParser.parseNVRAMOutput(outputArray);
+    }
+
+    //TODO
+    private static class SharedPreferencesBasedHostKeyRepository implements HostKeyRepository {
+
+        @NotNull final SharedPreferences sharedPreferences;
+
+        private static final String TAG = SharedPreferencesBasedHostKeyRepository.class.getSimpleName();
+
+        private static SharedPreferencesBasedHostKeyRepository instance = null;
+
+        private SharedPreferencesBasedHostKeyRepository(@NotNull final SharedPreferences sharedPreferences) {
+            this.sharedPreferences = sharedPreferences;
+        }
+
+        public static synchronized SharedPreferencesBasedHostKeyRepository getInstance(@NotNull final SharedPreferences sharedPreferences) {
+            if (instance == null) {
+                instance = new SharedPreferencesBasedHostKeyRepository(sharedPreferences);
+            }
+            return instance;
+        }
+
+        @Override
+        public int check(String host, byte[] key) {
+            if(host == null) {
+                return NOT_INCLUDED;
+            }
+            String keyFromPrefs = sharedPreferences.getString(host, null);
+            if (keyFromPrefs == null) {
+                //Add host
+                try {
+                    add(new HostKey(host, key), null);
+                } catch (JSchException e) {
+                    e.printStackTrace();
+                    return NOT_INCLUDED;
+                }
+                keyFromPrefs = sharedPreferences.getString(host, null);
+                if (keyFromPrefs == null) {
+                    return NOT_INCLUDED;
+                }
+            }
+
+            if (Arrays.equals(keyFromPrefs.getBytes(), key)) {
+                return OK;
+            }
+
+            return CHANGED;
+        }
+
+        @Override
+        public void add(HostKey hostkey, UserInfo ui) {
+            if (hostkey == null) {
+                return;
+            }
+            final String host = hostkey.getHost();
+            //Save host fingerprint into Android preferences
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            final Map<String, String> aMap = new HashMap<>();
+            final String type = hostkey.getType();
+
+            aMap.put("type", type);
+            aMap.put("marker", hostkey.getMarker());
+            aMap.put("host", host);
+            aMap.put("comment", hostkey.getComment());
+            aMap.put("key", hostkey.getKey());
+            aMap.put("fingerprint", hostkey.getFingerPrint(new JSch()));
+
+            final JSONObject jsonObject = new JSONObject(aMap);
+            final String jsonString = jsonObject.toString();
+            editor.remove(host).apply();
+            editor.putString(host + "_" + type, jsonString);
+
+            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
+            hostsManaged.add(host);
+            hostsManaged.add(host + "_" + type);
+            editor.putStringSet(TAG, hostsManaged);
+
+            editor.apply();
+        }
+
+        @Override
+        public void remove(String host, String type) {
+            remove(host, type, null);
+        }
+
+        @Override
+        public void remove(String host, String type, byte[] key) {
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(host + "_" + type);
+
+            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
+            hostsManaged.remove(host);
+            hostsManaged.remove(host + "_" + type);
+            editor.putStringSet(TAG, hostsManaged);
+
+            editor.apply();
+        }
+
+        @Override
+        public String getKnownHostsRepositoryID() {
+            return this.getClass().getSimpleName();
+        }
+
+        @Override
+        public HostKey[] getHostKey() {
+            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
+            final HostKey[] hostKeys = new HostKey[hostsManaged.size()];
+            int i = 0;
+            for (String hostManaged : hostsManaged) {
+                final String hostManagedType = sharedPreferences.getString(hostManaged + "_type", null);
+                if (hostManagedType == null) {
+                    continue;
+                }
+                final HostKey[] hostKey = \"fake-key\";
+                if (hostKey = \"fake-key\";
+                    continue;
+                }
+                hostKeys[i++] = hostKey[0];
+            }
+
+            return hostKeys;
+        }
+
+        @Override
+        public HostKey[] getHostKey(String host, String type) {
+            final String sharedPreferencesString = sharedPreferences.getString(host + "_" + type, null);
+            if (sharedPreferencesString == null) {
+                return new HostKey[0];
+            }
+            try {
+                final JSONObject jsonObject = new JSONObject(sharedPreferencesString);
+                return new HostKey[] {
+                        new HostKey(
+                            jsonObject.getString("marker"),
+                            jsonObject.getString("host"),
+                            jsonObject.getInt("type"),
+                            jsonObject.getString("key").getBytes(),
+                            jsonObject.getString("comment")
+                        )
+                };
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new HostKey[0];
+            }
+        }
     }
 
 }

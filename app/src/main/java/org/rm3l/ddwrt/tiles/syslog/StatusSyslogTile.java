@@ -27,16 +27,13 @@ package org.rm3l.ddwrt.tiles.syslog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -136,7 +133,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     } else {
                         NVRAMInfo nvramInfoTmp = null;
                         try {
-                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter, SYSLOGD_ENABLE);
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
                         } finally {
                             if (nvramInfoTmp != null) {
                                 nvramInfo.putAll(nvramInfoTmp);
@@ -146,7 +143,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             try {
                                 //Get last log lines
                                 logs = SSHUtils.getManualProperty(mRouter,
-                                        String.format("tail -n %d /tmp/var/log/messages %s",
+                                        mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
                                                 MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "":" | grep -i -E \"" + mGrep + "\""));
                             } finally {
                                 if (logs != null) {

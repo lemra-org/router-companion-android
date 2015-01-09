@@ -41,11 +41,9 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart;
@@ -159,7 +157,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         //noinspection ConstantConditions
                         nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
-                                SSHUtils.getManualProperty(mRouter, "nvram show 2>/dev/null | grep traff[-_]"));
+                                SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "nvram show 2>/dev/null | grep traff[-_]"));
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);

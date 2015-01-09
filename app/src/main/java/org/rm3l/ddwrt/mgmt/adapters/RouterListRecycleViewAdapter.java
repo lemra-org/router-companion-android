@@ -38,6 +38,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +139,9 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             //Drop SharedPreferences for this item too
             this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
                     .edit().clear().commit();
+
+            //Disconnect session
+            SSHUtils.destroySession(router);
 
             //Now refresh list
             final List<Router> allRouters = dao.getAllRouters();

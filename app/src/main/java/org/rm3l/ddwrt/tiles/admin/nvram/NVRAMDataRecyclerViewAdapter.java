@@ -23,6 +23,7 @@ package org.rm3l.ddwrt.tiles.admin.nvram;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -45,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -71,9 +73,11 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
     private Map<Object, Object> nvramInfo;
     private final FragmentManager fragmentManager;
     private final Router router;
+    private final SharedPreferences mGlobalPreferences;
 
     public NVRAMDataRecyclerViewAdapter(FragmentActivity context, Router router, NVRAMInfo nvramInfo) {
         this.context = context;
+        this.mGlobalPreferences = context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.router = router;
         this.fragmentManager = context.getSupportFragmentManager();
         //noinspection ConstantConditions
@@ -205,7 +209,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
             try {
                 final int exitStatus = SSHUtils
-                        .runCommands(router, String.format("nvram set %s=\"%s\"", key, value), "nvram commit");
+                        .runCommands(mGlobalPreferences, router,
+                                String.format("nvram set %s=\"%s\"", key, value), "nvram commit");
                 if (exitStatus == 0) {
                     //Notify item changed
                     nvramInfo.put(key, value);

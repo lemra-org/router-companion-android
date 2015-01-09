@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -98,7 +97,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
                     try {
                         nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                                NVRAMInfo.LAN_PROTO,
+                                mGlobalPreferences, NVRAMInfo.LAN_PROTO,
                                 NVRAMInfo.DHCP_DNSMASQ,
                                 NVRAMInfo.DHCP_START,
                                 NVRAMInfo.DHCP_NUM,

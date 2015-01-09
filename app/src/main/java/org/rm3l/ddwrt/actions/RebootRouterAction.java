@@ -21,6 +21,8 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.SharedPreferences;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -28,8 +30,8 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 
 public class RebootRouterAction extends AbstractRouterAction<Void> {
 
-    public RebootRouterAction(@Nullable RouterActionListener listener) {
-        super(listener, RouterAction.REBOOT);
+    public RebootRouterAction(@Nullable RouterActionListener listener, @NotNull final SharedPreferences globalSharedPreferences) {
+        super(listener, RouterAction.REBOOT, globalSharedPreferences);
     }
 
     @NotNull
@@ -38,7 +40,7 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
 
         Exception exception = null;
         try {
-            final int exitStatus = SSHUtils.runCommands(router, "reboot");
+            final int exitStatus = SSHUtils.runCommands(globalSharedPreferences, router, "reboot");
             if (exitStatus != 0) {
                 throw new IllegalStateException();
             }

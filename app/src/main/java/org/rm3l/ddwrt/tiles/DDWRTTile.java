@@ -62,6 +62,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected final SherlockFragmentActivity mParentFragmentActivity;
     @Nullable
     protected final SharedPreferences mParentFragmentPreferences;
+    @NotNull
+    protected final SharedPreferences mGlobalPreferences;
     @NotNull final SherlockFragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
@@ -79,6 +81,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         this.mParentFragmentActivity = this.mParentFragment.getSherlockActivity();
         this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
                     .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
+        this.mGlobalPreferences = this.mParentFragmentActivity
+                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
         this.mFragmentArguments = arguments;

@@ -30,6 +30,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -95,11 +96,16 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     protected abstract void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error);
 
+    protected SharedPreferences mGlobalSharedPreferences;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.dao = RouterManagementActivity.getDao(getActivity());
+
+        mGlobalSharedPreferences = getActivity()
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
     @NotNull
@@ -337,12 +343,12 @@ public abstract class AbstractRouterMgmtDialogFragment
         @NotNull final Router router = buildRouter(d);
 
         //This will throw an exception if connection could not be established!
-        SSHUtils.checkConnection(router, 10000);
+        SSHUtils.checkConnection(mGlobalSharedPreferences, router, 10000);
 
         return router;
     }
 
-    private static Router buildRouter(AlertDialog d) {
+    private static Router buildRouter(AlertDialog d) throws IOException {
         @NotNull final Router router = new Router();
         final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
@@ -363,6 +369,27 @@ public abstract class AbstractRouterMgmtDialogFragment
             router.setPassword(password, true);
         }
         if (!isNullOrEmpty(privkey)) {
+
+//            //Convert privkey into a format accepted by JSCh
+            //Causes a build issue with SpongyCastle
+//            final PEMParser pemParser = new PEMParser(new StringReader(privkey));
+//            Object object = pemParser.readObject();
+//            PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(nullToEmpty(password).toCharArray());
+//            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("SC");
+//            KeyPair kp;
+//            if (object instanceof PEMEncryptedKeyPair) {
+//                Log.d(LOG_TAG, "Encrypted key - we will use provided password");
+//                kp = converter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(decProv));
+//            } else {
+//                Log.d(LOG_TAG, "Unencrypted key - no password needed");
+//                kp = converter.getKeyPair((PEMKeyPair) object);
+//            }
+//            final PrivateKey privateKey = \"fake-key\";
+//            StringWriter stringWriter = new StringWriter();
+//            JcaPEMWriter pemWriter = new JcaPEMWriter(stringWriter);
+//            pemWriter.writeObject(privateKey);
+//            pemWriter.close();
+
             router.setPrivKey(privkey, true);
         }
         return router;
@@ -406,17 +433,25 @@ public abstract class AbstractRouterMgmtDialogFragment
             return false;
         }
 
-//        @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
-//        @NotNull final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
-//
-//        final boolean isPasswordEmpty = isNullOrEmpty(sshPasswordView.getText().toString());
-//        final boolean isPrivKeyEmpty = isNullOrEmpty(sshPrivKeyView.getText().toString());
-//        if (isPasswordEmpty && isPrivKeyEmpty) {
-//            displayMessage(getString(R.string.router_add_password_or_privkey_invalid), ALERT);
-//            sshPasswordView.requestFocus();
-//            openKeyboard(sshPasswordView);
-//            return false;
-//        }
+        final int checkedAuthMethodRadioButtonId = ((RadioGroup) d.findViewById(R.id.router_add_ssh_auth_method)).getCheckedRadioButtonId();
+        if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_password) {
+            //Check password
+            @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
+            if (isNullOrEmpty(sshPasswordView.getText().toString())) {
+                displayMessage(getString(R.string.router_add_password_invalid), ALERT);
+                sshPasswordView.requestFocus();
+                openKeyboard(sshPasswordView);
+                return false;
+            }
+        } else if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_privkey) {
+            //Check privkey
+            @NotNull final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
+            if (isNullOrEmpty(sshPrivKeyView.getText().toString())) {
+                displayMessage(getString(R.string.router_add_privkey_invalid), ALERT);
+                sshPrivKeyView.requestFocus();
+                return false;
+            }
+        }
 
         return true;
     }
@@ -479,7 +514,13 @@ public abstract class AbstractRouterMgmtDialogFragment
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(AlertDialog... dialogs) {
             if (!checkActualConnection) {
-                return new CheckRouterConnectionAsyncTaskResult<>(buildRouter(dialogs[0]), null);
+                try {
+                    return new CheckRouterConnectionAsyncTaskResult<>(buildRouter(dialogs[0]), null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //No worries, as we should not check actual connection
+                    return new CheckRouterConnectionAsyncTaskResult<>(null, e);
+                }
             }
             @org.jetbrains.annotations.Nullable Router result = null;
             @org.jetbrains.annotations.Nullable Exception exception = null;

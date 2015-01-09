@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -110,7 +109,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
                     try {
                         nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                                NVRAMInfo.CPU_CLOCK_FREQ);
+                                mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -126,7 +125,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                                GREP_MODEL_NAME_PROC_CPUINFO +
+                                mGlobalPreferences, GREP_MODEL_NAME_PROC_CPUINFO +
                                         "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
                         if (otherCmds != null && otherCmds.length >= 3) {
                             //Model
