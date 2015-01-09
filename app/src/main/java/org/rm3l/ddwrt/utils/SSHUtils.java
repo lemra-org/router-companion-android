@@ -23,11 +23,10 @@
 package org.rm3l.ddwrt.utils;
 
 import android.util.Log;
+import android.util.LruCache;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.ObjectArrays;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -60,11 +59,47 @@ public final class SSHUtils {
     public static final String NO = "no";
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
 
+    private static final LruCache<String, Session> sshSessionsCache = new LruCache<String, Session>(2) {
+        @Override
+        protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
+            Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
+            super.entryRemoved(evicted, key, oldValue, newValue);
+            try {
+                if (oldValue != null && oldValue.isConnected()) {
+                    Log.d(TAG, "Disconnect SSH session for router " + key);
+                    oldValue.disconnect();
+                }
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
+            }
+        }
+    };
+    public static final int CONNECT_TIMEOUT_MILLIS = 30000;
+
     private SSHUtils() {
     }
 
+    public static synchronized void destroySession(@NotNull final Router router) {
+        try {
+            sshSessionsCache.remove(router.getUuid());
+        } catch (final Exception e) {
+            //No worries
+            e.printStackTrace();
+        }
+    }
+
     @Nullable
-    private static Session getSSHSession(@NotNull final Router router) throws Exception {
+    private static synchronized Session getSSHSession(@NotNull final Router router) throws Exception {
+
+        final String uuid = router.getUuid();
+
+        final Session sessionCached = sshSessionsCache.get(uuid);
+
+        if (sessionCached != null) {
+            return sessionCached;
+        }
+
         @Nullable final String privKey = \"fake-key\";
         @NotNull final JSch jsch = new JSch();
 
@@ -74,8 +109,8 @@ public final class SSHUtils {
         final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
         switch (sshAuthenticationMethod) {
             case PUBLIC_PRIVATE_KEY:
-                    //noinspection ConstantConditions
-                jsch.addIdentity(router.getUuid(),
+                //noinspection ConstantConditions
+                jsch.addIdentity(uuid,
                         !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
                         null,
                         !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
@@ -94,39 +129,36 @@ public final class SSHUtils {
         config.put(STRICT_HOST_KEY_CHECKING, router.isStrictHostKeyChecking() ? YES : NO);
         jschSession.setConfig(config);
 
-        return jschSession;
+        sshSessionsCache.put(uuid, jschSession);
+
+        return sshSessionsCache.get(uuid);
     }
 
-    public static void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
-        @Nullable Session jschSession = null;
-        try {
-            jschSession = getSSHSession(router);
-            if (jschSession == null) {
-                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-            }
-            jschSession.connect(connectTimeoutMillis);
-        } finally {
-            if (jschSession != null && jschSession.isConnected()) {
-                jschSession.disconnect();
-            }
+    public static synchronized void checkConnection(@NotNull final Router router, final int connectTimeoutMillis) throws Exception {
+        @Nullable Session jschSession = getSSHSession(router);
+        if (jschSession == null) {
+            throw new IllegalStateException("Unable to retrieve session - please retry again later!");
         }
-
+        if (!jschSession.isConnected()) {
+            jschSession.connect(connectTimeoutMillis);
+        }
     }
 
-    public static int runCommands(@NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
+    public static synchronized int runCommands(@NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
-        @Nullable Session jschSession = null;
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            jschSession = getSSHSession(router);
+            @Nullable Session jschSession = getSSHSession(router);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
-            jschSession.connect(30000);
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+            }
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
@@ -146,32 +178,30 @@ public final class SSHUtils {
             if (channelExec != null) {
                 channelExec.disconnect();
             }
-            if (jschSession != null) {
-                jschSession.disconnect();
-            }
         }
 
     }
 
-    public static int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
+    public static synchronized int runCommands(@NotNull final Router router, @NotNull final String... cmdToExecute)
             throws Exception {
         return runCommands(router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
     @Nullable
-    public static String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
+    public static synchronized String[] getManualProperty(@NotNull final Router router, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
-        @Nullable Session jschSession = null;
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            jschSession = getSSHSession(router);
+            @Nullable Session jschSession = getSSHSession(router);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
-            jschSession.connect(30000);
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+            }
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
@@ -189,15 +219,12 @@ public final class SSHUtils {
             if (channelExec != null) {
                 channelExec.disconnect();
             }
-            if (jschSession != null) {
-                jschSession.disconnect();
-            }
         }
 
     }
 
     @Nullable
-    public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, @Nullable final String... fieldsToFetch) throws Exception {
+    public static synchronized NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, @Nullable final String... fieldsToFetch) throws Exception {
 
         if (router == null) {
             return null;

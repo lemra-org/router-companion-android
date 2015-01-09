@@ -66,6 +66,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
+import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -232,6 +233,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         if (mFeedbackDialog != null) {
             mFeedbackDialog.dismiss();
         }
+        //Close SSH Session as well
+        SSHUtils.destroySession(mRouter);
     }
 
     @Override
@@ -240,6 +243,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         if (mFeedbackDialog != null) {
             mFeedbackDialog.dismiss();
         }
+        //Close SSH Session as well
+        SSHUtils.destroySession(mRouter);
     }
 
     @Override
