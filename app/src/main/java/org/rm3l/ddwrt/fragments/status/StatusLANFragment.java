@@ -47,7 +47,7 @@ public class StatusLANFragment extends DDWRTBaseFragment {
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
                 new LANStateTile(this, savedInstanceState, this.router),
-                new LANClientsTile(this, savedInstanceState, this.router),
+//                new LANClientsTile(this, savedInstanceState, this.router),
                 new DHCPStatusTile(this, savedInstanceState, this.router),
                 new DHCPClientsTile(this, savedInstanceState, this.router)
         );
