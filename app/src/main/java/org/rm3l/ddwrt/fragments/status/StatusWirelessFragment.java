@@ -62,6 +62,7 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTile>> {
 
     private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
+    public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
     @Nullable
     private Collection<DDWRTTile> mIfaceTiles = null;
@@ -107,7 +108,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                         return null;
                     }
 
-                    final List<String> splitToList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(landevs);
+                    final List<String> splitToList = SPLITTER.splitToList(landevs);
                     if (splitToList == null || splitToList.isEmpty()) {
                         return null;
                     }
@@ -119,7 +120,34 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                             continue;
                         }
                         tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
-
+                        //Also get Virtual Interfaces
+                        try {
+                            final String landevVifsKeyword = landev + "_vifs";
+                            final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
+                                    getSherlockActivity()
+                                            .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                                    landevVifsKeyword);
+                            if (landevVifsNVRAMInfo == null) {
+                                continue;
+                            }
+                            final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                            if (landevVifsNVRAMInfoProp == null) {
+                                continue;
+                            }
+                            final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+                            if (list == null) {
+                                continue;
+                            }
+                            for (final String landevVif : list) {
+                                if (landevVif == null || landevVif.isEmpty()) {
+                                    continue;
+                                }
+                                tiles.add(new WirelessIfaceTile(landevVif, parentFragment, args, router));
+                            }
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            //No worries
+                        }
                     }
 
                     if (tiles.isEmpty()) {
@@ -217,11 +245,10 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
 
-            //Remove view prior to adding it again to parent
-            cardView.removeView(tileViewGroupLayout);
             cardView.addView(tileViewGroupLayout);
 
             //Remove view prior to adding it again to parent
+            this.mLayout.removeViewAt(idx);
             this.mLayout.addView(cardView, idx++);
         }
 
