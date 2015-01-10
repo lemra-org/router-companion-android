@@ -89,6 +89,7 @@ import org.rm3l.ddwrt.fragments.setup.SetupNetworkingFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupRoutingFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupVLANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
+import org.rm3l.ddwrt.fragments.status.StatusClientsFragment;
 import org.rm3l.ddwrt.fragments.status.StatusLANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusRouterFragment;
 import org.rm3l.ddwrt.fragments.status.StatusSysinfoFragment;
@@ -210,20 +211,22 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-                tabsToSort = new DDWRTBaseFragment[7];
+                tabsToSort = new DDWRTBaseFragment[8];
                 tabsToSort[0] = DDWRTBaseFragment.newInstance(StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
                 tabsToSort[1] = DDWRTBaseFragment.newInstance(StatusWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 tabsToSort[2] = DDWRTBaseFragment.newInstance(StatusLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_lan), router);
-                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusTimeFragment.class, parentSectionTitle,
+                tabsToSort[3] = DDWRTBaseFragment.newInstance(StatusClientsFragment.class, parentSectionTitle,
+                        resources.getString(R.string.status_clients), router);
+                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusTimeFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_time), router);
-                tabsToSort[4] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, parentSectionTitle,
+                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
-                tabsToSort[5] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, parentSectionTitle,
+                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusBandwidthFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_bandwidth), router);
-                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
+                tabsToSort[7] = DDWRTBaseFragment.newInstance(StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
 //                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.status_sysinfo), router);

@@ -183,7 +183,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         }
                         final List<String> as = Splitter.on(" ").splitToList(stdoutLine);
                         if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
-                            final Device device = new Device(as.get(1));
+                            final String macAddress = as.get(1);
+                            if ("00:00:00:00:00:00".equals(macAddress)) {
+                                //Skip clients with incomplete ARP set-up
+                                continue;
+                            }
+                            final Device device = new Device(macAddress);
                             device.setIpAddress(as.get(2));
 
                             final String systemName = as.get(3);

@@ -108,7 +108,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            mGlobalPreferences, wlIface + "_radio",
+                            mGlobalPreferences,
+                            wlIface + "_radio",
                             wlIface + "_mode",
                             wlIface + "_hwaddr",
                             wlIface + "_ifname",
@@ -253,11 +254,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
             //Channel
             @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
-            channelView.setText(data.getProperty(this.iface + "_channel", "N/A"));
+            final String channelProperty = data.getProperty(this.iface + "_channel", "N/A");
+            channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
 
             //Rate
             @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
-            rateView.setText(data.getProperty(this.iface + "_rate", "N/A"));
+            final String rateProperty = data.getProperty(this.iface + "_rate", "N/A");
+            rateView.setText(rateProperty);
 
             //TX Power
             @NotNull final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);

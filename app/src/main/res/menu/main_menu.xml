@@ -54,7 +54,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:orderInCategory="3"
                 android:showAsAction="ifRoom"
                 android:title="@string/menuitem_actions_upgrade_firmware"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:visible="false"/>
         </menu>
     </item>
 
