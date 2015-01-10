@@ -19,37 +19,25 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-
 package org.rm3l.ddwrt.fragments.status;
 
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.lan.DHCPClientsTile;
-import org.rm3l.ddwrt.tiles.status.lan.DHCPStatusTile;
-import org.rm3l.ddwrt.tiles.status.lan.LANClientsTile;
-import org.rm3l.ddwrt.tiles.status.lan.LANStateTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-/**
- *
- */
-public class StatusLANFragment extends DDWRTBaseFragment {
+public class StatusClientsFragment extends DDWRTBaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
-                new LANStateTile(this, savedInstanceState, this.router),
-//                new LANClientsTile(this, savedInstanceState, this.router),
-                new DHCPStatusTile(this, savedInstanceState, this.router)
-//                new DHCPClientsTile(this, savedInstanceState, this.router)
+                new DHCPClientsTile(this, savedInstanceState, this.router)
         );
     }
 }

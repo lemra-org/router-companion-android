@@ -48,6 +48,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfacesTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -73,7 +74,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new WirelessClientsTile(this, savedInstanceState, router));
+        return Arrays.<DDWRTTile>asList(new WirelessIfacesTile(this, savedInstanceState, router));
     }
 
     @Nullable

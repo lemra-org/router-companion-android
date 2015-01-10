@@ -176,7 +176,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         return null;
                     }
 
-
                     for (final String stdoutLine : output) {
                         if ("done".equals(stdoutLine)) {
                             break;

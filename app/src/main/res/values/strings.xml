@@ -296,4 +296,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="menuitem_actions_upgrade_firmware">Upgrade Firmware</string>
     <string name="you">YOU</string>
     <string name="wayne_TODO_TO_REMOVE">Thanks Wayne, I got the report and will look into the issue</string>
+    <string name="status_clients">Clients</string>
 </resources>
