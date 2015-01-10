@@ -31,6 +31,8 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -40,6 +42,7 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -209,7 +212,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         Log.d(LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
         this.mIfaceTiles = tiles;
 
-        if (tiles == null || this.mLayout == null) {
+        if (viewGroup == null || tiles == null || tiles.isEmpty()) {
             return;
         }
 
@@ -218,7 +221,12 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
         final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
 
-        int idx = 1;
+        final LinearLayout dynamicTilessViewGroup =
+                (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);
+
+        //Remove everything first
+        dynamicTilessViewGroup.removeAllViews();
+
         for (@NotNull final DDWRTTile tile : tiles) {
             @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
@@ -248,10 +256,11 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             cardView.addView(tileViewGroupLayout);
 
             //Remove view prior to adding it again to parent
-            this.mLayout.removeViewAt(idx);
-            this.mLayout.addView(cardView, idx++);
+            dynamicTilessViewGroup.addView(cardView);
         }
 
+        //Make it visible now
+        dynamicTilessViewGroup.setVisibility(View.VISIBLE);
 
     }
 

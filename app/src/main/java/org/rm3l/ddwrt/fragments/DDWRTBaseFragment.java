@@ -147,6 +147,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     protected boolean mLoaderStopped = true;
 
+    @Nullable protected ViewGroup viewGroup;
+
     public void setLoaderStopped(boolean mLoaderStopped) {
         this.mLoaderStopped = mLoaderStopped;
     }
@@ -533,8 +535,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
                 .getDisplayMetrics());
         params.setMargins(margin, margin, margin, margin);
-
-        @Nullable ViewGroup viewGroup = null;
 
         boolean atLeastOneTileAdded = false;
 

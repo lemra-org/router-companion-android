@@ -234,6 +234,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
+            <!-- Hidden for now - does not seem to work -->
             <CheckBox
                 android:id="@+id/router_add_is_strict_host_key_checking"
                 android:layout_width="match_parent"
@@ -242,7 +243,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:text="@string/router_add_strict_host_key_checking"/>
+                android:text="@string/router_add_strict_host_key_checking"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
