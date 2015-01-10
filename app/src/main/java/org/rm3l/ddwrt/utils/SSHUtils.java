@@ -29,6 +29,7 @@ import android.util.LruCache;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.HostKey;
@@ -354,7 +355,7 @@ public final class SSHUtils {
     private static class SSHLogger implements com.jcraft.jsch.Logger {
         private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
 
-        static final Map<Integer, String> name = new HashMap<>();
+        static final Map<Integer, String> name = Maps.newHashMapWithExpectedSize(5);
         static {
             name.put(DEBUG, "[DEBUG] ");
             name.put(INFO, "[INFO] ");
@@ -390,7 +391,7 @@ public final class SSHUtils {
         public void log(int level, String message){
             final String levelTag = name.get(level);
             final String messageToDisplay = String.format("%s%s\n",
-                    Strings.isNullOrEmpty(levelTag) ? "???" : levelTag, message);
+                    isNullOrEmpty(levelTag) ? "???" : levelTag, message);
             switch (level) {
                 case INFO:
                     Log.i(LOG_TAG, messageToDisplay);
