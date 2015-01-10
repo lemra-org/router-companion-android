@@ -52,6 +52,7 @@ public final class DDWRTCompanionConstants {
     public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
 
     public static final long DEFAULT_THEME = 31l;
+    public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
 
     public String[] mMonth = new String[] {
             "Jan", "Feb" , "Mar", "Apr", "May", "Jun",

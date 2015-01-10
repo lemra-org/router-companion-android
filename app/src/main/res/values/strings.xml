@@ -138,7 +138,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="action_settings">Settings</string>
     <string name="no_data">No Data - Feature Coming Soon!</string>
     <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues, so our monkeys can fix them all.</string>
-    <string name="crash_ok_dialog_text">Select your favorite email client to review and report the issue. We\'ll look into the issue as soon as possible. Thank you very much.</string>
+    <string name="crash_ok_dialog_text">Great. We\'ll look into the issue as soon as possible. Thank you very much.</string>
     <string name="title">Title</string>
     <string name="loading">Loading…</string>
     <string name="tile_status_router_router_state_title">Router State</string>
@@ -295,5 +295,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="menuitem_actions_restore_factory_defaults">Restore Factory Defaults</string>
     <string name="menuitem_actions_upgrade_firmware">Upgrade Firmware</string>
     <string name="you">YOU</string>
-
+    <string name="wayne_TODO_TO_REMOVE">Thanks Wayne, I got the report and will look into the issue</string>
 </resources>

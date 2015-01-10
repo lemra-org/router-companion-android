@@ -37,6 +37,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
             Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
             return getRouter(uuid);
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "insertRouter: close db");
@@ -137,6 +141,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
             Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
             return getRouter(uuid);
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "updateRouter: close db");
@@ -168,6 +175,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
             System.out.println("Delete Router with uuid: " + uuid);
             database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "deleteRouter: close db");
@@ -203,6 +213,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
 
             return Utils.dbIdsToPosition(routers);
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "getAllRouters: close db");
@@ -236,6 +249,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
 
             return null;
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "getAllRouters: close db");

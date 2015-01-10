@@ -34,6 +34,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
+import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,6 +181,10 @@ public final class Utils {
 
     public static String toHumanReadableByteCount(final long sizeInBytes) {
         return FileUtils.byteCountToDisplaySize(sizeInBytes);
+    }
+
+    public static void reportException(@NotNull final Throwable error) {
+        ACRA.getErrorReporter().handleException(error, false);
     }
 
 }

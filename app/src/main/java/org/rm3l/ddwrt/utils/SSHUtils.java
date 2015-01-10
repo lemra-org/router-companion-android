@@ -27,6 +27,7 @@ import android.util.Log;
 import android.util.LruCache;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -75,6 +77,10 @@ public final class SSHUtils {
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
+
+    static {
+        JSch.setLogger(SSHLogger.getInstance());
+    }
 
     private static final LruCache<String, Session> sshSessionsCache = new LruCache<String, Session>(2) {
         @Override
@@ -343,6 +349,49 @@ public final class SSHUtils {
         }
 
         return NVRAMParser.parseNVRAMOutput(outputArray);
+    }
+
+    private static class SSHLogger implements com.jcraft.jsch.Logger {
+        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
+
+        static final Map<Integer, String> name = new HashMap<>();
+        static {
+            name.put(DEBUG, "[DEBUG] ");
+            name.put(INFO, "[INFO] ");
+            name.put(WARN, "[WARN] ");
+            name.put(ERROR, "[ERROR] ");
+            name.put(FATAL, "[FATAL] ");
+        }
+
+        private static SSHLogger instance = null;
+
+        private SSHLogger() {}
+
+        public static SSHLogger getInstance() {
+            if (instance == null) {
+                instance = new SSHLogger();
+            }
+            return instance;
+        }
+
+        public boolean isEnabled(int level) {
+            switch (level) {
+                case DEBUG:
+                    return BuildConfig.DEBUG;
+                case INFO:
+                case WARN:
+                case ERROR:
+                case FATAL:
+                    return true;
+            }
+            return false;
+        }
+
+        public void log(int level, String message){
+            final String levelTag = name.get(level);
+            Log.d(LOG_TAG, String.format("%s%s\n",
+                    Strings.isNullOrEmpty(levelTag) ? "???" : levelTag, message));
+        }
     }
 
 }

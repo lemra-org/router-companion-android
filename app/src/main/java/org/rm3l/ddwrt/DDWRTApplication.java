@@ -27,6 +27,7 @@ import android.app.Application;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 /**
  * App Main Entry point.
@@ -34,12 +35,14 @@ import org.acra.annotation.ReportsCrashes;
  */
 @ReportsCrashes(
         formKey = \"fake-key\";
-        mailTo = "apps+ddwrt@rm3l.org",
-        mode = ReportingInteractionMode.DIALOG,
-        resDialogTitle = R.string.app_name,
-        resDialogIcon = R.drawable.ic_action_alert_warning,
-        resDialogText = R.string.crash_toast_text,
-        resDialogOkToast = R.string.crash_ok_dialog_text
+        formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
+//        mailTo = "apps+ddwrt@rm3l.org",
+        mode = ReportingInteractionMode.SILENT
+//        mode = ReportingInteractionMode.DIALOG,
+//        resDialogTitle = R.string.app_name,
+//        resDialogIcon = R.drawable.ic_action_alert_warning,
+//        resDialogText = R.string.crash_toast_text,
+//        resDialogOkToast = R.string.crash_ok_dialog_text
 )
 public class DDWRTApplication extends Application {
 
@@ -49,5 +52,8 @@ public class DDWRTApplication extends Application {
 
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        ACRA.getErrorReporter().putCustomData("TRACEPOT_DEVELOP_MODE",
+                BuildConfig.DEBUG ? "1" : "0");
     }
 }
