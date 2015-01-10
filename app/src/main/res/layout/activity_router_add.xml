@@ -191,7 +191,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/router_add_privkey_hdr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Private key"
+                    android:text="Private key (in OpenSSH format)"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"

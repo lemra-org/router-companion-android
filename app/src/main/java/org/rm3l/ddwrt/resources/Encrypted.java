@@ -56,37 +56,6 @@ public class Encrypted {
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
     private static final String AES = "AES";
 
-    @Nullable
-    private final Object originalData;
-
-    @Nullable
-    private final Object encryptedData;
-
-    protected Encrypted() {
-        this.originalData = null;
-        this.encryptedData = null;
-    }
-
-    public Encrypted(@Nullable final byte[] dataToEncrypt) {
-        this.originalData = dataToEncrypt;
-        this.encryptedData = e(dataToEncrypt);
-    }
-
-    public Encrypted(@Nullable final String dataToEncrypt) {
-        this.originalData = dataToEncrypt;
-        this.encryptedData = e(dataToEncrypt);
-    }
-
-    @Nullable
-    public Object getOriginalData() {
-        return originalData;
-    }
-
-    @Nullable
-    public Object getEncryptedData() {
-        return encryptedData;
-    }
-
     /**
      * Encrypt some data
      *
@@ -95,7 +64,7 @@ public class Encrypted {
      * or if data could not encoded properly
      */
     @Nullable
-    protected String e(@Nullable final String data) {
+    public static String e(@Nullable final String data) {
 
         if (data == null) {
             return null;
@@ -118,7 +87,7 @@ public class Encrypted {
      * or if data could not encoded properly
      */
     @Nullable
-    protected String d(@Nullable final String encryptedData) {
+    public static String d(@Nullable final String encryptedData) {
 
         if (encryptedData == null) {
             return null;
@@ -136,7 +105,7 @@ public class Encrypted {
     }
 
     @Nullable
-    protected byte[] e(@Nullable final byte[] byteArrayToEncrypt) {
+    public static byte[] e(@Nullable final byte[] byteArrayToEncrypt) {
 
         if (byteArrayToEncrypt == null) {
             return null;
@@ -181,7 +150,7 @@ public class Encrypted {
     }
 
     @Nullable
-    protected byte[] d(@Nullable final byte[] byteArrayToDecryptIV) {
+    public static byte[] d(@Nullable final byte[] byteArrayToDecryptIV) {
 
         if (byteArrayToDecryptIV == null) {
             return null;

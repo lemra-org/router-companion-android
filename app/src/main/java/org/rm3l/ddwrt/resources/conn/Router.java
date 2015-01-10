@@ -24,7 +24,7 @@ package org.rm3l.ddwrt.resources.conn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.resources.Encrypted;
+import static org.rm3l.ddwrt.resources.Encrypted.*;
 
 import java.io.Serializable;
 
@@ -37,7 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class Router extends Encrypted implements Serializable {
+public class Router implements Serializable {
 
     /**
      * the router UUID

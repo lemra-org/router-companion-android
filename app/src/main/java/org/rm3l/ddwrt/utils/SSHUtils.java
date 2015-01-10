@@ -34,6 +34,7 @@ import com.jcraft.jsch.HostKey;
 import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KnownHosts;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
@@ -42,10 +43,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -58,6 +61,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.Encrypted.d;
+import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
@@ -156,7 +161,8 @@ public final class SSHUtils {
         }
 
         final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
-        jsch.setHostKeyRepository(SharedPreferencesBasedHostKeyRepository.getInstance(globalSharedPreferences));
+        //Set known hosts file to preferences file
+//        jsch.setKnownHosts();
 
         @NotNull final Properties config = new Properties();
         config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
@@ -337,152 +343,6 @@ public final class SSHUtils {
         }
 
         return NVRAMParser.parseNVRAMOutput(outputArray);
-    }
-
-    //TODO
-    private static class SharedPreferencesBasedHostKeyRepository implements HostKeyRepository {
-
-        @NotNull final SharedPreferences sharedPreferences;
-
-        private static final String TAG = SharedPreferencesBasedHostKeyRepository.class.getSimpleName();
-
-        private static SharedPreferencesBasedHostKeyRepository instance = null;
-
-        private SharedPreferencesBasedHostKeyRepository(@NotNull final SharedPreferences sharedPreferences) {
-            this.sharedPreferences = sharedPreferences;
-        }
-
-        public static synchronized SharedPreferencesBasedHostKeyRepository getInstance(@NotNull final SharedPreferences sharedPreferences) {
-            if (instance == null) {
-                instance = new SharedPreferencesBasedHostKeyRepository(sharedPreferences);
-            }
-            return instance;
-        }
-
-        @Override
-        public int check(String host, byte[] key) {
-            if(host == null) {
-                return NOT_INCLUDED;
-            }
-            String keyFromPrefs = sharedPreferences.getString(host, null);
-            if (keyFromPrefs == null) {
-                //Add host
-                try {
-                    add(new HostKey(host, key), null);
-                } catch (JSchException e) {
-                    e.printStackTrace();
-                    return NOT_INCLUDED;
-                }
-                keyFromPrefs = sharedPreferences.getString(host, null);
-                if (keyFromPrefs == null) {
-                    return NOT_INCLUDED;
-                }
-            }
-
-            if (Arrays.equals(keyFromPrefs.getBytes(), key)) {
-                return OK;
-            }
-
-            return CHANGED;
-        }
-
-        @Override
-        public void add(HostKey hostkey, UserInfo ui) {
-            if (hostkey == null) {
-                return;
-            }
-            final String host = hostkey.getHost();
-            //Save host fingerprint into Android preferences
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            final Map<String, String> aMap = new HashMap<>();
-            final String type = hostkey.getType();
-
-            aMap.put("type", type);
-            aMap.put("marker", hostkey.getMarker());
-            aMap.put("host", host);
-            aMap.put("comment", hostkey.getComment());
-            aMap.put("key", hostkey.getKey());
-            aMap.put("fingerprint", hostkey.getFingerPrint(new JSch()));
-
-            final JSONObject jsonObject = new JSONObject(aMap);
-            final String jsonString = jsonObject.toString();
-            editor.remove(host).apply();
-            editor.putString(host + "_" + type, jsonString);
-
-            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
-            hostsManaged.add(host);
-            hostsManaged.add(host + "_" + type);
-            editor.putStringSet(TAG, hostsManaged);
-
-            editor.apply();
-        }
-
-        @Override
-        public void remove(String host, String type) {
-            remove(host, type, null);
-        }
-
-        @Override
-        public void remove(String host, String type, byte[] key) {
-            final SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(host + "_" + type);
-
-            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
-            hostsManaged.remove(host);
-            hostsManaged.remove(host + "_" + type);
-            editor.putStringSet(TAG, hostsManaged);
-
-            editor.apply();
-        }
-
-        @Override
-        public String getKnownHostsRepositoryID() {
-            return this.getClass().getSimpleName();
-        }
-
-        @Override
-        public HostKey[] getHostKey() {
-            final Set<String> hostsManaged = sharedPreferences.getStringSet(TAG, new HashSet<String>());
-            final HostKey[] hostKeys = new HostKey[hostsManaged.size()];
-            int i = 0;
-            for (String hostManaged : hostsManaged) {
-                final String hostManagedType = sharedPreferences.getString(hostManaged + "_type", null);
-                if (hostManagedType == null) {
-                    continue;
-                }
-                final HostKey[] hostKey = \"fake-key\";
-                if (hostKey = \"fake-key\";
-                    continue;
-                }
-                hostKeys[i++] = hostKey[0];
-            }
-
-            return hostKeys;
-        }
-
-        @Override
-        public HostKey[] getHostKey(String host, String type) {
-            final String sharedPreferencesString = sharedPreferences.getString(host + "_" + type, null);
-            if (sharedPreferencesString == null) {
-                return new HostKey[0];
-            }
-            try {
-                final JSONObject jsonObject = new JSONObject(sharedPreferencesString);
-                return new HostKey[] {
-                        new HostKey(
-                            jsonObject.getString("marker"),
-                            jsonObject.getString("host"),
-                            jsonObject.getInt("type"),
-                            jsonObject.getString("key").getBytes(),
-                            jsonObject.getString("comment")
-                        )
-                };
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new HostKey[0];
-            }
-        }
     }
 
 }
