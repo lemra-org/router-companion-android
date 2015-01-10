@@ -129,20 +129,32 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                         "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
                         if (otherCmds != null && otherCmds.length >= 3) {
                             //Model
-                            strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(otherCmds[0]);
-                            Log.d(LOG_TAG, "strings for model name: " + strings);
-                            if (strings != null && strings.size() >= 1) {
-                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
+                            final String modelNameLine = otherCmds[0];
+                            if (modelNameLine != null) {
+                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
+                                        modelNameLine
+                                                .replace(":", "")
+                                                .replace("model name", "")
+                                        .trim());
                             }
+//                            strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(modelNameLine);
+//                            Log.d(LOG_TAG, "strings for model name: " + strings);
+//                            if (strings != null && strings.size() >= 1) {
+//                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
+//                            }
 
                             //Nb Cores
                             nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[1]);
 
                             //Load Avg
-                            strings = Splitter.on("load average: ").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
+                            strings = Splitter.on("load average").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
                             Log.d(LOG_TAG, "strings for load avg: " + strings);
                             if (strings != null && strings.size() >= 2) {
-                                nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE, strings.get(1));
+                                final String loadAvg = strings.get(1);
+                                if (loadAvg != null) {
+                                    nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
+                                            loadAvg.replace(":", "").trim());
+                                }
                             }
 
                         }
