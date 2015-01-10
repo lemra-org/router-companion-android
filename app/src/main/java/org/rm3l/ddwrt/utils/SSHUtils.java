@@ -389,8 +389,27 @@ public final class SSHUtils {
 
         public void log(int level, String message){
             final String levelTag = name.get(level);
-            Log.d(LOG_TAG, String.format("%s%s\n",
-                    Strings.isNullOrEmpty(levelTag) ? "???" : levelTag, message));
+            final String messageToDisplay = String.format("%s%s\n",
+                    Strings.isNullOrEmpty(levelTag) ? "???" : levelTag, message);
+            switch (level) {
+                case INFO:
+                    Log.i(LOG_TAG, messageToDisplay);
+                    break;
+                case WARN:
+                    Log.w(LOG_TAG, messageToDisplay);
+                    break;
+                case ERROR:
+                    Log.e(LOG_TAG, messageToDisplay);
+                    break;
+                case FATAL:
+                    Log.wtf(LOG_TAG, messageToDisplay);
+                    break;
+                case DEBUG:
+                default:
+                    Log.d(LOG_TAG, messageToDisplay);
+                    break;
+
+            }
         }
     }
 
