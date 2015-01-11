@@ -146,7 +146,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                                 if (landevVif == null || landevVif.isEmpty()) {
                                     continue;
                                 }
-                                tiles.add(new WirelessIfaceTile(landevVif, parentFragment, args, router));
+                                tiles.add(new WirelessIfaceTile(landevVif, landev, parentFragment, args, router));
                             }
                         } catch (final Exception e) {
                             e.printStackTrace();
@@ -245,7 +245,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             //Init loaders for these tiles
-            getLoaderManager().initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
+            getSherlockActivity().getSupportLoaderManager()
+                    .initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
 
             //Add row for this iface
             final CardView cardView = new CardView(sherlockActivity);

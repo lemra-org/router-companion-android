@@ -249,6 +249,132 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="false"
                     android:text="@string/loading"/>
 
+
+                <!--&lt;!&ndash; Rate &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/wireless_iface_rate"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="8.0dip"-->
+                    <!--android:layout_marginRight="8.0dip"-->
+                    <!--android:text="@string/one_space" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tile_status_wireless_iface_rate"-->
+                    <!--android:layout_width="292dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:ellipsize="end"-->
+                    <!--android:gravity="start"-->
+                    <!--android:singleLine="false"-->
+                    <!--android:text="@string/loading"/>-->
+
+                <!-- BW In -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bandwidth In (RX)"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_rx_rate"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- BW Out -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bandwidth Out (TX)"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_tx_rate"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Packets In -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RX Packets"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_rx_packets"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
+                <!-- Packets Out -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TX Packets"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_tx_packets"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading"/>
+
                 <!-- TX Power -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -274,30 +400,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="false"
                     android:text="@string/loading"/>
 
-                <!-- Rate -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/wireless_iface_rate"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_rate"
-                    android:layout_width="292dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading"/>
 
                 <!-- Encryption -->
                 <TextView

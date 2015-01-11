@@ -34,8 +34,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -47,6 +50,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -56,12 +60,21 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
     public static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
+    public static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
     @NotNull
-    private String iface;
+    private final String iface;
+
+    @Nullable
+    private final String parentIface;
 
     public WirelessIfaceTile(@NotNull String iface, @NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+        this(iface, null, parentFragment, arguments, router);
+    }
+
+    public WirelessIfaceTile(@NotNull String iface, @Nullable String parentIface, @NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         this.iface = iface;
+        this.parentIface = parentIface;
         ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
     }
 
@@ -79,7 +92,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
             @Override
             public NVRAMInfo loadInBackground() {
 
-                @NotNull final String wlIface = WirelessIfaceTile.this.iface;
 
                 try {
                     Log.d(LOG_TAG, "Init background loader for " + WirelessIfaceTile.class + ": routerInfo=" +
@@ -92,22 +104,46 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    if (DDWRTCompanionConstants.TEST_MODE) {
-                        return new NVRAMInfo()
-                                .setProperty(WIRELESS_IFACE, wlIface)
-                                .setProperty(wlIface + "_radio", String.valueOf(new Random().nextInt()))
-                                .setProperty(wlIface + "_mode", "Mode")
-                                .setProperty(wlIface + "_hwaddr", "hw:ad:dr:rd:da:wh")
-                                .setProperty(wlIface + "_ifname", wlIface + " ifname")
-                                .setProperty(wlIface + "_net_mode", "ng-only")
-                                .setProperty(wlIface + "_ssid", "SSID")
-                                .setProperty(wlIface + "_channel", String.valueOf(new Random().nextInt(100)))
-                                .setProperty(wlIface + "_txpwr", String.valueOf(new Random().nextInt(100)))
-                                .setProperty(wlIface + "_rate", String.valueOf(new Random().nextInt(100)))
-                                .setProperty(wlIface + "_akm", "psk psk2");
+                    final NVRAMInfo nvramInfo = getIfaceNvramInfo(iface);
+                    if (parentIface != null && !parentIface.isEmpty()) {
+                        nvramInfo.putAll(getIfaceNvramInfo(parentIface));
                     }
 
-                    @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data!");
+                    }
+
+                    return nvramInfo;
+
+                } catch (@NotNull final Exception e) {
+                    e.printStackTrace();
+                    return new NVRAMInfo().setException(e);
+                }
+            }
+
+            @NotNull
+            private NVRAMInfo getIfaceNvramInfo(@NotNull String wlIface) throws Exception {
+
+                if (DDWRTCompanionConstants.TEST_MODE) {
+                    return new NVRAMInfo()
+                            .setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""), wlIface)
+                            .setProperty(wlIface + "_radio", String.valueOf(new Random().nextInt()))
+                            .setProperty(wlIface + "_mode", "Mode")
+                            .setProperty(wlIface + "_hwaddr", "hw:ad:dr:rd:da:wh")
+                            .setProperty(wlIface + "_ifname", wlIface + " ifname")
+                            .setProperty(wlIface + "_net_mode", "ng-only")
+                            .setProperty(wlIface + "_ssid", "SSID")
+                            .setProperty(wlIface + "_channel", String.valueOf(new Random().nextInt(100)))
+                            .setProperty(wlIface + "_txpwr", String.valueOf(new Random().nextInt(100)))
+                            .setProperty(wlIface + "_rate", String.valueOf(new Random().nextInt(100)))
+                            .setProperty(wlIface + "_akm", "psk psk2");
+                }
+
+                final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+                NVRAMInfo nvramInfoTmp = null;
+                try {
+                    nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
                             mGlobalPreferences,
                             wlIface + "_radio",
                             wlIface + "_mode",
@@ -119,18 +155,104 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                             wlIface + "_txpwr",
                             wlIface + "_rate",
                             wlIface + "_akm");
+                } finally {
+                    if (nvramInfoTmp != null) {
+                        nvramInfo.putAll(nvramInfoTmp);
+                    }
+                    nvramInfo.setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""),
+                            wlIface);
 
-                    if (nvramInfo != null) {
-                        nvramInfo.setProperty(WIRELESS_IFACE, wlIface);
+                    //Set RX and TX Network Bandwidths on Physical Interface
+                    final String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
+                    if (!Strings.isNullOrEmpty(phyIface)) {
+                        //noinspection ConstantConditions
+                        final Map<IfaceStatsType, Long> ifaceRxAndTxRates = getIfaceRxAndTxRates(phyIface);
+                        final Long rxBps = ifaceRxAndTxRates.get(IfaceStatsType.RX_BYTES);
+                        final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
+                        if (rxBps != null) {
+                            nvramInfo.setProperty(wlIface + "_rx_rate_human_readable",
+                                    rxBps + " B/s (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                            + "/s)");
+                        }
+                        if (txBps != null) {
+                            nvramInfo.setProperty(wlIface + "_tx_rate_human_readable",
+                                    txBps + " B/s (" + FileUtils.byteCountToDisplaySize(txBps)
+                                            + "/s)");
+                        }
+
+                        //Packet Info
+                        final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
+                        try {
+                            final String[] packetsInfo = SSHUtils
+                                    .getManualProperty(mRouter, mGlobalPreferences,
+                                            String.format("%s/rx_packets", sysClassNetStatsFolder),
+                                            String.format("%s/rx_errors", sysClassNetStatsFolder),
+                                            String.format("%s/tx_packets", sysClassNetStatsFolder),
+                                            String.format("%s/tx_errors", sysClassNetStatsFolder));
+
+                            if (packetsInfo != null) {
+                                final long rxErrors = Long.parseLong(packetsInfo[1]);
+                                nvramInfo.setProperty(wlIface + "_rx_packets",
+                                        String.format("%s (%s)",
+                                                packetsInfo[0], rxErrors <=0 ? "no error" :
+                                                        (rxErrors + String.format("error%s", rxErrors > 1 ? "s" : ""))));
+                                final long txErrors = Long.parseLong(packetsInfo[3]);
+                                nvramInfo.setProperty(wlIface + "_tx_packets",
+                                        String.format("%s (%s)",
+                                                packetsInfo[0], txErrors <=0 ? "no error" :
+                                                        (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
+                            }
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            //No worries
+                        }
+                    }
+                }
+
+                return nvramInfo;
+            }
+
+            @NotNull
+            private Map<IfaceStatsType, Long> getIfaceRxAndTxRates(@NotNull final String phyIface) {
+                final Map<IfaceStatsType, Long> result = Maps.newHashMapWithExpectedSize(2);
+                final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
+                final String rxBytesCmd = String
+                        .format("%s/rx_bytes", sysClassNetStatsFolder);
+                final String txBytesCmd = String
+                        .format("%s/tx_bytes", sysClassNetStatsFolder);
+
+                try {
+                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                                    rxBytesCmd,
+                                    txBytesCmd,
+                                    "sleep 1",
+                                    rxBytesCmd,
+                                    txBytesCmd)
+                    );
+                    if (bytesBeforeAndAfter.length >= 4) {
+                        result.put(IfaceStatsType.RX_BYTES, bytesBeforeAndAfter[1] - bytesBeforeAndAfter[0]);
+                        result.put(IfaceStatsType.TX_BYTES, bytesBeforeAndAfter[3] - bytesBeforeAndAfter[2]);
                     }
 
-                    return nvramInfo;
-
-                } catch (@NotNull final Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
-                    return new NVRAMInfo().setException(e);
                 }
+                return result;
             }
+
+            @NotNull
+            private long[] parseFloatDataFromOutput(@Nullable final String[] output) {
+                if (output == null || output.length == 0) {
+                    throw new IllegalArgumentException("Output null or empty");
+                }
+                final long[] result = new long[output.length];
+                for (int i = 0; i < output.length; i++) {
+                    result[i] = Long.parseLong(output[i]);
+
+                }
+                return result;
+            }
+
         };
     }
 
@@ -219,7 +341,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
             //Radio
             @NotNull final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
             radioView.setEnabled(false);
-            radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio")));
+            radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio", data.getProperty(this.parentIface + "_radio"))));
 
             //Mode
             @NotNull final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
@@ -228,7 +350,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
             //Net Mode
             @NotNull final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
-            final String netmode = data.getProperty(this.iface + "_net_mode");
+            final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode"));
             String mode = "N/A";
             if ("disabled".equalsIgnoreCase(netmode)) {
                 mode = "Disabled";
@@ -249,22 +371,36 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
             } else if (netmode != null) {
                 mode = netmode;
             }
-
             netModeView.setText(mode);
 
             //Channel
             @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
-            final String channelProperty = data.getProperty(this.iface + "_channel", "N/A");
+            final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "N/A"));
             channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
 
+//            //Rate
+//            @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
+//            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "N/A");
+//            rateView.setText(rateProperty);
             //Rate
-            @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
-            final String rateProperty = data.getProperty(this.iface + "_rate", "N/A");
-            rateView.setText(rateProperty);
+            @NotNull final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
+            final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "N/A");
+            rxRateView.setText(rxRateProperty);
+
+            @NotNull final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
+            final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "N/A");
+            txRateView.setText(txRateProperty);
+
+            //Packet Info
+            @NotNull final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
+            rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "N/A"));
+
+            @NotNull final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
+            txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "N/A"));
 
             //TX Power
             @NotNull final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
-            xmitView.setText(data.getProperty(this.iface + "_txpwr", "N/A"));
+            xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "N/A")));
 
             //Encryption
             @NotNull final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
@@ -323,12 +459,19 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         return null;
     }
 
-    @NotNull
-    public String getIface() {
-        return iface;
+    public enum IfaceStatsType {
+        RX_BYTES ("rx_bytes"),
+        TX_BYTES ("tx_bytes");
+
+        final String metric;
+
+        IfaceStatsType(String metric) {
+           this.metric = metric;
+        }
+
+        public String getMetric() {
+            return metric;
+        }
     }
 
-    public void setIface(@NotNull String iface) {
-        this.iface = iface;
-    }
 }
