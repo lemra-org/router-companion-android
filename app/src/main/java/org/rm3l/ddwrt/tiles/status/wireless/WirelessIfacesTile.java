@@ -22,17 +22,53 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
+import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 
 public class WirelessIfacesTile extends IfacesTile {
 
+    private static final String TAG = WirelessIfacesTile.class.getSimpleName();
+
     public WirelessIfacesTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
+    }
+
+    @Override
+    protected String getLogTag() {
+        return TAG;
+    }
+
+    @Override
+    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+        super.onLoadFinished(loader, data);
+        //Hide Non-wireless lines
+        final int[] viewsToHide = new int[] {
+                R.id.tile_status_bandwidth_ifaces_lan_title,
+                R.id.tile_status_bandwidth_ifaces_lan_separator,
+                R.id.tile_status_bandwidth_ifaces_lan,
+                R.id.tile_status_bandwidth_ifaces_wan,
+                R.id.tile_status_bandwidth_ifaces_wan_separator,
+                R.id.tile_status_bandwidth_ifaces_wan_title
+        };
+        for (final int viewToHide : viewsToHide) {
+            this.layout.findViewById(viewToHide).setVisibility(View.GONE);
+        }
+    }
+
+    @Nullable
+    @Override
+    protected Intent getOnclickIntent() {
+        return super.getOnclickIntent();
     }
 }

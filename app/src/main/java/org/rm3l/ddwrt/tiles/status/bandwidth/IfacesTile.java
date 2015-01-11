@@ -34,17 +34,25 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wan.WANConfigTile;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+
+import java.util.List;
+
+import static org.rm3l.ddwrt.fragments.status.StatusWirelessFragment.SPLITTER;
 
 /**
  *
@@ -81,10 +89,69 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
-                            mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
-                            NVRAMInfo.WAN_IFNAME,
-                            NVRAMInfo.LANDEVS);
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+                    NVRAMInfo nvramInfoTmp = null;
+                    try {
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
+                                NVRAMInfo.WAN_IFNAME,
+                                NVRAMInfo.LANDEVS);
+                    } finally {
+                        if (nvramInfoTmp != null) {
+                            nvramInfo.putAll(nvramInfoTmp);
+                        }
+
+                        String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS, null);
+                        if (landevs != null) {
+                            final List<String> splitToList =
+                                    SPLITTER.splitToList(landevs);
+                            if (splitToList != null && !splitToList.isEmpty()) {
+
+                                for (@Nullable final String landev : splitToList) {
+                                    if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
+                                        continue;
+                                    }
+                                    //Also get Virtual Interfaces
+                                    try {
+                                        final String landevVifsKeyword = landev + "_vifs";
+                                        final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                                mGlobalPreferences,
+                                                landevVifsKeyword);
+                                        if (landevVifsNVRAMInfo == null) {
+                                            continue;
+                                        }
+                                        final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                                        if (landevVifsNVRAMInfoProp == null) {
+                                            continue;
+                                        }
+                                        final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+                                        if (list == null) {
+                                            continue;
+                                        }
+                                        for (final String landevVif : list) {
+                                            if (landevVif == null || landevVif.isEmpty()) {
+                                                continue;
+                                            }
+                                            landevs += (" " + landevVif);
+                                        }
+                                    } catch (final Exception e) {
+                                        e.printStackTrace();
+                                        //No worries
+                                    }
+                                }
+                            }
+
+                            nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+                        }
+
+                    }
+
+                    if (nvramInfo.isEmpty()) {
+                        throw new DDWRTNoDataException("No Data");
+                    }
+
+                    return nvramInfo;
 
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();

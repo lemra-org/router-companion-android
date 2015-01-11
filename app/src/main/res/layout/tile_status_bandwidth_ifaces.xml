@@ -95,10 +95,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
                     android:text="@string/bw_lan"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tile_status_bandwidth_ifaces_lan_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -143,12 +145,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- WAN -->
                 <TextView
+                    android:id="@+id/tile_status_bandwidth_ifaces_wan_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bw_wan"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tile_status_bandwidth_ifaces_wan_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
