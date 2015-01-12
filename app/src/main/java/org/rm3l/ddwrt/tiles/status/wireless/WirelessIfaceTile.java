@@ -53,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -551,11 +552,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         escapeString(nullToEmpty(wifiPassword)),
                         wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
 
+                final String routerUuid = mRouter.getUuid();
                 final Class<?> activityClass =
-                        Utils.isThemeLight(mParentFragmentActivity, mRouter.getUuid()) ?
+                        Utils.isThemeLight(mParentFragmentActivity, routerUuid) ?
                                 WirelessIfaceQrCodeActivityLight.class : WirelessIfaceQrCodeActivity.class;
 
                 final Intent intent = new Intent(mParentFragmentActivity, activityClass);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
                 intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
                 intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
 

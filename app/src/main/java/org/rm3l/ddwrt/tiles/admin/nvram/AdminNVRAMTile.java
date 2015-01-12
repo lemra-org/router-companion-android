@@ -387,6 +387,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        if (mRouter != null) {
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("NVRAM Variables dump from router '%s' (%s)",
+                    mRouter.getName(), mRouter.getRemoteIpAddress()));
+        }
         sendIntent.setData(uriForFile);
         sendIntent.setType("text/plain");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

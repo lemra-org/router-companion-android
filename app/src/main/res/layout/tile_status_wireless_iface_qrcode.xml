@@ -30,43 +30,51 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceQrCodeActivity">
+    tools:context="org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceQrCodeActivity"
+    android:scrollbars="none">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tile_status_wireless_iface_qrcode_ssid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/ddwrt_green"
-            android:layout_gravity="center"
-            android:gravity="center"/>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/tile_status_wireless_iface_qrcode_view_to_share"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/tile_status_wireless_iface_qrcode_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
-                android:id="@+id/tile_status_wireless_iface_qrcode_image_error"
+                android:id="@+id/tile_status_wireless_iface_qrcode_ssid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/ddwrt_purple"
-                android:text="@string/internal_error_please_try_again"
+                android:textColor="@color/ddwrt_green"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:visibility="gone"/>
+                android:gravity="center"/>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/tile_status_wireless_iface_qrcode_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_qrcode_image_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/ddwrt_purple"
+                    android:text="@string/internal_error_please_try_again"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tile_status_wireless_iface_qrcode_note"

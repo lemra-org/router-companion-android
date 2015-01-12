@@ -22,36 +22,58 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.nullToEmpty;
+
+public class WirelessIfaceQrCodeActivity extends Activity {
 
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";
+    private String mRouterUuid;
     private String mWifiQrCodeString;
     private String mSsid;
     private Bitmap mBitmap;
+
+    private File mFileToShare;
+
+    private Exception mException;
+
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +93,7 @@ public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
 
         final Intent intent = getIntent();
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mSsid = intent.getStringExtra(SSID);
         mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
 
@@ -82,6 +105,7 @@ public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
 
         } catch (final WriterException e) {
             e.printStackTrace();
+            mException = e;
             findViewById(R.id.tile_status_wireless_iface_qrcode_image_error).setVisibility(View.VISIBLE);
             qrCodeImageView.setVisibility(View.GONE);
         }
@@ -90,23 +114,94 @@ public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.tile_wireless_iface_qr_code_options, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tile_wireless_iface_qr_code_options, menu);
+
+        /** Getting the actionprovider associated with the menu item whose id is share */
+        final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+        shareMenuItem.setEnabled(mException == null);
+
+        mShareActionProvider = (ShareActionProvider) shareMenuItem
+                .getActionProvider();
+
+        final View viewToShare = findViewById(R.id.tile_status_wireless_iface_qrcode_view_to_share);
+        //Construct Bitmap and share it
+        final Bitmap bitmapToExport = Bitmap
+                .createBitmap(viewToShare.getWidth(), viewToShare.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmapToExport);
+        viewToShare.draw(canvas);
+
+        mFileToShare = new File(getCacheDir(),
+                String.format("QR-Code_for_Wireless_Network__%s__on_router_%s.png",
+                        nullToEmpty(mSsid), nullToEmpty(mRouterUuid)));
+        OutputStream outputStream = null;
+        try {
+            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+            bitmapToExport.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
+                    .show();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                //No Worries
+            }
+        }
+
+        setShareFile(mFileToShare);
+
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(
-            @NotNull com.actionbarsherlock.view.MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.tile_status_wireless_iface_qrcode_share:
-                //TODO
-                Toast.makeText(this, "[TODO] Share QR Code generated for '" + this.mSsid +"'...", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                break;
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void setShareFile(File file) {
+        if (mShareActionProvider == null) {
+            return;
+        }
+
+        final Uri uriForFile = FileProvider
+                .getUriForFile(this, "org.rm3l.fileprovider", file);
+
+        mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
+            @Override
+            public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+                grantUriPermission(intent.getComponent().getPackageName(),
+                        uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                return true;
+            }
+        });
+
+        final Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("QR Code for Wireless Network '%s'", mSsid));
+
+        sendIntent.setData(uriForFile);
+        sendIntent.setType("image/png");
+        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        setShareIntent(sendIntent);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mFileToShare != null) {
+            //noinspection ResultOfMethodCallIgnored
+            mFileToShare.delete();
+        }
+        super.onDestroy();
     }
 
     /**************************************************************

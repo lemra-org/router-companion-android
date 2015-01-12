@@ -22,17 +22,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<item-->
-        <!--android:id="@+id/tile_status_wireless_iface_qrcode_share"-->
-        <!--android:icon="@android:drawable/ic_menu_share"-->
-        <!--android:orderInCategory="1"-->
-        <!--android:showAsAction="always"-->
-        <!--android:title="Share"-->
-        <!--android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"/>-->
     <item
         android:id="@+id/tile_status_wireless_iface_qrcode_share"
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="1"
         android:showAsAction="always"
-        android:title="Share"/>
+        android:title="Share"
+        android:actionProviderClass="android.widget.ShareActionProvider"/>
+
 </menu>
