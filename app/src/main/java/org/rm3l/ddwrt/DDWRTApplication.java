@@ -23,8 +23,10 @@
 package org.rm3l.ddwrt;
 
 import android.app.Application;
+import android.content.Context;
 
 import org.acra.ACRA;
+import org.acra.ACRAConfiguration;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -37,7 +39,9 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
         formKey = \"fake-key\";
         formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
 //        mailTo = "apps+ddwrt@rm3l.org",
-        mode = ReportingInteractionMode.SILENT
+        mode = ReportingInteractionMode.SILENT,
+        sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+        sharedPreferencesMode = Context.MODE_PRIVATE
 //        mode = ReportingInteractionMode.DIALOG,
 //        resDialogTitle = R.string.app_name,
 //        resDialogIcon = R.drawable.ic_action_alert_warning,

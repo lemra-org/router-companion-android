@@ -299,4 +299,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wifi_qr_code">WiFi QR Code</string>
     <string name="internal_error_please_try_again">Internal Error - please try again.</string>
     <string name="wifi_qr_code_note">This QR Code can be used to instantly connect to this network. Simply scan it with a compatible QR Code Scanner app:\n\n - Barcode Scanner from ZXing.\n - Every other Android Barcode Scanner based on the ZXing library.\n - mbarcode with the mbarcode wifi plugin on Maemo 5.\n - QR Reader for iPhone from TapMedia. Please note: Due to iOS design, Apps cannot modify WiFi settings directly and you\'ll have to copy-paste the details.\n \n Every other QR scanner out there should be able to scan the code too, but probably won\'t interpret it as intended. \n \n Feel free to report any issues with the scanner you use!</string>
+    <string name="pref_enable_acra">Automatic Error Reports</string>
+    <string name="pref_acra_disabled">Disabled</string>
+    <string name="pref_acra_enabled">Enabled</string>
+    <string name="pref_acra_syslog_enabled">Enabled. System Logs are great for helping fix bugs, but this may lead to privacy issues as some other apps might log private data like user account names, opened URLs, calendar events…</string>
+    <string name="pref_acra_syslog_disabled">Disabled</string>
+    <string name="pref_acra_syslog">Include System Logs</string>
+    <string name="pref_acra_deviceid">Include your Device ID in crash reports</string>
+    <string name="pref_acra_deviceid_enabled">Enabled</string>
+    <string name="pref_acra_deviceid_disabled">Disabled</string>
 </resources>

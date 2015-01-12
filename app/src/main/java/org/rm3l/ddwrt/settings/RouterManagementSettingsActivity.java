@@ -62,6 +62,10 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
+
+            bindPreferenceSummaryToValue(findPreference("acra.enable"));
+            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
+            bindPreferenceSummaryToValue(findPreference("acra.deviceid.enable"));
         }
     }
 }
