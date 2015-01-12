@@ -36,7 +36,7 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
 
     @NotNull
     @Override
-    protected AbstractRouterActionResult doActionInBackground(@NotNull final Router router) {
+    protected RouterActionResult doActionInBackground(@NotNull final Router router) {
 
         Exception exception = null;
         try {
@@ -49,6 +49,6 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
             exception = e;
         }
 
-        return new AbstractRouterActionResult(null, exception);
+        return new RouterActionResult(null, exception);
     }
 }

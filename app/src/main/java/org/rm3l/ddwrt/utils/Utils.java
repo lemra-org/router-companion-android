@@ -184,7 +184,7 @@ public final class Utils {
     }
 
     public static void reportException(@NotNull final Throwable error) {
-        ACRA.getErrorReporter().handleException(error, false);
+        ACRA.getErrorReporter().handleSilentException(error);
     }
 
 }

@@ -295,7 +295,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="menuitem_actions_restore_factory_defaults">Restore Factory Defaults</string>
     <string name="menuitem_actions_upgrade_firmware">Upgrade Firmware</string>
     <string name="you">YOU</string>
-    <string name="wayne_TODO_TO_REMOVE">Thanks Wayne, I got the report and will look into the issue</string>
     <string name="status_clients">Clients</string>
     <string name="wifi_qr_code">WiFi QR Code</string>
     <string name="internal_error_please_try_again">Internal Error - please try again.</string>

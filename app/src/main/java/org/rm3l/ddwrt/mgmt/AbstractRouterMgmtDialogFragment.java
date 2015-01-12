@@ -58,8 +58,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
-import org.acra.ACRA;
-import org.acra.ErrorReporter;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
@@ -516,15 +514,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         @org.jetbrains.annotations.Nullable
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(AlertDialog... dialogs) {
-            //TODO TO Remove
-            Router wayneRouter = null;
-            try {
-                wayneRouter = buildRouter(dialogs[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //END TODO
-
             if (!checkActualConnection) {
                 try {
                     return new CheckRouterConnectionAsyncTaskResult<>(buildRouter(dialogs[0]), null);
@@ -542,12 +531,6 @@ public abstract class AbstractRouterMgmtDialogFragment
                 e.printStackTrace();
                 exception = e;
             }
-
-            //TODO TO REMOVE
-            if (exception != null) {
-                return new CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<>(wayneRouter, exception);
-            }
-            //END TO REMOVE
 
             return new CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<>(result, exception);
         }

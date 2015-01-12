@@ -24,15 +24,17 @@ package org.rm3l.ddwrt.actions;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import org.acra.ACRA;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.Utils;
 
 /**
  * Abstract Router Action async task
  * @param <T> Type of async task result
  */
-public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, AbstractRouterAction.AbstractRouterActionResult> {
+public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, AbstractRouterAction.RouterActionResult> {
 
     @Nullable private final RouterActionListener listener;
     @NotNull private final RouterAction routerAction;
@@ -46,13 +48,15 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
     }
 
     @Override
-    protected final AbstractRouterActionResult doInBackground(Router... params) {
+    protected final RouterActionResult doInBackground(Router... params) {
         final Router router = params[0];
-        AbstractRouterActionResult actionResult = null;
+        RouterActionResult actionResult = null;
         try {
             actionResult = this.doActionInBackground(router);
         } catch (final Exception e) {
-            actionResult = new AbstractRouterActionResult(null, e);
+            actionResult = new RouterActionResult(null, e);
+            //Report exception
+            Utils.reportException(e);
         } finally {
             if (actionResult != null && listener != null) {
                 final Exception exception = actionResult.getException();
@@ -67,13 +71,13 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
     }
 
     @NotNull
-    protected abstract AbstractRouterActionResult doActionInBackground(@NotNull final Router router);
+    protected abstract RouterActionResult doActionInBackground(@NotNull final Router router);
 
-    protected class AbstractRouterActionResult {
+    protected class RouterActionResult {
         private final T result;
         private final Exception exception;
 
-        protected AbstractRouterActionResult(T result, Exception exception) {
+        protected RouterActionResult(T result, Exception exception) {
             this.result = result;
             this.exception = exception;
         }
