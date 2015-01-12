@@ -84,7 +84,7 @@ public final class SSHUtils {
         JSch.setLogger(SSHLogger.getInstance());
     }
 
-    private static final LruCache<String, Session> sshSessionsCache = new LruCache<String, Session>(2) {
+    private static final LruCache<String, Session> sshSessionsCache = new LruCache<String, Session>(5) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
             Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
@@ -127,60 +127,66 @@ public final class SSHUtils {
     private static synchronized Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
                                                       @NotNull final Router router,
                                                       @Nullable final Integer connectTimeout) throws Exception {
-
         final String uuid = router.getUuid();
 
-        final Session sessionCached = sshSessionsCache.get(uuid);
+        try {
 
-        if (sessionCached != null) {
-            if (!sessionCached.isConnected()) {
-                sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+            final Session sessionCached = sshSessionsCache.get(uuid);
+
+            if (sessionCached != null) {
+                if (!sessionCached.isConnected()) {
+                    sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+                }
+                return sessionCached;
             }
-            return sessionCached;
-        }
 
-        @Nullable final String privKey = \"fake-key\";
-        @NotNull final JSch jsch = new JSch();
+            @Nullable final String privKey = \"fake-key\";
+            @NotNull final JSch jsch = new JSch();
 
-        final String passwordPlain = router.getPasswordPlain();
-        final Session jschSession;
+            final String passwordPlain = router.getPasswordPlain();
+            final Session jschSession;
 
-        final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-        switch (sshAuthenticationMethod) {
-            case PUBLIC_PRIVATE_KEY:
-                //noinspection ConstantConditions
-                jsch.addIdentity(uuid,
-                        !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
-                        null,
-                        !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
-                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                break;
-            case PASSWORD:
-                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                jschSession.setPassword(passwordPlain);
-                break;
+            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+            switch (sshAuthenticationMethod) {
+                case PUBLIC_PRIVATE_KEY:
+                    //noinspection ConstantConditions
+                    jsch.addIdentity(uuid,
+                            !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
+                            null,
+                            !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    break;
+                case PASSWORD:
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    jschSession.setPassword(passwordPlain);
+                    break;
 //            case NONE:
 //                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
 //                jschSession.setPassword(DDWRTCompanionConstants.EMPTY_STRING);
 //                break;
-            default:
-                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                break;
-        }
+                default:
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    break;
+            }
 
-        final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
-        //Set known hosts file to preferences file
+            final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
+            //Set known hosts file to preferences file
 //        jsch.setKnownHosts();
 
-        @NotNull final Properties config = new Properties();
-        config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
-        jschSession.setConfig(config);
+            @NotNull final Properties config = new Properties();
+            config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
+            jschSession.setConfig(config);
 
-        jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+            jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
-        sshSessionsCache.put(uuid, jschSession);
+            sshSessionsCache.put(uuid, jschSession);
 
-        return sshSessionsCache.get(uuid);
+            return sshSessionsCache.get(uuid);
+        } catch (final JSchException jsche) {
+            //Disconnect session, so a new one can be reconstructed next time
+            destroySession(uuid);
+            throw jsche;
+        }
     }
 
     public static synchronized void checkConnection(@NotNull SharedPreferences globalSharedPreferences,
