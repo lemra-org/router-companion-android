@@ -80,7 +80,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
-    private static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
+    public static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
     public static final Pattern HEX_ONLY_QR_CODE_PATTERN = Pattern.compile("/^[0-9a-f]+$/i");
 
     @NotNull

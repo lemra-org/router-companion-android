@@ -27,6 +27,7 @@ import android.os.Bundle;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile;
 import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNLogsTile;
 import org.rm3l.ddwrt.tiles.syslog.StatusSyslogTile;
 
@@ -36,12 +37,13 @@ import java.util.List;
 /**
  * TODO
  */
-public class ServicesVPNFragment extends DDWRTBaseFragment {
+public class ServicesOpenVPNFragment extends DDWRTBaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
+                new OpenVPNClientTile(this, savedInstanceState, this.router),
                 new OpenVPNLogsTile(this, savedInstanceState, this.router));
     }
 }

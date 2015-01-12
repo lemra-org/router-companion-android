@@ -22,7 +22,6 @@
 
 package org.rm3l.ddwrt.fragments;
 
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -32,8 +31,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -44,24 +41,15 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminBackupFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminFactoryDefaultsFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminKeepAliveFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminManagementFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminUpgradeFragment;
-import org.rm3l.ddwrt.fragments.admin.AdminWOLFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragment;
@@ -70,16 +58,7 @@ import org.rm3l.ddwrt.fragments.nat_qos.NATQoSQoSFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSUPnPFragment;
 import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragment;
 import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesAdBlockingFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesFreeRadiusFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesHotSpotFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesNASFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesPPoEFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesSIPFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesServicesFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesUSBFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesVPNFragment;
-import org.rm3l.ddwrt.fragments.services.ServicesWebServerFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupBasicFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupEoIPFragment;
@@ -92,7 +71,6 @@ import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
 import org.rm3l.ddwrt.fragments.status.StatusClientsFragment;
 import org.rm3l.ddwrt.fragments.status.StatusLANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusRouterFragment;
-import org.rm3l.ddwrt.fragments.status.StatusSysinfoFragment;
 import org.rm3l.ddwrt.fragments.status.StatusSyslogFragment;
 import org.rm3l.ddwrt.fragments.status.StatusTimeFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
@@ -106,14 +84,11 @@ import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
@@ -272,8 +247,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
                 parentSectionTitle = resources.getString(R.string.services);
                 //4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
                 tabsToSort = new DDWRTBaseFragment[1];
-                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_vpn), router);
+                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
+                        resources.getString(R.string.services_openvpn), router);
 
 //                tabsToSort = new DDWRTBaseFragment[10];
 //                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
@@ -282,7 +257,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 //                        resources.getString(R.string.services_freeradius), router);
 //                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_ppoe), router);
-//                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesVPNFragment.class, parentSectionTitle,
+//                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_vpn), router);
 //                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_usb), router);

@@ -84,6 +84,32 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String CURRENT_DATE = "current_date";
     public static final String WAN_CONNECTION_UPTIME = "wan_connection_uptime";
     public static final String TTRAFF_ENABLE = "ttraff_enable";
+    public static final String OPENVPNCL_ENABLE = "openvpncl_enable";
+    public static final String OPENVPNCL_REMOTEIP = "openvpncl_remoteip";
+    public static final String OPENVPNCL_REMOTEPORT = "openvpncl_remoteport";
+    public static final String OPENVPNCL_TUNTAP = "openvpncl_tuntap";
+    public static final String OPENVPNCL_PROTO = "openvpncl_proto";
+    public static final String OPENVPNCL_CIPHER = "openvpncl_cipher";
+    public static final String OPENVPNCL_AUTH = "openvpncl_auth";
+    public static final String OPENVPNCL_TLSCIP = "openvpncl_tlscip";
+    public static final String OPENVPNCL_LZO = "openvpncl_lzo";
+    public static final String OPENVPNCL_NAT = "openvpncl_nat";
+    public static final String OPENVPNCL_SEC = "openvpncl_sec";
+    public static final String OPENVPNCL_BRIDGE = "openvpncl_bridge";
+    public static final String OPENVPNCL_IP = "openvpncl_ip";
+    public static final String OPENVPNCL_MASK = "openvpncl_mask";
+    public static final String OPENVPNCL_MTU = "openvpncl_mtu";
+    public static final String OPENVPNCL_FRAGMENT = "openvpncl_fragment";
+    public static final String OPENVPNCL_MSSFIX = "openvpncl_mssfix";
+    public static final String OPENVPNCL_CERTTYPE = "openvpncl_certtype";
+    public static final String OPENVPNCL_TLSAUTH = "openvpncl_tlsauth";
+    public static final String OPENVPNCL_CONFIG = "openvpncl_config";
+    public static final String OPENVPNCL_ROUTE = "openvpncl_route";
+    public static final String OPENVPNCL_PKCS_12 = "openvpncl_pkcs12";
+    public static final String OPENVPNCL_STATIC = "openvpncl_static";
+    public static final String OPENVPNCL_CA = "openvpncl_ca";
+    public static final String OPENVPNCL_CLIENT = "openvpncl_client";
+    public static final String OPENVPNCL_KEY = \"fake-key\";
 
     /**
      * Default constructor: initialized an empty Properties set
