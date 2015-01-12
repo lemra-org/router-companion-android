@@ -297,4 +297,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="you">YOU</string>
     <string name="wayne_TODO_TO_REMOVE">Thanks Wayne, I got the report and will look into the issue</string>
     <string name="status_clients">Clients</string>
+    <string name="wifi_qr_code">WiFi QR Code</string>
+    <string name="internal_error_please_try_again">Internal Error - please try again.</string>
+    <string name="wifi_qr_code_note">This QR Code can be used for your guests, so they instantly connect to this network as soon as they scan it with a compatible QR Code Scanner app:\n - Barcode Scanner from ZXing.\n - Every other Android Barcode Scanner based on the ZXing library.\n - mbarcode with the mbarcode wifi plugin on Maemo 5.\n - QR Reader for iPhone from TapMedia. Please note: Due to iOS design, Apps cannot modify WiFi settings directly and you\'ll have to copy-paste the details.\n \n Every other QR scanner out there should be able to scan the code too, but probably won\'t interpret it as intended. \n \n Feel free to report any issues with the scanner you use!</string>
 </resources>

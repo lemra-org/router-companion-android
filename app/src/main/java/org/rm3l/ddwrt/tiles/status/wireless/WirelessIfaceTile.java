@@ -22,14 +22,22 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +47,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -49,23 +58,44 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
  */
-public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
+public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
-    public static final String WIRELESS_IFACE = "wireless_iface";
+    private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
-    public static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
+    private static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
+    public static final Pattern HEX_ONLY_QR_CODE_PATTERN = Pattern.compile("/^[0-9a-f]+$/i");
+
     @NotNull
     private final String iface;
 
     @Nullable
     private final String parentIface;
+
+    @Nullable
+    private String wifiSsid;
+
+    @Nullable
+    private String wifiPassword;
+
+    @Nullable
+    private WirelessEncryptionTypeForQrCode wifiEncryptionType;
 
     public WirelessIfaceTile(@NotNull String iface, @NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         this(iface, null, parentFragment, arguments, router);
@@ -76,6 +106,36 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         this.iface = iface;
         this.parentIface = parentIface;
         ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
+
+        //Create Options Menu
+        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_iface_menu);
+
+        final boolean isThemeLight = isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+
+        if (!isThemeLight) {
+            //Set menu background to white
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        tileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(WirelessIfaceTile.this);
+                final MenuInflater inflater = popup.getMenuInflater();
+
+                final Menu menu = popup.getMenu();
+
+                inflater.inflate(R.menu.tile_wireless_iface_options, menu);
+
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
+                    menu.findItem(R.id.tile_status_wireless_iface_qrcode).setEnabled(false);
+                }
+
+                popup.show();
+            }
+        });
+
     }
 
     @Override
@@ -154,7 +214,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                             wlIface + "_channel",
                             wlIface + "_txpwr",
                             wlIface + "_rate",
-                            wlIface + "_akm");
+                            wlIface + "_akm",
+                            wlIface + "_wpa_psk");
                 } finally {
                     if (nvramInfoTmp != null) {
                         nvramInfo.putAll(nvramInfoTmp);
@@ -164,7 +225,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
                     //Set RX and TX Network Bandwidths on Physical Interface
                     final String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
-                    if (!Strings.isNullOrEmpty(phyIface)) {
+                    if (!isNullOrEmpty(phyIface)) {
                         //noinspection ConstantConditions
                         final Map<IfaceStatsType, Long> ifaceRxAndTxRates = getIfaceRxAndTxRates(phyIface);
                         final Long rxBps = ifaceRxAndTxRates.get(IfaceStatsType.RX_BYTES);
@@ -304,7 +365,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
 
         layout.findViewById(R.id.tile_status_wireless_iface_loading_view)
                 .setVisibility(View.GONE);
@@ -328,7 +389,10 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
 
             //SSID
             @NotNull final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
-            ssidView.setText(data.getProperty(this.iface + "_ssid", "SSID N/A"));
+            this.wifiSsid = data.getProperty(this.iface + "_ssid", DDWRTCompanionConstants.EMPTY_STRING);
+            ssidView.setText(this.wifiSsid);
+
+            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", DDWRTCompanionConstants.EMPTY_STRING);
 
             //Ifname
             @NotNull final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
@@ -422,6 +486,15 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
                 encryption = "RADIUS";
             } else if ("wep".equalsIgnoreCase(akm)) {
                 encryption = "WEP";
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+            }
+
+            if (startsWith(encryption, "WPA")) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
+            } else if (startsWith(encryption, "WEP")) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+            } else if (!"radius".equalsIgnoreCase(encryption)) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
             }
 
             encryptionView.setText(encryption);
@@ -459,6 +532,71 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         return null;
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.tile_status_wireless_iface_qrcode:
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
+                    //menu item should have been disabled, but anyways, you never know :)
+                    Toast.makeText(mParentFragmentActivity,
+                            "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                //https://github.com/zxing/zxing/wiki/Barcode-Contents
+                //noinspection ConstantConditions
+                final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
+                final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
+                        escapeString(wifiSsidNullToEmpty),
+                        wifiEncryptionType.toString(),
+                        escapeString(nullToEmpty(wifiPassword)),
+                        wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
+
+                final Class<?> activityClass =
+                        Utils.isThemeLight(mParentFragmentActivity, mRouter.getUuid()) ?
+                                WirelessIfaceQrCodeActivityLight.class : WirelessIfaceQrCodeActivity.class;
+
+                final Intent intent = new Intent(mParentFragmentActivity, activityClass);
+                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
+                intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);
+
+                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                        String.format("Generating QR Code for '%s'", wifiSsidNullToEmpty), false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mParentFragmentActivity.startActivity(intent);
+                        alertDialog.cancel();
+                    }
+                }, 2500);
+
+                return true;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    @NotNull
+    private String escapeString (@NotNull final String string) {
+        final List<Character> toEscape = Arrays.asList('\\', ';', ',', ':', '"');
+        String output = "";
+        for (int i=0; i < string.length(); i++) {
+            final char charAt = string.charAt(i);
+            if (toEscape.contains(charAt)) {
+                output += ('\\' + charAt);
+            } else {
+                output += charAt;
+            }
+        }
+
+        if (HEX_ONLY_QR_CODE_PATTERN.matcher(output).matches()) {
+            output = ("\"" + output + "\"");
+        }
+        return output;
+    }
+
     public enum IfaceStatsType {
         RX_BYTES ("rx_bytes"),
         TX_BYTES ("tx_bytes");
@@ -474,4 +612,19 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> {
         }
     }
 
+    public enum WirelessEncryptionTypeForQrCode {
+        WPA ("WPA"),
+        WEP ("WEP"),
+        NONE ("nopass");
+
+        private final String encType;
+        WirelessEncryptionTypeForQrCode(String encType) {
+            this.encType = encType;
+        }
+
+        @Override
+        public String toString() {
+            return encType;
+        }
+    }
 }

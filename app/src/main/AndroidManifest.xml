@@ -113,6 +113,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
+            android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
+            android:label="@string/wifi_qr_code"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/PopupTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivityLight"
+            android:label="@string/wifi_qr_code"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/PopupThemeLight">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
             android:name=".settings.RouterManagementSettingsActivity"
             android:label="@string/title_activity_router_settings"
             android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity"

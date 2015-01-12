@@ -50,19 +50,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
 
-            <TextView
-                android:id="@+id/tile_status_wireless_iface_ssid"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:singleLine="true"
-                android:text="@string/fetching_ssid"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/ddwrt_green"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_ssid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="true"
+                    android:text="@string/fetching_ssid"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/ddwrt_green"/>
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+                    android:contentDescription="@string/menu"
+                    android:id="@+id/tile_status_wireless_iface_menu"/>
+
+            </LinearLayout>
+
 
         </RelativeLayout>
 

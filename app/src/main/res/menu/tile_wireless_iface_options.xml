@@ -23,9 +23,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/tile_status_wireless_client_wol"
-        android:icon="@android:drawable/ic_menu_send"
+        android:id="@+id/tile_status_wireless_iface_qrcode"
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
-        android:title="Wake on LAN"/>
+        android:title="Generate QR Code"/>
 </menu>
