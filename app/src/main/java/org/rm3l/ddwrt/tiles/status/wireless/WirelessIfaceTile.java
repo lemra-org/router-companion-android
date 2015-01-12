@@ -292,8 +292,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                                     txBytesCmd)
                     );
                     if (bytesBeforeAndAfter.length >= 4) {
-                        result.put(IfaceStatsType.RX_BYTES, bytesBeforeAndAfter[1] - bytesBeforeAndAfter[0]);
-                        result.put(IfaceStatsType.TX_BYTES, bytesBeforeAndAfter[3] - bytesBeforeAndAfter[2]);
+                        result.put(IfaceStatsType.RX_BYTES, Math.abs(bytesBeforeAndAfter[1] - bytesBeforeAndAfter[0]));
+                        result.put(IfaceStatsType.TX_BYTES, Math.abs(bytesBeforeAndAfter[3] - bytesBeforeAndAfter[2]));
                     }
 
                 } catch (Exception e) {
