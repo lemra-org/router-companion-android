@@ -416,7 +416,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                             .setTitle(String.format("Wake up %s (%s)", deviceName, macAddress))
                             .setMessage(String.format("This lets you turn on a computer via the network.\n" +
                                             "For this to work properly:\n" +
-                                            "- '%s' (%s) must support Wake-on-LAN. You can enable it in the BIOS on in the Operating System Settings.\n" +
+                                            "- '%s' (%s) must support Wake-on-LAN. You can enable it in the BIOS or in the Operating System Settings.\n" +
                                             "- '%s' (%s) and this mobile device must be on the same network. To wake over the Internet, " +
                                             "you must forward packets from any port you want to the computer you wish to wake.",
                                     deviceName, macAddress, deviceName, macAddress))
