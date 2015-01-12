@@ -334,6 +334,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
                 .setVisibility(View.VISIBLE);
         layout.findViewById(R.id.tile_services_openvpn_client_grid_layout)
                 .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_services_openvpn_client_note)
+                .setVisibility(View.VISIBLE);
 
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -352,12 +354,16 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
             //State
             final String statusKey = \"fake-key\";
             final String statusValue;
-            if ("1".equals(statusKey)) {
-                statusValue = "Enabled";
-            } else if ("0".equals(statusKey)) {
-                statusValue = "Disabled";
-            } else {
-                statusValue = N_A;
+            switch (statusKey) {
+                case "1":
+                    statusValue = "Enabled";
+                    break;
+                case "0":
+                    statusValue = "Disabled";
+                    break;
+                default:
+                    statusValue = N_A;
+                    break;
             }
             ((TextView) openvpnclStatus).setText(statusValue);
 
@@ -398,6 +404,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
             if ("tcp-client".equalsIgnoreCase(protoProp)) {
                 tunnelProto = "TCP";
             } else {
+                //noinspection ConstantConditions
                 tunnelProto = protoProp.toUpperCase();
             }
             ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_protocol))

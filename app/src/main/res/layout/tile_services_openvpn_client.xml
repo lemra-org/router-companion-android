@@ -114,7 +114,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:gravity="center"
             android:singleLine="true"
             android:text="Tap anywhere in this tile to edit Settings"
-            android:textAppearance="?android:textAppearanceSmall"/>
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="italic"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/one_space"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
