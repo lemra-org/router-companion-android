@@ -30,6 +30,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.zxing.BarcodeFormat;
@@ -38,6 +39,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 
 import java.util.EnumMap;
@@ -47,9 +49,9 @@ public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
 
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";
-    String mWifiQrCodeString;
-    String mSsid;
-    Bitmap mBitmap;
+    private String mWifiQrCodeString;
+    private String mSsid;
+    private Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,26 @@ public class WirelessIfaceQrCodeActivity extends SherlockFragmentActivity {
         }
 
         ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_ssid)).setText(mSsid);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.tile_wireless_iface_qr_code_options, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(
+            @NotNull com.actionbarsherlock.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.tile_status_wireless_iface_qrcode_share:
+                //TODO
+                Toast.makeText(this, "[TODO] Share QR Code generated for '" + this.mSsid +"'...", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**************************************************************
