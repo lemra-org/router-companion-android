@@ -64,6 +64,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
@@ -301,7 +302,14 @@ public final class SSHUtils {
                 if (isNullOrEmpty(fieldToFetch)) {
                     continue;
                 }
-                if (StringUtils.containsIgnoreCase(fieldToFetch, "sshd_rsa_host_key")) {
+                if (containsIgnoreCase(fieldToFetch, "sshd_rsa_host_key")
+                        || containsIgnoreCase(fieldToFetch, "sshd_dss_host_key")
+                        || containsIgnoreCase(fieldToFetch, "openvpncl_ca")
+                        || containsIgnoreCase(fieldToFetch, "openvpncl_client")
+                        || containsIgnoreCase(fieldToFetch, "openvpncl_key")
+                        || containsIgnoreCase(fieldToFetch, "openvpn_ca")
+                        || containsIgnoreCase(fieldToFetch, "openvpn_client")
+                        || containsIgnoreCase(fieldToFetch, "openvpn_key")) {
                     getMultiOutput = true;
                 }
                 grep.add("^" + fieldToFetch + "=.*");
@@ -315,28 +323,46 @@ public final class SSHUtils {
                 SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_rsa_host_key") : null;
         final String[] sshdDsaHostKey = \"fake-key\";
                 SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_dss_host_key") : null;
+        final String[] openvpnclCaKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_ca") : null;
+        final String[] openvpnclClientKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_client") : null;
+        final String[] openvpnclKeyKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_key") : null;
+        final String[] openvpnCaKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_ca") : null;
+        final String[] openvpnClientKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_client") : null;
+        final String[] openvpnKeyKey = \"fake-key\";
+                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_key") : null;
 
-        //Fix multi-line output for sshd_rsa_host_key
-        final String[] sshdRsaHostKeyFixed =
+        //Fix multi-line output for some variables defined below
+        final String[] varsToFix =
                 new String[] {
                         "sshd_rsa_host_key=" + (sshdRsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdRsaHostKey) : EMPTY_STRING),
-                        "sshd_dss_host_key=" + (sshdDsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdDsaHostKey) : EMPTY_STRING)};
+                        "sshd_dss_host_key=" + (sshdDsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdDsaHostKey) : EMPTY_STRING),
+                        "openvpncl_ca=" + (openvpnclCaKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclCaKey) : EMPTY_STRING),
+                        "openvpncl_client=" + (openvpnclClientKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclClientKey) : EMPTY_STRING),
+                        "openvpncl_key=" + (openvpnclKeyKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclKeyKey) : EMPTY_STRING),
+                        "openvpn_ca=" + (openvpnCaKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnCaKey) : EMPTY_STRING),
+                        "openvpn_client=" + (openvpnClientKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnClientKey) : EMPTY_STRING),
+                        "openvpn_key=" + (openvpnKeyKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnKeyKey) : EMPTY_STRING)};
 
         String[] outputArray = null;
         if (nvramShow != null) {
-            outputArray = new String[nvramShow.length + sshdRsaHostKeyFixed.length];
+            outputArray = new String[nvramShow.length + varsToFix.length];
             int k = 0;
-            for (final String sshdHostKeyFixed : sshdRsaHostKeyFixed) {
-                if (isNullOrEmpty(sshdHostKeyFixed)) {
+            for (final String varToFix : varsToFix) {
+                if (isNullOrEmpty(varToFix)) {
                     continue;
                 }
-                outputArray[k++] = sshdHostKeyFixed;
+                outputArray[k++] = varToFix;
             }
             for (int j = 0; j < nvramShow.length; j++) {
                 boolean skip = false;
                 final String nvramAtPositionJ = nvramShow[j];
-                for (final String aSshdRsaHostKeyFixed : sshdRsaHostKeyFixed) {
-                    if (StringUtils.contains(aSshdRsaHostKeyFixed, nvramAtPositionJ)) {
+                for (final String varToFix : varsToFix) {
+                    if (StringUtils.contains(varToFix, nvramAtPositionJ)) {
                         skip = true;
                         break;
                     }
