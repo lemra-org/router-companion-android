@@ -42,12 +42,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -70,7 +68,6 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
-import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
@@ -528,7 +525,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

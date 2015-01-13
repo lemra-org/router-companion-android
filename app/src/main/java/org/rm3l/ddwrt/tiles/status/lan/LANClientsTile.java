@@ -22,12 +22,10 @@
 
 package org.rm3l.ddwrt.tiles.status.lan;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +110,7 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

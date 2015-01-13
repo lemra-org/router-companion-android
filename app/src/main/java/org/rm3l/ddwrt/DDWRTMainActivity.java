@@ -66,6 +66,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
+import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -246,6 +247,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mCurrentActivityResultListener = null;
         if (mFeedbackDialog != null) {
             mFeedbackDialog.dismiss();
         }
@@ -391,29 +393,42 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult("+requestCode+","+resultCode+","+data);
         // Check which request we're responding to
-        if (requestCode == ROUTER_SETTINGS_ACTIVITY_CODE) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF,-1l) ||
-                        this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
-                        !this.mCurrentSortingStrategy
-                        .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF,""))) {
-                    //Reload UI
-                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                            startActivity(getIntent());
-                            alertDialog.cancel();
-                        }
-                    }, 2000);
+        switch (requestCode) {
+            case LISTENED_REQUEST_CODE:
+                //Forward to listener
+                if (mCurrentActivityResultListener != null) {
+                    final DDWRTTile.ActivityResultListener listener = mCurrentActivityResultListener;
+                    mCurrentActivityResultListener = null;
+                    listener.onResultCode(resultCode, data );
                 }
-            }
+                break;
+            case ROUTER_SETTINGS_ACTIVITY_CODE:
+                // Make sure the request was successful and reload U if necessary
+                if (resultCode == RESULT_OK) {
+                    if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF,-1l) ||
+                            this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
+                            !this.mCurrentSortingStrategy
+                                    .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF,""))) {
+                        //Reload UI
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                                startActivity(getIntent());
+                                alertDialog.cancel();
+                            }
+                        }, 2000);
+                    }
+                }
+                break;
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
@@ -563,6 +578,22 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                                 long id) {
             selectItem(position);
         }
+    }
+
+    private static final int LISTENED_REQUEST_CODE = 77;
+
+    private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
+
+    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener ) {
+        Log.d(TAG, "startActivityForResult("+intent+","+listener+
+                ") / mCurrentActivityResultListener="+mCurrentActivityResultListener);
+
+        if (mCurrentActivityResultListener != null) {
+            Log.e(TAG, "Activity trying to start more than one activity at a time..." );
+            return;
+        }
+        mCurrentActivityResultListener = listener;
+        startActivityForResult(intent, LISTENED_REQUEST_CODE);
     }
 
 }

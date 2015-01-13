@@ -25,7 +25,6 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -391,7 +390,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

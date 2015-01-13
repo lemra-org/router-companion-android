@@ -23,7 +23,6 @@
 package org.rm3l.ddwrt.tiles.status.time;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -137,7 +136,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         return null;
     }
 

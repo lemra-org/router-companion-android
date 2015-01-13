@@ -42,9 +42,11 @@ import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -64,7 +66,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected final SharedPreferences mParentFragmentPreferences;
     @NotNull
     protected final SharedPreferences mGlobalPreferences;
-    @NotNull final SherlockFragment mParentFragment;
+    @NotNull protected final SherlockFragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
@@ -212,16 +214,21 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
     @Override
     public final void onClick(View view) {
-        final Intent onClickIntent = getOnclickIntent();
-        if (onClickIntent != null) {
+        final OnClickIntent onClickIntentAndListener = getOnclickIntent();
+        final Intent onClickIntent;
+        if (onClickIntentAndListener != null &&
+                (onClickIntent = onClickIntentAndListener.getIntent()) != null) {
+            final String dialogMsg = onClickIntentAndListener.getDialogMessage();
+            //noinspection ConstantConditions
             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                    String.format("Loading detailed view for '%s' ...", this.getClass().getSimpleName()), false, false);
+                Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
             alertDialog.show();
             ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mParentFragmentActivity.startActivity(onClickIntent);
+                    ((DDWRTBaseFragment) mParentFragment)
+                            .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
                     alertDialog.cancel();
                 }
             }, 2500);
@@ -229,5 +236,43 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     @Nullable
-    protected abstract Intent getOnclickIntent();
+    protected abstract OnClickIntent getOnclickIntent();
+
+    protected class OnClickIntent {
+        @Nullable
+        private final Intent intent;
+
+        @Nullable
+        private final ActivityResultListener listener;
+
+        @Nullable
+        private final String dialogMessage;
+
+        public OnClickIntent(@Nullable final String dialogMessage,
+                                @Nullable Intent intent,
+                             @Nullable ActivityResultListener listener) {
+            this.intent = intent;
+            this.listener = listener;
+            this.dialogMessage = dialogMessage;
+        }
+
+        @Nullable
+        public Intent getIntent() {
+            return intent;
+        }
+
+        @Nullable
+        public ActivityResultListener getListener() {
+            return listener;
+        }
+
+        @Nullable
+        public String getDialogMessage() {
+            return dialogMessage;
+        }
+    }
+
+    public interface ActivityResultListener {
+        void onResultCode(int resultCode, Intent data);
+    }
 }

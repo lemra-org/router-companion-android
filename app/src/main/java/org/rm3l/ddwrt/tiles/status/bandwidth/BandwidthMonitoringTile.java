@@ -23,7 +23,6 @@
 package org.rm3l.ddwrt.tiles.status.bandwidth;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -323,7 +322,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

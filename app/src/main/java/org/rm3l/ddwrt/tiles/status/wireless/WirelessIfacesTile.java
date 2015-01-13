@@ -22,7 +22,6 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
@@ -68,7 +67,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         return super.getOnclickIntent();
     }
 }

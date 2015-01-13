@@ -148,6 +148,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivity"
+            android:label="@string/title_openvpncl_settings"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/PopupTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivityLight"
+            android:label="@string/title_openvpncl_settings"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/PopupThemeLight">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
     </application>
 
 </manifest>

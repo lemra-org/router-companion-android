@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -34,14 +35,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.android.common.view.SlidingTabLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
+import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 /**
@@ -68,6 +72,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
      * above, but is designed to give continuous feedback to the user when scrolling.
      */
     private SlidingTabLayout mSlidingTabLayout;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -128,7 +133,18 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         mSlidingTabLayout.setViewPager(this.mPager);
     }
 
-    private static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
+    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener ) {
+        if (mOnPageChangeListener instanceof DDWRTMainActivity) {
+            ((DDWRTMainActivity) mOnPageChangeListener).startActivityForResult(intent, listener);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    private class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NotNull
         final DDWRTBaseFragment[] tabs;
@@ -141,7 +157,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = DDWRTBaseFragment.getFragments(this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
+            this.tabs = DDWRTBaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
         @Override

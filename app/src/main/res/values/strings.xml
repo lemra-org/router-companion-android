@@ -309,4 +309,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_acra_deviceid_enabled">Enabled</string>
     <string name="pref_acra_deviceid_disabled">Disabled</string>
     <string name="services_openvpn">OpenVPN</string>
+    <string name="title_openvpncl_settings">OpenVPN Client Settings</string>
 </resources>

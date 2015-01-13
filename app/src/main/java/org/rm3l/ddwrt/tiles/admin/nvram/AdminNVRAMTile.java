@@ -623,7 +623,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         return null;
     }
 

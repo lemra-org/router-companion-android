@@ -23,7 +23,6 @@
 package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -308,7 +307,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

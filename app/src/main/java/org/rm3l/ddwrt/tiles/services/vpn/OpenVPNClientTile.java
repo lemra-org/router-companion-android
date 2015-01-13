@@ -47,6 +47,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Map;
 
@@ -79,8 +80,9 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
-public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
+public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile.ActivityResultListener {
 
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     public static final String OPENVPNCL__DEV = "___openvpncl__dev";
@@ -314,13 +316,6 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
         return LOG_TAG;
     }
 
-    @Nullable
-    @Override
-    protected Intent getOnclickIntent() {
-        //TODO
-        return null;
-    }
-
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
@@ -472,5 +467,26 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> {
                 R.id.tile_services_openvpn_client_togglebutton_title, R.id.tile_services_openvpn_client_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+    }
+
+    @Nullable
+    @Override
+    protected OnClickIntent getOnclickIntent() {
+        //TODO
+
+        final Intent editOpenVPNClSettingsIntent =
+                new Intent(mParentFragment.getActivity(),
+                        isThemeLight(mParentFragmentActivity, mRouter.getUuid()) ?
+                        EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
+        //Put Extras over here
+
+        return new OnClickIntent("Loading OpenVPN Client detailed settings...",
+                editOpenVPNClSettingsIntent, this);
+    }
+
+    @Override
+    public void onResultCode(int resultCode, Intent data) {
+        //TODO
+        Toast.makeText(mParentFragmentActivity, "onResultCode(resultCode=" + resultCode + ",data="+data+")", Toast.LENGTH_SHORT).show();
     }
 }

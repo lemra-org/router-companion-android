@@ -233,7 +233,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

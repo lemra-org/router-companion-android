@@ -19,39 +19,7 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
+package org.rm3l.ddwrt.tiles.services.vpn;
 
-package org.rm3l.ddwrt.tiles.status.lan;
-
-import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragment;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
-
-/**
- *
- */
-public class DHCPClientsTile extends WirelessClientsTile {
-
-    private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
-
-    public DHCPClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router);
-    }
-
-    @Nullable
-    @Override
-    protected String getLogTag() {
-        return LOG_TAG;
-    }
-
-    @Nullable
-    @Override
-    protected OnClickIntent getOnclickIntent() {
-        //TODO
-        return null;
-    }
+public class EditOpenVPNClientSettingsActivityLight extends EditOpenVPNClientSettingsActivity {
 }

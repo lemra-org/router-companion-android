@@ -23,7 +23,6 @@
 package org.rm3l.ddwrt.tiles.status.bandwidth;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -34,19 +33,16 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
-import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wan.WANConfigTile;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -231,7 +227,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }

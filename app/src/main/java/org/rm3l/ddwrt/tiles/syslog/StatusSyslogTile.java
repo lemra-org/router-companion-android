@@ -25,7 +25,6 @@
 package org.rm3l.ddwrt.tiles.syslog;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -351,7 +350,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     @Nullable
     @Override
-    protected Intent getOnclickIntent() {
+    protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
     }
