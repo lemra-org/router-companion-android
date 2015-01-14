@@ -25,30 +25,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -83,17 +73,18 @@ import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRA
 
 public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity {
 
-    public static final String VARIABLES_CHANGED = "VARIABLES_CHANGED";
+    private static final String TAG = EditOpenVPNClientSettingsActivity.class.getSimpleName();
+
     private NVRAMInfo mNvramInfo;
 
     private String mRouterUuid;
 
-    private static final Map<String, Integer> tunnelDeviceSpinnerValues = Maps.newHashMapWithExpectedSize(2);
-    private static final Map<String, Integer> tunnelProtoSpinnerValues = Maps.newHashMapWithExpectedSize(2);
-    private static final Map<String, Integer> encryptionCipherSpinnerValues = Maps.newHashMapWithExpectedSize(6);
-    private static final Map<String, Integer> hashAlgoSpinnerValues = Maps.newHashMapWithExpectedSize(6);
-    private static final Map<String, Integer> tlsCipherSpinnerValues = Maps.newHashMapWithExpectedSize(8);
-    private static final Map<String, Integer> lzoCompressionSpinnerValues = Maps.newHashMapWithExpectedSize(4);
+    private static final BiMap<String, Integer> tunnelDeviceSpinnerValues = HashBiMap.create(2);
+    private static final BiMap<String, Integer> tunnelProtoSpinnerValues = HashBiMap.create(2);
+    private static final BiMap<String, Integer> encryptionCipherSpinnerValues = HashBiMap.create(6);
+    private static final BiMap<String, Integer> hashAlgoSpinnerValues = HashBiMap.create(6);
+    private static final BiMap<String, Integer> tlsCipherSpinnerValues = HashBiMap.create(8);
+    private static final BiMap<String, Integer> lzoCompressionSpinnerValues = HashBiMap.create(4);
 
     static {
         tunnelDeviceSpinnerValues.put("tun", 0);
@@ -288,23 +279,172 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
         data.putExtra(ROUTER_SELECTED, mRouterUuid);
 
         final NVRAMInfo nvramVarsToUpdate = new NVRAMInfo();
+        //Compare each variable
+
+        final String isOpenVPNClientOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag))
+                .isChecked() ? "1" : "0";
+        if (!isOpenVPNClientOn.equals(mNvramInfo.getProperty(OPENVPNCL_ENABLE))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_ENABLE, isOpenVPNClientOn);
+        }
+
+        final String serverIpName = ((EditText) findViewById(R.id.openvpn_client_settings_server_ip_name)).getText().toString();
+        if (!serverIpName.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEIP))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEIP, serverIpName);
+        }
+
+        final String serverPort = ((EditText) findViewById(R.id.openvpn_client_settings_port)).getText().toString();
+        if (!serverPort.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEPORT))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEPORT, serverPort);
+        }
+
+        final String tunnelDeviceSelectedItem = tunnelDeviceSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_tunnel_device)).getSelectedItemPosition());
+        if (tunnelDeviceSelectedItem != null && !tunnelDeviceSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_TUNTAP))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_TUNTAP, tunnelDeviceSelectedItem);
+        }
+
+        final String tunnelProtocolSelectedItem = tunnelProtoSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_tunnel_protocol)).getSelectedItemPosition());
+        if (tunnelProtocolSelectedItem != null && !tunnelProtocolSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_PROTO))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_PROTO, tunnelProtocolSelectedItem);
+        }
+
+        final String encryptionCipherSelectedItem = encryptionCipherSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_encryption_cipher)).getSelectedItemPosition());
+        if (encryptionCipherSelectedItem != null && !encryptionCipherSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_CIPHER))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_CIPHER, encryptionCipherSelectedItem);
+        }
+
+        final String hashAlgorithmSelectedItem = hashAlgoSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_hash_algorithm)).getSelectedItemPosition());
+        if (hashAlgorithmSelectedItem != null && !hashAlgorithmSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_AUTH))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_AUTH, hashAlgorithmSelectedItem);
+        }
+
+        final String caCert = ((EditText) findViewById(R.id.openvpn_client_settings_ca_cert)).getText().toString();
+        if (!caCert.equals(mNvramInfo.getProperty(OPENVPNCL_CA))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_CA, caCert);
+        }
+
+        final String publicClientCert = ((EditText) findViewById(R.id.openvpn_client_settings_public_client_cert)).getText().toString();
+        if (!publicClientCert.equals(mNvramInfo.getProperty(OPENVPNCL_CLIENT))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_CLIENT, publicClientCert);
+        }
+
+        final String privateClientKey = \"fake-key\";
+        if (!privateClientKey.equals(mNvramInfo.getProperty(OPENVPNCL_KEY))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_KEY, privateClientKey);
+        }
+
+        final String isAdvancedOptionsOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag))
+                .isChecked() ? "1" : "0";
+        if (!isAdvancedOptionsOn.equals(mNvramInfo.getProperty(OPENVPNCL_ADV))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_ADV, isAdvancedOptionsOn);
+        }
+
+        final String tlsCipherSelectedItem = tlsCipherSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_tls_cipher)).getSelectedItemPosition());
+        if (tlsCipherSelectedItem != null && !tlsCipherSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_TLSCIP))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_TLSCIP, tlsCipherSelectedItem);
+        }
+
+        final String lzoCompressionSelectedItem = lzoCompressionSpinnerValues.inverse().get(
+                ((Spinner) findViewById(R.id.openvpn_client_settings_lzo_compression)).getSelectedItemPosition());
+        if (lzoCompressionSelectedItem != null && !lzoCompressionSelectedItem.equals(mNvramInfo.getProperty(OPENVPNCL_LZO))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_LZO, lzoCompressionSelectedItem);
+        }
+
+        final String isNatOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat))
+                .isChecked() ? "1" : "0";
+        if (!isNatOn.equals(mNvramInfo.getProperty(OPENVPNCL_NAT))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_NAT, isNatOn);
+        }
+
+        final String isFWSecOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat_firewall))
+                .isChecked() ? "1" : "0";
+        if (!isFWSecOn.equals(mNvramInfo.getProperty(OPENVPNCL_SEC))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_SEC, isFWSecOn);
+        }
+
+        final String isBridgeOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat_bridge_tap_to_br0))
+                .isChecked() ? "1" : "0";
+        if (!isBridgeOn.equals(mNvramInfo.getProperty(OPENVPNCL_BRIDGE))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_BRIDGE, isBridgeOn);
+        }
+
+        final String ipAddr = ((EditText) findViewById(R.id.openvpn_client_settings_ip_address)).getText().toString();
+        if (!ipAddr.equals(mNvramInfo.getProperty(OPENVPNCL_IP))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_IP, ipAddr);
+        }
+
+        final String subnetMask = ((EditText) findViewById(R.id.openvpn_client_settings_subnet_mask)).getText().toString();
+        if (!subnetMask.equals(mNvramInfo.getProperty(OPENVPNCL_MASK))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_MASK, subnetMask);
+        }
+
+        final String tunnelMtu = ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting)).getText().toString();
+        if (!tunnelMtu.equals(mNvramInfo.getProperty(OPENVPNCL_MTU))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_MTU, tunnelMtu);
+        }
+
+        final String tunnelUdpFragment = ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment)).getText().toString();
+        if (!tunnelUdpFragment.equals(mNvramInfo.getProperty(OPENVPNCL_FRAGMENT))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_FRAGMENT, tunnelUdpFragment);
+        }
+
+        final String isTunnelUdpMssFixOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_tunnel_udp_mss_fix))
+                .isChecked() ? "1" : "0";
+        if (!isTunnelUdpMssFixOn.equals(mNvramInfo.getProperty(OPENVPNCL_MSSFIX))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_MSSFIX, isTunnelUdpMssFixOn);
+        }
+
+        final String isNsCerttypeOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nscerttype))
+                .isChecked() ? "1" : "0";
+        if (!isNsCerttypeOn.equals(mNvramInfo.getProperty(OPENVPNCL_CERTTYPE))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_CERTTYPE, isNsCerttypeOn);
+        }
+
+        final String additionalConfig = ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_additional_config)).getText().toString();
+        if (!additionalConfig.equals(mNvramInfo.getProperty(OPENVPNCL_CONFIG))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_CONFIG, additionalConfig);
+        }
+
+        final String tlsAuthKey = \"fake-key\";
+        if (!tlsAuthKey.equals(mNvramInfo.getProperty(OPENVPNCL_TLSAUTH))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_TLSAUTH, tlsAuthKey);
+        }
+
+        final String policyBasedRouting = ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_policy_based_routing)).getText().toString();
+        if (!policyBasedRouting.equals(mNvramInfo.getProperty(OPENVPNCL_ROUTE))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_ROUTE, policyBasedRouting);
+        }
+
+        final String pkcs12Key = \"fake-key\";
+        if (!pkcs12Key.equals(mNvramInfo.getProperty(OPENVPNCL_PKCS_12))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_PKCS_12, pkcs12Key);
+        }
+
+        final String staticKey = \"fake-key\";
+        if (!staticKey.equals(mNvramInfo.getProperty(OPENVPNCL_STATIC))) {
+            nvramVarsToUpdate.setProperty(OPENVPNCL_STATIC, staticKey);
+        }
+
+        Log.d(TAG, "vars that have changed: " + nvramVarsToUpdate);
+
+        //Set extra
         data.putExtra(OPENVPNCL_NVRAMINFO, nvramVarsToUpdate);
 
-        //TODO Set variables that have changed and which need commit in NVRAM
-        final ArrayList<String> variablesChanged = new ArrayList<>();
-        data.putStringArrayListExtra(VARIABLES_CHANGED, variablesChanged);
-
-        if (!variablesChanged.isEmpty()) {
+        if (!nvramVarsToUpdate.isEmpty()) {
             //Something changed - prompt confirmation dialog
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.ic_action_alert_warning)
-                    .setMessage("Some settings have been updated. Do you want to save them or not?\n" +
-                            "If you choose to save them, they will be applied right away.")
+                    .setMessage("Some settings have been updated. Do you want to save them?")
                     .setCancelable(true)
                     .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialogInterface, final int i) {
                             setResult(RESULT_OK, data);
+                            finish();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -312,11 +452,13 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Cancelled - nothing more to do!
                             setResult(RESULT_CANCELED, data);
+                            finish();
                         }
                     }).create().show();
+        } else {
+            setResult(RESULT_CANCELED, data);
+            super.finish();
         }
-
-        super.finish();
     }
 
 }

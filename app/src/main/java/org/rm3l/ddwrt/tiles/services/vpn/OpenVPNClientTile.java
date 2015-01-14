@@ -529,10 +529,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 Utils.displayMessage(mParentFragmentActivity, "Operation cancelled", Style.INFO);
                 break;
             case Activity.RESULT_OK:
-                final ArrayList<String> varsChanged = data.getStringArrayListExtra(
-                        EditOpenVPNClientSettingsActivity.VARIABLES_CHANGED);
                 final NVRAMInfo newNvramInfoData = (NVRAMInfo) data.getSerializableExtra(OPENVPNCL_NVRAMINFO);
-                if (newNvramInfoData == null || varsChanged == null || varsChanged.isEmpty()) {
+                if (newNvramInfoData == null || newNvramInfoData.isEmpty()) {
                     Utils.displayMessage(mParentFragmentActivity, "No change", Style.INFO);
                     break;
                 }
