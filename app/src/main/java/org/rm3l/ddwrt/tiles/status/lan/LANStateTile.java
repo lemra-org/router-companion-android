@@ -167,19 +167,19 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
             //MAC Address
             @NotNull final TextView macView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
-            macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "N/A"));
+            macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "-"));
 
             //IP Address
             @NotNull final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
-            ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
+            ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
 
             //Subnet Mask
             @NotNull final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
-            maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "N/A"));
+            maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "-"));
 
             //GW
             @NotNull final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
-            gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "N/A"));
+            gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "-"));
 
         }
 

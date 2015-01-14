@@ -106,7 +106,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     public static final String OPENVPNCL__DEV_TX_RATE = OPENVPNCL__DEV + "_tx_rate_human_readable";
     public static final String OPENVPNCL__DEV_RX_PACKETS = OPENVPNCL__DEV + "_rx_packets";
     public static final String OPENVPNCL__DEV_TX_PACKETS = OPENVPNCL__DEV + "_tx_packets";
-    public static final String N_A = "N/A";
+    public static final String N_A = "-";
     public static final String OPENVPNCL_NVRAMINFO = "OPENVPNCL_NVRAMINFO";
 
     private NVRAMInfo mNvramInfo;

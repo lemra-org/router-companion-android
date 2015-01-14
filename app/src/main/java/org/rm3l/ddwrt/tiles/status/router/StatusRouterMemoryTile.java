@@ -230,11 +230,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
             //Model
             @NotNull final TextView memFreeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
-            memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "N/A"));
+            memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "-"));
 
             //Cores Count
             @NotNull final TextView memUsedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
-            memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "N/A"));
+            memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "-"));
 
         }
 

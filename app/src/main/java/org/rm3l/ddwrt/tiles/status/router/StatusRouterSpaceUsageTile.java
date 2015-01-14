@@ -268,15 +268,15 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
             //NVRAM
             @NotNull final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
-            nvramSpaceView.setText(data.getProperty("nvram_space", "N/A"));
+            nvramSpaceView.setText(data.getProperty("nvram_space", "-"));
 
             //NVRAM
             @NotNull final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
-            cifsSpaceView.setText(data.getProperty("cifs_space", "N/A"));
+            cifsSpaceView.setText(data.getProperty("cifs_space", "-"));
 
             //NVRAM
             @NotNull final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
-            jffsView.setText(data.getProperty("jffs_space", "N/A"));
+            jffsView.setText(data.getProperty("jffs_space", "-"));
 
         }
 

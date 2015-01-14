@@ -394,11 +394,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //Ifname
             @NotNull final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
-            ifnameView.setText(data.getProperty(this.iface + "_ifname", "N/A"));
+            ifnameView.setText(data.getProperty(this.iface + "_ifname", "-"));
 
             //MAC
             @NotNull final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
-            hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "N/A"));
+            hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "-"));
 
             //Radio
             @NotNull final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
@@ -407,13 +407,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //Mode
             @NotNull final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
-            String property = data.getProperty(this.iface + "_mode", "N/A");
-            modeView.setText(property != null ? property.toUpperCase() : "N/A");
+            String property = data.getProperty(this.iface + "_mode", "-");
+            modeView.setText(property != null ? property.toUpperCase() : "-");
 
             //Net Mode
             @NotNull final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
             final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode"));
-            String mode = "N/A";
+            String mode = "-";
             if ("disabled".equalsIgnoreCase(netmode)) {
                 mode = "Disabled";
             } else if ("mixed".equalsIgnoreCase(netmode)) {
@@ -437,37 +437,37 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //Channel
             @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
-            final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "N/A"));
+            final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "-"));
             channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
 
 //            //Rate
 //            @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
-//            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "N/A");
+//            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "-");
 //            rateView.setText(rateProperty);
             //Rate
             @NotNull final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
-            final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "N/A");
+            final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "-");
             rxRateView.setText(rxRateProperty);
 
             @NotNull final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
-            final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "N/A");
+            final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "-");
             txRateView.setText(txRateProperty);
 
             //Packet Info
             @NotNull final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
-            rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "N/A"));
+            rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "-"));
 
             @NotNull final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
-            txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "N/A"));
+            txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "-"));
 
             //TX Power
             @NotNull final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
-            xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "N/A")));
+            xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "-")));
 
             //Encryption
             @NotNull final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
             final String akm = data.getProperty(this.iface + "_akm");
-            @NotNull String encryption = "N/A";
+            @NotNull String encryption = "-";
             if ("psk".equalsIgnoreCase(akm)) {
                 encryption = "WPA Pre-shared Key";
             } else if ("wpa".equalsIgnoreCase(akm)) {

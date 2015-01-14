@@ -648,7 +648,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         //NVRAM
         final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);
         ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
-                .setText(nvramSize != null ? nvramSize.toString(): "N/A");
+                .setText(nvramSize != null ? nvramSize.toString(): "-");
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 

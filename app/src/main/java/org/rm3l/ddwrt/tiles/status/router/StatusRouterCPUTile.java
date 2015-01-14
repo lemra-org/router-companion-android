@@ -248,15 +248,15 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
             //Model
             @NotNull final TextView cpuModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
-            cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "N/A"));
+            cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "-"));
 
             //Cores Count
             @NotNull final TextView cpuCountView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
-            cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "N/A"));
+            cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "-"));
 
             //Load Avg
             @NotNull final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
-            loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "N/A"));
+            loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
 
         }
 

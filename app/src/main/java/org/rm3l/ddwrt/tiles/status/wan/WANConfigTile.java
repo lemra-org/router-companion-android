@@ -145,7 +145,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
                                 } catch (final NumberFormatException nfe) {
                                     nfe.printStackTrace();
-                                    //No Worries - WAN Uptime will be marked as "N/A"
+                                    //No Worries - WAN Uptime will be marked as "-"
                                 }
                             }
                         }
@@ -231,7 +231,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
             //Connection Type
             @NotNull final TextView wanConnTypeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_type);
-            final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "N/A");
+            final String wanProto = data.getProperty(NVRAMInfo.WAN_PROTO, "-");
             @NotNull final String wanConnectionTypeManual;
 
             if ("ppoe".equalsIgnoreCase(wanProto)) {
@@ -246,42 +246,42 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                 wan3gSignalFieldView.setVisibility(View.VISIBLE);
                 wan3gSignalSeparatorView.setVisibility(View.VISIBLE);
                 wan3gSignalView.setVisibility(View.VISIBLE);
-                wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "N/A"));
+                wan3gSignalView.setText(data.getProperty(NVRAMInfo.WAN_3_G_SIGNAL, "-"));
 
             } else if ("heartbeat".equalsIgnoreCase(wanProto)) {
                 wanConnectionTypeManual = "Heartbeat Signal";
             } else if ("disabled".equalsIgnoreCase(wanProto)) {
                 wanConnectionTypeManual = "*Disabled*";
             } else {
-                wanConnectionTypeManual = (wanProto != null ? wanProto.toUpperCase() : "N/A");
+                wanConnectionTypeManual = (wanProto != null ? wanProto.toUpperCase() : "-");
             }
 
             wanConnTypeView.setText(wanConnectionTypeManual);
 
             //Connection Uptime
             @NotNull final TextView wanUptimeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
-            wanUptimeView.setText(data.getProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, "N/A"));
+            wanUptimeView.setText(data.getProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, "-"));
 
             //MAC
             @NotNull final TextView wanMacView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
-            wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "N/A"));
+            wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "-"));
 
             //IP
             @NotNull final TextView wanIPView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
-            wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "N/A"));
+            wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
 
             //Subnet
             @NotNull final TextView wanSubnetView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
-            wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "N/A"));
+            wanSubnetView.setText(data.getProperty(NVRAMInfo.WAN_NETMASK, "-"));
 
             //Gateway
             @NotNull final TextView wanGatewayView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
-            wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "N/A"));
+            wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "-"));
 
             //DNS
             @NotNull final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
-            final String property = data.getProperty(NVRAMInfo.WAN_DNS, "N/A");
-            wanDNSView.setText(property != null ? property.replaceAll(" ", ", ") : "N/A");
+            final String property = data.getProperty(NVRAMInfo.WAN_DNS, "-");
+            wanDNSView.setText(property != null ? property.replaceAll(" ", ", ") : "-");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

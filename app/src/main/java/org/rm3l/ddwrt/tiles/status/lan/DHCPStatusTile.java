@@ -251,7 +251,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
             @NotNull final String lanProtoTxt;
             if (lanProto == null) {
-                lanProtoTxt = "N/A";
+                lanProtoTxt = "-";
             } else if ("dhcp".equalsIgnoreCase(lanProto)) {
                 lanProtoTxt = "Enabled";
             } else {
@@ -266,21 +266,21 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
             if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
                 dhcpDnsmasqTxt = "DNSMasq";
             } else {
-                dhcpDnsmasqTxt = "N/A";
+                dhcpDnsmasqTxt = "-";
             }
             dhcpDaemonView.setText(dhcpDnsmasqTxt);
 
             //Start IP
             ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_start_ip))
-                    .setText(data.getProperty(DHCP_START_IP, "N/A"));
+                    .setText(data.getProperty(DHCP_START_IP, "-"));
 
             //End IP
             ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_end_ip))
-                    .setText(data.getProperty(DHCP_END_IP, "N/A"));
+                    .setText(data.getProperty(DHCP_END_IP, "-"));
 
             @NotNull final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
             final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
-            clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "N/A" :
+            clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "-" :
                     (dhcpClientLeaseTime + " min"));
 
         }

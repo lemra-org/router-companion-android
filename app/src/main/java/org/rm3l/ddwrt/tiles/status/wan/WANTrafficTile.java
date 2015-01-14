@@ -220,7 +220,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
 
             //Iface Name
             @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
-            wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "N/A" : wanIface);
+            wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "-" : wanIface);
 
             @NotNull final TextView wanIngressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
             String text;
@@ -228,13 +228,13 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             try {
                 final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
                 if (wanRcvMBytes < 0.) {
-                    text = "N/A";
+                    text = "-";
                 } else {
                     text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
                 }
 
             } catch (@NotNull final NumberFormatException nfe) {
-                text = "N/A";
+                text = "-";
             }
             wanIngressView.setText(text);
 
@@ -243,13 +243,13 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             try {
                 final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
                 if (wanXmitMBytes < 0.) {
-                    text = "N/A";
+                    text = "-";
                 } else {
                     text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
                 }
 
             } catch (@NotNull final NumberFormatException nfe) {
-                text = "N/A";
+                text = "-";
             }
             wanEgressView.setText(text);
 

@@ -170,7 +170,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
             //Current Date
             ((TextView) this.layout.findViewById(R.id.tile_status_time_current_date))
-                    .setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "N/A"));
+                    .setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
 
             //NTP Client
             final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
@@ -179,7 +179,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             if (ntpClientEnabled) {
                 //NTP Server
                 ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText(
-                        data.getProperty(NVRAMInfo.NTP_SERVER, "N/A"));
+                        data.getProperty(NVRAMInfo.NTP_SERVER, "-"));
             } else {
                 //NTP Server
                 ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText("-");
@@ -189,7 +189,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             final String timezone = data.getProperty(NVRAMInfo.TIME_ZONE);
             final String tzValue;
             if (timezone == null || timezone.isEmpty()) {
-                tzValue = "N/A";
+                tzValue = "-";
             } else {
                 tzValue = "UTC"+(timezone.contains(".") ?
                         timezone
@@ -203,7 +203,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             //Daylight
             final String daylightPeriodString = daylightMap.get(data.getProperty(NVRAMInfo.DAYLIGHT_TIME));
             ((TextView) this.layout.findViewById(R.id.tile_status_time_summertime)).setText(
-                    daylightPeriodString != null ? daylightPeriodString : "N/A");
+                    daylightPeriodString != null ? daylightPeriodString : "-");
 
         }
 

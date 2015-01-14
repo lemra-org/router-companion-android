@@ -189,15 +189,15 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
             //LAN
             @NotNull final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
-            lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "N/A"));
+            lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "-"));
 
             //WAN
             @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
-            wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "N/A"));
+            wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "-"));
 
             //Wireless
             @NotNull final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
-            wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "N/A"));
+            wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

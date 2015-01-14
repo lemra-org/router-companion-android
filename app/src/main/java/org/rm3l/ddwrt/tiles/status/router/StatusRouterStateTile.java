@@ -242,19 +242,19 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR));
 
             @NotNull final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
-            routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "N/A"));
+            routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "-"));
 
             @NotNull final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
-            lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "N/A"));
+            lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
 
             @NotNull final TextView fwView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
-            fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "N/A"));
+            fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "-"));
 
             @NotNull final TextView kernelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
-            kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "N/A"));
+            kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "-"));
 
             @NotNull final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
-            uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "N/A"));
+            uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "-"));
 
         }
 

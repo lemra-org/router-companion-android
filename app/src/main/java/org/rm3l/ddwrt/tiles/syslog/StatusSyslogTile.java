@@ -203,7 +203,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
             final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
 
-            syslogState.setText(syslogdEnabledPropertyValue == null ? "N/A" : (isSyslogEnabled ? "Enabled" : "Disabled"));
+            syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
 
             syslogState.setVisibility(mDisplayStatus ? View.VISIBLE : View.GONE);
 
