@@ -93,14 +93,7 @@ public final class SSHUtils {
     }
 
     public static void destroySession(@NotNull final Router router) {
-        try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                SSH_SESSIONS_LRU_CACHE.remove(router.getUuid());
-            }
-        } catch (final Exception e) {
-            //No worries
-            e.printStackTrace();
-        }
+        destroySession(router.getUuid());
     }
 
     public static void destroySession(@NotNull final String uuid) {
