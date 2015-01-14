@@ -67,7 +67,6 @@ import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -558,7 +557,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     }
 
     @Override
-    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router) {
+    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
         Utils.displayMessage(this,
                 String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
                 Style.CONFIRM);

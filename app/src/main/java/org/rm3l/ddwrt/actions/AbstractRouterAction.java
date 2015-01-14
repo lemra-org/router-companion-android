@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.actions;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import org.acra.ACRA;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -60,14 +59,25 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
         } finally {
             if (actionResult != null && listener != null) {
                 final Exception exception = actionResult.getException();
-                if (exception == null) {
-                    listener.onRouterActionSuccess(routerAction, router);
-                } else {
-                    listener.onRouterActionFailure(routerAction, router, exception);
+                try {
+                    if (exception == null) {
+                        listener.onRouterActionSuccess(routerAction, router, this.getDataToReturnOnSuccess());
+                    } else {
+                        listener.onRouterActionFailure(routerAction, router, exception);
+                    }
+                } catch (final Exception listenerException) {
+                    listenerException.printStackTrace();
+                    //No Worries, but report exception
+                    Utils.reportException(listenerException);
                 }
             }
         }
         return actionResult;
+    }
+
+    @Nullable
+    protected Object getDataToReturnOnSuccess() {
+        return null;
     }
 
     @NotNull

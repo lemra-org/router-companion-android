@@ -60,7 +60,6 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -373,103 +372,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
-            //State
-            final String statusKey = \"fake-key\";
-            final String statusValue;
-            switch (statusKey) {
-                case "1":
-                    statusValue = "Enabled";
-                    break;
-                case "0":
-                    statusValue = "Disabled";
-                    break;
-                default:
-                    statusValue = N_A;
-                    break;
-            }
-            ((TextView) openvpnclStatus).setText(statusValue);
-
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_state)).setText(statusValue);
-
-            //Server IP/Name
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_ip_name))
-                    .setText(data.getProperty(OPENVPNCL_REMOTEIP, N_A));
-
-            //Port
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_port))
-                    .setText(data.getProperty(OPENVPNCL_REMOTEPORT, N_A));
-
-            //BW In
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_rx_rate))
-                    .setText(data.getProperty(OPENVPNCL__DEV_RX_RATE, N_A));
-
-            //BW Out
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tx_rate))
-                    .setText(data.getProperty(OPENVPNCL__DEV_TX_RATE, N_A));
-
-            //RX Packets
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_rx_packets))
-                    .setText(data.getProperty(OPENVPNCL__DEV_RX_PACKETS, N_A));
-
-            //TX Packets
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tx_packets))
-                    .setText(data.getProperty(OPENVPNCL__DEV_TX_PACKETS, N_A));
-
-            //Tunnel Device
-            //noinspection ConstantConditions
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_device))
-                    .setText(data.getProperty(OPENVPNCL_TUNTAP, N_A).toUpperCase());
-
-            //Tunnel Proto
-            final String protoProp = data.getProperty(OPENVPNCL_PROTO, N_A);
-            final String tunnelProto;
-            if ("tcp-client".equalsIgnoreCase(protoProp)) {
-                tunnelProto = "TCP";
-            } else {
-                //noinspection ConstantConditions
-                tunnelProto = protoProp.toUpperCase();
-            }
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_protocol))
-                    .setText(tunnelProto);
-
-            //Encryption Cipher
-            final String encCipherProp = data.getProperty(OPENVPNCL_CIPHER, N_A);
-            final String encCipher;
-            //noinspection ConstantConditions
-            switch (encCipherProp.toLowerCase()) {
-                case "aes-512-cbc":
-                    encCipher = "AES-512 CBC";
-                    break;
-                case "aes-256-cbc":
-                    encCipher = "AES-256 CBC";
-                    break;
-                case "aes-192-cbc":
-                    encCipher = "AES-192 CBC";
-                    break;
-                case "aes-128-cbc":
-                    encCipher = "AES-128 CBC";
-                    break;
-                case "bf-cbc":
-                    encCipher = "Blowfish CBC";
-                    break;
-                default:
-                    encCipher = encCipherProp;
-                    break;
-            }
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_encryption_cipher))
-                    .setText(encCipher);
-
-            //Hash Algo
-            final String hashAlgoProp = data.getProperty(OPENVPNCL_AUTH, N_A);
-            final String hashAlgo;
-            if (!"none".equalsIgnoreCase(hashAlgoProp)) {
-                //noinspection ConstantConditions
-                hashAlgo = hashAlgoProp.toUpperCase();
-            } else {
-                hashAlgo = "None";
-            }
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_hash_algorithm))
-                    .setText(hashAlgo);
+            updateTileDisplayData(data, true);
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -494,6 +397,137 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 R.id.tile_services_openvpn_client_togglebutton_title, R.id.tile_services_openvpn_client_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+    }
+
+    private void updateTileDisplayData(@NotNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
+
+        //State
+        final String statusKey = \"fake-key\";
+                defaultValuesIfNotFound ? DDWRTCompanionConstants.EMPTY_STRING : null);
+        if (statusKey != null) {
+            final String statusValue;
+            switch (statusKey) {
+                case "1":
+                    statusValue = "Enabled";
+                    break;
+                case "0":
+                    statusValue = "Disabled";
+                    break;
+                default:
+                    statusValue = N_A;
+                    break;
+            }
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_status)).setText(statusValue);
+
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_state)).setText(statusValue);
+        }
+
+        //Server IP/Name
+        String property = data.getProperty(OPENVPNCL_REMOTEIP, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_ip_name))
+                    .setText(property);
+        }
+
+        //Port
+        property = data.getProperty(OPENVPNCL_REMOTEPORT, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_server_port))
+                    .setText(property);
+        }
+
+        //BW In
+        property = data.getProperty(OPENVPNCL__DEV_RX_RATE, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_rx_rate))
+                    .setText(property);
+        }
+
+        //BW Out
+        property = data.getProperty(OPENVPNCL__DEV_TX_RATE, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tx_rate))
+                    .setText(property);
+        }
+
+        //RX Packets
+        property = data.getProperty(OPENVPNCL__DEV_RX_PACKETS, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_rx_packets))
+                    .setText(property);
+        }
+
+        //TX Packets
+        property = data.getProperty(OPENVPNCL__DEV_TX_PACKETS, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tx_packets))
+                    .setText(property);
+        }
+
+        //Tunnel Device
+        //noinspection ConstantConditions
+        property = data.getProperty(OPENVPNCL_TUNTAP, defaultValuesIfNotFound ? N_A : null);
+        if (property != null) {
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_device))
+                    .setText(property.toUpperCase());
+        }
+
+        //Tunnel Proto
+        final String protoProp = data.getProperty(OPENVPNCL_PROTO, defaultValuesIfNotFound ? N_A : null);
+        if (protoProp != null) {
+            final String tunnelProto;
+            if ("tcp-client".equalsIgnoreCase(protoProp)) {
+                tunnelProto = "TCP";
+            } else {
+                //noinspection ConstantConditions
+                tunnelProto = protoProp.toUpperCase();
+            }
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_tunnel_protocol))
+                    .setText(tunnelProto);
+        }
+
+        //Encryption Cipher
+        final String encCipherProp = data.getProperty(OPENVPNCL_CIPHER, defaultValuesIfNotFound ? N_A : null);
+        if (encCipherProp != null) {
+            final String encCipher;
+            //noinspection ConstantConditions
+            switch (encCipherProp.toLowerCase()) {
+                case "aes-512-cbc":
+                    encCipher = "AES-512 CBC";
+                    break;
+                case "aes-256-cbc":
+                    encCipher = "AES-256 CBC";
+                    break;
+                case "aes-192-cbc":
+                    encCipher = "AES-192 CBC";
+                    break;
+                case "aes-128-cbc":
+                    encCipher = "AES-128 CBC";
+                    break;
+                case "bf-cbc":
+                    encCipher = "Blowfish CBC";
+                    break;
+                default:
+                    encCipher = encCipherProp;
+                    break;
+            }
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_encryption_cipher))
+                    .setText(encCipher);
+        }
+
+        //Hash Algo
+        final String hashAlgoProp = data.getProperty(OPENVPNCL_AUTH, defaultValuesIfNotFound ? N_A : null);
+        if (hashAlgoProp != null) {
+            final String hashAlgo;
+            if (!"none".equalsIgnoreCase(hashAlgoProp)) {
+                //noinspection ConstantConditions
+                hashAlgo = hashAlgoProp.toUpperCase();
+            } else {
+                hashAlgo = "None";
+            }
+            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_hash_algorithm))
+                    .setText(hashAlgo);
+        }
     }
 
     @Nullable
@@ -526,9 +560,6 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Override
     public void onResultCode(int resultCode, Intent data) {
         switch (resultCode) {
-            case Activity.RESULT_CANCELED:
-                Utils.displayMessage(mParentFragmentActivity, "Operation cancelled", Style.INFO);
-                break;
             case Activity.RESULT_OK:
                 final NVRAMInfo newNvramInfoData = (NVRAMInfo) data.getSerializableExtra(OPENVPNCL_NVRAMINFO);
                 if (newNvramInfoData == null || newNvramInfoData.isEmpty()) {
@@ -547,6 +578,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                         .show();
                 break;
             default:
+                //Ignored
                 break;
         }
     }
@@ -585,10 +617,22 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router) {
+    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router,
+                                      @Nullable final Object returnData) {
         Utils.displayMessage(mParentFragmentActivity,
                 "Success",
                 Style.CONFIRM);
+        //Update info right away
+        if (returnData instanceof NVRAMInfo) {
+            //Run on main thread to avoid the exception:
+            //"Only the original thread that created a view hierarchy can touch its views."
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateTileDisplayData((NVRAMInfo) returnData, false);
+                }
+            });
+        }
     }
 
     @Override

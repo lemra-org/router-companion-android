@@ -77,4 +77,9 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
         return new RouterActionResult(null, exception);
     }
+
+    @Nullable
+    protected Object getDataToReturnOnSuccess() {
+        return this.nvramInfo;
+    }
 }

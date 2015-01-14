@@ -27,7 +27,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 
 public interface RouterActionListener {
 
-    public void onRouterActionSuccess(@NotNull final RouterAction routerAction, @NotNull final Router router);
+    public void onRouterActionSuccess(@NotNull final RouterAction routerAction, @NotNull final Router router, Object returnData);
 
     public void onRouterActionFailure(@NotNull final RouterAction routerAction, @NotNull final Router router, @Nullable final Exception exception);
 }
