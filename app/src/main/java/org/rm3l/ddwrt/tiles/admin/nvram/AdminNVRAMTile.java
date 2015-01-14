@@ -566,7 +566,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
                                     .splitToList(nvramSize[0]);
                             if (nvramUsageList != null && !nvramUsageList.isEmpty()) {
-                                mNvramInfoDefaultSorting.setProperty(NVRAM_SIZE, nvramUsageList.get(0));
+                                final String value = nvramUsageList.get(0);
+                                if (value != null) {
+                                    mNvramInfoDefaultSorting.setProperty(NVRAM_SIZE, value);
+                                }
                             }
                         }
 

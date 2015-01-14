@@ -124,7 +124,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     protected boolean mLoaderStopped = true;
 
-    @Nullable protected ViewGroup viewGroup;
+    protected ViewGroup viewGroup;
 
     @NotNull
     private PageSlidingTabStripFragment parentFragment;
@@ -153,9 +153,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             return fragment;
 
-        } catch (java.lang.InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (java.lang.InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -403,6 +401,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             }
         }
         this.loaderIdsInUse.clear();
+        viewGroup = (ScrollView) getSherlockActivity().getLayoutInflater()
+                .inflate(R.layout.base_tiles_container_scrollview, null);
+
         this.fragmentTiles = this.getTiles(savedInstanceState);
     }
 
@@ -523,9 +524,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
-
-            @NotNull final LayoutInflater layoutInflater = sherlockActivity.getLayoutInflater();
-            viewGroup = (ScrollView) layoutInflater.inflate(R.layout.base_tiles_container_scrollview, null);
 
             @NotNull final List<CardView> cards = new ArrayList<CardView>();
 

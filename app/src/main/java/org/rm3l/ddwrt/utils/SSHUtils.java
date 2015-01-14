@@ -70,7 +70,7 @@ public final class SSHUtils {
         JSch.setLogger(SSHLogger.getInstance());
     }
 
-    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(3) {
+    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(13) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
             Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);

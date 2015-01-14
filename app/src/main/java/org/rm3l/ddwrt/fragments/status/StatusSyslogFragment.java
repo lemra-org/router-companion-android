@@ -43,6 +43,6 @@ public class StatusSyslogFragment extends DDWRTBaseFragment {
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
-                new StatusSyslogTile(this, savedInstanceState, null, true, this.router, null));
+                new StatusSyslogTile(this, mLayout, savedInstanceState, null, true, this.router, null));
     }
 }

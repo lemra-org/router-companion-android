@@ -226,9 +226,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             openvpnclIface = devDeviceLine[0].replace("dev ","").trim();
                         }
 
-                        nvramInfo.setProperty(OPENVPNCL__DEV, openvpnclIface);
-
                         if (!Strings.isNullOrEmpty(openvpnclIface)) {
+                            nvramInfo.setProperty(OPENVPNCL__DEV, openvpnclIface);
                             //noinspection ConstantConditions
                             final Map<WirelessIfaceTile.IfaceStatsType, Long> ifaceRxAndTxRates = getIfaceRxAndTxRates(openvpnclIface);
 

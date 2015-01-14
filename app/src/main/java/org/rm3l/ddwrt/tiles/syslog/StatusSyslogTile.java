@@ -38,8 +38,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,15 +88,19 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     private final boolean mDisplayStatus;
 
-    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments,
-                            @Nullable final String tileTitle, final boolean displayStatus, Router router, @Nullable final String grep) {
+    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @Nullable final ViewGroup parentViewGroup,
+                            @NotNull Bundle arguments, @Nullable final String tileTitle,
+                            final boolean displayStatus, Router router, @Nullable final String grep) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
         this.mGrep = grep;
         this.mDisplayStatus = displayStatus;
         if (!isNullOrEmpty(tileTitle)) {
-        ((TextView) layout.findViewById(R.id.tile_status_router_syslog_title))
-                .setText(tileTitle);
+            ((TextView) layout.findViewById(R.id.tile_status_router_syslog_title))
+                    .setText(tileTitle);
         }
+
+        this.parentViewGroup = parentViewGroup;
+
     }
 
     @Override

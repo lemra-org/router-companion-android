@@ -44,6 +44,6 @@ public class ServicesOpenVPNFragment extends DDWRTBaseFragment {
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
                 new OpenVPNClientTile(this, savedInstanceState, this.router),
-                new OpenVPNLogsTile(this, savedInstanceState, this.router));
+                new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
     }
 }

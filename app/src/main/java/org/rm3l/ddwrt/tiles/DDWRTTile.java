@@ -77,6 +77,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected CompoundButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
+    protected ViewGroup parentViewGroup;
 
     public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
@@ -110,6 +111,15 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     private boolean mLoaderStopped = true;
+
+    protected ViewGroup getParentViewGroup() {
+        return parentViewGroup;
+    }
+
+    public DDWRTTile<T> setParentViewGroup(ViewGroup parentViewGroup) {
+        this.parentViewGroup = parentViewGroup;
+        return this;
+    }
 
     public void setLoaderStopped(boolean mLoaderStopped) {
         this.mLoaderStopped = mLoaderStopped;
