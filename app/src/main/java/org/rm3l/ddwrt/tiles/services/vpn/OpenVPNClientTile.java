@@ -21,9 +21,12 @@
  */
 package org.rm3l.ddwrt.tiles.services.vpn;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -32,16 +35,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -49,8 +59,13 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_BRIDGE;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_CA;
@@ -82,7 +97,8 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsT
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
-public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile.ActivityResultListener {
+public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
+        implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener  {
 
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     public static final String OPENVPNCL__DEV = "___openvpncl__dev";
@@ -91,6 +107,9 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile
     public static final String OPENVPNCL__DEV_RX_PACKETS = OPENVPNCL__DEV + "_rx_packets";
     public static final String OPENVPNCL__DEV_TX_PACKETS = OPENVPNCL__DEV + "_tx_packets";
     public static final String N_A = "N/A";
+    public static final String OPENVPNCL_NVRAMINFO = "OPENVPNCL_NVRAMINFO";
+
+    private NVRAMInfo mNvramInfo;
 
     public OpenVPNClientTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_client, R.id.tile_services_openvpn_client_togglebutton);
@@ -120,6 +139,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mNvramInfo = null;
 
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -154,6 +175,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile
                                         //TLS-RSA-WITH-AES-128-CBC-SHA,
                                         //TLS-RSA-WITH-RC4-128-MD5,
                                         //0}
+                                        //Advanced Options: {1,0}
+                                        OPENVPNCL_ADV,
                                         OPENVPNCL_TLSCIP,
                                         //LZO Compression: {yes, adaptive, no, off}
                                         OPENVPNCL_LZO,
@@ -342,6 +365,9 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
+            mNvramInfo = new NVRAMInfo();
+            mNvramInfo.putAll(data);
+
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
@@ -472,21 +498,109 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo> implements DDWRTTile
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        //TODO
+        if (mNvramInfo == null) {
+            //Loading
+            Utils.displayMessage(mParentFragmentActivity, "Loading data from router - please wait a few seconds.", Style.ALERT);
+            return null;
+        }
 
+        if (mNvramInfo.isEmpty()) {
+            //No data!
+            Utils.displayMessage(mParentFragmentActivity, "No data available - please retry later.", Style.ALERT);
+            return null;
+        }
+
+        final String mRouterUuid = mRouter.getUuid();
         final Intent editOpenVPNClSettingsIntent =
                 new Intent(mParentFragment.getActivity(),
-                        isThemeLight(mParentFragmentActivity, mRouter.getUuid()) ?
+                        isThemeLight(mParentFragmentActivity, mRouterUuid) ?
                         EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
-        //Put Extras over here
+        editOpenVPNClSettingsIntent.putExtra(OPENVPNCL_NVRAMINFO, mNvramInfo);
+        editOpenVPNClSettingsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 
-        return new OnClickIntent("Loading OpenVPN Client detailed settings...",
+        return new OnClickIntent("Loading OpenVPN Client Settings...",
                 editOpenVPNClSettingsIntent, this);
     }
 
     @Override
     public void onResultCode(int resultCode, Intent data) {
-        //TODO
-        Toast.makeText(mParentFragmentActivity, "onResultCode(resultCode=" + resultCode + ",data="+data+")", Toast.LENGTH_SHORT).show();
+        switch (resultCode) {
+            case Activity.RESULT_CANCELED:
+                Utils.displayMessage(mParentFragmentActivity, "Operation cancelled", Style.INFO);
+                break;
+            case Activity.RESULT_OK:
+                final ArrayList<String> varsChanged = data.getStringArrayListExtra(
+                        EditOpenVPNClientSettingsActivity.VARIABLES_CHANGED);
+                final NVRAMInfo newNvramInfoData = (NVRAMInfo) data.getSerializableExtra(OPENVPNCL_NVRAMINFO);
+                if (newNvramInfoData == null || varsChanged == null || varsChanged.isEmpty()) {
+                    Utils.displayMessage(mParentFragmentActivity, "No change", Style.INFO);
+                    break;
+                }
+
+                final Bundle token = new Bundle();
+                token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.toString());
+                token.putSerializable(OPENVPNCL_NVRAMINFO, newNvramInfoData);
+
+                new UndoBarController.UndoBar(mParentFragmentActivity)
+                        .message("OpenVPN Client Settings will be updated")
+                        .listener(this)
+                        .token(token)
+                        .show();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
+        if (parcelable instanceof Bundle) {
+            final Bundle token = (Bundle) parcelable;
+            final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
+            Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+            if (isNullOrEmpty(routerAction)) {
+                return;
+            }
+            try {
+                switch (RouterAction.valueOf(routerAction)) {
+                    case SET_NVRAM_VARIABLES:
+                        new SetNVRAMVariablesAction(
+                                (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO),
+                                this,
+                                mGlobalPreferences)
+                                .execute(mRouter);
+                        break;
+                    default:
+                        //Ignored
+                        break;
+                }
+            } catch (IllegalArgumentException | NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onClear(@NonNull Parcelable[] parcelables) {
+        //Nothing to do
+    }
+
+    @Override
+    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router) {
+        Utils.displayMessage(mParentFragmentActivity,
+                "Success",
+                Style.CONFIRM);
+    }
+
+    @Override
+    public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+        Utils.displayMessage(mParentFragmentActivity,
+                String.format("Error: %s", ExceptionUtils.getRootCauseMessage(exception)),
+                Style.ALERT);
+    }
+
+    @Override
+    public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
+        //Nothing to do
     }
 }

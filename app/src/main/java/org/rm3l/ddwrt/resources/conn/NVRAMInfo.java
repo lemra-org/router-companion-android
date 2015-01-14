@@ -110,6 +110,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String OPENVPNCL_CA = "openvpncl_ca";
     public static final String OPENVPNCL_CLIENT = "openvpncl_client";
     public static final String OPENVPNCL_KEY = \"fake-key\";
+    public static final String OPENVPNCL_ADV = "openvpncl_adv";
 
     /**
      * Default constructor: initialized an empty Properties set

@@ -58,6 +58,93 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
     <string name="router_connection_proto_select">Select connection method</string>
 
+    <!-- OpenVPN -->
+    <string-array name="openvpn_client_settings_tunnel_device_array">
+        <item>TUN</item>
+        <item>TAP</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tunnel_device_array_values">
+        <item>tun</item>
+        <item>tap</item>
+    </string-array>
+
+    <string-array name="openvpn_client_settings_tunnel_protocol_array">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tunnel_protocol_array_values">
+        <item>udp</item>
+        <item>tcp-client</item>
+    </string-array>
+
+    <string-array name="openvpn_client_settings_encryption_cipher_array_values">
+        <item>aes-512-cbc</item>
+        <item>aes-256-cbc</item>
+        <item>aes-192-cbc</item>
+        <item>aes-128-cbc</item>
+        <item>bf-cbc</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_encryption_cipher_array">
+        <item>AES-512 CBC</item>
+        <item>AES-256 CBC</item>
+        <item>AES-192 CBC</item>
+        <item>AES-128 CBC</item>
+        <item>Blowfish CBC</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="openvpn_client_settings_hash_algorithm_array">
+        <item>SHA512</item>
+        <item>SHA256</item>
+        <item>SHA1</item>
+        <item>MD5</item>
+        <item>MD4</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_hash_algorithm_array_values">
+        <item>sha512</item>
+        <item>sha256</item>
+        <item>sha1</item>
+        <item>md5</item>
+        <item>md4</item>
+        <item>none</item>
+    </string-array>
+
+    <string-array name="openvpn_client_settings_tls_cipher_array">
+        <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS–RSA-WITH-RC4-128-MD5</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_tls_cipher_array_values">
+        <item>TLS-DHE-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-DHE-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-DHE-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-AES-256-GCM-SHA384</item>
+        <item>TLS-RSA-WITH-AES-256-CBC-SHA256</item>
+        <item>TLS-RSA-WITH-AES-128-CBC-SHA</item>
+        <item>TLS-RSA-WITH-RC4-128-MD5</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="openvpn_client_settings_lzo_compression_array">
+        <item>Yes</item>
+        <item>Adaptive</item>
+        <item>No</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="openvpn_client_settings_lzo_compression_array_values">
+        <item>yes</item>
+        <item>adaptive</item>
+        <item>no</item>
+        <item>off</item>
+    </string-array>
+
     <!-- Sections -->
     <!-- 1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo} -->
     <string name="status">Status</string>
@@ -310,4 +397,53 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_acra_deviceid_disabled">Disabled</string>
     <string name="services_openvpn">OpenVPN</string>
     <string name="title_openvpncl_settings">OpenVPN Client Settings</string>
+    <string name="openvpn_client_settings_tunnel_device">Tunnel Device</string>
+    <string name="openvpn_client_settings_tunnel_protocol">Tunnel Protocol</string>
+    <string name="openvpn_client_settings_encryption_cipher">Encryption Cipher</string>
+    <string name="openvpn_client_settings_hash_algorithm">Hash Algorithm</string>
+    <string name="openvpn_client_settings_tls_cipher">TLS Cipher</string>
+    <string name="openvpn_client_settings_lzo_compression">LZO Compression</string>
+    <string name="openvpncl_setting_status">Start OpenVPN Client</string>
+    <string name="openvpncl_setting_server_ip_or_name">Server IP/Name</string>
+    <string name="openvpncl_setting_server_ip_name_example">e.g., 192.168.1.254 or host.myvpn.com</string>
+    <string name="openvpncl_setting_server_port">Port</string>
+    <string name="openvpncl_setting_server_port_hint">Default: 1194</string>
+    <string name="openvpncl_setting_server_port_default">1194</string>
+    <string name="openvpncl_setting_tunnel_device">Tunnel Device</string>
+    <string name="openvpncl_setting_tunnel_protocol">Tunnel Protocol</string>
+    <string name="openvpncl_setting_encryption_cipher">Encryption Cipher</string>
+    <string name="openvpncl_setting_hash_algorithm">Hash Algorithm</string>
+    <string name="openvpncl_setting_ca_cert">CA Cert</string>
+    <string name="openvpncl_setting_ca_cert_hint">Master Certificate Authority (CA) certificate</string>
+    <string name="openvpncl_setting_public_client_cert">Public Client Cert</string>
+    <string name="openvpncl_setting_public_client_cert_hint">Client Certificate</string>
+    <string name="openvpncl_setting_private_client_key">Private Client Key</string>
+    <string name="openvpncl_setting_private_client_key_hint">Client Key</string>
+    <string name="openvpncl_setting_advanced_options">Advanced Options</string>
+    <string name="openvpncl_setting_tls_cipher">TLS Cipher</string>
+    <string name="openvpncl_setting_lzo_compression">LZO Compression</string>
+    <string name="openvpncl_setting_nat">NAT</string>
+    <string name="openvpncl_setting_firewall_protection">Firewall Protection</string>
+    <string name="openvpncl_setting_bridge">Bridge TAP to br0</string>
+    <string name="openvpncl_setting_ip_address">IP Address</string>
+    <string name="openvpncl_setting_ip_address_hint">e.g., 192.168.1.254</string>
+    <string name="openvpncl_setting_subnet_mask">Subnet Mask</string>
+    <string name="openvpncl_setting_subnet_mask_hint">e.g., 255.255.255.0</string>
+    <string name="openvpncl_setting_tunnel_mtu">Tunnel MTU Setting</string>
+    <string name="openvpncl_setting_tunnel_mtu_hint">Default: 1400</string>
+    <string name="openvpncl_setting_tunnel_mtu_default">1400</string>
+    <string name="openvpncl_setting_tunnel_udp_fragment">Tunnel UDP Fragment</string>
+    <string name="openvpncl_setting_tunnel_udp_fragment_hint">Default: Disable</string>
+    <string name="openvpncl_setting_tunnel_udp_mss_fix">Tunnel UDP MSS-Fix</string>
+    <string name="openvpncl_setting_nscerttype">nsCertType verification</string>
+    <string name="openvpncl_setting_tls_auth_key">TLS Auth Key</string>
+    <string name="openvpncl_setting_tls_auth_key_hint">TLS Auth Key</string>
+    <string name="openvpncl_setting_additional_config">Additional Config</string>
+    <string name="openvpncl_setting_additional_config_hint">Additional config for OpenVPN</string>
+    <string name="openvpncl_setting_policy_based_routing">Policy based Routing</string>
+    <string name="openvpncl_setting_pkcs12_key">PKCS12 Key</string>
+    <string name="openvpncl_setting_pkcs12_key_hint">PKCS12 Key</string>
+    <string name="openvpncl_setting_static_key">Static Key</string>
+    <string name="openvpncl_setting_static_key_hint">Static Key</string>
+    <string name="openvpn_client_settings_advanced_options_policy_based_routing_hint">Policy based Routing</string>
 </resources>

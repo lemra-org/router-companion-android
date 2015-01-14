@@ -25,6 +25,7 @@ public enum RouterAction {
 
     REBOOT,
     RESTORE_FACTORY_DEFAULTS,
+    SET_NVRAM_VARIABLES,
     UPGRADE_FIRMWARE;
 
 }

@@ -543,6 +543,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                         //TODO
                         break;
                     default:
+                        //Ignored
                         break;
                 }
             } catch (IllegalArgumentException | NullPointerException e) {

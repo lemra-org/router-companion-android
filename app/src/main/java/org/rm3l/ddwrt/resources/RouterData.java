@@ -25,13 +25,15 @@ package org.rm3l.ddwrt.resources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Abstract Router Data type, encapsulating the actual data and an exception, if any
  *
  * @param <T> the data type
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class RouterData<T> {
+public abstract class RouterData<T> implements Serializable {
 
     /**
      * The data wrapped
