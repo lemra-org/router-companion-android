@@ -214,7 +214,7 @@ public final class SSHUtils {
     public static synchronized int runCommands(@NotNull SharedPreferences globalSharedPreferences,
                                                @NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
             throws Exception {
-        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+        Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;

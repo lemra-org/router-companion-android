@@ -60,7 +60,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             String[] cmd = new String[data.size() + 1];
             int i = 0;
             for (final Map.Entry<Object, Object> entry : data.entrySet()) {
-                cmd[i] = String.format("nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
+                cmd[i++] = String.format("nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
             }
             cmd[cmd.length-1] = "nvram commit";
 
