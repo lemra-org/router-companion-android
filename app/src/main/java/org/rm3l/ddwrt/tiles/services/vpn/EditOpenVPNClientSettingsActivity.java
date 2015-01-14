@@ -444,7 +444,7 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
                         @Override
                         public void onClick(final DialogInterface dialogInterface, final int i) {
                             setResult(RESULT_OK, data);
-                            finish();
+                            EditOpenVPNClientSettingsActivity.super.finish();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -452,7 +452,7 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Cancelled - nothing more to do!
                             setResult(RESULT_CANCELED, data);
-                            finish();
+                            EditOpenVPNClientSettingsActivity.super.finish();
                         }
                     }).create().show();
         } else {
