@@ -597,6 +597,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     case SET_NVRAM_VARIABLES:
                         new SetNVRAMVariablesAction(
                                 (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO),
+                                true, //Reboot Router at the end of the operation
                                 this,
                                 mGlobalPreferences)
                                 .execute(mRouter);

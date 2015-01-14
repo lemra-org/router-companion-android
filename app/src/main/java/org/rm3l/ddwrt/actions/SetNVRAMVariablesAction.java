@@ -40,11 +40,20 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
     @NotNull
     private final NVRAMInfo nvramInfo;
 
+    private final boolean withReboot;
+
     public SetNVRAMVariablesAction(@NotNull NVRAMInfo nvramInfo,
                                       @Nullable RouterActionListener listener,
                                       @NotNull SharedPreferences globalSharedPreferences) {
+        this(nvramInfo, false, listener, globalSharedPreferences);
+    }
+
+    public SetNVRAMVariablesAction(@NotNull NVRAMInfo nvramInfo, boolean withReboot,
+                                   @Nullable RouterActionListener listener,
+                                   @NotNull SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
         this.nvramInfo = nvramInfo;
+        this.withReboot = withReboot;
     }
 
     @NotNull
@@ -57,12 +66,13 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             }
             final Properties data = nvramInfo.getData();
             //noinspection ConstantConditions
-            String[] cmd = new String[data.size() + 1];
+            String[] cmd = new String[data.size() + 2];
             int i = 0;
             for (final Map.Entry<Object, Object> entry : data.entrySet()) {
                 cmd[i++] = String.format("nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
             }
-            cmd[cmd.length-1] = "nvram commit";
+            cmd[cmd.length-2] = "nvram commit";
+            cmd[cmd.length-1] = withReboot ? "reboot" : "";
 
             Log.d(LOG_TAG, "cmd: [" + Arrays.toString(cmd) + "]");
 
