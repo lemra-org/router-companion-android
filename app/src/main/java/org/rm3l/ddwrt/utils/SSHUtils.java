@@ -27,46 +27,32 @@ import android.util.Log;
 import android.util.LruCache;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.HostKey;
-import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.KnownHosts;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UserInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
-import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-import static org.rm3l.ddwrt.resources.Encrypted.d;
-import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
@@ -84,7 +70,7 @@ public final class SSHUtils {
         JSch.setLogger(SSHLogger.getInstance());
     }
 
-    private static final LruCache<String, Session> sshSessionsCache = new LruCache<String, Session>(5) {
+    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(3) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
             Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
@@ -100,23 +86,28 @@ public final class SSHUtils {
             }
         }
     };
+
     public static final int CONNECT_TIMEOUT_MILLIS = 30000;
 
     private SSHUtils() {
     }
 
-    public static synchronized void destroySession(@NotNull final Router router) {
+    public static void destroySession(@NotNull final Router router) {
         try {
-            sshSessionsCache.remove(router.getUuid());
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                SSH_SESSIONS_LRU_CACHE.remove(router.getUuid());
+            }
         } catch (final Exception e) {
             //No worries
             e.printStackTrace();
         }
     }
 
-    public static synchronized void destroySession(@NotNull final String uuid) {
+    public static void destroySession(@NotNull final String uuid) {
         try {
-            sshSessionsCache.remove(uuid);
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                SSH_SESSIONS_LRU_CACHE.remove(uuid);
+            }
         } catch (final Exception e) {
             //No worries
             e.printStackTrace();
@@ -124,14 +115,16 @@ public final class SSHUtils {
     }
 
     @Nullable
-    private static synchronized Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
+    private static Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
                                                       @NotNull final Router router,
                                                       @Nullable final Integer connectTimeout) throws Exception {
         final String uuid = router.getUuid();
 
         try {
-
-            final Session sessionCached = sshSessionsCache.get(uuid);
+            final Session sessionCached;
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
+            }
 
             if (sessionCached != null) {
                 if (!sessionCached.isConnected()) {
@@ -179,9 +172,10 @@ public final class SSHUtils {
 
             jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
-            sshSessionsCache.put(uuid, jschSession);
-
-            return sshSessionsCache.get(uuid);
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                SSH_SESSIONS_LRU_CACHE.put(uuid, jschSession);
+                return SSH_SESSIONS_LRU_CACHE.get(uuid);
+            }
         } catch (final JSchException jsche) {
             //Disconnect session, so a new one can be reconstructed next time
             destroySession(uuid);
@@ -189,7 +183,7 @@ public final class SSHUtils {
         }
     }
 
-    public static synchronized void checkConnection(@NotNull SharedPreferences globalSharedPreferences,
+    public static  void checkConnection(@NotNull SharedPreferences globalSharedPreferences,
                                                     @NotNull final Router router, final int connectTimeoutMillis) throws Exception {
         // This is used that for a temporary connection check
         // at this point, we can just make a copy of the existing router and assign it a random UUID
@@ -207,11 +201,13 @@ public final class SSHUtils {
             }
         } finally {
             //Now drop from LRU Cache
-            sshSessionsCache.remove(tempUuid);
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                SSH_SESSIONS_LRU_CACHE.remove(tempUuid);
+            }
         }
     }
 
-    public static synchronized int runCommands(@NotNull SharedPreferences globalSharedPreferences,
+    public static  int runCommands(@NotNull SharedPreferences globalSharedPreferences,
                                                @NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
@@ -250,14 +246,14 @@ public final class SSHUtils {
 
     }
 
-    public static synchronized int runCommands(@NotNull SharedPreferences globalSharedPreferences,
+    public static  int runCommands(@NotNull SharedPreferences globalSharedPreferences,
                                                @NotNull final Router router, @NotNull final String... cmdToExecute)
             throws Exception {
         return runCommands(globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
     @Nullable
-    public static synchronized String[] getManualProperty(@NotNull final Router router, SharedPreferences globalPreferences, @NotNull final String... cmdToExecute) throws Exception {
+    public static  String[] getManualProperty(@NotNull final Router router, SharedPreferences globalPreferences, @NotNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         @Nullable ChannelExec channelExec = null;
@@ -293,7 +289,7 @@ public final class SSHUtils {
     }
 
     @Nullable
-    public static synchronized NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... fieldsToFetch) throws Exception {
+    public static  NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... fieldsToFetch) throws Exception {
 
         if (router == null) {
             return null;
