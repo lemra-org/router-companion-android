@@ -215,7 +215,7 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
                 .setText(mNvramInfo.getProperty(OPENVPNCL_KEY), EDITABLE);
 
         final String tlsCipher = mNvramInfo.getProperty(OPENVPNCL_TLSCIP);
-        position = tlsCipher != null ? tlsCipherSpinnerValues.get(tlsCipher.toLowerCase()) : null;
+        position = tlsCipher != null ? tlsCipherSpinnerValues.get(tlsCipher) : null;
         ((Spinner) findViewById(R.id.openvpn_client_settings_tls_cipher))
                 .setSelection(position != null ? position : 7);
 
