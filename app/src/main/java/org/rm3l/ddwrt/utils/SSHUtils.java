@@ -70,7 +70,8 @@ public final class SSHUtils {
         JSch.setLogger(SSHLogger.getInstance());
     }
 
-    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(13) {
+
+    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(5) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
             Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
@@ -87,7 +88,7 @@ public final class SSHUtils {
         }
     };
 
-    public static final int CONNECT_TIMEOUT_MILLIS = 30000;
+    public static final int CONNECT_TIMEOUT_MILLIS = 10000;
 
     private SSHUtils() {
     }
@@ -111,61 +112,59 @@ public final class SSHUtils {
     private static Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
                                                       @NotNull final Router router,
                                                       @Nullable final Integer connectTimeout) throws Exception {
+
         final String uuid = router.getUuid();
 
         try {
-            final Session sessionCached;
             synchronized (SSH_SESSIONS_LRU_CACHE) {
-                sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
-            }
+                final Session sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
 
-            if (sessionCached != null) {
-                if (!sessionCached.isConnected()) {
-                    sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+                if (sessionCached != null) {
+                    if (!sessionCached.isConnected()) {
+                        sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+                    }
+                    return sessionCached;
                 }
-                return sessionCached;
-            }
 
-            @Nullable final String privKey = \"fake-key\";
-            @NotNull final JSch jsch = new JSch();
+                @Nullable final String privKey = \"fake-key\";
+                @NotNull final JSch jsch = new JSch();
 
-            final String passwordPlain = router.getPasswordPlain();
-            final Session jschSession;
+                final String passwordPlain = router.getPasswordPlain();
+                final Session jschSession;
 
-            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-            switch (sshAuthenticationMethod) {
-                case PUBLIC_PRIVATE_KEY:
-                    //noinspection ConstantConditions
-                    jsch.addIdentity(uuid,
-                            !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
-                            null,
-                            !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                    break;
-                case PASSWORD:
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                    jschSession.setPassword(passwordPlain);
-                    break;
+                final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+                switch (sshAuthenticationMethod) {
+                    case PUBLIC_PRIVATE_KEY:
+                        //noinspection ConstantConditions
+                        jsch.addIdentity(uuid,
+                                !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
+                                null,
+                                !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
+                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                        break;
+                    case PASSWORD:
+                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                        jschSession.setPassword(passwordPlain);
+                        break;
 //            case NONE:
 //                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
 //                jschSession.setPassword(DDWRTCompanionConstants.EMPTY_STRING);
 //                break;
-                default:
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                    break;
-            }
+                    default:
+                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                        break;
+                }
 
-            final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
-            //Set known hosts file to preferences file
+                final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
+                //Set known hosts file to preferences file
 //        jsch.setKnownHosts();
 
-            @NotNull final Properties config = new Properties();
-            config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
-            jschSession.setConfig(config);
+                @NotNull final Properties config = new Properties();
+                config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
+                jschSession.setConfig(config);
 
-            jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+                jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
                 SSH_SESSIONS_LRU_CACHE.put(uuid, jschSession);
                 return SSH_SESSIONS_LRU_CACHE.get(uuid);
             }
@@ -173,6 +172,15 @@ public final class SSHUtils {
             //Disconnect session, so a new one can be reconstructed next time
             destroySession(uuid);
             throw jsche;
+        } finally {
+            Log.d(TAG, "=== SSH_SESSIONS_LRU_CACHE stats ===\n" +
+                    "create_count=" + SSH_SESSIONS_LRU_CACHE.createCount() + ", " +
+                    "eviction_count" + SSH_SESSIONS_LRU_CACHE.evictionCount() + ", " +
+                    "hit_count" + SSH_SESSIONS_LRU_CACHE.hitCount() + ", " +
+                    "miss_count" + SSH_SESSIONS_LRU_CACHE. missCount() + ", " +
+                    "put_count" + SSH_SESSIONS_LRU_CACHE.putCount() + ", " +
+                    "cache size" + SSH_SESSIONS_LRU_CACHE.size() + ", \n" +
+                    "snapshot" + SSH_SESSIONS_LRU_CACHE.snapshot());
         }
     }
 
@@ -185,18 +193,18 @@ public final class SSHUtils {
         try {
             routerCopy.setUuid(tempUuid);
 
-            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
-            if (jschSession == null) {
-                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-            }
-            if (!jschSession.isConnected()) {
-                jschSession.connect(connectTimeoutMillis);
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
+                if (jschSession == null) {
+                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+                }
+                if (!jschSession.isConnected()) {
+                    jschSession.connect(connectTimeoutMillis);
+                }
             }
         } finally {
             //Now drop from LRU Cache
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                SSH_SESSIONS_LRU_CACHE.remove(tempUuid);
-            }
+            destroySession(tempUuid);
         }
     }
 
@@ -209,25 +217,27 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
-            if (jschSession == null) {
-                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-            }
-            if (!jschSession.isConnected()) {
-                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
-            }
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
+                if (jschSession == null) {
+                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+                }
+                if (!jschSession.isConnected()) {
+                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+                }
 
-            channelExec = (ChannelExec) jschSession.openChannel("exec");
+                channelExec = (ChannelExec) jschSession.openChannel("exec");
 
-            channelExec.setCommand(commandsJoiner.join(cmdToExecute));
-            channelExec.setInputStream(null);
-            in = channelExec.getInputStream();
-            err = channelExec.getErrStream();
-            channelExec.connect();
+                channelExec.setCommand(commandsJoiner.join(cmdToExecute));
+                channelExec.setInputStream(null);
+                in = channelExec.getInputStream();
+                err = channelExec.getErrStream();
+                channelExec.connect();
 
-            //FIXME does not return the actual status
+                //FIXME does not return the actual status
 //            return channelExec.getExitStatus();
-            return 0;
+                return 0;
+            }
 
         } finally {
             Closeables.closeQuietly(in);
@@ -253,23 +263,25 @@ public final class SSHUtils {
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
         try {
-            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
-            if (jschSession == null) {
-                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            synchronized (SSH_SESSIONS_LRU_CACHE) {
+                @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+                if (jschSession == null) {
+                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+                }
+                if (!jschSession.isConnected()) {
+                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+                }
+
+                channelExec = (ChannelExec) jschSession.openChannel("exec");
+
+                channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+                channelExec.setInputStream(null);
+                in = channelExec.getInputStream();
+                err = channelExec.getErrStream();
+                channelExec.connect();
+
+                return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
             }
-            if (!jschSession.isConnected()) {
-                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
-            }
-
-            channelExec = (ChannelExec) jschSession.openChannel("exec");
-
-            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
-            channelExec.setInputStream(null);
-            in = channelExec.getInputStream();
-            err = channelExec.getErrStream();
-            channelExec.connect();
-
-            return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
 
         } finally {
             Closeables.closeQuietly(in);
