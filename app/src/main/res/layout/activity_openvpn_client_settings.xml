@@ -71,7 +71,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:hint="@string/openvpncl_setting_server_ip_name_example"
+                    android:hint="@string/openvpncl_setting_server_ip_name_hint"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text"
                     android:maxLines="1"/>
