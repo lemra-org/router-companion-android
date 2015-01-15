@@ -361,62 +361,6 @@ public final class SSHUtils {
             varsToFix[i++] = (multiOutputNvramVar + "=" + (completeValue != null ? JOINER_CARRIAGE_RETURN.join(completeValue) : EMPTY_STRING));
         }
 
-//        final String[] sshdRsaHostKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_rsa_host_key") : null;
-//        final String[] sshdDsaHostKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get sshd_dss_host_key") : null;
-//
-//        final String[] openvpnclCaKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_ca") : null;
-//        final String[] openvpnclClientKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_client") : null;
-//        final String[] openvpnclKeyKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_key") : null;
-//        final String[] openvpnclTlsAuthKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_tlsauth") : null;
-//        final String[] openvpnClStaticKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_static") : null;
-//        final String[] openvpnClRouteKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpncl_route") : null;
-//
-//        final String[] openvpnCaKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_ca") : null;
-//        final String[] openvpnClientKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_client") : null;
-//        final String[] openvpnKeyKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_key") : null;
-//        final String[] openvpnTlsAuthKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_tlsauth") : null;
-//        final String[] openvpnCrtKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_crt") : null;
-//        final String[] openvpnCrlKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_crl") : null;
-//        final String[] openvpnStaticKey = \"fake-key\";
-//                SSHUtils.getManualProperty(router, globalPreferences, "nvram get openvpn_static") : null;
-//
-//
-//        //Fix multi-line output for some variables defined below
-//        final String[] varsToFix =
-//                new String[] {
-//                        "sshd_rsa_host_key=" + (sshdRsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdRsaHostKey) : EMPTY_STRING),
-//                        "sshd_dss_host_key=" + (sshdDsaHostKey != null ? JOINER_CARRIAGE_RETURN.join(sshdDsaHostKey) : EMPTY_STRING),
-//
-//                        "openvpncl_ca=" + (openvpnclCaKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclCaKey) : EMPTY_STRING),
-//                        "openvpncl_client=" + (openvpnclClientKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclClientKey) : EMPTY_STRING),
-//                        "openvpncl_key=" + (openvpnclKeyKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclKeyKey) : EMPTY_STRING),
-//                        "openvpncl_route=" + (openvpnClRouteKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnClRouteKey) : EMPTY_STRING),
-//                        "openvpncl_static=" + (openvpnClStaticKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnClStaticKey) : EMPTY_STRING),
-//                        "openvpncl_tlsauth=" + (openvpnclTlsAuthKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnclTlsAuthKey) : EMPTY_STRING),
-//
-//                        "openvpn_ca=" + (openvpnCaKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnCaKey) : EMPTY_STRING),
-//                        "openvpn_client=" + (openvpnClientKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnClientKey) : EMPTY_STRING),
-//                        "openvpn_key=" + (openvpnKeyKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnKeyKey) : EMPTY_STRING),
-//                        "openvpn_crl=" + (openvpnCrlKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnCrlKey) : EMPTY_STRING),
-//                        "openvpn_crt=" + (openvpnCrtKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnCrtKey) : EMPTY_STRING),
-//                        "openvpn_static=" + (openvpnStaticKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnStaticKey) : EMPTY_STRING),
-//                        "openvpn_tlsauth=" + (openvpnTlsAuthKey != null ? JOINER_CARRIAGE_RETURN.join(openvpnTlsAuthKey) : EMPTY_STRING)
-//                };
-
         String[] outputArray = null;
         if (nvramShow != null) {
             outputArray = new String[nvramShow.length + varsToFix.length];
@@ -453,22 +397,14 @@ public final class SSHUtils {
         private SSHLogger() {
         }
 
-        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
-
-        static {
-            name.put(DEBUG, "[DEBUG] ");
-            name.put(INFO, "[INFO] ");
-            name.put(WARN, "[WARN] ");
-            name.put(ERROR, "[ERROR] ");
-            name.put(FATAL, "[FATAL] ");
-        }
-
         public static SSHLogger getInstance() {
             if (instance == null) {
                 instance = new SSHLogger();
             }
             return instance;
         }
+
+        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
 
         public boolean isEnabled(int level) {
             switch (level) {
@@ -481,6 +417,14 @@ public final class SSHUtils {
                     return true;
             }
             return false;
+        }
+
+        static {
+            name.put(DEBUG, "[DEBUG] ");
+            name.put(INFO, "[INFO] ");
+            name.put(WARN, "[WARN] ");
+            name.put(ERROR, "[ERROR] ");
+            name.put(FATAL, "[FATAL] ");
         }
 
         public void log(int level, String message) {
@@ -507,8 +451,6 @@ public final class SSHUtils {
 
             }
         }
-
-
 
 
     }
