@@ -23,7 +23,6 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -32,7 +31,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -45,9 +43,6 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -65,16 +60,16 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
  */
 public final class SSHUtils {
 
-    private static final String TAG = SSHUtils.class.getSimpleName();
     public static final String STRICT_HOST_KEY_CHECKING = "StrictHostKeyChecking";
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
-
     static {
         JSch.setLogger(SSHLogger.getInstance());
     }
 
+    public static final int CONNECT_TIMEOUT_MILLIS = 10000;
+    private static final String TAG = SSHUtils.class.getSimpleName();
     private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(5) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
@@ -91,8 +86,6 @@ public final class SSHUtils {
             }
         }
     };
-
-    public static final int CONNECT_TIMEOUT_MILLIS = 10000;
 
     private SSHUtils() {
     }
@@ -404,9 +397,8 @@ public final class SSHUtils {
     }
 
     private static class SSHLogger implements com.jcraft.jsch.Logger {
-        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
-
         static final Map<Integer, String> name = Maps.newHashMapWithExpectedSize(5);
+        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
         static {
             name.put(DEBUG, "[DEBUG] ");
             name.put(INFO, "[INFO] ");
@@ -417,7 +409,8 @@ public final class SSHUtils {
 
         private static SSHLogger instance = null;
 
-        private SSHLogger() {}
+        private SSHLogger() {
+        }
 
         public static SSHLogger getInstance() {
             if (instance == null) {
@@ -439,7 +432,7 @@ public final class SSHUtils {
             return false;
         }
 
-        public void log(int level, String message){
+        public void log(int level, String message) {
             final String levelTag = name.get(level);
             final String messageToDisplay = String.format("%s%s\n",
                     isNullOrEmpty(levelTag) ? "???" : levelTag, message);
@@ -463,6 +456,8 @@ public final class SSHUtils {
 
             }
         }
+
+
     }
 
 }
