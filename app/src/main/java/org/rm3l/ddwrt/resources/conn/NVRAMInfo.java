@@ -111,6 +111,15 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String OPENVPNCL_CLIENT = "openvpncl_client";
     public static final String OPENVPNCL_KEY = \"fake-key\";
     public static final String OPENVPNCL_ADV = "openvpncl_adv";
+    public static final String SSHD_RSA_HOST_KEY = \"fake-key\";
+    public static final String SSHD_DSS_HOST_KEY = \"fake-key\";
+    public static final String OPENVPN_CA = "openvpn_ca";
+    public static final String OPENVPN_CLIENT = "openvpn_client";
+    public static final String OPENVPN_KEY = \"fake-key\";
+    public static final String OPENVPN_TLSAUTH = "openvpn_tlsauth";
+    public static final String OPENVPN_CRT = "openvpn_crt";
+    public static final String OPENVPN_CRL = "openvpn_crl";
+    public static final String OPENVPN_STATIC = "openvpn_static";
 
     /**
      * Default constructor: initialized an empty Properties set
