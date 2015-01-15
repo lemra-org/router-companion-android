@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.mgmt.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -50,6 +51,8 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     private final Context context;
     private List<Router> routersList;
     private SparseBooleanArray selectedItems;
+
+    private final Handler mAsyncHandler = new Handler();
 
     public RouterListRecycleViewAdapter(Context context, List<Router> results) {
         routersList = results;
@@ -141,7 +144,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
                     .edit().clear().commit();
 
             //Disconnect session
-            SSHUtils.destroySession(router);
+            destroySSHSession(router);
 
             //Now refresh list
             final List<Router> allRouters = dao.getAllRouters();
@@ -150,6 +153,16 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             return allRouters.size();
         }
         return dao.getAllRouters().size();
+    }
+
+    private void destroySSHSession(@NotNull final Router router) {
+        //Async to avoid ANR because SSHUtils#destroySession makes use of locking mechanisms
+        mAsyncHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                SSHUtils.destroySession(router);
+            }
+        });
     }
 
     @NotNull

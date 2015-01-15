@@ -125,6 +125,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     @NotNull
     private Router mRouter;
 
+    private final Handler mAsyncHandler = new Handler();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,7 +242,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
             mFeedbackDialog.dismiss();
         }
         //Close SSH Session as well
-        SSHUtils.destroySession(mRouter);
+        destroySSHSession();
     }
 
     @Override
@@ -251,7 +253,17 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
             mFeedbackDialog.dismiss();
         }
         //Close SSH Session as well
-        SSHUtils.destroySession(mRouter);
+        destroySSHSession();
+    }
+
+    private void destroySSHSession() {
+        //Async to avoid ANR because SSHUtils#destroySession makes use of locking mechanisms
+        mAsyncHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                SSHUtils.destroySession(mRouter);
+            }
+        });
     }
 
     @Override
