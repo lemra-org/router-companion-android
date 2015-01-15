@@ -75,8 +75,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
  */
 public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
-    private static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
+    protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
+    protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
     private static final String FONT_COLOR_YELLOW_HTML = "<font color='yellow'>";
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
@@ -84,7 +84,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     private final String mGrep;
 
-    private static final int MAX_LOG_LINES = 15;
+    protected static final int MAX_LOG_LINES = 15;
 
     private final boolean mDisplayStatus;
 

@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -31,6 +32,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -43,6 +45,9 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -69,7 +74,6 @@ public final class SSHUtils {
     static {
         JSch.setLogger(SSHLogger.getInstance());
     }
-
 
     private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(5) {
         @Override
@@ -253,6 +257,20 @@ public final class SSHUtils {
                                                @NotNull final Router router, @NotNull final String... cmdToExecute)
             throws Exception {
         return runCommands(globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
+    }
+
+    public static String[] execCommandOverTelnet(@NotNull final Router router, SharedPreferences globalPreferences,
+                                                 final int telnetPort, @NotNull final String... cmdToExecute) throws Exception {
+        //( echo "log 15"; sleep 1 ) | telnet localhost 16
+        final List<String> cmdToRun = Lists.newArrayList();
+        if (cmdToExecute.length > 0) {
+            for (String cmdToExec : cmdToExecute) {
+                cmdToRun.add(String.format("echo \"%s\"", cmdToExec));
+            }
+        }
+
+        return getManualProperty(router, globalPreferences,
+                String.format("( %s ; sleep 1 ) | telnet localhost %d", Joiner.on(";").skipNulls().join(cmdToRun), telnetPort));
     }
 
     @Nullable
