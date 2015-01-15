@@ -258,7 +258,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                                 final long txErrors = Long.parseLong(packetsInfo[3]);
                                 nvramInfo.setProperty(wlIface + "_tx_packets",
                                         String.format("%s (%s)",
-                                                packetsInfo[0], txErrors <=0 ? "no error" :
+                                                packetsInfo[2], txErrors <=0 ? "no error" :
                                                         (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                             }
                         } catch (final Exception e) {

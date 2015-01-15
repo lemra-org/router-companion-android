@@ -263,7 +263,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                     final long txErrors = Long.parseLong(packetsInfo[3]);
                                     nvramInfo.setProperty(OPENVPNCL__DEV_TX_PACKETS,
                                             String.format("%s (%s)",
-                                                    packetsInfo[0], txErrors <=0 ? "no error" :
+                                                    packetsInfo[2], txErrors <=0 ? "no error" :
                                                             (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                                 }
                             } catch (final Exception e) {
