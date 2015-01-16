@@ -71,6 +71,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".DDWRTMainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:parentActivityName=".mgmt.RouterManagementActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -116,9 +117,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
             android:label="@string/wifi_qr_code"
             android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/PopupTheme">
-            <meta-data
+            android:theme="@android:style/Theme.Holo"
+            android:windowSoftInputMode="adjustResize">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -127,9 +128,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivityLight"
             android:label="@string/wifi_qr_code"
             android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/PopupThemeLight">
-            <meta-data
+            android:theme="@android:style/Theme.Holo.Light"
+            android:windowSoftInputMode="adjustResize">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -152,9 +153,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivity"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/PopupTheme">
-            <meta-data
+            android:theme="@android:style/Theme.Holo"
+            android:windowSoftInputMode="adjustResize">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -163,9 +164,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivityLight"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/PopupThemeLight">
-            <meta-data
+            android:theme="@android:style/Theme.Holo.Light"
+            android:windowSoftInputMode="adjustResize">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>

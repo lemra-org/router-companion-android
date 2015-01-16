@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
 
-    <style name="AppBaseTheme" parent="android:Theme.Holo"/>
+    <style name="AppBaseTheme" parent="android:Theme.Holo" />
 
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowBackground">@color/background_window</item>
@@ -63,7 +63,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="undoBarStyle">@style/UndoBarMaterialStyle</item>
     </style>
 
-    <style name="PopupTheme" parent="android:Theme.Holo.Dialog">
+    <style name="PopupTheme" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
@@ -71,7 +71,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="PopupThemeLight" parent="android:Theme.Holo.Light.Dialog">
+    <style name="PopupThemeLight" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateAlwaysHidden</item>

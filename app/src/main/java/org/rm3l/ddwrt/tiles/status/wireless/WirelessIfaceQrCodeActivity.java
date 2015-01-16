@@ -22,18 +22,19 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -44,6 +45,8 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 
@@ -64,16 +67,73 @@ public class WirelessIfaceQrCodeActivity extends Activity {
 
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";
+    public static final int COMPRESSION_QUALITY = 100;
+    /**
+     * ***********************************************************
+     * getting from com.google.zxing.client.android.encode.QRCodeEncoder
+     * <p/>
+     * See the sites below
+     * http://code.google.com/p/zxing/
+     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/EncodeActivity.java
+     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java
+     */
+
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int BLACK = 0xFF000000;
     private String mRouterUuid;
     private String mWifiQrCodeString;
     private String mSsid;
     private Bitmap mBitmap;
-
     private File mFileToShare;
-
     private Exception mException;
-
     private ShareActionProvider mShareActionProvider;
+
+    @Nullable
+    private static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
+        if (contents == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        final String encoding = guessAppropriateEncoding(contents);
+        if (encoding != null) {
+            hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        final MultiFormatWriter writer = new MultiFormatWriter();
+        final BitMatrix result;
+        try {
+            result = writer.encode(contents, format, imgWidth, imgHeight, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        final int width = result.getWidth();
+        final int height = result.getHeight();
+        final int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            final int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        final Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+
+        return bitmap;
+    }
+
+    @Nullable
+    private static String guessAppropriateEncoding(@NotNull final CharSequence contents) {
+        // Very crude at the moment
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                return "UTF-8";
+            }
+        }
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +141,21 @@ public class WirelessIfaceQrCodeActivity extends Activity {
 
         //Show activity as popup
         //To show activity as dialog and dim the background, you need to declare android:theme="@style/PopupTheme" on for the chosen activity on the manifest
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        final WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT; //fixed height
-        params.width = WindowManager.LayoutParams.WRAP_CONTENT; //fixed width
-        params.alpha = 1.0f;
-        params.dimAmount = 0.5f;
-        getWindow().setAttributes(params);
+//        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//        final WindowManager.LayoutParams params = getWindow().getAttributes();
+//        params.height = WindowManager.LayoutParams.WRAP_CONTENT; //fixed height
+//        params.width = WindowManager.LayoutParams.WRAP_CONTENT; //fixed width
+//        params.alpha = 1.0f;
+//        params.dimAmount = 0.5f;
+//        getWindow().setAttributes(params);
 
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
+
+        final ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
@@ -99,11 +164,13 @@ public class WirelessIfaceQrCodeActivity extends Activity {
 
         final ImageView qrCodeImageView = (ImageView) findViewById(R.id.tile_status_wireless_iface_qrcode_image);
         try {
-            mBitmap = encodeAsBitmap(mWifiQrCodeString, BarcodeFormat.QR_CODE, 600, 300);
-            qrCodeImageView
-                    .setImageBitmap(mBitmap);
+            final Point outSize = new Point();
+            getWindowManager().getDefaultDisplay().getSize(outSize);
+            mBitmap =
+                    encodeAsBitmap(mWifiQrCodeString, BarcodeFormat.QR_CODE, outSize.x, outSize.y / 2);
+            qrCodeImageView.setImageBitmap(mBitmap);
 
-        } catch (final WriterException e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             mException = e;
             findViewById(R.id.tile_status_wireless_iface_qrcode_image_error).setVisibility(View.VISIBLE);
@@ -117,7 +184,7 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_wireless_iface_qr_code_options, menu);
 
-        /** Getting the actionprovider associated with the menu item whose id is share */
+        /* Getting the actionprovider associated with the menu item whose id is share */
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
         shareMenuItem.setEnabled(mException == null);
 
@@ -137,7 +204,7 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-            bitmapToExport.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+            bitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,6 +224,19 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         setShareFile(mFileToShare);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Call to update the share intent
@@ -202,62 +282,6 @@ public class WirelessIfaceQrCodeActivity extends Activity {
             mFileToShare.delete();
         }
         super.onDestroy();
-    }
-
-    /**************************************************************
-     * getting from com.google.zxing.client.android.encode.QRCodeEncoder
-     *
-     * See the sites below
-     * http://code.google.com/p/zxing/
-     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/EncodeActivity.java
-     * http://code.google.com/p/zxing/source/browse/trunk/android/src/com/google/zxing/client/android/encode/QRCodeEncoder.java
-     */
-
-    private static final int WHITE = 0xFFFFFFFF;
-    private static final int BLACK = 0xFF000000;
-
-    Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
-        if (contents == null) {
-            return null;
-        }
-        Map<EncodeHintType, Object> hints = null;
-        String encoding = guessAppropriateEncoding(contents);
-        if (encoding != null) {
-            hints = new EnumMap<>(EncodeHintType.class);
-            hints.put(EncodeHintType.CHARACTER_SET, encoding);
-        }
-        MultiFormatWriter writer = new MultiFormatWriter();
-        BitMatrix result;
-        try {
-            result = writer.encode(contents, format, img_width, img_height, hints);
-        } catch (IllegalArgumentException iae) {
-            // Unsupported format
-            return null;
-        }
-        int width = result.getWidth();
-        int height = result.getHeight();
-        int[] pixels = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            int offset = y * width;
-            for (int x = 0; x < width; x++) {
-                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
-            }
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height,
-                Bitmap.Config.ARGB_8888);
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
-    }
-
-    private static String guessAppropriateEncoding(CharSequence contents) {
-        // Very crude at the moment
-        for (int i = 0; i < contents.length(); i++) {
-            if (contents.charAt(i) > 0xFF) {
-                return "UTF-8";
-            }
-        }
-        return null;
     }
 
 }

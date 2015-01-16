@@ -90,10 +90,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
+    public static final String SAVE_ROUTER_SELECTED = "SAVE_ROUTER_SELECTED";
     public static final int ROUTER_SETTINGS_ACTIVITY_CODE = 1;
     public static final String IS_SORTING_STRATEGY_CHANGED = "isSortingStrategyChanged";
     public static final String ROUTER_ACTION = "ROUTER_ACTION";
-
+    private static final int LISTENED_REQUEST_CODE = 77;
+    private final Handler mAsyncHandler = new Handler();
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -107,25 +109,17 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     private String[] mDDWRTNavigationMenuSections;
     //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
-
     private FeedbackDialog mFeedbackDialog;
-
     private String mCurrentSortingStrategy;
-
     private long mCurrentSyncInterval;
-
     private long mCurrentTheme;
-
     @NotNull
     private SharedPreferences mPreferences;
-
     @NotNull
     private SharedPreferences mGlobalPreferences;
-
     @NotNull
     private Router mRouter;
-
-    private final Handler mAsyncHandler = new Handler();
+    private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,7 +129,13 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
-        final Router router = this.dao.getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED));
+        String uuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        if (uuid == null) {
+            if (savedInstanceState != null) {
+                uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+            }
+        }
+        final Router router = this.dao.getRouter(uuid);
 
         if (router == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
@@ -205,7 +205,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
         //Load from Shared Preferences
-        this.mCurrentSortingStrategy = this.mPreferences.getString(SORTING_STRATEGY_PREF,"");
+        this.mCurrentSortingStrategy = this.mPreferences.getString(SORTING_STRATEGY_PREF, "");
         this.mCurrentSyncInterval = this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
         this.mCurrentTheme = this.mPreferences.getLong(THEMING_PREF, -1l);
 
@@ -232,6 +232,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(SAVE_ITEM_SELECTED, mPosition);
+        savedInstanceState.putString(SAVE_ROUTER_SELECTED, mRouterUuid);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -341,11 +342,11 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                                 token.putString(ROUTER_ACTION, RouterAction.REBOOT.toString());
 
                                 new UndoBarController.UndoBar(DDWRTMainActivity.this)
-                                    .message(String.format("Router '%s' will be rebooted",
-                                            displayName))
-                                    .listener(DDWRTMainActivity.this)
-                                    .token(token)
-                                    .show();
+                                        .message(String.format("Router '%s' will be rebooted",
+                                                displayName))
+                                        .listener(DDWRTMainActivity.this)
+                                        .token(token)
+                                        .show();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -404,7 +405,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult("+requestCode+","+resultCode+","+data);
+        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         // Check which request we're responding to
         switch (requestCode) {
             case LISTENED_REQUEST_CODE:
@@ -412,16 +413,16 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                 if (mCurrentActivityResultListener != null) {
                     final DDWRTTile.ActivityResultListener listener = mCurrentActivityResultListener;
                     mCurrentActivityResultListener = null;
-                    listener.onResultCode(resultCode, data );
+                    listener.onResultCode(resultCode, data);
                 }
                 break;
             case ROUTER_SETTINGS_ACTIVITY_CODE:
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
-                    if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF,-1l) ||
+                    if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l) ||
                             this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
                             !this.mCurrentSortingStrategy
-                                    .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF,""))) {
+                                    .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF, ""))) {
                         //Reload UI
                         final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
                         alertDialog.show();
@@ -582,6 +583,18 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                 Style.ALERT);
     }
 
+    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
+        Log.d(TAG, "startActivityForResult(" + intent + "," + listener +
+                ") / mCurrentActivityResultListener=" + mCurrentActivityResultListener);
+
+        if (mCurrentActivityResultListener != null) {
+            Log.e(TAG, "Activity trying to start more than one activity at a time...");
+            return;
+        }
+        mCurrentActivityResultListener = listener;
+        startActivityForResult(intent, LISTENED_REQUEST_CODE);
+    }
+
     // The click listener for ListView in the navigation drawer
     private class DrawerItemClickListener implements
             ListView.OnItemClickListener {
@@ -590,22 +603,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                                 long id) {
             selectItem(position);
         }
-    }
-
-    private static final int LISTENED_REQUEST_CODE = 77;
-
-    private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
-
-    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener ) {
-        Log.d(TAG, "startActivityForResult("+intent+","+listener+
-                ") / mCurrentActivityResultListener="+mCurrentActivityResultListener);
-
-        if (mCurrentActivityResultListener != null) {
-            Log.e(TAG, "Activity trying to start more than one activity at a time..." );
-            return;
-        }
-        mCurrentActivityResultListener = listener;
-        startActivityForResult(intent, LISTENED_REQUEST_CODE);
     }
 
 }

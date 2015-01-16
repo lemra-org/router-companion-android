@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.tiles.services.vpn;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -74,18 +75,12 @@ import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRA
 public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity {
 
     private static final String TAG = EditOpenVPNClientSettingsActivity.class.getSimpleName();
-
-    private NVRAMInfo mNvramInfo;
-
-    private String mRouterUuid;
-
     private static final BiMap<String, Integer> tunnelDeviceSpinnerValues = HashBiMap.create(2);
     private static final BiMap<String, Integer> tunnelProtoSpinnerValues = HashBiMap.create(2);
     private static final BiMap<String, Integer> encryptionCipherSpinnerValues = HashBiMap.create(6);
     private static final BiMap<String, Integer> hashAlgoSpinnerValues = HashBiMap.create(6);
     private static final BiMap<String, Integer> tlsCipherSpinnerValues = HashBiMap.create(8);
     private static final BiMap<String, Integer> lzoCompressionSpinnerValues = HashBiMap.create(4);
-
     static {
         tunnelDeviceSpinnerValues.put("tun", 0);
         tunnelDeviceSpinnerValues.put("tap", 1);
@@ -122,11 +117,19 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
         lzoCompressionSpinnerValues.put("off", 3);
     }
 
+    private NVRAMInfo mNvramInfo;
+    private String mRouterUuid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_openvpn_client_settings);
+
+        final ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
 
         final Intent intent = getIntent();
         mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(OPENVPNCL_NVRAMINFO);
@@ -136,7 +139,6 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
             Toast.makeText(this, "Could not load OpenVPN Client settings", Toast.LENGTH_SHORT).show();
             finish();
         }
-
 
         //Advanced Options
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag))
@@ -462,5 +464,4 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
             super.finish();
         }
     }
-
 }
