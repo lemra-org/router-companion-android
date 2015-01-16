@@ -36,6 +36,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -124,38 +125,44 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
-                                mGlobalPreferences, GREP_MODEL_NAME_PROC_CPUINFO +
-                                        "| uniq", GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l", "uptime");
-                        if (otherCmds != null && otherCmds.length >= 3) {
-                            //Model
-                            final String modelNameLine = otherCmds[0];
-                            if (modelNameLine != null) {
-                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
-                                        modelNameLine
-                                                .replace(":", "")
-                                                .replace("model name", "")
-                                        .trim());
+                                mGlobalPreferences,
+                                "uptime | awk -F'average:' '{ print $2}'",
+                                GREP_MODEL_NAME_PROC_CPUINFO + "| uniq",
+                                GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l");
+
+                        if (otherCmds != null) {
+
+                            if (otherCmds.length >= 1) {
+                                //Load Avg
+                                nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
+                                        StringUtils.trimToNull(otherCmds[0]));
+                                //Removed: computation done on the router:
+//                                strings = Splitter.on("load average").omitEmptyStrings()
+//                                        .trimResults().splitToList(otherCmds[0]);
+//                                Log.d(LOG_TAG, "strings for load avg: " + strings);
+//                                if (strings != null && strings.size() >= 2) {
+//                                    final String loadAvg = strings.get(1);
+//                                    if (loadAvg != null) {
+//                                        nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
+//                                                loadAvg.replace(":", "").trim());
+//                                    }
+//                                }
                             }
-//                            strings = Splitter.on("model name\t:").omitEmptyStrings().trimResults().splitToList(modelNameLine);
-//                            Log.d(LOG_TAG, "strings for model name: " + strings);
-//                            if (strings != null && strings.size() >= 1) {
-//                                nvramInfo.setProperty(NVRAMInfo.CPU_MODEL, strings.get(0));
-//                            }
-
-                            //Nb Cores
-                            nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[1]);
-
-                            //Load Avg
-                            strings = Splitter.on("load average").omitEmptyStrings().trimResults().splitToList(otherCmds[2]);
-                            Log.d(LOG_TAG, "strings for load avg: " + strings);
-                            if (strings != null && strings.size() >= 2) {
-                                final String loadAvg = strings.get(1);
-                                if (loadAvg != null) {
-                                    nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
-                                            loadAvg.replace(":", "").trim());
+                            if (otherCmds.length >= 2) {
+                                //Model
+                                final String modelNameLine = otherCmds[1];
+                                if (modelNameLine != null) {
+                                    nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
+                                            modelNameLine
+                                                    .replace(":", "")
+                                                    .replace("model name", "")
+                                                    .trim());
                                 }
                             }
-
+                            if (otherCmds.length >= 3) {
+                                //Nb Cores
+                                nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[2]);
+                            }
                         }
                     }
 
