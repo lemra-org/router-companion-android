@@ -109,27 +109,34 @@ public final class SSHUtils {
     private SSHUtils() {
     }
 
-    public static void destroySession(@NotNull final Router router) {
-        destroySession(router.getUuid());
+    public static void destroySession(@Nullable final Router router) {
+        if (router != null) {
+            destroySession(router.getUuid());
+        }
     }
 
-    public static void destroySession(@NotNull final String uuid) {
-        try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                SSH_SESSIONS_LRU_CACHE.remove(uuid);
+    public static void destroySession(@Nullable final String uuid) {
+        if (uuid != null) {
+            try {
+                synchronized (SSH_SESSIONS_LRU_CACHE) {
+                    SSH_SESSIONS_LRU_CACHE.remove(uuid);
+                }
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
             }
-        } catch (final Exception e) {
-            //No worries
-            e.printStackTrace();
         }
     }
 
     @Nullable
     private static Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
-                                                      @NotNull final Router router,
+                                         @Nullable final Router router,
                                                       @Nullable final Integer connectTimeout) throws Exception {
 
-        final String uuid = router.getUuid();
+        final String uuid;
+        if (router == null || (uuid = router.getUuid()) == null) {
+            return null;
+        }
 
         try {
             synchronized (SSH_SESSIONS_LRU_CACHE) {
@@ -173,7 +180,7 @@ public final class SSHUtils {
 
                 final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
                 //Set known hosts file to preferences file
-//        jsch.setKnownHosts();
+                //        jsch.setKnownHosts();
 
                 @NotNull final Properties config = new Properties();
                 config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
@@ -191,12 +198,12 @@ public final class SSHUtils {
         } finally {
             Log.d(TAG, "=== SSH_SESSIONS_LRU_CACHE stats ===\n" +
                     "create_count=" + SSH_SESSIONS_LRU_CACHE.createCount() + ", " +
-                    "eviction_count" + SSH_SESSIONS_LRU_CACHE.evictionCount() + ", " +
-                    "hit_count" + SSH_SESSIONS_LRU_CACHE.hitCount() + ", " +
-                    "miss_count" + SSH_SESSIONS_LRU_CACHE. missCount() + ", " +
-                    "put_count" + SSH_SESSIONS_LRU_CACHE.putCount() + ", " +
-                    "cache size" + SSH_SESSIONS_LRU_CACHE.size() + ", \n" +
-                    "snapshot" + SSH_SESSIONS_LRU_CACHE.snapshot());
+                    "eviction_count=" + SSH_SESSIONS_LRU_CACHE.evictionCount() + ", " +
+                    "hit_count=" + SSH_SESSIONS_LRU_CACHE.hitCount() + ", " +
+                    "miss_count=" + SSH_SESSIONS_LRU_CACHE.missCount() + ", " +
+                    "put_count=" + SSH_SESSIONS_LRU_CACHE.putCount() + ", " +
+                    "cache size=" + SSH_SESSIONS_LRU_CACHE.size() + ", \n" +
+                    "snapshot=" + SSH_SESSIONS_LRU_CACHE.snapshot());
         }
     }
 
@@ -404,8 +411,6 @@ public final class SSHUtils {
             return instance;
         }
 
-        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
-
         public boolean isEnabled(int level) {
             switch (level) {
                 case DEBUG:
@@ -418,6 +423,8 @@ public final class SSHUtils {
             }
             return false;
         }
+
+        private static final String LOG_TAG = TAG + "." + SSHLogger.class.getSimpleName();
 
         static {
             name.put(DEBUG, "[DEBUG] ");
@@ -451,6 +458,8 @@ public final class SSHUtils {
 
             }
         }
+
+
 
 
     }

@@ -24,11 +24,12 @@ package org.rm3l.ddwrt.resources.conn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import static org.rm3l.ddwrt.resources.Encrypted.*;
 
 import java.io.Serializable;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.Encrypted.d;
+import static org.rm3l.ddwrt.resources.Encrypted.e;
 
 /**
  * Encapsulates everything needed to establish a connection to a given router.
@@ -339,6 +340,7 @@ public class Router implements Serializable {
     @NotNull
     public String toString() {
         return "Router{" +
+                "sshAuth=Type=" + getSshAuthenticationMethod() +
                 "routerConnectionProtocol=" + routerConnectionProtocol +
                 ", name='" + name + '\'' +
                 ", remoteIpAddress='" + remoteIpAddress + '\'' +
