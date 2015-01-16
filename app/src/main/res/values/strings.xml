@@ -445,4 +445,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="openvpncl_setting_static_key">Static Key</string>
     <string name="openvpncl_setting_static_key_hint">Used for P2P links. No pki needed.</string>
     <string name="openvpn_client_settings_advanced_options_policy_based_routing_hint">One line per allowed IP in the form 0.0.0.0/0. Forces clients to use the tunnel as default gateway.</string>
+    <string name="wireless_iface_temperature">Temperature</string>
 </resources>

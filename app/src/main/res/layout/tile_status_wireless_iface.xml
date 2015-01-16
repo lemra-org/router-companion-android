@@ -25,8 +25,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_wireless_iface"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -43,18 +43,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_status_wireless_iface_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true">
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true">
 
                 <TextView
                     android:id="@+id/tile_status_wireless_iface_ssid"
@@ -69,12 +69,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textColor="@color/ddwrt_green"/>
 
                 <ImageButton
+                    android:id="@+id/tile_status_wireless_iface_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
                     android:contentDescription="@string/menu"
-                    android:id="@+id/tile_status_wireless_iface_menu"/>
+                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light" />
 
             </LinearLayout>
 
@@ -108,10 +108,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_status_wireless_iface_gridlayout"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3">
+                android:columnCount="3"
+                android:visibility="gone">
 
                 <!-- Ifname -->
                 <TextView
@@ -263,6 +263,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:gravity="start"
                     android:singleLine="false"
                     android:text="@string/loading"/>
+
+                <!-- Temperature -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wireless_iface_temperature"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wireless_iface_temperature"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading" />
 
 
                 <!--&lt;!&ndash; Rate &ndash;&gt;-->
@@ -462,12 +487,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_wireless_iface_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_wireless_iface_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"

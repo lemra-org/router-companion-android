@@ -68,6 +68,8 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
+import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
@@ -75,11 +77,11 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
  */
 public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
-    private static final String WIRELESS_IFACE = "wireless_iface";
-    private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
     public static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
     public static final Pattern HEX_ONLY_QR_CODE_PATTERN = Pattern.compile("/^[0-9a-f]+$/i");
-
+    public static final char DEGREE_SYMBOL = '\u00B0';
+    private static final String WIRELESS_IFACE = "wireless_iface";
+    private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
     @NotNull
     private final String iface;
 
@@ -221,9 +223,21 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                     nvramInfo.setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""),
                             wlIface);
 
-                    //Set RX and TX Network Bandwidths on Physical Interface
+                    //Set Temp, RX and TX Network Bandwidths on Physical Interface
                     final String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
                     if (!isNullOrEmpty(phyIface)) {
+
+                        //Set temperature
+                        //noinspection ConstantConditions
+                        final Map<TemperatureUnit, String> ifaceTemperatures = getIfaceTemperature(phyIface);
+                        final String celsius = ifaceTemperatures.get(CELSIUS);
+                        final String fahrenheit = ifaceTemperatures.get(FAHRENHEIT);
+                        if (!(isNullOrEmpty(celsius) || isNullOrEmpty(fahrenheit))) {
+                            nvramInfo.setProperty(wlIface + "_temperature",
+                                    celsius + DEGREE_SYMBOL + CELSIUS + " (" + fahrenheit + DEGREE_SYMBOL + FAHRENHEIT + ")");
+                        }
+
+                        //RX and TX Bytes
                         //noinspection ConstantConditions
                         final Map<IfaceStatsType, Long> ifaceRxAndTxRates = getIfaceRxAndTxRates(phyIface);
                         final Long rxBps = ifaceRxAndTxRates.get(IfaceStatsType.RX_BYTES);
@@ -269,6 +283,32 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 }
 
                 return nvramInfo;
+            }
+
+            @NotNull
+            private Map<TemperatureUnit, String> getIfaceTemperature(@NotNull final String phyIface) {
+                final Map<TemperatureUnit, String> result = Maps.newHashMapWithExpectedSize(2);
+                final String phyIfaceVarNameInRouter = WirelessIfaceTile.class.getSimpleName() + "TemperatureCelsius";
+                try {
+                    final String[] temperatures = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                            String.format("%s=$(echo $((`wl -i %s phy_tempsense | awk {' print $1 '}`/2+20))); echo \"C:$%s\"; echo \"F:$(($%s*9/5+32))\"",
+                                    phyIfaceVarNameInRouter, phyIface, phyIfaceVarNameInRouter, phyIfaceVarNameInRouter));
+                    if (temperatures != null && temperatures.length >= 2) {
+                        for (final String temperature : temperatures) {
+                            if (temperature == null) {
+                                continue;
+                            }
+                            if (temperature.startsWith("C:")) {
+                                result.put(CELSIUS, temperature.replaceAll("C:", "").trim());
+                            } else if (temperature.startsWith("F:")) {
+                                result.put(FAHRENHEIT, temperature.replaceAll("F:", "").trim());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return result;
             }
 
             @NotNull
@@ -434,6 +474,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 mode = netmode;
             }
             netModeView.setText(mode);
+
+            //Temperature
+            @NotNull final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
+            final String temperatureProperty = data.getProperty(this.iface + "_temperature", data.getProperty(this.parentIface + "_temperature", "-"));
+            temperatureView.setText(temperatureProperty);
 
             //Channel
             @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
@@ -625,6 +670,22 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         @Override
         public String toString() {
             return encType;
+        }
+    }
+
+    public enum TemperatureUnit {
+        CELSIUS("C"),
+        FAHRENHEIT("F");
+
+        private final String unitDisplay;
+
+        TemperatureUnit(String unitDisplay) {
+            this.unitDisplay = unitDisplay;
+        }
+
+        @Override
+        public String toString() {
+            return unitDisplay;
         }
     }
 }
