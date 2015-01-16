@@ -21,37 +21,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <ScrollView
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceQrCodeActivity"
-    android:scrollbars="none">
+    android:scrollbars="none"
+    tools:context="org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceQrCodeActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/tile_status_wireless_iface_qrcode_view_to_share"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tile_status_wireless_iface_qrcode_ssid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/ddwrt_green"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/ddwrt_green" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -60,17 +60,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <ImageView
                     android:id="@+id/tile_status_wireless_iface_qrcode_image"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/tile_status_wireless_iface_qrcode_image_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tile_status_wireless_iface_qrcode_image_error"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/ddwrt_purple"
-                    android:text="@string/internal_error_please_try_again"
                     android:layout_gravity="center"
                     android:gravity="center"
+                    android:text="@string/internal_error_please_try_again"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/ddwrt_purple"
                     android:visibility="gone"/>
 
             </RelativeLayout>
@@ -80,8 +88,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/tile_status_wireless_iface_qrcode_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:text="@string/wifi_qr_code_note"/>
+            android:text="@string/wifi_qr_code_note"
+            android:textAppearance="?android:textAppearanceSmall" />
 
     </LinearLayout>
 </ScrollView>

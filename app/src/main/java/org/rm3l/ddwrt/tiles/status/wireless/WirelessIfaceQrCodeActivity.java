@@ -30,6 +30,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.view.Menu;
@@ -49,6 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -87,6 +89,8 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     private File mFileToShare;
     private Exception mException;
     private ShareActionProvider mShareActionProvider;
+
+    private Menu optionsMenu;
 
     @Nullable
     private static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
@@ -163,19 +167,47 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
 
         final ImageView qrCodeImageView = (ImageView) findViewById(R.id.tile_status_wireless_iface_qrcode_image);
-        try {
-            final Point outSize = new Point();
-            getWindowManager().getDefaultDisplay().getSize(outSize);
-            mBitmap =
-                    encodeAsBitmap(mWifiQrCodeString, BarcodeFormat.QR_CODE, outSize.x, outSize.y / 2);
-            qrCodeImageView.setImageBitmap(mBitmap);
 
-        } catch (final Exception e) {
-            e.printStackTrace();
-            mException = e;
-            findViewById(R.id.tile_status_wireless_iface_qrcode_image_error).setVisibility(View.VISIBLE);
-            qrCodeImageView.setVisibility(View.GONE);
-        }
+        final View loadingView = findViewById(R.id.tile_status_wireless_iface_qrcode_image_loading_view);
+        loadingView.setVisibility(View.VISIBLE);
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Point outSize = new Point();
+                            getWindowManager().getDefaultDisplay().getSize(outSize);
+                            mBitmap =
+                                    encodeAsBitmap(mWifiQrCodeString, BarcodeFormat.QR_CODE, outSize.x, outSize.y / 2);
+                            qrCodeImageView.setImageBitmap(mBitmap);
+                            qrCodeImageView.setVisibility(View.VISIBLE);
+                            loadingView.setVisibility(View.GONE);
+                            if (optionsMenu != null) {
+                                optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share)
+                                        .setEnabled(true);
+                            }
+
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            mException = e;
+                            Utils.reportException(e);
+                            findViewById(R.id.tile_status_wireless_iface_qrcode_image_error)
+                                    .setVisibility(View.VISIBLE);
+                            qrCodeImageView.setVisibility(View.GONE);
+                            loadingView.setVisibility(View.GONE);
+                            qrCodeImageView.setVisibility(View.GONE);
+                            if (optionsMenu != null) {
+                                optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share)
+                                        .setEnabled(false);
+                            }
+                        }
+                    }
+                });
+            }
+        });
 
         ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_ssid)).setText(mSsid);
     }
@@ -183,6 +215,8 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_wireless_iface_qr_code_options, menu);
+
+        this.optionsMenu = menu;
 
         /* Getting the actionprovider associated with the menu item whose id is share */
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
