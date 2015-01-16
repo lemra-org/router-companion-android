@@ -36,13 +36,10 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.syslog.StatusSyslogTile;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.List;
-import java.util.Random;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOGD_ENABLE;
 
@@ -121,7 +118,10 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                                                     MAX_LOG_LINES, " | grep -i -E \"" + OPENVPN + "\""));
                                 } finally {
                                     if (logs != null) {
-                                        nvramInfo.setProperty(SYSLOG, logsStr + "\n" + LOGS_JOINER.join(logs));
+                                        final String logsToSet = logsStr + "\n" + LOGS_JOINER.join(logs);
+                                        if (!"\n".equals(logsToSet)) {
+                                            nvramInfo.setProperty(SYSLOG, logsToSet);
+                                        }
                                     }
                                 }
                             }
