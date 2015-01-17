@@ -70,6 +70,9 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";
     public static final int COMPRESSION_QUALITY = 100;
+    public static final int DEFAULT_BITMAP_WIDTH = 600;
+    public static final int DEFAULT_BITMAP_HEIGHT = 300;
+    public static final String UTF_8 = "UTF-8";
     /**
      * ***********************************************************
      * getting from com.google.zxing.client.android.encode.QRCodeEncoder
@@ -133,7 +136,7 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         // Very crude at the moment
         for (int i = 0; i < contents.length(); i++) {
             if (contents.charAt(i) > 0xFF) {
-                return "UTF-8";
+                return UTF_8;
             }
         }
         return null;
@@ -227,8 +230,12 @@ public class WirelessIfaceQrCodeActivity extends Activity {
 
         final View viewToShare = findViewById(R.id.tile_status_wireless_iface_qrcode_view_to_share);
         //Construct Bitmap and share it
+        final int width = viewToShare.getWidth();
+        final int height = viewToShare.getHeight();
         final Bitmap bitmapToExport = Bitmap
-                .createBitmap(viewToShare.getWidth(), viewToShare.getHeight(), Bitmap.Config.ARGB_8888);
+                .createBitmap(width > 0 ? width : DEFAULT_BITMAP_WIDTH,
+                        height > 0 ? height : DEFAULT_BITMAP_HEIGHT,
+                        Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmapToExport);
         viewToShare.draw(canvas);
 
