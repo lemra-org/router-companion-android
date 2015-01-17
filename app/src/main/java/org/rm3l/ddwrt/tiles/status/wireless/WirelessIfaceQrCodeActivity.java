@@ -146,17 +146,6 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Show activity as popup
-        //To show activity as dialog and dim the background, you need to declare android:theme="@style/PopupTheme" on for the chosen activity on the manifest
-//        requestWindowFeature(Window.FEATURE_ACTION_BAR);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-//        final WindowManager.LayoutParams params = getWindow().getAttributes();
-//        params.height = WindowManager.LayoutParams.WRAP_CONTENT; //fixed height
-//        params.width = WindowManager.LayoutParams.WRAP_CONTENT; //fixed width
-//        params.alpha = 1.0f;
-//        params.dimAmount = 0.5f;
-//        getWindow().setAttributes(params);
-
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
 
         final ActionBar actionBar = getActionBar();
