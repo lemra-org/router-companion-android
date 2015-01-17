@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
@@ -60,17 +59,16 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
-
-    private static long nextLoaderId = 1;
-
-    private Utils() {
-    }
-
     private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
 
     static {
         colorToTheme.put(R.color.cardview_light_background, 30); //Light
         colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
+    }
+
+    private static long nextLoaderId = 1;
+
+    private Utils() {
     }
 
     public static int getThemeBackgroundColor(@NotNull final Context context, @NotNull final String routerUuid) {
@@ -185,6 +183,16 @@ public final class Utils {
 
     public static void reportException(@NotNull final Throwable error) {
         ACRA.getErrorReporter().handleSilentException(error);
+    }
+
+    public static String removeLastChar(@Nullable final String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, str.length() - 1);
     }
 
 }

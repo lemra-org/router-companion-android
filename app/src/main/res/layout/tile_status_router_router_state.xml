@@ -25,8 +25,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_router_router_state"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -56,27 +56,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/loading_router_name"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_wan_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="true"
                     android:text="@string/fetching_wan_ip"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/ddwrt_green"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"/>
+                    android:textColor="@color/ddwrt_green" />
 
             </RelativeLayout>
             <ProgressBar
@@ -243,6 +243,37 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="false"
                     android:text="@string/loading"/>
 
+                <!-- Date/time-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="4"
+                    android:text="@string/router_state_date_time"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:layout_row="4"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_state_datetime"
+                    android:layout_width="292dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="3"
+                    android:layout_gravity="start"
+                    android:layout_row="4"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading" />
+
                 <!-- Uptime-->
                 <TextView
                     android:layout_width="wrap_content"
@@ -298,13 +329,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_router_router_state_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_router_router_state_togglebutton"
                     android:layout_column="3"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:layout_row="6"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"

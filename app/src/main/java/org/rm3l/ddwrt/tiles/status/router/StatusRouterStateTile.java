@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +46,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
-
-import java.util.List;
+import org.rm3l.ddwrt.utils.Utils;
 
 /**
  *
@@ -112,30 +112,54 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
+                        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
+                        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
+
                         //Add FW, Kernel and Uptime
-                        @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "uptime", "uname -a", "cat /tmp/loginprompt");
+                        @Nullable final String[] otherCmds = SSHUtils
+                                .getManualProperty(mRouter, mGlobalPreferences,
+                                        //date
+                                        "date",
+                                        //date since last reboot
+                                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))",
+                                        //elapsed from current date
+                                        "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
+                                        "uname -a",
+                                        "cat /tmp/loginprompt");
+
                         if (otherCmds != null) {
+                            if (otherCmds.length >= 1) {
+                                //date
+                                nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, otherCmds[0]);
+                            }
                             if (otherCmds.length >= 3) {
-                                //Uptime
-                                final List<String> strings = SPLITTER.splitToList(otherCmds[0]);
-                                if (strings != null && strings.size() > 0) {
-                                    nvramInfo.setProperty(NVRAMInfo.UPTIME, strings.get(0));
-
+                                String uptime = otherCmds[1];
+                                final String uptimeCmd = otherCmds[2];
+                                if (!Strings.isNullOrEmpty(uptimeCmd)) {
+                                    final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
+                                    if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
+                                        uptime += ("\n(up " + elapsedFromUptime + ")");
+                                    }
                                 }
+                                nvramInfo.setProperty(NVRAMInfo.UPTIME, uptime);
+                            }
 
+                            if (otherCmds.length >= 4) {
                                 //Kernel
-                                nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[1]);
+                                nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[3]);
+                            }
 
+                            if (otherCmds.length >= 5) {
                                 //Firmware
                                 //TODO Relying on loginprompt, since there is no easy way to get the info
-                                final String firmVer = otherCmds[2];
+                                final String firmVer = otherCmds[4];
                                 String firmReleaseAndBuildNumber = null;
-                                if (otherCmds.length >= 4) {
-                                    firmReleaseAndBuildNumber = otherCmds[3];
+                                if (otherCmds.length >= 6) {
+                                    firmReleaseAndBuildNumber = otherCmds[5];
                                 }
 
                                 nvramInfo.setProperty(NVRAMInfo.FIRMWARE, firmVer +
-                                        (firmReleaseAndBuildNumber != null ? (" - " + firmReleaseAndBuildNumber) : ""));
+                                        (firmReleaseAndBuildNumber != null ? ("\n" + firmReleaseAndBuildNumber) : ""));
 
                             }
                         }
@@ -234,12 +258,9 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
             routerNameView.setText(routerNameToSet);
 
-            //We can change the action bar title
-//        this.layout.getSupportActionBar().setTitle((String) data);
-
             //WAN IP
             @NotNull final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
-            wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR));
+            wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
 
             @NotNull final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
             routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "-"));
@@ -256,6 +277,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             @NotNull final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
             uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "-"));
 
+            @NotNull final TextView currentDateView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
+            currentDateView.setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
