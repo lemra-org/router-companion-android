@@ -56,7 +56,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  */
 public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
-    public static final String GREP_MODEL_NAME_PROC_CPUINFO = "grep \"model name\" /proc/cpuinfo ";
+    public static final String GREP_MODEL_PROC_CPUINFO = "grep -i -E \".*model\" /proc/cpuinfo | awk -F':' '{print $2}' ";
     private static final String LOG_TAG = StatusRouterCPUTile.class.getSimpleName();
 
 //    Drawable icon;
@@ -127,8 +127,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         @Nullable final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
                                 mGlobalPreferences,
                                 "uptime | awk -F'average:' '{ print $2}'",
-                                GREP_MODEL_NAME_PROC_CPUINFO + "| uniq",
-                                GREP_MODEL_NAME_PROC_CPUINFO + "| wc -l");
+                                GREP_MODEL_PROC_CPUINFO + "| uniq",
+                                GREP_MODEL_PROC_CPUINFO + "| wc -l");
 
                         if (otherCmds != null) {
 
@@ -136,27 +136,13 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                 //Load Avg
                                 nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
                                         StringUtils.trimToNull(otherCmds[0]));
-                                //Removed: computation done on the router:
-//                                strings = Splitter.on("load average").omitEmptyStrings()
-//                                        .trimResults().splitToList(otherCmds[0]);
-//                                Log.d(LOG_TAG, "strings for load avg: " + strings);
-//                                if (strings != null && strings.size() >= 2) {
-//                                    final String loadAvg = strings.get(1);
-//                                    if (loadAvg != null) {
-//                                        nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
-//                                                loadAvg.replace(":", "").trim());
-//                                    }
-//                                }
                             }
                             if (otherCmds.length >= 2) {
                                 //Model
                                 final String modelNameLine = otherCmds[1];
                                 if (modelNameLine != null) {
                                     nvramInfo.setProperty(NVRAMInfo.CPU_MODEL,
-                                            modelNameLine
-                                                    .replace(":", "")
-                                                    .replace("model name", "")
-                                                    .trim());
+                                            modelNameLine.trim());
                                 }
                             }
                             if (otherCmds.length >= 3) {
