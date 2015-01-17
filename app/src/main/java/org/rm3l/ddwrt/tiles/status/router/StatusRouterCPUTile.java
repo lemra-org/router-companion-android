@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -42,14 +43,19 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -58,6 +64,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
     public static final String GREP_MODEL_PROC_CPUINFO = "grep -i -E \".*model\" /proc/cpuinfo | awk -F':' '{print $2}' ";
     private static final String LOG_TAG = StatusRouterCPUTile.class.getSimpleName();
+
+    private String[] cpuInfoContents;
 
 //    Drawable icon;
 
@@ -102,6 +110,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    cpuInfoContents = null;
 
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -150,6 +160,10 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                 nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[2]);
                             }
                         }
+
+                        //Now cache whole /proc/cpuinfo, for detailed activity
+                        cpuInfoContents = SSHUtils.getManualProperty(mRouter,
+                                mGlobalPreferences, "cat /proc/cpuinfo");
                     }
 
                     if (nvramInfo.isEmpty()) {
@@ -280,7 +294,26 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        //TODO
-        return null;
+        if (cpuInfoContents == null) {
+            //Loading
+            Utils.displayMessage(mParentFragmentActivity, "Loading data from router - please wait a few seconds.", Style.ALERT);
+            return null;
+        }
+
+        if (cpuInfoContents.length == 0) {
+            //No data!
+            Utils.displayMessage(mParentFragmentActivity, "No data available - please retry later.", Style.ALERT);
+            return null;
+        }
+
+        final String mRouterUuid = mRouter.getUuid();
+        final Intent cpuInfoIntent =
+                new Intent(mParentFragment.getActivity(),
+                        isThemeLight(mParentFragmentActivity, mRouterUuid) ?
+                                RouterCpuInfoActivityLight.class : RouterCpuInfoActivity.class);
+        cpuInfoIntent.putExtra(RouterCpuInfoActivity.CPU_INFO_OUTPUT, cpuInfoContents);
+        cpuInfoIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+
+        return new OnClickIntent("Loading CPU Info...", cpuInfoIntent, null);
     }
 }

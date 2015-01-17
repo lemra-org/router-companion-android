@@ -171,6 +171,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
 
+        <activity
+            android:name=".tiles.status.router.RouterCpuInfoActivity"
+            android:label="@string/title_cpuinfo"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:theme="@android:style/Theme.Holo"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tiles.status.router.RouterCpuInfoActivityLight"
+            android:label="@string/title_cpuinfo"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
     </application>
 
 </manifest>

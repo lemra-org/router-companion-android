@@ -447,4 +447,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="openvpn_client_settings_advanced_options_policy_based_routing_hint">One line per allowed IP in the form 0.0.0.0/0. Forces clients to use the tunnel as default gateway.</string>
     <string name="wireless_iface_temperature">Temperature</string>
     <string name="router_state_date_time">Date &amp; Time</string>
+    <string name="title_cpuinfo">CPU Information</string>
 </resources>
