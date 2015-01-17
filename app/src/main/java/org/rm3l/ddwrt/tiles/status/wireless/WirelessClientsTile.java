@@ -88,12 +88,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     };
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 99;
-
-    private String mBroadcastAddress;
-    private String mCurrentIpAddress;
-
     //Generate a random string, to use as discriminator for determining dhcp clients
     private final String MAP_KEYWORD;
+    private String mBroadcastAddress;
+    private String mCurrentIpAddress;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
@@ -152,11 +150,32 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                                         .setSystemName(String.format("Device %1$s-%2$s", randomI, randomJ)));
                     }
                     Log.d(LOG_TAG, "wireless client devices: " + devices);
-                    return devices;
+                    return devices
+                            .setActiveDhcpLeasesNum(new Random().nextInt(10))
+                            .setActiveClientsNum(new Random().nextInt(20));
                     //FIXME END TEST MODE
                 }
 
                 try {
+
+                    //Get number of active clients and DHCP leases
+                    final String[] numActiveClientsAndLeases = SSHUtils.getManualProperty(mRouter,
+                            mGlobalPreferences, "arp -a | wc -l ", "cat /tmp/dnsmasq.leases | wc -l");
+                    if (numActiveClientsAndLeases != null) {
+                        final int length = numActiveClientsAndLeases.length;
+                        try {
+                            if (length >= 1) {
+                                devices.setActiveClientsNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[0])));
+                            }
+                            if (length >= 2) {
+                                devices.setActiveDhcpLeasesNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[1])));
+                            }
+                        } catch (final NumberFormatException nfe) {
+                            nfe.printStackTrace();
+                            //No Worries
+                        }
+                    }
+
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
@@ -283,6 +302,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
             clientsContainer.removeAllViews();
             clientsContainer.setBackgroundColor(mParentFragmentActivity.getResources().getColor(android.R.color.transparent));
+
+            //Number of Active Clients
+            final int numActiveClients = data.getActiveClientsNum();
+            ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_clients_num))
+                    .setText(numActiveClients >= 0 ? String.valueOf(numActiveClients) : "-");
+
+            //Number of Active DHCP Leases
+            final int numActiveDhcpLeases = data.getActiveDhcpLeasesNum();
+            ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_dhcp_leases_num))
+                    .setText(numActiveDhcpLeases >= 0 ? String.valueOf(numActiveDhcpLeases) : "-");
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());

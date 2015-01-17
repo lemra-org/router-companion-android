@@ -37,6 +37,27 @@ public class ClientDevices {
     @Nullable
     private Exception exception;
 
+    private int activeClientsNum;
+    private int activeDhcpLeasesNum;
+
+    public int getActiveClientsNum() {
+        return activeClientsNum;
+    }
+
+    public ClientDevices setActiveClientsNum(int activeClientsNum) {
+        this.activeClientsNum = activeClientsNum;
+        return this;
+    }
+
+    public int getActiveDhcpLeasesNum() {
+        return activeDhcpLeasesNum;
+    }
+
+    public ClientDevices setActiveDhcpLeasesNum(int activeDhcpLeasesNum) {
+        this.activeDhcpLeasesNum = activeDhcpLeasesNum;
+        return this;
+    }
+
     @NotNull
     public Set<Device> getDevices() {
         return devices;

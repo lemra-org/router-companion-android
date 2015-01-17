@@ -76,10 +76,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <GridLayout
             android:id="@+id/tile_status_wireless_clients_togglebutton_container"
-            android:visibility="gone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3">
+            android:columnCount="3"
+            android:visibility="gone">
 
             <!-- Auto-refresh -->
             <TextView
@@ -101,28 +101,87 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
+                android:id="@+id/tile_status_wireless_clients_togglebutton"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tile_status_wireless_clients_togglebutton"
                 android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
                 android:textOn="ON"
                 android:visibility="gone" />
 
+            <!-- Number of active clients -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/num_active_clients"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_active_clients_num"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+            <!-- Number of active DHCP Leases -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/num_active_dhcp_leases"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_active_dhcp_leases_num"
+                android:layout_width="292dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
         </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/marginBottom"
+            android:visibility="invisible" />
 
         <GridLayout
             android:id="@+id/tile_status_wireless_clients_layout_list_container"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="0.74"
             android:columnCount="2"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/tile_status_wireless_clients_show_more"
@@ -138,7 +197,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/tile_status_wireless_clients_loading_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_gravity="center" />
 
 
     </LinearLayout>
