@@ -26,10 +26,17 @@ import android.app.Application;
 import android.content.Context;
 
 import org.acra.ACRA;
-import org.acra.ACRAConfiguration;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.jetbrains.annotations.Nullable;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
+
+import static org.rm3l.ddwrt.BuildConfig.DEBUG;
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TRACEPOT_DEVELOP_MODE;
+import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
 
 /**
  * App Main Entry point.
@@ -57,7 +64,18 @@ public class DDWRTApplication extends Application {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
 
-        ACRA.getErrorReporter().putCustomData("TRACEPOT_DEVELOP_MODE",
-                BuildConfig.DEBUG ? "1" : "0");
+        ACRA.getErrorReporter()
+                .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
+
+        if (isFirstLaunch(this)) {
+            //Report: this is to help me analyze whom this app is used by, and provide better device support!
+            Utils.reportException(new FirstLaunch(FLAVOR));
+        }
+    }
+
+    private class FirstLaunch extends DDWRTCompanionException {
+        private FirstLaunch(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
     }
 }

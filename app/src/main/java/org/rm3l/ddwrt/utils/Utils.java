@@ -26,8 +26,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -49,8 +51,11 @@ import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.content.Context.MODE_PRIVATE;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
@@ -72,7 +77,7 @@ public final class Utils {
     }
 
     public static int getThemeBackgroundColor(@NotNull final Context context, @NotNull final String routerUuid) {
-        final long theme = context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
+        final long theme = context.getSharedPreferences(routerUuid, MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
         final BiMap<Integer, Integer> colorToThemeInverse = colorToTheme.inverse();
         Integer color = colorToThemeInverse.get(Long.valueOf(theme).intValue());
         if (color == null) {
@@ -193,6 +198,21 @@ public final class Utils {
             return str;
         }
         return str.substring(0, str.length() - 1);
+    }
+
+    public static boolean isFirstLaunch(@NotNull final Context context) {
+        final SharedPreferences defaultSharedPreferences = context
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
+
+        final boolean isFirstLaunch = defaultSharedPreferences.getBoolean(IS_FIRST_LAUNCH_PREF_KEY, true);
+        Log.i(TAG, "isFirstLaunch: " + isFirstLaunch);
+        if (isFirstLaunch) {
+            //Store flag
+            defaultSharedPreferences.edit()
+                    .putBoolean(IS_FIRST_LAUNCH_PREF_KEY, false)
+                    .apply();
+        }
+        return isFirstLaunch;
     }
 
 }
