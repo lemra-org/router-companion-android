@@ -30,7 +30,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,8 +90,7 @@ public class RouterCpuInfoActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        ((EditText) findViewById(R.id.tile_status_router_cpuinfo))
-                .setText(mCpuInfoMultiLine, TextView.BufferType.EDITABLE);
+        ((TextView) findViewById(R.id.tile_status_router_cpuinfo)).setText(mCpuInfoMultiLine);
     }
 
     @Override

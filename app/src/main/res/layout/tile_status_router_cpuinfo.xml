@@ -37,29 +37,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="CPU Info"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/ddwrt_green" />
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:gravity="center"-->
+        <!--android:text="CPU Info"-->
+        <!--android:textAppearance="?android:textAppearanceLarge"-->
+        <!--android:textColor="@color/ddwrt_green" />-->
 
-        <EditText
+        <TextView
             android:id="@+id/tile_status_router_cpuinfo"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
-            android:layout_weight="1"
-            android:drawableBottom="@android:color/holo_blue_dark"
-            android:enabled="false"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textMultiLine"
-            android:isScrollContainer="true" />
+            android:enabled="false" />
 
     </LinearLayout>
 </ScrollView>
