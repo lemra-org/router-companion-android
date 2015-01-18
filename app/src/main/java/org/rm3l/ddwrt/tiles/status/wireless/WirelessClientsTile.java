@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
@@ -92,6 +93,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     private final String MAP_KEYWORD;
     private String mBroadcastAddress;
     private String mCurrentIpAddress;
+    private String mCurrentMacAddress;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
@@ -118,8 +120,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 //Determine broadcast address at each run (because that might change if connected to another network)
                 try {
                     final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
+                    final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
-                    mCurrentIpAddress = Utils.intToIp(wifiManager.getConnectionInfo().getIpAddress());
+                    mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
+                    mCurrentMacAddress = connectionInfo.getMacAddress();
 
                     final InetAddress broadcastAddress = Utils.getBroadcastAddress(wifiManager);
                     if (broadcastAddress != null) {
@@ -345,8 +349,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
                 final String ipAddress = device.getIpAddress();
-                final boolean isThisDevice = (ipAddress != null && ipAddress.equals(mCurrentIpAddress));
                 deviceIp.setText(ipAddress);
+
+                final boolean isThisDevice = (nullToEmpty(macAddress).equalsIgnoreCase(mCurrentMacAddress) &&
+                        nullToEmpty(ipAddress).equals(mCurrentIpAddress));
                 if (isThisDevice) {
                     final View thisDevice = cardView.findViewById(R.id.tile_status_wireless_client_device_this);
                     if (isThemeLight) {
