@@ -25,8 +25,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_router_syslog"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -46,47 +46,86 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
-            <TextView
-                android:id="@+id/tile_status_router_syslog_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@string/syslog"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"/>
-
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="start"
-                android:gravity="start">
+                android:paddingTop="4.0dip">
+
+                <TextView
+                    android:id="@+id/tile_status_router_syslog_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/syslog"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tile_status_router_syslog_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/ddwrt_green"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:visibility="gone"/>
 
-                <ProgressBar
-                    android:id="@+id/tile_status_router_syslog_header_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
             </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/tile_status_router_syslog_header_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_router_syslog_title"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="@string/syslog"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_alignParentLeft="true"/>-->
+
+            <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:gravity="start">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_router_syslog_state"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:ellipsize="end"-->
+            <!--android:gravity="start"-->
+            <!--android:singleLine="true"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:textColor="@color/ddwrt_green"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:visibility="gone"/>-->
+
+            <!--<ProgressBar-->
+            <!--android:id="@+id/tile_status_router_syslog_header_loading_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true" />-->
+
+            <!--</RelativeLayout>-->
 
         </RelativeLayout>
 
@@ -112,9 +151,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <ScrollView
+            android:id="@+id/tile_status_router_syslog_content_scrollview"
             android:layout_width="fill_parent"
-            android:layout_height="313dp"
-            android:id="@+id/tile_status_router_syslog_content_scrollview">
+            android:layout_height="313dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -122,13 +161,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_syslog_content"
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/abs__background_holo_dark"
                     android:gravity="bottom"
                     android:maxLines="200"
-                    android:background="@color/abs__background_holo_dark"
-                    android:textColor="@color/abs__background_holo_light"/>
+                    android:textColor="@color/abs__background_holo_light"
+                    android:visibility="gone" />
 
                 <ProgressBar
                     android:id="@+id/tile_status_router_syslog_content_loading_view"
@@ -152,15 +191,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.02"
-                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:textColor="@android:color/holo_blue_dark"
-                android:hint="@string/syslog_filter_hint"
                 android:drawableBottom="@android:color/holo_blue_dark"
-                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
                 android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                android:imeOptions="actionSearch" />
+                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+                android:hint="@string/syslog_filter_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+                android:textColor="@android:color/holo_blue_dark" />
 
         </LinearLayout>
 
@@ -189,12 +228,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
+                android:id="@+id/tile_status_router_syslog_togglebutton"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tile_status_router_syslog_togglebutton"
                 android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"

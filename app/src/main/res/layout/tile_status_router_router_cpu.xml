@@ -42,29 +42,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4.0dip">
-
-            <TextView
-                android:id="@+id/tile_status_router_router_cpu_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@string/router_cpu_cpu"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="start"
-                android:gravity="start">
+                android:paddingTop="4.0dip">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_cpu_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/router_cpu_cpu"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_speed"
@@ -80,13 +76,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:textAppearanceSmall"
                     android:visibility="gone"/>
 
-                <ProgressBar
-                    android:id="@+id/tile_status_router_router_cpu_speed_header_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
             </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/tile_status_router_router_cpu_speed_header_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
         </RelativeLayout>
 
@@ -117,10 +113,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_status_router_router_cpu_grid_layout"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3">
+                android:columnCount="3"
+                android:visibility="gone">
 
                 <!-- Model -->
                 <TextView
@@ -238,12 +234,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_router_router_cpu_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_router_router_cpu_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"

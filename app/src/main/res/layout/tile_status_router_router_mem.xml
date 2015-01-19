@@ -39,25 +39,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
-            <TextView
-                android:id="@+id/tile_status_router_router_mem_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="@string/memory"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
-
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="start"
-                android:gravity="start">
+                android:paddingTop="4.0dip">
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_mem_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/memory"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_mem_total"
@@ -73,13 +70,57 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:textAppearanceSmall"
                     android:visibility="gone"/>
 
-                <ProgressBar
-                    android:id="@+id/tile_status_router_router_mem_header_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
             </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/tile_status_router_router_mem_header_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_router_router_mem_title"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="@string/memory"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:textStyle="bold" />-->
+
+            <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_gravity="end"-->
+            <!--android:gravity="end"-->
+            <!--android:layout_toRightOf="@+id/tile_status_router_router_mem_title"-->
+            <!--android:layout_toEndOf="@+id/tile_status_router_router_mem_title">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_router_router_mem_total"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:ellipsize="end"-->
+            <!--android:gravity="start"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="@string/loading_total"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:visibility="gone"/>-->
+
+            <!--<ProgressBar-->
+            <!--android:id="@+id/tile_status_router_router_mem_header_loading_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true" />-->
+
+            <!--</RelativeLayout>-->
 
         </RelativeLayout>
 
@@ -223,12 +264,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_router_router_mem_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_router_router_mem_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"
