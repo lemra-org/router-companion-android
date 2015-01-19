@@ -95,7 +95,6 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     public static final String IS_SORTING_STRATEGY_CHANGED = "isSortingStrategyChanged";
     public static final String ROUTER_ACTION = "ROUTER_ACTION";
     private static final int LISTENED_REQUEST_CODE = 77;
-    private final Handler mAsyncHandler = new Handler();
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -119,6 +118,12 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     private SharedPreferences mGlobalPreferences;
     @NotNull
     private Router mRouter;
+    private final Runnable mDestroySessionRunnable = new Runnable() {
+        @Override
+        public void run() {
+            SSHUtils.destroySession(mRouter);
+        }
+    };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
 
     @Override
@@ -238,33 +243,28 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
     @Override
     protected void onPause() {
-        super.onPause();
         if (mFeedbackDialog != null) {
             mFeedbackDialog.dismiss();
         }
         //Close SSH Session as well
         destroySSHSession();
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mCurrentActivityResultListener = null;
         if (mFeedbackDialog != null) {
             mFeedbackDialog.dismiss();
         }
         //Close SSH Session as well
         destroySSHSession();
+        super.onDestroy();
     }
 
     private void destroySSHSession() {
         //Async to avoid ANR because SSHUtils#destroySession makes use of locking mechanisms
-        mAsyncHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                SSHUtils.destroySession(mRouter);
-            }
-        });
+        new Thread(mDestroySessionRunnable).start();
     }
 
     @Override
