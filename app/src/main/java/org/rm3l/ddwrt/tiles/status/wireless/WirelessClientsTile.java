@@ -38,6 +38,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -72,6 +73,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
@@ -205,7 +209,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         final List<String> as = Splitter.on(" ").splitToList(stdoutLine);
                         if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
                             final String macAddress = as.get(1);
-                            if ("00:00:00:00:00:00".equals(macAddress)) {
+                            if (isNullOrEmpty(macAddress) || "00:00:00:00:00:00".equals(macAddress)) {
                                 //Skip clients with incomplete ARP set-up
                                 continue;
                             }
@@ -216,6 +220,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                             if (!"*".equals(systemName)) {
                                 device.setSystemName(systemName);
                             }
+
+                            //Alias from SharedPreferences
+                            if (mParentFragmentPreferences != null) {
+                                final String deviceAlias = mParentFragmentPreferences
+                                        .getString(macAddress, null);
+                                if (!isNullOrEmpty(deviceAlias)) {
+                                    device.setAlias(deviceAlias);
+                                }
+                            }
+
                             devices.addDevice(device);
                         }
 
@@ -339,9 +353,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
 
-                final TextView deviceName = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
+                final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();
-                deviceName.setText(name);
+                deviceNameView.setText(name);
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
                 final String macAddress = device.getMacAddress();
@@ -371,7 +385,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     @Override
                     public void onClick(View v) {
                         final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                        popup.setOnMenuItemClickListener(new DeviceOnMenuItemClickListener(device));
+                        popup.setOnMenuItemClickListener(new DeviceOnMenuItemClickListener(deviceNameView, device));
                         final MenuInflater inflater = popup.getMenuInflater();
 
                         final Menu menu = popup.getMenu();
@@ -433,18 +447,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     private class DeviceOnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
         @NotNull
+        private final TextView deviceNameView;
+        @NotNull
         private final Device device;
 
-        private DeviceOnMenuItemClickListener(@NotNull final Device device) {
+        private DeviceOnMenuItemClickListener(@NotNull TextView deviceNameView, @NotNull final Device device) {
+            this.deviceNameView = deviceNameView;
             this.device = device;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            final String macAddress = device.getMacAddress();
             switch(item.getItemId()) {
                 case R.id.tile_status_wireless_client_wol:
                     final String deviceName = nullToEmpty(device.getName());
-                    final String macAddress = device.getMacAddress();
                     new AlertDialog.Builder(mParentFragmentActivity)
                             .setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle(String.format("Wake up %s (%s)", deviceName, macAddress))
@@ -468,6 +485,53 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                                     //Cancelled - nothing more to do!
                                 }
                             }).create().show();
+                    return true;
+                case R.id.tile_status_wireless_client_rename:
+                    if (mParentFragmentPreferences == null) {
+                        Toast.makeText(mParentFragmentActivity, "Internal Error: ", Toast.LENGTH_SHORT).show();
+                        Utils.reportException(new
+                                IllegalStateException("Click on R.id.tile_status_wireless_client_rename - mParentFragmentPreferences == null"));
+                    } else {
+                        final String currentAlias = mParentFragmentPreferences.getString(macAddress, null);
+                        final boolean isNewAlias = isNullOrEmpty(currentAlias);
+                        final EditText aliasInputText = new EditText(mParentFragmentActivity);
+                        aliasInputText.setText(currentAlias, TextView.BufferType.EDITABLE);
+                        aliasInputText.setHint("e.g., \"Mom's PC\"");
+                        new AlertDialog.Builder(mParentFragmentActivity)
+                                .setTitle((isNewAlias ? "Set device alias" : "Update device alias") + ": " + macAddress)
+                                .setMessage("Note that the Alias you define here is stored locally only, not on the router")
+                                .setView(aliasInputText)
+                                .setCancelable(true)
+                                .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialogInterface, final int i) {
+                                        try {
+                                            final String newAlias = nullToEmpty(aliasInputText.getText().toString());
+                                            if (newAlias.equals(currentAlias)) {
+                                                return;
+                                            }
+                                            mParentFragmentPreferences.edit()
+                                                    .putString(macAddress, newAlias)
+                                                    .apply();
+                                            //Update device name immediately
+                                            device.setAlias(newAlias);
+                                            deviceNameView.setText(device.getName());
+                                            Utils.displayMessage(mParentFragmentActivity, "Alias set! Changes will appear upon next sync.", Style.CONFIRM);
+                                        } catch (final Exception e) {
+                                            Utils.reportException(new
+                                                    IllegalStateException("Error: Click on R.id.tile_status_wireless_client_rename", e));
+                                            Utils.displayMessage(mParentFragmentActivity, "Internal Error - please try again later", Style.ALERT);
+                                        }
+
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Cancelled - nothing more to do!
+                                    }
+                                }).create().show();
+                    }
                     return true;
                 default:
                     break;
