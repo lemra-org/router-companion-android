@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,8 +23,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,30 +37,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tile_services_openvpn_client_title"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="OpenVPN Client"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"/>
-
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="start"
-                android:gravity="start">
+                android:paddingTop="4.0dip">
+
+                <TextView
+                    android:id="@+id/tile_services_openvpn_client_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="OpenVPN Client"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
@@ -69,17 +67,58 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="Loading Status..."
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/ddwrt_green"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:visibility="gone"/>
-
-                <ProgressBar
-                    android:id="@+id/tile_services_openvpn_client_header_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
+                    android:visibility="gone" />
 
             </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/tile_services_openvpn_client_header_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/tile_services_openvpn_client_title"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="OpenVPN Client"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_alignParentLeft="true"/>-->
+
+            <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:gravity="start">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tile_services_openvpn_client_status"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:ellipsize="end"-->
+            <!--android:gravity="start"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="Loading Status..."-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:textColor="@color/ddwrt_green"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:visibility="gone"/>-->
+
+            <!--<ProgressBar-->
+            <!--android:id="@+id/tile_services_openvpn_client_header_loading_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true" />-->
+
+            <!--</RelativeLayout>-->
 
         </RelativeLayout>
 
@@ -116,7 +155,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="Tap anywhere in this tile to edit Settings"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="italic"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="300dp"
@@ -125,7 +164,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/one_space"/>
+            android:text="@string/one_space" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -133,10 +172,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_services_openvpn_client_grid_layout"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3">
+                android:columnCount="3"
+                android:visibility="gone">
 
                 <!-- Status -->
                 <TextView
@@ -161,14 +200,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Server IP/Name -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Server IP/Name"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -176,7 +215,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"/>
+                    android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_server_ip_name"
@@ -186,7 +225,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Port -->
                 <TextView
@@ -211,7 +250,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- BW In -->
                 <TextView
@@ -236,7 +275,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- BW Out -->
                 <TextView
@@ -261,7 +300,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Packets In -->
                 <TextView
@@ -286,7 +325,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Packets Out -->
                 <TextView
@@ -311,7 +350,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
 
                 <!-- Tunnel Device -->
@@ -337,7 +376,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Tunnel Protocol -->
                 <TextView
@@ -362,7 +401,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Encryption Cipher -->
                 <TextView
@@ -387,7 +426,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Hash Algorithm -->
                 <TextView
@@ -412,7 +451,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
                 <TextView
@@ -434,12 +473,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_services_openvpn_client_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_services_openvpn_client_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"
@@ -447,6 +486,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_services_openvpn_client_loading_view"
                 android:layout_width="wrap_content"
