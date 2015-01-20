@@ -499,7 +499,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         aliasInputText.setHint("e.g., \"Mom's PC\"");
                         new AlertDialog.Builder(mParentFragmentActivity)
                                 .setTitle((isNewAlias ? "Set device alias" : "Update device alias") + ": " + macAddress)
-                                .setMessage("Note that the Alias you define here is stored locally only, not on the router")
+                                .setMessage("Note that the Alias you define here is stored locally only, not on the router.")
                                 .setView(aliasInputText)
                                 .setCancelable(true)
                                 .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", new DialogInterface.OnClickListener() {
