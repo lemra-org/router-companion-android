@@ -367,6 +367,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                                 "All of your settings will be erased and '%s' will be rebooted. " +
                                 "You might have to wait some time before connection is re-established.\n\n" +
                                 "[CAUTION]\n" +
+                                "- Make sure to *backup* your settings first!!!\n" +
                                 "- After resetting DD-WRT, you need to login with the default user name \"root\" and default password \"admin\".\n" +
                                 "- Some devices may not boot properly after being reset. In this case, you will have to reflash them.", displayName))
                         .setCancelable(true)
