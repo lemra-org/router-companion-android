@@ -38,6 +38,10 @@ import com.google.common.collect.Lists;
 
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.HttpParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -213,6 +217,16 @@ public final class Utils {
                     .apply();
         }
         return isFirstLaunch;
+    }
+
+    @NotNull
+    public static DefaultHttpClient getThreadSafeClient() {
+        final DefaultHttpClient client = new DefaultHttpClient();
+        final ClientConnectionManager mgr = client.getConnectionManager();
+        final HttpParams params = client.getParams();
+
+        return new DefaultHttpClient(new ThreadSafeClientConnManager(params,
+                mgr.getSchemeRegistry()), params);
     }
 
 }

@@ -274,9 +274,12 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
                 Integer ifaceColor = colorsCache.get(iface);
                 if (ifaceColor == null) {
-                    //Generate a Random Color, excluding 'white' (because graph background is already white)
+                    //Generate a Random Color, excluding 'white' and 'black'
+                    // (because graph background may be white or black)
                     ifaceColor = Color.argb(255,
-                            randomColorGen.nextInt(255), randomColorGen.nextInt(255), randomColorGen.nextInt(255));
+                            1 + randomColorGen.nextInt(254),
+                            1 + randomColorGen.nextInt(254),
+                            1 + randomColorGen.nextInt(254));
                     colorsCache.put(iface, ifaceColor);
                 }
                 renderer.setColor(ifaceColor);

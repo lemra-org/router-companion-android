@@ -35,23 +35,49 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_weight="0.74"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
 
             <TextView
                 android:id="@+id/tile_status_wireless_clients_title"
-                android:layout_width="0.0dip"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="20.23"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="@string/clients"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
 
-        </LinearLayout>
+            <!--<TextView-->
+            <!--android:id="@+id/tile_status_wireless_clients_title"-->
+            <!--android:layout_width="0.0dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="20.23"-->
+            <!--android:ellipsize="end"-->
+            <!--android:singleLine="true"-->
+            <!--android:text="@string/clients"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:textStyle="bold"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_alignParentLeft="true"/>-->
+
+            <!-- TODO Add Sorting capabilities (A->Z, Z->A, Top talkers, ...) -->
+            <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"-->
+            <!--android:contentDescription="@string/menu"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:id="@+id/tile_status_wireless_clients_menu"-->
+            <!--android:visibility="gone"/>-->
+
+        </RelativeLayout>
 
         <View
             android:layout_width="377dp"
@@ -139,7 +165,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:ellipsize="end"
                 android:gravity="start"
                 android:singleLine="false"
-                android:text="@string/loading" />
+                android:text="@string/loading"
+                android:textColor="@color/ddwrt_green" />
 
             <!-- Number of active DHCP Leases -->
             <TextView
@@ -171,7 +198,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/marginBottom"
+            android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
             android:visibility="invisible" />
 
         <GridLayout

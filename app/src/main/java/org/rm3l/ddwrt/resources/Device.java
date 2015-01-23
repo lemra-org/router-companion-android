@@ -38,6 +38,9 @@ public class Device implements Comparable<Device> {
     private final String macAddress;
 
     @Nullable
+    private MACOUIVendor macouiVendorDetails;
+
+    @Nullable
     private String alias;
 
     @Nullable
@@ -164,6 +167,15 @@ public class Device implements Comparable<Device> {
             return this.systemName;
         }
         return this.macAddress;
+    }
+
+    @Nullable
+    public MACOUIVendor getMacouiVendorDetails() {
+        return macouiVendorDetails;
+    }
+
+    public void setMacouiVendorDetails(@Nullable MACOUIVendor macouiVendorDetails) {
+        this.macouiVendorDetails = macouiVendorDetails;
     }
 
     @Override

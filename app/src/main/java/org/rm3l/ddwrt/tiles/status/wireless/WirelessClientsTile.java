@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,16 +44,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
+import com.google.common.io.Closeables;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.PointStyle;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -58,17 +81,27 @@ import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
+import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
+import org.rm3l.ddwrt.tiles.status.lan.DHCPClientsTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.WoLUtils;
+import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -77,6 +110,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
@@ -92,16 +126,92 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         }
     };
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
-    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 99;
+    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 100;
+    private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = DHCPClientsTile.class.getSimpleName();
+    private final Random randomColorGen = new Random();
+    private final Map<String, Integer> colorsCache = new HashMap<>();
     //Generate a random string, to use as discriminator for determining dhcp clients
     private final String MAP_KEYWORD;
+    private final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache;
+    @NotNull
+    private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
+            Maps.newHashMap();
     private String mBroadcastAddress;
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
+    private String[] activeClients;
+    private String[] activeDhcpLeases;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
         MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
+
+        mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
+
+            @Override
+            protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
+                super.entryRemoved(evicted, key, oldValue, newValue);
+                Log.d(LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
+            }
+
+            @Override
+            protected MACOUIVendor create(String macAddr) {
+                if (isNullOrEmpty(macAddr)) {
+                    return null;
+                }
+                //Get to MAC OUI Vendor Lookup API
+                try {
+                    final String url = String.format("%s/%s",
+                            MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
+                    Log.d(LOG_TAG, "--> GET " + url);
+                    final HttpGet httpGet = new HttpGet(url);
+                    final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
+                    final StatusLine statusLine = httpResponse.getStatusLine();
+
+                    if (statusLine.getStatusCode() == 200) {
+                        final HttpEntity entity = httpResponse.getEntity();
+                        final InputStream content = entity.getContent();
+                        try {
+                            //Read the server response and attempt to parse it as JSON
+                            final Reader reader = new InputStreamReader(content);
+                            final GsonBuilder gsonBuilder = new GsonBuilder();
+                            final Gson gson = gsonBuilder.create();
+                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
+                            Log.d(LOG_TAG, "--> Result of GET " + url + ": " + Arrays.toString(macouiVendors));
+                            if (macouiVendors == null || macouiVendors.length == 0) {
+                                return null;
+                            }
+                            return macouiVendors[0];
+
+                        } finally {
+                            Closeables.closeQuietly(content);
+                            entity.consumeContent();
+                        }
+                    } else {
+                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusLine.getStatusCode());
+                    }
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        };
+
+        //Create Options Menu
+//        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
+//        if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+//            //Set menu background to white
+//            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+//        }
+//        tileMenu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+//
+//            }
+//        });
     }
 
     @Override
@@ -166,23 +276,66 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                 try {
 
-                    //Get number of active clients and DHCP leases
-                    final String[] numActiveClientsAndLeases = SSHUtils.getManualProperty(mRouter,
-                            mGlobalPreferences, "arp -a | wc -l ", "cat /tmp/dnsmasq.leases | wc -l");
-                    if (numActiveClientsAndLeases != null) {
-                        final int length = numActiveClientsAndLeases.length;
+                    //Run Setup (does not matter if already done)
+                    Log.d(LOG_TAG, "[SETUP] Setup router for per-IP bandwidth monitoring, if needed!");
+
+                    SSHUtils.runCommands(mGlobalPreferences, mRouter, Joiner.on(" ; ").skipNulls(),
+                            "LAN_IFACE=$(nvram get lan_ifname)",
+                            "iptables -N " + PER_IP_MONITORING_IP_TABLES_CHAIN + " 2> /dev/null",
+                            "iptables -L FORWARD --line-numbers -n | grep \"" + PER_IP_MONITORING_IP_TABLES_CHAIN + "\" | grep \"1\" > /dev/null",
+                            "if [ $? -ne 0 ]; then " +
+                                    "iptables -L FORWARD -n | grep \"" + PER_IP_MONITORING_IP_TABLES_CHAIN + "\" > /dev/null; " +
+                                    "if [ $? -eq 0 ]; then " +
+                                    "iptables -D FORWARD -j " + PER_IP_MONITORING_IP_TABLES_CHAIN + "; " +
+                                    "fi; " +
+                                    "iptables -I FORWARD -j " + PER_IP_MONITORING_IP_TABLES_CHAIN + "; " +
+                                    "fi",
+                            "grep ${LAN_IFACE} /proc/net/arp | while read IP TYPE FLAGS MAC MASK IFACE; " +
+                                    "do " +
+                                    "iptables -nL " + PER_IP_MONITORING_IP_TABLES_CHAIN + " | grep \"${IP} \" > /dev/null; " +
+                                    "if [ $? -ne 0 ]; then " +
+                                    "iptables -I " + PER_IP_MONITORING_IP_TABLES_CHAIN + " -d ${IP} -j RETURN; " +
+                                    "iptables -I " + PER_IP_MONITORING_IP_TABLES_CHAIN + " -s ${IP} -j RETURN; " +
+                                    "fi; " +
+                                    "done;");
+
+                    activeClients = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "arp -a");
+                    activeDhcpLeases = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
+                    try {
+                        if (activeClients != null) {
+                            devices.setActiveClientsNum(activeClients.length);
+                        }
+                    } catch (final NumberFormatException nfe) {
+                        nfe.printStackTrace();
+                        //No Worries
+                    } finally {
                         try {
-                            if (length >= 1) {
-                                devices.setActiveClientsNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[0])));
-                            }
-                            if (length >= 2) {
-                                devices.setActiveDhcpLeasesNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[1])));
+                            if (activeDhcpLeases != null) {
+                                devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                             }
                         } catch (final NumberFormatException nfe) {
                             nfe.printStackTrace();
                             //No Worries
                         }
                     }
+
+//                    //Get number of active clients and DHCP leases
+//                    final String[] numActiveClientsAndLeases = SSHUtils.getManualProperty(mRouter,
+//                            mGlobalPreferences, "arp -a | wc -l ", "cat /tmp/dnsmasq.leases | wc -l");
+//                    if (numActiveClientsAndLeases != null) {
+//                        final int length = numActiveClientsAndLeases.length;
+//                        try {
+//                            if (length >= 1) {
+//                                devices.setActiveClientsNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[0])));
+//                            }
+//                            if (length >= 2) {
+//                                devices.setActiveDhcpLeasesNum(Integer.parseInt(nullToEmpty(numActiveClientsAndLeases[1])));
+//                            }
+//                        } catch (final NumberFormatException nfe) {
+//                            nfe.printStackTrace();
+//                            //No Worries
+//                        }
+//                    }
 
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
@@ -202,6 +355,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         return null;
                     }
 
+                    final long timestamp = System.currentTimeMillis();
                     for (final String stdoutLine : output) {
                         if ("done".equals(stdoutLine)) {
                             break;
@@ -229,6 +383,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                                     device.setAlias(deviceAlias);
                                 }
                             }
+
+                            //Get bandwidth monitoring data for this device
+                            if (!bandwidthMonitoringIfaceDataPerDevice.containsKey(macAddress)) {
+                                bandwidthMonitoringIfaceDataPerDevice.put(macAddress, new BandwidthMonitoringIfaceData());
+                            }
+                            final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+                                    bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+                            //FIXME Fetch Real data
+                            bandwidthMonitoringIfaceData.addData("IN",
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, new Random().nextDouble() * 1000000));
+                            bandwidthMonitoringIfaceData.addData("OUT",
+                                    new BandwidthMonitoringTile.DataPoint(timestamp, new Random().nextDouble() * 700000));
+
+                            device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
 
                             devices.addDevice(device);
                         }
@@ -301,6 +469,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
                 .setVisibility(View.VISIBLE);
 
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (data == null ||
                 (data.getDevices().isEmpty() &&
                         !(data.getException() instanceof DDWRTTileAutoRefreshNotAllowedException))) {
@@ -319,7 +488,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
             final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
             clientsContainer.removeAllViews();
-            clientsContainer.setBackgroundColor(mParentFragmentActivity.getResources().getColor(android.R.color.transparent));
+
+            final Resources resources = mParentFragmentActivity.getResources();
+            clientsContainer.setBackgroundColor(resources.getColor(android.R.color.transparent));
 
             //Number of Active Clients
             final int numActiveClients = data.getActiveClientsNum();
@@ -334,9 +505,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
             final boolean isThemeLight = isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+
+            final String expandedClientsPrefKey = \"fake-key\";
+
+            Set<String> expandedClients;
             for (final Device device : devices) {
 
-                final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater().inflate(R.layout.tile_status_wireless_client, null);
+                expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey, null);
+                if (expandedClients == null) {
+                    //Add first item right away
+                    mParentFragmentPreferences.edit()
+                            .putStringSet(expandedClientsPrefKey, Sets.newHashSet(device.getMacAddress()))
+                            .apply();
+                }
+
+                final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
+                        .inflate(R.layout.tile_status_wireless_client, null);
 
                 //Create Options Menu
                 final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
@@ -353,12 +537,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
 
+                final String macAddress = device.getMacAddress();
+
                 final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();
                 deviceNameView.setText(name);
+                if (activeClients != null) {
+                    for (final String activeClient : activeClients) {
+                        if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
+                            deviceNameView.setTextColor(resources.getColor(R.color.ddwrt_green));
+                            break;
+                        }
+                    }
+                }
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
-                final String macAddress = device.getMacAddress();
                 deviceMac.setText(macAddress);
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
@@ -372,12 +565,171 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     if (isThemeLight) {
                         //Set text color to blue
                         ((TextView) thisDevice)
-                                .setTextColor(mParentFragmentActivity.getResources().getColor(R.color.blue));
+                                .setTextColor(resources.getColor(R.color.blue));
                     }
                     thisDevice.setVisibility(View.VISIBLE);
                 }
 
-                cardView.setOnClickListener(new DeviceOnClickListener(device));
+                final LinearLayout deviceDetailsPlaceHolder = (LinearLayout) cardView
+                        .findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
+                deviceDetailsPlaceHolder.removeAllViews();
+
+                final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+                long rxBytes = -1l;
+                long txBytes = -1l;
+                if (bandwidthMonitoringIfaceData != null) {
+                    final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
+
+                    long maxX = System.currentTimeMillis() + 5000;
+                    long minX = System.currentTimeMillis() - 5000;
+                    double maxY = 10;
+                    double minY = 1.;
+
+                    final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+                    final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+
+                    //noinspection ConstantConditions
+                    for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
+                        final String inOrOut = entry.getKey();
+                        final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
+                        final XYSeries series = new XYSeries(inOrOut);
+                        long lastTimestamp = -1l;
+                        double pointForLastTimestamp = -1.;
+                        for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
+                            final long x = point.getTimestamp();
+                            final double y = point.getValue();
+                            series.add(x, y);
+                            if (lastTimestamp <= x) {
+                                lastTimestamp = x;
+                                pointForLastTimestamp = y;
+                            }
+                            maxX = Math.max(maxX, x);
+                            minX = Math.min(minX, x);
+                            maxY = Math.max(maxY, y);
+                            minY = Math.min(minY, y);
+                        }
+                        if ("IN".equalsIgnoreCase(inOrOut)) {
+                            rxBytes = Double.valueOf(pointForLastTimestamp).longValue();
+                        } else if ("OUT".equalsIgnoreCase(inOrOut)) {
+                            txBytes = Double.valueOf(pointForLastTimestamp).longValue();
+                        }
+
+                        // Now we add our series
+                        dataset.addSeries(series);
+
+                        // Now we create the renderer
+                        final XYSeriesRenderer renderer = new XYSeriesRenderer();
+                        renderer.setLineWidth(2);
+
+                        Integer seriesColor = colorsCache.get(inOrOut);
+                        if (seriesColor == null) {
+                            //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
+                            seriesColor = Color.argb(255,
+                                    1 + randomColorGen.nextInt(254),
+                                    1 + randomColorGen.nextInt(254),
+                                    1 + randomColorGen.nextInt(254));
+                            colorsCache.put(inOrOut, seriesColor);
+                        }
+                        renderer.setColor(seriesColor);
+                        // Include low and max value
+                        renderer.setDisplayBoundingPoints(true);
+                        // we add point markers
+                        renderer.setPointStyle(PointStyle.POINT);
+                        renderer.setPointStrokeWidth(1);
+
+                        mRenderer.addSeriesRenderer(renderer);
+                    }
+
+                    // We want to avoid black border
+                    mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+                    // Disable Pan on two axis
+                    mRenderer.setPanEnabled(false, false);
+                    mRenderer.setYAxisMax(maxY + 10);
+                    mRenderer.setYAxisMin(minY);
+                    mRenderer.setXAxisMin(minX);
+                    mRenderer.setXAxisMax(maxX + 10);
+                    mRenderer.setShowGrid(false);
+                    mRenderer.setClickEnabled(false);
+                    mRenderer.setZoomEnabled(true);
+                    mRenderer.setPanEnabled(false);
+                    mRenderer.setZoomRate(6.0f);
+                    mRenderer.setShowLabels(true);
+                    mRenderer.setFitLegend(true);
+                    mRenderer.setInScroll(true);
+
+                    final GraphicalView chartView = ChartFactory.getTimeChartView(mParentFragmentActivity, dataset, mRenderer, null);
+                    chartView.repaint();
+
+                    deviceDetailsPlaceHolder.addView(chartView, 0);
+                }
+
+                final NetworkTrafficView networkTrafficView =
+                        new NetworkTrafficView(mParentFragmentActivity, isThemeLight, mRouter.getUuid(), device);
+                networkTrafficView.setRxAndTxBytes(rxBytes, txBytes);
+
+                final LinearLayout trafficViewPlaceHolder = (LinearLayout) cardView
+                        .findViewById(R.id.tile_status_wireless_client_network_traffic_placeholder);
+                trafficViewPlaceHolder.removeAllViews();
+                trafficViewPlaceHolder.addView(networkTrafficView);
+
+                //Oui Addr
+                final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
+                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                if (macouiVendorDetails == null || isNullOrEmpty(macouiVendorDetails.getCompany())) {
+                    ouiVendorRowView.setText("-");
+                } else {
+                    ouiVendorRowView.setText(macouiVendorDetails.getCompany() + "\n" +
+                            nullToEmpty(macouiVendorDetails.getCountry()));
+                }
+
+                //TODO LastSeen
+
+                final View ouiAndLastSeenView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_lastseen_table);
+                final View trafficGraphPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
+
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Set<String> clientsExpanded = new HashSet<>(mParentFragmentPreferences
+                                .getStringSet(expandedClientsPrefKey, new HashSet<String>()));
+
+                        if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
+                            ouiAndLastSeenView.setVisibility(View.GONE);
+                            clientsExpanded.remove(macAddress);
+                            cardView.setCardElevation(20f);
+                        } else {
+                            ouiAndLastSeenView.setVisibility(View.VISIBLE);
+                            clientsExpanded.add(macAddress);
+                            cardView.setCardElevation(0f);
+                        }
+                        if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
+                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                        } else {
+                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                        }
+                        mParentFragmentPreferences.edit()
+                                .putStringSet(expandedClientsPrefKey, clientsExpanded)
+                                .apply();
+                    }
+                });
+
+                expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
+                        new HashSet<String>());
+                if (expandedClients.contains(macAddress)) {
+                    //Expand detailed view for the first item only
+                    ouiAndLastSeenView.setVisibility(View.VISIBLE);
+                    trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                    //Highlight CardView
+                    cardView.setCardElevation(20f);
+                } else {
+                    //Collapse detailed view for the first item only
+                    ouiAndLastSeenView.setVisibility(View.GONE);
+                    trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                    cardView.setCardElevation(0f);
+                }
+
+                //TODO Fill tableView with OUI Details
+//                cardView.setOnClickListener(new DeviceOnClickListener(device));
 
                 clientsContainer.addView(cardView);
 
@@ -400,6 +752,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         popup.show();
                     }
                 });
+
             }
 
             final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
