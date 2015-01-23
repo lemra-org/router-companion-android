@@ -30,6 +30,8 @@ import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
@@ -50,11 +52,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
@@ -70,6 +74,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -77,6 +82,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.ClientDevices;
@@ -89,13 +97,11 @@ import org.rm3l.ddwrt.tiles.status.lan.DHCPClientsTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
-import org.rm3l.ddwrt.utils.WoLUtils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -110,6 +116,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
@@ -136,11 +143,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     @NotNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newHashMap();
-    private String mBroadcastAddress;
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
     private String[] activeClients;
     private String[] activeDhcpLeases;
+
+    @Nullable
+    private List<String> broadcastAddresses;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
@@ -238,11 +247,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
                     mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
                     mCurrentMacAddress = connectionInfo.getMacAddress();
-
-                    final InetAddress broadcastAddress = Utils.getBroadcastAddress(wifiManager);
-                    if (broadcastAddress != null) {
-                        mBroadcastAddress = broadcastAddress.getHostAddress();
-                    }
                 } catch (@NotNull final Exception e) {
                     e.printStackTrace();
                     //No worries
@@ -274,7 +278,34 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     //FIXME END TEST MODE
                 }
 
+                broadcastAddresses = Lists.newArrayList();
+
                 try {
+
+                    //Get Broadcast Addresses (for WOL)
+                    try {
+                        final String[] wanBroadcast = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                                "ifconfig `nvram get wan_iface` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
+                        if (wanBroadcast != null && wanBroadcast.length > 0) {
+                            final String wanBcast = wanBroadcast[0];
+                            if (wanBcast != null) {
+                                //noinspection ConstantConditions
+                                broadcastAddresses.add(wanBcast.trim());
+                            }
+                        }
+                        final String[] lanBroadcast = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                                "ifconfig `nvram get lan_ifname` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
+                        if (lanBroadcast != null && lanBroadcast.length > 0) {
+                            final String lanBcast = lanBroadcast[0];
+                            if (lanBcast != null) {
+                                //noinspection ConstantConditions
+                                broadcastAddresses.add(lanBcast.trim());
+                            }
+                        }
+                    } catch (final Exception e) {
+                        //No worries
+                        e.printStackTrace();
+                    }
 
                     //Run Setup (does not matter if already done)
                     Log.d(LOG_TAG, "[SETUP] Setup router for per-IP bandwidth monitoring, if needed!");
@@ -797,7 +828,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
         return null;
     }
 
-    private class DeviceOnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
+    private class DeviceOnMenuItemClickListener implements
+            PopupMenu.OnMenuItemClickListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
         @NotNull
         private final TextView deviceNameView;
@@ -820,16 +852,26 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                             .setTitle(String.format("Wake up %s (%s)", deviceName, macAddress))
                             .setMessage(String.format("This lets you turn on a computer via the network.\n" +
                                             "For this to work properly:\n" +
-                                            "- '%s' (%s) must support Wake-on-LAN. You can enable it in the BIOS or in the Operating System Settings.\n" +
-                                            "- '%s' (%s) and this mobile device must be on the same network. To wake over the Internet, " +
-                                            "you must forward packets from any port you want to the computer you wish to wake.",
+                                            "- '%s' (%s) must support Wake-on-LAN (WOL). You can enable it in the BIOS or in the Operating System Settings.\n" +
+                                            "- WOL magic packet will be sent from the router to '%s' (%s). To wake over the Internet, " +
+                                            "you must forward packets from any port you want to the device you wish to wake.",
                                     deviceName, macAddress, deviceName, macAddress))
                             .setCancelable(true)
                             .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(final DialogInterface dialogInterface, final int i) {
-                                    //Send Magic Packet
-                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
+
+                                    final Bundle token = new Bundle();
+                                    token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.toString());
+
+                                    new UndoBarController.UndoBar(mParentFragmentActivity)
+                                            .message(String.format("WOL Request will be sent from router to '%s' (%s)",
+                                                    deviceName, macAddress))
+                                            .listener(DeviceOnMenuItemClickListener.this)
+                                            .token(token)
+                                            .show();
+
+//                                    new WoLUtils.SendWoLMagicPacketAsyncTask(mParentFragmentActivity, device).execute(macAddress, mBroadcastAddress);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -890,6 +932,64 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     break;
             }
             return false;
+        }
+
+        @Override
+        public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
+            if (parcelable instanceof Bundle) {
+                final Bundle token = (Bundle) parcelable;
+                final String routerAction = token.getString(ROUTER_ACTION);
+                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                if (isNullOrEmpty(routerAction)) {
+                    return;
+                }
+                try {
+                    switch (RouterAction.valueOf(routerAction)) {
+                        case WAKE_ON_LAN:
+                            if (broadcastAddresses == null) {
+                                Utils.displayMessage(mParentFragmentActivity,
+                                        "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
+                                        Style.ALERT);
+                                Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
+                                return;
+                            }
+                            new WakeOnLANRouterAction(this, mGlobalPreferences, device,
+                                    broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
+                                    .execute(mRouter);
+                            break;
+                        default:
+                            //Ignored
+                            break;
+                    }
+                } catch (IllegalArgumentException | NullPointerException e) {
+                    e.printStackTrace();
+                    Utils.reportException(e);
+                }
+            }
+        }
+
+        @Override
+        public void onClear(@NonNull Parcelable[] parcelables) {
+            //Nothing to do
+        }
+
+        @Override
+        public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                    Style.CONFIRM);
+        }
+
+        @Override
+        public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                    Style.ALERT);
+        }
+
+        @Override
+        public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
+            //Nothing to do
         }
     }
 
