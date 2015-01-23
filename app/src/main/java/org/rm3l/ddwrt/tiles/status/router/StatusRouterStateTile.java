@@ -37,6 +37,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -125,7 +126,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                         //elapsed from current date
                                         "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
                                         "uname -a",
-                                        "cat /tmp/loginprompt");
+                                        "echo \"`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
+                                                "`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
 
                         if (otherCmds != null) {
                             if (otherCmds.length >= 1) {
@@ -146,21 +148,15 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
                             if (otherCmds.length >= 4) {
                                 //Kernel
-                                nvramInfo.setProperty(NVRAMInfo.KERNEL, otherCmds[3]);
+                                nvramInfo.setProperty(NVRAMInfo.KERNEL,
+                                        StringUtils.replace(
+                                                StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
+                                                nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
                             }
 
                             if (otherCmds.length >= 5) {
                                 //Firmware
-                                //TODO Relying on loginprompt, since there is no easy way to get the info
-                                final String firmVer = otherCmds[4];
-                                String firmReleaseAndBuildNumber = null;
-                                if (otherCmds.length >= 6) {
-                                    firmReleaseAndBuildNumber = otherCmds[5];
-                                }
-
-                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, firmVer +
-                                        (firmReleaseAndBuildNumber != null ? ("\n" + firmReleaseAndBuildNumber) : ""));
-
+                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, otherCmds[4]);
                             }
                         }
                     }
