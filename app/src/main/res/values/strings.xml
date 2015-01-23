@@ -450,4 +450,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="title_cpuinfo">CPU Information</string>
     <string name="num_active_dhcp_leases"># Active DHCP Leases</string>
     <string name="num_active_clients"># Active Clients</string>
+    <string name="title_meminfo">Memory Information</string>
 </resources>

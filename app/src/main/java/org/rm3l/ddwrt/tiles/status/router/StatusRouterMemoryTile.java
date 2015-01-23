@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -40,14 +41,19 @@ import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -56,18 +62,20 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusRouterMemoryTile.class.getSimpleName();
 
+    private String[] memInfoContents;
+
     public StatusRouterMemoryTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem, R.id.tile_status_router_router_mem_togglebutton);
-    }
-
-    @Override
-    public int getTileTitleViewId() {
-        return R.id.tile_status_router_router_mem_title;
     }
 
     @NotNull
     private static String getGrepProcMemInfo(@NotNull final String item) {
         return "grep \"" + item + "\" /proc/meminfo ";
+    }
+
+    @Override
+    public int getTileTitleViewId() {
+        return R.id.tile_status_router_router_mem_title;
     }
 
     @Nullable
@@ -101,6 +109,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    memInfoContents = null;
 
                     @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -140,6 +150,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
 
                         }
+
+                        //Now cache whole /proc/cpuinfo, for detailed activity
+                        memInfoContents = SSHUtils.getManualProperty(mRouter,
+                                mGlobalPreferences, "cat /proc/meminfo");
 
                     }
 
@@ -265,7 +279,26 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        //TODO
-        return null;
+        if (memInfoContents == null) {
+            //Loading
+            Utils.displayMessage(mParentFragmentActivity, "Loading data from router - please wait a few seconds.", Style.ALERT);
+            return null;
+        }
+
+        if (memInfoContents.length == 0) {
+            //No data!
+            Utils.displayMessage(mParentFragmentActivity, "No data available - please retry later.", Style.ALERT);
+            return null;
+        }
+
+        final String mRouterUuid = mRouter.getUuid();
+        final Intent memInfoIntent =
+                new Intent(mParentFragment.getActivity(),
+                        isThemeLight(mParentFragmentActivity, mRouterUuid) ?
+                                RouterMemInfoActivityLight.class : RouterMemInfoActivity.class);
+        memInfoIntent.putExtra(RouterMemInfoActivity.MEM_INFO_OUTPUT, memInfoContents);
+        memInfoIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
+
+        return new OnClickIntent("Loading Memory Info...", memInfoIntent, null);
     }
 }

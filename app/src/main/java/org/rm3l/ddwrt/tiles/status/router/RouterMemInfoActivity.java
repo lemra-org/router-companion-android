@@ -50,21 +50,21 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class RouterCpuInfoActivity extends Activity {
+public class RouterMemInfoActivity extends Activity {
 
-    public static final String CPU_INFO_OUTPUT = "CPU_INFO_OUTPUT";
+    public static final String MEM_INFO_OUTPUT = "MEM_INFO_OUTPUT";
 
     private ShareActionProvider mShareActionProvider;
     private String mRouterUuid;
     private File mFileToShare;
 
-    private String mCpuInfoMultiLine;
+    private String mMemInfoMultiLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.tile_status_router_cpuinfo);
+        setContentView(R.layout.tile_status_router_meminfo);
 
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
@@ -73,38 +73,37 @@ public class RouterCpuInfoActivity extends Activity {
 
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        final String[] mCpuInfo = intent.getStringArrayExtra(CPU_INFO_OUTPUT);
-
-        if (mCpuInfo == null || mCpuInfo.length == 0) {
-            Toast.makeText(this, "Internal Error - No CPU Info available!", Toast.LENGTH_SHORT).show();
+        final String[] mMemInfo = intent.getStringArrayExtra(MEM_INFO_OUTPUT);
+        if (mMemInfo == null || mMemInfo.length == 0) {
+            Toast.makeText(this, "Internal Error - No Mem Info available!", Toast.LENGTH_SHORT).show();
             finish();
         }
 
-        mCpuInfoMultiLine = Joiner.on("\n").join(mCpuInfo);
+        mMemInfoMultiLine = Joiner.on("\n").join(mMemInfo);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        ((TextView) findViewById(R.id.tile_status_router_cpuinfo)).setText(mCpuInfoMultiLine);
+        ((TextView) findViewById(R.id.tile_status_router_meminfo)).setText(mMemInfoMultiLine);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tile_status_router_cpuinfo_options, menu);
+        getMenuInflater().inflate(R.menu.tile_status_router_meminfo_options, menu);
 
-        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.tile_status_router_cpuinfo_share)
+        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.tile_status_router_meminfo_share)
                 .getActionProvider();
 
         mFileToShare = new File(getCacheDir(),
-                String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid)));
+                String.format("Mem_Info__%s.txt", nullToEmpty(mRouterUuid)));
 
         Exception exception = null;
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
             //noinspection ConstantConditions
-            outputStream.write(mCpuInfoMultiLine.getBytes());
+            outputStream.write(mMemInfoMultiLine.getBytes());
         } catch (IOException e) {
             exception = e;
             e.printStackTrace();
@@ -120,7 +119,7 @@ public class RouterCpuInfoActivity extends Activity {
 
         if (exception != null) {
             Crouton.makeText(this,
-                    "Error while trying to share CPU Info - please try again later",
+                    "Error while trying to share Mem Info - please try again later",
                     Style.ALERT).show();
             return true;
         }
@@ -170,7 +169,7 @@ public class RouterCpuInfoActivity extends Activity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "CPU Info");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Memory Info");
 
         sendIntent.setData(uriForFile);
         sendIntent.setType("text/plain");

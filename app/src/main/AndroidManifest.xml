@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -21,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.rm3l.ddwrt" >
+    package="org.rm3l.ddwrt">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -38,9 +37,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <!-- TODO Are these permissions really needed? -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:name=".DDWRTApplication"
@@ -48,7 +51,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock" >
+        android:theme="@style/Theme.Sherlock">
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.rm3l.fileprovider"
@@ -58,6 +61,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".mgmt.RouterManagementActivity"
             android:label="@string/app_name"
@@ -83,14 +87,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:excludeFromRecents="true"
             android:label="@string/support_app"
             android:launchMode="singleInstance"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="org.acra.CrashReportDialog"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Dialog"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="org.achartengine.GraphicalActivity"
             android:excludeFromRecents="true"
@@ -119,7 +123,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:parentActivityName=".DDWRTMainActivity"
             android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="adjustResize">
-        <meta-data
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -130,7 +134,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:parentActivityName=".DDWRTMainActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize">
-        <meta-data
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -144,7 +148,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
             <intent-filter>
-                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE"/>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -155,7 +159,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:parentActivityName=".DDWRTMainActivity"
             android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="adjustResize">
-        <meta-data
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -166,7 +170,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:parentActivityName=".DDWRTMainActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize">
-        <meta-data
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
@@ -185,6 +189,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".tiles.status.router.RouterCpuInfoActivityLight"
             android:label="@string/title_cpuinfo"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tiles.status.router.RouterMemInfoActivity"
+            android:label="@string/title_meminfo"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:theme="@android:style/Theme.Holo"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
+        <activity
+            android:name=".tiles.status.router.RouterMemInfoActivityLight"
+            android:label="@string/title_meminfo"
             android:parentActivityName=".DDWRTMainActivity"
             android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="stateHidden">
