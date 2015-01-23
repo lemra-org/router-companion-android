@@ -846,15 +846,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             final String macAddress = device.getMacAddress();
             switch(item.getItemId()) {
                 case R.id.tile_status_wireless_client_wol:
+                    //TODO Support Secure On Password????
                     final String deviceName = nullToEmpty(device.getName());
                     new AlertDialog.Builder(mParentFragmentActivity)
                             .setIcon(R.drawable.ic_action_alert_warning)
-                            .setTitle(String.format("Wake up %s (%s)", deviceName, macAddress))
+                            .setTitle(String.format("Wake up '%s' (%s)", deviceName, macAddress))
                             .setMessage(String.format("This lets you turn on a computer via the network.\n" +
                                             "For this to work properly:\n" +
-                                            "- '%s' (%s) must support Wake-on-LAN (WOL). You can enable it in the BIOS or in the Operating System Settings.\n" +
+                                            "- '%s' (%s) hardware must support Wake-on-LAN (WOL). You can enable it in the BIOS or in the Operating System Settings.\n" +
                                             "- WOL magic packet will be sent from the router to '%s' (%s). To wake over the Internet, " +
-                                            "you must forward packets from any port you want to the device you wish to wake.",
+                                            "you must forward packets from any port you want to the device you wish to wake.\n" +
+                                            "Note that some computers support WOL only when they are in Sleep mode or Hibernated, " +
+                                            "not powered off. Some may also require a SecureOn password, which is not supported (yet)!",
                                     deviceName, macAddress, deviceName, macAddress))
                             .setCancelable(true)
                             .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
