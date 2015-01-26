@@ -769,6 +769,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 final long lastSeen = device.getLastSeen();
                 if (lastSeen <= 0l) {
                     lastSeenRowView.setText("-");
+                    lastSeenRowView.setReferenceTime(-1l);
                 } else {
                     lastSeenRowView.setReferenceTime(lastSeen);
                     lastSeenRowView.setPrefix(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(lastSeen)) + "\n(");
