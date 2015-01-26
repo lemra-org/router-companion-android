@@ -52,6 +52,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cocosw.undobar.UndoBarController;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
@@ -764,12 +765,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     ouiVendorRowView.setText(macouiVendorDetails.getCompany());
                 }
 
-                final TextView lastSeenRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
+                final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                 final long lastSeen = device.getLastSeen();
                 if (lastSeen <= 0l) {
                     lastSeenRowView.setText("-");
                 } else {
-                    lastSeenRowView.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(lastSeen)));
+                    lastSeenRowView.setReferenceTime(lastSeen);
+                    lastSeenRowView.setPrefix(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(lastSeen)) + "\n(");
+                    lastSeenRowView.setSuffix(")");
                 }
 
                 final TextView totalDownloadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_download);

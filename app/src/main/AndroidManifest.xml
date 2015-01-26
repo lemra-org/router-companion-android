@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.rm3l.ddwrt">
 
     <uses-sdk
@@ -53,7 +54,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock">
+        android:theme="@style/Theme.Sherlock"
+        tools:replace="android:theme">
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.rm3l.fileprovider"
