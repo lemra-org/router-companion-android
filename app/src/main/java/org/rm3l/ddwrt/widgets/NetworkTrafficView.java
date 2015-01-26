@@ -44,8 +44,8 @@ public class NetworkTrafficView extends TextView {
     public void setRxAndTxBytes(final long rxBytes, final long txBytes) {
         setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) mContext.getResources()
                 .getDimensionPixelSize(R.dimen.net_traffic_single_text_size));
-        String dataToShow = (rxBytes < 0 ? NO_DATA : byteCountToDisplaySize(rxBytes) + PER_SEC);
-        dataToShow += ("\n" + (txBytes < 0 ? NO_DATA : byteCountToDisplaySize(txBytes) + PER_SEC));
+        String dataToShow = (txBytes < 0l ? NO_DATA : byteCountToDisplaySize(txBytes) + PER_SEC);
+        dataToShow += ("\n" + (rxBytes < 0l ? NO_DATA : byteCountToDisplaySize(rxBytes) + PER_SEC));
         super.setText(dataToShow);
         updateTrafficDrawable();
     }

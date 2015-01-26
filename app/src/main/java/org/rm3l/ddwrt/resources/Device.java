@@ -52,6 +52,16 @@ public class Device implements Comparable<Device> {
     @Nullable
     private String systemName;
 
+    private boolean active = false;
+
+    private double txRate = -1.;
+    private double rxRate = -1.;
+
+    private double rxTotal = -1.;
+    private double txTotal = -1.;
+
+    private long lastSeen;
+
     /**
      * Constructor
      *
@@ -200,9 +210,70 @@ public class Device implements Comparable<Device> {
         return this.state != State.DISABLED;
     }
 
-    @NotNull
+    @Override
     public String toString() {
-        return "Device[alias=" + this.alias + ",mac=" + this.macAddress + ",ip=" + this.ipAddress + "]";
+        return "Device{" +
+                "macAddress='" + macAddress + '\'' +
+                ", macouiVendorDetails=" + macouiVendorDetails +
+                ", alias='" + alias + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", state=" + state +
+                ", systemName='" + systemName + '\'' +
+                ", active=" + active +
+                ", txRate=" + txRate +
+                ", rxRate=" + rxRate +
+                ", rxTotal=" + rxTotal +
+                ", txTotal=" + txTotal +
+                ", lastSeen=" + lastSeen +
+                '}';
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public double getRxRate() {
+        return rxRate;
+    }
+
+    public void setRxRate(double rxRate) {
+        this.rxRate = rxRate;
+    }
+
+    public double getTxRate() {
+        return txRate;
+    }
+
+    public void setTxRate(double txRate) {
+        this.txRate = txRate;
+    }
+
+    public double getRxTotal() {
+        return rxTotal;
+    }
+
+    public void setRxTotal(double rxTotal) {
+        this.rxTotal = rxTotal;
+    }
+
+    public double getTxTotal() {
+        return txTotal;
+    }
+
+    public void setTxTotal(double txTotal) {
+        this.txTotal = txTotal;
+    }
+
+    public long getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(long lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     enum State {

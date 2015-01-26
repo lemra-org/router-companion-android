@@ -58,9 +58,11 @@ public final class DDWRTCompanionConstants {
     public static final String TRACEPOT_DEVELOP_MODE = "TRACEPOT_DEVELOP_MODE";
     public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
     public static final String MAC_OUI_SEARCH_URL = "http://standards.ieee.org/cgi-bin/ouisearch?";
-    public String[] mMonth = new String[] {
-            "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
+    public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME = "wrtbwmon_ddwrtcompanion.sh";
+    public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE = "/tmp/." + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
+    public String[] mMonth = new String[]{
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
 
     private DDWRTCompanionConstants() {
