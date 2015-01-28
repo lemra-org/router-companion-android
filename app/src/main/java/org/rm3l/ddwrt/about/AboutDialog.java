@@ -54,12 +54,10 @@ public class AboutDialog extends Dialog {
     public static final String VERSION_CODE_INFO_TXT = "%VERSION_CODE%";
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
-
-    private final Context mContext;
-
-    private static final int[] BIT_FIELDS_TO_LINKIFY = new int[] {
-        EMAIL_ADDRESSES, MAP_ADDRESSES, WEB_URLS
+    private static final int[] BIT_FIELDS_TO_LINKIFY = new int[]{
+            EMAIL_ADDRESSES, MAP_ADDRESSES, WEB_URLS
     };
+    private final Context mContext;
 
     /**
      * Constructor
@@ -112,13 +110,19 @@ public class AboutDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about);
 
+        boolean fileFound;
         TextView tv = (TextView) findViewById(R.id.legal_text);
-        final String legalTxtRaw = readRawTextFile(R.raw.legal);
-        boolean fileFound = (legalTxtRaw != null);
-        if (fileFound) {
-            setTextContentAndLinkify(tv, legalTxtRaw);
+        if (BuildConfig.DONATIONS) {
+            //Show GPL License terms
+            final String legalTxtRaw = readRawTextFile(R.raw.legal);
+            fileFound = (legalTxtRaw != null);
+            if (fileFound) {
+                setTextContentAndLinkify(tv, legalTxtRaw);
+            }
+            tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
+        } else {
+            tv.setVisibility(View.GONE);
         }
-        tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
 
         tv = (TextView) findViewById(R.id.info_text);
         final String infoText = readRawTextFile(R.raw.info);

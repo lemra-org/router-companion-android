@@ -27,6 +27,7 @@ public enum RouterAction {
     RESTORE_FACTORY_DEFAULTS,
     SET_NVRAM_VARIABLES,
     UPGRADE_FIRMWARE,
-    WAKE_ON_LAN;
+    WAKE_ON_LAN,
+    RESET_COUNTERS;
 
 }

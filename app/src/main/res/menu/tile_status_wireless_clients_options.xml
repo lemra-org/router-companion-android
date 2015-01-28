@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+DD-WRT Companion is a mobile app that lets you connect to,
+monitor and manage your DD-WRT routers on the go.
+
+Copyright (C) 2014  Armel Soro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Sort -->
+    <item
+        android:id="@+id/tile_status_wireless_clients_sort"
+        android:orderInCategory="1"
+        android:showAsAction="never"
+        android:title="@string/sort">
+
+        <menu>
+
+            <group
+                android:id="@+id/tile_status_wireless_clients_sort_a_z_z_a"
+                android:checkableBehavior="single"
+                android:orderInCategory="2">
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_a_z"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_sort_alphabetically"
+                    android:orderInCategory="1"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/sort_a_z" />
+
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_z_a"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_sort_alphabetically"
+                    android:orderInCategory="2"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/sort_z_a" />
+
+            </group>
+
+            <group
+                android:id="@+id/tile_status_wireless_clients_sort_top_talkers"
+                android:checkableBehavior="single"
+                android:orderInCategory="3">
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_top_senders"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_sort_by_size"
+                    android:orderInCategory="3"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/top_senders" />
+
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_top_receivers"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_sort_by_size"
+                    android:orderInCategory="4"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/top_receivers" />
+            </group>
+
+            <group
+                android:id="@+id/tile_status_wireless_clients_sort_last_seen"
+                android:checkableBehavior="single"
+                android:orderInCategory="4">
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_seen_recently"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_view"
+                    android:orderInCategory="5"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/seen_recently" />
+
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_not_seen_recently"
+                    android:checkable="true"
+                    android:icon="@android:drawable/ic_menu_view"
+                    android:orderInCategory="6"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/not_seen_recently" />
+            </group>
+
+            <!-- Reset Preferences -->
+            <item
+                android:id="@+id/tile_status_wireless_clients_reset_prefs"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:orderInCategory="7"
+                android:showAsAction="never"
+                android:title="@string/reset_sort_prefs" />
+
+        </menu>
+
+    </item>
+
+    <!-- Display/Hide Inactive hosts -->
+    <item
+        android:id="@+id/tile_status_wireless_clients_hide_inactive_hosts"
+        android:checkable="true"
+        android:checked="false"
+        android:icon="@android:drawable/ic_menu_crop"
+        android:orderInCategory="2"
+        android:showAsAction="never"
+        android:title="@string/hide_inactive_hosts" />
+
+    <!-- Reset Counters -->
+    <item
+        android:id="@+id/tile_status_wireless_clients_reset_counters"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:orderInCategory="3"
+        android:showAsAction="never"
+        android:title="@string/reset_counters" />
+
+
+</menu>

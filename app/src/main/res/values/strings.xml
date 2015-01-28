@@ -457,4 +457,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="last_seen">Last Seen</string>
     <string name="total_download">Total Download</string>
     <string name="total_upload">Total Upload</string>
+    <string name="name">Name</string>
+    <string name="system_name">System Name</string>
+    <string name="top_senders">Top Senders</string>
+    <string name="top_receivers">Top Receivers</string>
+    <string name="seen_recently">Seen Recently</string>
+    <string name="not_seen_recently">Not Seen Recently</string>
+    <string name="reset_sort_prefs">Reset Sort Preferences</string>
+    <string name="hide_inactive_hosts">Hide Inactive Hosts</string>
+    <string name="reset_counters">Reset counters</string>
 </resources>

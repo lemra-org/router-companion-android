@@ -122,7 +122,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:background="@color/abs__background_holo_dark"
                     android:gravity="bottom"
+                    android:maxLength="9000"
                     android:maxLines="200"
+                    android:singleLine="false"
                     android:textColor="@color/abs__background_holo_light"
                     android:visibility="gone" />
 

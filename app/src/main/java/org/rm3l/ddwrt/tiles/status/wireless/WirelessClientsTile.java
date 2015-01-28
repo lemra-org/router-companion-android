@@ -37,10 +37,12 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -55,12 +57,13 @@ import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
@@ -83,6 +86,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
@@ -94,6 +98,10 @@ import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
+import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.HideInactiveClientsSortingVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
@@ -105,7 +113,6 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -127,24 +134,22 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANI
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
+
 /**
  *
  */
-public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
+public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements PopupMenu.OnMenuItemClickListener {
 
-    public static final Comparator<Device> COMPARATOR = new Comparator<Device>() {
-        @Override
-        public int compare(Device device, Device device2) {
-            return Ordering.natural().compare(nullToEmpty(device.getName()).toLowerCase(),
-                    nullToEmpty(device2.getName()).toLowerCase());
-        }
-    };
+    public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
+    public static final String SORT_LAST_SEEN = "sort_last_seen";
+    public static final String SORT = "sort";
+    public static final String SORT_TOP_TALKERS = SORT + "_top_talkers";
+    public static final String SORT_APHABETICAL = SORT + "_aphabetical";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db.out";
-
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = new HashMap<>();
     //Generate a random string, to use as discriminator for determining dhcp clients
@@ -153,19 +158,29 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     @NotNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newConcurrentMap();
+    private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
     private String[] activeClients;
     private String[] activeDhcpLeases;
-
     @Nullable
     private List<String> broadcastAddresses;
-
     private File wrtbwmonScriptPath;
+
+    private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
         MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
+
+        sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
+        sortIds.put(R.id.tile_status_wireless_clients_sort_z_a, 73);
+
+        sortIds.put(R.id.tile_status_wireless_clients_sort_top_senders, 82);
+        sortIds.put(R.id.tile_status_wireless_clients_sort_top_receivers, 83);
+
+        sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
+        sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
 
         mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
 
@@ -226,19 +241,63 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             }
         };
 
-        //Create Options Menu
-//        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
-//        if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
-//            //Set menu background to white
-//            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-//        }
-//        tileMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-//
-//            }
-//        });
+//        Create Options Menu
+        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
+        if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+            //Set menu background to white
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+        tileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(WirelessClientsTile.this);
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.tile_status_wireless_clients_options, menu);
+
+                //Disable menu item from preference
+                if (mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
+                    //Mark as checked
+                    menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
+                }
+
+                if (mParentFragmentPreferences != null) {
+                    final Integer currentSortAlphabetical = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL), -1));
+                    if (currentSortAlphabetical != null && currentSortAlphabetical > 0) {
+                        final MenuItem currentSortMenuItem = menu.findItem(currentSortAlphabetical);
+                        if (currentSortMenuItem != null) {
+                            currentSortMenuItem.setEnabled(false);
+                            currentSortMenuItem.setChecked(true);
+                        }
+                    }
+
+                    final Integer currentSortTopTalkers = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS), -1));
+                    if (currentSortTopTalkers != null && currentSortTopTalkers > 0) {
+                        final MenuItem currentSortMenuItem = menu.findItem(currentSortTopTalkers);
+                        if (currentSortMenuItem != null) {
+                            currentSortMenuItem.setEnabled(false);
+                            currentSortMenuItem.setChecked(true);
+                        }
+                    }
+
+                    final Integer currentSortLastSeen = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN), -1));
+                    if (currentSortLastSeen != null && currentSortLastSeen > 0) {
+                        final MenuItem currentSortMenuItem = menu.findItem(currentSortLastSeen);
+                        if (currentSortMenuItem != null) {
+                            currentSortMenuItem.setEnabled(false);
+                            currentSortMenuItem.setChecked(true);
+                        }
+                    }
+                }
+
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -485,20 +544,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                         }
                     }
 
-                    //TODO Backup usage DB (and maybe back it to external storage (scpFrom))
-                    try {
-                        SSHUtils.scpFrom(mRouter, mGlobalPreferences,
-                                USAGE_DB,
-                                new File(mParentFragmentActivity.getExternalFilesDir(null),
-                                        "usage_" + mRouter.getUuid()).getAbsolutePath());
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                        //No worries
-                    } finally {
-                        //Final operation
-                        for (final Device device : macToDevice.values()) {
-                            devices.addDevice(device);
-                        }
+                    //TODO and maybe back it up to external storage (scpFrom)
+//                    try {
+//                        SSHUtils.scpFrom(mRouter, mGlobalPreferences,
+//                                USAGE_DB,
+//                                new File(mParentFragmentActivity.getExternalFilesDir(null),
+//                                        "usage_" + mRouter.getUuid()).getAbsolutePath());
+//                    } catch (final Exception e) {
+//                        e.printStackTrace();
+//                        //No worries
+//                    } finally {
+//
+//                    }
+
+                    //Final operation
+                    for (final Device device : macToDevice.values()) {
+                        devices.addDevice(device);
                     }
 
                     return devices;
@@ -609,6 +670,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             final String expandedClientsPrefKey = \"fake-key\";
 
             Set<String> expandedClients;
+
+            currentDevicesViewsMap.clear();
+
             for (final Device device : devices) {
 
                 expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey, null);
@@ -670,7 +734,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 deviceDetailsPlaceHolder.removeAllViews();
 
                 final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
-                if (bandwidthMonitoringIfaceData != null) {
+                if (bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
+                    //Show no data
+                    final TextView noDataTextView = new TextView(mParentFragmentActivity);
+                    noDataTextView.setText("No Data");
+                    noDataTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    noDataTextView.setTextAppearance(mParentFragmentActivity, android.R.style.TextAppearance_Medium);
+                    noDataTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+
+                    deviceDetailsPlaceHolder.addView(noDataTextView);
+
+                } else {
                     final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
                             bandwidthMonitoringIfaceData.getData();
 
@@ -756,6 +830,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                 trafficViewPlaceHolder.removeAllViews();
                 trafficViewPlaceHolder.addView(networkTrafficView);
 
+                final TextView deviceSystemNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_system_name);
+                final String systemName = device.getSystemName();
+                if (isNullOrEmpty(systemName)) {
+                    deviceSystemNameView.setText("-");
+                } else {
+                    deviceSystemNameView.setText(systemName);
+                }
+
                 //OUI Addr
                 final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
                 final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
@@ -840,7 +922,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
 
 //                cardView.setOnClickListener(new DeviceOnClickListener(device));
 
-                clientsContainer.addView(cardView);
+//                if (!hideInactive) {
+//                    cardViewsVisibleToUser.put(device, cardView);
+//                } else {
+//                    if (device.isActive()) {
+//                        cardViewsVisibleToUser.put(device, cardView);
+//                    }
+//                }
+
+//                if (!hideInactive ||device.isActive()) {
+//                    clientsContainer.addView(cardView);
+//                }
 
                 tileMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -862,6 +954,54 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
                     }
                 });
 
+                currentDevicesViewsMap.put(device, cardView);
+            }
+
+            //Filter
+            final boolean hideInactive = (mParentFragmentPreferences != null &&
+                    mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+            Set<Device> newDevices =
+                    new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+            //Alphabetical sorting
+            Integer aphabeticalSort = null;
+            if (mParentFragmentPreferences != null) {
+                aphabeticalSort = sortIds.inverse()
+                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
+                                -1));
+            }
+            if (aphabeticalSort != null && aphabeticalSort > 0) {
+                newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
+                        .visit(newDevices);
+            }
+
+            //Last Seen sorting
+            Integer lastSeenSort = null;
+            if (mParentFragmentPreferences != null) {
+                lastSeenSort = sortIds.inverse()
+                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
+                                -1));
+            }
+            if (lastSeenSort != null && lastSeenSort > 0) {
+                newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
+            }
+
+            //Now finish by applying Top Talkers sorting
+            Integer topTalkersSort = null;
+            if (mParentFragmentPreferences != null) {
+                topTalkersSort = sortIds.inverse()
+                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
+                                -1));
+            }
+            if (topTalkersSort != null && topTalkersSort > 0) {
+                newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
+            }
+
+            for (final Device dev : newDevices) {
+                final View view = currentDevicesViewsMap.get(dev);
+                if (view != null) {
+                    clientsContainer.addView(view);
+                }
             }
 
             final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
@@ -893,6 +1033,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
+        final View tileMenu = layout.findViewById(R.id.tile_status_wireless_clients_menu);
+        if (currentDevicesViewsMap.isEmpty()) {
+            tileMenu.setVisibility(View.GONE);
+        } else {
+            tileMenu.setVisibility(View.VISIBLE);
+        }
+
         doneWithLoaderInstance(this, loader,
                 R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
 
@@ -904,6 +1051,292 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> {
     protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
+        final int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.tile_status_wireless_clients_reset_counters:
+                //Reset Counters
+                final Bundle token = new Bundle();
+                token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.toString());
+
+                new UndoBarController.UndoBar(mParentFragmentActivity)
+                        .message("Bandwidth Monitoring counters will be reset.")
+                        .listener(new MenuActionItemClickListener())
+                        .token(token)
+                        .show();
+                break;
+            case R.id.tile_status_wireless_clients_hide_inactive_hosts: {
+                final boolean hideInactive = !item.isChecked();
+
+                //Filter
+                Set<Device> newDevices =
+                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                //Apply alphabetical sorting, if needed
+                Integer aphabeticalSort = null;
+                if (mParentFragmentPreferences != null) {
+                    aphabeticalSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
+                                    -1));
+                }
+                if (aphabeticalSort != null && aphabeticalSort > 0) {
+                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
+                            .visit(newDevices);
+                }
+
+                //Now finish by applying Top Talkers sorting
+                Integer topTalkersSort = null;
+                if (mParentFragmentPreferences != null) {
+                    topTalkersSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
+                                    -1));
+                }
+                if (topTalkersSort != null && topTalkersSort > 0) {
+                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
+                }
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
+                            .apply();
+                }
+            }
+            return true;
+            case R.id.tile_status_wireless_clients_sort_a_z:
+            case R.id.tile_status_wireless_clients_sort_z_a: {
+                final boolean hideInactive = (mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+
+                //Filter
+                Set<Device> newDevices =
+                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                //Alphabetical filtering on these newDevices (filtered)
+                newDevices = new ClientsAlphabeticalSortingVisitorImpl(itemId).visit(newDevices);
+
+                //Last Seen sorting
+                Integer lastSeenSort = null;
+                if (mParentFragmentPreferences != null) {
+                    lastSeenSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
+                                    -1));
+                }
+                if (lastSeenSort != null && lastSeenSort > 0) {
+                    newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
+                }
+
+                //Now finish by applying Top Talkers sorting
+                Integer topTalkersSort = null;
+                if (mParentFragmentPreferences != null) {
+                    topTalkersSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
+                                    -1));
+                }
+                if (topTalkersSort != null && topTalkersSort > 0) {
+                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
+                }
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putInt(getFormattedPrefKey(SORT_APHABETICAL), sortIds.get(itemId))
+                            .apply();
+                }
+            }
+            return true;
+            case R.id.tile_status_wireless_clients_sort_top_senders:
+            case R.id.tile_status_wireless_clients_sort_top_receivers: {
+                final boolean hideInactive = (mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+
+                //Filter
+                Set<Device> newDevices =
+                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                //Apply alphabetical sorting, if needed
+                Integer aphabeticalSort = null;
+                if (mParentFragmentPreferences != null) {
+                    aphabeticalSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
+                                    -1));
+                }
+                if (aphabeticalSort != null && aphabeticalSort > 0) {
+                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
+                            .visit(newDevices);
+                }
+
+                //Last Seen sorting
+                Integer lastSeenSort = null;
+                if (mParentFragmentPreferences != null) {
+                    lastSeenSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
+                                    -1));
+                }
+                if (lastSeenSort != null && lastSeenSort > 0) {
+                    newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
+                }
+
+                //Now top talkers
+                newDevices = new TopTalkersClientsSortingVisitorImpl(itemId).visit(newDevices);
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putInt(getFormattedPrefKey(SORT_TOP_TALKERS), sortIds.get(itemId))
+                            .apply();
+                }
+            }
+            return true;
+            case R.id.tile_status_wireless_clients_sort_seen_recently:
+            case R.id.tile_status_wireless_clients_sort_not_seen_recently: {
+
+                final boolean hideInactive = (mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
+
+                //Filter
+                Set<Device> newDevices =
+                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                //Apply alphabetical sorting, if needed
+                Integer aphabeticalSort = null;
+                if (mParentFragmentPreferences != null) {
+                    aphabeticalSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
+                                    -1));
+                }
+                if (aphabeticalSort != null && aphabeticalSort > 0) {
+                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
+                            .visit(newDevices);
+                }
+
+                //Last Seen
+                newDevices = new LastSeenClientsSortingVisitorImpl(itemId).visit(newDevices);
+
+                //Now finish by applying Top Talkers sorting
+                Integer topTalkersSort = null;
+                if (mParentFragmentPreferences != null) {
+                    topTalkersSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
+                                    -1));
+                }
+                if (topTalkersSort != null && topTalkersSort > 0) {
+                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
+                }
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putInt(getFormattedPrefKey(SORT_LAST_SEEN), sortIds.get(itemId))
+                            .apply();
+                }
+            }
+            return true;
+            case R.id.tile_status_wireless_clients_reset_prefs:
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .remove(getFormattedPrefKey(SORT_TOP_TALKERS))
+                            .remove(getFormattedPrefKey(SORT_APHABETICAL))
+                            .remove(getFormattedPrefKey(SORT_LAST_SEEN))
+                            .apply();
+                }
+                Utils.displayMessage(mParentFragmentActivity, "Changes will appear upon next sync.", Style.CONFIRM);
+                return true;
+            default:
+                break;
+        }
+        return false;
+    }
+
+
+    private class MenuActionItemClickListener implements UndoBarController.AdvancedUndoListener, RouterActionListener {
+
+        @Override
+        public void onHide(@android.support.annotation.Nullable Parcelable parcelable) {
+            if (parcelable instanceof Bundle) {
+                final Bundle token = (Bundle) parcelable;
+                final String routerAction = token.getString(ROUTER_ACTION);
+                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                if (isNullOrEmpty(routerAction)) {
+                    return;
+                }
+                try {
+                    switch (RouterAction.valueOf(routerAction)) {
+                        case RESET_COUNTERS:
+                            new ResetBandwidthMonitoringCountersRouterAction(this, mGlobalPreferences)
+                                    .execute(mRouter);
+                            break;
+                        default:
+                            //Ignored
+                            break;
+                    }
+                } catch (IllegalArgumentException | NullPointerException e) {
+                    e.printStackTrace();
+                    Utils.reportException(e);
+                }
+            }
+        }
+
+        @Override
+        public void onClear(@NonNull Parcelable[] parcelables) {
+            //Nothing to do
+        }
+
+        @Override
+        public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
+            //Nothing to do
+        }
+
+        @Override
+        public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
+//            bandwidthMonitoringIfaceDataPerDevice.clear();
+            Utils.displayMessage(mParentFragmentActivity,
+                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                    Style.CONFIRM);
+        }
+
+        @Override
+        public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                    Style.ALERT);
+        }
     }
 
     private class DeviceOnMenuItemClickListener implements

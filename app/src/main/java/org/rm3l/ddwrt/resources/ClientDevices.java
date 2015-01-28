@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 
 import java.util.Set;
 
@@ -72,8 +71,7 @@ public class ClientDevices {
     public Set<Device> getDevices(int max) {
         return FluentIterable
                 .from(devices)
-                .limit(max)
-                .toSortedSet(WirelessClientsTile.COMPARATOR);
+                .limit(max).toSet();
     }
 
     @NotNull

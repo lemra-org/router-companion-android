@@ -74,11 +74,10 @@ import java.util.Set;
  */
 public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
+    public static final int MAX_DATA_POINTS = 77;
+    //END TESTS ONLY
     //TODO TESTS ONLY
     private static final boolean BW_MONIT_TEST = true;
-    //END TESTS ONLY
-
-    public static final int MAX_DATA_POINTS = 50;
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
@@ -183,7 +182,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public void fillIfaceDataPoint(@NotNull final String iface) {
 
-        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST ) {
+        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST) {
             //FIXME TEST MODE
             final double random = new Random().nextDouble() * 1024;
 
