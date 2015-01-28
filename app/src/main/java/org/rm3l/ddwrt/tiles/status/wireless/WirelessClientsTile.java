@@ -37,12 +37,10 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.util.LruCache;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -731,20 +729,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final LinearLayout deviceDetailsPlaceHolder = (LinearLayout) cardView
                         .findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
+                final View noDataView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_no_data);
+
                 deviceDetailsPlaceHolder.removeAllViews();
 
                 final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
-                if (bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
+                final boolean hideGraphPlaceHolder = bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty();
+                if (hideGraphPlaceHolder) {
                     //Show no data
-                    final TextView noDataTextView = new TextView(mParentFragmentActivity);
-                    noDataTextView.setText("No Data");
-                    noDataTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    noDataTextView.setTextAppearance(mParentFragmentActivity, android.R.style.TextAppearance_Medium);
-                    noDataTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-
-                    deviceDetailsPlaceHolder.addView(noDataTextView);
+                    deviceDetailsPlaceHolder.setVisibility(View.GONE);
+                    noDataView.setVisibility(View.VISIBLE);
 
                 } else {
+
                     final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer =
                             bandwidthMonitoringIfaceData.getData();
 
@@ -818,6 +815,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     chartView.repaint();
 
                     deviceDetailsPlaceHolder.addView(chartView, 0);
+
+                    deviceDetailsPlaceHolder.setVisibility(View.VISIBLE);
+                    noDataView.setVisibility(View.GONE);
                 }
 
                 final NetworkTrafficView networkTrafficView =
@@ -894,10 +894,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             clientsExpanded.add(macAddress);
                             cardView.setCardElevation(0f);
                         }
-                        if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
+                        if (hideGraphPlaceHolder) {
                             trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                            if (noDataView.getVisibility() == View.VISIBLE) {
+                                noDataView.setVisibility(View.GONE);
+                            } else {
+                                noDataView.setVisibility(View.VISIBLE);
+                            }
                         } else {
-                            trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                            noDataView.setVisibility(View.GONE);
+                            if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
+                                trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                            } else {
+                                trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                            }
                         }
                         mParentFragmentPreferences.edit()
                                 .putStringSet(expandedClientsPrefKey, clientsExpanded)
@@ -908,31 +918,24 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
                         new HashSet<String>());
                 if (expandedClients.contains(macAddress)) {
-                    //Expand detailed view for the first item only
+                    //Expand detailed view
                     ouiAndLastSeenView.setVisibility(View.VISIBLE);
-                    trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                    if (hideGraphPlaceHolder) {
+                        noDataView.setVisibility(View.VISIBLE);
+                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                    } else {
+                        trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                        noDataView.setVisibility(View.GONE);
+                    }
                     //Highlight CardView
                     cardView.setCardElevation(20f);
                 } else {
-                    //Collapse detailed view for the first item only
+                    //Collapse detailed view
                     ouiAndLastSeenView.setVisibility(View.GONE);
                     trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                    noDataView.setVisibility(View.GONE);
                     cardView.setCardElevation(0f);
                 }
-
-//                cardView.setOnClickListener(new DeviceOnClickListener(device));
-
-//                if (!hideInactive) {
-//                    cardViewsVisibleToUser.put(device, cardView);
-//                } else {
-//                    if (device.isActive()) {
-//                        cardViewsVisibleToUser.put(device, cardView);
-//                    }
-//                }
-
-//                if (!hideInactive ||device.isActive()) {
-//                    clientsContainer.addView(cardView);
-//                }
 
                 tileMenu.setOnClickListener(new View.OnClickListener() {
                     @Override
