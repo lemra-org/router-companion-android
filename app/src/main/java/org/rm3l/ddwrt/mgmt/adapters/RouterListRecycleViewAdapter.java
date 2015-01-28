@@ -39,6 +39,8 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.ArrayList;
@@ -160,7 +162,13 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
 
                                 "iptables -D FORWARD -j DDWRTCompanion",
                                 "iptables -F DDWRTCompanion",
-                                "iptables -X DDWRTCompanion");
+                                "iptables -X DDWRTCompanion",
+
+                                "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
+                                "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
+                                "rm -f " + WirelessClientsTile.USAGE_DB,
+                                "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
                     } catch (final Exception e) {
                         e.printStackTrace();
                         //No Worries

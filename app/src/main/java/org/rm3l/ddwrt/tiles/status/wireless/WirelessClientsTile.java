@@ -153,7 +153,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
-    public static final String USAGE_DB_OUT = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db.out";
+    public static final String USAGE_DB_OUT = USAGE_DB + ".out";
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = new HashMap<>();
     //Generate a random string, to use as discriminator for determining dhcp clients
