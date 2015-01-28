@@ -52,7 +52,7 @@ public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisito
                         if (right == null) {
                             return -1;
                         }
-                        final int rxTotalComparison = Double.valueOf(left.getRxTotal()).compareTo(right.getRxTotal());
+                        final int rxTotalComparison = Double.valueOf(right.getRxTotal()).compareTo(left.getRxTotal());
                         if (rxTotalComparison == 0) {
                             return Ordering.natural().compare(nullToEmpty(left.getName()).toLowerCase(),
                                     nullToEmpty(right.getName()).toLowerCase());
@@ -74,7 +74,7 @@ public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisito
                         if (right == null) {
                             return 1;
                         }
-                        final int txTotalComparison = Double.valueOf(left.getTxTotal()).compareTo(right.getTxTotal());
+                        final int txTotalComparison = Double.valueOf(right.getTxTotal()).compareTo(left.getTxTotal());
                         if (txTotalComparison == 0) {
                             return Ordering.natural().compare(nullToEmpty(left.getName()).toLowerCase(),
                                     nullToEmpty(right.getName()).toLowerCase());
