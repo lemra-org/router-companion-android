@@ -100,7 +100,6 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener  {
 
-    private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     public static final String OPENVPNCL__DEV = "___openvpncl__dev";
     public static final String OPENVPNCL__DEV_RX_RATE = OPENVPNCL__DEV + "_rx_rate_human_readable";
     public static final String OPENVPNCL__DEV_TX_RATE = OPENVPNCL__DEV + "_tx_rate_human_readable";
@@ -108,7 +107,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     public static final String OPENVPNCL__DEV_TX_PACKETS = OPENVPNCL__DEV + "_tx_packets";
     public static final String N_A = "-";
     public static final String OPENVPNCL_NVRAMINFO = "OPENVPNCL_NVRAMINFO";
-
+    private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     private NVRAMInfo mNvramInfo;
 
     public OpenVPNClientTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
@@ -567,7 +566,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 }
 
                 final Bundle token = new Bundle();
-                token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.toString());
+                token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.name());
                 token.putSerializable(OPENVPNCL_NVRAMINFO, newNvramInfoData);
 
                 new UndoBarController.UndoBar(mParentFragmentActivity)

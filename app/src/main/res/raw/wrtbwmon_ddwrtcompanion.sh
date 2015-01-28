@@ -34,7 +34,26 @@ case ${1} in
 
 "setup" )
 
+    insmod xt_mac #k2.6
+    insmod ipt_mac #k2.4
+
+    #
+    # Create WANAccess Chain too and add it to the FORWARD Chain
+    #
+	iptables -N DDWRTCompWANAccess 2> /dev/null
+	iptables -L FORWARD --line-numbers -n | grep "DDWRTCompWANAccess" | grep "1" > /dev/null
+	if [ $? -ne 0 ]; then
+	    iptables -L FORWARD -n | grep "DDWRTCompWANAccess" > /dev/null
+	    if [ $? -eq 0 ]; then
+			echo "DEBUG : DDWRTCompWANAccess iptables chain misplaced, recreating it..."
+			iptables -D FORWARD -j DDWRTCompWANAccess
+        fi
+        iptables -I FORWARD -j DDWRTCompWANAccess
+    fi
+
+    #
 	#Create the DDWRTCompanion CHAIN (it doesn't matter if it already exists).
+	#
 	iptables -N DDWRTCompanion 2> /dev/null
 
 	#Add the DDWRTCompanion CHAIN to the FORWARD chain (if non existing).
@@ -57,7 +76,8 @@ case ${1} in
 			iptables -I DDWRTCompanion -d ${IP} -j RETURN
 			iptables -I DDWRTCompanion -s ${IP} -j RETURN
 		fi
-	done	
+	done
+
 	;;
 
 "read" )

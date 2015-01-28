@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.mgmt.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -32,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +44,9 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
 
     public static final String EMPTY = "(empty)";
@@ -51,8 +54,6 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     private final Context context;
     private List<Router> routersList;
     private SparseBooleanArray selectedItems;
-
-    private final Handler mAsyncHandler = new Handler();
 
     public RouterListRecycleViewAdapter(Context context, List<Router> results) {
         routersList = results;
@@ -143,8 +144,32 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
                     .edit().clear().commit();
 
-            //Disconnect session
-            destroySSHSession(router);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //Delete iptables chains created for monitoring and wan access (in a thread)
+                        SSHUtils.runCommands(context
+                                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                                                Context.MODE_PRIVATE),
+                                router,
+                                Joiner.on(" ; ").skipNulls(),
+                                "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+
+                                "iptables -D FORWARD -j DDWRTCompanion",
+                                "iptables -F DDWRTCompanion",
+                                "iptables -X DDWRTCompanion");
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        //No Worries
+                    } finally {
+                        //Disconnect session
+                        destroySSHSession(router);
+                    }
+                }
+            }).start();
 
             //Now refresh list
             final List<Router> allRouters = dao.getAllRouters();
@@ -157,12 +182,12 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
 
     private void destroySSHSession(@NotNull final Router router) {
         //Async to avoid ANR because SSHUtils#destroySession makes use of locking mechanisms
-        mAsyncHandler.post(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 SSHUtils.destroySession(router);
             }
-        });
+        }).start();
     }
 
     @NotNull

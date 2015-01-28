@@ -60,6 +60,7 @@ public final class DDWRTCompanionConstants {
     public static final String MAC_OUI_SEARCH_URL = "http://standards.ieee.org/cgi-bin/ouisearch?";
     public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME = "wrtbwmon_ddwrtcompanion.sh";
     public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE = "/tmp/." + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
+    public static final String DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN = "DDWRTCompWANAccess";
     public String[] mMonth = new String[]{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

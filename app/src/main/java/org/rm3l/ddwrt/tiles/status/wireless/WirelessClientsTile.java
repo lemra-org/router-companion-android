@@ -84,6 +84,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
+import org.rm3l.ddwrt.actions.EnableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -129,6 +131,7 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
@@ -564,19 +567,59 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     }
 
-                    //TODO and maybe back it up to external storage (scpFrom)
-//                    try {
-//                        SSHUtils.scpFrom(mRouter, mGlobalPreferences,
-//                                USAGE_DB,
-//                                new File(mParentFragmentActivity.getExternalFilesDir(null),
-//                                        "usage_" + mRouter.getUuid()).getAbsolutePath());
-//                    } catch (final Exception e) {
-//                        e.printStackTrace();
-//                        //No worries
-//                    } finally {
-//
-//                    }
+                    //WAN Access
+                    try {
+                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                                "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " --line-numbers -n 2>/dev/null; echo $?");
+                        if (wanAccessIptablesChainDump != null) {
+                            int exitStatus = -1;
+                            if (wanAccessIptablesChainDump.length >= 1) {
+                                //Get Command execution status
+                                try {
+                                    exitStatus = Integer.parseInt(wanAccessIptablesChainDump[wanAccessIptablesChainDump.length - 1]);
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //No Worries
+                                }
+                            }
+                            if (exitStatus == 0) {
+                                for (final Device device : macToDevice.values()) {
+                                    final String macAddr = nullToEmpty(device.getMacAddress());
+                                    boolean wanAccessDisabled = false;
+                                    for (final String wanAccessIptablesChainLine : wanAccessIptablesChainDump) {
+                                        if (StringUtils.containsIgnoreCase(wanAccessIptablesChainLine, macAddr)
+                                                && StringUtils.containsIgnoreCase(wanAccessIptablesChainLine, "DROP")) {
+                                            device.setWanAccessState(Device.WANAccessState.WAN_ACCESS_DISABLED);
+                                            wanAccessDisabled = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!wanAccessDisabled) {
+                                        device.setWanAccessState(Device.WANAccessState.WAN_ACCESS_ENABLED);
+                                    }
+                                }
+                            }
+                            //else WAN Access States will remain to 'UNKNOWN' for all devices
+                        }
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        //No Worries - WAN Access States will remain to 'UNKNOWN'
+                    }
 
+                    //Save usage data file
+                    final boolean withBackup = (mParentFragmentPreferences != null &&
+                            mParentFragmentPreferences.getBoolean("withUsageDataBackup", false));
+                    if (withBackup) {
+                        try {
+                            SSHUtils.scpFrom(mRouter, mGlobalPreferences,
+                                    USAGE_DB,
+                                    new File(mParentFragmentActivity.getExternalFilesDir(null),
+                                            "usage_" + mRouter.getUuid()).getAbsolutePath());
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            //No worries
+                        }
+                    }
                     //Final operation
                     for (final Device device : macToDevice.values()) {
                         devices.addDevice(device);
@@ -1103,7 +1146,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             case R.id.tile_status_wireless_clients_reset_counters:
                 //Reset Counters
                 final Bundle token = new Bundle();
-                token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.toString());
+                token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.name());
 
                 new UndoBarController.UndoBar(mParentFragmentActivity)
                         .message("Bandwidth Monitoring counters will be reset.")
@@ -1369,14 +1412,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
 //            bandwidthMonitoringIfaceDataPerDevice.clear();
             Utils.displayMessage(mParentFragmentActivity,
-                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                     Style.CONFIRM);
         }
 
         @Override
         public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
             Utils.displayMessage(mParentFragmentActivity,
-                    String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                    String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                     Style.ALERT);
         }
     }
@@ -1397,10 +1440,52 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             final String macAddress = device.getMacAddress();
+            final String deviceName = nullToEmpty(device.getName());
+
             switch(item.getItemId()) {
+                case R.id.tile_status_wireless_client_wan_access_state:
+                    final boolean disableWanAccess = item.isChecked();
+                    new AlertDialog.Builder(mParentFragmentActivity)
+                            .setIcon(R.drawable.ic_action_alert_warning)
+                            .setTitle(String.format("%s WAN Access for '%s' (%s)",
+                                    disableWanAccess ? "Disable" : "Enable", deviceName, macAddress))
+                            .setMessage(String.format("This allows you to %s WAN (Internet) Access for a particular device.\n" +
+                                            "%s\n\n" +
+                                            "Note that:\n" +
+                                            "- This leverages MAC Addresses, which may be relatively easy to spoof.\n" +
+                                            "- This setting will get reverted the next time the router reboots. We are working on making this persistent.",
+                                    disableWanAccess ? "disable" : "enable",
+                                    disableWanAccess ? String.format("'%s' (%s) will still be able to connect to the router local networks, " +
+                                            "but will not be allowed to connect to the outside.", deviceName, macAddress) :
+                                            String.format("'%s' (%s) will now be able to get access to the outside.", deviceName, macAddress)))
+                            .setCancelable(true)
+                            .setPositiveButton(String.format("%s WAN Access!",
+                                    disableWanAccess ? "Disable" : "Enable"), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialogInterface, final int i) {
+                                    final Bundle token = new Bundle();
+                                    token.putString(ROUTER_ACTION,
+                                            disableWanAccess ? RouterAction.DISABLE_WAN_ACCESS.name() :
+                                                    RouterAction.ENABLE_WAN_ACCESS.name());
+
+                                    new UndoBarController.UndoBar(mParentFragmentActivity)
+                                            .message(String.format("WAN Access will be %s for '%s' (%s)",
+                                                    disableWanAccess ? "disabled" : "enabled",
+                                                    deviceName, macAddress))
+                                            .listener(DeviceOnMenuItemClickListener.this)
+                                            .token(token)
+                                            .show();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Cancelled - nothing more to do!
+                                }
+                            }).create().show();
+                    return true;
                 case R.id.tile_status_wireless_client_wol:
-                    //TODO Support Secure On Password????
-                    final String deviceName = nullToEmpty(device.getName());
+                    //TODO Support SecureOn Password????
                     new AlertDialog.Builder(mParentFragmentActivity)
                             .setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle(String.format("Wake up '%s' (%s)", deviceName, macAddress))
@@ -1418,7 +1503,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 public void onClick(final DialogInterface dialogInterface, final int i) {
 
                                     final Bundle token = new Bundle();
-                                    token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.toString());
+                                    token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
                                     new UndoBarController.UndoBar(mParentFragmentActivity)
                                             .message(String.format("WOL Request will be sent from router to '%s' (%s)",
@@ -1513,6 +1598,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
                                     .execute(mRouter);
                             break;
+                        case DISABLE_WAN_ACCESS:
+                            new DisableWANAccessRouterAction(this, mGlobalPreferences, device).execute(mRouter);
+                            break;
+                        case ENABLE_WAN_ACCESS:
+                            new EnableWANAccessRouterAction(this, mGlobalPreferences, device).execute(mRouter);
+                            break;
                         default:
                             //Ignored
                             break;
@@ -1532,14 +1623,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         @Override
         public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
             Utils.displayMessage(mParentFragmentActivity,
-                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                     Style.CONFIRM);
         }
 
         @Override
         public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
             Utils.displayMessage(mParentFragmentActivity,
-                    String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                    String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                     Style.ALERT);
         }
 

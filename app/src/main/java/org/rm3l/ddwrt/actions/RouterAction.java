@@ -23,11 +23,23 @@ package org.rm3l.ddwrt.actions;
 
 public enum RouterAction {
 
-    REBOOT,
-    RESTORE_FACTORY_DEFAULTS,
-    SET_NVRAM_VARIABLES,
-    UPGRADE_FIRMWARE,
-    WAKE_ON_LAN,
-    RESET_COUNTERS;
+    REBOOT("Reboot"),
+    RESTORE_FACTORY_DEFAULTS("Restore Factory Defaults"),
+    SET_NVRAM_VARIABLES("Set NVRAM Variables"),
+    UPGRADE_FIRMWARE("Upgrade Firmware"),
+    WAKE_ON_LAN("Wake On LAN (WOL)"),
+    RESET_COUNTERS("Reset Bandwidth Counters"),
+    DISABLE_WAN_ACCESS("Disable WAN Access"),
+    ENABLE_WAN_ACCESS("Enable WAN Access");
 
+    private final String displayName;
+
+    RouterAction(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
+    }
 }

@@ -339,7 +339,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
                                 final Bundle token = new Bundle();
-                                token.putString(ROUTER_ACTION, RouterAction.REBOOT.toString());
+                                token.putString(ROUTER_ACTION, RouterAction.REBOOT.name());
 
                                 new UndoBarController.UndoBar(DDWRTMainActivity.this)
                                         .message(String.format("Router '%s' will be rebooted",
@@ -375,7 +375,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
                                 final Bundle token = new Bundle();
-                                token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.toString());
+                                token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
 
                                 new UndoBarController.UndoBar(DDWRTMainActivity.this)
                                         .message(String.format("Router '%s' will be reset",
@@ -573,14 +573,14 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     @Override
     public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
         Utils.displayMessage(this,
-                String.format("Action '%s' executed successfully on host '%s'", routerAction.toString().toLowerCase(), router.getRemoteIpAddress()),
+                String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                 Style.CONFIRM);
     }
 
     @Override
     public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
         Utils.displayMessage(this,
-                String.format("Error on action '%s': %s", routerAction.toString().toLowerCase(), ExceptionUtils.getRootCauseMessage(exception)),
+                String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                 Style.ALERT);
     }
 
