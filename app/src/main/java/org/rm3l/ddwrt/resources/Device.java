@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
 
 /**
  * Device Type: represents a device reported as a Client (Wireless/DHCP/...)
@@ -47,7 +48,7 @@ public class Device implements Comparable<Device> {
     private String ipAddress;
 
     @Nullable
-    private State state = State.UNKNOWN;
+    private WANAccessState wanAccessState = WAN_ACCESS_UNKNOWN;
 
     @Nullable
     private String systemName;
@@ -120,26 +121,6 @@ public class Device implements Comparable<Device> {
     }
 
     /**
-     * @return the state
-     */
-    @Nullable
-    public State getState() {
-        return state;
-    }
-
-    /**
-     * Set the state
-     *
-     * @param state the state to set
-     * @return this object
-     */
-    @NotNull
-    public Device setState(@Nullable final State state) {
-        this.state = state;
-        return this;
-    }
-
-    /**
      * @return the system name
      */
     @Nullable
@@ -155,20 +136,23 @@ public class Device implements Comparable<Device> {
 
     @Override
     public int compareTo(@NotNull final Device device) {
-        if (this.alias == null) {
-            if (device.alias == null) {
-                return 0;
-            }
-            return -1;
-        }
-
-        if (device.alias == null) {
-            return 1;
-        }
-
-        return this.alias.compareTo(device.alias);
+        return this.macAddress.compareTo(device.macAddress);
+//        if (this.macAddress == null) {
+//            if (device.alias == null) {
+//                return 0;
+//            }
+//            return -1;
+//        }
+//
+//        if (device.alias == null) {
+//            return 1;
+//        }
+//
+//        return this.alias.compareTo(device.alias);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public String getName() {
         if (!isNullOrEmpty(this.alias)) {
             return this.alias;
@@ -206,8 +190,13 @@ public class Device implements Comparable<Device> {
         return macAddress.hashCode();
     }
 
-    public boolean isEnabled() {
-        return this.state != State.DISABLED;
+    @NotNull
+    public WANAccessState getWanAccessState() {
+        return wanAccessState;
+    }
+
+    public void setWanAccessState(@Nullable WANAccessState wanAccessState) {
+        this.wanAccessState = (wanAccessState != null ? wanAccessState : WAN_ACCESS_UNKNOWN);
     }
 
     @Override
@@ -217,7 +206,7 @@ public class Device implements Comparable<Device> {
                 ", macouiVendorDetails=" + macouiVendorDetails +
                 ", alias='" + alias + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
-                ", state=" + state +
+                ", wanAccessState=" + wanAccessState +
                 ", systemName='" + systemName + '\'' +
                 ", active=" + active +
                 ", txRate=" + txRate +
@@ -276,11 +265,22 @@ public class Device implements Comparable<Device> {
         this.lastSeen = lastSeen;
     }
 
-    enum State {
-        UNKNOWN,
+    public enum WANAccessState {
+        WAN_ACCESS_UNKNOWN("Unknown"),
 
-        ENABLED,
+        WAN_ACCESS_ENABLED("Enabled"),
 
-        DISABLED;
+        WAN_ACCESS_DISABLED("Disabled");
+
+        private final String mToString;
+
+        private WANAccessState(final String mToString) {
+            this.mToString = mToString;
+        }
+
+        @Override
+        public String toString() {
+            return mToString;
+        }
     }
 }

@@ -93,6 +93,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
@@ -126,7 +127,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
@@ -377,6 +380,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
+                    //Get WAN Gateway Address (we skip it!)
+                    String gatewayAddress = EMPTY_STRING;
+                    try {
+                        final NVRAMInfo nvRamInfoFromRouter = SSHUtils
+                                .getNVRamInfoFromRouter(mRouter, mGlobalPreferences, WAN_GATEWAY);
+                        if (nvRamInfoFromRouter != null) {
+                            gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
+                        }
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        //No worries
+                    }
+
                     @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
@@ -409,7 +425,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 //Skip clients with incomplete ARP set-up
                                 continue;
                             }
+
+                            final String ipAddress = as.get(2);
+                            if (StringUtils.equalsIgnoreCase(ipAddress, gatewayAddress)) {
+                                //Skip Gateway
+                                continue;
+                            }
+
                             final Device device = new Device(macAddress);
+                            device.setIpAddress(ipAddress);
 
                             if (activeClients != null) {
                                 for (final String activeClient : activeClients) {
@@ -419,8 +443,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     }
                                 }
                             }
-
-                            device.setIpAddress(as.get(2));
 
                             final String systemName = as.get(3);
                             if (!"*".equals(systemName)) {
@@ -704,8 +726,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();
                 deviceNameView.setText(name);
-                if (device.isActive()) {
+
+                final Device.WANAccessState wanAccessState = device.getWanAccessState();
+                final boolean isDeviceWanAccessEnabled = (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
+                if (isDeviceWanAccessEnabled) {
                     deviceNameView.setTextColor(resources.getColor(R.color.ddwrt_green));
+                }
+                final TextView deviceWanAccessStateView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wan_access);
+                if (wanAccessState == null || isNullOrEmpty(wanAccessState.toString())) {
+                    deviceWanAccessStateView.setText("-");
+                } else {
+                    deviceWanAccessStateView.setText(wanAccessState.toString());
                 }
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
@@ -951,6 +982,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         if (isThisDevice) {
                             //WOL not needed as this is the current device
                             menu.findItem(R.id.tile_status_wireless_client_wol).setEnabled(false);
+                        }
+
+                        final MenuItem wanAccessStateMenuItem = menu.findItem(R.id.tile_status_wireless_client_wan_access_state);
+                        if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
+                            wanAccessStateMenuItem.setEnabled(false);
+                        } else {
+                            wanAccessStateMenuItem.setEnabled(true);
+                            wanAccessStateMenuItem.setChecked(isDeviceWanAccessEnabled);
                         }
 
                         popup.show();

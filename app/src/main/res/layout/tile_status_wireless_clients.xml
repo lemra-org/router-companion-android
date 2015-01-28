@@ -165,8 +165,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:ellipsize="end"
                 android:gravity="start"
                 android:singleLine="false"
-                android:text="@string/loading"
-                android:textColor="@color/ddwrt_green" />
+                android:text="@string/loading" />
 
             <!-- Number of active DHCP Leases -->
             <TextView
