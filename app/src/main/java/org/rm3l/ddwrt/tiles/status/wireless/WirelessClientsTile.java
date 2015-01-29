@@ -102,6 +102,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.HideInactiveClientsFilterVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
@@ -151,6 +152,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SORT = "sort";
     public static final String SORT_TOP_TALKERS = SORT + "_top_talkers";
     public static final String SORT_APHABETICAL = SORT + "_aphabetical";
+    public static final String SORTING_STRATEGY = "sorting_strategy";
     public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
@@ -272,45 +274,34 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu
                         .findItem(R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled);
-                if (mParentFragmentPreferences != null &&
-                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)) {
-                    //Mark as checked
-                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(true);
-                }
                 //If no devices with WAN Access Disabled, disable the corresponding menu item
-                showOnlyHostsWithWANAccessDisabledMenuItem
-                        .setEnabled(Sets.filter(currentDevicesViewsMap.keySet(), new Predicate<Device>() {
-                            @Override
-                            public boolean apply(Device input) {
-                                return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
-                            }
-                        }).size() > 0);
+                final boolean atLeastOneDeviceWithNoWANAccess = Sets.filter(currentDevicesViewsMap.keySet(), new Predicate<Device>() {
+                    @Override
+                    public boolean apply(Device input) {
+                        return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
+                    }
+                }).size() > 0;
+                final boolean wanAccessTogglePref = mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false);
+                if (!atLeastOneDeviceWithNoWANAccess) {
+                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(false);
+                    if (wanAccessTogglePref) {
+                        mParentFragmentPreferences.edit()
+                                .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)
+                                .apply();
+                    }
+                } else {
+                    //Mark as checked
+                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(wanAccessTogglePref);
+                }
+
+                showOnlyHostsWithWANAccessDisabledMenuItem.setEnabled(atLeastOneDeviceWithNoWANAccess);
 
                 if (mParentFragmentPreferences != null) {
-                    final Integer currentSortAlphabetical = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL), -1));
-                    if (currentSortAlphabetical != null && currentSortAlphabetical > 0) {
-                        final MenuItem currentSortMenuItem = menu.findItem(currentSortAlphabetical);
-                        if (currentSortMenuItem != null) {
-                            currentSortMenuItem.setEnabled(false);
-                            currentSortMenuItem.setChecked(true);
-                        }
-                    }
-
-                    final Integer currentSortTopTalkers = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS), -1));
-                    if (currentSortTopTalkers != null && currentSortTopTalkers > 0) {
-                        final MenuItem currentSortMenuItem = menu.findItem(currentSortTopTalkers);
-                        if (currentSortMenuItem != null) {
-                            currentSortMenuItem.setEnabled(false);
-                            currentSortMenuItem.setChecked(true);
-                        }
-                    }
-
-                    final Integer currentSortLastSeen = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN), -1));
-                    if (currentSortLastSeen != null && currentSortLastSeen > 0) {
-                        final MenuItem currentSortMenuItem = menu.findItem(currentSortLastSeen);
+                    final Integer currentSortStrategy = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORTING_STRATEGY), -1));
+                    if (currentSortStrategy != null && currentSortStrategy > 0) {
+                        final MenuItem currentSortMenuItem = menu.findItem(currentSortStrategy);
                         if (currentSortMenuItem != null) {
                             currentSortMenuItem.setEnabled(false);
                             currentSortMenuItem.setChecked(true);
@@ -1061,50 +1052,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 currentDevicesViewsMap.put(device, cardView);
             }
 
-            //Filter
+            //Filters
             Set<Device> newDevices =
                     new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
                             mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
                             .visit(currentDevicesViewsMap.keySet());
-
             newDevices =
                     new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                             mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
                             .visit(newDevices);
 
-            //Alphabetical sorting
-            Integer aphabeticalSort = null;
-            if (mParentFragmentPreferences != null) {
-                aphabeticalSort = sortIds.inverse()
-                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
-                                -1));
-            }
-            if (aphabeticalSort != null && aphabeticalSort > 0) {
-                newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
-                        .visit(newDevices);
-            }
-
-            //Last Seen sorting
-            Integer lastSeenSort = null;
-            if (mParentFragmentPreferences != null) {
-                lastSeenSort = sortIds.inverse()
-                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
-                                -1));
-            }
-            if (lastSeenSort != null && lastSeenSort > 0) {
-                newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
-            }
-
-            //Now finish by applying Top Talkers sorting
-            Integer topTalkersSort = null;
-            if (mParentFragmentPreferences != null) {
-                topTalkersSort = sortIds.inverse()
-                        .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
-                                -1));
-            }
-            if (topTalkersSort != null && topTalkersSort > 0) {
-                newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
-            }
+            newDevices = applyCurrentSortingStrategy(newDevices);
 
             for (final Device dev : newDevices) {
                 final View view = currentDevicesViewsMap.get(dev);
@@ -1155,6 +1113,43 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
+    @NotNull
+    private Set<Device> applyCurrentSortingStrategy(@NotNull final Set<Device> devicesToSort) {
+        Integer currentSortingStrategy = null;
+        if (mParentFragmentPreferences != null) {
+            currentSortingStrategy = sortIds.inverse()
+                    .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORTING_STRATEGY),
+                            -1));
+        }
+        if (currentSortingStrategy == null || currentSortingStrategy <= 0) {
+            return devicesToSort;
+        }
+
+        ClientsSortingVisitor clientsSortingVisitor = null;
+        switch (currentSortingStrategy) {
+            case R.id.tile_status_wireless_clients_sort_a_z:
+            case R.id.tile_status_wireless_clients_sort_z_a:
+                clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(currentSortingStrategy);
+                break;
+            case R.id.tile_status_wireless_clients_sort_seen_recently:
+            case R.id.tile_status_wireless_clients_sort_not_seen_recently:
+                clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(currentSortingStrategy);
+                break;
+            case R.id.tile_status_wireless_clients_sort_top_senders:
+            case R.id.tile_status_wireless_clients_sort_top_receivers:
+                clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(currentSortingStrategy);
+                break;
+            default:
+                break;
+        }
+
+        if (clientsSortingVisitor == null) {
+            return devicesToSort;
+        }
+
+        return clientsSortingVisitor.visit(devicesToSort);
+    }
+
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
@@ -1191,28 +1186,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
                                 .visit(newDevices);
 
-                //Apply alphabetical sorting, if needed
-                Integer aphabeticalSort = null;
-                if (mParentFragmentPreferences != null) {
-                    aphabeticalSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
-                                    -1));
-                }
-                if (aphabeticalSort != null && aphabeticalSort > 0) {
-                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
-                            .visit(newDevices);
-                }
-
-                //Now finish by applying Top Talkers sorting
-                Integer topTalkersSort = null;
-                if (mParentFragmentPreferences != null) {
-                    topTalkersSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
-                                    -1));
-                }
-                if (topTalkersSort != null && topTalkersSort > 0) {
-                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
-                }
+                newDevices = applyCurrentSortingStrategy(newDevices);
 
                 clientsContainer.removeAllViews();
                 for (final Device device : newDevices) {
@@ -1244,28 +1218,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
                                 .visit(newDevices);
 
-                //Apply alphabetical sorting, if needed
-                Integer aphabeticalSort = null;
-                if (mParentFragmentPreferences != null) {
-                    aphabeticalSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
-                                    -1));
-                }
-                if (aphabeticalSort != null && aphabeticalSort > 0) {
-                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
-                            .visit(newDevices);
-                }
-
-                //Now finish by applying Top Talkers sorting
-                Integer topTalkersSort = null;
-                if (mParentFragmentPreferences != null) {
-                    topTalkersSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
-                                    -1));
-                }
-                if (topTalkersSort != null && topTalkersSort > 0) {
-                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
-                }
+                newDevices = applyCurrentSortingStrategy(newDevices);
 
                 clientsContainer.removeAllViews();
                 for (final Device device : newDevices) {
@@ -1281,159 +1234,44 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
                             .apply();
                 }
+                return true;
             }
-            return true;
             case R.id.tile_status_wireless_clients_sort_a_z:
-            case R.id.tile_status_wireless_clients_sort_z_a: {
-                final boolean hideInactive = (mParentFragmentPreferences != null &&
-                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
-
-                //Filter
-                Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
-
-                newDevices =
-                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
-                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
-                                .visit(newDevices);
-
-                //Alphabetical filtering on these newDevices (filtered)
-                newDevices = new ClientsAlphabeticalSortingVisitorImpl(itemId).visit(newDevices);
-
-                //Last Seen sorting
-                Integer lastSeenSort = null;
-                if (mParentFragmentPreferences != null) {
-                    lastSeenSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
-                                    -1));
-                }
-                if (lastSeenSort != null && lastSeenSort > 0) {
-                    newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
-                }
-
-                //Now finish by applying Top Talkers sorting
-                Integer topTalkersSort = null;
-                if (mParentFragmentPreferences != null) {
-                    topTalkersSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
-                                    -1));
-                }
-                if (topTalkersSort != null && topTalkersSort > 0) {
-                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
-                }
-
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putInt(getFormattedPrefKey(SORT_APHABETICAL), sortIds.get(itemId))
-                            .apply();
-                }
-            }
-            return true;
+            case R.id.tile_status_wireless_clients_sort_z_a:
             case R.id.tile_status_wireless_clients_sort_top_senders:
-            case R.id.tile_status_wireless_clients_sort_top_receivers: {
-                final boolean hideInactive = (mParentFragmentPreferences != null &&
-                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
-
-                //Filter
-                Set<Device> newDevices =
-                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
-
-                newDevices =
-                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
-                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
-                                .visit(newDevices);
-
-                //Apply alphabetical sorting, if needed
-                Integer aphabeticalSort = null;
-                if (mParentFragmentPreferences != null) {
-                    aphabeticalSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
-                                    -1));
-                }
-                if (aphabeticalSort != null && aphabeticalSort > 0) {
-                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
-                            .visit(newDevices);
-                }
-
-                //Last Seen sorting
-                Integer lastSeenSort = null;
-                if (mParentFragmentPreferences != null) {
-                    lastSeenSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_LAST_SEEN),
-                                    -1));
-                }
-                if (lastSeenSort != null && lastSeenSort > 0) {
-                    newDevices = new LastSeenClientsSortingVisitorImpl(lastSeenSort).visit(newDevices);
-                }
-
-                //Now top talkers
-                newDevices = new TopTalkersClientsSortingVisitorImpl(itemId).visit(newDevices);
-
-                clientsContainer.removeAllViews();
-                for (final Device device : newDevices) {
-                    final View view;
-                    if ((view = currentDevicesViewsMap.get(device)) != null) {
-                        clientsContainer.addView(view);
-                    }
-                }
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putInt(getFormattedPrefKey(SORT_TOP_TALKERS), sortIds.get(itemId))
-                            .apply();
-                }
-            }
-            return true;
+            case R.id.tile_status_wireless_clients_sort_top_receivers:
             case R.id.tile_status_wireless_clients_sort_seen_recently:
             case R.id.tile_status_wireless_clients_sort_not_seen_recently: {
-
                 final boolean hideInactive = (mParentFragmentPreferences != null &&
                         mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
 
-                //Filter
+                //Filters
                 Set<Device> newDevices =
                         new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
-
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
                                 .visit(newDevices);
 
-                //Apply alphabetical sorting, if needed
-                Integer aphabeticalSort = null;
-                if (mParentFragmentPreferences != null) {
-                    aphabeticalSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
-                                    -1));
-                }
-                if (aphabeticalSort != null && aphabeticalSort > 0) {
-                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
-                            .visit(newDevices);
+                ClientsSortingVisitor clientsSortingVisitor = null;
+                switch (itemId) {
+                    case R.id.tile_status_wireless_clients_sort_a_z:
+                    case R.id.tile_status_wireless_clients_sort_z_a:
+                        clientsSortingVisitor = new ClientsAlphabeticalSortingVisitorImpl(itemId);
+                        break;
+                    case R.id.tile_status_wireless_clients_sort_top_senders:
+                    case R.id.tile_status_wireless_clients_sort_top_receivers:
+                        clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(itemId);
+                        break;
+                    case R.id.tile_status_wireless_clients_sort_seen_recently:
+                    case R.id.tile_status_wireless_clients_sort_not_seen_recently:
+                        clientsSortingVisitor = new LastSeenClientsSortingVisitorImpl(itemId);
+                        break;
+                    default:
+                        break;
                 }
 
-                //Last Seen
-                newDevices = new LastSeenClientsSortingVisitorImpl(itemId).visit(newDevices);
-
-                //Now finish by applying Top Talkers sorting
-                Integer topTalkersSort = null;
-                if (mParentFragmentPreferences != null) {
-                    topTalkersSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
-                                    -1));
-                }
-                if (topTalkersSort != null && topTalkersSort > 0) {
-                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
-                }
+                newDevices = clientsSortingVisitor.visit(newDevices);
 
                 clientsContainer.removeAllViews();
                 for (final Device device : newDevices) {
@@ -1446,21 +1284,24 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 //Save preference
                 if (mParentFragmentPreferences != null) {
                     mParentFragmentPreferences.edit()
-                            .putInt(getFormattedPrefKey(SORT_LAST_SEEN), sortIds.get(itemId))
+                            .putInt(getFormattedPrefKey(SORTING_STRATEGY), sortIds.get(itemId))
                             .apply();
                 }
+
+                return true;
             }
-            return true;
-            case R.id.tile_status_wireless_clients_reset_prefs:
+            case R.id.tile_status_wireless_clients_reset_sort_prefs: {
                 if (mParentFragmentPreferences != null) {
                     mParentFragmentPreferences.edit()
                             .remove(getFormattedPrefKey(SORT_TOP_TALKERS))
                             .remove(getFormattedPrefKey(SORT_APHABETICAL))
                             .remove(getFormattedPrefKey(SORT_LAST_SEEN))
+                            .remove(getFormattedPrefKey(SORTING_STRATEGY))
                             .apply();
                 }
                 Utils.displayMessage(mParentFragmentActivity, "Changes will appear upon next sync.", Style.CONFIRM);
                 return true;
+            }
             default:
                 break;
         }

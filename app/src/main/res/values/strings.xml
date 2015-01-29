@@ -459,12 +459,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="total_upload">Total Upload</string>
     <string name="name">Name</string>
     <string name="system_name">System Name</string>
-    <string name="top_senders">Top Senders</string>
-    <string name="top_receivers">Top Receivers</string>
+    <string name="top_uploaders">Top Uploaders</string>
+    <string name="top_downloaders">Top Downloaders</string>
     <string name="seen_recently">Seen Recently</string>
     <string name="not_seen_recently">Not Seen Recently</string>
     <string name="reset_sort_prefs">Reset Sort Preferences</string>
     <string name="hide_inactive_hosts">Hide Inactive Hosts</string>
     <string name="reset_counters">Reset counters</string>
     <string name="filter">Filter</string>
+    <string name="set_alias">Set Alias</string>
+    <string name="wake_on_lan">Wake on LAN</string>
+    <string name="wan_access">Internet Access</string>
+    <string name="show_only_hosts_with_wan_access_disabled">No-Internet Hosts Only</string>
 </resources>

@@ -47,7 +47,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:icon="@drawable/ic_action_notification_do_not_disturb"
                 android:orderInCategory="2"
                 android:showAsAction="never"
-                android:title="Show Only Hosts with WAN Access Disabled" />
+                android:title="@string/show_only_hosts_with_wan_access_disabled" />
 
         </menu>
 
@@ -63,9 +63,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <menu>
 
             <group
-                android:id="@+id/tile_status_wireless_clients_sort_a_z_z_a"
+                android:id="@+id/tile_status_wireless_clients_sort_selection"
                 android:checkableBehavior="single"
                 android:orderInCategory="2">
+
+                <!-- Alphabetical Sort -->
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_a_z"
                     android:checkable="true"
@@ -73,7 +75,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orderInCategory="1"
                     android:showAsAction="ifRoom"
                     android:title="@string/sort_a_z" />
-
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_z_a"
                     android:checkable="true"
@@ -82,33 +83,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:showAsAction="ifRoom"
                     android:title="@string/sort_z_a" />
 
-            </group>
-
-            <group
-                android:id="@+id/tile_status_wireless_clients_sort_top_talkers"
-                android:checkableBehavior="single"
-                android:orderInCategory="3">
+                <!-- Based on Total Usage -->
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_top_senders"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_senders"
                     android:orderInCategory="3"
                     android:showAsAction="ifRoom"
-                    android:title="@string/top_senders" />
-
+                    android:title="@string/top_uploaders" />
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_top_receivers"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_listeners"
                     android:orderInCategory="4"
                     android:showAsAction="ifRoom"
-                    android:title="@string/top_receivers" />
-            </group>
+                    android:title="@string/top_downloaders" />
 
-            <group
-                android:id="@+id/tile_status_wireless_clients_sort_last_seen"
-                android:checkableBehavior="single"
-                android:orderInCategory="4">
+                <!-- Based on Last Seen -->
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_seen_recently"
                     android:checkable="true"
@@ -116,7 +107,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orderInCategory="5"
                     android:showAsAction="ifRoom"
                     android:title="@string/seen_recently" />
-
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_not_seen_recently"
                     android:checkable="true"
@@ -124,11 +114,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orderInCategory="6"
                     android:showAsAction="ifRoom"
                     android:title="@string/not_seen_recently" />
+
             </group>
 
             <!-- Reset Preferences -->
             <item
-                android:id="@+id/tile_status_wireless_clients_reset_prefs"
+                android:id="@+id/tile_status_wireless_clients_reset_sort_prefs"
                 android:icon="@android:drawable/ic_menu_revert"
                 android:orderInCategory="7"
                 android:showAsAction="never"
