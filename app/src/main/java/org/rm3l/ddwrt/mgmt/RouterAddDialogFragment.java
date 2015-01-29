@@ -27,16 +27,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
-import android.os.Bundle;
 import android.widget.EditText;
+
+import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -90,11 +89,15 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         @NotNull final AlertDialog d = (AlertDialog) getDialog();
         //Fill the router IP Address with the current gateway address, if any
         try {
-            final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-            if (wifiManager != null) {
-                final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                if (dhcpInfo != null) {
-                    ((EditText) d.findViewById(R.id.router_add_ip)).setText(Utils.intToIp(dhcpInfo.gateway));
+            final EditText routerIpOrDnsEditText = (EditText) d.findViewById(R.id.router_add_ip);
+            if (!(routerIpOrDnsEditText.getText() == null || Strings.isNullOrEmpty(routerIpOrDnsEditText.getText().toString()))) {
+                //Do this only if nothing has been filled in the EditText by the user
+                final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager != null) {
+                    final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                    if (dhcpInfo != null) {
+                        routerIpOrDnsEditText.setText(Utils.intToIp(dhcpInfo.gateway));
+                    }
                 }
             }
         } catch (@NotNull final Exception e) {
