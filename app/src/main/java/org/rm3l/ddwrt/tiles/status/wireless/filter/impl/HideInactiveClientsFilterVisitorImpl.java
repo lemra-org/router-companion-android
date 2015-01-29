@@ -19,15 +19,42 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.tiles.status.wireless.sort;
+package org.rm3l.ddwrt.tiles.status.wireless.filter.impl;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.resources.Device;
+import org.rm3l.ddwrt.tiles.status.wireless.filter.ClientsFilterVisitor;
 
 import java.util.Set;
 
-public interface ClientsSortingVisitor {
+public class HideInactiveClientsFilterVisitorImpl implements ClientsFilterVisitor {
+
+    final boolean hideInactive;
+
+    public HideInactiveClientsFilterVisitorImpl(final boolean hideInactive) {
+        this.hideInactive = hideInactive;
+    }
 
     @NotNull
-    Set<Device> visit(@NotNull final Set<Device> devices);
+    @Override
+    public Set<Device> visit(@NotNull Set<Device> devices) {
+        return Sets.filter(devices, new Predicate<Device>() {
+            @Override
+            public boolean apply(Device device) {
+                if (!hideInactive) {
+                    return true;
+                } else {
+                    if (device.isActive()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
+    }
+
 }

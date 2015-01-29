@@ -19,14 +19,14 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.tiles.status.wireless.sort;
+package org.rm3l.ddwrt.tiles.status.wireless.filter;
 
 import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.resources.Device;
 
 import java.util.Set;
 
-public interface ClientsSortingVisitor {
+public interface ClientsFilterVisitor {
 
     @NotNull
     Set<Device> visit(@NotNull final Set<Device> devices);

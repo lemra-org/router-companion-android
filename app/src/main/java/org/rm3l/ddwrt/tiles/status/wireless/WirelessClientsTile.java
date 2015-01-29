@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -99,8 +100,9 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
+import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.HideInactiveClientsFilterVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
-import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.HideInactiveClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -149,6 +151,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SORT = "sort";
     public static final String SORT_TOP_TALKERS = SORT + "_top_talkers";
     public static final String SORT_APHABETICAL = SORT + "_aphabetical";
+    public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
@@ -266,6 +269,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //Mark as checked
                     menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
                 }
+
+                final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu
+                        .findItem(R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled);
+                if (mParentFragmentPreferences != null &&
+                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false)) {
+                    //Mark as checked
+                    showOnlyHostsWithWANAccessDisabledMenuItem.setChecked(true);
+                }
+                //If no devices with WAN Access Disabled, disable the corresponding menu item
+                showOnlyHostsWithWANAccessDisabledMenuItem
+                        .setEnabled(Sets.filter(currentDevicesViewsMap.keySet(), new Predicate<Device>() {
+                            @Override
+                            public boolean apply(Device input) {
+                                return (input.getWanAccessState() == Device.WANAccessState.WAN_ACCESS_DISABLED);
+                            }
+                        }).size() > 0);
 
                 if (mParentFragmentPreferences != null) {
                     final Integer currentSortAlphabetical = sortIds.inverse()
@@ -1043,10 +1062,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
 
             //Filter
-            final boolean hideInactive = (mParentFragmentPreferences != null &&
-                    mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false));
             Set<Device> newDevices =
-                    new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                    new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
+                            mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
+                            .visit(currentDevicesViewsMap.keySet());
+
+            newDevices =
+                    new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                            mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                            .visit(newDevices);
 
             //Alphabetical sorting
             Integer aphabeticalSort = null;
@@ -1154,12 +1178,71 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         .token(token)
                         .show();
                 break;
+            case R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled: {
+                //First filter (based on WAN Access State)
+                final boolean showOnlyWanAccessDisabledHosts = !item.isChecked();
+                Set<Device> newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(showOnlyWanAccessDisabledHosts)
+                                .visit(currentDevicesViewsMap.keySet());
+
+                //Apply all other visitors
+                newDevices =
+                        new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
+                                .visit(newDevices);
+
+                //Apply alphabetical sorting, if needed
+                Integer aphabeticalSort = null;
+                if (mParentFragmentPreferences != null) {
+                    aphabeticalSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_APHABETICAL),
+                                    -1));
+                }
+                if (aphabeticalSort != null && aphabeticalSort > 0) {
+                    newDevices = new ClientsAlphabeticalSortingVisitorImpl(aphabeticalSort)
+                            .visit(newDevices);
+                }
+
+                //Now finish by applying Top Talkers sorting
+                Integer topTalkersSort = null;
+                if (mParentFragmentPreferences != null) {
+                    topTalkersSort = sortIds.inverse()
+                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT_TOP_TALKERS),
+                                    -1));
+                }
+                if (topTalkersSort != null && topTalkersSort > 0) {
+                    newDevices = new TopTalkersClientsSortingVisitorImpl(topTalkersSort).visit(newDevices);
+                }
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), showOnlyWanAccessDisabledHosts)
+                            .apply();
+                }
+
+
+            }
+            break;
             case R.id.tile_status_wireless_clients_hide_inactive_hosts: {
                 final boolean hideInactive = !item.isChecked();
 
                 //Filter
                 Set<Device> newDevices =
-                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                                .visit(newDevices);
 
                 //Apply alphabetical sorting, if needed
                 Integer aphabeticalSort = null;
@@ -1207,7 +1290,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 //Filter
                 Set<Device> newDevices =
-                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                                .visit(newDevices);
 
                 //Alphabetical filtering on these newDevices (filtered)
                 newDevices = new ClientsAlphabeticalSortingVisitorImpl(itemId).visit(newDevices);
@@ -1257,7 +1345,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 //Filter
                 Set<Device> newDevices =
-                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                                .visit(newDevices);
 
                 //Apply alphabetical sorting, if needed
                 Integer aphabeticalSort = null;
@@ -1309,7 +1402,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 //Filter
                 Set<Device> newDevices =
-                        new HideInactiveClientsSortingVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                        new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                                .visit(newDevices);
 
                 //Apply alphabetical sorting, if needed
                 Integer aphabeticalSort = null;

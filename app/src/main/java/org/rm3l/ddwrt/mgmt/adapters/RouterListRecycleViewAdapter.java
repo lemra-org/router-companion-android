@@ -135,8 +135,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
      * underlying data set.
      *
      * @param position The index of the item to remove.
-     *
-     *@return the number of elements in the DB
+     * @return the number of elements in the DB
      */
     public int removeData(int position) {
         final Router router = this.routersList.get(position);
@@ -156,6 +155,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
                                                 Context.MODE_PRIVATE),
                                 router,
                                 Joiner.on(" ; ").skipNulls(),
+
                                 "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
                                 "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
                                 "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
@@ -169,6 +169,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
                                 "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
                                 "rm -f " + WirelessClientsTile.USAGE_DB,
                                 "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
+
                     } catch (final Exception e) {
                         e.printStackTrace();
                         //No Worries

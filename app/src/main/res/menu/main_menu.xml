@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -26,16 +25,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/action_ddwrt_actions"
         android:alphabeticShortcut="a"
-        android:icon="@drawable/ic_action_action"
+        android:icon="@drawable/ic_action_action_launch"
         android:orderInCategory="1"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_actions" >
+        android:showAsAction="always"
+        android:title="@string/menuitem_actions">
 
         <menu>
 
             <item
                 android:id="@+id/action_ddwrt_actions_reboot_router"
                 android:alphabeticShortcut="R"
+                android:icon="@drawable/ic_action_action_settings_power"
                 android:orderInCategory="1"
                 android:showAsAction="ifRoom"
                 android:title="@string/menuitem_actions_reboot_router" />
@@ -43,19 +43,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <item
                 android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
                 android:alphabeticShortcut="D"
+                android:icon="@drawable/ic_action_action_restore"
                 android:orderInCategory="2"
                 android:showAsAction="ifRoom"
-                android:title="@string/menuitem_actions_restore_factory_defaults"/>
+                android:title="@string/menuitem_actions_restore_factory_defaults" />
 
-            <!-- TODO Disabled for now -->
+            <!-- TODO Hidden for now -->
             <item
                 android:id="@+id/action_ddwrt_actions_firmware_upgrade"
                 android:alphabeticShortcut="U"
+                android:enabled="false"
+                android:icon="@drawable/ic_action_action_system_update_tv"
                 android:orderInCategory="3"
                 android:showAsAction="ifRoom"
                 android:title="@string/menuitem_actions_upgrade_firmware"
-                android:enabled="false"
-                android:visible="false"/>
+                android:visible="false" />
         </menu>
     </item>
 
@@ -70,6 +72,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/action_donate"
         android:alphabeticShortcut="d"
+        android:icon="@drawable/ic_action_action_payment"
         android:orderInCategory="3"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_donate" />
@@ -85,6 +88,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/action_about"
         android:alphabeticShortcut="A"
+        android:icon="@drawable/ic_action_social_person"
         android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_about" />
