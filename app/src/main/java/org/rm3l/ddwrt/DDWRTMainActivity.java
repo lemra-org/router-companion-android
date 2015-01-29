@@ -167,7 +167,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+        mDrawerList.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, mDDWRTNavigationMenuSections));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 

@@ -21,42 +21,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:paddingBottom="10dip"
     android:paddingLeft="10dip"
     android:paddingRight="10dip"
-    android:paddingTop="10dip">
+    android:paddingTop="10dip"
+    android:transitionName="@string/transition_router"
+    card_view:cardBackgroundColor="@android:color/transparent"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="2dp"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:cardUseCompatPadding="true"
+    card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+    card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+    card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/router_uuid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/router_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/ddwrt_green" />
+        <TextView
+            android:id="@+id/router_uuid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/router_ip_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/router_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/ddwrt_green" />
 
-    <TextView
-        android:id="@+id/router_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/router_ip_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/router_connection_protocol"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/router_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
+        <TextView
+            android:id="@+id/router_connection_protocol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

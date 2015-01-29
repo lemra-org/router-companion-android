@@ -34,7 +34,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/routersListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" />
+        android:scrollbars="vertical" />
 
     <ImageButton
         android:id="@+id/router_list_add"

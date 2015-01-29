@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
@@ -207,6 +209,7 @@ public class RouterManagementActivity
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         this.optionsMenu = menu;
         getSupportMenuInflater().inflate(R.menu.menu_router_management, menu);
+        //noinspection PointlessBooleanExpression
         if (!BuildConfig.DONATIONS) {
             final MenuItem item = menu.findItem(R.id.router_list_donate);
             if (item != null) {
@@ -283,7 +286,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onClick(@Nullable View view) {
+    public void onClick(@Nullable final View view) {
         if (view == null) {
             return;
         }
@@ -330,7 +333,15 @@ public class RouterManagementActivity
                     }
                     final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
                     ddWrtMainIntent.putExtra(ROUTER_SELECTED, router.getUuid());
-                    RouterManagementActivity.this.startActivity(ddWrtMainIntent);
+
+                    //Animate
+                    final String transitionName = getString(R.string.transition_router);
+                    final ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                    RouterManagementActivity.this, view, transitionName);
+
+                    ActivityCompat.startActivity(RouterManagementActivity.this, ddWrtMainIntent, options.toBundle());
+
                     alertDialog.cancel();
                 }
             }, 2000);
