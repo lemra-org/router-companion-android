@@ -61,7 +61,6 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
-import org.rm3l.ddwrt.utils.ChangeLogParameterized;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -76,9 +75,9 @@ public class RouterManagementActivity
         implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
-    private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
+    private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     @Nullable
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
@@ -89,7 +88,6 @@ public class RouterManagementActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
-    private ChangeLogParameterized mChangelogDialog;
     private FeedbackDialog mFeedbackDialog;
 
     @NotNull
@@ -139,28 +137,7 @@ public class RouterManagementActivity
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
-        //Changelog Popup
-        mChangelogDialog = new ChangeLogParameterized(this);
-        //FIXME Disabled for now, because the listener may not be bound to the right positive button
-//        if (mChangelogDialog.isFirstRun()) {
-//            final AlertDialog clLogDialog = mChangelogDialog.getLogDialog();
-//            clLogDialog.show();
-//            if (mAdapter.getItemCount() == 0) {
-//                //Override click on Positive Button, so we can display the 'Add Router' Dialog when user closes the ChangeLog popup
-//                clLogDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        //Call initial onclick listener
-//                        mChangelogDialog.handlePositiveButtonClick();
-//                        RouterManagementActivity.this.initOpenAddRouterFormIfNecessary();
-//                    }
-//                });
-//            }
-//        } else {
-//            initOpenAddRouterFormIfNecessary();
-//        }
         initOpenAddRouterFormIfNecessary();
-
     }
 
     private void initOpenAddRouterFormIfNecessary() {
@@ -173,7 +150,6 @@ public class RouterManagementActivity
     protected void onPause() {
         super.onPause();
         mFeedbackDialog.dismiss();
-        mChangelogDialog.getLogDialog().dismiss();
     }
 
     @Override
@@ -181,7 +157,6 @@ public class RouterManagementActivity
         super.onDestroy();
 
         mFeedbackDialog.dismiss();
-        mChangelogDialog.getLogDialog().dismiss();
 
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
