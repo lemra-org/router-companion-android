@@ -29,8 +29,6 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.widget.EditText;
 
-import com.google.common.base.Strings;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
@@ -41,6 +39,7 @@ import org.rm3l.ddwrt.utils.Utils;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
@@ -90,7 +89,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         //Fill the router IP Address with the current gateway address, if any
         try {
             final EditText routerIpOrDnsEditText = (EditText) d.findViewById(R.id.router_add_ip);
-            if (!(routerIpOrDnsEditText.getText() == null || Strings.isNullOrEmpty(routerIpOrDnsEditText.getText().toString()))) {
+            if (routerIpOrDnsEditText.getText() == null || isNullOrEmpty(routerIpOrDnsEditText.getText().toString())) {
                 //Do this only if nothing has been filled in the EditText by the user
                 final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
                 if (wifiManager != null) {
