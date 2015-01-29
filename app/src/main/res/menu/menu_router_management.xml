@@ -50,6 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_list_donate"
         android:alphabeticShortcut="d"
+        android:icon="@drawable/ic_action_action_payment"
         android:orderInCategory="3"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_donate"
@@ -58,6 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
+        android:icon="@drawable/ic_action_social_person"
         android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:title="@string/menuitem_about" />
