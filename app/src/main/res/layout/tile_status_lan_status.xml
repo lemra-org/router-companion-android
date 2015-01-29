@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -24,15 +23,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_lan_status"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
-
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_lan_status"-->
-    <!--android:background="@android:color/transparent"/>-->
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -85,10 +77,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_status_lan_status_gridLayout"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3">
+                android:columnCount="3"
+                android:visibility="gone">
 
                 <!-- MAC -->
                 <TextView
@@ -107,13 +99,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_lan_status_mac"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- IP -->
                 <TextView
@@ -132,13 +124,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_lan_status_ip"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Subnet Mask -->
                 <TextView
@@ -157,13 +149,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_lan_status_subnet_mask"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- GW -->
                 <TextView
@@ -182,13 +174,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_lan_status_gateway"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!--&lt;!&ndash; Comma-separated list of DNSs &ndash;&gt;-->
                 <!--<TextView-->
@@ -207,7 +199,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!--<TextView-->
                 <!--android:id="@+id/tile_status_lan_status_dns"-->
-                <!--android:layout_width="292dp"-->
+                <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_gravity="left"-->
                 <!--android:ellipsize="end"-->
@@ -236,12 +228,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_lan_status_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_lan_status_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"
@@ -249,6 +241,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_status_lan_status_loading_view"
                 android:layout_width="wrap_content"

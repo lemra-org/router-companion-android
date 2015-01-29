@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -75,7 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="true"
                     android:text="@string/loading_current_date"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
@@ -179,20 +178,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_time_ntp_client"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Timezone -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ntp_timezone"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -200,17 +199,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"/>
+                    android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_time_ntp_timezone"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Summer Time (DST) -->
                 <TextView
@@ -229,13 +228,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_time_summertime"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- NTP Server -->
                 <TextView
@@ -254,13 +253,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_time_time_server"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
                 <TextView
@@ -295,6 +294,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_status_time_loading_view"
                 android:layout_width="wrap_content"

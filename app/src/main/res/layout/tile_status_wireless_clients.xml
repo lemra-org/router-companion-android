@@ -128,7 +128,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <Switch
                 android:id="@+id/tile_status_wireless_clients_togglebutton"
-                android:layout_width="130dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="15dp"
@@ -158,7 +158,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_clients_active_clients_num"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="4dp"
@@ -184,7 +184,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_clients_active_dhcp_leases_num"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"

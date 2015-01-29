@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -25,8 +24,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_bandwidth_ifaces"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <!--<ImageView-->
     <!--android:layout_width="wrap_content"-->
@@ -86,16 +85,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <GridLayout
                 android:id="@+id/tile_status_bandwidth_ifaces_gridLayout"
-                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3">
+                android:columnCount="3"
+                android:visibility="gone">
 
                 <!-- LAN -->
                 <TextView
+                    android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
                     android:text="@string/bw_lan"
                     android:textStyle="bold" />
 
@@ -110,13 +109,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_bandwidth_ifaces_lan"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Wireless -->
                 <TextView
@@ -135,13 +134,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_bandwidth_ifaces_wireless"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- WAN -->
                 <TextView
@@ -162,13 +161,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_bandwidth_ifaces_wan"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
                 <TextView
@@ -190,12 +189,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <Switch
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="15dp"
+                    android:id="@+id/tile_status_bandwidth_ifaces_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tile_status_bandwidth_ifaces_togglebutton"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="7dp"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"
@@ -203,6 +202,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_status_bandwidth_ifaces_loading_view"
                 android:layout_width="wrap_content"

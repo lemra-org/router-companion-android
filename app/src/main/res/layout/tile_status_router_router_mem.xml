@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -68,7 +67,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="true"
                     android:text="@string/loading_total"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
@@ -77,50 +76,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_router_router_mem_title"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:ellipsize="end"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="@string/memory"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:textStyle="bold" />-->
-
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_gravity="end"-->
-            <!--android:gravity="end"-->
-            <!--android:layout_toRightOf="@+id/tile_status_router_router_mem_title"-->
-            <!--android:layout_toEndOf="@+id/tile_status_router_router_mem_title">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_router_router_mem_total"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="start"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="@string/loading_total"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:visibility="gone"/>-->
-
-            <!--<ProgressBar-->
-            <!--android:id="@+id/tile_status_router_router_mem_header_loading_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true" />-->
-
-            <!--</RelativeLayout>-->
 
         </RelativeLayout>
 
@@ -173,13 +128,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_router_mem_free"
-                    android:layout_width="310dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Used -->
                 <TextView
@@ -198,51 +153,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_router_mem_used"
-                    android:layout_width="310dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
-
-                <!-- Load Avg-->
-                <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Load Average" />-->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
-                <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_mem_kernel"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
-
-                <!-- Temperature-->
-                <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Temperature" />-->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
-                <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_mem_lan_ip"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
+                    android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
                 <TextView
@@ -277,6 +194,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_status_router_router_mem_loading_view"
                 android:layout_width="wrap_content"

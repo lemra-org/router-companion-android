@@ -156,7 +156,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_system_name"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="4dp"
@@ -182,7 +182,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_oui_addr"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="4dp"
@@ -243,7 +243,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_total_upload"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"
@@ -268,7 +268,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_total_download"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"
@@ -280,7 +280,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WAN Access"
+                android:text="@string/wan_access"
                 android:textStyle="bold" />
 
             <TextView
@@ -293,7 +293,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_wan_access"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"

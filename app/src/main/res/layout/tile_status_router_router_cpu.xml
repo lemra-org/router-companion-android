@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -27,13 +26,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:orientation="horizontal">
-
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_router_router_cpu"-->
-    <!--android:background="@android:color/transparent"/>-->
 
     <LinearLayout
         android:layout_width="0dp"
@@ -74,7 +66,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="true"
                     android:text="@string/loading_clock"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
@@ -135,13 +127,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_model"
-                    android:layout_width="254dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Cores -->
                 <TextView
@@ -160,13 +152,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_cores"
-                    android:layout_width="254dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
+                    android:text="@string/loading" />
 
                 <!-- Load Avg -->
                 <TextView
@@ -185,34 +177,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_load_avg"
-                    android:layout_width="254dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
-                    android:text="@string/loading"/>
-
-
-                <!-- Temperature-->
-                <!--<TextView-->
-                <!--android:textStyle="bold"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Temperature" />-->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text=":" />-->
-                <!--<TextView-->
-                <!--android:id="@+id/tile_status_router_router_cpu_lan_ip"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="right" />-->
-
+                    android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
                 <TextView
@@ -247,6 +218,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
             </GridLayout>
+
             <ProgressBar
                 android:id="@+id/tile_status_router_router_cpu_loading_view"
                 android:layout_width="wrap_content"

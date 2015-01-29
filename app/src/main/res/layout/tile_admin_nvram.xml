@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -21,11 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -43,24 +41,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_admin_nvram_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="@string/nvram"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"/>
+                android:textStyle="bold" />
 
             <ImageButton
+                android:id="@+id/tile_admin_nvram_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-                android:contentDescription="@string/menu"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:id="@+id/tile_admin_nvram_menu"
-                android:visibility="gone"/>
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/menu"
+                android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -99,15 +97,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="3"
                 android:layout_gravity="start"
-                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:textColor="@color/primary_dark"
-                android:hint="@string/syslog_filter_hint"
                 android:drawableBottom="@color/primary_dark"
-                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
                 android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                android:imeOptions="actionSearch" />
+                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+                android:hint="@string/syslog_filter_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+                android:textColor="@color/primary_dark" />
 
             <!-- Auto-refresh -->
             <TextView
@@ -129,31 +127,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
+                android:id="@+id/tile_admin_nvram_togglebutton"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tile_admin_nvram_togglebutton"
                 android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
-                android:textOn="ON"/>
+                android:textOn="ON" />
 
             <!--<Switch-->
-                <!--android:id="@+id/tile_admin_nvram_togglebutton"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:checked="true"-->
-                <!--android:thumb="@drawable/switch_bg"-->
-                <!--android:track="@drawable/track_bg"-->
-                <!--android:layout_marginTop="7dp"-->
-                <!--android:layout_marginBottom="15dp"-->
-                <!--android:textAppearance="?android:textAppearanceSmall"-->
-                <!--android:textOff="OFF"-->
-                <!--android:textOn="ON"-->
-                <!--android:visibility="gone" />-->
+            <!--android:id="@+id/tile_admin_nvram_togglebutton"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:checked="true"-->
+            <!--android:thumb="@drawable/switch_bg"-->
+            <!--android:track="@drawable/track_bg"-->
+            <!--android:layout_marginTop="7dp"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--android:textOff="OFF"-->
+            <!--android:textOn="ON"-->
+            <!--android:visibility="gone" />-->
 
             <!-- Size -->
             <TextView
@@ -172,13 +170,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_admin_nvram_size"
-                android:layout_width="292dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:singleLine="false"
-                android:text="@string/loading"/>
+                android:text="@string/loading" />
 
         </GridLayout>
 
@@ -188,18 +186,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/tile_admin_nvram_ListView"
-                android:overScrollMode="ifContentScrolls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:listSelector="@android:color/transparent"/>
+                android:listSelector="@android:color/transparent"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none" />
 
             <ProgressBar
                 android:id="@+id/tile_admin_nvram_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
-        
+
         </RelativeLayout>
 
     </LinearLayout>

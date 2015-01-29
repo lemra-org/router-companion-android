@@ -77,49 +77,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
 
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/tile_services_openvpn_client_title"-->
-            <!--android:ellipsize="end"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="OpenVPN Client"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:textStyle="bold"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_alignParentLeft="true"/>-->
-
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:gravity="start">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_services_openvpn_client_status"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="start"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="Loading Status..."-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:textColor="@color/ddwrt_green"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:visibility="gone"/>-->
-
-            <!--<ProgressBar-->
-            <!--android:id="@+id/tile_services_openvpn_client_header_loading_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true" />-->
-
-            <!--</RelativeLayout>-->
-
         </RelativeLayout>
 
         <View
@@ -194,7 +151,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_state"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -219,7 +176,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_server_ip_name"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -244,7 +201,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_server_port"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -269,7 +226,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_rx_rate"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -294,7 +251,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_tx_rate"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -319,7 +276,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_rx_packets"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -344,7 +301,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_tx_packets"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -370,7 +327,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_tunnel_device"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -395,7 +352,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_tunnel_protocol"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -420,7 +377,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_encryption_cipher"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"
@@ -445,7 +402,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <TextView
                     android:id="@+id/tile_services_openvpn_client_hash_algorithm"
-                    android:layout_width="292dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:ellipsize="end"

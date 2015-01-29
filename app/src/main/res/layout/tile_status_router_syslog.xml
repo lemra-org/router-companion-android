@@ -110,7 +110,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <ScrollView
             android:id="@+id/tile_status_router_syslog_content_scrollview"
             android:layout_width="fill_parent"
-            android:layout_height="313dp">
+            android:layout_height="320dp"
+            android:fillViewport="true"
+            android:scrollbars="vertical|horizontal">
 
             <RelativeLayout
                 android:layout_width="match_parent"

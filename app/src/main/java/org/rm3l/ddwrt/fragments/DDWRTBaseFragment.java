@@ -106,12 +106,13 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     public static final String FRAGMENT_CLASS = "fragment_class";
     public static final String ROUTER_CONNECTION_INFO = "router_info";
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
-
-    private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
     public static final String STATE_LOADER_IDS = "loaderIds";
-
+    private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
+    private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
     protected LinearLayout mLayout;
     protected Router router;
+    protected boolean mLoaderStopped = true;
+    protected ViewGroup viewGroup;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     @Nullable
@@ -119,19 +120,8 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @NotNull
     private DDWRTMainActivity ddwrtMainActivity;
     private Class<? extends DDWRTBaseFragment> mClazz;
-
-    private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
-
-    protected boolean mLoaderStopped = true;
-
-    protected ViewGroup viewGroup;
-
     @NotNull
     private PageSlidingTabStripFragment parentFragment;
-
-    public void setLoaderStopped(boolean mLoaderStopped) {
-        this.mLoaderStopped = mLoaderStopped;
-    }
 
     @Nullable
     public static DDWRTBaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NotNull final Class<? extends DDWRTBaseFragment> clazz,
@@ -348,6 +338,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
     }
 
+    public void setLoaderStopped(boolean mLoaderStopped) {
+        this.mLoaderStopped = mLoaderStopped;
+    }
 
     @NotNull
     public final DDWRTBaseFragment setParentSectionTitle(@NotNull final CharSequence parentSectionTitle) {
@@ -488,7 +481,6 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     }
 
 
-
     @Override
     public void onResume() {
         initLoaders();
@@ -527,7 +519,12 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             @NotNull final List<CardView> cards = new ArrayList<CardView>();
 
-            final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT);
+            cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+            cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+            cardViewLayoutParams.bottomMargin = R.dimen.marginBottom;
 
             final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
 
@@ -600,7 +597,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
         }
 
         viewGroup.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        viewGroup.setLayoutParams(params);
+//        viewGroup.setLayoutParams(params);
 
         return viewGroup;
 
@@ -687,7 +684,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
     @Nullable
     protected abstract List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState);
 
-    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener ) {
+    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
         parentFragment.startActivityForResult(intent, listener);
     }
 
