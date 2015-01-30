@@ -23,14 +23,8 @@
 package org.rm3l.ddwrt.fragments.admin;
 
 import android.os.Bundle;
-import android.widget.Toast;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 import org.jetbrains.annotations.Nullable;
-import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.admin.nvram.AdminNVRAMTile;
@@ -42,14 +36,13 @@ import java.util.List;
 /**
  * 'Admin > NVRAM' fragment
  * <p/>
- * TODO To Implement
  */
 public class AdminNVRAMFragment extends DDWRTBaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile> asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+        return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
     }
 
 }

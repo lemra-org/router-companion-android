@@ -39,10 +39,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,15 +75,12 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
+    protected static final int MAX_LOG_LINES = 15;
     private static final String FONT_COLOR_YELLOW_HTML = "<font color='yellow'>";
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
-
     @Nullable
     private final String mGrep;
-
-    protected static final int MAX_LOG_LINES = 15;
-
     private final boolean mDisplayStatus;
 
     public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @Nullable final ViewGroup parentViewGroup,
@@ -101,6 +96,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
         this.parentViewGroup = parentViewGroup;
 
+    }
+
+    @Override
+    public boolean isEmbeddedWithinScrollView() {
+        return false;
     }
 
     @Override

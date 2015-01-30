@@ -107,43 +107,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <ScrollView
-            android:id="@+id/tile_status_router_syslog_content_scrollview"
-            android:layout_width="fill_parent"
-            android:layout_height="320dp"
-            android:fillViewport="true"
-            android:scrollbars="vertical|horizontal">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tile_status_router_syslog_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/abs__background_holo_dark"
-                    android:gravity="bottom"
-                    android:maxLength="9000"
-                    android:maxLines="200"
-                    android:singleLine="false"
-                    android:textColor="@color/abs__background_holo_light"
-                    android:visibility="gone" />
-
-                <ProgressBar
-                    android:id="@+id/tile_status_router_syslog_content_loading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
-            </RelativeLayout>
-
-        </ScrollView>
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="4.0dip"
+            android:paddingTop="1.0dip"
             android:weightSum="1">
 
             <!-- Filter -->
@@ -202,6 +169,40 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
         </GridLayout>
+
+        <org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight
+            android:id="@+id/tile_status_router_syslog_content_scrollview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="vertical|horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tile_status_router_syslog_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/abs__background_holo_dark"
+                    android:gravity="bottom"
+                    android:maxLength="9000"
+                    android:maxLines="200"
+                    android:singleLine="false"
+                    android:textColor="@color/abs__background_holo_light"
+                    android:visibility="gone" />
+
+                <ProgressBar
+                    android:id="@+id/tile_status_router_syslog_content_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
+
+        </org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight>
+
 
     </LinearLayout>
 

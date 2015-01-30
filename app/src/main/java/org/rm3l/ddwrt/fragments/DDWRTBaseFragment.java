@@ -530,12 +530,22 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
 
+            boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
+
                 @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);
 
                 if (viewGroupLayout == null) {
                     continue;
+                }
+
+                if (!ddwrtTile.isEmbeddedWithinScrollView()) {
+                    if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
+                        viewGroup = (LinearLayout) getSherlockActivity().getLayoutInflater()
+                                .inflate(R.layout.base_tiles_container_linearlayout, null);
+                        parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
+                    }
                 }
 
                 if (isThemeLight) {
@@ -582,11 +592,16 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
             }
 
-            ((ScrollView) viewGroup).setFillViewport(true);
+            if (viewGroup instanceof ScrollView) {
+                ((ScrollView) viewGroup).setFillViewport(true);
+            }
         }
 
         if (viewGroup == null || !atLeastOneTileAdded) {
-            viewGroup = new FrameLayout(sherlockActivity);
+            if (viewGroup == null) {
+                viewGroup = new FrameLayout(sherlockActivity);
+            }
+
             @NotNull final TextView view = new TextView(sherlockActivity);
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));

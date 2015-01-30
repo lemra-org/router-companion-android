@@ -87,9 +87,7 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuItemClickListener {
 
-    private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
     public static final String NVRAM_SIZE = AdminNVRAMTile.class.getSimpleName() + "::nvram_size";
-    private static final String LAST_SEARCH = "lastSearch";
     public static final Comparator<Object> COMPARATOR_STRING_CASE_INSENSITIVE = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
@@ -105,7 +103,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             return o1.toString().compareToIgnoreCase(o2.toString());
         }
     };
-
     public static final Comparator<Object> COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
@@ -123,17 +120,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     };
     public static final String SORT = "sort";
     public static final Joiner.MapJoiner PROPERTIES_JOINER_TO_FILE = Joiner.on('\n').withKeyValueSeparator("=");
-
+    private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
+    private static final String LAST_SEARCH = "lastSearch";
     private final RecyclerView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
 
     private final NVRAMInfo mNvramInfoDefaultSorting;
+    private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
     private Map<Object, Object> mNvramInfoToDisplay = new HashMap<>();
-
     private ShareActionProvider mShareActionProvider;
-
-    private final BiMap<Integer,Integer> sortIds = HashBiMap.create();
 
     public AdminNVRAMTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
@@ -144,6 +140,31 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.tile_admin_nvram_ListView);
+
+//        super.parentViewGroup.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Log.v(LOG_TAG, "PARENT TOUCH");
+//                requestDisallowParentInterceptTouchEvent(mRecyclerView, false);
+//                return false;
+//            }
+//        });
+//
+//        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Log.v(LOG_TAG,"CHILD TOUCH");
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    //  Disallow the touch request for parent scroll on touch of child view
+//                    requestDisallowParentInterceptTouchEvent(v, true);
+//                } else if (event.getAction() == MotionEvent.ACTION_UP ||
+//                        event.getAction() == MotionEvent.ACTION_CANCEL) {
+//                    // Re-allows parent events
+//                    requestDisallowParentInterceptTouchEvent(v, false);
+//                }
+//                return false;
+//            }
+//        });
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -352,6 +373,11 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
         });
 
+    }
+
+    @Override
+    public boolean isEmbeddedWithinScrollView() {
+        return false;
     }
 
     @Override

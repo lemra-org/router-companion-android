@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -36,9 +35,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -66,7 +63,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected final SharedPreferences mParentFragmentPreferences;
     @NotNull
     protected final SharedPreferences mGlobalPreferences;
-    @NotNull protected final SherlockFragment mParentFragment;
+    @NotNull
+    protected final SherlockFragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
@@ -78,12 +76,13 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected CompoundButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
     protected ViewGroup parentViewGroup;
+    private boolean mLoaderStopped = true;
 
     public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getSherlockActivity();
         this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
-                    .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
+                .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
         this.mGlobalPreferences = this.mParentFragmentActivity
                 .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.mRouter = router;
@@ -110,8 +109,6 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
     }
 
-    private boolean mLoaderStopped = true;
-
     protected ViewGroup getParentViewGroup() {
         return parentViewGroup;
     }
@@ -119,6 +116,14 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public DDWRTTile<T> setParentViewGroup(ViewGroup parentViewGroup) {
         this.parentViewGroup = parentViewGroup;
         return this;
+    }
+
+    /**
+     * @return <code>true</code> if this tile should be embedded within a ScrollView,
+     * <code>false</code> otherwise (in this case it will be embedded within a LinearLayout)
+     */
+    public boolean isEmbeddedWithinScrollView() {
+        return true;
     }
 
     public void setLoaderStopped(boolean mLoaderStopped) {
@@ -141,7 +146,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     protected String getFormattedPrefKey(@NotNull final String scope) {
-        return this.getClass().getCanonicalName()+"::"+scope;
+        return this.getClass().getCanonicalName() + "::" + scope;
     }
 
     @Nullable
@@ -203,7 +208,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader +
-                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: "+refreshDelay+"ms");
+                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: " + refreshDelay + "ms");
     }
 
     @Nullable
@@ -231,7 +236,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             final String dialogMsg = onClickIntentAndListener.getDialogMessage();
             //noinspection ConstantConditions
             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
+                    Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
             alertDialog.show();
             ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
             new Handler().postDelayed(new Runnable() {
@@ -248,6 +253,10 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
 
+    public interface ActivityResultListener {
+        void onResultCode(int resultCode, Intent data);
+    }
+
     protected class OnClickIntent {
         @Nullable
         private final Intent intent;
@@ -259,7 +268,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         private final String dialogMessage;
 
         public OnClickIntent(@Nullable final String dialogMessage,
-                                @Nullable Intent intent,
+                             @Nullable Intent intent,
                              @Nullable ActivityResultListener listener) {
             this.intent = intent;
             this.listener = listener;
@@ -280,9 +289,5 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         public String getDialogMessage() {
             return dialogMessage;
         }
-    }
-
-    public interface ActivityResultListener {
-        void onResultCode(int resultCode, Intent data);
     }
 }
