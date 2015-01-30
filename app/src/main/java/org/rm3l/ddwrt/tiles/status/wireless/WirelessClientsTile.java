@@ -106,6 +106,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
@@ -138,6 +139,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACC
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
@@ -154,6 +156,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SORT_APHABETICAL = SORT + "_aphabetical";
     public static final String SORTING_STRATEGY = "sorting_strategy";
     public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
+    public static final String TRIPLE_ZERO = "000";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
@@ -167,7 +170,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     @NotNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newConcurrentMap();
-    private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
+    private final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
     private String[] activeClients;
@@ -177,6 +180,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private File wrtbwmonScriptPath;
 
     private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
+
+    private String mUsageDbBackupPath = null;
 
     public WirelessClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
@@ -399,6 +404,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final NVRAMInfo nvRamInfoFromRouter = SSHUtils
                                 .getNVRamInfoFromRouter(mRouter, mGlobalPreferences, WAN_GATEWAY);
                         if (nvRamInfoFromRouter != null) {
+                            //noinspection ConstantConditions
                             gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
                         }
                     } catch (final Exception e) {
@@ -494,6 +500,26 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 deviceCollection.iterator().next());
                     }
 
+                    try {
+                        final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
+                        mUsageDbBackupPath = file.getAbsolutePath();
+                        Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+                        if (file.exists()) {
+                            final String[] doesUsageDataExistLines = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                                    "[ -f " + USAGE_DB + " ]; echo $?");
+                            Log.d(LOG_TAG, "doesUsageDataExistLines: " + Arrays.toString(doesUsageDataExistLines));
+                            if (doesUsageDataExistLines != null && doesUsageDataExistLines.length > 0
+                                    && !"0".equals(doesUsageDataExistLines[0].trim())) {
+                                //Usage Data File does not exist - restore what we have on file (if any)
+                                SSHUtils.scpTo(mRouter, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                            }
+                        }
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        mUsageDbBackupPath = null;
+                    }
+
                     /** http://www.dd-wrt.com/phpBB2/viewtopic.php?t=75275 */
 
                     //Copy wrtbwmon file to remote host (/tmp/)
@@ -513,7 +539,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
                             WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup",
                             WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read",
-                            "sleep 3",
+                            "sleep 1",
                             WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " update " + USAGE_DB,
                             WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " publish-raw " + USAGE_DB + " " + USAGE_DB_OUT);
 
@@ -546,29 +572,44 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
 
                             try {
-                                device.setRxTotal(Double.parseDouble(splitToList.get(2)) * 1024);
+                                device.setRxTotal(Double.parseDouble(splitToList.get(2) + TRIPLE_ZERO));
                             } catch (final NumberFormatException nfe) {
                                 nfe.printStackTrace();
                                 //no worries
                             }
                             try {
-                                device.setTxTotal(Double.parseDouble(splitToList.get(3)) * 1024);
+                                device.setTxTotal(Double.parseDouble(splitToList.get(3) + TRIPLE_ZERO));
                             } catch (final NumberFormatException nfe) {
                                 nfe.printStackTrace();
                                 //no worries
                             }
 
+                            long lastSeen = -1l;
                             try {
-                                final long lastSeen = Long.parseLong(splitToList.get(1)) * 1000l;
-                                final double rxRate = Double.parseDouble(splitToList.get(4)) * 1024;
-                                final double txRate = Double.parseDouble(splitToList.get(5)) * 1024;
+                                lastSeen = Long.parseLong(splitToList.get(1)) * 1000l;
                                 device.setLastSeen(lastSeen);
+                            } catch (final NumberFormatException nfe) {
+                                nfe.printStackTrace();
+                                //no worries
+                            }
+                            try {
+                                final double rxRate = Double.parseDouble(splitToList.get(4) + TRIPLE_ZERO);
                                 device.setRxRate(rxRate);
+                                if (lastSeen > 0l) {
+                                    bandwidthMonitoringIfaceData.addData("IN",
+                                            new BandwidthMonitoringTile.DataPoint(lastSeen, rxRate));
+                                }
+                            } catch (final NumberFormatException nfe) {
+                                nfe.printStackTrace();
+                                //no worries
+                            }
+                            try {
+                                final double txRate = Double.parseDouble(splitToList.get(5) + TRIPLE_ZERO);
                                 device.setTxRate(txRate);
-                                bandwidthMonitoringIfaceData.addData("IN",
-                                        new BandwidthMonitoringTile.DataPoint(lastSeen, rxRate));
-                                bandwidthMonitoringIfaceData.addData("OUT",
-                                        new BandwidthMonitoringTile.DataPoint(lastSeen, txRate));
+                                if (lastSeen > 0l) {
+                                    bandwidthMonitoringIfaceData.addData("OUT",
+                                            new BandwidthMonitoringTile.DataPoint(lastSeen, txRate));
+                                }
                             } catch (final NumberFormatException nfe) {
                                 nfe.printStackTrace();
                                 //no worries
@@ -617,19 +658,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Save usage data file
-                    final boolean withBackup = (mParentFragmentPreferences != null &&
-                            mParentFragmentPreferences.getBoolean("withUsageDataBackup", false));
-                    if (withBackup) {
+                    final boolean disableBackup = (mParentFragmentPreferences != null &&
+                            mParentFragmentPreferences.getBoolean("disableUsageDataAutoBackup", false));
+                    Log.d(LOG_TAG, "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
+                    if (!disableBackup) {
                         try {
-                            SSHUtils.scpFrom(mRouter, mGlobalPreferences,
-                                    USAGE_DB,
-                                    new File(mParentFragmentActivity.getExternalFilesDir(null),
-                                            "usage_" + mRouter.getUuid()).getAbsolutePath());
+                            if (!isNullOrEmpty(mUsageDbBackupPath)) {
+                                //Backup to new data file
+                                SSHUtils.scpFrom(mRouter, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
+                            }
                         } catch (final Exception e) {
                             e.printStackTrace();
                             //No worries
                         }
                     }
+
                     //Final operation
                     for (final Device device : macToDevice.values()) {
                         devices.addDevice(device);
@@ -1350,6 +1393,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         @Override
         public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
 //            bandwidthMonitoringIfaceDataPerDevice.clear();
+            switch (routerAction) {
+                case RESET_COUNTERS:
+                    //Also delete local backup (so it does not get restored on the router)
+                    //noinspection ResultOfMethodCallIgnored
+                    DDWRTCompanionConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
+                            .delete();
+                    break;
+                default:
+                    //Ignored
+                    break;
+            }
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                     Style.CONFIRM);

@@ -48,6 +48,7 @@ import java.util.List;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
 
@@ -144,6 +145,10 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             //Drop SharedPreferences for this item too
             this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
                     .edit().clear().commit();
+
+            //Also Remove Usage Data Created
+            //noinspection ResultOfMethodCallIgnored
+            getClientsUsageDataFile(context, router.getUuid()).delete();
 
             new Thread(new Runnable() {
                 @Override

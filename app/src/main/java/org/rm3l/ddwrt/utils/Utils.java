@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.common.base.Strings;
@@ -52,6 +53,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -75,7 +77,7 @@ public final class Utils {
         colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
     }
 
-    private static long nextLoaderId = 1;
+    private static AtomicLong nextLoaderId = new AtomicLong(1);
 
     private Utils() {
     }
@@ -101,7 +103,7 @@ public final class Utils {
     }
 
     public static long getNextLoaderId() {
-        return nextLoaderId++;
+        return nextLoaderId.getAndIncrement();
     }
 
     public static void readAll(@NotNull BufferedReader bufferedReader, @NotNull StringBuffer result) throws IOException {
@@ -227,6 +229,18 @@ public final class Utils {
 
         return new DefaultHttpClient(new ThreadSafeClientConnManager(params,
                 mgr.getSchemeRegistry()), params);
+    }
+
+    /* Checks if external storage is available for read and write */
+    public static boolean isExternalStorageWritable() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    /* Checks if external storage is available to at least read */
+    public static boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        return (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
 }

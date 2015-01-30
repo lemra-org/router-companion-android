@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
@@ -56,8 +57,10 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
-        if (this.mRouterUuid.isEmpty()) {
-            throw new IllegalStateException("Router UUID is null: " + this.mRouterUuid);
+        if (isNullOrEmpty(this.mRouterUuid)) {
+            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+            Utils.reportException(new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+            finish();
         }
         return super.getSharedPreferences(this.mRouterUuid, mode);
     }

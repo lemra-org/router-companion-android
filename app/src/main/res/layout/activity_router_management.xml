@@ -38,8 +38,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <ImageButton
         android:id="@+id/router_list_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="75dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
@@ -47,7 +47,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/router_add_new"
-        android:src="@drawable/ic_action_content_add" />
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_router_add" />
 
 </RelativeLayout>

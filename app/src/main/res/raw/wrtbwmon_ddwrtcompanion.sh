@@ -28,7 +28,7 @@
 #
 
 LAN_IFACE=$(nvram get lan_ifname)
-SLEEP_TIME=3
+SLEEP_TIME=1
 
 case ${1} in
 
@@ -41,7 +41,7 @@ case ${1} in
     # Create WANAccess Chain too and add it to the FORWARD Chain
     #
 	iptables -N DDWRTCompWANAccess 2> /dev/null
-	iptables -L FORWARD --line-numbers -n | grep "DDWRTCompWANAccess" | grep "1" > /dev/null
+	iptables -L FORWARD --line-numbers -n | grep "DDWRTCompWANAccess" | grep "2" > /dev/null
 	if [ $? -ne 0 ]; then
 	    iptables -L FORWARD -n | grep "DDWRTCompWANAccess" > /dev/null
 	    if [ $? -eq 0 ]; then
