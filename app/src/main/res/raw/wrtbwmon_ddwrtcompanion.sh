@@ -179,10 +179,29 @@ case ${1} in
 	[ -z "${4}" ] || USERSFILE=${4}
 	[ -f "${USERSFILE}" ] || USERSFILE="/dev/null"
 
+    # first do some number crunching - rewrite the database so that it is sorted
+	touch /tmp/.DDWRTCompanion_sorted_$$.tmp
 	cat ${2} | while IFS=, read MAC PEAKUSAGE_IN PEAKUSAGE_OUT OFFPEAKUSAGE_IN OFFPEAKUSAGE_OUT LASTSEEN
 	do
-	    echo ${MAC},${LASTSEEN},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},$(((${PEAKUSAGE_IN}-${OFFPEAKUSAGE_IN})/${SLEEP_TIME})),$(((${PEAKUSAGE_OUT}-${OFFPEAKUSAGE_OUT})/${SLEEP_TIME})) >> ${3}
+		echo ${PEAKUSAGE_IN},${PEAKUSAGE_OUT},$(((${PEAKUSAGE_IN}-${OFFPEAKUSAGE_IN})/${SLEEP_TIME})),$(((${PEAKUSAGE_OUT}-${OFFPEAKUSAGE_OUT})/${SLEEP_TIME})),${MAC},${LASTSEEN} >> /tmp/.DDWRTCompanion_sorted_$$.tmp
 	done
+
+    cat /tmp/.DDWRTCompanion_sorted_$$.tmp | while IFS=, read PEAKUSAGE_IN PEAKUSAGE_OUT OFFPEAKUSAGE_IN OFFPEAKUSAGE_OUT MAC LASTSEEN
+	do
+	    echo ${MAC},${LASTSEEN},${PEAKUSAGE_IN}000,${PEAKUSAGE_OUT}000,${OFFPEAKUSAGE_IN}000,${OFFPEAKUSAGE_OUT}000 >> ${3}
+	done
+
+    #Free some memory
+	rm -f /tmp/.DDWRTCompanion_sorted_$$.tmp
+
+	#Make previous bandwidth values match the current
+	touch /tmp/.DDWRTCompanion_matched_$$.tmp
+	cat ${2} | while IFS=, read MAC PEAKUSAGE_IN PEAKUSAGE_OUT OFFPEAKUSAGE_IN OFFPEAKUSAGE_OUT LASTSEEN
+	do
+		echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${LASTSEEN} >> /tmp/.DDWRTCompanion_matched_$$.tmp
+	done
+	mv /tmp/.DDWRTCompanion_matched_$$.tmp ${2}
+
 	;;
 
 

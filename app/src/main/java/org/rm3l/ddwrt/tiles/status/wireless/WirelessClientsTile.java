@@ -156,7 +156,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SORT_APHABETICAL = SORT + "_aphabetical";
     public static final String SORTING_STRATEGY = "sorting_strategy";
     public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
-    public static final String TRIPLE_ZERO = "000";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
@@ -572,13 +571,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
 
                             try {
-                                device.setRxTotal(Double.parseDouble(splitToList.get(2) + TRIPLE_ZERO));
+                                device.setRxTotal(Double.parseDouble(splitToList.get(2)));
                             } catch (final NumberFormatException nfe) {
                                 nfe.printStackTrace();
                                 //no worries
                             }
                             try {
-                                device.setTxTotal(Double.parseDouble(splitToList.get(3) + TRIPLE_ZERO));
+                                device.setTxTotal(Double.parseDouble(splitToList.get(3)));
                             } catch (final NumberFormatException nfe) {
                                 nfe.printStackTrace();
                                 //no worries
@@ -593,7 +592,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 //no worries
                             }
                             try {
-                                final double rxRate = Double.parseDouble(splitToList.get(4) + TRIPLE_ZERO);
+                                final double rxRate = Double.parseDouble(splitToList.get(4));
                                 device.setRxRate(rxRate);
                                 if (lastSeen > 0l) {
                                     bandwidthMonitoringIfaceData.addData("IN",
@@ -604,7 +603,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 //no worries
                             }
                             try {
-                                final double txRate = Double.parseDouble(splitToList.get(5) + TRIPLE_ZERO);
+                                final double txRate = Double.parseDouble(splitToList.get(5));
                                 device.setTxRate(txRate);
                                 if (lastSeen > 0l) {
                                     bandwidthMonitoringIfaceData.addData("OUT",
