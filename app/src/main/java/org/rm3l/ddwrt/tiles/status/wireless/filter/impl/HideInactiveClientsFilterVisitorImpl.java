@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class HideInactiveClientsFilterVisitorImpl implements ClientsFilterVisitor {
 
-    final boolean hideInactive;
+    private final boolean hideInactive;
 
     public HideInactiveClientsFilterVisitorImpl(final boolean hideInactive) {
         this.hideInactive = hideInactive;

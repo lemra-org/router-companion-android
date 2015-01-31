@@ -191,6 +191,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         sortIds.put(R.id.tile_status_wireless_clients_sort_top_senders, 82);
         sortIds.put(R.id.tile_status_wireless_clients_sort_top_receivers, 83);
+        sortIds.put(R.id.tile_status_wireless_clients_sort_top_senders_current_rate, 84);
+        sortIds.put(R.id.tile_status_wireless_clients_sort_top_receivers_current_rate, 85);
 
         sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
@@ -1179,6 +1181,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 break;
             case R.id.tile_status_wireless_clients_sort_top_senders:
             case R.id.tile_status_wireless_clients_sort_top_receivers:
+            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
+            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
                 clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(currentSortingStrategy);
                 break;
             default:
@@ -1282,6 +1286,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             case R.id.tile_status_wireless_clients_sort_z_a:
             case R.id.tile_status_wireless_clients_sort_top_senders:
             case R.id.tile_status_wireless_clients_sort_top_receivers:
+            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
+            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
             case R.id.tile_status_wireless_clients_sort_seen_recently:
             case R.id.tile_status_wireless_clients_sort_not_seen_recently: {
                 final boolean hideInactive = (mParentFragmentPreferences != null &&
@@ -1303,6 +1309,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         break;
                     case R.id.tile_status_wireless_clients_sort_top_senders:
                     case R.id.tile_status_wireless_clients_sort_top_receivers:
+                    case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
+                    case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
                         clientsSortingVisitor = new TopTalkersClientsSortingVisitorImpl(itemId);
                         break;
                     case R.id.tile_status_wireless_clients_sort_seen_recently:

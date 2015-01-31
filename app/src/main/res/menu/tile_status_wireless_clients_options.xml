@@ -99,6 +99,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:showAsAction="ifRoom"
                     android:title="@string/top_downloaders" />
 
+                <!-- Based on Current Rate -->
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_top_senders_current_rate"
+                    android:checkable="true"
+                    android:icon="@drawable/ic_action_sort_senders"
+                    android:orderInCategory="3"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/top_uploaders_current_rate" />
+                <item
+                    android:id="@+id/tile_status_wireless_clients_sort_top_receivers_current_rate"
+                    android:checkable="true"
+                    android:icon="@drawable/ic_action_sort_listeners"
+                    android:orderInCategory="4"
+                    android:showAsAction="ifRoom"
+                    android:title="@string/top_downloaders_current_rate" />
+
                 <!-- Based on Last Seen -->
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_seen_recently"

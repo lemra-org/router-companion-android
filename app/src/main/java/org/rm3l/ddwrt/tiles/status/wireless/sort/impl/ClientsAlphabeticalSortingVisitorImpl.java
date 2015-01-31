@@ -35,7 +35,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class ClientsAlphabeticalSortingVisitorImpl implements ClientsSortingVisitor {
 
-    final Ordering<Device> aphabeticalOrdering;
+    @NotNull
+    private final Ordering<Device> aphabeticalOrdering;
 
     public ClientsAlphabeticalSortingVisitorImpl(int aphabeticalSort) {
         switch (aphabeticalSort) {

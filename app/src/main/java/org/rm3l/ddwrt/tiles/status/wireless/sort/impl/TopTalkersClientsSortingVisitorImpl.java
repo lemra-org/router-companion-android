@@ -35,7 +35,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisitor {
 
-    final Ordering<Device> topTalkersOrdering;
+    @NotNull
+    private final Ordering<Device> topTalkersOrdering;
 
     public TopTalkersClientsSortingVisitorImpl(final int topTalkersSort) {
         switch (topTalkersSort) {
@@ -75,6 +76,50 @@ public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisito
                             return 1;
                         }
                         final int txTotalComparison = Double.valueOf(right.getTxTotal()).compareTo(left.getTxTotal());
+                        if (txTotalComparison == 0) {
+                            return Ordering.natural().compare(nullToEmpty(left.getName()).toLowerCase(),
+                                    nullToEmpty(right.getName()).toLowerCase());
+                        }
+                        return txTotalComparison;
+                    }
+                };
+                break;
+            case R.id.tile_status_wireless_clients_sort_top_receivers_current_rate:
+                topTalkersOrdering = new Ordering<Device>() {
+                    @Override
+                    public int compare(Device left, Device right) {
+                        if (left == right) {
+                            return 0;
+                        }
+                        if (left == null) {
+                            return 1;
+                        }
+                        if (right == null) {
+                            return -1;
+                        }
+                        final int rxTotalComparison = Double.valueOf(right.getRxRate()).compareTo(left.getRxRate());
+                        if (rxTotalComparison == 0) {
+                            return Ordering.natural().compare(nullToEmpty(left.getName()).toLowerCase(),
+                                    nullToEmpty(right.getName()).toLowerCase());
+                        }
+                        return rxTotalComparison;
+                    }
+                };
+                break;
+            case R.id.tile_status_wireless_clients_sort_top_senders_current_rate:
+                topTalkersOrdering = new Ordering<Device>() {
+                    @Override
+                    public int compare(Device left, Device right) {
+                        if (left == right) {
+                            return 0;
+                        }
+                        if (left == null) {
+                            return -1;
+                        }
+                        if (right == null) {
+                            return 1;
+                        }
+                        final int txTotalComparison = Double.valueOf(right.getTxRate()).compareTo(left.getTxRate());
                         if (txTotalComparison == 0) {
                             return Ordering.natural().compare(nullToEmpty(left.getName()).toLowerCase(),
                                     nullToEmpty(right.getName()).toLowerCase());

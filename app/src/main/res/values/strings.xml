@@ -459,8 +459,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="total_upload">Total Upload</string>
     <string name="name">Name</string>
     <string name="system_name">System Name</string>
-    <string name="top_uploaders">Top Uploaders</string>
-    <string name="top_downloaders">Top Downloaders</string>
+    <string name="top_uploaders">Top Uploaders (Total)</string>
+    <string name="top_downloaders">Top Downloaders (Total)</string>
+    <string name="top_uploaders_current_rate">Top Uploaders (by Rate)</string>
+    <string name="top_downloaders_current_rate">Top Downloaders (by Rate)</string>
     <string name="seen_recently">Seen Recently</string>
     <string name="not_seen_recently">Not Seen Recently</string>
     <string name="reset_sort_prefs">Reset Sort Preferences</string>

@@ -14,7 +14,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class LastSeenClientsSortingVisitorImpl implements ClientsSortingVisitor {
 
-    final Ordering<Device> lastSeenOrdering;
+    @NotNull
+    private final Ordering<Device> lastSeenOrdering;
 
     public LastSeenClientsSortingVisitorImpl(final int lastSeenFlagSort) {
         switch (lastSeenFlagSort) {
