@@ -62,6 +62,7 @@ import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
@@ -215,6 +216,7 @@ public final class Utils {
         if (isFirstLaunch) {
             //Store flag
             defaultSharedPreferences.edit()
+                    .remove(OLD_IS_FIRST_LAUNCH_PREF_KEY)
                     .putBoolean(IS_FIRST_LAUNCH_PREF_KEY, false)
                     .apply();
         }

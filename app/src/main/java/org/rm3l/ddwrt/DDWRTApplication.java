@@ -68,14 +68,42 @@ public class DDWRTApplication extends Application {
                 .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
 
         if (isFirstLaunch(this)) {
-            //Report: this is to help me analyze whom this app is used by, and provide better device support!
-            Utils.reportException(new FirstLaunch(FLAVOR));
+            //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
+            final FirstLaunch firstLaunchReport;
+            if ("google".equalsIgnoreCase(FLAVOR)) {
+                firstLaunchReport = new GoogleFirstLaunch();
+            } else if ("amazon".equalsIgnoreCase(FLAVOR)) {
+                firstLaunchReport = new AmazonFirstLaunch();
+            } else if ("fdroid".equalsIgnoreCase(FLAVOR)) {
+                firstLaunchReport = new FDroidFirstLaunch();
+            } else {
+                firstLaunchReport = new FirstLaunch(FLAVOR);
+            }
+            Utils.reportException(firstLaunchReport);
         }
     }
 
     private class FirstLaunch extends DDWRTCompanionException {
         private FirstLaunch(@Nullable String detailMessage) {
-            super(detailMessage);
+            super("[Build Flavor: " + FLAVOR + "]: " + detailMessage);
+        }
+    }
+
+    private final class GoogleFirstLaunch extends FirstLaunch {
+        private GoogleFirstLaunch() {
+            super("google");
+        }
+    }
+
+    private final class AmazonFirstLaunch extends FirstLaunch {
+        private AmazonFirstLaunch() {
+            super("amazon");
+        }
+    }
+
+    private final class FDroidFirstLaunch extends FirstLaunch {
+        private FDroidFirstLaunch() {
+            super("fdroid");
         }
     }
 }
