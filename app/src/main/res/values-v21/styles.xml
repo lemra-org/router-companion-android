@@ -19,26 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources>
 
-    <item
-        android:id="@+id/tile_status_wireless_client_rename"
-        android:orderInCategory="1"
-        android:title="@string/set_alias"
-        app:showAsAction="never" />
+    <style name="myAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryColorDark</item>
+        <item name="android:statusBarColor">@color/primaryColorDark</item>
 
-    <item
-        android:id="@+id/tile_status_wireless_client_wol"
-        android:orderInCategory="2"
-        android:title="@string/wake_on_lan"
-        app:showAsAction="never" />
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
 
-    <item
-        android:id="@+id/tile_status_wireless_client_wan_access_state"
-        android:checkable="true"
-        android:orderInCategory="3"
-        android:title="@string/wan_access"
-        app:showAsAction="never" />
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/black</item>
+    </style>
 
-</menu>
+</resources>

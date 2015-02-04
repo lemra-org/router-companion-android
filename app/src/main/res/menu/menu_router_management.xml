@@ -21,6 +21,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
     <item
@@ -28,24 +29,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:alphabeticShortcut="r"
         android:icon="@drawable/ic_menu_refresh"
         android:orderInCategory="1"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_refresh" />
+        android:title="@string/menuitem_refresh"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/router_list_feedback"
         android:alphabeticShortcut="f"
         android:icon="@drawable/ic_action_action_thumbs_up_down"
         android:orderInCategory="4"
-        android:showAsAction="ifRoom"
-        android:title="@string/feedback" />
+        android:title="@string/feedback"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="2"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_settings" />
+        android:title="@string/menuitem_settings"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/router_list_donate"

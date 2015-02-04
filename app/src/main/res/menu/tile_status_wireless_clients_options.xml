@@ -19,13 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:orderInCategory="1"
-        android:showAsAction="never"
-        android:title="@string/filter">
+        android:title="@string/filter"
+        app:showAsAction="never">
 
         <menu>
 
@@ -36,8 +36,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:checked="false"
                 android:icon="@drawable/ic_action_av_snooze"
                 android:orderInCategory="1"
-                android:showAsAction="never"
-                android:title="@string/hide_inactive_hosts" />
+                android:title="@string/hide_inactive_hosts"
+                app:showAsAction="never" />
 
             <!-- Display/Hide Hosts With Disabled WAN Access -->
             <item
@@ -46,8 +46,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:checked="false"
                 android:icon="@drawable/ic_action_notification_do_not_disturb"
                 android:orderInCategory="2"
-                android:showAsAction="never"
-                android:title="@string/show_only_hosts_with_wan_access_disabled" />
+                android:title="@string/show_only_hosts_with_wan_access_disabled"
+                app:showAsAction="never" />
 
         </menu>
 
@@ -57,8 +57,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/tile_status_wireless_clients_sort"
         android:orderInCategory="2"
-        android:showAsAction="never"
-        android:title="@string/sort">
+        android:title="@string/sort"
+        app:showAsAction="never">
 
         <menu>
 
@@ -73,15 +73,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_az"
                     android:orderInCategory="1"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/sort_a_z" />
+                    android:title="@string/sort_a_z"
+                    app:showAsAction="ifRoom" />
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_z_a"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_za"
                     android:orderInCategory="2"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/sort_z_a" />
+                    android:title="@string/sort_z_a"
+                    app:showAsAction="ifRoom" />
 
                 <!-- Based on Total Usage -->
                 <item
@@ -89,15 +89,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_senders"
                     android:orderInCategory="3"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/top_uploaders" />
+                    android:title="@string/top_uploaders"
+                    app:showAsAction="ifRoom" />
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_top_receivers"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_listeners"
                     android:orderInCategory="4"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/top_downloaders" />
+                    android:title="@string/top_downloaders"
+                    app:showAsAction="ifRoom" />
 
                 <!-- Based on Current Rate -->
                 <item
@@ -105,15 +105,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_senders"
                     android:orderInCategory="5"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/top_uploaders_current_rate" />
+                    android:title="@string/top_uploaders_current_rate"
+                    app:showAsAction="ifRoom" />
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_top_receivers_current_rate"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_sort_listeners"
                     android:orderInCategory="6"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/top_downloaders_current_rate" />
+                    android:title="@string/top_downloaders_current_rate"
+                    app:showAsAction="ifRoom" />
 
                 <!-- Based on Last Seen -->
                 <item
@@ -121,15 +121,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:checkable="true"
                     android:icon="@drawable/ic_action_action_visibility"
                     android:orderInCategory="7"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/seen_recently" />
+                    android:title="@string/seen_recently"
+                    app:showAsAction="ifRoom" />
                 <item
                     android:id="@+id/tile_status_wireless_clients_sort_not_seen_recently"
                     android:checkable="true"
                     android:icon="@drawable/ic_action_action_visibility_off"
                     android:orderInCategory="8"
-                    android:showAsAction="ifRoom"
-                    android:title="@string/not_seen_recently" />
+                    android:title="@string/not_seen_recently"
+                    app:showAsAction="ifRoom" />
 
             </group>
 
@@ -138,8 +138,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_status_wireless_clients_reset_sort_prefs"
                 android:icon="@android:drawable/ic_menu_revert"
                 android:orderInCategory="9"
-                android:showAsAction="never"
-                android:title="@string/reset_sort_prefs" />
+                android:title="@string/reset_sort_prefs"
+                app:showAsAction="never" />
 
         </menu>
 
@@ -150,8 +150,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/tile_status_wireless_clients_reset_counters"
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="3"
-        android:showAsAction="never"
-        android:title="@string/reset_counters" />
+        android:title="@string/reset_counters"
+        app:showAsAction="never" />
 
 
 </menu>

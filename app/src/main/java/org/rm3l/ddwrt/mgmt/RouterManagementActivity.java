@@ -33,10 +33,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -72,7 +73,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 
 public class RouterManagementActivity
-        extends FragmentActivity
+        extends ActionBarActivity
         implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -91,6 +92,8 @@ public class RouterManagementActivity
     private Menu optionsMenu;
     private FeedbackDialog mFeedbackDialog;
 
+    private Toolbar mToolbar;
+
     @NotNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
@@ -100,6 +103,12 @@ public class RouterManagementActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_router_management);
+
+        mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("Manage your Routers");
+            setSupportActionBar(mToolbar);
+        }
 
         //Default values are not set by default
         //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
@@ -150,14 +159,18 @@ public class RouterManagementActivity
     @Override
     protected void onPause() {
         super.onPause();
-        mFeedbackDialog.dismiss();
+        if (mFeedbackDialog != null) {
+            mFeedbackDialog.dismiss();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        mFeedbackDialog.dismiss();
+        if (mFeedbackDialog != null) {
+            mFeedbackDialog.dismiss();
+        }
 
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
@@ -237,6 +250,9 @@ public class RouterManagementActivity
                 this.startActivity(new Intent(this, RouterManagementSettingsActivity.class));
                 return true;
             case R.id.router_list_feedback:
+                if (mFeedbackDialog == null) {
+                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+                }
                 mFeedbackDialog.show();
                 return true;
             default:
@@ -378,6 +394,9 @@ public class RouterManagementActivity
     @Override
     public boolean onCreateActionMode(@NotNull ActionMode actionMode, Menu menu) {
         // Inflate a menu resource providing context menu items
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.GONE);
+        }
         final MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
         addNewButton.setVisibility(View.GONE);
@@ -479,6 +498,9 @@ public class RouterManagementActivity
         }
         ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
         addNewButton.setVisibility(View.VISIBLE);
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

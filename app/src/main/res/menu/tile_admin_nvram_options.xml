@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -20,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Sort -->
     <group>
@@ -28,29 +28,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/tile_admin_nvram_sort_default"
             android:icon="@android:drawable/ic_menu_sort_alphabetically"
             android:orderInCategory="1"
-            android:showAsAction="ifRoom"
-            android:title="@string/sort_default" />
+            android:title="@string/sort_default"
+            app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/tile_admin_nvram_sort_asc"
             android:icon="@android:drawable/ic_menu_sort_alphabetically"
             android:orderInCategory="2"
-            android:showAsAction="ifRoom"
-            android:title="@string/sort_a_z" />
+            android:title="@string/sort_a_z"
+            app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/tile_admin_nvram_sort_desc"
             android:orderInCategory="3"
-            android:showAsAction="ifRoom"
-            android:title="@string/sort_z_a" />
+            android:title="@string/sort_z_a"
+            app:showAsAction="ifRoom" />
     </group>
 
     <item
         android:id="@+id/tile_admin_nvram_share"
+        android:actionProviderClass="android.widget.ShareActionProvider"
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="4"
-        android:showAsAction="ifRoom"
         android:title="@string/share"
-        android:actionProviderClass="android.widget.ShareActionProvider" />
+        app:showAsAction="ifRoom" />
 
 </menu>

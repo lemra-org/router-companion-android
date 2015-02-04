@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,10 +34,11 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -85,7 +87,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  * Main Android Activity
  * <p/>
  */
-public class DDWRTMainActivity extends FragmentActivity
+public class DDWRTMainActivity extends ActionBarActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
@@ -98,6 +100,7 @@ public class DDWRTMainActivity extends FragmentActivity
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar toolbar;
     @NotNull
     private DDWRTCompanionDAO dao;
     @NotNull
@@ -125,12 +128,11 @@ public class DDWRTMainActivity extends FragmentActivity
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
+    private ArrayAdapter<String> mNavigationDrawerAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
 
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
@@ -148,6 +150,8 @@ public class DDWRTMainActivity extends FragmentActivity
             return;
         }
 
+        setContentView(R.layout.activity_main);
+
         final String routerName = router.getName();
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
 
@@ -158,44 +162,34 @@ public class DDWRTMainActivity extends FragmentActivity
         this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
         mTitle = mDrawerTitle = getTitle();
-        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        initView();
+        if (toolbar != null) {
+            toolbar.setTitle(mTitle);
+            setSupportActionBar(toolbar);
+        }
 
-        // set a custom shadow that overlays the main content when the drawer
-        // opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-                GravityCompat.START);
-        // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<>(this,
-                R.layout.drawer_list_item, mDDWRTNavigationMenuSections));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+//        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
+//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+//
+//        // set a custom shadow that overlays the main content when the drawer
+//        // opens
+//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+//                GravityCompat.START);
+//        // set up the drawer's list view with items and click listener
+//        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
+//                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
+//        mDrawerList.setAdapter(mNavigationDrawerAdapter);
+//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        final ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
 
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-                mDrawerLayout, /* DrawerLayout object */
-                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
-        ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        initDrawer();
 
         final Integer savedPosition;
         int position = 0;
@@ -234,12 +228,56 @@ public class DDWRTMainActivity extends FragmentActivity
         }
     }
 
+    private void initView() {
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // set a custom shadow that overlays the main content when the drawer
+        // opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+                GravityCompat.START);
+        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
+        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
+                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
+        mDrawerList.setAdapter(mNavigationDrawerAdapter);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    }
+
+    private void initDrawer() {
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+                mDrawerLayout, /* DrawerLayout object */
+                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
+                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+//                if (actionBar != null)
+//                    actionBar.setTitle(mTitle);
+//                invalidateOptionsMenu(); // creates call to
+//                // onPrepareOptionsMenu()
+                super.onDrawerClosed(view);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+//                if (actionBar != null)
+//                    actionBar.setTitle(mDrawerTitle);
+//                invalidateOptionsMenu(); // creates call to
+//                // onPrepareOptionsMenu()
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(SAVE_ITEM_SELECTED, mPosition);
         savedInstanceState.putString(SAVE_ROUTER_SELECTED, mRouterUuid);
         super.onSaveInstanceState(savedInstanceState);
     }
+
 
     @Override
     protected void onPause() {
@@ -289,14 +327,14 @@ public class DDWRTMainActivity extends FragmentActivity
 
         switch (item.getItemId()) {
 
-            case android.R.id.home: {
-                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-                    mDrawerLayout.closeDrawer(mDrawerList);
-                } else {
-                    mDrawerLayout.openDrawer(mDrawerList);
-                }
-                return true;
-            }
+//            case android.R.id.home: {
+//                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+//                    mDrawerLayout.closeDrawer(mDrawerList);
+//                } else {
+//                    mDrawerLayout.openDrawer(mDrawerList);
+//                }
+//                return true;
+//            }
 //            case R.id.action_refresh:
 //                //Disabled for now
 //                Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
@@ -401,7 +439,8 @@ public class DDWRTMainActivity extends FragmentActivity
 
         }
 
-        return super.onOptionsItemSelected(item);
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -487,7 +526,7 @@ public class DDWRTMainActivity extends FragmentActivity
                                 .newInstance(this, position, this.mRouterUuid))
                 .commit();
 
-        mDrawerLayout.closeDrawer(mDrawerList);
+//        FIXME mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     /**

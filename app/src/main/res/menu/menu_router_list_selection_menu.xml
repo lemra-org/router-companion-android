@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -21,27 +20,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_router_item_edit"
         android:icon="@drawable/ic_action_editor_mode_edit"
         android:orderInCategory="10"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_edit" />
+        android:title="@string/action_edit"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_router_item_copy"
         android:icon="@drawable/ic_action_content_content_copy"
         android:orderInCategory="10"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_copy" />
+        android:title="@string/action_copy"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_router_list_delete"
         android:icon="@drawable/ic_action_remove"
         android:orderInCategory="20"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_remove" />
+        android:title="@string/action_remove"
+        app:showAsAction="ifRoom" />
 
 </menu>

@@ -19,26 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/routerManagementActivityToolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimary"
+    android:minHeight="?attr/actionBarSize">
 
-    <item
-        android:id="@+id/tile_status_wireless_client_rename"
-        android:orderInCategory="1"
-        android:title="@string/set_alias"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/tile_status_wireless_client_wol"
-        android:orderInCategory="2"
-        android:title="@string/wake_on_lan"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/tile_status_wireless_client_wan_access_state"
-        android:checkable="true"
-        android:orderInCategory="3"
-        android:title="@string/wan_access"
-        app:showAsAction="never" />
-
-</menu>
+</android.support.v7.widget.Toolbar>

@@ -20,15 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_ddwrt_actions"
         android:alphabeticShortcut="a"
         android:icon="@drawable/ic_action_action_launch"
         android:orderInCategory="1"
-        android:showAsAction="always"
-        android:title="@string/menuitem_actions">
+        android:title="@string/menuitem_actions"
+        app:showAsAction="always">
 
         <menu>
 
@@ -37,16 +38,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:alphabeticShortcut="R"
                 android:icon="@drawable/ic_action_action_settings_power"
                 android:orderInCategory="1"
-                android:showAsAction="ifRoom"
-                android:title="@string/menuitem_actions_reboot_router" />
+                android:title="@string/menuitem_actions_reboot_router"
+                app:showAsAction="ifRoom" />
 
             <item
                 android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
                 android:alphabeticShortcut="D"
                 android:icon="@drawable/ic_action_action_restore"
                 android:orderInCategory="2"
-                android:showAsAction="ifRoom"
-                android:title="@string/menuitem_actions_restore_factory_defaults" />
+                android:title="@string/menuitem_actions_restore_factory_defaults"
+                app:showAsAction="ifRoom" />
 
             <!-- TODO Hidden for now -->
             <item
@@ -55,9 +56,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:enabled="false"
                 android:icon="@drawable/ic_action_action_system_update_tv"
                 android:orderInCategory="3"
-                android:showAsAction="ifRoom"
                 android:title="@string/menuitem_actions_upgrade_firmware"
-                android:visible="false" />
+                android:visible="false"
+                app:showAsAction="ifRoom" />
         </menu>
     </item>
 
@@ -66,31 +67,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="2"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_settings" />
+        android:title="@string/menuitem_settings"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_donate"
         android:alphabeticShortcut="d"
         android:icon="@drawable/ic_action_action_payment"
         android:orderInCategory="3"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_donate" />
+        android:title="@string/menuitem_donate"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_feedback"
         android:alphabeticShortcut="f"
         android:icon="@drawable/ic_action_action_thumbs_up_down"
         android:orderInCategory="4"
-        android:showAsAction="ifRoom"
-        android:title="@string/feedback" />
+        android:title="@string/feedback"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_about"
         android:alphabeticShortcut="A"
         android:icon="@drawable/ic_action_social_person"
         android:orderInCategory="5"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_about" />
+        android:title="@string/menuitem_about"
+        app:showAsAction="ifRoom" />
 
 </menu>
