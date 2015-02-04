@@ -70,14 +70,19 @@ public class DDWRTApplication extends Application {
         if (isFirstLaunch(this)) {
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
             final FirstLaunch firstLaunchReport;
-            if ("google".equalsIgnoreCase(FLAVOR)) {
-                firstLaunchReport = new GoogleFirstLaunch();
-            } else if ("amazon".equalsIgnoreCase(FLAVOR)) {
-                firstLaunchReport = new AmazonFirstLaunch();
-            } else if ("fdroid".equalsIgnoreCase(FLAVOR)) {
-                firstLaunchReport = new FDroidFirstLaunch();
-            } else {
-                firstLaunchReport = new FirstLaunch(FLAVOR);
+            switch (FLAVOR) {
+                case "google":
+                    firstLaunchReport = new GoogleFirstLaunch();
+                    break;
+                case "amazon":
+                    firstLaunchReport = new AmazonFirstLaunch();
+                    break;
+                case "fdroid":
+                    firstLaunchReport = new FDroidFirstLaunch();
+                    break;
+                default:
+                    firstLaunchReport = new FirstLaunch(FLAVOR);
+                    break;
             }
             Utils.reportException(firstLaunchReport);
         }
