@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -70,6 +71,8 @@ import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 
 
 public class RouterManagementActivity
@@ -346,8 +349,17 @@ public class RouterManagementActivity
                                 "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
                         return;
                     }
+                    final String routerUuid = router.getUuid();
+
                     final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
-                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, router.getUuid());
+                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+
+                    final SharedPreferences routerSharedPreferences = getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+                    if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+                        routerSharedPreferences.edit()
+                                .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
+                                .apply();
+                    }
 
                     //Animate
                     final String transitionName = getString(R.string.transition_router);

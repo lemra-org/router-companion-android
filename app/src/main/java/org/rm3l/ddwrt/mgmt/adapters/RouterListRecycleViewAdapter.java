@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.mgmt.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -48,6 +49,7 @@ import java.util.List;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
@@ -142,48 +144,53 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final Router router = this.routersList.get(position);
         if (router != null) {
             dao.deleteRouter(router.getUuid());
-            //Drop SharedPreferences for this item too
-            this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
-                    .edit().clear().commit();
 
             //Also Remove Usage Data Created
             //noinspection ResultOfMethodCallIgnored
             getClientsUsageDataFile(context, router.getUuid()).delete();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        //Delete iptables chains created for monitoring and wan access (in a thread)
-                        SSHUtils.runCommands(context
-                                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                                                Context.MODE_PRIVATE),
-                                router,
-                                Joiner.on(" ; ").skipNulls(),
+            final SharedPreferences sharedPreferences = this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
 
-                                "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
-                                "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
-                                "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+            if (sharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+                //Opened at least once, meaning that usage data might have been created.
+                //If never opened, do nothing, as usage data might be used by another router record
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            //Delete iptables chains created for monitoring and wan access (in a thread)
+                            SSHUtils.runCommands(context
+                                            .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                                    router,
+                                    Joiner.on(" ; ").skipNulls(),
 
-                                "iptables -D FORWARD -j DDWRTCompanion",
-                                "iptables -F DDWRTCompanion",
-                                "iptables -X DDWRTCompanion",
+                                    "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                    "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                    "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
 
-                                "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
-                                "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
-                                "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
-                                "rm -f " + WirelessClientsTile.USAGE_DB,
-                                "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
+                                    "iptables -D FORWARD -j DDWRTCompanion",
+                                    "iptables -F DDWRTCompanion",
+                                    "iptables -X DDWRTCompanion",
 
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                        //No Worries
-                    } finally {
-                        //Disconnect session
-                        destroySSHSession(router);
+                                    "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                    "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
+                                    "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
+                                    "rm -f " + WirelessClientsTile.USAGE_DB,
+                                    "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
+
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            //No Worries
+                        } finally {
+                            //Disconnect session
+                            destroySSHSession(router);
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            }
+
+            //Drop SharedPreferences for this item too
+            sharedPreferences.edit().clear().apply();
 
             //Now refresh list
             final List<Router> allRouters = dao.getAllRouters();
