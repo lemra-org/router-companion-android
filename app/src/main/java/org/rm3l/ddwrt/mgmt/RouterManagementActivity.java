@@ -33,22 +33,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +72,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 
 public class RouterManagementActivity
-        extends SherlockFragmentActivity
+        extends FragmentActivity
         implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -206,9 +205,9 @@ public class RouterManagementActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         this.optionsMenu = menu;
-        getSupportMenuInflater().inflate(R.menu.menu_router_management, menu);
+        getMenuInflater().inflate(R.menu.menu_router_management, menu);
         //noinspection PointlessBooleanExpression
         if (!BuildConfig.DONATIONS) {
             final MenuItem item = menu.findItem(R.id.router_list_donate);
@@ -220,7 +219,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -350,7 +349,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onRouterAdd(SherlockDialogFragment dialog, boolean error) {
+    public void onRouterAdd(DialogFragment dialog, boolean error) {
         if (!error) {
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
@@ -359,7 +358,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onRouterUpdated(SherlockDialogFragment dialog, int position, boolean error) {
+    public void onRouterUpdated(DialogFragment dialog, int position, boolean error) {
         if (!error) {
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
@@ -379,7 +378,7 @@ public class RouterManagementActivity
     @Override
     public boolean onCreateActionMode(@NotNull ActionMode actionMode, Menu menu) {
         // Inflate a menu resource providing context menu items
-        MenuInflater inflater = actionMode.getMenuInflater();
+        final MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
         addNewButton.setVisibility(View.GONE);
         return true;

@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -41,7 +42,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -97,11 +97,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     @Nullable
     private WirelessEncryptionTypeForQrCode wifiEncryptionType;
 
-    public WirelessIfaceTile(@NotNull String iface, @NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public WirelessIfaceTile(@NotNull String iface, @NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         this(iface, null, parentFragment, arguments, router);
     }
 
-    public WirelessIfaceTile(@NotNull String iface, @Nullable String parentIface, @NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public WirelessIfaceTile(@NotNull String iface, @Nullable String parentIface, @NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         this.iface = iface;
         this.parentIface = parentIface;

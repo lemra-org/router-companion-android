@@ -25,10 +25,9 @@ package org.rm3l.ddwrt.donate;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -39,7 +38,7 @@ import org.sufficientlysecure.donations.DonationsFragment;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class DonateActivity extends SherlockFragmentActivity {
+public class DonateActivity extends FragmentActivity {
 
     /**
      * Google

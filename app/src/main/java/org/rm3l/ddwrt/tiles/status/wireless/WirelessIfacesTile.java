@@ -23,10 +23,9 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.view.View;
-
-import com.actionbarsherlock.app.SherlockFragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +38,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
     private static final String TAG = WirelessIfacesTile.class.getSimpleName();
 
-    public WirelessIfacesTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public WirelessIfacesTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
     }
 

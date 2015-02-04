@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
@@ -32,15 +33,13 @@ import android.preference.Preference;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
-import com.actionbarsherlock.app.SherlockActivity;
-
 import org.rm3l.ddwrt.R;
 
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
-public abstract class AbstractDDWRTSettingsActivity extends SherlockActivity {
+public abstract class AbstractDDWRTSettingsActivity extends Activity {
 
     /**
      * A preference value change listener that updates the preference's summary

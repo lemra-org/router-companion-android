@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -37,8 +39,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Strings;
 
 import org.jetbrains.annotations.NotNull;
@@ -58,13 +58,13 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public static final Handler HANDLER = new Handler();
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NotNull
-    protected final SherlockFragmentActivity mParentFragmentActivity;
+    protected final FragmentActivity mParentFragmentActivity;
     @Nullable
     protected final SharedPreferences mParentFragmentPreferences;
     @NotNull
     protected final SharedPreferences mGlobalPreferences;
     @NotNull
-    protected final SherlockFragment mParentFragment;
+    protected final Fragment mParentFragment;
     @NotNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
@@ -78,9 +78,9 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected ViewGroup parentViewGroup;
     private boolean mLoaderStopped = true;
 
-    public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
+    public DDWRTTile(@NotNull final Fragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
-        this.mParentFragmentActivity = this.mParentFragment.getSherlockActivity();
+        this.mParentFragmentActivity = this.mParentFragment.getActivity();
         this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
                 .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
         this.mGlobalPreferences = this.mParentFragmentActivity
@@ -90,7 +90,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         this.mFragmentArguments = arguments;
     }
 
-    public DDWRTTile(@NotNull final SherlockFragment parentFragment, @NotNull final Bundle arguments,
+    public DDWRTTile(@NotNull final Fragment parentFragment, @NotNull final Bundle arguments,
                      @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
         this(parentFragment, arguments, router);
         if (layoutId != null) {

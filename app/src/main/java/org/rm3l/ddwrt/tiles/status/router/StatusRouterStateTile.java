@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.tiles.status.router;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -32,7 +33,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -57,7 +57,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
 
-    public StatusRouterStateTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public StatusRouterStateTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
     }
 

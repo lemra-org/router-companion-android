@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -54,15 +54,15 @@ import java.util.List;
  */
 public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = DHCPStatusTile.class.getSimpleName();
     public static final String DHCP_END_IP = "dhcp_end_ip";
     public static final String DHCP_START_IP = "dhcp_start_ip";
     public static final Splitter IP_ADDR_SPLITTER = Splitter
             .on(".")
             .omitEmptyStrings()
             .trimResults();
+    private static final String LOG_TAG = DHCPStatusTile.class.getSimpleName();
 
-    public DHCPStatusTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public DHCPStatusTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_lan_dhcp_status, R.id.tile_status_lan_dhcp_status_togglebutton);
     }
 
@@ -147,8 +147,8 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                                                 distFromLowIpToStartIp++;
                                             }
                                             //Then get end address, starting from DHCP Start IP
-                                            if (allAddresses.length >= distFromLowIpToStartIp+dhcpHostCount) {
-                                                nvramInfo.setProperty(DHCP_END_IP, allAddresses[distFromLowIpToStartIp+dhcpHostCount - 1]);
+                                            if (allAddresses.length >= distFromLowIpToStartIp + dhcpHostCount) {
+                                                nvramInfo.setProperty(DHCP_END_IP, allAddresses[distFromLowIpToStartIp + dhcpHostCount - 1]);
                                             }
                                         }
 

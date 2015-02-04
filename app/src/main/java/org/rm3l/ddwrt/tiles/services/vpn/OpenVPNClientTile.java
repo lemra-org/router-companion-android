@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -34,7 +35,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -98,7 +98,7 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsT
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
-        implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener  {
+        implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
     public static final String OPENVPNCL__DEV = "___openvpncl__dev";
     public static final String OPENVPNCL__DEV_RX_RATE = OPENVPNCL__DEV + "_rx_rate_human_readable";
@@ -110,7 +110,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     private NVRAMInfo mNvramInfo;
 
-    public OpenVPNClientTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public OpenVPNClientTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_client, R.id.tile_services_openvpn_client_togglebutton);
     }
 
@@ -222,7 +222,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                 "cat /tmp/openvpncl/openvpn.conf | grep \"dev \"");
                         String openvpnclIface = null;
                         if (devDeviceLine != null && devDeviceLine.length > 0) {
-                            openvpnclIface = devDeviceLine[0].replace("dev ","").trim();
+                            openvpnclIface = devDeviceLine[0].replace("dev ", "").trim();
                         }
 
                         if (!Strings.isNullOrEmpty(openvpnclIface)) {
@@ -257,12 +257,12 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                     final long rxErrors = Long.parseLong(packetsInfo[1]);
                                     nvramInfo.setProperty(OPENVPNCL__DEV_RX_PACKETS,
                                             String.format("%s (%s)",
-                                                    packetsInfo[0], rxErrors <=0 ? "no error" :
+                                                    packetsInfo[0], rxErrors <= 0 ? "no error" :
                                                             (rxErrors + String.format("error%s", rxErrors > 1 ? "s" : ""))));
                                     final long txErrors = Long.parseLong(packetsInfo[3]);
                                     nvramInfo.setProperty(OPENVPNCL__DEV_TX_PACKETS,
                                             String.format("%s (%s)",
-                                                    packetsInfo[2], txErrors <=0 ? "no error" :
+                                                    packetsInfo[2], txErrors <= 0 ? "no error" :
                                                             (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                                 }
                             } catch (final Exception e) {
@@ -547,7 +547,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         final Intent editOpenVPNClSettingsIntent =
                 new Intent(mParentFragment.getActivity(),
                         isThemeLight(mParentFragmentActivity, mRouterUuid) ?
-                        EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
+                                EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
         editOpenVPNClSettingsIntent.putExtra(OPENVPNCL_NVRAMINFO, mNvramInfo);
         editOpenVPNClSettingsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 

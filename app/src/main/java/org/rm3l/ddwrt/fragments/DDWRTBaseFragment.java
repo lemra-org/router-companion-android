@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.fragments;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
@@ -40,8 +42,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -100,7 +100,7 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements LoaderManager.LoaderCallbacks<T> {
+public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T> {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
@@ -394,7 +394,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             }
         }
         this.loaderIdsInUse.clear();
-        viewGroup = (ScrollView) getSherlockActivity().getLayoutInflater()
+        viewGroup = (ScrollView) getActivity().getLayoutInflater()
                 .inflate(R.layout.base_tiles_container_scrollview, null);
 
         this.fragmentTiles = this.getTiles(savedInstanceState);
@@ -514,7 +514,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         boolean atLeastOneTileAdded = false;
 
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+        final FragmentActivity fragmentActivity = getActivity();
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
 
             @NotNull final List<CardView> cards = new ArrayList<CardView>();
@@ -526,9 +526,9 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
             cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
             cardViewLayoutParams.bottomMargin = R.dimen.marginBottom;
 
-            final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
+            final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
 
-            final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
+            final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
 
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
             for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
@@ -542,7 +542,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
                 if (!ddwrtTile.isEmbeddedWithinScrollView()) {
                     if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
-                        viewGroup = (LinearLayout) getSherlockActivity().getLayoutInflater()
+                        viewGroup = (LinearLayout) getActivity().getLayoutInflater()
                                 .inflate(R.layout.base_tiles_container_linearlayout, null);
                         parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
                     }
@@ -561,7 +561,7 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
                 viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-                final CardView cardView = new CardView(sherlockActivity);
+                final CardView cardView = new CardView(fragmentActivity);
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
                 cardView.setCardBackgroundColor(themeBackgroundColor);
@@ -599,10 +599,10 @@ public abstract class DDWRTBaseFragment<T> extends SherlockFragment implements L
 
         if (viewGroup == null || !atLeastOneTileAdded) {
             if (viewGroup == null) {
-                viewGroup = new FrameLayout(sherlockActivity);
+                viewGroup = new FrameLayout(fragmentActivity);
             }
 
-            @NotNull final TextView view = new TextView(sherlockActivity);
+            @NotNull final TextView view = new TextView(fragmentActivity);
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));
             view.setBackgroundResource(R.drawable.background_card);

@@ -23,8 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +37,7 @@ public class DHCPClientsTile extends WirelessClientsTile {
 
     private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
 
-    public DHCPClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public DHCPClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
     }
 

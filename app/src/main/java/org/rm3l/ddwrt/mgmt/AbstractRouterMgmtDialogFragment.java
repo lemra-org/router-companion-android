@@ -38,6 +38,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.util.Log;
@@ -54,7 +55,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
@@ -80,13 +80,61 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTE
 import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
 public abstract class AbstractRouterMgmtDialogFragment
-        extends SherlockDialogFragment
+        extends DialogFragment
         implements AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = AbstractRouterMgmtDialogFragment.class.getSimpleName();
     private static final int READ_REQUEST_CODE = 42;
     protected DDWRTCompanionDAO dao;
+    protected SharedPreferences mGlobalSharedPreferences;
     private RouterMgmtDialogListener mListener;
+
+    private static Router buildRouter(AlertDialog d) throws IOException {
+        @NotNull final Router router = new Router();
+        final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
+        if (!isNullOrEmpty(uuid)) {
+            router.setUuid(uuid);
+        }
+        router.setName(((EditText) d.findViewById(R.id.router_add_name)).getText().toString());
+        router.setRemoteIpAddress(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString());
+        router.setRemotePort(Integer.parseInt(((EditText) d.findViewById(R.id.router_add_port)).getText().toString()));
+        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(
+                (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
+        ));
+        router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
+        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
+
+        final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
+        final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();
+        if (!isNullOrEmpty(password)) {
+            router.setPassword(password, true);
+        }
+        if (!isNullOrEmpty(privkey)) {
+
+//            //Convert privkey into a format accepted by JSCh
+            //Causes a build issue with SpongyCastle
+//            final PEMParser pemParser = new PEMParser(new StringReader(privkey));
+//            Object object = pemParser.readObject();
+//            PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(nullToEmpty(password).toCharArray());
+//            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("SC");
+//            KeyPair kp;
+//            if (object instanceof PEMEncryptedKeyPair) {
+//                Log.d(LOG_TAG, "Encrypted key - we will use provided password");
+//                kp = converter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(decProv));
+//            } else {
+//                Log.d(LOG_TAG, "Unencrypted key - no password needed");
+//                kp = converter.getKeyPair((PEMKeyPair) object);
+//            }
+//            final PrivateKey privateKey = \"fake-key\";
+//            StringWriter stringWriter = new StringWriter();
+//            JcaPEMWriter pemWriter = new JcaPEMWriter(stringWriter);
+//            pemWriter.writeObject(privateKey);
+//            pemWriter.close();
+
+            router.setPrivKey(privkey, true);
+        }
+        return router;
+    }
 
     protected abstract CharSequence getDialogMessage();
 
@@ -96,8 +144,6 @@ public abstract class AbstractRouterMgmtDialogFragment
     protected abstract CharSequence getPositiveButtonMsg();
 
     protected abstract void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error);
-
-    protected SharedPreferences mGlobalSharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -222,7 +268,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                 final AlertDialog d = (AlertDialog) getDialog();
                 if (d != null) {
 
-                    final ContentResolver contentResolver = this.getSherlockActivity().getContentResolver();
+                    final ContentResolver contentResolver = this.getActivity().getContentResolver();
 
                     final Cursor uriCursor =
                             contentResolver.query(uri, null, null, null, null);
@@ -329,9 +375,9 @@ public abstract class AbstractRouterMgmtDialogFragment
                         // Now check actual connection to router ...
                         new CheckRouterConnectionAsyncTask(
                                 ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
-                                getSherlockActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                                getActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                                         .getBoolean(ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
-                             .execute(d);
+                                .execute(d);
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
                 }
@@ -346,53 +392,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         //This will throw an exception if connection could not be established!
         SSHUtils.checkConnection(mGlobalSharedPreferences, router, 10000);
 
-        return router;
-    }
-
-    private static Router buildRouter(AlertDialog d) throws IOException {
-        @NotNull final Router router = new Router();
-        final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
-        if (!isNullOrEmpty(uuid)) {
-            router.setUuid(uuid);
-        }
-        router.setName(((EditText) d.findViewById(R.id.router_add_name)).getText().toString());
-        router.setRemoteIpAddress(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString());
-        router.setRemotePort(Integer.parseInt(((EditText) d.findViewById(R.id.router_add_port)).getText().toString()));
-        router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(
-                (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
-        ));
-        router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
-        router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
-
-        final String password = ((EditText) d.findViewById(R.id.router_add_password)).getText().toString();
-        final String privkey = ((TextView) d.findViewById(R.id.router_add_privkey_path)).getText().toString();
-        if (!isNullOrEmpty(password)) {
-            router.setPassword(password, true);
-        }
-        if (!isNullOrEmpty(privkey)) {
-
-//            //Convert privkey into a format accepted by JSCh
-            //Causes a build issue with SpongyCastle
-//            final PEMParser pemParser = new PEMParser(new StringReader(privkey));
-//            Object object = pemParser.readObject();
-//            PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(nullToEmpty(password).toCharArray());
-//            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("SC");
-//            KeyPair kp;
-//            if (object instanceof PEMEncryptedKeyPair) {
-//                Log.d(LOG_TAG, "Encrypted key - we will use provided password");
-//                kp = converter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(decProv));
-//            } else {
-//                Log.d(LOG_TAG, "Unencrypted key - no password needed");
-//                kp = converter.getKeyPair((PEMKeyPair) object);
-//            }
-//            final PrivateKey privateKey = \"fake-key\";
-//            StringWriter stringWriter = new StringWriter();
-//            JcaPEMWriter pemWriter = new JcaPEMWriter(stringWriter);
-//            pemWriter.writeObject(privateKey);
-//            pemWriter.close();
-
-            router.setPrivKey(privkey, true);
-        }
         return router;
     }
 

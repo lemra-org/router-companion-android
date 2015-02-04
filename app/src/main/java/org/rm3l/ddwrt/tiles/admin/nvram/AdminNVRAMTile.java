@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
@@ -47,7 +48,6 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -131,7 +131,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private Map<Object, Object> mNvramInfoToDisplay = new HashMap<>();
     private ShareActionProvider mShareActionProvider;
 
-    public AdminNVRAMTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public AdminNVRAMTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
 
         sortIds.put(R.id.tile_admin_nvram_sort_default, 11);
@@ -241,8 +241,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 final int DRAWABLE_RIGHT = 2;
                 final int DRAWABLE_BOTTOM = 3;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                         //'Clear' button - clear data, and reset everything out
                         //Reset everything
                         filterEditText.setText(EMPTY_STRING);
@@ -345,7 +345,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                                     continue;
                                 }
                                 if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
-                                    mNvramInfoToDisplayCopy.put(key,value);
+                                    mNvramInfoToDisplayCopy.put(key, value);
                                 }
                             }
                         }
@@ -359,7 +359,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                                 continue;
                             }
                             if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
-                                mNvramInfoToDisplayCopy.put(key,value);
+                                mNvramInfoToDisplayCopy.put(key, value);
                             }
                         }
                     }
@@ -428,7 +428,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     public boolean onMenuItemClick(MenuItem item) {
         final int itemId = item.getItemId();
         //Store current value in preferences
-        switch(itemId) {
+        switch (itemId) {
             case R.id.tile_admin_nvram_sort_default:
             case R.id.tile_admin_nvram_sort_asc:
             case R.id.tile_admin_nvram_sort_desc:
@@ -677,7 +677,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         //NVRAM
         final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);
         ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
-                .setText(nvramSize != null ? nvramSize.toString(): "-");
+                .setText(nvramSize != null ? nvramSize.toString() : "-");
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 

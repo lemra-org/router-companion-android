@@ -22,12 +22,12 @@
 package org.rm3l.ddwrt.tiles.services.vpn;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
 
     public static final String OPENVPN = "openvpn";
 
-    public OpenVPNLogsTile(@NotNull SherlockFragment parentFragment, @Nullable ViewGroup parentViewGroup, @NotNull Bundle arguments, Router router) {
+    public OpenVPNLogsTile(@NotNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup, @NotNull Bundle arguments, Router router) {
         super(parentFragment, parentViewGroup, arguments, "OpenVPN Logs", false, router, OPENVPN);
     }
 

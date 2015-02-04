@@ -24,14 +24,10 @@ package org.rm3l.ddwrt.fragments.status;
 
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.lan.DHCPClientsTile;
 import org.rm3l.ddwrt.tiles.status.lan.DHCPStatusTile;
-import org.rm3l.ddwrt.tiles.status.lan.LANClientsTile;
 import org.rm3l.ddwrt.tiles.status.lan.LANStateTile;
 
 import java.util.Arrays;

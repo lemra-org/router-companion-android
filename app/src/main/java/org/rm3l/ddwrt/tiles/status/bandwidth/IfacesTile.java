@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +57,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = IfacesTile.class.getSimpleName();
 
-    public IfacesTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public IfacesTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
     }
 

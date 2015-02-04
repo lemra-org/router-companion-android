@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -54,7 +54,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
 
-    public WANConfigTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public WANConfigTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
     }
 
@@ -101,13 +101,13 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
                                 mGlobalPreferences, NVRAMInfo.WAN_PROTO,
-                            NVRAMInfo.WAN_3_G_SIGNAL,
-                            NVRAMInfo.WAN_HWADDR,
-                            NVRAMInfo.WAN_LEASE,
-                            NVRAMInfo.WAN_IPADDR,
-                            NVRAMInfo.WAN_NETMASK,
-                            NVRAMInfo.WAN_GATEWAY,
-                            NVRAMInfo.WAN_DNS);
+                                NVRAMInfo.WAN_3_G_SIGNAL,
+                                NVRAMInfo.WAN_HWADDR,
+                                NVRAMInfo.WAN_LEASE,
+                                NVRAMInfo.WAN_IPADDR,
+                                NVRAMInfo.WAN_NETMASK,
+                                NVRAMInfo.WAN_GATEWAY,
+                                NVRAMInfo.WAN_DNS);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);

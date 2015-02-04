@@ -54,6 +54,7 @@ public class AboutDialog extends Dialog {
     public static final String VERSION_CODE_INFO_TXT = "%VERSION_CODE%";
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
+    public static final String DONATIONS_LIB_INFO_TXT = "%DONATIONS_LIB%";
     private static final int[] BIT_FIELDS_TO_LINKIFY = new int[]{
             EMAIL_ADDRESSES, MAP_ADDRESSES, WEB_URLS
     };
@@ -140,7 +141,12 @@ public class AboutDialog extends Dialog {
         final String contributorsTxt = readRawTextFile(R.raw.contributors);
         fileFound = (contributorsTxt != null);
         if (fileFound) {
-            setTextContentAndLinkify(tv, contributorsTxt);
+            setTextContentAndLinkify(tv,
+                    contributorsTxt
+                            .replaceAll(DONATIONS_LIB_INFO_TXT,
+                                    BuildConfig.DONATIONS ?
+                                            "&#8226; <a href=\"https://github.com/dschuermann/android-donations-lib\" target=\"_blank\">android-donations-lib</a>" :
+                                            ""));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
     }

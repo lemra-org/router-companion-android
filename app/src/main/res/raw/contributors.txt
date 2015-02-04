@@ -26,9 +26,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <br/>
 
 <b><em>Third-party libs</em></b>:
-<a href="https://github.com/JakeWharton/ActionBarSherlock" target="_blank">ActionBarSherlock</a>
-&#8226; <a href="https://github.com/keyboardsurfer/Crouton" target="_blank">Crouton</a>
+<a href="https://github.com/keyboardsurfer/Crouton" target="_blank">Crouton</a>
 &#8226; <a href="https://code.google.com/p/achartengine/" target="_blank">achartengine</a>
-&#8226; <a href="https://github.com/dschuermann/android-donations-lib" target="_blank">android-donations-lib</a>
+%DONATIONS_LIB%
 &#8226; <a href="http://www.android-feedback.com/" target="_blank">android-feedback</a>
 &#8226; <a href="https://github.com/rm3l/ddwrt-companion-android/blob/master/app/build.gradle#L126" target="_blank">many others</a>

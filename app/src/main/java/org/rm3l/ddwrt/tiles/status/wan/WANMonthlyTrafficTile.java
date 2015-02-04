@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -38,7 +39,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -81,8 +81,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
+    private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
     private static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
 
@@ -90,7 +90,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     private ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
-    public WANMonthlyTrafficTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public WANMonthlyTrafficTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
         final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
         monthYearTextViewToDisplay.addTextChangedListener(new TextWatcher() {
@@ -118,6 +118,12 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
             }
         });
+    }
+
+    private static void setVisibility(@NotNull final View[] views, final int visibility) {
+        for (final View view : views) {
+            view.setVisibility(visibility);
+        }
     }
 
     @Override
@@ -257,7 +263,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     preliminaryCheckException = new IllegalStateException("Traffic monitoring disabled!");
                 } else if (traffData == null || traffData.isEmpty()) {
                     preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
-            }
+                }
         }
 
         if (preliminaryCheckException != null) {
@@ -274,7 +280,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         final View nextButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
         final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
 
-        final View[] ctrlViews = new View[] {monthYearDisplayed, displayButton, currentButton, previousButton, nextButton};
+        final View[] ctrlViews = new View[]{monthYearDisplayed, displayButton, currentButton, previousButton, nextButton};
 
         if (exception == null) {
             errorPlaceHolderView.setVisibility(View.GONE);
@@ -389,12 +395,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
-    }
-
-    private static void setVisibility(@NotNull final View[] views, final int visibility) {
-        for (final View view : views) {
-            view.setVisibility(visibility);
-        }
     }
 
     @NotNull

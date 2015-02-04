@@ -28,10 +28,8 @@ import android.content.SharedPreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -58,7 +56,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
         if (!error) {
             if (router != null) {
                 //Add default preferences values
-                final SharedPreferences sharedPreferences = this.getSherlockActivity()
+                final SharedPreferences sharedPreferences = this.getActivity()
                         .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);

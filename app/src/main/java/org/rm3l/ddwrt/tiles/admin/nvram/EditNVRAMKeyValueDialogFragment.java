@@ -27,8 +27,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -38,7 +38,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.cocosw.undobar.UndoBarController;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,14 +48,12 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 
-public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
-
-    private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
+public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
     public static final String POSITION = "position";
     public static final String KEY = \"fake-key\";
     public static final String VALUE = "value";
-
+    private NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter;
     private int mPosition;
     private CharSequence mKey;
     private CharSequence mValue;
@@ -106,7 +103,7 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
                         "* SO DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING! *")
                 .setIcon(android.R.drawable.stat_sys_warning)
                 .setView(view)
-                // Add action buttons
+                        // Add action buttons
                 .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -172,7 +169,7 @@ public class EditNVRAMKeyValueDialogFragment extends SherlockDialogFragment {
                     token.putCharSequence(KEY, variableKey);
 
                     //nvram set data changed
-                    new UndoBarController.UndoBar(getSherlockActivity())
+                    new UndoBarController.UndoBar(getActivity())
                             .message(String.format("Variable '%s' will be updated", variableKey))
                             .listener(nvramDataRecyclerViewAdapter)
                             .token(token)

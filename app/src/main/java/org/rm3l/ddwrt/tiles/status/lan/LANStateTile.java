@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = LANStateTile.class.getSimpleName();
 
-    public LANStateTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public LANStateTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_lan_status, R.id.tile_status_lan_status_togglebutton);
     }
 

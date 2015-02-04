@@ -22,11 +22,11 @@
 
 package org.rm3l.ddwrt.mgmt;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+import android.support.v4.app.DialogFragment;
 
 public interface RouterMgmtDialogListener {
 
-    void onRouterAdd(SherlockDialogFragment dialog, boolean error);
+    void onRouterAdd(DialogFragment dialog, boolean error);
 
-    void onRouterUpdated(SherlockDialogFragment dialog, int position, boolean error);
+    void onRouterUpdated(DialogFragment dialog, int position, boolean error);
 }

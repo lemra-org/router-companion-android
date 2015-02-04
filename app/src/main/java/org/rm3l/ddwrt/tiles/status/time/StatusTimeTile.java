@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.time;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -53,7 +53,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
     private final Map<String, String> daylightMap = Maps.newHashMapWithExpectedSize(10);
 
-    public StatusTimeTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public StatusTimeTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_time, R.id.tile_status_time_togglebutton);
         daylightMap.put("1", "none");
         daylightMap.put("2", "first Sun Apr - last Sun Oct");
@@ -175,7 +175,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             //NTP Client
             final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
             ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_client)).setText((ntpClientEnabled ?
-                "En": "Dis") + "abled");
+                    "En" : "Dis") + "abled");
             if (ntpClientEnabled) {
                 //NTP Server
                 ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText(
@@ -191,11 +191,11 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             if (timezone == null || timezone.isEmpty()) {
                 tzValue = "-";
             } else {
-                tzValue = "UTC"+(timezone.contains(".") ?
+                tzValue = "UTC" + (timezone.contains(".") ?
                         timezone
-                            .replaceAll(".25", ":15")
-                            .replaceAll(".5", ":30")
-                            .replaceAll(".75", ":45") :
+                                .replaceAll(".25", ":15")
+                                .replaceAll(".5", ":30")
+                                .replaceAll(".75", ":45") :
                         (timezone + ":00"));
             }
             ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_timezone)).setText(tzValue);

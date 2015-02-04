@@ -23,9 +23,8 @@
 package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
-
-import com.actionbarsherlock.app.SherlockFragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,7 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = LANClientsTile.class.getSimpleName();
 
 
-    public LANClientsTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public LANClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         //TODO
         super(parentFragment, arguments, router, null, null);
     }

@@ -35,9 +35,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.android.common.view.SlidingTabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +51,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class PageSlidingTabStripFragment extends SherlockFragment {
+public class PageSlidingTabStripFragment extends Fragment {
 
     public static final String TAG = PageSlidingTabStripFragment.class
             .getSimpleName();
@@ -97,7 +95,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         setRetainInstance(true);
 
         final String routerUuid = getArguments().getString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO);
-        final SharedPreferences sharedPreferences = getSherlockActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
 
         mFragmentTabsAdapter = new FragmentTabsAdapter(
                 getArguments().getInt(ARG_SECTION_NUMBER),
@@ -120,20 +118,20 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mPager = (ViewPager) view.findViewById(R.id.viewPager);
-        mPager.setOffscreenPageLimit(mFragmentTabsAdapter.getCount()-1);
+        mPager.setOffscreenPageLimit(mFragmentTabsAdapter.getCount() - 1);
         mPager.setAdapter(mFragmentTabsAdapter);
         mPager.setOnPageChangeListener(mOnPageChangeListener);
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setViewPager(this.mPager);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        mSlidingTabLayout.setSelectedIndicatorColors(
-                getResources().getColor(R.color.tab_selected_strip));
-        mSlidingTabLayout.setDistributeEvenly(true);
+//        mSlidingTabLayout.setSelectedIndicatorColors(
+//                getResources().getColor(R.color.tab_selected_strip));
+//        mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(this.mPager);
     }
 
-    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener ) {
+    public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
         if (mOnPageChangeListener instanceof DDWRTMainActivity) {
             ((DDWRTMainActivity) mOnPageChangeListener).startActivityForResult(intent, listener);
         }
@@ -167,7 +165,7 @@ public class PageSlidingTabStripFragment extends SherlockFragment {
 
         @Nullable
         @Override
-        public SherlockFragment getItem(int position) {
+        public Fragment getItem(int position) {
             if (this.tabs.length <= position) {
                 Log.d(TAG, "tabs contains less than " + position + " items");
                 return null;

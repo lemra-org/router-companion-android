@@ -70,7 +70,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
         if (!error) {
             if (router != null) {
                 //Add default preferences values
-                final SharedPreferences sharedPreferences = this.getSherlockActivity()
+                final SharedPreferences sharedPreferences = this.getActivity()
                         .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);

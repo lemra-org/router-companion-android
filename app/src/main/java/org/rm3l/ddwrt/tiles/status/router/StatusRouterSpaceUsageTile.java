@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -31,7 +32,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -57,10 +57,10 @@ import java.util.Map;
  */
 public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
-    private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
     public static final Splitter NVRAM_SIZE_SPLITTER = Splitter.on("size: ").omitEmptyStrings().trimResults();
+    private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
 
-    public StatusRouterSpaceUsageTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public StatusRouterSpaceUsageTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
 
     }
@@ -263,7 +263,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             if (exception == null) {
-                 errorPlaceHolderView.setVisibility(View.GONE);
+                errorPlaceHolderView.setVisibility(View.GONE);
             }
 
             //NVRAM

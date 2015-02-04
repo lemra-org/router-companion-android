@@ -27,6 +27,7 @@ package org.rm3l.ddwrt.tiles.syslog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
@@ -44,7 +45,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
@@ -83,7 +83,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private final String mGrep;
     private final boolean mDisplayStatus;
 
-    public StatusSyslogTile(@NotNull SherlockFragment parentFragment, @Nullable final ViewGroup parentViewGroup,
+    public StatusSyslogTile(@NotNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
                             @NotNull Bundle arguments, @Nullable final String tileTitle,
                             final boolean displayStatus, Router router, @Nullable final String grep) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);

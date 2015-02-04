@@ -33,11 +33,14 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -45,9 +48,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.cocosw.undobar.UndoBarController;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
@@ -85,7 +85,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  * Main Android Activity
  * <p/>
  */
-public class DDWRTMainActivity extends SherlockFragmentActivity
+public class DDWRTMainActivity extends FragmentActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
@@ -172,8 +172,8 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -184,13 +184,13 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
                 R.string.navigation_drawer_close /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
+                getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to
                 // onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
+                getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to
                 // onPrepareOptionsMenu()
             }
@@ -268,9 +268,9 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         this.optionsMenu = menu;
-        getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         if (!BuildConfig.DONATIONS) {
             final MenuItem item = menu.findItem(R.id.action_donate);
             if (item != null) {
@@ -282,7 +282,7 @@ public class DDWRTMainActivity extends SherlockFragmentActivity
 
     @Override
     public boolean onOptionsItemSelected(
-            @NotNull com.actionbarsherlock.view.MenuItem item) {
+            @NotNull MenuItem item) {
 
         final String routerName = mRouter.getName();
         final String displayName = isNullOrEmpty(routerName) ? mRouter.getRemoteIpAddress() : routerName;

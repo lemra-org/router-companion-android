@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -32,7 +33,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -78,7 +78,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
     private String wanIface;
 
-    public BandwidthWANMonitoringTile(@NotNull SherlockFragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public BandwidthWANMonitoringTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
@@ -344,7 +344,6 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
-
 
 
 }

@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -34,7 +35,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -72,7 +72,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRAMINFO;
 
-public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity {
+public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
     private static final String TAG = EditOpenVPNClientSettingsActivity.class.getSimpleName();
     private static final BiMap<String, Integer> tunnelDeviceSpinnerValues = HashBiMap.create(2);
@@ -81,6 +81,7 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
     private static final BiMap<String, Integer> hashAlgoSpinnerValues = HashBiMap.create(6);
     private static final BiMap<String, Integer> tlsCipherSpinnerValues = HashBiMap.create(8);
     private static final BiMap<String, Integer> lzoCompressionSpinnerValues = HashBiMap.create(4);
+
     static {
         tunnelDeviceSpinnerValues.put("tun", 0);
         tunnelDeviceSpinnerValues.put("tap", 1);
@@ -198,13 +199,13 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
                 .setSelection(position != null ? position : 0);
 
         final String encryptionCipher = mNvramInfo.getProperty(OPENVPNCL_CIPHER);
-        position =encryptionCipher != null ? encryptionCipherSpinnerValues.get(encryptionCipher.toLowerCase()) : null;
-                ((Spinner) findViewById(R.id.openvpn_client_settings_encryption_cipher))
+        position = encryptionCipher != null ? encryptionCipherSpinnerValues.get(encryptionCipher.toLowerCase()) : null;
+        ((Spinner) findViewById(R.id.openvpn_client_settings_encryption_cipher))
                 .setSelection(position != null ? position : 5);
 
         final String hashAlgorithm = mNvramInfo.getProperty(OPENVPNCL_AUTH);
         position = hashAlgorithm != null ? hashAlgoSpinnerValues.get(hashAlgorithm.toLowerCase()) : null;
-                ((Spinner) findViewById(R.id.openvpn_client_settings_hash_algorithm))
+        ((Spinner) findViewById(R.id.openvpn_client_settings_hash_algorithm))
                 .setSelection(position != null ? position : 5);
 
         ((EditText) findViewById(R.id.openvpn_client_settings_ca_cert))
@@ -270,7 +271,6 @@ public class EditOpenVPNClientSettingsActivity extends SherlockFragmentActivity 
 
         //TODO
     }
-
 
 
     @Override

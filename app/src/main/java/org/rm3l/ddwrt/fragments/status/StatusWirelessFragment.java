@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.fragments.status;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -32,11 +34,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -46,7 +45,6 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfacesTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -65,9 +63,8 @@ import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
  */
 public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTile>> {
 
-    private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
     public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
-
+    private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();
     @Nullable
     private Collection<DDWRTTile> mIfaceTiles = null;
 
@@ -81,7 +78,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     @Override
     protected Loader<Collection<DDWRTTile>> getLoader(final int id, @NotNull final Bundle args) {
 
-        return new AsyncTaskLoader<Collection<DDWRTTile>>(getSherlockActivity()) {
+        return new AsyncTaskLoader<Collection<DDWRTTile>>(getActivity()) {
 
             @Nullable
             @Override
@@ -91,7 +88,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
                             router);
 
-                    final SherlockFragment parentFragment= StatusWirelessFragment.this;
+                    final Fragment parentFragment = StatusWirelessFragment.this;
 
                     if (DDWRTCompanionConstants.TEST_MODE) {
                         return Arrays.<DDWRTTile>asList(new WirelessIfaceTile("eth0.test", parentFragment, args, router),
@@ -100,7 +97,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     }
 
                     @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
-                            getSherlockActivity()
+                            getActivity()
                                     .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE), NVRAMInfo.LANDEVS);
 
                     if (nvramInfo == null) {
@@ -128,7 +125,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                         try {
                             final String landevVifsKeyword = landev + "_vifs";
                             final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
-                                    getSherlockActivity()
+                                    getActivity()
                                             .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                                     landevVifsKeyword);
                             if (landevVifsNVRAMInfo == null) {
@@ -217,10 +214,10 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             return;
         }
 
-        final SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+        final FragmentActivity fragmentActivity = getActivity();
 
-        final int themeBackgroundColor = getThemeBackgroundColor(sherlockActivity, router.getUuid());
-        final boolean isThemeLight = isThemeLight(sherlockActivity, themeBackgroundColor);
+        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
+        final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
 
         final LinearLayout dynamicTilessViewGroup =
                 (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);
@@ -245,11 +242,11 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
             tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
             //Init loaders for these tiles
-            getSherlockActivity().getSupportLoaderManager()
+            getActivity().getSupportLoaderManager()
                     .initLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
 
             //Add row for this iface
-            final CardView cardView = new CardView(sherlockActivity);
+            final CardView cardView = new CardView(fragmentActivity);
             cardView.setCardBackgroundColor(themeBackgroundColor);
 
             cardView.setOnClickListener(tile);
