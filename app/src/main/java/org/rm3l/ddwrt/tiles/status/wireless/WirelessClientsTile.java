@@ -119,7 +119,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +161,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
     private final Random randomColorGen = new Random();
-    private final Map<String, Integer> colorsCache = new HashMap<>();
+
+    private final LruCache<String, Integer> colorsCache;
+
     //Generate a random string, to use as discriminator for determining dhcp clients
     private final String MAP_KEYWORD;
     private final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache;
@@ -196,6 +197,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
+
+        colorsCache = new LruCache<String, Integer>(3) {
+            @Override
+            protected Integer create(final String key) {
+                //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
+                return Color.argb(255,
+                        1 + randomColorGen.nextInt(254),
+                        1 + randomColorGen.nextInt(254),
+                        1 + randomColorGen.nextInt(254));
+            }
+        };
 
         mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
 
@@ -903,16 +915,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final XYSeriesRenderer renderer = new XYSeriesRenderer();
                         renderer.setLineWidth(2);
 
-                        Integer seriesColor = colorsCache.get(inOrOut);
-                        if (seriesColor == null) {
-                            //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
-                            seriesColor = Color.argb(255,
-                                    1 + randomColorGen.nextInt(254),
-                                    1 + randomColorGen.nextInt(254),
-                                    1 + randomColorGen.nextInt(254));
-                            colorsCache.put(inOrOut, seriesColor);
-                        }
-                        renderer.setColor(seriesColor);
+                        renderer.setColor(colorsCache.get(inOrOut));
                         // Include low and max value
                         renderer.setDisplayBoundingPoints(true);
                         // we add point markers
@@ -920,6 +923,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         renderer.setPointStrokeWidth(1);
 
                         mRenderer.addSeriesRenderer(renderer);
+
                     }
 
                     // We want to avoid black border
