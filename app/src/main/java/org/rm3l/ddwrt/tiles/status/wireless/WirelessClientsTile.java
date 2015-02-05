@@ -1155,7 +1155,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             tileMenu.setVisibility(View.VISIBLE);
         }
 
-        doneWithLoaderInstance(this, loader,
+        //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
+        //TODO Check how much extra load that represents on the router
+        doneWithLoaderInstance(this, loader, 500l,
                 R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");

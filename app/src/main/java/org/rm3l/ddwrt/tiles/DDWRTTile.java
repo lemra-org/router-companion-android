@@ -177,8 +177,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
-                                                                @Nullable final int... additionalButtonsToMakeVisible) {
-
+                                                                final long nextRunMillis, @Nullable final int... additionalButtonsToMakeVisible) {
         @Nullable final ViewGroup viewGroupLayout = this.getViewGroupLayout();
         if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
             mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
@@ -193,22 +192,27 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             }
         }
 
-        final long refreshDelay = (this.mParentFragmentPreferences != null ?
-                this.mParentFragmentPreferences.
-                        getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS) : TILE_REFRESH_MILLIS);
-
-        if (!this.mLoaderStopped) {
+        if (nextRunMillis > 0 && !this.mLoaderStopped) {
 //        Re-schedule it if loader has not been stopped!
             HANDLER.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
                 }
-            }, refreshDelay);
+            }, nextRunMillis);
         }
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader +
-                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: " + refreshDelay + "ms");
+                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: " + nextRunMillis + "ms");
+    }
+
+    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
+                                                                @Nullable final int... additionalButtonsToMakeVisible) {
+        doneWithLoaderInstance(tile, loader,
+                this.mParentFragmentPreferences != null ?
+                        this.mParentFragmentPreferences.
+                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS) : TILE_REFRESH_MILLIS,
+                additionalButtonsToMakeVisible);
     }
 
     @Nullable
