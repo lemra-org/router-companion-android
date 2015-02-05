@@ -25,15 +25,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:transitionName="@string/transition_router"
     tools:context="org.rm3l.ddwrt.DDWRTMainActivity">
 
     <include layout="@layout/activity_main_toolbar" />
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:transitionName="@string/transition_router">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <!-- activity view -->
         <RelativeLayout
@@ -56,7 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <ListView
                 android:id="@+id/left_drawer"
-                android:layout_width="130dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:background="#151515"

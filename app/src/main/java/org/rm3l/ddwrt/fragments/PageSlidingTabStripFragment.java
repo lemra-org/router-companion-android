@@ -125,8 +125,8 @@ public class PageSlidingTabStripFragment extends Fragment {
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setViewPager(this.mPager);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-//        mSlidingTabLayout.setSelectedIndicatorColors(
-//                getResources().getColor(R.color.tab_selected_strip));
+        mSlidingTabLayout.setSelectedIndicatorColors(
+                getResources().getColor(R.color.tab_selected_strip));
 //        mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(this.mPager);
     }

@@ -27,6 +27,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- Customize your theme here. -->
     <!--</style>-->
 
+    <style name="AppTheme" parent="AppTheme.Base" />
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryColorDark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+
     <style name="myAppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
@@ -37,22 +47,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@android:color/black</item>
+        <!--<item name="color">@android:color/black</item>-->
     </style>
 
     <!--<style name="AppBaseTheme" parent="android:Theme.Light"></style>-->
 
-    <style name="AppBaseTheme" parent="android:Theme.Holo" />
+    <!--<style name="AppBaseTheme" parent="android:Theme.Holo" />-->
 
-    <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:windowBackground">@color/background_window</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-    </style>
+    <!--<style name="AppTheme" parent="AppBaseTheme">-->
+    <!--<item name="android:windowBackground">@color/background_window</item>-->
+    <!--<item name="android:actionBarStyle">@style/ActionBarStyle</item>-->
+    <!--</style>-->
 
-    <style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:icon">@drawable/ic_launcher_actionbar</item>
-        <item name="android:background">#FF666666</item>
-    </style>
+    <!--<style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">-->
+    <!--<item name="android:icon">@drawable/ic_launcher_actionbar</item>-->
+    <!--<item name="android:background">#FF666666</item>-->
+    <!--</style>-->
 
     <!-- Misc -->
     <style name="TabIndicator" />

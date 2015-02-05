@@ -96,7 +96,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name="org.acra.CrashReportDialog"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
-            android:theme="@android:style/Theme.Dialog"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="org.achartengine.GraphicalActivity"
@@ -123,7 +122,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
             android:label="@string/wifi_qr_code"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -134,7 +132,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivityLight"
             android:label="@string/wifi_qr_code"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -159,7 +156,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivity"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -170,7 +166,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivityLight"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -181,7 +176,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterCpuInfoActivity"
             android:label="@string/title_cpuinfo"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -192,7 +186,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterCpuInfoActivityLight"
             android:label="@string/title_cpuinfo"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -203,7 +196,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterMemInfoActivity"
             android:label="@string/title_meminfo"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -214,7 +206,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterMemInfoActivityLight"
             android:label="@string/title_meminfo"
             android:parentActivityName=".DDWRTMainActivity"
-            android:theme="@android:style/Theme.Holo.Light"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

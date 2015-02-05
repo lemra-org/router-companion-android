@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -335,45 +336,52 @@ public class RouterManagementActivity
                 return;
             }
 
-            final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-            alertDialog.show();
-            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //No action mode - normal mode => open up main activity for this router
-                    final List<Router> routersList = adapter.getRoutersList();
-                    final Router router;
-                    if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
-                        Crouton.makeText(RouterManagementActivity.this,
-                                "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
-                        return;
+            //No action mode - normal mode => open up main activity for this router
+            final List<Router> routersList = adapter.getRoutersList();
+            final Router router;
+            if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
+                Crouton.makeText(RouterManagementActivity.this,
+                        "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
+                return;
+            }
+            final String routerUuid = router.getUuid();
+
+            final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
+            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+
+            final SharedPreferences routerSharedPreferences = getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+            if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+                routerSharedPreferences.edit()
+                        .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
+                        .apply();
+            }
+
+            //Animate
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                startActivity(view, ddWrtMainIntent);
+            } else {
+                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(view, ddWrtMainIntent);
+                        alertDialog.cancel();
                     }
-                    final String routerUuid = router.getUuid();
-
-                    final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
-                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
-
-                    final SharedPreferences routerSharedPreferences = getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
-                    if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
-                        routerSharedPreferences.edit()
-                                .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
-                                .apply();
-                    }
-
-                    //Animate
-                    final String transitionName = getString(R.string.transition_router);
-                    final ActivityOptionsCompat options =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    RouterManagementActivity.this, view, transitionName);
-
-                    ActivityCompat.startActivity(RouterManagementActivity.this, ddWrtMainIntent, options.toBundle());
-
-                    alertDialog.cancel();
-                }
-            }, 2000);
+                }, 2000);
+            }
 
         }
+    }
+
+    private void startActivity(View view, Intent ddWrtMainIntent) {
+        final String transitionName = getString(R.string.transition_router);
+        final ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        RouterManagementActivity.this, view, transitionName);
+
+        ActivityCompat.startActivity(RouterManagementActivity.this, ddWrtMainIntent, options.toBundle());
     }
 
     @Override

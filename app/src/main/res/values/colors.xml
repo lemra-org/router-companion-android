@@ -40,7 +40,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="ddwrt_green">#009900</color>
     <color name="background_window">#FFE5E5E5</color>
     <color name="tab_background">@color/theme_primary</color>
-    <color name="tab_selected_strip">@color/theme_accent_1</color>
+    <color name="tab_selected_strip">@color/win8_orange</color>
 
     <color name="translucent_actionbar_background">#cc3f51b5</color>
     <color name="translucent_statusbar_background">#cc3f51b5</color>
