@@ -68,6 +68,7 @@ public final class DDWRTCompanionConstants {
     public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE = "/tmp/." + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
     public static final String DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN = "DDWRTCompWANAccess";
     public static final String OPENED_AT_LEAST_ONCE_PREF_KEY = \"fake-key\";
+    public static final String EMPTY_VALUE_TO_DISPLAY = "-";
     public String[] mMonth = new String[]{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

@@ -44,10 +44,14 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
     protected RouterActionResult doActionInBackground(@NotNull Router router) {
         Exception exception = null;
         try {
-            final int exitStatus = SSHUtils.runCommands(globalSharedPreferences, router,
-                    "rm -f " + WirelessClientsTile.USAGE_DB);
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
+            final String[] exitStatus = SSHUtils.getManualProperty(router, globalSharedPreferences,
+                    "rm -f " + WirelessClientsTile.USAGE_DB + "; echo $?");
+
+            if (exitStatus == null || exitStatus.length == 0) {
+                throw new IllegalStateException("Unable to get the Reset Command Status.");
+            }
+            if (!"0".equals(exitStatus[0])) {
+                throw new IllegalStateException("Command execution status: " + exitStatus[0]);
             }
         } catch (Exception e) {
             e.printStackTrace();

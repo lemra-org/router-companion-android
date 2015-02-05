@@ -64,7 +64,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -136,12 +138,12 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
-
 
 /**
  *
@@ -155,38 +157,89 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SORT_APHABETICAL = SORT + "_aphabetical";
     public static final String SORTING_STRATEGY = "sorting_strategy";
     public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
+    public static final String IN = "IN";
+    public static final String OUT = "OUT";
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final String TEMP_ROUTER_UUID = UUID.randomUUID().toString();
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
+    private static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
+
+        @Override
+        protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
+            super.entryRemoved(evicted, key, oldValue, newValue);
+            Log.d(LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
+        }
+
+        @Override
+        protected MACOUIVendor create(final String macAddr) {
+            if (isNullOrEmpty(macAddr)) {
+                return null;
+            }
+            //Get to MAC OUI Vendor Lookup API
+            try {
+                final String url = String.format("%s/%s",
+                        MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
+                Log.d(LOG_TAG, "--> GET " + url);
+                final HttpGet httpGet = new HttpGet(url);
+                final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
+                final StatusLine statusLine = httpResponse.getStatusLine();
+                final int statusCode = statusLine.getStatusCode();
+
+                if (statusCode == 200) {
+                    final HttpEntity entity = httpResponse.getEntity();
+                    final InputStream content = entity.getContent();
+                    try {
+                        //Read the server response and attempt to parse it as JSON
+                        final Reader reader = new InputStreamReader(content);
+                        final GsonBuilder gsonBuilder = new GsonBuilder();
+                        final Gson gson = gsonBuilder.create();
+                        final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
+                        Log.d(LOG_TAG, "--> Result of GET " + url + ": " + Arrays.toString(macouiVendors));
+                        if (macouiVendors == null || macouiVendors.length == 0) {
+                            //Returning null so we can try again later
+                            return null;
+                        }
+                        return macouiVendors[0];
+
+                    } finally {
+                        Closeables.closeQuietly(content);
+                        entity.consumeContent();
+                    }
+                } else {
+                    Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                    if (statusCode == 204) {
+                        //No Content found on the remote server - no need to retry later
+                        return new MACOUIVendor();
+                    }
+                }
+
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    };
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
-    private final Random randomColorGen = new Random();
-
-    private final LruCache<String, Integer> colorsCache;
-
+    private static final Random randomColorGen = new Random();
+    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(3) {
+        @Override
+        protected Integer create(final String key) {
+            //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
+            return Color.argb(255,
+                    1 + randomColorGen.nextInt(254),
+                    1 + randomColorGen.nextInt(254),
+                    1 + randomColorGen.nextInt(254));
+        }
+    };
     //Generate a random string, to use as discriminator for determining dhcp clients
-    private final String MAP_KEYWORD;
-    private final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache;
-    @NotNull
-    private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
-            Maps.newConcurrentMap();
-    private final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
-    private String mCurrentIpAddress;
-    private String mCurrentMacAddress;
-    private String[] activeClients;
-    private String[] activeDhcpLeases;
-    @Nullable
-    private List<String> broadcastAddresses;
-    private File wrtbwmonScriptPath;
+    private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
+    private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
 
-    private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
-
-    private String mUsageDbBackupPath = null;
-
-    public WirelessClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
-        MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
-
+    static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
         sortIds.put(R.id.tile_status_wireless_clients_sort_z_a, 73);
 
@@ -197,76 +250,31 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
+    }
 
-        colorsCache = new LruCache<String, Integer>(3) {
-            @Override
-            protected Integer create(final String key) {
-                //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
-                return Color.argb(255,
-                        1 + randomColorGen.nextInt(254),
-                        1 + randomColorGen.nextInt(254),
-                        1 + randomColorGen.nextInt(254));
-            }
-        };
+    final Router mRouterCopy;
+    private final Object usageDataLock = new Object();
+    @NotNull
+    private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
+            Maps.newConcurrentMap();
+    private String mCurrentIpAddress;
+    private String mCurrentMacAddress;
+    private String[] activeClients;
+    private String[] activeDhcpLeases;
+    @Nullable
+    private List<String> broadcastAddresses;
+    private File wrtbwmonScriptPath;
+    private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
+    private String mUsageDbBackupPath = null;
 
-        mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
+    public WirelessClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+        super(parentFragment, arguments,
+                router,
+                R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
 
-            @Override
-            protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
-                super.entryRemoved(evicted, key, oldValue, newValue);
-                Log.d(LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
-            }
-
-            @Override
-            protected MACOUIVendor create(final String macAddr) {
-                if (isNullOrEmpty(macAddr)) {
-                    return null;
-                }
-                //Get to MAC OUI Vendor Lookup API
-                try {
-                    final String url = String.format("%s/%s",
-                            MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-                    Log.d(LOG_TAG, "--> GET " + url);
-                    final HttpGet httpGet = new HttpGet(url);
-                    final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
-                    final StatusLine statusLine = httpResponse.getStatusLine();
-                    final int statusCode = statusLine.getStatusCode();
-
-                    if (statusCode == 200) {
-                        final HttpEntity entity = httpResponse.getEntity();
-                        final InputStream content = entity.getContent();
-                        try {
-                            //Read the server response and attempt to parse it as JSON
-                            final Reader reader = new InputStreamReader(content);
-                            final GsonBuilder gsonBuilder = new GsonBuilder();
-                            final Gson gson = gsonBuilder.create();
-                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-                            Log.d(LOG_TAG, "--> Result of GET " + url + ": " + Arrays.toString(macouiVendors));
-                            if (macouiVendors == null || macouiVendors.length == 0) {
-                                //Returning null so we can try again later
-                                return null;
-                            }
-                            return macouiVendors[0];
-
-                        } finally {
-                            Closeables.closeQuietly(content);
-                            entity.consumeContent();
-                        }
-                    } else {
-                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                        if (statusCode == 204) {
-                            //No Content found on the remote server - no need to retry later
-                            return new MACOUIVendor();
-                        }
-                    }
-
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-        };
+        //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
+        //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
+        mRouterCopy = new Router(mRouter).setUuid(TEMP_ROUTER_UUID);
 
 //        Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
@@ -376,22 +384,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     //Get Broadcast Addresses (for WOL)
                     try {
-                        final String[] wanBroadcast = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
-                                "ifconfig `nvram get wan_iface` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
-                        if (wanBroadcast != null && wanBroadcast.length > 0) {
-                            final String wanBcast = wanBroadcast[0];
-                            if (wanBcast != null) {
-                                //noinspection ConstantConditions
-                                broadcastAddresses.add(wanBcast.trim());
-                            }
-                        }
-                        final String[] lanBroadcast = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
+                                "ifconfig `nvram get wan_iface` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'",
                                 "ifconfig `nvram get lan_ifname` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
-                        if (lanBroadcast != null && lanBroadcast.length > 0) {
-                            final String lanBcast = lanBroadcast[0];
-                            if (lanBcast != null) {
-                                //noinspection ConstantConditions
-                                broadcastAddresses.add(lanBcast.trim());
+                        if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
+                            for (final String wanAndLanBcast : wanAndLanBroadcast) {
+                                if (wanAndLanBcast == null) {
+                                    continue;
+                                }
+                                broadcastAddresses.add(wanAndLanBcast.trim());
                             }
                         }
                     } catch (final Exception e) {
@@ -400,13 +401,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Active clients
-                    activeClients = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "arp -a");
+                    activeClients = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences, "arp -a");
                     if (activeClients != null) {
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
                     //Active DHCP Leases
-                    activeDhcpLeases = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
+                    activeDhcpLeases = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
                     if (activeDhcpLeases != null) {
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
@@ -415,7 +416,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     String gatewayAddress = EMPTY_STRING;
                     try {
                         final NVRAMInfo nvRamInfoFromRouter = SSHUtils
-                                .getNVRamInfoFromRouter(mRouter, mGlobalPreferences, WAN_GATEWAY);
+                                .getNVRamInfoFromRouter(mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
                         if (nvRamInfoFromRouter != null) {
                             //noinspection ConstantConditions
                             gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
@@ -425,7 +426,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         //No worries
                     }
 
-                    @Nullable final String[] output = SSHUtils.getManualProperty(mRouter,
+                    @Nullable final String[] output = SSHUtils.getManualProperty(mRouterCopy,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
@@ -513,127 +514,150 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 deviceCollection.iterator().next());
                     }
 
-                    try {
-                        final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
-                        mUsageDbBackupPath = file.getAbsolutePath();
-                        Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
-                        if (file.exists()) {
-                            final String[] doesUsageDataExistLines = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
-                                    "[ -f " + USAGE_DB + " ]; echo $?");
-                            Log.d(LOG_TAG, "doesUsageDataExistLines: " + Arrays.toString(doesUsageDataExistLines));
-                            if (doesUsageDataExistLines != null && doesUsageDataExistLines.length > 0
-                                    && !"0".equals(doesUsageDataExistLines[0].trim())) {
-                                //Usage Data File does not exist - restore what we have on file (if any)
-                                SSHUtils.scpTo(mRouter, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                    @NotNull String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
+
+                    synchronized (usageDataLock) {
+
+                        try {
+                            final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
+                            mUsageDbBackupPath = file.getAbsolutePath();
+                            Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+
+                            //Compute checksum of remote script, and see if usage DB exists remotely
+                            final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
+                                    .getManualProperty(mRouterCopy, mGlobalPreferences,
+                                            "[ -f " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " ] && " +
+                                                    "md5sum " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " | awk '{print $1}'",
+                                            "[ -f " + USAGE_DB + " ]; echo $?");
+                            if (remoteMd5ChecksumAndUsageDBCheckOutput != null && remoteMd5ChecksumAndUsageDBCheckOutput.length > 1) {
+                                remoteChecksum = nullToEmpty(remoteMd5ChecksumAndUsageDBCheckOutput[0]).trim();
+                                final String doesUsageDataExistRemotely = remoteMd5ChecksumAndUsageDBCheckOutput[1];
+                                Log.d(LOG_TAG, "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
+                                if (doesUsageDataExistRemotely != null &&
+                                        file.exists() &&
+                                        !"0".equals(doesUsageDataExistRemotely.trim())) {
+                                    //Usage Data File does not exist - restore what we have on file (if any)
+                                    SSHUtils.scpTo(mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                                }
                             }
+
+
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            mUsageDbBackupPath = null;
                         }
 
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                        mUsageDbBackupPath = null;
-                    }
+                        /** http://www.dd-wrt.com/phpBB2/viewtopic.php?t=75275 */
 
-                    /** http://www.dd-wrt.com/phpBB2/viewtopic.php?t=75275 */
+                        //Copy wrtbwmon file to remote host (/tmp/), if needed
+                        Log.d(LOG_TAG, "[COPY] Copying monitoring script to remote router, if needed...");
+                        wrtbwmonScriptPath = new File(mParentFragmentActivity.getCacheDir(), WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
 
-                    //Copy wrtbwmon file to remote host (/tmp/)
-                    Log.d(LOG_TAG, "[COPY] Copying monitoring script to remote router...");
-                    wrtbwmonScriptPath = new File(mParentFragmentActivity.getCacheDir(), WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
+                        FileUtils.copyInputStreamToFile(mParentFragmentActivity.getResources().openRawResource(R.raw.wrtbwmon_ddwrtcompanion),
+                                wrtbwmonScriptPath);
 
-                    FileUtils.copyInputStreamToFile(mParentFragmentActivity.getResources().openRawResource(R.raw.wrtbwmon_ddwrtcompanion),
-                            wrtbwmonScriptPath);
-                    SSHUtils.scpTo(mRouter, mGlobalPreferences,
-                            wrtbwmonScriptPath.getAbsolutePath(),
-                            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE);
+                        //Compare MD5 checksum locally on remotely. If any differences, overwrite the remote one
+                        final String localChecksum = Files.hash(wrtbwmonScriptPath, Hashing.md5()).toString();
+                        Log.d(LOG_TAG, String.format("<localChecksum=%s , remoteChecksum=%s>", localChecksum, remoteChecksum));
+                        if (!remoteChecksum.equalsIgnoreCase(localChecksum)) {
+                            Log.i(LOG_TAG, "Local and remote Checksums for the per-client monitoring script are different " +
+                                    "=> uploading the local one...");
+                            SSHUtils.scpTo(mRouterCopy, mGlobalPreferences,
+                                    wrtbwmonScriptPath.getAbsolutePath(),
+                                    WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE);
+                        }
 
-                    //Run Setup (does not matter if already done)
-                    Log.d(LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
+                        //Run Setup (does not matter if already done)
+                        Log.d(LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
 
-                    SSHUtils.runCommands(mGlobalPreferences, mRouter,
-                            "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
-                            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup",
-                            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read",
-                            "sleep 1",
-                            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " update " + USAGE_DB,
-                            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " publish-raw " + USAGE_DB + " " + USAGE_DB_OUT);
+                        final String[] usageDbOutLines = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
+                                "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup",
+                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read",
+                                "sleep 1",
+                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " update " + USAGE_DB,
+                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " publish-raw " + USAGE_DB + " " + USAGE_DB_OUT,
+                                "cat " + USAGE_DB_OUT,
+                                "rm -f " + USAGE_DB_OUT);
 
-                    final String[] usageDbOutLines = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
-                            "cat " + USAGE_DB_OUT,
-                            "rm -f " + USAGE_DB_OUT);
+                        if (usageDbOutLines != null) {
 
-                    if (usageDbOutLines != null) {
-                        for (final String usageDbOutLine : usageDbOutLines) {
-                            if (isNullOrEmpty(usageDbOutLine)) {
-                                continue;
-                            }
-                            final List<String> splitToList = Splitter.on(",").omitEmptyStrings().splitToList(usageDbOutLine);
-                            if (splitToList == null || splitToList.size() < 6) {
-                                Log.w(LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
-                                continue;
-                            }
-                            final String macAddress = splitToList.get(0);
-                            if (isNullOrEmpty(macAddress)) {
-                                continue;
-                            }
-                            final Device device = macToDevice.get(macAddress.trim());
-                            if (device == null) {
-                                continue;
-                            }
-                            if (!bandwidthMonitoringIfaceDataPerDevice.containsKey(macAddress)) {
-                                bandwidthMonitoringIfaceDataPerDevice.put(macAddress, new BandwidthMonitoringIfaceData());
-                            }
-                            final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
-                                    bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
-
-                            try {
-                                device.setRxTotal(Double.parseDouble(splitToList.get(2)));
-                            } catch (final NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //no worries
-                            }
-                            try {
-                                device.setTxTotal(Double.parseDouble(splitToList.get(3)));
-                            } catch (final NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //no worries
-                            }
-
-                            long lastSeen = -1l;
-                            try {
-                                lastSeen = Long.parseLong(splitToList.get(1)) * 1000l;
-                                device.setLastSeen(lastSeen);
-                            } catch (final NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //no worries
-                            }
-                            try {
-                                final double rxRate = Double.parseDouble(splitToList.get(4));
-                                device.setRxRate(rxRate);
-                                if (lastSeen > 0l) {
-                                    bandwidthMonitoringIfaceData.addData("IN",
-                                            new BandwidthMonitoringTile.DataPoint(lastSeen, rxRate));
+                            for (final String usageDbOutLine : usageDbOutLines) {
+                                if (isNullOrEmpty(usageDbOutLine)) {
+                                    continue;
                                 }
-                            } catch (final NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //no worries
-                            }
-                            try {
-                                final double txRate = Double.parseDouble(splitToList.get(5));
-                                device.setTxRate(txRate);
-                                if (lastSeen > 0l) {
-                                    bandwidthMonitoringIfaceData.addData("OUT",
-                                            new BandwidthMonitoringTile.DataPoint(lastSeen, txRate));
+                                final List<String> splitToList = Splitter.on(",").omitEmptyStrings().splitToList(usageDbOutLine);
+                                if (splitToList == null || splitToList.size() < 6) {
+                                    Log.w(LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
+                                    continue;
                                 }
-                            } catch (final NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //no worries
-                            }
+                                final String macAddress = splitToList.get(0);
+                                if (isNullOrEmpty(macAddress)) {
+                                    continue;
+                                }
+                                final Device device = macToDevice.get(macAddress.trim());
+                                if (device == null) {
+                                    continue;
+                                }
 
+                                try {
+                                    device.setRxTotal(Double.parseDouble(splitToList.get(2)));
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //no worries
+                                }
+                                try {
+                                    device.setTxTotal(Double.parseDouble(splitToList.get(3)));
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //no worries
+                                }
+
+                                long lastSeen = -1l;
+                                try {
+                                    lastSeen = Long.parseLong(splitToList.get(1)) * 1000l;
+                                    device.setLastSeen(lastSeen);
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //no worries
+                                }
+
+                                if (!bandwidthMonitoringIfaceDataPerDevice.containsKey(macAddress)) {
+                                    bandwidthMonitoringIfaceDataPerDevice.put(macAddress, new BandwidthMonitoringIfaceData());
+                                }
+                                final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
+                                        bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+
+                                try {
+                                    final double rxRate = Double.parseDouble(splitToList.get(4));
+                                    device.setRxRate(rxRate);
+                                    if (lastSeen > 0l) {
+                                        bandwidthMonitoringIfaceData.addData(IN,
+                                                new BandwidthMonitoringTile.DataPoint(lastSeen, rxRate));
+                                    }
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //no worries
+                                }
+                                try {
+                                    final double txRate = Double.parseDouble(splitToList.get(5));
+                                    device.setTxRate(txRate);
+                                    if (lastSeen > 0l) {
+                                        bandwidthMonitoringIfaceData.addData(OUT,
+                                                new BandwidthMonitoringTile.DataPoint(lastSeen, txRate));
+                                    }
+                                } catch (final NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //no worries
+                                }
+
+                            }
                         }
                     }
 
                     //WAN Access
                     try {
-                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
                                 "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " --line-numbers -n 2>/dev/null; echo $?");
                         if (wanAccessIptablesChainDump != null) {
                             int exitStatus = -1;
@@ -678,7 +702,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         try {
                             if (!isNullOrEmpty(mUsageDbBackupPath)) {
                                 //Backup to new data file
-                                SSHUtils.scpFrom(mRouter, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
+                                synchronized (usageDataLock) {
+                                    SSHUtils.scpFrom(mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
+                                }
                             }
                         } catch (final Exception e) {
                             e.printStackTrace();
@@ -785,12 +811,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             //Number of Active Clients
             final int numActiveClients = data.getActiveClientsNum();
             ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_clients_num))
-                    .setText(numActiveClients >= 0 ? String.valueOf(numActiveClients) : "-");
+                    .setText(numActiveClients >= 0 ? String.valueOf(numActiveClients) : EMPTY_VALUE_TO_DISPLAY);
 
             //Number of Active DHCP Leases
             final int numActiveDhcpLeases = data.getActiveDhcpLeasesNum();
             ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_dhcp_leases_num))
-                    .setText(numActiveDhcpLeases >= 0 ? String.valueOf(numActiveDhcpLeases) : "-");
+                    .setText(numActiveDhcpLeases >= 0 ? String.valueOf(numActiveDhcpLeases) : EMPTY_VALUE_TO_DISPLAY);
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
@@ -843,7 +869,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
                 final TextView deviceWanAccessStateView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wan_access);
                 if (wanAccessState == null || isNullOrEmpty(wanAccessState.toString())) {
-                    deviceWanAccessStateView.setText("-");
+                    deviceWanAccessStateView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     deviceWanAccessStateView.setText(wanAccessState.toString());
                 }
@@ -873,7 +899,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 deviceDetailsPlaceHolder.removeAllViews();
 
-                final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+                final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData;
+                synchronized (usageDataLock) {
+                    bandwidthMonitoringIfaceData = bandwidthMonitoringIfaceDataPerDevice.get(macAddress);
+                }
+
                 final boolean hideGraphPlaceHolder = bandwidthMonitoringIfaceData == null || bandwidthMonitoringIfaceData.getData().isEmpty();
                 if (hideGraphPlaceHolder) {
                     //Show no data
@@ -923,7 +953,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         renderer.setPointStrokeWidth(1);
 
                         mRenderer.addSeriesRenderer(renderer);
-
                     }
 
                     // We want to avoid black border
@@ -965,7 +994,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final TextView deviceSystemNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_system_name);
                 final String systemName = device.getSystemName();
                 if (isNullOrEmpty(systemName)) {
-                    deviceSystemNameView.setText("-");
+                    deviceSystemNameView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     deviceSystemNameView.setText(systemName);
                 }
@@ -974,7 +1003,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
                 final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
                 if (macouiVendorDetails == null || isNullOrEmpty(macouiVendorDetails.getCompany())) {
-                    ouiVendorRowView.setText("-");
+                    ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     ouiVendorRowView.setText(macouiVendorDetails.getCompany());
                 }
@@ -982,18 +1011,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                 final long lastSeen = device.getLastSeen();
                 if (lastSeen <= 0l) {
-                    lastSeenRowView.setText("-");
+                    lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                     lastSeenRowView.setReferenceTime(-1l);
                 } else {
                     lastSeenRowView.setReferenceTime(lastSeen);
-                    lastSeenRowView.setPrefix(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(lastSeen)) + "\n(");
+                    lastSeenRowView.setPrefix(DATE_FORMAT.format(new Date(lastSeen)) + "\n(");
                     lastSeenRowView.setSuffix(")");
                 }
 
                 final TextView totalDownloadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_download);
                 final double rxTotal = device.getRxTotal();
                 if (rxTotal < 0.) {
-                    totalDownloadRowView.setText("-");
+                    totalDownloadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     final long value = Double.valueOf(rxTotal).longValue();
                     totalDownloadRowView.setText(value + " B (" + byteCountToDisplaySize(value) + ")");
@@ -1002,7 +1031,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final TextView totalUploadRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_total_upload);
                 final double txTotal = device.getTxTotal();
                 if (txTotal < 0.) {
-                    totalUploadRowView.setText("-");
+                    totalUploadRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     final long value = Double.valueOf(txTotal).longValue();
                     totalUploadRowView.setText(value + " B (" + byteCountToDisplaySize(value) + ")");
@@ -1379,8 +1408,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 try {
                     switch (RouterAction.valueOf(routerAction)) {
                         case RESET_COUNTERS:
-                            new ResetBandwidthMonitoringCountersRouterAction(this, mGlobalPreferences)
-                                    .execute(mRouter);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    synchronized (usageDataLock) {
+                                        new ResetBandwidthMonitoringCountersRouterAction(MenuActionItemClickListener.this,
+                                                mGlobalPreferences)
+                                                .execute(mRouter);
+                                    }
+                                }
+                            }).start();
                             break;
                         default:
                             //Ignored
@@ -1405,13 +1442,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         @Override
         public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
-//            bandwidthMonitoringIfaceDataPerDevice.clear();
             switch (routerAction) {
                 case RESET_COUNTERS:
                     //Also delete local backup (so it does not get restored on the router)
-                    //noinspection ResultOfMethodCallIgnored
-                    DDWRTCompanionConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
-                            .delete();
+                    synchronized (usageDataLock) {
+                        bandwidthMonitoringIfaceDataPerDevice.clear();
+                        //noinspection ResultOfMethodCallIgnored
+                        DDWRTCompanionConstants.getClientsUsageDataFile(mParentFragmentActivity, router.getUuid())
+                                .delete();
+                    }
                     break;
                 default:
                     //Ignored
