@@ -161,7 +161,7 @@ public class Router implements Serializable {
      * Set the username
      *
      * @param username the username to set
-     * @param  encrypt whether to encrypt data.
+     * @param encrypt  whether to encrypt data.
      *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
      *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
@@ -193,7 +193,7 @@ public class Router implements Serializable {
      * Set the password
      *
      * @param password the password to set
-     * @param  encrypt whether to encrypt data.
+     * @param encrypt  whether to encrypt data.
      *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
      *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
@@ -303,9 +303,9 @@ public class Router implements Serializable {
      * Set the privKey
      *
      * @param privKey the privKey to set
-     * @param  encrypt whether to encrypt data.
-     *                 To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
-     *                 is known to be encrypted (e.g., when retrieved from the B)
+     * @param encrypt whether to encrypt data.
+     *                To avoid encrypting twice, set this to <code>false</code> if <code>privKey</code>
+     *                is known to be encrypted (e.g., when retrieved from the B)
      * @return this object
      */
     @NotNull
@@ -341,7 +341,7 @@ public class Router implements Serializable {
     public String toString() {
         return "Router{" +
                 "sshAuth=Type=" + getSshAuthenticationMethod() +
-                "routerConnectionProtocol=" + routerConnectionProtocol +
+                ", routerConnectionProtocol=" + routerConnectionProtocol +
                 ", name='" + name + '\'' +
                 ", remoteIpAddress='" + remoteIpAddress + '\'' +
                 ", remotePort=" + remotePort +

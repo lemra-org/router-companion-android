@@ -58,6 +58,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -88,18 +90,31 @@ public final class SSHUtils {
     public static final String NO = "no";
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
     public static final int CONNECT_TIMEOUT_MILLIS = 10000;
+    public static final int MAX_SSH_SESSIONS_IN_CACHE = 5;
+    private static final LruCache<String, ReentrantLock> SSH_SESSIONS_CACHE_LOCKS = new LruCache<String, ReentrantLock>(MAX_SSH_SESSIONS_IN_CACHE) {
+        @Override
+        protected void entryRemoved(boolean evicted, String key, ReentrantLock oldValue, ReentrantLock newValue) {
+            if (oldValue.isLocked()) {
+                oldValue.unlock();
+            }
+            super.entryRemoved(evicted, key, oldValue, newValue);
+        }
+
+        @Override
+        protected ReentrantLock create(String key) {
+            return new ReentrantLock();
+        }
+    };
     private static final List<String> MULTI_OUTPUT_NVRAM_VARS =
             Arrays.asList(SSHD_RSA_HOST_KEY,
                     SSHD_DSS_HOST_KEY,
                     OPENVPNCL_CA, OPENVPNCL_CLIENT, OPENVPNCL_KEY, OPENVPNCL_TLSAUTH, OPENVPNCL_STATIC, OPENVPNCL_ROUTE,
                     OPENVPN_CA, OPENVPN_CLIENT, OPENVPN_KEY, OPENVPN_TLSAUTH, OPENVPN_CRT, OPENVPN_CRL, OPENVPN_STATIC);
-
     static {
         JSch.setLogger(SSHLogger.getInstance());
     }
-
     private static final String TAG = SSHUtils.class.getSimpleName();
-    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(5) {
+    private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
             Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
@@ -129,13 +144,16 @@ public final class SSHUtils {
 
     public static void destroySession(@Nullable final String uuid) {
         if (uuid != null) {
+            final Lock lock = SSH_SESSIONS_CACHE_LOCKS.get(uuid);
+            lock.lock();
             try {
-                synchronized (SSH_SESSIONS_LRU_CACHE) {
-                    SSH_SESSIONS_LRU_CACHE.remove(uuid);
-                }
+                SSH_SESSIONS_LRU_CACHE.remove(uuid);
             } catch (final Exception e) {
                 //No worries
                 e.printStackTrace();
+            } finally {
+                lock.unlock();
+                SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
             }
         }
     }
@@ -150,64 +168,61 @@ public final class SSHUtils {
             return null;
         }
 
+        final ReentrantLock lock = SSH_SESSIONS_CACHE_LOCKS.get(uuid);
+        lock.lock();
         try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                final Session sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
+            final Session sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
 
-                if (sessionCached != null) {
-                    if (!sessionCached.isConnected()) {
-                        sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
-                    }
-                    return sessionCached;
+            if (sessionCached != null) {
+                if (!sessionCached.isConnected()) {
+                    sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
                 }
-
-                @Nullable final String privKey = \"fake-key\";
-                @NotNull final JSch jsch = new JSch();
-
-                final String passwordPlain = router.getPasswordPlain();
-                final Session jschSession;
-
-                final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-                switch (sshAuthenticationMethod) {
-                    case PUBLIC_PRIVATE_KEY:
-                        //noinspection ConstantConditions
-                        jsch.addIdentity(uuid,
-                                !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
-                                null,
-                                !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
-                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                        break;
-                    case PASSWORD:
-                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                        jschSession.setPassword(passwordPlain);
-                        break;
-//            case NONE:
-//                jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-//                jschSession.setPassword(DDWRTCompanionConstants.EMPTY_STRING);
-//                break;
-                    default:
-                        jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
-                        break;
-                }
-
-                final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
-                //Set known hosts file to preferences file
-                //        jsch.setKnownHosts();
-
-                @NotNull final Properties config = new Properties();
-                config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
-                jschSession.setConfig(config);
-
-                jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
-
-                SSH_SESSIONS_LRU_CACHE.put(uuid, jschSession);
-                return SSH_SESSIONS_LRU_CACHE.get(uuid);
+                return sessionCached;
             }
+
+            @Nullable final String privKey = \"fake-key\";
+            @NotNull final JSch jsch = new JSch();
+
+            final String passwordPlain = router.getPasswordPlain();
+            final Session jschSession;
+
+            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+            switch (sshAuthenticationMethod) {
+                case PUBLIC_PRIVATE_KEY:
+                    //noinspection ConstantConditions
+                    jsch.addIdentity(uuid,
+                            !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
+                            null,
+                            !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    break;
+                case PASSWORD:
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    jschSession.setPassword(passwordPlain);
+                    break;
+                default:
+                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    break;
+            }
+
+            final boolean strictHostKeyChecking = router.isStrictHostKeyChecking();
+            //Set known hosts file to preferences file
+            //        jsch.setKnownHosts();
+
+            @NotNull final Properties config = new Properties();
+            config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
+            jschSession.setConfig(config);
+
+            jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
+
+            SSH_SESSIONS_LRU_CACHE.put(uuid, jschSession);
+            return SSH_SESSIONS_LRU_CACHE.get(uuid);
         } catch (final JSchException jsche) {
             //Disconnect session, so a new one can be reconstructed next time
             destroySession(uuid);
             throw jsche;
         } finally {
+            lock.unlock();
             //Display stats every 1h
             final Long lastUpdate = cacheStatsElapsedTimeForDebugging.get();
             final long currentTimeMillis = System.currentTimeMillis();
@@ -220,6 +235,8 @@ public final class SSHUtils {
                         "put_count=" + SSH_SESSIONS_LRU_CACHE.putCount() + ", " +
                         "cache size=" + SSH_SESSIONS_LRU_CACHE.size() + ", \n" +
                         "snapshot=" + SSH_SESSIONS_LRU_CACHE.snapshot());
+                Log.d(TAG, "=== sshSessionsCacheLock ===\n" +
+                        "holdCount=" + lock.getHoldCount());
                 cacheStatsElapsedTimeForDebugging.set(currentTimeMillis);
             }
         }
@@ -231,20 +248,22 @@ public final class SSHUtils {
         // at this point, we can just make a copy of the existing router and assign it a random UUID
         final Router routerCopy = new Router(router);
         final String tempUuid = UUID.randomUUID().toString();
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(tempUuid);
+        reentrantLock.lock();
         try {
             routerCopy.setUuid(tempUuid);
 
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
-                if (jschSession == null) {
-                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-                }
-                if (!jschSession.isConnected()) {
-                    jschSession.connect(connectTimeoutMillis);
-                }
+            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(connectTimeoutMillis);
+            }
+
         } finally {
             //Now drop from LRU Cache
+            reentrantLock.unlock();
             destroySession(tempUuid);
         }
     }
@@ -257,33 +276,34 @@ public final class SSHUtils {
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        reentrantLock.lock();
         try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
-                if (jschSession == null) {
-                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-                }
-                if (!jschSession.isConnected()) {
-                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
-                }
-
-                channelExec = (ChannelExec) jschSession.openChannel("exec");
-
-                channelExec.setCommand(commandsJoiner.join(cmdToExecute));
-                channelExec.setInputStream(null);
-                in = channelExec.getInputStream();
-                err = channelExec.getErrStream();
-                channelExec.connect();
-
-                final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
-                Log.d(TAG, "output: " + Arrays.toString(output));
-
-                //FIXME does not return the actual status
-//            return channelExec.getExitStatus();
-                return 0;
+            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
             }
 
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+
+            channelExec.setCommand(commandsJoiner.join(cmdToExecute));
+            channelExec.setInputStream(null);
+            in = channelExec.getInputStream();
+            err = channelExec.getErrStream();
+            channelExec.connect();
+
+            final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+            Log.d(TAG, "output: " + Arrays.toString(output));
+
+            //FIXME does not return the actual status
+//            return channelExec.getExitStatus();
+            return 0;
+
         } finally {
+            reentrantLock.unlock();
             Closeables.closeQuietly(in);
             Closeables.closeQuietly(err);
             if (channelExec != null) {
@@ -320,28 +340,29 @@ public final class SSHUtils {
         @Nullable ChannelExec channelExec = null;
         @Nullable InputStream in = null;
         @Nullable InputStream err = null;
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        reentrantLock.lock();
         try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
-                if (jschSession == null) {
-                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-                }
-                if (!jschSession.isConnected()) {
-                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
-                }
-
-                channelExec = (ChannelExec) jschSession.openChannel("exec");
-
-                channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
-                channelExec.setInputStream(null);
-                in = channelExec.getInputStream();
-                err = channelExec.getErrStream();
-                channelExec.connect();
-
-                return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
             }
 
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+
+            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+            channelExec.setInputStream(null);
+            in = channelExec.getInputStream();
+            err = channelExec.getErrStream();
+            channelExec.connect();
+
+            return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+
         } finally {
+            reentrantLock.unlock();
             Closeables.closeQuietly(in);
             Closeables.closeQuietly(err);
             if (channelExec != null) {
@@ -438,78 +459,78 @@ public final class SSHUtils {
                 "scp -q -o StrictHostKeyChecking=no -t " + toRemotePath;
         Log.d(TAG, "scpTo: command=[" + command + "]");
 
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        reentrantLock.lock();
         try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
-                if (jschSession == null) {
-                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
-                }
-                if (!jschSession.isConnected()) {
-                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
-                }
-
-                channelExec = (ChannelExec) jschSession.openChannel("exec");
-                channelExec.setCommand(command);
-
-                /*
-                 * Forcing allocation of a pseudo-TTY prevents SCP from working
-                 * correctly
-                 */
-                channelExec.setPty(false);
-
-                // get I/O streams for remote scp
-                out = channelExec.getOutputStream();
-                in = channelExec.getInputStream();
-
-                channelExec.connect();
-
-                final int checkAck = checkAck(in);
-                if (checkAck != 0) {
-                    return closeChannel(channelExec, out);
-                }
-
-                final File _lfile = new File(fromLocalPath);
-                // send "C0644 filesize filename", where filename should not include
-                // '/'
-                final long filesize = _lfile.length();
-                command = "C0644 " + filesize + " ";
-                if (fromLocalPath.lastIndexOf('/') > 0) {
-                    command += fromLocalPath
-                            .substring(fromLocalPath.lastIndexOf('/') + 1);
-                } else {
-                    command += fromLocalPath;
-                }
-                command += "\n";
-
-                out.write(command.getBytes(Charset.forName("UTF-8")));
-                out.flush();
-                if (checkAck(in) != 0) {
-                    return closeChannel(channelExec, out);
-                }
-
-                // send a content of lfile
-                fis = new FileInputStream(fromLocalPath);
-                final byte[] buf = new byte[1024];
-                while (true) {
-                    final int len = fis.read(buf, 0, buf.length);
-                    if (len <= 0) {
-                        break;
-                    }
-                    out.write(buf, 0, len); // out.flush();
-                }
-                fis.close();
-                fis = null;
-                // send '\0'
-                buf[0] = 0;
-                out.write(buf, 0, 1);
-                out.flush();
-
-                // checkAck(in);
-                if (checkAck(in) != 0) {
-                    return closeChannel(channelExec, out);
-                }
-                out.close();
+            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+            }
+
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+            channelExec.setCommand(command);
+
+            /*
+             * Forcing allocation of a pseudo-TTY prevents SCP from working
+             * correctly
+             */
+            channelExec.setPty(false);
+
+            // get I/O streams for remote scp
+            out = channelExec.getOutputStream();
+            in = channelExec.getInputStream();
+
+            channelExec.connect();
+
+            final int checkAck = checkAck(in);
+            if (checkAck != 0) {
+                return closeChannel(channelExec, out);
+            }
+
+            final File _lfile = new File(fromLocalPath);
+            // send "C0644 filesize filename", where filename should not include
+            // '/'
+            final long filesize = _lfile.length();
+            command = "C0644 " + filesize + " ";
+            if (fromLocalPath.lastIndexOf('/') > 0) {
+                command += fromLocalPath
+                        .substring(fromLocalPath.lastIndexOf('/') + 1);
+            } else {
+                command += fromLocalPath;
+            }
+            command += "\n";
+
+            out.write(command.getBytes(Charset.forName("UTF-8")));
+            out.flush();
+            if (checkAck(in) != 0) {
+                return closeChannel(channelExec, out);
+            }
+
+            // send a content of lfile
+            fis = new FileInputStream(fromLocalPath);
+            final byte[] buf = new byte[1024];
+            while (true) {
+                final int len = fis.read(buf, 0, buf.length);
+                if (len <= 0) {
+                    break;
+                }
+                out.write(buf, 0, len); // out.flush();
+            }
+            fis.close();
+            fis = null;
+            // send '\0'
+            buf[0] = 0;
+            out.write(buf, 0, 1);
+            out.flush();
+
+            // checkAck(in);
+            if (checkAck(in) != 0) {
+                return closeChannel(channelExec, out);
+            }
+            out.close();
 
         } catch (final IOException ioe) {
             try {
@@ -523,6 +544,7 @@ public final class SSHUtils {
             return false;
 
         } finally {
+            reentrantLock.unlock();
             Closeables.closeQuietly(in);
 //            Closeables.closeQuietly(err);
             if (channelExec != null && channelExec.isConnected()) {
@@ -553,113 +575,113 @@ public final class SSHUtils {
                 "scp -q -o StrictHostKeyChecking=no -f " + fromRemotePath;
         Log.d(TAG, "scpTo: command=[" + command + "]");
 
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        reentrantLock.lock();
         try {
-            synchronized (SSH_SESSIONS_LRU_CACHE) {
-                @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
-                if (jschSession == null) {
-                    throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+            }
+
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+            channelExec.setCommand(command);
+
+            /*
+             * Forcing allocation of a pseudo-TTY prevents SCP from working
+             * correctly
+             */
+            channelExec.setPty(false);
+
+            // get I/O streams for remote scp
+            out = channelExec.getOutputStream();
+            in = channelExec.getInputStream();
+
+            channelExec.connect();
+
+            byte[] buf = new byte[1024];
+
+            // send '\0'
+            buf[0] = 0;
+            out.write(buf, 0, 1);
+            out.flush();
+
+            while (true) {
+                int c = checkAck(in);
+                if (c != 'C') {
+                    break;
                 }
-                if (!jschSession.isConnected()) {
-                    jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+
+                // read '0644 '
+                in.read(buf, 0, 5);
+
+                long filesize = 0L;
+                while (true) {
+                    if (in.read(buf, 0, 1) < 0) {
+                        // error
+                        break;
+                    }
+                    if (buf[0] == ' ') {
+                        break;
+                    }
+                    filesize = filesize * 10L + (long) (buf[0] - '0');
                 }
 
-                channelExec = (ChannelExec) jschSession.openChannel("exec");
-                channelExec.setCommand(command);
+                String file = null;
+                for (int i = 0; ; i++) {
+                    in.read(buf, i, 1);
+                    if (buf[i] == (byte) 0x0a) {
+                        file = new String(buf, 0, i, Charset.defaultCharset());
+                        break;
+                    }
+                }
 
-                /*
-                 * Forcing allocation of a pseudo-TTY prevents SCP from working
-                 * correctly
-                 */
-                channelExec.setPty(false);
-
-                // get I/O streams for remote scp
-                out = channelExec.getOutputStream();
-                in = channelExec.getInputStream();
-
-                channelExec.connect();
-
-                byte[] buf = new byte[1024];
+                //System.out.println("filesize="+filesize+", file="+file);
 
                 // send '\0'
                 buf[0] = 0;
                 out.write(buf, 0, 1);
                 out.flush();
 
+                // read a content of lfile
+                fos = new FileOutputStream(toLocalPath);
+                int foo;
                 while (true) {
-                    int c = checkAck(in);
-                    if (c != 'C') {
+                    if (buf.length < filesize) {
+                        foo = buf.length;
+                    } else {
+                        foo = (int) filesize;
+                    }
+                    foo = in.read(buf, 0, foo);
+                    if (foo < 0) {
+                        // error
                         break;
                     }
-
-                    // read '0644 '
-                    in.read(buf, 0, 5);
-
-                    long filesize = 0L;
-                    while (true) {
-                        if (in.read(buf, 0, 1) < 0) {
-                            // error
-                            break;
-                        }
-                        if (buf[0] == ' ') {
-                            break;
-                        }
-                        filesize = filesize * 10L + (long) (buf[0] - '0');
+                    fos.write(buf, 0, foo);
+                    filesize -= foo;
+                    if (filesize == 0L) {
+                        break;
                     }
+                }
+                fos.close();
+                fos = null;
 
-                    String file = null;
-                    for (int i = 0; ; i++) {
-                        in.read(buf, i, 1);
-                        if (buf[i] == (byte) 0x0a) {
-                            file = new String(buf, 0, i, Charset.defaultCharset());
-                            break;
-                        }
-                    }
-
-                    //System.out.println("filesize="+filesize+", file="+file);
-
-                    // send '\0'
-                    buf[0] = 0;
-                    out.write(buf, 0, 1);
-                    out.flush();
-
-                    // read a content of lfile
-                    fos = new FileOutputStream(toLocalPath);
-                    int foo;
-                    while (true) {
-                        if (buf.length < filesize) {
-                            foo = buf.length;
-                        } else {
-                            foo = (int) filesize;
-                        }
-                        foo = in.read(buf, 0, foo);
-                        if (foo < 0) {
-                            // error
-                            break;
-                        }
-                        fos.write(buf, 0, foo);
-                        filesize -= foo;
-                        if (filesize == 0L) {
-                            break;
-                        }
-                    }
-                    fos.close();
-                    fos = null;
-
-                    if (checkAck(in) != 0) {
-                        return false;
-                    }
-
-                    // send '\0'
-                    buf[0] = 0;
-                    out.write(buf, 0, 1);
-                    out.flush();
+                if (checkAck(in) != 0) {
+                    return false;
                 }
 
-                out.close();
-                in.close();
-                channelExec.disconnect();
-
+                // send '\0'
+                buf[0] = 0;
+                out.write(buf, 0, 1);
+                out.flush();
             }
+
+            out.close();
+            in.close();
+            channelExec.disconnect();
+
         } catch (final IOException ioe) {
             try {
                 if (fos != null) {
@@ -671,6 +693,7 @@ public final class SSHUtils {
             }
             return false;
         } finally {
+            reentrantLock.unlock();
             Closeables.closeQuietly(in);
 //            Closeables.closeQuietly(err);
             if (channelExec != null && channelExec.isConnected()) {
