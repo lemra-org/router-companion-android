@@ -50,9 +50,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="end|bottom"
             android:layout_marginBottom="@dimen/add_button_margin"
             android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"
             android:background="@drawable/shape"
             android:contentDescription="@string/router_add_new"
+            android:elevation="@dimen/elevation_low"
             android:src="@android:drawable/ic_input_add"
             android:tint="@android:color/white" />
 

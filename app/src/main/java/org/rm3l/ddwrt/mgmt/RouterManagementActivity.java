@@ -22,11 +22,13 @@
 
 package org.rm3l.ddwrt.mgmt;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +53,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -182,8 +185,21 @@ public class RouterManagementActivity
         mRecyclerView.addOnItemTouchListener(this);
         gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
 
-        addNewButton = (ImageButton) findViewById(R.id.router_list_add);
+        final View addNewButtonView = findViewById(R.id.router_list_add);
+        addNewButton = (ImageButton) addNewButtonView;
         addNewButton.setOnClickListener(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            addNewButtonView.setOutlineProvider(new ViewOutlineProvider() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    final int diameter = getResources().getDimensionPixelSize(R.dimen.diameter);
+                    outline.setOval(0, 0, diameter, diameter);
+                }
+            });
+            addNewButtonView.setClipToOutline(true);
+        }
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
