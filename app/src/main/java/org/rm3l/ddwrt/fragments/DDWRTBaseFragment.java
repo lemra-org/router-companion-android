@@ -548,6 +548,8 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
             final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
 
+            final Resources resources = fragmentActivity.getResources();
+
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
@@ -580,6 +582,8 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                 viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
                 final CardView cardView = new CardView(fragmentActivity);
+
+                cardView.setContentPadding(15, 5, 15, 5);
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
                 cardView.setCardBackgroundColor(themeBackgroundColor);

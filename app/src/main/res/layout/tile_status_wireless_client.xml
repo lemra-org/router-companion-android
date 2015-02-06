@@ -29,6 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardPreventCornerOverlap="true"
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+    card_view:contentPaddingLeft="10dp"
     card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
     card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
