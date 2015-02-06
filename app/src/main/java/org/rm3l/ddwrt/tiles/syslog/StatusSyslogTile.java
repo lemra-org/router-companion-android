@@ -27,6 +27,8 @@ package org.rm3l.ddwrt.tiles.syslog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -48,8 +50,6 @@ import android.widget.Toast;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -83,8 +83,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private final String mGrep;
     private final boolean mDisplayStatus;
 
-    public StatusSyslogTile(@NotNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
-                            @NotNull Bundle arguments, @Nullable final String tileTitle,
+    public StatusSyslogTile(@NonNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
+                            @NonNull Bundle arguments, @Nullable final String tileTitle,
                             final boolean displayStatus, Router router, @Nullable final String grep) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_syslog, R.id.tile_status_router_syslog_togglebutton);
         this.mGrep = grep;
@@ -126,16 +126,16 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
                     if (DDWRTCompanionConstants.TEST_MODE) {
-                        @NotNull final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
+                        final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
                                 "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
                                 "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +
                                 "Refrigerate roasted lobsters in a cooker with hollandaise sauce for about an hour to enhance their thickness." +
                                 "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n" +
                                 "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
                         nvramInfo.setProperty(SYSLOG, syslogData);
-                        nvramInfo.setProperty(SYSLOGD_ENABLE,String.valueOf(new Random().nextInt()));
+                        nvramInfo.setProperty(SYSLOGD_ENABLE, String.valueOf(new Random().nextInt()));
                     } else {
                         NVRAMInfo nvramInfoTmp = null;
                         try {
@@ -150,7 +150,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                 //Get last log lines
                                 logs = SSHUtils.getManualProperty(mRouter,
                                         mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
-                                                MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "":" | grep -i -E \"" + mGrep + "\""));
+                                                MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\""));
                             } finally {
                                 if (logs != null) {
                                     nvramInfo.setProperty(SYSLOG, LOGS_JOINER.join(logs));
@@ -161,7 +161,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -175,7 +175,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
@@ -192,9 +192,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -347,10 +347,10 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
-    @NotNull
-    private Spanned findAndHighlightOutput(@NotNull final CharSequence text, @NotNull final String textToFind) {
+    @NonNull
+    private Spanned findAndHighlightOutput(@NonNull final CharSequence text, @NonNull final String textToFind) {
         final Matcher matcher = Pattern.compile("(" + Pattern.quote(textToFind) + ")", Pattern.CASE_INSENSITIVE)
-                                    .matcher(text);
+                .matcher(text);
         return Html.fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_YELLOW_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
                 .replaceAll(Pattern.quote("\n"), Matcher.quoteReplacement("<br/>")));
     }

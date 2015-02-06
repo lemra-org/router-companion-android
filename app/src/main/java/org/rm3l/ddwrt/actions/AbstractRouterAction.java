@@ -23,24 +23,28 @@ package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
 /**
  * Abstract Router Action async task
+ *
  * @param <T> Type of async task result
  */
 public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, AbstractRouterAction.RouterActionResult> {
 
-    @Nullable private final RouterActionListener listener;
-    @NotNull private final RouterAction routerAction;
-    @NotNull protected final SharedPreferences globalSharedPreferences;
+    @NonNull
+    protected final SharedPreferences globalSharedPreferences;
+    @Nullable
+    private final RouterActionListener listener;
+    @NonNull
+    private final RouterAction routerAction;
 
-    protected AbstractRouterAction(@Nullable final RouterActionListener listener, @NotNull final RouterAction routerAction,
-                                   @NotNull final SharedPreferences globalSharedPreferences) {
+    protected AbstractRouterAction(@Nullable final RouterActionListener listener, @NonNull final RouterAction routerAction,
+                                   @NonNull final SharedPreferences globalSharedPreferences) {
         this.listener = listener;
         this.routerAction = routerAction;
         this.globalSharedPreferences = globalSharedPreferences;
@@ -80,8 +84,8 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
         return null;
     }
 
-    @NotNull
-    protected abstract RouterActionResult doActionInBackground(@NotNull final Router router);
+    @NonNull
+    protected abstract RouterActionResult doActionInBackground(@NonNull final Router router);
 
     protected class RouterActionResult {
         private final T result;

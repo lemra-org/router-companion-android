@@ -37,6 +37,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -59,7 +60,6 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -90,7 +90,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     private RouterMgmtDialogListener mListener;
 
     private static Router buildRouter(AlertDialog d) throws IOException {
-        @NotNull final Router router = new Router();
+        final Router router = new Router();
         final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
@@ -138,12 +138,12 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     protected abstract CharSequence getDialogMessage();
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     protected abstract CharSequence getDialogTitle();
 
     protected abstract CharSequence getPositiveButtonMsg();
 
-    protected abstract void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error);
+    protected abstract void onPositiveButtonActionSuccess(@NonNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,15 +155,15 @@ public abstract class AbstractRouterMgmtDialogFragment
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
 
-        @NotNull AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         // Get the layout inflater
-        @NotNull final LayoutInflater inflater = activity.getLayoutInflater();
+        final LayoutInflater inflater = activity.getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
@@ -318,7 +318,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     }
 
     @Override
-    public void onAttach(@NotNull Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
         // Verify that the host activity implements the callback interface
         try {
@@ -386,8 +386,8 @@ public abstract class AbstractRouterMgmtDialogFragment
     }
 
     @Nullable
-    private Router doCheckConnectionToRouter(@NotNull AlertDialog d) throws Exception {
-        @NotNull final Router router = buildRouter(d);
+    private Router doCheckConnectionToRouter(@NonNull AlertDialog d) throws Exception {
+        final Router router = buildRouter(d);
 
         //This will throw an exception if connection could not be established!
         SSHUtils.checkConnection(mGlobalSharedPreferences, router, 10000);
@@ -395,8 +395,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         return router;
     }
 
-    private boolean validateForm(@NotNull AlertDialog d) {
-        @NotNull final EditText ipAddrView = (EditText) d.findViewById(R.id.router_add_ip);
+    private boolean validateForm(@NonNull AlertDialog d) {
+        final EditText ipAddrView = (EditText) d.findViewById(R.id.router_add_ip);
 
         final Editable ipAddrViewText = ipAddrView.getText();
 
@@ -410,11 +410,11 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
 
         boolean validPort;
-        @NotNull final EditText portView = (EditText) d.findViewById(R.id.router_add_port);
+        final EditText portView = (EditText) d.findViewById(R.id.router_add_port);
         try {
             final String portStr = portView.getText().toString();
             validPort = (!isNullOrEmpty(portStr) && (Integer.parseInt(portStr) > 0));
-        } catch (@NotNull final Exception e) {
+        } catch (@NonNull final Exception e) {
             e.printStackTrace();
             validPort = false;
         }
@@ -425,7 +425,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             return false;
         }
 
-        @NotNull final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
+        final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
             displayMessage(getString(R.string.router_add_username_invalid), ALERT);
             sshUsernameView.requestFocus();
@@ -436,7 +436,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         final int checkedAuthMethodRadioButtonId = ((RadioGroup) d.findViewById(R.id.router_add_ssh_auth_method)).getCheckedRadioButtonId();
         if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_password) {
             //Check password
-            @NotNull final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
+            final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
             if (isNullOrEmpty(sshPasswordView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_password_invalid), ALERT);
                 sshPasswordView.requestFocus();
@@ -445,7 +445,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             }
         } else if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_privkey) {
             //Check privkey
-            @NotNull final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
+            final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
             if (isNullOrEmpty(sshPrivKeyView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_privkey_invalid), ALERT);
                 sshPrivKeyView.requestFocus();
@@ -469,7 +469,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         if (isNullOrEmpty(msg)) {
             return;
         }
-        @org.jetbrains.annotations.Nullable final AlertDialog d = (AlertDialog) getDialog();
+        final AlertDialog d = (AlertDialog) getDialog();
         Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView() : d.findViewById(R.id.router_add_notification_viewgroup))).show();
     }
 
@@ -486,13 +486,12 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     }
 
-    @org.jetbrains.annotations.Nullable
-    protected abstract Router onPositiveButtonClickHandler(@NotNull final Router router);
+    @Nullable
+    protected abstract Router onPositiveButtonClickHandler(@NonNull final Router router);
 
     protected class CheckRouterConnectionAsyncTask extends AsyncTask<AlertDialog, Void, CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router>> {
 
         private final String routerIpOrDns;
-        @org.jetbrains.annotations.Nullable
         private AlertDialog checkingConnectionDialog = null;
         private boolean checkActualConnection;
 
@@ -510,7 +509,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             }
         }
 
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         @Override
         protected CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> doInBackground(AlertDialog... dialogs) {
             if (!checkActualConnection) {
@@ -522,8 +521,8 @@ public abstract class AbstractRouterMgmtDialogFragment
                     return new CheckRouterConnectionAsyncTaskResult<>(null, e);
                 }
             }
-            @org.jetbrains.annotations.Nullable Router result = null;
-            @org.jetbrains.annotations.Nullable Exception exception = null;
+            Router result = null;
+            Exception exception = null;
             try {
                 result = doCheckConnectionToRouter(dialogs[0]);
             } catch (Exception e) {
@@ -535,13 +534,13 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
 
         @Override
-        protected void onPostExecute(@NotNull CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
+        protected void onPostExecute(@NonNull CheckRouterConnectionAsyncTask.CheckRouterConnectionAsyncTaskResult<Router> result) {
             if (checkingConnectionDialog != null) {
                 checkingConnectionDialog.cancel();
             }
 
             final Exception e = result.getException();
-            @org.jetbrains.annotations.Nullable Router router = result.getResult();
+            Router router = result.getResult();
             if (e != null) {
                 final Throwable rootCause = Throwables.getRootCause(e);
                 displayMessage(getString(R.string.router_add_connection_unsuccessful) +
@@ -552,7 +551,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                         router.toString() : e.getMessage(), e));
             } else {
                 if (router != null) {
-                    @org.jetbrains.annotations.Nullable AlertDialog daoAlertDialog = null;
+                    AlertDialog daoAlertDialog = null;
                     try {
                         //Register or update router
                         daoAlertDialog = Utils.buildAlertDialog(getActivity(), null,
@@ -614,7 +613,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     }
 
     private class DDWRTCompanionExceptionForConnectionChecksException extends DDWRTCompanionException {
-        private DDWRTCompanionExceptionForConnectionChecksException(@org.jetbrains.annotations.Nullable String detailMessage, @org.jetbrains.annotations.Nullable Throwable throwable) {
+        private DDWRTCompanionExceptionForConnectionChecksException(@Nullable String detailMessage, @Nullable Throwable throwable) {
             super(detailMessage, throwable);
         }
     }

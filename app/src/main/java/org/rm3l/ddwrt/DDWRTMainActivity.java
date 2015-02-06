@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -54,8 +55,6 @@ import com.cocosw.undobar.UndoBarController;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
@@ -101,9 +100,9 @@ public class DDWRTMainActivity extends ActionBarActivity
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
-    @NotNull
+    @NonNull
     private DDWRTCompanionDAO dao;
-    @NotNull
+    @NonNull
     private String mRouterUuid;
     private Menu optionsMenu;
     private CharSequence mDrawerTitle;
@@ -115,11 +114,11 @@ public class DDWRTMainActivity extends ActionBarActivity
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
     private long mCurrentTheme;
-    @NotNull
+    @NonNull
     private SharedPreferences mPreferences;
-    @NotNull
+    @NonNull
     private SharedPreferences mGlobalPreferences;
-    @NotNull
+    @NonNull
     private Router mRouter;
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
@@ -320,7 +319,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(
-            @NotNull MenuItem item) {
+            @NonNull MenuItem item) {
 
         final String routerName = mRouter.getName();
         final String displayName = isNullOrEmpty(routerName) ? mRouter.getRemoteIpAddress() : routerName;
@@ -614,14 +613,14 @@ public class DDWRTMainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
+    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
         Utils.displayMessage(this,
                 String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                 Style.CONFIRM);
     }
 
     @Override
-    public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
         Utils.displayMessage(this,
                 String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                 Style.ALERT);

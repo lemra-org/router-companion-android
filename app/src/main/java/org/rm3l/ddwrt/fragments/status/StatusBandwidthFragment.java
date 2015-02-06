@@ -23,11 +23,10 @@
 package org.rm3l.ddwrt.fragments.status;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthWANMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 

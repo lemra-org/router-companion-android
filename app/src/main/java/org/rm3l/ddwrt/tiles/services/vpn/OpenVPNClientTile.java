@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -42,8 +43,6 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -110,7 +109,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
     private NVRAMInfo mNvramInfo;
 
-    public OpenVPNClientTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public OpenVPNClientTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_client, R.id.tile_services_openvpn_client_togglebutton);
     }
 
@@ -141,7 +140,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                     mNvramInfo = null;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
 
@@ -279,15 +278,15 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
 
             }
 
-            @NotNull
-            private Map<WirelessIfaceTile.IfaceStatsType, Long> getIfaceRxAndTxRates(@NotNull final String phyIface) {
+            @NonNull
+            private Map<WirelessIfaceTile.IfaceStatsType, Long> getIfaceRxAndTxRates(@NonNull final String phyIface) {
                 final Map<WirelessIfaceTile.IfaceStatsType, Long> result = Maps.newHashMapWithExpectedSize(2);
                 final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
                 final String rxBytesCmd = String
@@ -316,7 +315,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 return result;
             }
 
-            @NotNull
+            @NonNull
             private long[] parseFloatDataFromOutput(@Nullable final String[] output) {
                 if (output == null || output.length == 0) {
                     throw new IllegalArgumentException("Output null or empty");
@@ -357,9 +356,9 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_openvpn_client_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_openvpn_client_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -397,7 +396,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
-    private void updateTileDisplayData(@NotNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
+    private void updateTileDisplayData(@NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {
 
         //State
         final String statusKey = \"fake-key\";
@@ -616,7 +615,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router,
+    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router,
                                       @Nullable final Object returnData) {
         Utils.displayMessage(mParentFragmentActivity,
                 "Success",
@@ -635,7 +634,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     }
 
     @Override
-    public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
         Utils.displayMessage(mParentFragmentActivity,
                 String.format("Error: %s", ExceptionUtils.getRootCauseMessage(exception)),
                 Style.ALERT);

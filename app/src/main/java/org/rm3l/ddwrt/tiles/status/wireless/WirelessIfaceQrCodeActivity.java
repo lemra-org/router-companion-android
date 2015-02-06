@@ -31,6 +31,8 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.view.Menu;
@@ -46,8 +48,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.Utils;
@@ -132,7 +132,7 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     }
 
     @Nullable
-    private static String guessAppropriateEncoding(@NotNull final CharSequence contents) {
+    private static String guessAppropriateEncoding(@NonNull final CharSequence contents) {
         // Very crude at the moment
         for (int i = 0; i < contents.length(); i++) {
             if (contents.charAt(i) > 0xFF) {

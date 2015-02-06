@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.resources;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
@@ -35,7 +35,7 @@ import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
  */
 public class Device implements Comparable<Device> {
 
-    @NotNull
+    @NonNull
     private final String macAddress;
 
     @Nullable
@@ -68,7 +68,7 @@ public class Device implements Comparable<Device> {
      *
      * @param macAddress the device MAC
      */
-    public Device(@NotNull final String macAddress) {
+    public Device(@NonNull final String macAddress) {
         this.macAddress = macAddress;
     }
 
@@ -86,7 +86,7 @@ public class Device implements Comparable<Device> {
      * @param alias the alias to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Device setAlias(@Nullable final String alias) {
         this.alias = alias;
         return this;
@@ -106,7 +106,7 @@ public class Device implements Comparable<Device> {
      * @param ipAddress the IP to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Device setIpAddress(@Nullable final String ipAddress) {
         this.ipAddress = ipAddress;
         return this;
@@ -115,7 +115,7 @@ public class Device implements Comparable<Device> {
     /**
      * @return the MAC
      */
-    @NotNull
+    @NonNull
     public String getMacAddress() {
         return macAddress;
     }
@@ -128,14 +128,14 @@ public class Device implements Comparable<Device> {
         return systemName;
     }
 
-    @NotNull
+    @NonNull
     public Device setSystemName(@Nullable final String systemName) {
         this.systemName = systemName;
         return this;
     }
 
     @Override
-    public int compareTo(@NotNull final Device device) {
+    public int compareTo(@NonNull final Device device) {
         return this.macAddress.compareTo(device.macAddress);
 //        if (this.macAddress == null) {
 //            if (device.alias == null) {
@@ -152,7 +152,7 @@ public class Device implements Comparable<Device> {
     }
 
     @SuppressWarnings("ConstantConditions")
-    @NotNull
+    @NonNull
     public String getName() {
         if (!isNullOrEmpty(this.alias)) {
             return this.alias;
@@ -190,7 +190,7 @@ public class Device implements Comparable<Device> {
         return macAddress.hashCode();
     }
 
-    @NotNull
+    @NonNull
     public WANAccessState getWanAccessState() {
         return wanAccessState;
     }

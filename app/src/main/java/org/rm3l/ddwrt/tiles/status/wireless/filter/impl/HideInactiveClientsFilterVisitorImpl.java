@@ -21,10 +21,11 @@
  */
 package org.rm3l.ddwrt.tiles.status.wireless.filter.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.ClientsFilterVisitor;
 
@@ -38,9 +39,9 @@ public class HideInactiveClientsFilterVisitorImpl implements ClientsFilterVisito
         this.hideInactive = hideInactive;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public Set<Device> visit(@NotNull Set<Device> devices) {
+    public Set<Device> visit(@NonNull Set<Device> devices) {
         return Sets.filter(devices, new Predicate<Device>() {
             @Override
             public boolean apply(Device device) {

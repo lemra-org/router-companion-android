@@ -23,6 +23,8 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -37,8 +39,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -159,7 +159,7 @@ public final class SSHUtils {
     }
 
     @Nullable
-    private static Session getSSHSession(@NotNull final SharedPreferences globalSharedPreferences,
+    private static Session getSSHSession(@NonNull final SharedPreferences globalSharedPreferences,
                                          @Nullable final Router router,
                                          @Nullable final Integer connectTimeout) throws Exception {
 
@@ -180,8 +180,8 @@ public final class SSHUtils {
                 return sessionCached;
             }
 
-            @Nullable final String privKey = \"fake-key\";
-            @NotNull final JSch jsch = new JSch();
+            final String privKey = \"fake-key\";
+            final JSch jsch = new JSch();
 
             final String passwordPlain = router.getPasswordPlain();
             final Session jschSession;
@@ -209,7 +209,7 @@ public final class SSHUtils {
             //Set known hosts file to preferences file
             //        jsch.setKnownHosts();
 
-            @NotNull final Properties config = new Properties();
+            final Properties config = new Properties();
             config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
             jschSession.setConfig(config);
 
@@ -242,8 +242,8 @@ public final class SSHUtils {
         }
     }
 
-    public static void checkConnection(@NotNull SharedPreferences globalSharedPreferences,
-                                       @NotNull final Router router, final int connectTimeoutMillis) throws Exception {
+    public static void checkConnection(@NonNull SharedPreferences globalSharedPreferences,
+                                       @NonNull final Router router, final int connectTimeoutMillis) throws Exception {
         // This is used that for a temporary connection check
         // at this point, we can just make a copy of the existing router and assign it a random UUID
         final Router routerCopy = new Router(router);
@@ -253,7 +253,7 @@ public final class SSHUtils {
         try {
             routerCopy.setUuid(tempUuid);
 
-            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
+            Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -268,18 +268,18 @@ public final class SSHUtils {
         }
     }
 
-    public static int runCommands(@NotNull SharedPreferences globalSharedPreferences,
-                                  @NotNull final Router router, @NotNull final Joiner commandsJoiner, @NotNull final String... cmdToExecute)
+    public static int runCommands(@NonNull SharedPreferences globalSharedPreferences,
+                                  @NonNull final Router router, @NonNull final Joiner commandsJoiner, @NonNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
-        @Nullable ChannelExec channelExec = null;
-        @Nullable InputStream in = null;
-        @Nullable InputStream err = null;
+        ChannelExec channelExec = null;
+        InputStream in = null;
+        InputStream err = null;
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            @Nullable Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -313,14 +313,14 @@ public final class SSHUtils {
 
     }
 
-    public static int runCommands(@NotNull SharedPreferences globalSharedPreferences,
-                                  @NotNull final Router router, @NotNull final String... cmdToExecute)
+    public static int runCommands(@NonNull SharedPreferences globalSharedPreferences,
+                                  @NonNull final Router router, @NonNull final String... cmdToExecute)
             throws Exception {
         return runCommands(globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
-    public static String[] execCommandOverTelnet(@NotNull final Router router, SharedPreferences globalPreferences,
-                                                 final int telnetPort, @NotNull final String... cmdToExecute) throws Exception {
+    public static String[] execCommandOverTelnet(@NonNull final Router router, SharedPreferences globalPreferences,
+                                                 final int telnetPort, @NonNull final String... cmdToExecute) throws Exception {
         //( echo "log 15"; sleep 1 ) | telnet localhost 16
         final List<String> cmdToRun = Lists.newArrayList();
         if (cmdToExecute.length > 0) {
@@ -334,16 +334,16 @@ public final class SSHUtils {
     }
 
     @Nullable
-    public static String[] getManualProperty(@NotNull final Router router, SharedPreferences globalPreferences, @NotNull final String... cmdToExecute) throws Exception {
+    public static String[] getManualProperty(@NonNull final Router router, SharedPreferences globalPreferences, @NonNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
-        @Nullable ChannelExec channelExec = null;
-        @Nullable InputStream in = null;
-        @Nullable InputStream err = null;
+        ChannelExec channelExec = null;
+        InputStream in = null;
+        InputStream err = null;
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -442,7 +442,7 @@ public final class SSHUtils {
 
 
     public static boolean scpTo(@Nullable final Router router, SharedPreferences globalPreferences,
-                                @NotNull final String fromLocalPath, @NotNull final String toRemotePath)
+                                @NonNull final String fromLocalPath, @NonNull final String toRemotePath)
             throws Exception {
         Log.d(TAG, "scpTo: <router=" + router + " / fromLocalPath=" + fromLocalPath +
                 ", toRemotePath=" + toRemotePath + ">");
@@ -462,7 +462,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -557,7 +557,7 @@ public final class SSHUtils {
     }
 
     public static boolean scpFrom(@Nullable final Router router, SharedPreferences globalPreferences,
-                                  @NotNull final String fromRemotePath, @NotNull final String toLocalPath)
+                                  @NonNull final String fromRemotePath, @NonNull final String toLocalPath)
             throws Exception {
         Log.d(TAG, "scpFrom: <router=" + router + " / fromRemotePath=" + fromRemotePath +
                 ", toLocalPath=" + toLocalPath + ">");
@@ -578,7 +578,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            @Nullable Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -710,7 +710,7 @@ public final class SSHUtils {
      * @return
      * @throws java.io.IOException
      */
-    private static boolean closeChannel(@NotNull final Channel channel, @Nullable final OutputStream out)
+    private static boolean closeChannel(@NonNull final Channel channel, @Nullable final OutputStream out)
             throws IOException {
 
         if (out != null) {
@@ -720,7 +720,7 @@ public final class SSHUtils {
         return false;
     }
 
-    private static int checkAck(@NotNull final InputStream in) throws IOException {
+    private static int checkAck(@NonNull final InputStream in) throws IOException {
         final int b = in.read();
         // b may be 0 for success,
         // 1 for error,

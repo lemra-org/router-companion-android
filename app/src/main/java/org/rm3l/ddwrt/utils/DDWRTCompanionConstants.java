@@ -23,8 +23,8 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.BuildConfig;
 
 import java.io.File;
@@ -77,8 +77,8 @@ public final class DDWRTCompanionConstants {
     private DDWRTCompanionConstants() {
     }
 
-    @NotNull
-    public static File getClientsUsageDataFile(@NotNull final Context context, @NotNull final String routerUuid) {
+    @NonNull
+    public static File getClientsUsageDataFile(@NonNull final Context context, @NonNull final String routerUuid) {
         return new File(context.getFilesDir(),
                 BuildConfig.APPLICATION_ID + "_Usage_" + routerUuid + ".bak");
     }

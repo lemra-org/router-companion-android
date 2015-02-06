@@ -22,11 +22,11 @@
 package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.common.base.Joiner;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -39,23 +39,23 @@ import static org.rm3l.ddwrt.actions.RouterAction.WAKE_ON_LAN;
 
 public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
 
-    @NotNull
+    @NonNull
     private final List<String> mBroadcastAddressCandidates;
 
-    @NotNull
+    @NonNull
     private final Device mDevice;
 
     private final int port;
 
     public WakeOnLANRouterAction(@Nullable RouterActionListener listener,
-                                 @NotNull SharedPreferences globalSharedPreferences,
-                                 @NotNull Device device, @Nullable String... broadcastAddressCandidates) {
+                                 @NonNull SharedPreferences globalSharedPreferences,
+                                 @NonNull Device device, @Nullable String... broadcastAddressCandidates) {
         this(listener, globalSharedPreferences, device, -1, broadcastAddressCandidates);
     }
 
     public WakeOnLANRouterAction(@Nullable RouterActionListener listener,
-                                 @NotNull SharedPreferences globalSharedPreferences,
-                                 @NotNull Device device, int port, @Nullable String... broadcastAddressCandidates) {
+                                 @NonNull SharedPreferences globalSharedPreferences,
+                                 @NonNull Device device, int port, @Nullable String... broadcastAddressCandidates) {
         super(listener, WAKE_ON_LAN, globalSharedPreferences);
         if (broadcastAddressCandidates != null) {
             this.mBroadcastAddressCandidates = Arrays.asList(broadcastAddressCandidates);
@@ -66,9 +66,9 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
         this.port = port;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NotNull Router router) {
+    protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             if (mBroadcastAddressCandidates.isEmpty()) {

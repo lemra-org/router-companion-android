@@ -26,10 +26,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
-
-import org.jetbrains.annotations.NotNull;
 
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static android.util.TypedValue.applyDimension;
@@ -68,7 +67,7 @@ public class ScrollViewWithLimitedHeight extends ScrollView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    private int dpToPx(@NotNull final Resources res, final int dp) {
+    private int dpToPx(@NonNull final Resources res, final int dp) {
         return (int) applyDimension(COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
     }
 

@@ -30,6 +30,8 @@ import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Strings;
@@ -43,8 +45,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -83,7 +83,7 @@ public final class Utils {
     private Utils() {
     }
 
-    public static int getThemeBackgroundColor(@NotNull final Context context, @NotNull final String routerUuid) {
+    public static int getThemeBackgroundColor(@NonNull final Context context, @NonNull final String routerUuid) {
         final long theme = context.getSharedPreferences(routerUuid, MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
         final BiMap<Integer, Integer> colorToThemeInverse = colorToTheme.inverse();
         Integer color = colorToThemeInverse.get(Long.valueOf(theme).intValue());
@@ -93,12 +93,12 @@ public final class Utils {
         return context.getResources().getColor(color);
     }
 
-    public static boolean isThemeLight(@NotNull final Context context, @NotNull final String routerUuid) {
+    public static boolean isThemeLight(@NonNull final Context context, @NonNull final String routerUuid) {
         return (getThemeBackgroundColor(context, routerUuid) ==
                 context.getResources().getColor(R.color.cardview_light_background));
     }
 
-    public static boolean isThemeLight(@NotNull final Context context, final int themeBackgroundColor) {
+    public static boolean isThemeLight(@NonNull final Context context, final int themeBackgroundColor) {
         return (themeBackgroundColor ==
                 context.getResources().getColor(R.color.cardview_light_background));
     }
@@ -107,14 +107,14 @@ public final class Utils {
         return nextLoaderId.getAndIncrement();
     }
 
-    public static void readAll(@NotNull BufferedReader bufferedReader, @NotNull StringBuffer result) throws IOException {
+    public static void readAll(@NonNull BufferedReader bufferedReader, @NonNull StringBuffer result) throws IOException {
         for (String line; (line = bufferedReader.readLine()) != null; ) {
             result.append(line);
         }
     }
 
     @Nullable
-    public static String[] getLines(@NotNull BufferedReader bufferedReader) throws IOException {
+    public static String[] getLines(@NonNull BufferedReader bufferedReader) throws IOException {
         final List<String> lines = Lists.newArrayList();
         for (String line; (line = bufferedReader.readLine()) != null; ) {
             lines.add(line);
@@ -122,10 +122,10 @@ public final class Utils {
         return lines.toArray(new String[lines.size()]);
     }
 
-    @NotNull
-    public static AlertDialog buildAlertDialog(@NotNull final Context context, @Nullable final String title, @NotNull final String msg,
+    @NonNull
+    public static AlertDialog buildAlertDialog(@NonNull final Context context, @Nullable final String title, @NonNull final String msg,
                                                final boolean cancelable, final boolean cancelableOnTouchOutside) {
-        @NotNull final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         if (!Strings.isNullOrEmpty(title)) {
             alertDialog.setTitle(title);
         }
@@ -136,12 +136,12 @@ public final class Utils {
         return alertDialog;
     }
 
-    public static void openDonateActivity(@NotNull final Context context) {
+    public static void openDonateActivity(@NonNull final Context context) {
         final Intent donateIntent = new Intent(context, DonateActivity.class);
         context.startActivity(donateIntent);
     }
 
-    public static void displayMessage(@NotNull final Activity activity, final String msg, final Style style) {
+    public static void displayMessage(@NonNull final Activity activity, final String msg, final Style style) {
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 makeText(activity, msg, style).show();
@@ -149,7 +149,7 @@ public final class Utils {
         });
     }
 
-    @NotNull
+    @NonNull
     public static String intToIp(final int i) {
 
         return (i & 0xFF) + "." +
@@ -176,13 +176,13 @@ public final class Utils {
         return InetAddress.getByAddress(quads);
     }
 
-    @NotNull
-    public static List<Router> dbIdsToPosition(@NotNull final List<Router> routersList) {
+    @NonNull
+    public static List<Router> dbIdsToPosition(@NonNull final List<Router> routersList) {
         final List<Router> routers = Lists.newArrayListWithCapacity(routersList.size());
 
         int i = 0;
         for (final Router router : routersList) {
-            @NotNull final Router r = new Router(router);
+            final Router r = new Router(router);
             r.setId(i++);
             routers.add(r);
         }
@@ -193,7 +193,7 @@ public final class Utils {
         return FileUtils.byteCountToDisplaySize(sizeInBytes);
     }
 
-    public static void reportException(@NotNull final Throwable error) {
+    public static void reportException(@NonNull final Throwable error) {
         ACRA.getErrorReporter().handleSilentException(error);
     }
 
@@ -207,7 +207,7 @@ public final class Utils {
         return str.substring(0, str.length() - 1);
     }
 
-    public static boolean isFirstLaunch(@NotNull final Context context) {
+    public static boolean isFirstLaunch(@NonNull final Context context) {
         final SharedPreferences defaultSharedPreferences = context
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
 
@@ -223,7 +223,7 @@ public final class Utils {
         return isFirstLaunch;
     }
 
-    @NotNull
+    @NonNull
     public static DefaultHttpClient getThreadSafeClient() {
         final DefaultHttpClient client = new DefaultHttpClient();
         final ClientConnectionManager mgr = client.getConnectionManager();

@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -49,8 +51,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -81,10 +81,10 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
-    @NotNull
+    @NonNull
     private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
 
-    public BandwidthMonitoringTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public BandwidthMonitoringTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
@@ -117,7 +117,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
                     return new None();
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return (None) new None().setException(e);
                 }
@@ -125,7 +125,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         };
     }
 
-    @NotNull
+    @NonNull
     private Collection<String> getIfaces() throws Exception {
 
         //TODO TESTS: Real ifaces for DD-WRT Routers
@@ -180,7 +180,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
         }
     }
 
-    public void fillIfaceDataPoint(@NotNull final String iface) {
+    public void fillIfaceDataPoint(@NonNull final String iface) {
 
         if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST) {
             //FIXME TEST MODE
@@ -199,7 +199,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<None> loader, @Nullable None data) {
+    public void onLoadFinished(@NonNull Loader<None> loader, @Nullable None data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
@@ -208,9 +208,9 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -218,7 +218,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
-            @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+            final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
             final Map<String, EvictingQueue<DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
 
             long maxX = System.currentTimeMillis() + 5000;

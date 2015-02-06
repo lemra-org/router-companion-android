@@ -26,9 +26,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -52,7 +52,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
  */
 public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
-    @NotNull
+    @NonNull
     private String mRouterUuid;
 
     @Override

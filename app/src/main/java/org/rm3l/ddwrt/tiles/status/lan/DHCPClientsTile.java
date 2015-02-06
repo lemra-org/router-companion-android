@@ -23,10 +23,10 @@
 package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 
@@ -37,7 +37,7 @@ public class DHCPClientsTile extends WirelessClientsTile {
 
     private static final String LOG_TAG = DHCPClientsTile.class.getSimpleName();
 
-    public DHCPClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public DHCPClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
     }
 

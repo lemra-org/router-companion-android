@@ -27,6 +27,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -38,8 +40,6 @@ import android.view.ViewGroup;
 
 import com.android.common.view.SlidingTabLayout;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
@@ -58,11 +58,11 @@ public class PageSlidingTabStripFragment extends Fragment {
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String SORTING_STRATEGY = "sorting_strategy";
-    @NotNull
+    @NonNull
     private FragmentTabsAdapter mFragmentTabsAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
 
-    @NotNull
+    @NonNull
     private ViewPager mPager;
 
     /**
@@ -75,12 +75,12 @@ public class PageSlidingTabStripFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    @NotNull
-    public static PageSlidingTabStripFragment newInstance(@NotNull final ViewPager.OnPageChangeListener onPageChangeListener,
+    @NonNull
+    public static PageSlidingTabStripFragment newInstance(@NonNull final ViewPager.OnPageChangeListener onPageChangeListener,
                                                           int sectionNumber,
                                                           @Nullable final String routerUuid) {
-        @NotNull final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
-        @NotNull Bundle args = new Bundle();
+        final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
+        final Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
@@ -111,13 +111,13 @@ public class PageSlidingTabStripFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.pager, container, false);
     }
 
     @Override
-    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mPager = (ViewPager) view.findViewById(R.id.viewPager);
@@ -147,7 +147,7 @@ public class PageSlidingTabStripFragment extends Fragment {
 
     private class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
-        @NotNull
+        @NonNull
         final DDWRTBaseFragment[] tabs;
 
         private final Resources resources;

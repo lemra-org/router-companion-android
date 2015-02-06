@@ -31,6 +31,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
@@ -54,8 +56,6 @@ import android.widget.TextView;
 
 import com.suredigit.inappfeedback.FeedbackDialog;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
@@ -99,7 +99,7 @@ public class RouterManagementActivity
 
     private Toolbar mToolbar;
 
-    @NotNull
+    @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
     }
@@ -229,14 +229,14 @@ public class RouterManagementActivity
         if (addRouter instanceof DialogFragment) {
             ((DialogFragment) addRouter).dismiss();
         }
-        @NotNull final DialogFragment addFragment = new RouterAddDialogFragment();
+        final DialogFragment addFragment = new RouterAddDialogFragment();
         addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
     private void openUpdateRouterForm(@Nullable Router router) {
         if (router != null) {
-            @NotNull final DialogFragment updateFragment = new RouterUpdateDialogFragment();
-            @NotNull final Bundle args = new Bundle();
+            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
+            final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             updateFragment.setArguments(args);
             updateFragment.show(getSupportFragmentManager(), UPDATE_ROUTER_FRAGMENT_TAG);
@@ -247,8 +247,8 @@ public class RouterManagementActivity
 
     private void openDuplicateRouterForm(@Nullable Router router) {
         if (router != null) {
-            @NotNull final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
-            @NotNull final Bundle args = new Bundle();
+            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
+            final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             copyFragment.setArguments(args);
             copyFragment.show(getSupportFragmentManager(), "copy_router");
@@ -272,7 +272,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -301,7 +301,7 @@ public class RouterManagementActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void doRefreshRoutersListWithSpinner(@NotNull final RoutersListRefreshCause cause, final Integer position) {
+    private void doRefreshRoutersListWithSpinner(@NonNull final RoutersListRefreshCause cause, final Integer position) {
         setRefreshActionButtonState(true);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -448,7 +448,7 @@ public class RouterManagementActivity
      * mode should be aborted.
      */
     @Override
-    public boolean onCreateActionMode(@NotNull ActionMode actionMode, Menu menu) {
+    public boolean onCreateActionMode(@NonNull ActionMode actionMode, Menu menu) {
         // Inflate a menu resource providing context menu items
         if (mToolbar != null) {
             mToolbar.setVisibility(View.GONE);
@@ -480,8 +480,8 @@ public class RouterManagementActivity
      * invocation should continue.
      */
     @Override
-    public boolean onActionItemClicked(@NotNull final ActionMode actionMode, @NotNull final MenuItem menuItem) {
-        @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+    public boolean onActionItemClicked(@NonNull final ActionMode actionMode, @NonNull final MenuItem menuItem) {
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         switch (menuItem.getItemId()) {
             case R.id.menu_router_list_delete:
                 final int selectedItemCount = adapter.getSelectedItemCount();
@@ -493,7 +493,7 @@ public class RouterManagementActivity
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
-                                @NotNull final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+                                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
                                 int numberOfItems = -1;
                                 for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
                                     numberOfItems = adapter.removeData(selectedItemPositions.get(itemPosition));
@@ -574,7 +574,7 @@ public class RouterManagementActivity
         if (actionMode == null) {
             return;
         }
-        @NotNull final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
         adapter.toggleSelection(idx);
         final int selectedItemCount = adapter.getSelectedItemCount();
 
@@ -603,13 +603,13 @@ public class RouterManagementActivity
 
     private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onSingleTapConfirmed(@NotNull MotionEvent e) {
+        public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
             final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
             onClick(view);
             return super.onSingleTapConfirmed(e);
         }
 
-        public void onLongPress(@NotNull MotionEvent e) {
+        public void onLongPress(@NonNull MotionEvent e) {
             if (actionMode != null) {
                 return;
             }

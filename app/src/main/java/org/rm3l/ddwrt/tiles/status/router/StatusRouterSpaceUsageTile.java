@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.tiles.status.router;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -35,8 +37,6 @@ import android.widget.Toast;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -60,7 +60,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter NVRAM_SIZE_SPLITTER = Splitter.on("size: ").omitEmptyStrings().trimResults();
     private static final String LOG_TAG = StatusRouterSpaceUsageTile.class.getSimpleName();
 
-    public StatusRouterSpaceUsageTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public StatusRouterSpaceUsageTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_space_usage, R.id.tile_status_router_router_space_usage_togglebutton);
 
     }
@@ -80,7 +80,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
-            @NotNull
+            @NonNull
             @Override
             public NVRAMInfo loadInBackground() {
 
@@ -95,15 +95,15 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                    @NotNull final Map<String, ProcMountPoint> mountPointMap = new HashMap<String, ProcMountPoint>();
-                    @NotNull final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
+                    final Map<String, ProcMountPoint> mountPointMap = new HashMap<String, ProcMountPoint>();
+                    final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
 
-                    @Nullable final String[] catProcMounts = SSHUtils.getManualProperty(mRouter,
+                    final String[] catProcMounts = SSHUtils.getManualProperty(mRouter,
                             mGlobalPreferences, "nvram show 2>&1 1>/dev/null", "cat /proc/mounts");
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
-                    @Nullable String cifsMountPoint = null;
+                    String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
                         final List<String> nvramUsageList = NVRAM_SIZE_SPLITTER
                                 .splitToList(catProcMounts[0]);
@@ -112,7 +112,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         int i = 0;
-                        for (@Nullable final String procMountLine : catProcMounts) {
+                        for (final String procMountLine : catProcMounts) {
                             if (i == 0 || procMountLine == null) {
                                 i++;
                                 continue;
@@ -122,7 +122,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
 
                             if (procMountLineItem != null) {
                                 if (procMountLineItem.size() >= 6) {
-                                    @NotNull final ProcMountPoint procMountPoint = new ProcMountPoint();
+                                    final ProcMountPoint procMountPoint = new ProcMountPoint();
                                     procMountPoint.setDeviceType(procMountLineItem.get(0));
                                     procMountPoint.setMountPoint(procMountLineItem.get(1));
                                     procMountPoint.setFsType(procMountLineItem.get(2));
@@ -150,7 +150,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
-                    @NotNull final List<String> itemsToDf = new ArrayList<String>();
+                    final List<String> itemsToDf = new ArrayList<String>();
 
                     //JFFS Space: "jffs_space"
                     final ProcMountPoint jffsProcMountPoint = mountPointMap.get("/jffs");
@@ -167,7 +167,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     for (final String itemToDf : itemsToDf) {
-                        @Nullable final String[] itemToDfResult = SSHUtils.getManualProperty(mRouter,
+                        final String[] itemToDfResult = SSHUtils.getManualProperty(mRouter,
                                 mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
                         Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
@@ -196,7 +196,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     return nvramInfo;
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -244,7 +244,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(@NotNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
@@ -257,9 +257,9 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             if (exception == null) {
@@ -267,15 +267,15 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //NVRAM
-            @NotNull final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
+            final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
             nvramSpaceView.setText(data.getProperty("nvram_space", "-"));
 
             //NVRAM
-            @NotNull final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
+            final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
             cifsSpaceView.setText(data.getProperty("cifs_space", "-"));
 
             //NVRAM
-            @NotNull final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
+            final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
             jffsView.setText(data.getProperty("jffs_space", "-"));
 
         }

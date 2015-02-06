@@ -22,23 +22,23 @@
 package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.common.base.Joiner;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
-    public RestoreRouterDefaultsAction(@Nullable RouterActionListener listener, @NotNull final SharedPreferences globalSharedPreferences) {
+    public RestoreRouterDefaultsAction(@Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NotNull Router router) {
+    protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             final int exitStatus = SSHUtils

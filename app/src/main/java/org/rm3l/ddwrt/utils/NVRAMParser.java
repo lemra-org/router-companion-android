@@ -22,12 +22,10 @@
 
 package org.rm3l.ddwrt.utils;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import android.support.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.common.base.Splitter;
+
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
 import java.util.List;
@@ -51,29 +49,8 @@ public final class NVRAMParser {
         if (nvramLines == null || nvramLines.length == 0) {
             return null;
         }
-//
-//        final String[] copy = new String[nvramLines.length];
-//
-//        int i = 0;
-//        while (i < nvramLines.length) {
-//            final String nvramLine = nvramLines[i];
-//            if (StringUtils.startsWith(nvramLine, "sshd_rsa_host_key")) {
-//                final StringBuilder sb = new StringBuilder();
-//                for (int j = i; j < nvramLines.length; j++) {
-//                    final String line = nvramLines[j];
-//                    sb.append(line).append("\n");
-//                    if (StringUtils.contains(line, "-----END RSA PRIVATE KEY-----")) {
-//                        break;
-//                    }
-//                }
-//                copy[i] = sb.toString();
-//            } else {
-//                copy[i] = nvramLine;
-//            }
-//            i++;
-//        }
 
-        @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
 
         int size;
         for (final String nvramLine : nvramLines) {

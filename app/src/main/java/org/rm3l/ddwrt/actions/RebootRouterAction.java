@@ -22,21 +22,21 @@
 package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 public class RebootRouterAction extends AbstractRouterAction<Void> {
 
-    public RebootRouterAction(@Nullable RouterActionListener listener, @NotNull final SharedPreferences globalSharedPreferences) {
+    public RebootRouterAction(@Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.REBOOT, globalSharedPreferences);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NotNull final Router router) {
+    protected RouterActionResult doActionInBackground(@NonNull final Router router) {
 
         Exception exception = null;
         try {

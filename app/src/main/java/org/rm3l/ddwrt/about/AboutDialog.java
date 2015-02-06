@@ -26,14 +26,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 
@@ -65,7 +65,7 @@ public class AboutDialog extends Dialog {
      *
      * @param context the activity context
      */
-    public AboutDialog(@NotNull final Context context) {
+    public AboutDialog(@NonNull final Context context) {
         super(context);
         mContext = context;
         super.setTitle(mContext.getString(R.string.menuitem_about));
@@ -77,7 +77,7 @@ public class AboutDialog extends Dialog {
      * @param textView the text view
      * @param text     the text to set as content
      */
-    private static void setTextContentAndLinkify(@NotNull final TextView textView, @NotNull final String text) {
+    private static void setTextContentAndLinkify(@NonNull final TextView textView, @NonNull final String text) {
         textView.setText(Html.fromHtml(text));
         textView.setLinkTextColor(Color.WHITE);
         for (final int bitFieldToLinkify : BIT_FIELDS_TO_LINKIFY) {

@@ -27,10 +27,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.EditText;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -64,7 +64,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull final RouterMgmtDialogListener mListener,
+    protected void onPositiveButtonActionSuccess(@NonNull final RouterMgmtDialogListener mListener,
                                                  @Nullable final Router router, final boolean error) {
         mListener.onRouterAdd(this, error);
         if (!error) {
@@ -85,7 +85,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        @NotNull final AlertDialog d = (AlertDialog) getDialog();
+        final AlertDialog d = (AlertDialog) getDialog();
         //Fill the router IP Address with the current gateway address, if any
         try {
             final EditText routerIpOrDnsEditText = (EditText) d.findViewById(R.id.router_add_ip);
@@ -99,7 +99,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
                     }
                 }
             }
-        } catch (@NotNull final Exception e) {
+        } catch (@NonNull final Exception e) {
             e.printStackTrace();
             //No worries
         }
@@ -107,7 +107,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
 
     @Nullable
     @Override
-    protected Router onPositiveButtonClickHandler(@NotNull Router router) {
+    protected Router onPositiveButtonClickHandler(@NonNull Router router) {
         return this.dao.insertRouter(router);
     }
 

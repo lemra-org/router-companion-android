@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -46,8 +48,6 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -72,13 +72,13 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
     private final Random randomColorGen = new Random();
     private final Map<String, Integer> colorsCache = Maps.newHashMap();
-    @NotNull
+    @NonNull
     private final BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
             new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
 
     private String wanIface;
 
-    public BandwidthWANMonitoringTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public BandwidthWANMonitoringTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
     }
 
@@ -108,7 +108,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     nbRunsLoader++;
 
                     //Start by getting information about the WAN iface name
-                    @Nullable final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
@@ -120,7 +120,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
 
-                    @Nullable final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    final String[] netDevWanIfaces = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
                     if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
                         return null;
                     }
@@ -167,7 +167,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                             bandwidthMonitoringIfaceData.addData("IN",
                                     new BandwidthMonitoringTile.DataPoint(timestamp, wanRcvMBytes));
                         }
-                    } catch (@NotNull final NumberFormatException nfe) {
+                    } catch (@NonNull final NumberFormatException nfe) {
                         return null;
                     }
                     nvRamInfoFromRouter.setProperty(wanIface + "_ingress_MB", Double.toString(wanRcvMBytes));
@@ -183,7 +183,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                                     new BandwidthMonitoringTile.DataPoint(timestamp, wanXmitMBytes));
                         }
 
-                    } catch (@NotNull final NumberFormatException nfe) {
+                    } catch (@NonNull final NumberFormatException nfe) {
                         return null;
                     }
 
@@ -191,7 +191,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
                     return new None();
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return (None) new None().setException(e);
                 }
@@ -226,9 +226,9 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
             data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -241,7 +241,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                             .getString(R.string.bandwidth_usage_mb) + (!Strings.isNullOrEmpty(wanIface) ?
                             (": " + wanIface) : ""));
 
-            @NotNull final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+            final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
             final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
 
             long maxX = System.currentTimeMillis() + 5000;

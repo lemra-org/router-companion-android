@@ -22,11 +22,11 @@
 
 package org.rm3l.ddwrt.resources;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;

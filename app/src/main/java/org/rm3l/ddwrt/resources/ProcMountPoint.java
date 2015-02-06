@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.resources;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +43,10 @@ public class ProcMountPoint {
     The 5th and 6th columns are dummy values designed to match the format used in /etc/mtab.
      */
 
-    @NotNull
+    @NonNull
     private final List<String> permissions = new ArrayList<String>();
 
-    @NotNull
+    @NonNull
     private final List<String> otherAttributes = new ArrayList<String>();
 
     @Nullable
@@ -62,7 +62,7 @@ public class ProcMountPoint {
         return deviceType;
     }
 
-    @NotNull
+    @NonNull
     public ProcMountPoint setDeviceType(final String deviceType) {
         this.deviceType = deviceType;
         return this;
@@ -72,7 +72,7 @@ public class ProcMountPoint {
         return mountPoint;
     }
 
-    @NotNull
+    @NonNull
     public ProcMountPoint setMountPoint(final String mountPoint) {
         this.mountPoint = mountPoint;
         return this;
@@ -82,35 +82,35 @@ public class ProcMountPoint {
         return fsType;
     }
 
-    @NotNull
+    @NonNull
     public ProcMountPoint setFsType(final String fsType) {
         this.fsType = fsType;
         return this;
     }
 
-    @NotNull
+    @NonNull
     public ProcMountPoint addPermission(final String perm) {
         this.permissions.add(perm);
         return this;
     }
 
-    @NotNull
+    @NonNull
     public List<String> getPermissions() {
         return permissions;
     }
 
-    @NotNull
+    @NonNull
     public List<String> getOtherAttributes() {
         return otherAttributes;
     }
 
-    @NotNull
-    public ProcMountPoint addOtherAttr(@NotNull final String attr) {
+    @NonNull
+    public ProcMountPoint addOtherAttr(@NonNull final String attr) {
         this.otherAttributes.add(attr);
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return "ProcMountPoint{" +
@@ -127,7 +127,7 @@ public class ProcMountPoint {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        @NotNull ProcMountPoint that = (ProcMountPoint) o;
+        final ProcMountPoint that = (ProcMountPoint) o;
 
         if (deviceType != null ? !deviceType.equals(that.deviceType) : that.deviceType != null)
             return false;

@@ -23,12 +23,12 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.view.View;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -38,7 +38,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
     private static final String TAG = WirelessIfacesTile.class.getSimpleName();
 
-    public WirelessIfacesTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public WirelessIfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
     }
 
@@ -48,10 +48,10 @@ public class WirelessIfacesTile extends IfacesTile {
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         super.onLoadFinished(loader, data);
         //Hide Non-wireless lines
-        final int[] viewsToHide = new int[] {
+        final int[] viewsToHide = new int[]{
                 R.id.tile_status_bandwidth_ifaces_lan_title,
                 R.id.tile_status_bandwidth_ifaces_lan_separator,
                 R.id.tile_status_bandwidth_ifaces_lan,

@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -52,8 +54,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -90,7 +90,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     private ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
-    public WANMonthlyTrafficTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
         final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
         monthYearTextViewToDisplay.addTextChangedListener(new TextWatcher() {
@@ -120,7 +120,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         });
     }
 
-    private static void setVisibility(@NotNull final View[] views, final int visibility) {
+    private static void setVisibility(@NonNull final View[] views, final int visibility) {
         for (final View view : views) {
             view.setVisibility(visibility);
         }
@@ -157,7 +157,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
@@ -222,7 +222,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -270,9 +270,9 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(preliminaryCheckException);
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         final View displayButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button);
         final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
@@ -397,7 +397,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     }
 
-    @NotNull
+    @NonNull
     private int[] getCurrentYearAndMonth(final Date currentDate, final String monthYearDisplayed) {
         final int[] currentYearAndMonth = new int[2];
 
@@ -415,7 +415,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         return currentYearAndMonth;
     }
 
-    private Intent renderTraffDateForMonth(@NotNull final String monthFormatted) {
+    private Intent renderTraffDateForMonth(@NonNull final String monthFormatted) {
 
         Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted);
 

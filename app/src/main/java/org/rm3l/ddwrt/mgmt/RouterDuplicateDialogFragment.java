@@ -24,9 +24,9 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -51,7 +51,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, Router router, boolean error) {
+    protected void onPositiveButtonActionSuccess(@NonNull RouterMgmtDialogListener mListener, Router router, boolean error) {
         mListener.onRouterAdd(this, error);
         if (!error) {
             if (router != null) {
@@ -74,7 +74,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
     @Nullable
     @Override
-    protected Router onPositiveButtonClickHandler(@NotNull Router router) {
+    protected Router onPositiveButtonClickHandler(@NonNull Router router) {
         return this.dao.insertRouter(router);
     }
 }

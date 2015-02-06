@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.mgmt.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -35,7 +36,6 @@ import android.widget.TextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -76,26 +76,26 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         routersList = results;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.router_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        @NotNull ViewHolder vh = new ViewHolder(this.context, v);
+        final ViewHolder vh = new ViewHolder(this.context, v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NotNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Router routerAt = routersList.get(position);
 
         holder.routerUuid.setText(routerAt.getUuid());
-        @NotNull final String routerAtName = routerAt.getName();
+        final String routerAtName = routerAt.getName();
         if (Strings.isNullOrEmpty(routerAtName)) {
             //Italic
             holder.routerName.setText(EMPTY);
@@ -201,7 +201,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         return dao.getAllRouters().size();
     }
 
-    private void destroySSHSession(@NotNull final Router router) {
+    private void destroySSHSession(@NonNull final Router router) {
         //Async to avoid ANR because SSHUtils#destroySession makes use of locking mechanisms
         new Thread(new Runnable() {
             @Override
@@ -211,9 +211,9 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         }).start();
     }
 
-    @NotNull
+    @NonNull
     public List<Integer> getSelectedItems() {
-        @NotNull final List<Integer> items = new ArrayList<Integer>(selectedItems.size());
+        final List<Integer> items = new ArrayList<Integer>(selectedItems.size());
         for (int i = 0; i < selectedItems.size(); i++) {
             items.add(selectedItems.keyAt(i));
         }
@@ -226,15 +226,15 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     public static class ViewHolder extends RecyclerView.ViewHolder {
 //                implements View.OnClickListener, View.OnLongClickListener {
 
-        @NotNull
+        @NonNull
         final TextView routerName;
-        @NotNull
+        @NonNull
         final TextView routerIp;
-        @NotNull
+        @NonNull
         final TextView routerConnProto;
-        @NotNull
+        @NonNull
         final TextView routerUuid;
-        @NotNull
+        @NonNull
         final TextView routerUsername;
 
         private final Context context;

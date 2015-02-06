@@ -22,11 +22,10 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Android ViewGroup Utilities
@@ -37,19 +36,19 @@ public final class ViewGroupUtils {
     }
 
     @Nullable
-    public static ViewGroup getParent(@NotNull final View view) {
+    public static ViewGroup getParent(@NonNull final View view) {
         return (ViewGroup) view.getParent();
     }
 
-    public static void removeView(@NotNull final View view) {
-        @Nullable ViewGroup parent = getParent(view);
+    public static void removeView(@NonNull final View view) {
+        final ViewGroup parent = getParent(view);
         if (parent != null) {
             parent.removeView(view);
         }
     }
 
-    public static void replaceView(@NotNull final View currentView, @NotNull final View newView) {
-        @Nullable ViewGroup parent = getParent(currentView);
+    public static void replaceView(@NonNull final View currentView, @NonNull final View newView) {
+        final ViewGroup parent = getParent(currentView);
         if (parent == null) {
             return;
         }

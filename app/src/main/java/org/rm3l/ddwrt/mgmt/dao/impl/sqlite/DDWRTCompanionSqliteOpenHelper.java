@@ -25,8 +25,7 @@ package org.rm3l.ddwrt.mgmt.dao.impl.sqlite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
@@ -63,7 +62,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(@NotNull SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(@NonNull SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DATABASE_CREATE);
     }
 

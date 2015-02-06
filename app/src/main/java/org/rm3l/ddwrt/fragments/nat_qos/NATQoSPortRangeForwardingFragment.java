@@ -23,8 +23,8 @@
 package org.rm3l.ddwrt.fragments.nat_qos;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 

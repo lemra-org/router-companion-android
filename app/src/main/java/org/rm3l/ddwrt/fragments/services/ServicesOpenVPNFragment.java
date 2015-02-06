@@ -23,13 +23,12 @@
 package org.rm3l.ddwrt.fragments.services;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile;
 import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNLogsTile;
-import org.rm3l.ddwrt.tiles.syslog.StatusSyslogTile;
 
 import java.util.Arrays;
 import java.util.List;

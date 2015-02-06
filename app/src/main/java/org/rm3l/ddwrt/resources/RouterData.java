@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.resources;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -61,7 +61,7 @@ public abstract class RouterData<T> implements Serializable {
      * @param data the data to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public RouterData<T> setData(final T data) {
         this.data = data;
         return this;
@@ -81,7 +81,7 @@ public abstract class RouterData<T> implements Serializable {
      * @param exception the exception to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public RouterData<T> setException(Exception exception) {
         this.exception = exception;
         return this;

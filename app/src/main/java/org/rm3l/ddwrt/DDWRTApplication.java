@@ -24,11 +24,11 @@ package org.rm3l.ddwrt;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;

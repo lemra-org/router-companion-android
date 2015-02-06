@@ -21,13 +21,14 @@
  */
 package org.rm3l.ddwrt.actions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import org.rm3l.ddwrt.resources.conn.Router;
 
 public interface RouterActionListener {
 
-    public void onRouterActionSuccess(@NotNull final RouterAction routerAction, @NotNull final Router router, Object returnData);
+    public void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData);
 
-    public void onRouterActionFailure(@NotNull final RouterAction routerAction, @NotNull final Router router, @Nullable final Exception exception);
+    public void onRouterActionFailure(@NonNull final RouterAction routerAction, @NonNull final Router router, @Nullable final Exception exception);
 }

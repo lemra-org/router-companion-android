@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -34,8 +36,6 @@ import android.widget.Toast;
 
 import com.google.common.base.Throwables;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -57,7 +57,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = IfacesTile.class.getSimpleName();
 
-    public IfacesTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
     }
 
@@ -104,7 +104,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                                     SPLITTER.splitToList(landevs);
                             if (splitToList != null && !splitToList.isEmpty()) {
 
-                                for (@Nullable final String landev : splitToList) {
+                                for (final String landev : splitToList) {
                                     if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
                                         continue;
                                     }
@@ -149,7 +149,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -163,7 +163,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
 
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
@@ -177,9 +177,9 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -188,15 +188,15 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             }
 
             //LAN
-            @NotNull final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
+            final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
             lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "-"));
 
             //WAN
-            @NotNull final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
+            final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
             wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "-"));
 
             //Wireless
-            @NotNull final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
+            final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
             wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
         }
 

@@ -21,13 +21,13 @@
  */
 package org.rm3l.ddwrt.tiles.admin.nvram;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -36,13 +36,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
-import com.google.common.collect.ImmutableMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -54,12 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static java.util.Map.Entry;
 import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.KEY;
 import static org.rm3l.ddwrt.tiles.admin.nvram.EditNVRAMKeyValueDialogFragment.POSITION;
@@ -69,11 +63,11 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         implements UndoBarController.AdvancedUndoListener {
 
     private final FragmentActivity context;
-    private final List<Entry<Object,Object>> entryList = new ArrayList<>();
-    private Map<Object, Object> nvramInfo;
+    private final List<Entry<Object, Object>> entryList = new ArrayList<>();
     private final FragmentManager fragmentManager;
     private final Router router;
     private final SharedPreferences mGlobalPreferences;
+    private Map<Object, Object> nvramInfo;
 
     public NVRAMDataRecyclerViewAdapter(FragmentActivity context, Router router, NVRAMInfo nvramInfo) {
         this.context = context;
@@ -89,14 +83,14 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         return nvramInfo;
     }
 
-    public void setEntryList(@NotNull final Map<Object, Object> nvramInfo) {
+    public void setEntryList(@NonNull final Map<Object, Object> nvramInfo) {
         this.entryList.clear();
         this.nvramInfo = nvramInfo;
         //Not needed at this point - so make sure value has been read prior to calling this method
         nvramInfo.remove(AdminNVRAMTile.NVRAM_SIZE);
         this.nvramInfo = nvramInfo;
         //noinspection ConstantConditions
-        for (final Entry<Object,Object> entry : nvramInfo.entrySet()) {
+        for (final Entry<Object, Object> entry : nvramInfo.entrySet()) {
             if (entry.getKey() == null || isNullOrEmpty(entry.getKey().toString())) {
                 continue;
             }
@@ -111,7 +105,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
                 .inflate(R.layout.tile_admin_nvram_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        @NotNull ViewHolder vh = new ViewHolder(this.context, this.fragmentManager, v);
+        final ViewHolder vh = new ViewHolder(this.context, this.fragmentManager, v);
         return vh;
     }
 
@@ -152,6 +146,10 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         //Nothing to do
     }
 
+    private void displayMessage(String msg, Style style) {
+        Utils.displayMessage(context, msg, style);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -160,17 +158,15 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         private static final String EDIT_NVRAM_DATA_FRAGMENT_TAG = "edit_nvram_data_fragment_tag";
 
-        @NotNull
+        @NonNull
         final TextView key;
 
-        @NotNull
+        @NonNull
         final TextView value;
-
-        int position;
-
         private final Context context;
         private final View itemView;
         private final FragmentManager fragmentManager;
+        int position;
 
         public ViewHolder(Context context, FragmentManager fragmentManager, View itemView) {
             super(itemView);
@@ -185,15 +181,11 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         @Override
         public void onClick(View v) {
-            @NotNull final DialogFragment editFragment =
+            final DialogFragment editFragment =
                     EditNVRAMKeyValueDialogFragment.newInstance(NVRAMDataRecyclerViewAdapter.this, position, key.getText(), value.getText());
             editFragment.show(fragmentManager, EDIT_NVRAM_DATA_FRAGMENT_TAG);
         }
 
-    }
-
-    private void displayMessage(String msg, Style style) {
-        Utils.displayMessage(context, msg, style);
     }
 
     private class EditNVRAMVariableTask extends AsyncTask<Bundle, Void, EditNVRAMVariableTask.EditNVRAMVariableTaskResult<CharSequence>> {

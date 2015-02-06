@@ -33,6 +33,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -86,8 +87,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.EnableWANAccessRouterAction;
@@ -241,6 +240,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     //Generate a random string, to use as discriminator for determining dhcp clients
     private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
+
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
         sortIds.put(R.id.tile_status_wireless_clients_sort_z_a, 73);
@@ -253,9 +253,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
     }
+
     final Router mRouterCopy;
     private final Object usageDataLock = new Object();
-    @NotNull
+    @NonNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
             Maps.newConcurrentMap();
     private String mCurrentIpAddress;
@@ -270,7 +271,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
     private Loader<ClientDevices> mCurrentLoader;
 
-    public WirelessClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
+    public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
                 router,
                 R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
@@ -412,7 +413,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
                     mCurrentMacAddress = connectionInfo.getMacAddress();
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     //No worries
                 }
@@ -474,7 +475,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         //No worries
                     }
 
-                    @Nullable final String[] output = SSHUtils.getManualProperty(mRouterCopy,
+                    final String[] output = SSHUtils.getManualProperty(mRouterCopy,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
@@ -562,7 +563,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 deviceCollection.iterator().next());
                     }
 
-                    @NotNull String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
+                    String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
 
                     synchronized (usageDataLock) {
 
@@ -767,7 +768,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     return devices;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
                     return new ClientDevices().setException(e);
                 }
@@ -842,9 +843,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_clients_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_clients_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -1253,8 +1254,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         }
     }
 
-    @NotNull
-    private Set<Device> applyCurrentSortingStrategy(@NotNull final Set<Device> devicesToSort) {
+    @NonNull
+    private Set<Device> applyCurrentSortingStrategy(@NonNull final Set<Device> devicesToSort) {
         Integer currentSortingStrategy = null;
         if (mParentFragmentPreferences != null) {
             currentSortingStrategy = sortIds.inverse()
@@ -1511,7 +1512,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         }
 
         @Override
-        public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
+        public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
             switch (routerAction) {
                 case RESET_COUNTERS:
                     //Also delete local backup (so it does not get restored on the router)
@@ -1532,7 +1533,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         }
 
         @Override
-        public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+        public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                     Style.ALERT);
@@ -1542,12 +1543,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private class DeviceOnMenuItemClickListener implements
             PopupMenu.OnMenuItemClickListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
 
-        @NotNull
+        @NonNull
         private final TextView deviceNameView;
-        @NotNull
+        @NonNull
         private final Device device;
 
-        private DeviceOnMenuItemClickListener(@NotNull TextView deviceNameView, @NotNull final Device device) {
+        private DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView, @NonNull final Device device) {
             this.deviceNameView = deviceNameView;
             this.device = device;
         }
@@ -1557,7 +1558,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             final String macAddress = device.getMacAddress();
             final String deviceName = nullToEmpty(device.getName());
 
-            switch(item.getItemId()) {
+            switch (item.getItemId()) {
                 case R.id.tile_status_wireless_client_wan_access_state:
                     final boolean disableWanAccess = item.isChecked();
                     new AlertDialog.Builder(mParentFragmentActivity)
@@ -1736,14 +1737,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         }
 
         @Override
-        public void onRouterActionSuccess(@NotNull RouterAction routerAction, @NotNull Router router, Object returnData) {
+        public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                     Style.CONFIRM);
         }
 
         @Override
-        public void onRouterActionFailure(@NotNull RouterAction routerAction, @NotNull Router router, @Nullable Exception exception) {
+        public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
             Utils.displayMessage(mParentFragmentActivity,
                     String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                     Style.ALERT);

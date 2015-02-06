@@ -27,6 +27,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
@@ -53,8 +55,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -131,7 +131,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private Map<Object, Object> mNvramInfoToDisplay = new HashMap<>();
     private ShareActionProvider mShareActionProvider;
 
-    public AdminNVRAMTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public AdminNVRAMTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
 
         sortIds.put(R.id.tile_admin_nvram_sort_default, 11);
@@ -635,7 +635,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     }
 
                     return new None();
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return (None) new None().setException(e);
                 }
@@ -670,9 +670,9 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         //NVRAM
         final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);

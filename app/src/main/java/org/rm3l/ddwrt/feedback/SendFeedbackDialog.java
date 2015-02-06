@@ -23,13 +23,12 @@ package org.rm3l.ddwrt.feedback;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.view.Gravity;
-import android.widget.LinearLayout;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
-import org.jetbrains.annotations.NotNull;
+
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -43,10 +42,10 @@ public class SendFeedbackDialog {
      */
     private static final String ANDROID_FEEDBACK_APIKEY = \"fake-api-key\";
 
-    @NotNull
+    @NonNull
     private final FeedbackDialog mFeedbackDialog;
 
-    public SendFeedbackDialog(@NotNull final Context context) {
+    public SendFeedbackDialog(@NonNull final Context context) {
 
         final Resources resources = context.getResources();
         final FeedbackSettings feedbackSettings = new FeedbackSettings();
@@ -88,17 +87,17 @@ public class SendFeedbackDialog {
 //        //DEVELOPER CUSTOM MESSAGE (NOT SEEN BY THE END USER)
         feedbackSettings.setDeveloperMessage(DDWRTCompanionConstants.PUBKEY);
 
-        this.mFeedbackDialog =new FeedbackDialog(context, ANDROID_FEEDBACK_APIKEY);
+        this.mFeedbackDialog = new FeedbackDialog(context, ANDROID_FEEDBACK_APIKEY);
         this.setSettings(feedbackSettings);
     }
 
-    @NotNull
+    @NonNull
     public FeedbackDialog getFeedbackDialog() {
         return mFeedbackDialog;
     }
 
-    @NotNull
-    private SendFeedbackDialog setSettings(@NotNull final FeedbackSettings feedbackSettings) {
+    @NonNull
+    private SendFeedbackDialog setSettings(@NonNull final FeedbackSettings feedbackSettings) {
         this.mFeedbackDialog.setSettings(feedbackSettings);
         return this;
     }

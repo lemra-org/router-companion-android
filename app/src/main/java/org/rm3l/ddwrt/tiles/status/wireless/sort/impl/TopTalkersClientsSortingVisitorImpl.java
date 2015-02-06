@@ -21,10 +21,11 @@
  */
 package org.rm3l.ddwrt.tiles.status.wireless.sort.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
@@ -35,7 +36,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisitor {
 
-    @NotNull
+    @NonNull
     private final Ordering<Device> topTalkersOrdering;
 
     public TopTalkersClientsSortingVisitorImpl(final int topTalkersSort) {
@@ -133,9 +134,9 @@ public class TopTalkersClientsSortingVisitorImpl implements ClientsSortingVisito
         }
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public Set<Device> visit(@NotNull Set<Device> devices) {
+    public Set<Device> visit(@NonNull Set<Device> devices) {
         return FluentIterable.from(devices).toSortedSet(topTalkersOrdering);
     }
 

@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -41,8 +43,6 @@ import android.widget.TextView;
 
 import com.google.common.base.Strings;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -57,15 +57,15 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
     public static final Handler HANDLER = new Handler();
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
-    @NotNull
+    @NonNull
     protected final FragmentActivity mParentFragmentActivity;
     @Nullable
     protected final SharedPreferences mParentFragmentPreferences;
-    @NotNull
+    @NonNull
     protected final SharedPreferences mGlobalPreferences;
-    @NotNull
+    @NonNull
     protected final Fragment mParentFragment;
-    @NotNull
+    @NonNull
     protected final Bundle mFragmentArguments;
     protected final LoaderManager mSupportLoaderManager;
     @Nullable
@@ -78,7 +78,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected ViewGroup parentViewGroup;
     private boolean mLoaderStopped = true;
 
-    public DDWRTTile(@NotNull final Fragment parentFragment, @NotNull final Bundle arguments, @Nullable Router router) {
+    public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getActivity();
         this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
@@ -90,7 +90,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         this.mFragmentArguments = arguments;
     }
 
-    public DDWRTTile(@NotNull final Fragment parentFragment, @NotNull final Bundle arguments,
+    public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
                      @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
         this(parentFragment, arguments, router);
         if (layoutId != null) {
@@ -149,7 +149,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         return getFormattedPrefKey("autoRefresh");
     }
 
-    protected String getFormattedPrefKey(@NotNull final String scope) {
+    protected String getFormattedPrefKey(@NonNull final String scope) {
         return this.getClass().getCanonicalName() + "::" + scope;
     }
 
@@ -180,9 +180,9 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     @Nullable
     protected abstract Loader<T> getLoader(int id, Bundle args);
 
-    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
+    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
                                                                 final long nextRunMillis, @Nullable final int... additionalButtonsToMakeVisible) {
-        @Nullable final ViewGroup viewGroupLayout = this.getViewGroupLayout();
+        final ViewGroup viewGroupLayout = this.getViewGroupLayout();
         if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
             mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
             if (additionalButtonsToMakeVisible != null) {
@@ -212,7 +212,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: " + nextRunMillis + "ms");
     }
 
-    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NotNull final Loader loader,
+    protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
                                                                 @Nullable final int... additionalButtonsToMakeVisible) {
         doneWithLoaderInstance(tile, loader,
                 this.mParentFragmentPreferences != null ?

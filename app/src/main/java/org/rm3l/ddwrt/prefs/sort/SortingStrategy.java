@@ -22,10 +22,11 @@
 
 package org.rm3l.ddwrt.prefs.sort;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 
 import java.util.Comparator;
@@ -39,14 +40,14 @@ public abstract class SortingStrategy {
 
     public static final String DEFAULT = DDWRTSortingStrategy.class.getSimpleName();
 
-    @NotNull
+    @NonNull
     public abstract String getDisplayName();
 
-    @NotNull
+    @NonNull
     public abstract String getShortDescription();
 
-    @NotNull
-    public final DDWRTBaseFragment[] sort(@NotNull final DDWRTBaseFragment[] tabs) {
+    @NonNull
+    public final DDWRTBaseFragment[] sort(@NonNull final DDWRTBaseFragment[] tabs) {
         if (doCompare()) {
 
             final TreeMap<String, DDWRTBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
@@ -55,9 +56,9 @@ public abstract class SortingStrategy {
                 tabsMap.put(tab.getTabTitle().toString(), tab);
             }
 
-            @NotNull final DDWRTBaseFragment[] output = new DDWRTBaseFragment[tabsMap.size()];
+            final DDWRTBaseFragment[] output = new DDWRTBaseFragment[tabsMap.size()];
             int j = 0;
-            for (@NotNull Map.Entry<String, DDWRTBaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
+            for (Map.Entry<String, DDWRTBaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
                 output[j++] = DDWRTBaseFragmentEntry.getValue();
             }
             return output;

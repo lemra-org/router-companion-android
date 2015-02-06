@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.prefs.sort;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Comparator;
 
@@ -31,13 +31,13 @@ import java.util.Comparator;
  * DDWRT-style order
  */
 public class DDWRTSortingStrategy extends SortingStrategy {
-    @NotNull
+    @NonNull
     @Override
     public String getDisplayName() {
         return "DD-WRT style";
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String getShortDescription() {
         return "Same order as in DD-WRT Web Gui";

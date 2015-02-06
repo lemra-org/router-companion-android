@@ -23,11 +23,11 @@
 package org.rm3l.ddwrt.tiles.status.lan;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -40,7 +40,7 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = LANClientsTile.class.getSimpleName();
 
 
-    public LANClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public LANClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         //TODO
         super(parentFragment, arguments, router, null, null);
     }

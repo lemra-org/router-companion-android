@@ -27,6 +27,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -46,8 +48,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -82,7 +82,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     public static final char DEGREE_SYMBOL = '\u00B0';
     private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
-    @NotNull
+    @NonNull
     private final String iface;
 
     @Nullable
@@ -97,11 +97,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     @Nullable
     private WirelessEncryptionTypeForQrCode wifiEncryptionType;
 
-    public WirelessIfaceTile(@NotNull String iface, @NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public WirelessIfaceTile(@NonNull String iface, @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         this(iface, null, parentFragment, arguments, router);
     }
 
-    public WirelessIfaceTile(@NotNull String iface, @Nullable String parentIface, @NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public WirelessIfaceTile(@NonNull String iface, @Nullable String parentIface, @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         this.iface = iface;
         this.parentIface = parentIface;
@@ -175,14 +175,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
             }
 
-            @NotNull
-            private NVRAMInfo getIfaceNvramInfo(@NotNull String wlIface) throws Exception {
+            @NonNull
+            private NVRAMInfo getIfaceNvramInfo(@NonNull String wlIface) throws Exception {
 
                 if (DDWRTCompanionConstants.TEST_MODE) {
                     return new NVRAMInfo()
@@ -267,12 +267,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                                 final long rxErrors = Long.parseLong(packetsInfo[1]);
                                 nvramInfo.setProperty(wlIface + "_rx_packets",
                                         String.format("%s (%s)",
-                                                packetsInfo[0], rxErrors <=0 ? "no error" :
+                                                packetsInfo[0], rxErrors <= 0 ? "no error" :
                                                         (rxErrors + String.format("error%s", rxErrors > 1 ? "s" : ""))));
                                 final long txErrors = Long.parseLong(packetsInfo[3]);
                                 nvramInfo.setProperty(wlIface + "_tx_packets",
                                         String.format("%s (%s)",
-                                                packetsInfo[2], txErrors <=0 ? "no error" :
+                                                packetsInfo[2], txErrors <= 0 ? "no error" :
                                                         (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                             }
                         } catch (final Exception e) {
@@ -285,8 +285,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 return nvramInfo;
             }
 
-            @NotNull
-            private Map<TemperatureUnit, String> getIfaceTemperature(@NotNull final String phyIface) {
+            @NonNull
+            private Map<TemperatureUnit, String> getIfaceTemperature(@NonNull final String phyIface) {
                 final Map<TemperatureUnit, String> result = Maps.newHashMapWithExpectedSize(2);
                 final String phyIfaceVarNameInRouter = WirelessIfaceTile.class.getSimpleName() + "TemperatureCelsius";
                 try {
@@ -311,8 +311,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 return result;
             }
 
-            @NotNull
-            private Map<IfaceStatsType, Long> getIfaceRxAndTxRates(@NotNull final String phyIface) {
+            @NonNull
+            private Map<IfaceStatsType, Long> getIfaceRxAndTxRates(@NonNull final String phyIface) {
                 final Map<IfaceStatsType, Long> result = Maps.newHashMapWithExpectedSize(2);
                 final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
                 final String rxBytesCmd = String
@@ -339,7 +339,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 return result;
             }
 
-            @NotNull
+            @NonNull
             private long[] parseFloatDataFromOutput(@Nullable final String[] output) {
                 if (output == null || output.length == 0) {
                     throw new IllegalArgumentException("Output null or empty");
@@ -401,7 +401,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
      * @param data   The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(@NotNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+    public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
 
@@ -415,9 +415,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -426,32 +426,32 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             }
 
             //SSID
-            @NotNull final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
+            final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
             this.wifiSsid = data.getProperty(this.iface + "_ssid", DDWRTCompanionConstants.EMPTY_STRING);
             ssidView.setText(this.wifiSsid);
 
             this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", DDWRTCompanionConstants.EMPTY_STRING);
 
             //Ifname
-            @NotNull final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
+            final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
             ifnameView.setText(data.getProperty(this.iface + "_ifname", "-"));
 
             //MAC
-            @NotNull final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
+            final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
             hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "-"));
 
             //Radio
-            @NotNull final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
+            final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
             radioView.setEnabled(false);
             radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio", data.getProperty(this.parentIface + "_radio"))));
 
             //Mode
-            @NotNull final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
+            final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
             String property = data.getProperty(this.iface + "_mode", "-");
             modeView.setText(property != null ? property.toUpperCase() : "-");
 
             //Net Mode
-            @NotNull final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
+            final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
             final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode"));
             String mode = "-";
             if ("disabled".equalsIgnoreCase(netmode)) {
@@ -476,43 +476,43 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             netModeView.setText(mode);
 
             //Temperature
-            @NotNull final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
+            final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
             final String temperatureProperty = data.getProperty(this.iface + "_temperature", data.getProperty(this.parentIface + "_temperature", "-"));
             temperatureView.setText(temperatureProperty);
 
             //Channel
-            @NotNull final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
+            final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
             final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "-"));
             channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
 
 //            //Rate
-//            @NotNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
+//            @NonNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
 //            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "-");
 //            rateView.setText(rateProperty);
             //Rate
-            @NotNull final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
+            final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
             final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "-");
             rxRateView.setText(rxRateProperty);
 
-            @NotNull final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
+            final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
             final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "-");
             txRateView.setText(txRateProperty);
 
             //Packet Info
-            @NotNull final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
+            final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
             rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "-"));
 
-            @NotNull final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
+            final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
             txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "-"));
 
             //TX Power
-            @NotNull final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
+            final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
             xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "-")));
 
             //Encryption
-            @NotNull final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
+            final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
             final String akm = data.getProperty(this.iface + "_akm");
-            @NotNull String encryption = "-";
+            String encryption = "-";
             if ("psk".equalsIgnoreCase(akm)) {
                 encryption = "WPA Pre-shared Key";
             } else if ("wpa".equalsIgnoreCase(akm)) {
@@ -577,7 +577,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.tile_status_wireless_iface_qrcode:
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
                     //menu item should have been disabled, but anyways, you never know :)
@@ -623,11 +623,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         return false;
     }
 
-    @NotNull
-    private String escapeString (@NotNull final String string) {
+    @NonNull
+    private String escapeString(@NonNull final String string) {
         final List<Character> toEscape = Arrays.asList('\\', ';', ',', ':', '"');
         String output = "";
-        for (int i=0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++) {
             final char charAt = string.charAt(i);
             if (toEscape.contains(charAt)) {
                 output += ('\\' + charAt);
@@ -643,13 +643,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     }
 
     public enum IfaceStatsType {
-        RX_BYTES ("rx_bytes"),
-        TX_BYTES ("tx_bytes");
+        RX_BYTES("rx_bytes"),
+        TX_BYTES("tx_bytes");
 
         final String metric;
 
         IfaceStatsType(String metric) {
-           this.metric = metric;
+            this.metric = metric;
         }
 
         public String getMetric() {
@@ -658,11 +658,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     }
 
     public enum WirelessEncryptionTypeForQrCode {
-        WPA ("WPA"),
-        WEP ("WEP"),
-        NONE ("nopass");
+        WPA("WPA"),
+        WEP("WEP"),
+        NONE("nopass");
 
         private final String encType;
+
         WirelessEncryptionTypeForQrCode(String encType) {
             this.encType = encType;
         }

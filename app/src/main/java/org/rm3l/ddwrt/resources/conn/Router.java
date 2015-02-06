@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.resources.conn;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -43,7 +43,7 @@ public class Router implements Serializable {
     /**
      * the router UUID
      */
-    @NotNull
+    @NonNull
     private String uuid;
 
     /**
@@ -60,13 +60,13 @@ public class Router implements Serializable {
     /**
      * the connection protocol
      */
-    @NotNull
+    @NonNull
     private RouterConnectionProtocol routerConnectionProtocol;
 
     /**
      * the router IP or DNS
      */
-    @NotNull
+    @NonNull
     private String remoteIpAddress;
 
     /**
@@ -77,7 +77,7 @@ public class Router implements Serializable {
     /**
      * the login username
      */
-    @NotNull
+    @NonNull
     private String username;
 
     /**
@@ -124,7 +124,7 @@ public class Router implements Serializable {
     /**
      * @return the RouterConnectionProtocol
      */
-    @NotNull
+    @NonNull
     public RouterConnectionProtocol getRouterConnectionProtocol() {
         return routerConnectionProtocol;
     }
@@ -135,8 +135,8 @@ public class Router implements Serializable {
      * @param routerConnectionProtocol the RouterConnectionProtocol to set
      * @return this object
      */
-    @NotNull
-    public Router setRouterConnectionProtocol(@NotNull final RouterConnectionProtocol routerConnectionProtocol) {
+    @NonNull
+    public Router setRouterConnectionProtocol(@NonNull final RouterConnectionProtocol routerConnectionProtocol) {
         this.routerConnectionProtocol = routerConnectionProtocol;
         return this;
     }
@@ -144,7 +144,7 @@ public class Router implements Serializable {
     /**
      * @return the username
      */
-    @NotNull
+    @NonNull
     public String getUsername() {
         return username;
     }
@@ -166,8 +166,8 @@ public class Router implements Serializable {
      *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
      */
-    @NotNull
-    public Router setUsername(@NotNull final String username, final boolean encrypt) {
+    @NonNull
+    public Router setUsername(@NonNull final String username, final boolean encrypt) {
         //noinspection ConstantConditions
         this.username = encrypt ? e(username) : username;
         return this;
@@ -198,7 +198,7 @@ public class Router implements Serializable {
      *                 is known to be encrypted (e.g., when retrieved from the DB)
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setPassword(@Nullable final String password, final boolean encrypt) {
         this.password = encrypt ? e(password) : password;
         return this;
@@ -218,7 +218,7 @@ public class Router implements Serializable {
      * @param name the name to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setName(@Nullable final String name) {
         this.name = name;
         return this;
@@ -227,7 +227,7 @@ public class Router implements Serializable {
     /**
      * @return the remoteIpAddress
      */
-    @NotNull
+    @NonNull
     public String getRemoteIpAddress() {
         return remoteIpAddress;
     }
@@ -238,8 +238,8 @@ public class Router implements Serializable {
      * @param remoteIpAddress the remoteIpAddress to set
      * @return this object
      */
-    @NotNull
-    public Router setRemoteIpAddress(@NotNull final String remoteIpAddress) {
+    @NonNull
+    public Router setRemoteIpAddress(@NonNull final String remoteIpAddress) {
         this.remoteIpAddress = remoteIpAddress;
         return this;
     }
@@ -257,7 +257,7 @@ public class Router implements Serializable {
      * @param remotePort the remotePort to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setRemotePort(final int remotePort) {
         this.remotePort = remotePort;
         return this;
@@ -266,7 +266,7 @@ public class Router implements Serializable {
     /**
      * @return the uuid
      */
-    @NotNull
+    @NonNull
     public String getUuid() {
         return uuid;
     }
@@ -277,8 +277,8 @@ public class Router implements Serializable {
      * @param uuid the uuid to set
      * @return this object
      */
-    @NotNull
-    public Router setUuid(@NotNull final String uuid) {
+    @NonNull
+    public Router setUuid(@NonNull final String uuid) {
         this.uuid = uuid;
         return this;
     }
@@ -308,7 +308,7 @@ public class Router implements Serializable {
      *                is known to be encrypted (e.g., when retrieved from the B)
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setPrivKey(@Nullable final String privKey, final boolean encrypt) {
         this.privKey = \"fake-key\";
         return this;
@@ -327,7 +327,7 @@ public class Router implements Serializable {
      * @param strictHostKeyChecking the strictHostKeyChecking to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setStrictHostKeyChecking(final boolean strictHostKeyChecking) {
         this.strictHostKeyChecking = strictHostKeyChecking;
         return this;
@@ -337,7 +337,7 @@ public class Router implements Serializable {
      * @return the Router string representation
      */
     @Override
-    @NotNull
+    @NonNull
     public String toString() {
         return "Router{" +
                 "sshAuth=Type=" + getSshAuthenticationMethod() +
@@ -364,7 +364,7 @@ public class Router implements Serializable {
      * @param id the internal DB id to set
      * @return this object
      */
-    @NotNull
+    @NonNull
     public Router setId(int id) {
         this.id = id;
         return this;
@@ -375,7 +375,7 @@ public class Router implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        @NotNull Router router = (Router) o;
+        final Router router = (Router) o;
 
         if (id != router.id) return false;
         if (remotePort != router.remotePort) return false;
@@ -408,7 +408,7 @@ public class Router implements Serializable {
         return result;
     }
 
-    @NotNull
+    @NonNull
     public SSHAuthenticationMethod getSshAuthenticationMethod() {
         if (!isNullOrEmpty(privKey)) {
             return SSHAuthenticationMethod.PUBLIC_PRIVATE_KEY;
@@ -430,7 +430,7 @@ public class Router implements Serializable {
 
         HTTPS("https", 443, "admin", null);
 
-        @NotNull
+        @NonNull
         private final String channel;
 
         private final int defaultPort;
@@ -449,7 +449,7 @@ public class Router implements Serializable {
          * @param defaultUsername the default username
          * @param defaultPassword the default password
          */
-        private RouterConnectionProtocol(@NotNull final String channel,
+        private RouterConnectionProtocol(@NonNull final String channel,
                                          final int defaultPort,
                                          @Nullable final String defaultUsername,
                                          @Nullable final String defaultPassword) {
@@ -462,7 +462,7 @@ public class Router implements Serializable {
         /**
          * @return the channel
          */
-        @NotNull
+        @NonNull
         public String getChannel() {
             return channel;
         }

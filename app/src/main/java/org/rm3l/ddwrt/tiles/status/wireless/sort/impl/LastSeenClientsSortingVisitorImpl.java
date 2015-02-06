@@ -1,9 +1,10 @@
 package org.rm3l.ddwrt.tiles.status.wireless.sort.impl;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
@@ -14,7 +15,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class LastSeenClientsSortingVisitorImpl implements ClientsSortingVisitor {
 
-    @NotNull
+    @NonNull
     private final Ordering<Device> lastSeenOrdering;
 
     public LastSeenClientsSortingVisitorImpl(final int lastSeenFlagSort) {
@@ -68,9 +69,9 @@ public class LastSeenClientsSortingVisitorImpl implements ClientsSortingVisitor 
         }
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public Set<Device> visit(@NotNull Set<Device> devices) {
+    public Set<Device> visit(@NonNull Set<Device> devices) {
         return FluentIterable.from(devices).toSortedSet(lastSeenOrdering);
     }
 }

@@ -22,9 +22,9 @@
 package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -33,19 +33,19 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACC
 
 public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
 
-    @NotNull
+    @NonNull
     private final Device mDevice;
 
     public DisableWANAccessRouterAction(@Nullable RouterActionListener listener,
-                                        @NotNull SharedPreferences globalSharedPreferences,
-                                        @NotNull Device device) {
+                                        @NonNull SharedPreferences globalSharedPreferences,
+                                        @NonNull Device device) {
         super(listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
         this.mDevice = device;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NotNull Router router) {
+    protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             final String macAddr = mDevice.getMacAddress();

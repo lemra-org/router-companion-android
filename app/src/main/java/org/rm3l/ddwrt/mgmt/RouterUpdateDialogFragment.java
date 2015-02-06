@@ -24,14 +24,14 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.Router;
 
@@ -39,7 +39,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.widget.TextView.BufferType.EDITABLE;
-import static android.widget.TextView.BufferType.NORMAL;
 
 public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment {
 
@@ -63,7 +62,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     }
 
     @Override
-    protected void onPositiveButtonActionSuccess(@NotNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error) {
+    protected void onPositiveButtonActionSuccess(@NonNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error) {
         final int position = (router != null ? router.getId() : -1);
         if (position >= 0) {
             mListener.onRouterUpdated(this, position, error);
@@ -87,7 +86,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        @NotNull final AlertDialog d = (AlertDialog) getDialog();
+        final AlertDialog d = (AlertDialog) getDialog();
 
         if (router == null) {
             Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
@@ -102,7 +101,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
         ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName(), EDITABLE);
         ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress(), EDITABLE);
         ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()), EDITABLE);
-        @NotNull final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
+        final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
         switch (router.getRouterConnectionProtocol()) {
             case SSH:
                 protoDropdown.setSelection(0);
@@ -136,7 +135,7 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
 
     @Nullable
     @Override
-    protected Router onPositiveButtonClickHandler(@NotNull Router router) {
+    protected Router onPositiveButtonClickHandler(@NonNull Router router) {
         return this.dao.updateRouter(router);
     }
 }

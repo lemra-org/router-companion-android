@@ -22,8 +22,8 @@
 package org.rm3l.ddwrt.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.List;

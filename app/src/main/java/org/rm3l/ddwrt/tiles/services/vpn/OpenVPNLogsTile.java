@@ -22,6 +22,8 @@
 package org.rm3l.ddwrt.tiles.services.vpn;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -30,8 +32,6 @@ import android.view.ViewGroup;
 
 import com.google.common.base.Splitter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -47,7 +47,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
 
     public static final String OPENVPN = "openvpn";
 
-    public OpenVPNLogsTile(@NotNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup, @NotNull Bundle arguments, Router router) {
+    public OpenVPNLogsTile(@NonNull Fragment parentFragment, @Nullable ViewGroup parentViewGroup, @NonNull Bundle arguments, Router router) {
         super(parentFragment, parentViewGroup, arguments, "OpenVPN Logs", false, router, OPENVPN);
     }
 
@@ -74,7 +74,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                     }
                     nbRunsLoader++;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
                     NVRAMInfo nvramInfoTmp = null;
                     String[] logs = null;
                     String logsStr = "";
@@ -135,7 +135,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
 
                     return nvramInfo;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }

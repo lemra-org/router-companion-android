@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -41,7 +42,6 @@ import android.widget.TextView;
 import com.cocosw.undobar.UndoBarController;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.R;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -58,7 +58,7 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
     private CharSequence mKey;
     private CharSequence mValue;
 
-    @NotNull
+    @NonNull
     public static EditNVRAMKeyValueDialogFragment newInstance(NVRAMDataRecyclerViewAdapter nvramDataRecyclerViewAdapter,
                                                               int position, CharSequence key, CharSequence value) {
         final EditNVRAMKeyValueDialogFragment fragment = new EditNVRAMKeyValueDialogFragment();
@@ -83,15 +83,15 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
         this.mPosition = arguments.getInt(POSITION);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final FragmentActivity activity = getActivity();
 
-        @NotNull AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         // Get the layout inflater
-        @NotNull final LayoutInflater inflater = activity.getLayoutInflater();
+        final LayoutInflater inflater = activity.getLayoutInflater();
 
         final View view = inflater.inflate(R.layout.tile_admin_nvram_edit, null);
         builder

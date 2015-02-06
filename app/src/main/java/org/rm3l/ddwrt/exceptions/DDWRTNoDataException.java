@@ -22,7 +22,7 @@
 
 package org.rm3l.ddwrt.exceptions;
 
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * Indicates a lack of data from the remote router

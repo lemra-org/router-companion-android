@@ -22,13 +22,13 @@
 
 package org.rm3l.ddwrt.mgmt.dao.impl.test;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -55,10 +55,10 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     }
 
     private void populateDB() {
-        @NotNull final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(MAX_INIT_ENTRIES);
+        final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(MAX_INIT_ENTRIES);
 
         for (int i = 1; i <= MAX_INIT_ENTRIES; i++) {
-            @NotNull final Router sr = new Router();
+            final Router sr = new Router();
             sr.setName("router #" + i);
             sr.setRemoteIpAddress("172.17.17." + i);
             sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);
@@ -66,9 +66,9 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
         }
     }
 
-    @NotNull
+    @NonNull
     private List<Integer> getPrimeNumbersFromEratostheneSieve(final int up) {
-        @NotNull final List<Integer> excluded = new ArrayList<Integer>();
+        final List<Integer> excluded = new ArrayList<Integer>();
         for (int i = 2; i <= up; i++) {
             if (excluded.contains(i)) {
                 continue;
@@ -80,7 +80,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
             }
         }
 
-        @NotNull final List<Integer> primes = new ArrayList<Integer>();
+        final List<Integer> primes = new ArrayList<Integer>();
         for (int l = 1; l <= up; l++) {
             if (excluded.contains(l)) {
                 continue;
@@ -99,7 +99,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Router insertRouter(@NotNull Router router) {
+    public Router insertRouter(@NonNull Router router) {
         Log.d(LOG_TAG, "createRouter(" + router + ")");
         if (isNullOrEmpty(router.getUuid())) {
             router.setUuid(UUID.randomUUID().toString());
@@ -113,7 +113,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Router updateRouter(@NotNull Router router) {
+    public Router updateRouter(@NonNull Router router) {
         if (isNullOrEmpty(router.getUuid())) {
             throw new IllegalArgumentException("UUID not specified for update");
         }

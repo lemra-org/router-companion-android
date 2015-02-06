@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.fragments.status;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -39,8 +41,6 @@ import android.widget.TextView;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -76,7 +76,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
     @Nullable
     @Override
-    protected Loader<Collection<DDWRTTile>> getLoader(final int id, @NotNull final Bundle args) {
+    protected Loader<Collection<DDWRTTile>> getLoader(final int id, @NonNull final Bundle args) {
 
         return new AsyncTaskLoader<Collection<DDWRTTile>>(getActivity()) {
 
@@ -96,7 +96,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                                 new WirelessIfaceTile("eth2.test", parentFragment, args, router));
                     }
 
-                    @Nullable final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
+                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
                             getActivity()
                                     .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE), NVRAMInfo.LANDEVS);
 
@@ -116,7 +116,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
                     final List<DDWRTTile> tiles = Lists.newArrayList();
 
-                    for (@Nullable final String landev : splitToList) {
+                    for (final String landev : splitToList) {
                         if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
                             continue;
                         }
@@ -157,7 +157,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
                     return tiles;
 
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return null;
                 }
@@ -225,8 +225,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         //Remove everything first
         dynamicTilessViewGroup.removeAllViews();
 
-        for (@NotNull final DDWRTTile tile : tiles) {
-            @Nullable final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+        for (final DDWRTTile tile : tiles) {
+            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
                 continue;
             }

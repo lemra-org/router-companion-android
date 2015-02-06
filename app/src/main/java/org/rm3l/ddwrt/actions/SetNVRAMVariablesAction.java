@@ -22,10 +22,10 @@
 package org.rm3l.ddwrt.actions;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -37,28 +37,28 @@ import java.util.Properties;
 public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
     public static final String LOG_TAG = SetNVRAMVariablesAction.class.getSimpleName();
-    @NotNull
+    @NonNull
     private final NVRAMInfo nvramInfo;
 
     private final boolean withReboot;
 
-    public SetNVRAMVariablesAction(@NotNull NVRAMInfo nvramInfo,
-                                      @Nullable RouterActionListener listener,
-                                      @NotNull SharedPreferences globalSharedPreferences) {
+    public SetNVRAMVariablesAction(@NonNull NVRAMInfo nvramInfo,
+                                   @Nullable RouterActionListener listener,
+                                   @NonNull SharedPreferences globalSharedPreferences) {
         this(nvramInfo, false, listener, globalSharedPreferences);
     }
 
-    public SetNVRAMVariablesAction(@NotNull NVRAMInfo nvramInfo, boolean withReboot,
+    public SetNVRAMVariablesAction(@NonNull NVRAMInfo nvramInfo, boolean withReboot,
                                    @Nullable RouterActionListener listener,
-                                   @NotNull SharedPreferences globalSharedPreferences) {
+                                   @NonNull SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
         this.nvramInfo = nvramInfo;
         this.withReboot = withReboot;
     }
 
-    @NotNull
+    @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NotNull Router router) {
+    protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             if (nvramInfo.isEmpty()) {
@@ -71,8 +71,8 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             for (final Map.Entry<Object, Object> entry : data.entrySet()) {
                 cmd[i++] = String.format("nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
             }
-            cmd[cmd.length-2] = "nvram commit";
-            cmd[cmd.length-1] = withReboot ? "reboot" : "";
+            cmd[cmd.length - 2] = "nvram commit";
+            cmd[cmd.length - 1] = withReboot ? "reboot" : "";
 
             Log.d(LOG_TAG, "cmd: [" + Arrays.toString(cmd) + "]");
 

@@ -22,7 +22,7 @@
 
 package org.rm3l.ddwrt.resources;
 
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * @see {https://www.macvendorlookup.com/mac-address-api}

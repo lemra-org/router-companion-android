@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.fragments;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -51,8 +53,6 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
@@ -129,15 +129,15 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
     @Nullable
     private Toolbar toolbar;
     private Class<? extends DDWRTBaseFragment> mClazz;
-    @NotNull
+    @NonNull
     private PageSlidingTabStripFragment parentFragment;
 
     @Nullable
-    public static DDWRTBaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NotNull final Class<? extends DDWRTBaseFragment> clazz,
-                                                @NotNull final CharSequence parentSectionTitle, @NotNull final CharSequence tabTitle,
+    public static DDWRTBaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NonNull final Class<? extends DDWRTBaseFragment> clazz,
+                                                @NonNull final CharSequence parentSectionTitle, @NonNull final CharSequence tabTitle,
                                                 @Nullable final String router) {
         try {
-            @NotNull final DDWRTBaseFragment fragment = clazz.newInstance()
+            final DDWRTBaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
                     .setParentSectionTitle(parentSectionTitle);
             fragment.mClazz = clazz;
@@ -149,7 +149,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                 fragment.toolbar = fragment.ddwrtMainActivity.getToolbar();
             }
 
-            @NotNull Bundle args = new Bundle();
+            Bundle args = new Bundle();
             args.putCharSequence(TAB_TITLE, tabTitle);
             args.putCharSequence(PARENT_SECTION_TITLE, parentSectionTitle);
             args.putString(FRAGMENT_CLASS, clazz.getCanonicalName());
@@ -164,19 +164,19 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         return null;
     }
 
-    @NotNull
-    public static DDWRTBaseFragment[] getFragments(@NotNull PageSlidingTabStripFragment parentFragment, @NotNull final Resources resources, int parentSectionNumber,
+    @NonNull
+    public static DDWRTBaseFragment[] getFragments(@NonNull PageSlidingTabStripFragment parentFragment, @NonNull final Resources resources, int parentSectionNumber,
                                                    String sortingStrategy,
                                                    @Nullable final String router) {
         Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
-        @Nullable SortingStrategy sortingStrategyInstance = null;
-        @Nullable Exception exception = null;
+        SortingStrategy sortingStrategyInstance = null;
+        Exception exception = null;
         try {
             sortingStrategyClass = Class.forName(sortingStrategy);
             sortingStrategyInstance = (SortingStrategy) sortingStrategyClass.newInstance();
-        } catch (@NotNull final Exception e) {
+        } catch (@NonNull final Exception e) {
             e.printStackTrace();
             exception = e;
         }
@@ -189,7 +189,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
         String parentSectionTitle;
 
-        @NotNull final DDWRTBaseFragment[] tabsToSort;
+        final DDWRTBaseFragment[] tabsToSort;
         switch (parentSectionNumber) {
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
@@ -357,8 +357,8 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         this.mLoaderStopped = mLoaderStopped;
     }
 
-    @NotNull
-    public final DDWRTBaseFragment setParentSectionTitle(@NotNull final CharSequence parentSectionTitle) {
+    @NonNull
+    public final DDWRTBaseFragment setParentSectionTitle(@NonNull final CharSequence parentSectionTitle) {
         this.mParentSectionTitle = parentSectionTitle;
         return this;
     }
@@ -367,8 +367,8 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         return mTabTitle;
     }
 
-    @NotNull
-    public final DDWRTBaseFragment setTabTitle(@NotNull final CharSequence tabTitle) {
+    @NonNull
+    public final DDWRTBaseFragment setTabTitle(@NonNull final CharSequence tabTitle) {
         this.mTabTitle = tabTitle;
         return this;
     }
@@ -436,7 +436,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
      *                           from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
      */
-    @NotNull
+    @NonNull
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return this.getLayout();
@@ -523,9 +523,9 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         super.onDestroy();
     }
 
-    @NotNull
+    @NonNull
     private ViewGroup getLayout() {
-        @NotNull final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
                 .getDisplayMetrics());
         params.setMargins(margin, margin, margin, margin);
@@ -535,7 +535,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         final FragmentActivity fragmentActivity = getActivity();
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
 
-            @NotNull final List<CardView> cards = new ArrayList<CardView>();
+            final List<CardView> cards = new ArrayList<CardView>();
 
             final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -549,9 +549,9 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
             final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
 
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
-            for (@NotNull final DDWRTTile ddwrtTile : this.fragmentTiles) {
+            for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
-                @Nullable final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
+                final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
                 atLeastOneTileAdded |= (viewGroupLayout != null);
 
                 if (viewGroupLayout == null) {
@@ -603,7 +603,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
                 mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
 
-                for (@NotNull final CardView card : cards) {
+                for (final CardView card : cards) {
 //                    mTableLayout.removeView(row);
                     mLayout.addView(card);
                 }
@@ -620,7 +620,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                 viewGroup = new FrameLayout(fragmentActivity);
             }
 
-            @NotNull final TextView view = new TextView(fragmentActivity);
+            final TextView view = new TextView(fragmentActivity);
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));
             view.setBackgroundResource(R.drawable.background_card);
@@ -732,7 +732,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
     }
 
     @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+    public void onUpOrCancelMotionEvent(@Nullable final ScrollState scrollState) {
         Log.d(LOG_TAG, "ObservableScrollViewCallbacks: onUpOrCancelMotionEvent(" + scrollState + ")");
         if (ddwrtMainActivity != null) {
             final ActionBar ab = ddwrtMainActivity.getSupportActionBar();
@@ -748,43 +748,4 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         }
     }
 
-//
-//    @Override
-//    public void onScrollChanged(int scrollY) {
-//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onScrollChanged(" + scrollY + ")");
-//    }
-//
-//    @Override
-//    public void onDownMotionEvent() {
-//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onDownMotionEvent");
-//        if (ddwrtMainActivity != null) {
-//            final ActionBar supportActionBar = ddwrtMainActivity.getSupportActionBar();
-//            if (supportActionBar != null) {
-//                if (!supportActionBar.isShowing()) {
-//                    supportActionBar.show();
-//                }
-//            }
-//        }
-////        if (toolbar != null) {
-//////            toolbar.animate().cancel();
-////            toolbar.animate().translationY(0).setDuration(200).start();
-////        }
-//    }
-//
-//    @Override
-//    public void onUpOrCancelMotionEvent() {
-//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onUpOrCancelMotionEvent");
-//        if (ddwrtMainActivity != null) {
-//            final ActionBar supportActionBar = ddwrtMainActivity.getSupportActionBar();
-//            if (supportActionBar != null) {
-//                if (supportActionBar.isShowing()) {
-//                    supportActionBar.hide();
-//                }
-//            }
-//        }
-////        if (toolbar != null) {
-//////            toolbar.animate().cancel();
-////            toolbar.animate().translationY(-toolbar.getHeight()).setDuration(200).start();
-////        }
-//    }
 }

@@ -22,8 +22,9 @@
 
 package org.rm3l.ddwrt.resources.conn;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import org.rm3l.ddwrt.resources.RouterData;
 
 import java.io.Serializable;
@@ -143,9 +144,9 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
      * @param name  the property name
      * @param value the property value
      */
-    @NotNull
+    @NonNull
     @SuppressWarnings("ConstantConditions")
-    public NVRAMInfo setProperty(@NotNull final String name, @NotNull final String value) {
+    public NVRAMInfo setProperty(@NonNull final String name, @NonNull final String value) {
         super.getData().setProperty(name, value);
         return this;
     }
@@ -158,7 +159,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
      */
     @Nullable
     @SuppressWarnings("ConstantConditions")
-    public String getProperty(@NotNull final String name) {
+    public String getProperty(@NonNull final String name) {
         return this.getProperty(name, null);
     }
 
@@ -171,14 +172,14 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
      */
     @Nullable
     @SuppressWarnings("ConstantConditions")
-    public String getProperty(@NotNull final String name, @Nullable final String defaultValue) {
+    public String getProperty(@NonNull final String name, @Nullable final String defaultValue) {
         return super.getData().getProperty(name, defaultValue);
     }
 
     /**
      * @return the string representation
      */
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return super.toString();
@@ -190,7 +191,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
      * @param exception the exception to set
      * @return the current object
      */
-    @NotNull
+    @NonNull
     public NVRAMInfo setException(@Nullable final Exception exception) {
         super.setException(exception);
         return this;

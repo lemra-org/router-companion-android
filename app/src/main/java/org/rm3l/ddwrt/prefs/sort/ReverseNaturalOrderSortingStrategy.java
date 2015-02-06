@@ -22,8 +22,8 @@
 
 package org.rm3l.ddwrt.prefs.sort;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,13 +33,13 @@ import java.util.Comparator;
  */
 public class ReverseNaturalOrderSortingStrategy extends SortingStrategy {
 
-    @NotNull
+    @NonNull
     @Override
     public String getDisplayName() {
         return "Reverse Natural Ordering";
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String getShortDescription() {
         return "Reverse Alphabetical";

@@ -23,8 +23,8 @@ package org.rm3l.ddwrt.utils;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
 import org.rm3l.ddwrt.resources.Device;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class WoLUtils {
 
     public static final int PORT = 9;
 
-    public static void sendWoLMagicPacket(@NotNull final String macStr, @NotNull final String bcastIpStr)
+    public static void sendWoLMagicPacket(@NonNull final String macStr, @NonNull final String bcastIpStr)
             throws IOException {
 
         byte[] macBytes = getMacBytes(macStr);
@@ -69,8 +69,7 @@ public class WoLUtils {
             for (int i = 0; i < 6; i++) {
                 bytes[i] = (byte) Integer.parseInt(hex[i], 16);
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid hex digit in MAC address.");
         }
         return bytes;
@@ -78,10 +77,12 @@ public class WoLUtils {
 
     public static class SendWoLMagicPacketAsyncTask extends AsyncTask<String, Void, SendWoLMagicPacketAsyncTask.Result<Void>> {
 
-        @NotNull final Activity activity;
-        @NotNull final Device device;
+        @NonNull
+        final Activity activity;
+        @NonNull
+        final Device device;
 
-        public SendWoLMagicPacketAsyncTask(@NotNull final Activity activity, @NotNull Device device) {
+        public SendWoLMagicPacketAsyncTask(@NonNull final Activity activity, @NonNull Device device) {
             this.activity = activity;
             this.device = device;
         }

@@ -22,9 +22,8 @@
 
 package org.rm3l.ddwrt.exceptions;
 
+import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
-
-import org.jetbrains.annotations.Nullable;
 
 /**
  * By default, auto-refresh is enabled on all tiles. But this exception is raised whenever the user

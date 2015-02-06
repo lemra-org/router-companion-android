@@ -21,16 +21,16 @@
  */
 package org.rm3l.ddwrt.resources;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 public class ClientDevices {
-    @NotNull
+    @NonNull
     private final Set<Device> devices = Sets.newHashSet();
 
     @Nullable
@@ -57,24 +57,24 @@ public class ClientDevices {
         return this;
     }
 
-    @NotNull
+    @NonNull
     public Set<Device> getDevices() {
         return devices;
     }
 
-    @NotNull
+    @NonNull
     public int getDevicesCount() {
         return devices.size();
     }
 
-    @NotNull
+    @NonNull
     public Set<Device> getDevices(int max) {
         return FluentIterable
                 .from(devices)
                 .limit(max).toSet();
     }
 
-    @NotNull
+    @NonNull
     public ClientDevices addDevice(Device device) {
         this.devices.add(device);
         return this;
@@ -85,7 +85,7 @@ public class ClientDevices {
         return exception;
     }
 
-    @NotNull
+    @NonNull
     public ClientDevices setException(Exception exception) {
         this.exception = exception;
         return this;

@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.tiles.status.time;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -35,8 +37,6 @@ import android.widget.Toast;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -53,7 +53,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
     private final Map<String, String> daylightMap = Maps.newHashMapWithExpectedSize(10);
 
-    public StatusTimeTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, @Nullable Router router) {
+    public StatusTimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_time, R.id.tile_status_time_togglebutton);
         daylightMap.put("1", "none");
         daylightMap.put("2", "first Sun Apr - last Sun Oct");
@@ -92,7 +92,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    @NotNull final NVRAMInfo nvramInfo = new NVRAMInfo();
+                    final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
@@ -119,7 +119,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     return nvramInfo;
-                } catch (@NotNull final Exception e) {
+                } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
                 }
@@ -158,9 +158,9 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
         }
 
-        @NotNull final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_time_error);
+        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_time_error);
 
-        @Nullable final Exception exception = data.getException();
+        final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
