@@ -548,8 +548,6 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
             final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
 
-            final Resources resources = fragmentActivity.getResources();
-
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
