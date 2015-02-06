@@ -36,6 +36,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -114,6 +115,12 @@ public class RouterManagementActivity
             setSupportActionBar(mToolbar);
         }
 
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setHomeButtonEnabled(false);
+        }
+
         //Default values are not set by default
         //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
         PreferenceManager.setDefaultValues(this, DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
@@ -136,6 +143,35 @@ public class RouterManagementActivity
         // specify an adapter (see also next example)
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                final ActionBar ab = getSupportActionBar();
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        //The RecyclerView is currently being dragged by outside input such as user touch input.
+                        if (ab.isShowing()) {
+                            ab.hide();
+                        }
+                        break;
+                    case RecyclerView.SCROLL_STATE_SETTLING:
+                        //The RecyclerView is currently animating to a final position while not under outside control.
+                        if (!ab.isShowing()) {
+                            ab.show();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
         /*
          * onClickDetection is done in this Activity's onItemTouchListener

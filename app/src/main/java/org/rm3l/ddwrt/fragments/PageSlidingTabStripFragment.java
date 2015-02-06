@@ -71,7 +71,6 @@ public class PageSlidingTabStripFragment extends Fragment {
      */
     private SlidingTabLayout mSlidingTabLayout;
 
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -87,6 +86,10 @@ public class PageSlidingTabStripFragment extends Fragment {
         fragment.setArguments(args);
         fragment.mOnPageChangeListener = onPageChangeListener;
         return fragment;
+    }
+
+    public ViewPager.OnPageChangeListener getOnPageChangeListener() {
+        return mOnPageChangeListener;
     }
 
     @Override

@@ -22,7 +22,6 @@
 
 package org.rm3l.ddwrt;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +36,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -100,7 +100,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
-    private Toolbar toolbar;
+    private Toolbar mToolbar;
     @NotNull
     private DDWRTCompanionDAO dao;
     @NotNull
@@ -163,9 +163,9 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         mTitle = mDrawerTitle = getTitle();
         initView();
-        if (toolbar != null) {
-            toolbar.setTitle(mTitle);
-            setSupportActionBar(toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle(mTitle);
+            setSupportActionBar(mToolbar);
         }
 
 //        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
@@ -183,10 +183,10 @@ public class DDWRTMainActivity extends ActionBarActivity
 //        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
+            actionBar.setHomeButtonEnabled(false);
         }
 
         initDrawer();
@@ -230,7 +230,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
         // opens
@@ -527,6 +527,10 @@ public class DDWRTMainActivity extends ActionBarActivity
                 .commit();
 
 //        FIXME mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
     }
 
     /**

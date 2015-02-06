@@ -29,7 +29,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -42,6 +45,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -95,12 +101,13 @@ import static android.widget.FrameLayout.LayoutParams;
 import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
+
 /**
  * Abstract base fragment
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T> {
+public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T>, ObservableScrollViewCallbacks {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
@@ -117,8 +124,10 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
     private CharSequence mParentSectionTitle;
     @Nullable
     private List<DDWRTTile> fragmentTiles; //fragment tiles and the ID they are assigned
-    @NotNull
+    @Nullable
     private DDWRTMainActivity ddwrtMainActivity;
+    @Nullable
+    private Toolbar toolbar;
     private Class<? extends DDWRTBaseFragment> mClazz;
     @NotNull
     private PageSlidingTabStripFragment parentFragment;
@@ -133,6 +142,12 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                     .setParentSectionTitle(parentSectionTitle);
             fragment.mClazz = clazz;
             fragment.parentFragment = parentFragment;
+
+            final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
+            if (parentFragmentOnPageChangeListener instanceof DDWRTMainActivity) {
+                fragment.ddwrtMainActivity = (DDWRTMainActivity) parentFragmentOnPageChangeListener;
+                fragment.toolbar = fragment.ddwrtMainActivity.getToolbar();
+            }
 
             @NotNull Bundle args = new Bundle();
             args.putCharSequence(TAB_TITLE, tabTitle);
@@ -396,6 +411,9 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         this.loaderIdsInUse.clear();
         viewGroup = (ScrollView) getActivity().getLayoutInflater()
                 .inflate(R.layout.base_tiles_container_scrollview, null);
+        if (viewGroup instanceof ObservableScrollView) {
+            ((ObservableScrollView) viewGroup).setScrollViewCallbacks(this);
+        }
 
         this.fragmentTiles = this.getTiles(savedInstanceState);
     }
@@ -703,4 +721,70 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         parentFragment.startActivityForResult(intent, listener);
     }
 
+    @Override
+    public void onScrollChanged(int i, boolean b, boolean b2) {
+        Log.d(LOG_TAG, "ObservableScrollViewCallbacks: onScrollChanged(" + i + ", " + b + ", " + b2 + ")");
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        Log.d(LOG_TAG, "ObservableScrollViewCallbacks: onUpOrCancelMotionEvent(" + scrollState + ")");
+        if (ddwrtMainActivity != null) {
+            final ActionBar ab = ddwrtMainActivity.getSupportActionBar();
+            if (scrollState == ScrollState.UP) {
+                if (ab.isShowing()) {
+                    ab.hide();
+                }
+            } else if (scrollState == ScrollState.DOWN) {
+                if (!ab.isShowing()) {
+                    ab.show();
+                }
+            }
+        }
+    }
+
+//
+//    @Override
+//    public void onScrollChanged(int scrollY) {
+//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onScrollChanged(" + scrollY + ")");
+//    }
+//
+//    @Override
+//    public void onDownMotionEvent() {
+//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onDownMotionEvent");
+//        if (ddwrtMainActivity != null) {
+//            final ActionBar supportActionBar = ddwrtMainActivity.getSupportActionBar();
+//            if (supportActionBar != null) {
+//                if (!supportActionBar.isShowing()) {
+//                    supportActionBar.show();
+//                }
+//            }
+//        }
+////        if (toolbar != null) {
+//////            toolbar.animate().cancel();
+////            toolbar.animate().translationY(0).setDuration(200).start();
+////        }
+//    }
+//
+//    @Override
+//    public void onUpOrCancelMotionEvent() {
+//        Log.d(LOG_TAG, "ObservableScrollView#Callbacks: onUpOrCancelMotionEvent");
+//        if (ddwrtMainActivity != null) {
+//            final ActionBar supportActionBar = ddwrtMainActivity.getSupportActionBar();
+//            if (supportActionBar != null) {
+//                if (supportActionBar.isShowing()) {
+//                    supportActionBar.hide();
+//                }
+//            }
+//        }
+////        if (toolbar != null) {
+//////            toolbar.animate().cancel();
+////            toolbar.animate().translationY(-toolbar.getHeight()).setDuration(200).start();
+////        }
+//    }
 }
