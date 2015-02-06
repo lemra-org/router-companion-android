@@ -45,6 +45,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -53,7 +54,6 @@ import java.util.List;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -294,7 +294,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
         final String mRouterUuid = mRouter.getUuid();
         final Intent memInfoIntent =
                 new Intent(mParentFragment.getActivity(),
-                        isThemeLight(mParentFragmentActivity, mRouterUuid) ?
+                        ColorUtils.isThemeLight(mParentFragmentActivity, mRouterUuid) ?
                                 RouterMemInfoActivityLight.class : RouterMemInfoActivity.class);
         memInfoIntent.putExtra(RouterMemInfoActivity.MEM_INFO_OUTPUT, memInfoContents);
         memInfoIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);

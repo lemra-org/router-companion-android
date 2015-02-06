@@ -47,6 +47,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfacesTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -55,8 +56,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
+import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
 
 /**
  *
@@ -217,7 +217,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         final FragmentActivity fragmentActivity = getActivity();
 
         final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
-        final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
+        final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity, themeBackgroundColor);
 
         final LinearLayout dynamicTilessViewGroup =
                 (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);

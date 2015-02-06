@@ -55,6 +55,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -94,7 +95,6 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -545,7 +545,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         final String mRouterUuid = mRouter.getUuid();
         final Intent editOpenVPNClSettingsIntent =
                 new Intent(mParentFragment.getActivity(),
-                        isThemeLight(mParentFragmentActivity, mRouterUuid) ?
+                        ColorUtils.isThemeLight(mParentFragmentActivity, mRouterUuid) ?
                                 EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
         editOpenVPNClSettingsIntent.putExtra(OPENVPNCL_NVRAMINFO, mNvramInfo);
         editOpenVPNClSettingsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);

@@ -55,6 +55,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -70,7 +71,6 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -110,7 +110,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_iface_menu);
 
-        final boolean isThemeLight = isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid());
 
         if (!isThemeLight) {
             //Set menu background to white
@@ -596,7 +596,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                 final String routerUuid = mRouter.getUuid();
                 final Class<?> activityClass =
-                        Utils.isThemeLight(mParentFragmentActivity, routerUuid) ?
+                        ColorUtils.isThemeLight(mParentFragmentActivity, routerUuid) ?
                                 WirelessIfaceQrCodeActivityLight.class : WirelessIfaceQrCodeActivity.class;
 
                 final Intent intent = new Intent(mParentFragmentActivity, activityClass);

@@ -35,8 +35,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
 import org.acra.ACRA;
@@ -45,7 +43,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
-import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 
@@ -60,10 +57,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static android.content.Context.MODE_PRIVATE;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * General utilities
@@ -71,36 +66,10 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
-    private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
-
-    static {
-        colorToTheme.put(R.color.cardview_light_background, 30); //Light
-        colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
-    }
 
     private static AtomicLong nextLoaderId = new AtomicLong(1);
 
     private Utils() {
-    }
-
-    public static int getThemeBackgroundColor(@NonNull final Context context, @NonNull final String routerUuid) {
-        final long theme = context.getSharedPreferences(routerUuid, MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
-        final BiMap<Integer, Integer> colorToThemeInverse = colorToTheme.inverse();
-        Integer color = colorToThemeInverse.get(Long.valueOf(theme).intValue());
-        if (color == null) {
-            color = colorToThemeInverse.get(Long.valueOf(DEFAULT_THEME).intValue());
-        }
-        return context.getResources().getColor(color);
-    }
-
-    public static boolean isThemeLight(@NonNull final Context context, @NonNull final String routerUuid) {
-        return (getThemeBackgroundColor(context, routerUuid) ==
-                context.getResources().getColor(R.color.cardview_light_background));
-    }
-
-    public static boolean isThemeLight(@NonNull final Context context, final int themeBackgroundColor) {
-        return (themeBackgroundColor ==
-                context.getResources().getColor(R.color.cardview_light_background));
     }
 
     public static long getNextLoaderId() {

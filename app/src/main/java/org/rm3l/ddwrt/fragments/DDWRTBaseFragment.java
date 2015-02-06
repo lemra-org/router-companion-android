@@ -91,6 +91,7 @@ import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
@@ -98,8 +99,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.widget.FrameLayout.LayoutParams;
-import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
+import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
 
 
 /**
@@ -546,7 +546,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
             final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
 
-            final boolean isThemeLight = isThemeLight(fragmentActivity, themeBackgroundColor);
+            final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity, themeBackgroundColor);
 
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {

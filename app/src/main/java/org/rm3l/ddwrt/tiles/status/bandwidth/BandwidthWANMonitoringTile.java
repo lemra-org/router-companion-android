@@ -39,7 +39,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.Maps;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -55,13 +54,13 @@ import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  *
@@ -70,8 +69,6 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 
     private static final String LOG_TAG = BandwidthWANMonitoringTile.class.getSimpleName();
 
-    private final Random randomColorGen = new Random();
-    private final Map<String, Integer> colorsCache = Maps.newHashMap();
     @NonNull
     private final BandwidthMonitoringTile.BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData =
             new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
@@ -272,17 +269,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                 final XYSeriesRenderer renderer = new XYSeriesRenderer();
                 renderer.setLineWidth(2);
 
-                Integer ifaceColor = colorsCache.get(iface);
-                if (ifaceColor == null) {
-                    //Generate a Random Color, excluding 'white' and 'black'
-                    // (because graph background may be white or black)
-                    ifaceColor = Color.argb(255,
-                            1 + randomColorGen.nextInt(254),
-                            1 + randomColorGen.nextInt(254),
-                            1 + randomColorGen.nextInt(254));
-                    colorsCache.put(iface, ifaceColor);
-                }
-                renderer.setColor(ifaceColor);
+                renderer.setColor(ColorUtils.getColor(iface));
                 // Include low and max value
                 renderer.setDisplayBoundingPoints(true);
                 // we add point markers

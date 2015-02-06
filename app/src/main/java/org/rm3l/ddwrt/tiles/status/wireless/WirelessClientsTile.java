@@ -109,6 +109,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVisitorImpl;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -118,14 +119,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -137,14 +137,13 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
+import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
-import static org.rm3l.ddwrt.utils.Utils.getThemeBackgroundColor;
-import static org.rm3l.ddwrt.utils.Utils.isThemeLight;
 
 /**
  *
@@ -160,7 +159,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS = "show_only_wan_access_disabled_hosts";
     public static final String IN = "IN";
     public static final String OUT = "OUT";
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
     public static final String TEMP_ROUTER_UUID = UUID.randomUUID().toString();
     public static final String RT_GRAPHS = "rt_graphs";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
@@ -226,17 +225,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
-    private static final Random randomColorGen = new Random();
-    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(3) {
-        @Override
-        protected Integer create(final String key) {
-            //Generate a Random Color, excluding 'white' and 'black' (because graph background may be white or black)
-            return Color.argb(255,
-                    1 + randomColorGen.nextInt(254),
-                    1 + randomColorGen.nextInt(254),
-                    1 + randomColorGen.nextInt(254));
-        }
-    };
+
     //Generate a random string, to use as discriminator for determining dhcp clients
     private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
@@ -296,7 +285,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
 //        Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
-        if (!isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
@@ -871,7 +860,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
             final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
-            final boolean isThemeLight = isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid());
 
             final String expandedClientsPrefKey = \"fake-key\";
 
@@ -996,7 +985,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final XYSeriesRenderer renderer = new XYSeriesRenderer();
                         renderer.setLineWidth(2);
 
-                        renderer.setColor(colorsCache.get(inOrOut));
+                        renderer.setColor(ColorUtils.getColor(inOrOut));
                         // Include low and max value
                         renderer.setDisplayBoundingPoints(true);
                         // we add point markers
