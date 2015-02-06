@@ -474,4 +474,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wan_access">Internet Access</string>
     <string name="show_only_hosts_with_wan_access_disabled">No-Internet Hosts Only</string>
     <string name="transition_router">transition from list to router details</string>
+    <string name="rt_graphs">Real-time graphs</string>
 </resources>

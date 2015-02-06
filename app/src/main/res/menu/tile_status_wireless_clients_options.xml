@@ -142,16 +142,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 app:showAsAction="never" />
 
         </menu>
-
     </item>
+
+    <!-- Real-time graphs -->
+    <item
+        android:id="@+id/tile_status_wireless_clients_realtime_graphs"
+        android:checkable="true"
+        android:checked="true"
+        android:icon="@drawable/ic_action_rt"
+        android:orderInCategory="3"
+        android:title="@string/rt_graphs"
+        app:showAsAction="never" />
 
     <!-- Reset Counters -->
     <item
         android:id="@+id/tile_status_wireless_clients_reset_counters"
         android:icon="@android:drawable/ic_menu_delete"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/reset_counters"
         app:showAsAction="never" />
-
 
 </menu>

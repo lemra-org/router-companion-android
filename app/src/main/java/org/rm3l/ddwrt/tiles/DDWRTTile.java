@@ -96,15 +96,14 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         if (layoutId != null) {
             this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
+        this.mAutoRefreshToggle = this.mParentFragmentPreferences != null &&
+                this.mParentFragmentPreferences.getBoolean(getAutoRefreshPreferenceKey(), true);
+
         if (toggleRefreshButtonId != null) {
             this.mToggleAutoRefreshButton = (CompoundButton) layout.findViewById(toggleRefreshButtonId);
             if (this.mToggleAutoRefreshButton != null) {
                 this.mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-                if (this.mParentFragmentPreferences != null) {
-                    this.mToggleAutoRefreshButton.setChecked(
-                            this.mParentFragmentPreferences.getBoolean(getAutoRefreshPreferenceKey(), true)
-                    );
-                }
+                this.mToggleAutoRefreshButton.setChecked(this.mAutoRefreshToggle);
             }
         }
     }
@@ -139,6 +138,11 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             editor.putBoolean(getAutoRefreshPreferenceKey(), this.mAutoRefreshToggle);
             editor.apply();
         }
+        this.onAutoRefreshToggleCheckedChanged(compoundButton, isChecked);
+    }
+
+    protected void onAutoRefreshToggleCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        //Nothing to do here, but subclasses may override this to perform additional processing
     }
 
     protected String getAutoRefreshPreferenceKey() {
@@ -191,6 +195,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 }
             }
         }
+
+        mSupportLoaderManager.destroyLoader(loader.getId());
 
         if (nextRunMillis > 0 && !this.mLoaderStopped) {
 //        Re-schedule it if loader has not been stopped!

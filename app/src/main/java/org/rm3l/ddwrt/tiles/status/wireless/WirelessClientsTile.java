@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
@@ -43,6 +44,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -161,6 +163,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String OUT = "OUT";
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final String TEMP_ROUTER_UUID = UUID.randomUUID().toString();
+    public static final String RT_GRAPHS = "rt_graphs";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
     private static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
@@ -238,7 +241,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     //Generate a random string, to use as discriminator for determining dhcp clients
     private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
-
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
         sortIds.put(R.id.tile_status_wireless_clients_sort_z_a, 73);
@@ -251,7 +253,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         sortIds.put(R.id.tile_status_wireless_clients_sort_seen_recently, 92);
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
     }
-
     final Router mRouterCopy;
     private final Object usageDataLock = new Object();
     @NotNull
@@ -267,6 +268,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
     private String mUsageDbBackupPath = null;
 
+    private Loader<ClientDevices> mCurrentLoader;
+
     public WirelessClientsTile(@NotNull Fragment parentFragment, @NotNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
                 router,
@@ -275,6 +278,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
         //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
         mRouterCopy = new Router(mRouter).setUuid(TEMP_ROUTER_UUID);
+
+        if (!this.mAutoRefreshToggle) {
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .remove(getFormattedPrefKey(RT_GRAPHS))
+                        .apply();
+            }
+        } else {
+            if (mParentFragmentPreferences != null && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
+                mParentFragmentPreferences.edit()
+                        .putBoolean(getFormattedPrefKey(RT_GRAPHS), true)
+                        .apply();
+            }
+        }
 
 //        Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
@@ -296,6 +313,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
                     //Mark as checked
                     menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
+                }
+
+                final MenuItem rtMenuItem = menu.findItem(R.id.tile_status_wireless_clients_realtime_graphs);
+                if (mParentFragmentPreferences != null) {
+                    rtMenuItem.setVisible(true);
+                    rtMenuItem
+                            .setEnabled(mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS)));
+                    rtMenuItem
+                            .setChecked(mParentFragmentPreferences
+                                    .getBoolean(getFormattedPrefKey(RT_GRAPHS), false));
+                } else {
+                    rtMenuItem.setVisible(false);
                 }
 
                 final MenuItem showOnlyHostsWithWANAccessDisabledMenuItem = menu
@@ -345,10 +374,29 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         return R.id.tile_status_wireless_clients_title;
     }
 
+    @Override
+    protected void onAutoRefreshToggleCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if (mParentFragmentPreferences != null) {
+            final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
+            final String rtPrefKey = \"fake-key\";
+            if (isChecked) {
+                editor.putBoolean(rtPrefKey, true);
+                //Destroy existing loader, and reload it
+            } else {
+                //This will cause menu item to be disabled
+                editor.remove(rtPrefKey);
+            }
+            editor.apply();
+            if (this.mCurrentLoader != null) {
+                doneLoading(this.mCurrentLoader);
+            }
+        }
+    }
+
     @Nullable
     @Override
     protected Loader<ClientDevices> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<ClientDevices>(this.mParentFragmentActivity) {
+        this.mCurrentLoader = new AsyncTaskLoader<ClientDevices>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -725,6 +773,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
             }
         };
+
+        return this.mCurrentLoader;
     }
 
     @Nullable
@@ -1184,12 +1234,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             tileMenu.setVisibility(View.VISIBLE);
         }
 
-        //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
-        //TODO Check how much extra load that represents on the router
-        doneWithLoaderInstance(this, loader, 500l,
-                R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
+        doneLoading(loader);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+    }
+
+    private void doneLoading(Loader<ClientDevices> loader) {
+        if (mParentFragmentPreferences != null &&
+                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
+            //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
+            //TODO Check how much extra load that represents on the router
+            doneWithLoaderInstance(this, loader, 500l,
+                    R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
+        } else {
+            //Use classical sync
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
+        }
     }
 
     @NotNull
@@ -1243,7 +1304,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
         final int itemId = item.getItemId();
         switch (itemId) {
-            case R.id.tile_status_wireless_clients_reset_counters:
+            case R.id.tile_status_wireless_clients_realtime_graphs: {
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putBoolean(getFormattedPrefKey(RT_GRAPHS), !item.isChecked())
+                            .apply();
+                }
+                return true;
+            }
+            case R.id.tile_status_wireless_clients_reset_counters: {
                 //Reset Counters
                 final Bundle token = new Bundle();
                 token.putString(ROUTER_ACTION, RouterAction.RESET_COUNTERS.name());
@@ -1253,7 +1322,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         .listener(new MenuActionItemClickListener())
                         .token(token)
                         .show();
-                break;
+                return true;
+            }
             case R.id.tile_status_wireless_clients_show_only_hosts_with_wan_access_disabled: {
                 //First filter (based on WAN Access State)
                 final boolean showOnlyWanAccessDisabledHosts = !item.isChecked();
@@ -1284,9 +1354,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             .apply();
                 }
 
-
+                return true;
             }
-            break;
             case R.id.tile_status_wireless_clients_hide_inactive_hosts: {
                 final boolean hideInactive = !item.isChecked();
 
@@ -1390,6 +1459,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             default:
                 break;
         }
+
         return false;
     }
 
