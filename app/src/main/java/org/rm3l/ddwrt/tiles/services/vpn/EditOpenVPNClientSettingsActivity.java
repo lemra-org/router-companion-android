@@ -23,12 +23,16 @@ package org.rm3l.ddwrt.tiles.services.vpn;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -41,7 +45,11 @@ import com.google.common.collect.HashBiMap;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static android.widget.TextView.BufferType.EDITABLE;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
@@ -71,9 +79,16 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRAMINFO;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsUDPFragments";
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsMTUSettings";
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsLocalSubnets";
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsLocalIPs";
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsServerPorts";
+    public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsTargetServers";
     private static final String TAG = EditOpenVPNClientSettingsActivity.class.getSimpleName();
     private static final BiMap<String, Integer> tunnelDeviceSpinnerValues = HashBiMap.create(2);
     private static final BiMap<String, Integer> tunnelProtoSpinnerValues = HashBiMap.create(2);
@@ -81,7 +96,6 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
     private static final BiMap<String, Integer> hashAlgoSpinnerValues = HashBiMap.create(6);
     private static final BiMap<String, Integer> tlsCipherSpinnerValues = HashBiMap.create(8);
     private static final BiMap<String, Integer> lzoCompressionSpinnerValues = HashBiMap.create(4);
-
     static {
         tunnelDeviceSpinnerValues.put("tun", 0);
         tunnelDeviceSpinnerValues.put("tap", 1);
@@ -117,9 +131,9 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         lzoCompressionSpinnerValues.put("no", 2);
         lzoCompressionSpinnerValues.put("off", 3);
     }
-
     private NVRAMInfo mNvramInfo;
     private String mRouterUuid;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +148,21 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
         final Intent intent = getIntent();
         mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(OPENVPNCL_NVRAMINFO);
-        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
 
         if (mNvramInfo == null) {
             Toast.makeText(this, "Could not load OpenVPN Client settings", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
+        if (isNullOrEmpty(mRouterUuid)) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        //Preferences saved globally, to be shared across different routers
+        sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
 
         //Advanced Options
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag))
@@ -182,10 +205,22 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_flag))
                 .setChecked("1".equals(mNvramInfo.getProperty(OPENVPNCL_ADV)));
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_server_ip_name))
+        final AutoCompleteTextView serverIpOrNameAutoComplete = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_server_ip_name);
+        final Set<String> editOpenVPNClientSettingsTargetServers = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        serverIpOrNameAutoComplete
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsTargetServers.toArray(new String[editOpenVPNClientSettingsTargetServers.size()])));
+        serverIpOrNameAutoComplete
                 .setText(mNvramInfo.getProperty(OPENVPNCL_REMOTEIP), EDITABLE);
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_port))
+        final AutoCompleteTextView serverPortAutoComplete = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_port);
+        final Set<String> editOpenVPNClientSettingsServerPorts = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        serverPortAutoComplete
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsServerPorts.toArray(new String[editOpenVPNClientSettingsServerPorts.size()])));
+        serverPortAutoComplete
                 .setText(mNvramInfo.getProperty(OPENVPNCL_REMOTEPORT), EDITABLE);
 
         final String tunnelDevice = mNvramInfo.getProperty(OPENVPNCL_TUNTAP);
@@ -236,16 +271,40 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_nat_bridge_tap_to_br0))
                 .setChecked("1".equals(mNvramInfo.getProperty(OPENVPNCL_BRIDGE)));
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_ip_address))
+        final AutoCompleteTextView localIps = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_ip_address);
+        final Set<String> editOpenVPNClientSettingsLocalIPs = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        localIps
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsLocalIPs.toArray(new String[editOpenVPNClientSettingsLocalIPs.size()])));
+        localIps
                 .setText(mNvramInfo.getProperty(OPENVPNCL_IP), EDITABLE);
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_subnet_mask))
+        final AutoCompleteTextView localSubnetMask = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_subnet_mask);
+        final Set<String> editOpenVPNClientSettingsLocalSubnets = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        localSubnetMask
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsLocalSubnets.toArray(new String[editOpenVPNClientSettingsLocalSubnets.size()])));
+        localSubnetMask
                 .setText(mNvramInfo.getProperty(OPENVPNCL_MASK), EDITABLE);
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting))
+        final AutoCompleteTextView mtuSettingAutoCompleteView = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting);
+        final Set<String> editOpenVPNClientSettingsMTUSettings = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        mtuSettingAutoCompleteView
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsMTUSettings.toArray(new String[editOpenVPNClientSettingsMTUSettings.size()])));
+        mtuSettingAutoCompleteView
                 .setText(mNvramInfo.getProperty(OPENVPNCL_MTU, "1400"), EDITABLE);
 
-        ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment))
+        final AutoCompleteTextView udpFragmentAutoCompleteView = (AutoCompleteTextView) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment);
+        final Set<String> editOpenVPNClientSettingsUDPFragment = sharedPreferences
+                .getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF, new HashSet<String>());
+        udpFragmentAutoCompleteView
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        editOpenVPNClientSettingsUDPFragment.toArray(new String[editOpenVPNClientSettingsUDPFragment.size()])));
+        udpFragmentAutoCompleteView
                 .setText(mNvramInfo.getProperty(OPENVPNCL_FRAGMENT), EDITABLE);
 
         ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_tunnel_udp_mss_fix))
@@ -268,8 +327,6 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
         ((EditText) findViewById(R.id.openvpn_client_settings_advanced_options_static_key))
                 .setText(mNvramInfo.getProperty(OPENVPNCL_STATIC), EDITABLE);
-
-        //TODO
     }
 
 
@@ -283,6 +340,9 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         final NVRAMInfo nvramVarsToUpdate = new NVRAMInfo();
         //Compare each variable
 
+        boolean applyNewPrefs = false;
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+
         final String isOpenVPNClientOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag))
                 .isChecked() ? "1" : "0";
         if (!isOpenVPNClientOn.equals(mNvramInfo.getProperty(OPENVPNCL_ENABLE))) {
@@ -292,11 +352,31 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         final String serverIpName = ((EditText) findViewById(R.id.openvpn_client_settings_server_ip_name)).getText().toString();
         if (!serverIpName.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEIP))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEIP, serverIpName);
+            if (!isNullOrEmpty(serverIpName)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(serverIpName)) {
+                    mSharedPreferencesStringSet.add(serverIpName);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
         }
 
         final String serverPort = ((EditText) findViewById(R.id.openvpn_client_settings_port)).getText().toString();
         if (!serverPort.equals(mNvramInfo.getProperty(OPENVPNCL_REMOTEPORT))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_REMOTEPORT, serverPort);
+            if (!isNullOrEmpty(serverPort)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(serverPort)) {
+                    mSharedPreferencesStringSet.add(serverPort);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
         }
 
         final String tunnelDeviceSelectedItem = tunnelDeviceSpinnerValues.inverse().get(
@@ -377,21 +457,65 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         final String ipAddr = ((EditText) findViewById(R.id.openvpn_client_settings_ip_address)).getText().toString();
         if (!ipAddr.equals(mNvramInfo.getProperty(OPENVPNCL_IP))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_IP, ipAddr);
+            if (!isNullOrEmpty(ipAddr)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(ipAddr)) {
+                    mSharedPreferencesStringSet.add(ipAddr);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
         }
 
         final String subnetMask = ((EditText) findViewById(R.id.openvpn_client_settings_subnet_mask)).getText().toString();
         if (!subnetMask.equals(mNvramInfo.getProperty(OPENVPNCL_MASK))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_MASK, subnetMask);
+            if (!isNullOrEmpty(subnetMask)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(subnetMask)) {
+                    mSharedPreferencesStringSet.add(subnetMask);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
         }
 
         final String tunnelMtu = ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_mtu_setting)).getText().toString();
         if (!tunnelMtu.equals(mNvramInfo.getProperty(OPENVPNCL_MTU))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_MTU, tunnelMtu);
+            if (!isNullOrEmpty(tunnelMtu)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(tunnelMtu)) {
+                    mSharedPreferencesStringSet.add(tunnelMtu);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
         }
 
         final String tunnelUdpFragment = ((EditText) findViewById(R.id.openvpn_client_settings_tunnel_udp_fragment)).getText().toString();
         if (!tunnelUdpFragment.equals(mNvramInfo.getProperty(OPENVPNCL_FRAGMENT))) {
             nvramVarsToUpdate.setProperty(OPENVPNCL_FRAGMENT, tunnelUdpFragment);
+            if (!isNullOrEmpty(tunnelUdpFragment)) {
+                final Set<String> mSharedPreferencesStringSet = new HashSet<>(sharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF,
+                        new HashSet<String>()));
+                if (!mSharedPreferencesStringSet.contains(tunnelUdpFragment)) {
+                    mSharedPreferencesStringSet.add(tunnelUdpFragment);
+                    editor
+                            .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                    applyNewPrefs = true;
+                }
+            }
+        }
+
+        if (applyNewPrefs) {
+            editor.apply();
         }
 
         final String isTunnelUdpMssFixOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_advanced_options_tunnel_udp_mss_fix))
