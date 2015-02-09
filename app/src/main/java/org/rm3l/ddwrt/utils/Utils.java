@@ -25,10 +25,13 @@ package org.rm3l.ddwrt.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -56,6 +59,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.content.Context.MODE_PRIVATE;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
+import static org.rm3l.ddwrt.BuildConfig.APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
@@ -212,6 +216,43 @@ public final class Utils {
         String state = Environment.getExternalStorageState();
         return (Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
+    }
+
+    public static void displayUpgradeMessage(@NonNull final Context ctx) {
+        //Download the full version to unlock this version
+        new AlertDialog.Builder(ctx)
+                .setMessage("Unlock this feature by upgrading to the full version on Google Play Store. \n\n" +
+                        "Thank you for supporting this initiative!")
+                .setCancelable(true)
+                .setPositiveButton("Upgrade!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialogInterface, final int i) {
+                        String url;
+                        try {
+                            //Check whether Google Play store is installed or not:
+                            ctx.getPackageManager().getPackageInfo("com.android.vending", 0);
+                            url = "market://details?id=" + APPLICATION_ID;
+                        } catch (final Exception e) {
+                            url = "https://play.google.com/store/apps/details?id=" + APPLICATION_ID;
+                        }
+
+
+                        //Open the app page in Google Play store:
+                        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                        } else {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                        }
+                        ctx.startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Cancelled - nothing more to do!
+                    }
+                }).create().show();
     }
 
 }

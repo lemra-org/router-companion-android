@@ -88,6 +88,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.EnableWANAccessRouterAction;
@@ -1569,6 +1570,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
             switch (item.getItemId()) {
                 case R.id.tile_status_wireless_client_wan_access_state:
+                    if (BuildConfig.DONATIONS) {
+                        //Download the full version to unlock this version
+                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                        return true;
+                    }
                     final boolean disableWanAccess = item.isChecked();
                     new AlertDialog.Builder(mParentFragmentActivity)
                             .setIcon(R.drawable.ic_action_alert_warning)
