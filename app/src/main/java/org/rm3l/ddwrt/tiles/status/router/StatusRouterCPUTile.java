@@ -47,7 +47,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -71,6 +70,11 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
     public StatusRouterCPUTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_router_router_cpu_hdr;
     }
 
     @Override
@@ -308,9 +312,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
         final String mRouterUuid = mRouter.getUuid();
         final Intent cpuInfoIntent =
-                new Intent(mParentFragment.getActivity(),
-                        ColorUtils.isThemeLight(mParentFragmentActivity, mRouterUuid) ?
-                                RouterCpuInfoActivityLight.class : RouterCpuInfoActivity.class);
+                new Intent(mParentFragment.getActivity(), RouterCpuInfoActivity.class);
         cpuInfoIntent.putExtra(RouterCpuInfoActivity.CPU_INFO_OUTPUT, cpuInfoContents);
         cpuInfoIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 

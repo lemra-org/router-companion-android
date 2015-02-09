@@ -21,16 +21,19 @@
  */
 package org.rm3l.ddwrt.tiles.status.router;
 
-import android.app.ActionBar;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,8 @@ import com.google.common.base.Joiner;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -49,8 +54,10 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
-public class RouterCpuInfoActivity extends Activity {
+public class RouterCpuInfoActivity extends ActionBarActivity {
 
     public static final String CPU_INFO_OUTPUT = "CPU_INFO_OUTPUT";
 
@@ -60,13 +67,31 @@ public class RouterCpuInfoActivity extends Activity {
 
     private String mCpuInfoMultiLine;
 
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+
         setContentView(R.layout.tile_status_router_cpuinfo);
 
-        final ActionBar actionBar = getActionBar();
+        mToolbar = (Toolbar) findViewById(R.id.tile_status_router_cpuinfo_view_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("CPU Information");
+            setSupportActionBar(mToolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -93,8 +118,13 @@ public class RouterCpuInfoActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_router_cpuinfo_options, menu);
 
-        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.tile_status_router_cpuinfo_share)
-                .getActionProvider();
+        final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_router_cpuinfo_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat
+                .getActionProvider(shareMenuItem);
+        if (mShareActionProvider == null) {
+            mShareActionProvider = new ShareActionProvider(this);
+            MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
+        }
 
         mFileToShare = new File(getCacheDir(),
                 String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid)));
@@ -187,4 +217,5 @@ public class RouterCpuInfoActivity extends Activity {
         }
         super.onDestroy();
     }
+
 }

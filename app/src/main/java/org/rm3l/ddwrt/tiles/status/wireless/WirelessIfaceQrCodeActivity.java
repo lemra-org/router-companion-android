@@ -22,8 +22,7 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
-import android.app.ActionBar;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -35,11 +34,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
@@ -50,6 +53,8 @@ import com.google.zxing.common.BitMatrix;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -64,8 +69,10 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
-public class WirelessIfaceQrCodeActivity extends Activity {
+public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";
@@ -73,6 +80,7 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     public static final int DEFAULT_BITMAP_WIDTH = 600;
     public static final int DEFAULT_BITMAP_HEIGHT = 300;
     public static final String UTF_8 = "UTF-8";
+    private static final String LOG_TAG = WirelessIfaceQrCodeActivity.class.getSimpleName();
     /**
      * ***********************************************************
      * getting from com.google.zxing.client.android.encode.QRCodeEncoder
@@ -85,6 +93,8 @@ public class WirelessIfaceQrCodeActivity extends Activity {
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+    private Toolbar mToolbar;
+    private String mTitle;
     private String mRouterUuid;
     private String mWifiQrCodeString;
     private String mSsid;
@@ -146,9 +156,25 @@ public class WirelessIfaceQrCodeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
 
-        final ActionBar actionBar = getActionBar();
+        mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle(mTitle);
+            setSupportActionBar(mToolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -157,6 +183,13 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mSsid = intent.getStringExtra(SSID);
         mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
+
+        mTitle = String.format("QR Code for '%s'", mSsid);
+
+        if (mToolbar != null) {
+            mToolbar.setTitle(mTitle);
+            setSupportActionBar(mToolbar);
+        }
 
         final ImageView qrCodeImageView = (ImageView) findViewById(R.id.tile_status_wireless_iface_qrcode_image);
 
@@ -214,8 +247,12 @@ public class WirelessIfaceQrCodeActivity extends Activity {
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
         shareMenuItem.setEnabled(mException == null);
 
-        mShareActionProvider = (ShareActionProvider) shareMenuItem
-                .getActionProvider();
+        mShareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(shareMenuItem);
+        if (mShareActionProvider == null) {
+            mShareActionProvider = new ShareActionProvider(this);
+            MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
+        }
 
         final View viewToShare = findViewById(R.id.tile_status_wireless_iface_qrcode_view_to_share);
         //Construct Bitmap and share it

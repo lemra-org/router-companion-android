@@ -27,13 +27,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:orientation="horizontal">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_lan_dhcp_status"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,6 +34,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/tile_status_lan_dhcp_status_hdr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
@@ -235,7 +229,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/tile_status_lan_dhcp_status_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"

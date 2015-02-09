@@ -44,6 +44,8 @@ import com.google.common.collect.HashBiMap;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,6 +82,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRAMINFO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
@@ -96,6 +99,7 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
     private static final BiMap<String, Integer> hashAlgoSpinnerValues = HashBiMap.create(6);
     private static final BiMap<String, Integer> tlsCipherSpinnerValues = HashBiMap.create(8);
     private static final BiMap<String, Integer> lzoCompressionSpinnerValues = HashBiMap.create(4);
+
     static {
         tunnelDeviceSpinnerValues.put("tun", 0);
         tunnelDeviceSpinnerValues.put("tap", 1);
@@ -131,6 +135,7 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
         lzoCompressionSpinnerValues.put("no", 2);
         lzoCompressionSpinnerValues.put("off", 3);
     }
+
     private NVRAMInfo mNvramInfo;
     private String mRouterUuid;
     private SharedPreferences sharedPreferences;
@@ -138,6 +143,16 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
 
         setContentView(R.layout.activity_openvpn_client_settings);
 

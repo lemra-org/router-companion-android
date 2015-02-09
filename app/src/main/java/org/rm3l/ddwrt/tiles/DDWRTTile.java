@@ -76,6 +76,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected CompoundButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
     protected ViewGroup parentViewGroup;
+    protected Integer layoutId;
     private boolean mLoaderStopped = true;
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
@@ -93,6 +94,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
                      @Nullable final Router router, @Nullable final Integer layoutId, @Nullable final Integer toggleRefreshButtonId) {
         this(parentFragment, arguments, router);
+        this.layoutId = layoutId;
         if (layoutId != null) {
             this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
@@ -106,6 +108,11 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 this.mToggleAutoRefreshButton.setChecked(this.mAutoRefreshToggle);
             }
         }
+    }
+
+    @Nullable
+    public Integer getLayoutId() {
+        return layoutId;
     }
 
     protected ViewGroup getParentViewGroup() {
@@ -174,6 +181,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
         return loader;
     }
+
+    public abstract int getTileHeaderViewId();
 
     public abstract int getTileTitleViewId();
 

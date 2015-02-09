@@ -251,7 +251,7 @@ public abstract class AbstractRouterMgmtDialogFragment
      * @param resultData  An Intent, which can return result data to the caller
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent resultData) {
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
@@ -267,54 +267,71 @@ public abstract class AbstractRouterMgmtDialogFragment
                 Log.i(LOG_TAG, "Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
                 if (d != null) {
+                    Cursor uriCursor = null;
 
-                    final ContentResolver contentResolver = this.getActivity().getContentResolver();
-
-                    final Cursor uriCursor =
-                            contentResolver.query(uri, null, null, null, null);
-
-                    /*
-                     * Get the column indexes of the data in the Cursor,
-                     * move to the first row in the Cursor, get the data,
-                     * and display it.
-                     */
-                    final int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    final int sizeIndex = uriCursor.getColumnIndex(OpenableColumns.SIZE);
-
-                    uriCursor.moveToFirst();
-
-                    //File size in bytes
-                    final long fileSize = uriCursor.getLong(sizeIndex);
-                    final String filename = uriCursor.getString(nameIndex);
-
-                    //Check file size
-                    if (fileSize > MAX_PRIVKEY_SIZE_BYTES) {
-                        displayMessage(String
-                                .format("File '%s' too big (%s). Limit is %s", filename,
-                                        toHumanReadableByteCount(fileSize),
-                                        toHumanReadableByteCount(MAX_PRIVKEY_SIZE_BYTES)), ALERT);
-                        return;
-                    }
-
-                    //Replace button hint message with file name
-                    final Button fileSelectorButton = (Button) d.findViewById(R.id.router_add_privkey);
-                    final CharSequence fileSelectorOriginalHint = fileSelectorButton.getHint();
-                    if (!Strings.isNullOrEmpty(filename)) {
-                        fileSelectorButton.setHint(filename);
-                    }
-
-                    //Set file actual content in hidden field
-                    final TextView privKeyPath = (TextView) d.findViewById(R.id.router_add_privkey_path);
                     try {
-                        privKeyPath.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
-                    } catch (IOException e) {
-                        displayMessage("Error: " + e.getMessage(), ALERT);
-                        e.printStackTrace();
-                        fileSelectorButton.setHint(fileSelectorOriginalHint);
+                        final ContentResolver contentResolver = this.getActivity().getContentResolver();
+
+                        if (contentResolver == null || (uriCursor =
+                                contentResolver.query(uri, null, null, null, null)) == null) {
+                            displayMessage("Unknown Content Provider - please select a different location or auth method!",
+                                    ALERT);
+                            return;
+                        }
+
+                        /*
+                         * Get the column indexes of the data in the Cursor,
+                         * move to the first row in the Cursor, get the data,
+                         * and display it.
+                         */
+                        final int nameIndex = uriCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        final int sizeIndex = uriCursor.getColumnIndex(OpenableColumns.SIZE);
+
+                        uriCursor.moveToFirst();
+
+                        //File size in bytes
+                        final long fileSize = uriCursor.getLong(sizeIndex);
+                        final String filename = uriCursor.getString(nameIndex);
+
+                        //Check file size
+                        if (fileSize > MAX_PRIVKEY_SIZE_BYTES) {
+                            displayMessage(String
+                                    .format("File '%s' too big (%s). Limit is %s", filename,
+                                            toHumanReadableByteCount(fileSize),
+                                            toHumanReadableByteCount(MAX_PRIVKEY_SIZE_BYTES)), ALERT);
+                            return;
+                        }
+
+                        //Replace button hint message with file name
+                        final Button fileSelectorButton = (Button) d.findViewById(R.id.router_add_privkey);
+                        final CharSequence fileSelectorOriginalHint = fileSelectorButton.getHint();
+                        if (!Strings.isNullOrEmpty(filename)) {
+                            fileSelectorButton.setHint(filename);
+                        }
+
+                        //Set file actual content in hidden field
+                        final TextView privKeyPath = (TextView) d.findViewById(R.id.router_add_privkey_path);
+                        try {
+                            privKeyPath.setText(IOUtils.toString(contentResolver.openInputStream(uri)));
+                        } catch (IOException e) {
+                            displayMessage("Error: " + e.getMessage(), ALERT);
+                            e.printStackTrace();
+                            fileSelectorButton.setHint(fileSelectorOriginalHint);
+                        }
+                    } finally {
+                        if (uriCursor != null) {
+                            try {
+                                uriCursor.close();
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                Utils.reportException(e);
+                            }
+                        }
                     }
                 }
             }
         }
+        super.onActivityResult(requestCode, resultCode, resultData);
     }
 
     @Override

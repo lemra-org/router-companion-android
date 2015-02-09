@@ -110,7 +110,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_iface_menu);
 
-        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         if (!isThemeLight) {
             //Set menu background to white
@@ -136,6 +136,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             }
         });
 
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_wireless_iface_hdr;
     }
 
     @Override
@@ -595,11 +600,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
 
                 final String routerUuid = mRouter.getUuid();
-                final Class<?> activityClass =
-                        ColorUtils.isThemeLight(mParentFragmentActivity, routerUuid) ?
-                                WirelessIfaceQrCodeActivityLight.class : WirelessIfaceQrCodeActivity.class;
 
-                final Intent intent = new Intent(mParentFragmentActivity, activityClass);
+                final Intent intent = new Intent(mParentFragmentActivity, WirelessIfaceQrCodeActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
                 intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
                 intent.putExtra(WirelessIfaceQrCodeActivity.WIFI_QR_CODE, wifiQrCodeString);

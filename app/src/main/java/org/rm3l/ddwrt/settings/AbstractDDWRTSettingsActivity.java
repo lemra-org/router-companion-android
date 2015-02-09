@@ -21,25 +21,29 @@
  */
 package org.rm3l.ddwrt.settings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.RingtonePreference;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
-public abstract class AbstractDDWRTSettingsActivity extends Activity {
+public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -117,5 +121,20 @@ public abstract class AbstractDDWRTSettingsActivity extends Activity {
         final Object value = preferencesMap.get(preference.getKey());
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 value != null ? value : "");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+
+        super.onCreate(savedInstanceState);
     }
 }

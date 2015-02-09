@@ -24,8 +24,10 @@ package org.rm3l.ddwrt.mgmt.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -41,6 +43,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -50,6 +53,7 @@ import java.util.List;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
 public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
@@ -57,6 +61,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     public static final String EMPTY = "(empty)";
     final DDWRTCompanionDAO dao;
     private final Context context;
+    private final Resources resources;
     private List<Router> routersList;
     private SparseBooleanArray selectedItems;
 
@@ -64,7 +69,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         routersList = results;
         this.context = context;
         this.dao = RouterManagementActivity.getDao(context);
-
+        resources = context.getResources();
         selectedItems = new SparseBooleanArray();
     }
 
@@ -84,8 +89,18 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
                 .inflate(R.layout.router_list_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
         // ...
-        final ViewHolder vh = new ViewHolder(this.context, v);
-        return vh;
+        final long currentTheme = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+        } else {
+            //Default is Dark
+            cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+        }
+
+        return new ViewHolder(this.context, v);
     }
 
     @Override
@@ -224,7 +239,6 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
-//                implements View.OnClickListener, View.OnLongClickListener {
 
         @NonNull
         final TextView routerName;
@@ -244,8 +258,6 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             super(itemView);
             this.context = context;
             this.itemView = itemView;
-//            this.itemView.setOnClickListener(this);
-//            this.itemView.setOnLongClickListener(this);
 
             this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
             this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);
@@ -254,35 +266,6 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
         }
 
-//        @Override
-//        public void onClick(View view) {
-//            if (routerUuid == null) {
-//                Toast.makeText(this.context,
-//                        "Click on Unknown router - please refresh list or add a new one.",
-//                        Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//
-//            //Opens up main activity with the router selected
-//            final Intent ddWrtMainIntent = new Intent(this.context, DDWRTMainActivity.class);
-//            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid.getText());
-//            this.context.startActivity(ddWrtMainIntent);
-//        }
-//
-//        @Override
-//        public boolean onLongClick(View view) {
-//            if (routerUuid == null) {
-//                Toast.makeText(this.context,
-//                        "Long click on Unknown router - please refresh list or add a new one.",
-//                        Toast.LENGTH_LONG).show();
-//                return false;
-//            }
-//            //TODO
-//            Toast.makeText(this.context,
-//                    "[onLongClick] router: " + routerUuid.getText(),
-//                    Toast.LENGTH_LONG).show();
-//            return false;
-//        }
     }
 
 }

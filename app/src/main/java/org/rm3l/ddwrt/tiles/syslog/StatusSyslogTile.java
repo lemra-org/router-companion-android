@@ -76,7 +76,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
     protected static final int MAX_LOG_LINES = 15;
-    private static final String FONT_COLOR_YELLOW_HTML = "<font color='yellow'>";
+    private static final String FONT_COLOR_MATCHING_HTML = "<font color='#009900'>";
     private static final String SLASH_FONT_HTML = "</font>";
     private static final String LAST_SEARCH = "lastSearch";
     @Nullable
@@ -101,6 +101,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public boolean isEmbeddedWithinScrollView() {
         return false;
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_router_syslog_hdr;
     }
 
     @Override
@@ -275,7 +280,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                                 logTextView.setText(currentText
                                         .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                        .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING));
+                                        .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING));
 
                                 if (sharedPreferences != null) {
                                     final SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -312,7 +317,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                             logTextView.setText(findAndHighlightOutput(currentText
                                     .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                    .replaceAll(FONT_COLOR_YELLOW_HTML, EMPTY_STRING), textToFind));
+                                    .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING), textToFind));
 
                             return true;
                         }
@@ -351,7 +356,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private Spanned findAndHighlightOutput(@NonNull final CharSequence text, @NonNull final String textToFind) {
         final Matcher matcher = Pattern.compile("(" + Pattern.quote(textToFind) + ")", Pattern.CASE_INSENSITIVE)
                 .matcher(text);
-        return Html.fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_YELLOW_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
+        return Html.fromHtml(matcher.replaceAll(Matcher.quoteReplacement(FONT_COLOR_MATCHING_HTML) + "$1" + Matcher.quoteReplacement(SLASH_FONT_HTML))
                 .replaceAll(Pattern.quote("\n"), Matcher.quoteReplacement("<br/>")));
     }
 

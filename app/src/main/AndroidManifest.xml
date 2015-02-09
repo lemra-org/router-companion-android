@@ -23,10 +23,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     package="org.rm3l.ddwrt">
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
-
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
@@ -54,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/myAppTheme"
+        android:theme="@style/AppThemeDark"
         tools:replace="android:theme">
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -129,16 +125,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
-            android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivityLight"
-            android:label="@string/wifi_qr_code"
-            android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
-        </activity>
-
-        <activity
             android:name=".settings.RouterManagementSettingsActivity"
             android:label="@string/title_activity_router_settings"
             android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity"
@@ -163,16 +149,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
-            android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivityLight"
-            android:label="@string/title_openvpncl_settings"
-            android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
-        </activity>
-
-        <activity
             android:name=".tiles.status.router.RouterCpuInfoActivity"
             android:label="@string/title_cpuinfo"
             android:parentActivityName=".DDWRTMainActivity"
@@ -183,27 +159,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
-            android:name=".tiles.status.router.RouterCpuInfoActivityLight"
-            android:label="@string/title_cpuinfo"
-            android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
-        </activity>
-
-        <activity
             android:name=".tiles.status.router.RouterMemInfoActivity"
-            android:label="@string/title_meminfo"
-            android:parentActivityName=".DDWRTMainActivity"
-            android:windowSoftInputMode="stateHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
-        </activity>
-
-        <activity
-            android:name=".tiles.status.router.RouterMemInfoActivityLight"
             android:label="@string/title_meminfo"
             android:parentActivityName=".DDWRTMainActivity"
             android:windowSoftInputMode="stateHidden">

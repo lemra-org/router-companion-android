@@ -45,7 +45,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -71,6 +70,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
     @NonNull
     private static String getGrepProcMemInfo(@NonNull final String item) {
         return "grep \"" + item + "\" /proc/meminfo ";
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_router_router_mem_hdr;
     }
 
     @Override
@@ -293,9 +297,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
         final String mRouterUuid = mRouter.getUuid();
         final Intent memInfoIntent =
-                new Intent(mParentFragment.getActivity(),
-                        ColorUtils.isThemeLight(mParentFragmentActivity, mRouterUuid) ?
-                                RouterMemInfoActivityLight.class : RouterMemInfoActivity.class);
+                new Intent(mParentFragment.getActivity(), RouterMemInfoActivity.class);
         memInfoIntent.putExtra(RouterMemInfoActivity.MEM_INFO_OUTPUT, memInfoContents);
         memInfoIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 

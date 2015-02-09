@@ -67,6 +67,11 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_lan_dhcp_status_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_lan_dhcp_status_title;
     }

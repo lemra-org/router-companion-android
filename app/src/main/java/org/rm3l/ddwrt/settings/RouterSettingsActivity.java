@@ -37,7 +37,6 @@ import org.rm3l.ddwrt.utils.Utils;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -58,7 +57,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
         if (isNullOrEmpty(this.mRouterUuid)) {
-            Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG).show();
             Utils.reportException(new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
             finish();
         }
@@ -67,22 +66,20 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
         final Router router;
-
-        if ((router = RouterManagementActivity.getDao(this)
-                .getRouter(getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED))) == null) {
+        if ((router = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
+        super.onCreate(savedInstanceState);
+
         final String routerName = router.getName();
         setTitle(String.format("Settings for '%s'",
                 isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName));
-
-        this.mRouterUuid = router.getUuid();
 
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
@@ -114,7 +111,6 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
             bindPreferenceSummaryToValue(findPreference(SYNC_INTERVAL_MILLIS_PREF));
-            bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
         }
 
     }

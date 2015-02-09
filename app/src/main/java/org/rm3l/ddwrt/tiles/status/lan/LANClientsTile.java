@@ -46,6 +46,12 @@ public class LANClientsTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        //TODO
+        return -1;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         //TODO
         return -1;

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -27,13 +26,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_bandwidth_monitoring"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,6 +34,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:weightSum="1">
 
         <LinearLayout
+            android:id="@+id/tile_status_bandwidth_monitoring_hdr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
@@ -56,19 +49,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/bandwidth_usage_mb"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_bandwidth_monitoring_ssid"-->
-            <!--android:layout_width="215dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="left"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="left"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="Fetching SSID..."-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:textColor="@color/ddwrt_green"-->
-            <!--android:textStyle="italic" />-->
 
         </LinearLayout>
 
@@ -117,13 +97,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space"
                 android:visibility="gone" />
 
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/tile_status_bandwidth_monitoring_togglebutton"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tile_status_bandwidth_monitoring_togglebutton"
                 android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
@@ -140,8 +120,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"

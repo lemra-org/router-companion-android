@@ -41,6 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/tile_status_router_router_state_hdr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -328,7 +329,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/tile_status_router_router_state_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"

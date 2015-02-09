@@ -42,6 +42,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="tab_background">@color/theme_primary</color>
     <color name="tab_selected_strip">@color/win8_orange</color>
 
+    <color name="left_drawer_dark_background">#151515</color>
+    <color name="left_drawer_light_background">#D3D3D3</color>
+
     <color name="translucent_actionbar_background">#cc3f51b5</color>
     <color name="translucent_statusbar_background">#cc3f51b5</color>
 
@@ -250,6 +253,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- y -->
 
     <color name="YellowGreen">#9ACD32</color>
+    <color name="cardview_longpress_background">#80ffffff</color>
     <!-- z -->
 
 </resources>

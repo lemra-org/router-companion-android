@@ -68,6 +68,8 @@ import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -113,9 +115,6 @@ public class DDWRTMainActivity extends ActionBarActivity
     private FeedbackDialog mFeedbackDialog;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
-    private long mCurrentTheme;
-    @NonNull
-    private SharedPreferences mPreferences;
     @NonNull
     private SharedPreferences mGlobalPreferences;
     @NonNull
@@ -149,16 +148,34 @@ public class DDWRTMainActivity extends ActionBarActivity
             return;
         }
 
+        this.mRouterUuid = router.getUuid();
+        this.mRouter = router;
+
+        final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
+        this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
+        //Load from Shared Preferences
+        this.mCurrentSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
+        this.mCurrentSyncInterval = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
+
+        final long mCurrentTheme = this.mGlobalPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+        // Inherit theme for router - this is for SettingsActivity,
+        // because we are overriding the getSharedPreferences() method
+        mPreferences.edit()
+                .putLong(THEMING_PREF, mCurrentTheme)
+                .apply();
+
         setContentView(R.layout.activity_main);
 
         final String routerName = router.getName();
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
-
-        this.mRouterUuid = router.getUuid();
-        this.mRouter = router;
-
-        this.mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
-        this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
         mTitle = mDrawerTitle = getTitle();
         initView();
@@ -202,18 +219,13 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
 
-        //Load from Shared Preferences
-        this.mCurrentSortingStrategy = this.mPreferences.getString(SORTING_STRATEGY_PREF, "");
-        this.mCurrentSyncInterval = this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
-        this.mCurrentTheme = this.mPreferences.getLong(THEMING_PREF, -1l);
-
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
         final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval <= 0l);
-        final boolean putDefaultTheme = (this.mCurrentTheme <= 0l);
+        final boolean putDefaultTheme = (mCurrentTheme <= 0l);
         if (putDefaultSortingStrategy || putDefaultSyncInterval || putDefaultTheme) {
             //Add default preferences values
-            final SharedPreferences.Editor editor = this.mPreferences.edit();
+            final SharedPreferences.Editor editor = mPreferences.edit();
             if (putDefaultSortingStrategy) {
                 editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
             }
@@ -229,6 +241,16 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        final boolean isThemeLight = ColorUtils.isThemeLight(this);
+        if (isThemeLight) {
+            //Light
+            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_light_background));
+        } else {
+            //Default is Dark
+            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_dark_background));
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
@@ -456,12 +478,13 @@ public class DDWRTMainActivity extends ActionBarActivity
                 }
                 break;
             case ROUTER_SETTINGS_ACTIVITY_CODE:
-                // Make sure the request was successful and reload U if necessary
+                // Make sure the request was successful and reload UI if necessary
                 if (resultCode == RESULT_OK) {
-                    if (this.mCurrentSyncInterval != this.mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l) ||
-                            this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
-                            !this.mCurrentSortingStrategy
-                                    .equals(this.mPreferences.getString(SORTING_STRATEGY_PREF, ""))) {
+                    final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
+                    final long prefSyncIntervalMillis = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
+                    final String prefSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
+                    if (this.mCurrentSyncInterval != prefSyncIntervalMillis ||
+                            !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {
                         //Reload UI
                         final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
                         alertDialog.show();
@@ -525,7 +548,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                                 .newInstance(this, position, this.mRouterUuid))
                 .commit();
 
-//        FIXME mDrawerLayout.closeDrawer(mDrawerList);
+//        mDrawerLayout.closeDrawer(mDrawerList);
+        mDrawerLayout.closeDrawers();
     }
 
     public Toolbar getToolbar() {

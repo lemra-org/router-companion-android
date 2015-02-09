@@ -26,6 +26,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,7 +46,10 @@ import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+
+import java.util.ArrayList;
 
 /**
  * Page Sliding fragment
@@ -121,15 +126,35 @@ public class PageSlidingTabStripFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mPager = (ViewPager) view.findViewById(R.id.viewPager);
-        mPager.setOffscreenPageLimit(mFragmentTabsAdapter.getCount() - 1);
+        final int mFragmentTabsAdapterCount = mFragmentTabsAdapter.getCount();
+        mPager.setOffscreenPageLimit(mFragmentTabsAdapterCount - 1);
         mPager.setAdapter(mFragmentTabsAdapter);
         mPager.setOnPageChangeListener(mOnPageChangeListener);
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setViewPager(this.mPager);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        mSlidingTabLayout.setSelectedIndicatorColors(
-                getResources().getColor(R.color.tab_selected_strip));
+
+        final ArrayList<Integer> colorsToSkip = new ArrayList<>();
+        final Drawable tabsBackground = mSlidingTabLayout.getBackground();
+        if (tabsBackground instanceof ColorDrawable) {
+            colorsToSkip.add(((ColorDrawable) tabsBackground).getColor());
+        }
+
+        //Generate random colors to use for selection
+        final DDWRTBaseFragment[] tabs = mFragmentTabsAdapter.tabs;
+        if (tabs != null && tabs.length > 0) {
+            final int[] selectedIndicatorColors = new int[tabs.length];
+            int i = 0;
+            for (final DDWRTBaseFragment tab : tabs) {
+                selectedIndicatorColors[i++] = (tab != null ?
+                        ColorUtils.getColor(tab.getClass().getSimpleName()) : ColorUtils.genColor(colorsToSkip));
+            }
+            mSlidingTabLayout.setSelectedIndicatorColors(selectedIndicatorColors);
+        } else {
+            mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.tab_selected_strip));
+        }
+
 //        mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(this.mPager);
     }

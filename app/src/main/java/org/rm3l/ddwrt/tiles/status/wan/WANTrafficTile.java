@@ -62,6 +62,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_wan_traffic_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_wan_traffic_title;
     }

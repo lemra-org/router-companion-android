@@ -94,10 +94,16 @@ public final class SSHUtils {
     private static final LruCache<String, ReentrantLock> SSH_SESSIONS_CACHE_LOCKS = new LruCache<String, ReentrantLock>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, ReentrantLock oldValue, ReentrantLock newValue) {
-            if (oldValue.isLocked()) {
-                oldValue.unlock();
+            try {
+                if (oldValue.isLocked()) {
+                    oldValue.unlock();
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+                Utils.reportException(e);
+            } finally {
+                super.entryRemoved(evicted, key, oldValue, newValue);
             }
-            super.entryRemoved(evicted, key, oldValue, newValue);
         }
 
         @Override
@@ -110,9 +116,11 @@ public final class SSHUtils {
                     SSHD_DSS_HOST_KEY,
                     OPENVPNCL_CA, OPENVPNCL_CLIENT, OPENVPNCL_KEY, OPENVPNCL_TLSAUTH, OPENVPNCL_STATIC, OPENVPNCL_ROUTE,
                     OPENVPN_CA, OPENVPN_CLIENT, OPENVPN_KEY, OPENVPN_TLSAUTH, OPENVPN_CRT, OPENVPN_CRL, OPENVPN_STATIC);
+
     static {
         JSch.setLogger(SSHLogger.getInstance());
     }
+
     private static final String TAG = SSHUtils.class.getSimpleName();
     private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override

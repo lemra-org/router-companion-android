@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.fragments;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,9 +47,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -99,7 +96,6 @@ import java.util.List;
 import java.util.Map;
 
 import static android.widget.FrameLayout.LayoutParams;
-import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
 
 
 /**
@@ -107,7 +103,7 @@ import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T>, ObservableScrollViewCallbacks {
+public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T> {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
@@ -115,17 +111,18 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     public static final String STATE_LOADER_IDS = "loaderIds";
     private static final String LOG_TAG = DDWRTBaseFragment.class.getSimpleName();
+    protected final Handler mHandler = new Handler();
     private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
     protected LinearLayout mLayout;
     protected Router router;
     protected boolean mLoaderStopped = true;
     protected ViewGroup viewGroup;
+    @Nullable
+    protected DDWRTMainActivity ddwrtMainActivity;
     private CharSequence mTabTitle;
     private CharSequence mParentSectionTitle;
     @Nullable
     private List<DDWRTTile> fragmentTiles; //fragment tiles and the ID they are assigned
-    @Nullable
-    private DDWRTMainActivity ddwrtMainActivity;
     @Nullable
     private Toolbar toolbar;
     private Class<? extends DDWRTBaseFragment> mClazz;
@@ -410,10 +407,7 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
         }
         this.loaderIdsInUse.clear();
         viewGroup = (ScrollView) getActivity().getLayoutInflater()
-                .inflate(R.layout.base_tiles_container_scrollview, null);
-        if (viewGroup instanceof ObservableScrollView) {
-            ((ObservableScrollView) viewGroup).setScrollViewCallbacks(this);
-        }
+                .inflate(R.layout.base_tiles_container_scrollview, new ScrollView(getActivity()));
 
         this.fragmentTiles = this.getTiles(savedInstanceState);
     }
@@ -542,33 +536,46 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                     LayoutParams.WRAP_CONTENT);
             cardViewLayoutParams.rightMargin = R.dimen.marginRight;
             cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-            cardViewLayoutParams.bottomMargin = R.dimen.marginBottom;
-
-            final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
-
-            final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity, themeBackgroundColor);
+            cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
 
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
+
+            final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
+
+            final boolean isThemeLight = ColorUtils.isThemeLight(this.getActivity());
+
+            final Resources resources = this.getActivity().getResources();
+
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
                 final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
+                final Integer layoutId = ddwrtTile.getLayoutId();
+
                 atLeastOneTileAdded |= (viewGroupLayout != null);
 
-                if (viewGroupLayout == null) {
+                if (layoutId == null || viewGroupLayout == null) {
                     continue;
                 }
 
                 if (!ddwrtTile.isEmbeddedWithinScrollView()) {
                     if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
                         viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                                .inflate(R.layout.base_tiles_container_linearlayout, null);
+                                .inflate(R.layout.base_tiles_container_linearlayout, new LinearLayout(fragmentActivity));
                         parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
                     }
                 }
 
+                //Set header background color
+//                final View hdrView = viewGroupLayout.findViewById(ddwrtTile.getTileHeaderViewId());
+//                if (hdrView != null) {
+//                    hdrView.setBackgroundColor(fragmentColor);
+//                }
+
+                final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
                 if (isThemeLight) {
-                    ((TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId()))
-                            .setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                    if (titleTextView != null) {
+                        titleTextView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                    }
                 }
 
                 //Detach this from Parent
@@ -584,11 +591,19 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
                 cardView.setContentPadding(15, 5, 15, 5);
                 cardView.setOnClickListener(ddwrtTile);
                 cardView.setLayoutParams(cardViewLayoutParams);
-                cardView.setCardBackgroundColor(themeBackgroundColor);
+//                cardView.setCardBackgroundColor(themeBackgroundColor);
                 //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                 cardView.setPreventCornerOverlap(true);
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
+
+                if (isThemeLight) {
+                    //Light
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                } else {
+                    //Default is Dark
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                }
 
                 cardView.addView(viewGroupLayout);
 
@@ -721,33 +736,6 @@ public abstract class DDWRTBaseFragment<T> extends Fragment implements LoaderMan
 
     public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
         parentFragment.startActivityForResult(intent, listener);
-    }
-
-    @Override
-    public void onScrollChanged(int i, boolean b, boolean b2) {
-        Log.d(LOG_TAG, "ObservableScrollViewCallbacks: onScrollChanged(" + i + ", " + b + ", " + b2 + ")");
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(@Nullable final ScrollState scrollState) {
-        Log.d(LOG_TAG, "ObservableScrollViewCallbacks: onUpOrCancelMotionEvent(" + scrollState + ")");
-        if (ddwrtMainActivity != null) {
-            final ActionBar ab = ddwrtMainActivity.getSupportActionBar();
-            if (scrollState == ScrollState.UP) {
-                if (ab.isShowing()) {
-                    ab.hide();
-                }
-            } else if (scrollState == ScrollState.DOWN) {
-                if (!ab.isShowing()) {
-                    ab.show();
-                }
-            }
-        }
     }
 
 }

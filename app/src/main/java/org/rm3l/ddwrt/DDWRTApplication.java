@@ -30,11 +30,14 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TRACEPOT_DEVELOP_MODE;
 import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
 
@@ -85,6 +88,16 @@ public class DDWRTApplication extends Application {
                     break;
             }
             Utils.reportException(firstLaunchReport);
+        }
+
+        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
         }
     }
 

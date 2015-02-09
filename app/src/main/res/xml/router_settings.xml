@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -22,51 +21,51 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Theming -->
-    <PreferenceCategory
-        android:title="Theming"
-        android:key="@string/pref_header_theming">
+    <!--&lt;!&ndash; Theming &ndash;&gt;-->
+    <!--<PreferenceCategory-->
+    <!--android:title="Theming"-->
+    <!--android:key="@string/pref_header_theming">-->
 
-        <org.rm3l.ddwrt.utils.LongListPreference
-            android:key="theming"
-            android:title="@string/pref_title_theme"
-            android:entries="@array/pref_theme_titles"
-            android:entryValues="@array/pref_theme_values"
-            android:defaultValue="31"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
+    <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+    <!--android:key="theming"-->
+    <!--android:title="@string/pref_title_theme"-->
+    <!--android:entries="@array/pref_theme_titles"-->
+    <!--android:entryValues="@array/pref_theme_values"-->
+    <!--android:defaultValue="31"-->
+    <!--android:negativeButtonText="@null"-->
+    <!--android:positiveButtonText="@null" />-->
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
     <!-- General -->
     <PreferenceCategory
-        android:title="General"
-        android:key="@string/pref_header_general">
+        android:key="@string/pref_header_general"
+        android:title="General">
 
         <ListPreference
-            android:key="sortingStrategy"
-            android:title="@string/pref_title_tab_sorting_strategy"
             android:defaultValue="DDWRTSortingStrategy"
             android:entries="@array/pref_sorting_strategy_titles"
             android:entryValues="@array/pref_sorting_strategy_values"
+            android:key="sortingStrategy"
             android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_tab_sorting_strategy" />
 
     </PreferenceCategory>
 
     <!-- Data & Sync -->
     <PreferenceCategory
-        android:title="Data &amp; Sync"
-        android:key="@string/pref_header_data_sync">
+        android:key="@string/pref_header_data_sync"
+        android:title="Data &amp; Sync">
 
         <org.rm3l.ddwrt.utils.LongListPreference
-            android:key="syncIntervalMillis"
-            android:title="@string/pref_title_sync_frequency"
+            android:defaultValue="30000"
             android:entries="@array/pref_sync_frequency_titles"
             android:entryValues="@array/pref_sync_frequency_values"
-            android:defaultValue="30000"
+            android:key="syncIntervalMillis"
             android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_frequency" />
 
     </PreferenceCategory>
 

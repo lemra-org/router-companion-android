@@ -45,6 +45,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -69,6 +70,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -77,13 +79,16 @@ import java.util.List;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 
 public class RouterManagementActivity
         extends ActionBarActivity
         implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
 
+    public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
@@ -93,6 +98,7 @@ public class RouterManagementActivity
     GestureDetectorCompat gestureDetector;
     int itemCount;
     ImageButton addNewButton;
+    private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -101,6 +107,7 @@ public class RouterManagementActivity
     private FeedbackDialog mFeedbackDialog;
 
     private Toolbar mToolbar;
+    private SharedPreferences mPreferences;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -110,11 +117,27 @@ public class RouterManagementActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Default values are not set by default
+        //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
+        PreferenceManager.setDefaultValues(this, DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE, R.xml.router_management_settings, false);
+
+        mPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        mCurrentTheme = mPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+
         setContentView(R.layout.activity_router_management);
 
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("Manage your Routers");
+            mToolbar.setTitle("Routers");
             setSupportActionBar(mToolbar);
         }
 
@@ -123,11 +146,6 @@ public class RouterManagementActivity
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setHomeButtonEnabled(false);
         }
-
-        //Default values are not set by default
-        //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
-        PreferenceManager.setDefaultValues(this, DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                Context.MODE_PRIVATE, R.xml.router_management_settings, false);
 
         this.dao = getDao(this);
 
@@ -147,34 +165,34 @@ public class RouterManagementActivity
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                final ActionBar ab = getSupportActionBar();
-                switch (newState) {
-                    case RecyclerView.SCROLL_STATE_DRAGGING:
-                        //The RecyclerView is currently being dragged by outside input such as user touch input.
-                        if (ab.isShowing()) {
-                            ab.hide();
-                        }
-                        break;
-                    case RecyclerView.SCROLL_STATE_SETTLING:
-                        //The RecyclerView is currently animating to a final position while not under outside control.
-                        if (!ab.isShowing()) {
-                            ab.show();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
+//        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                final ActionBar ab = getSupportActionBar();
+//                switch (newState) {
+//                    case RecyclerView.SCROLL_STATE_DRAGGING:
+//                        //The RecyclerView is currently being dragged by outside input such as user touch input.
+//                        if (ab.isShowing()) {
+//                            ab.hide();
+//                        }
+//                        break;
+//                    case RecyclerView.SCROLL_STATE_SETTLING:
+//                        //The RecyclerView is currently animating to a final position while not under outside control.
+//                        if (!ab.isShowing()) {
+//                            ab.show();
+//                        }
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//            }
+//        });
 
         /*
          * onClickDetection is done in this Activity's onItemTouchListener
@@ -303,7 +321,8 @@ public class RouterManagementActivity
                 new AboutDialog(this).show();
                 return true;
             case R.id.router_list_settings:
-                this.startActivity(new Intent(this, RouterManagementSettingsActivity.class));
+                this.startActivityForResult(
+                        new Intent(this, RouterManagementSettingsActivity.class), ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.router_list_feedback:
                 if (mFeedbackDialog == null) {
@@ -315,6 +334,34 @@ public class RouterManagementActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(LOG_TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        // Check which request we're responding to
+        switch (requestCode) {
+            case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:
+                // Make sure the request was successful and reload U if necessary
+                if (resultCode == RESULT_OK) {
+                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)) {
+                        //Reload UI
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                                startActivity(getIntent());
+                                alertDialog.cancel();
+                            }
+                        }, 2000);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void doRefreshRoutersListWithSpinner(@NonNull final RoutersListRefreshCause cause, final Integer position) {
@@ -634,7 +681,7 @@ public class RouterManagementActivity
             if (view == null) {
                 return;
             }
-            view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+            view.setBackgroundColor(getResources().getColor(R.color.cardview_longpress_background));
             // Start the CAB using the ActionMode.Callback defined above
             actionMode = startActionMode(RouterManagementActivity.this);
             int idx = mRecyclerView.getChildPosition(view);

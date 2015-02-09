@@ -43,10 +43,14 @@ import com.cocosw.undobar.UndoBarController;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
 
@@ -77,6 +81,19 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final FragmentActivity fragmentActivity = getActivity();
+
+        final long currentTheme = fragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+        if (currentTheme == ColorUtils.LIGHT_THEME) {
+            //Light
+            fragmentActivity.setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            fragmentActivity.setTheme(R.style.AppThemeDark);
+        }
+
         final Bundle arguments = getArguments();
         this.mKey = \"fake-key\";
         this.mValue = arguments.getCharSequence(VALUE);

@@ -41,6 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/tile_status_time_hdr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
@@ -83,49 +84,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
-
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/tile_status_time_title"-->
-            <!--android:ellipsize="end"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="@string/time_settings"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:textStyle="bold"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_alignParentLeft="true"/>-->
-
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:gravity="start">-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_time_current_date"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="start"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="start"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="@string/loading_current_date"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--android:textColor="@color/ddwrt_green"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:visibility="gone"/>-->
-
-            <!--<ProgressBar-->
-            <!--android:id="@+id/tile_status_time_header_loading_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true" />-->
-
-            <!--</RelativeLayout>-->
 
         </RelativeLayout>
 
@@ -280,7 +238,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/tile_status_time_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"

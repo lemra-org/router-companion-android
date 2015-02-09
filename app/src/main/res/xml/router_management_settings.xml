@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -22,40 +21,58 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- General -->
+    <!-- Theming -->
     <PreferenceCategory
-        android:title="General"
-        android:key="@string/pref_header_general">
+        android:key="@string/pref_header_theming"
+        android:title="Theming">
 
-        <CheckBoxPreference
-            android:title="Connection Check"
-            android:summary="Always check actual connection prior to adding or updating an entry"
-            android:key="alwaysCheckConnection"
-            android:enabled="true"
-            android:defaultValue="true"/>
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:defaultValue="31"
+            android:entries="@array/pref_theme_titles"
+            android:entryValues="@array/pref_theme_values"
+            android:key="theming"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_theme" />
 
     </PreferenceCategory>
 
+    <!-- General -->
     <PreferenceCategory
-        android:title="Error Reporting">
+        android:key="@string/pref_header_general"
+        android:title="General">
 
-        <CheckBoxPreference android:key="acra.enable"
-            android:title="@string/pref_enable_acra"
-            android:summaryOn="@string/pref_acra_enabled"
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:enabled="true"
+            android:key="alwaysCheckConnection"
+            android:summary="Always check actual connection prior to adding or updating an entry"
+            android:title="Connection Check" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Error Reporting">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="acra.enable"
             android:summaryOff="@string/pref_acra_disabled"
-            android:defaultValue="true"/>
+            android:summaryOn="@string/pref_acra_enabled"
+            android:title="@string/pref_enable_acra" />
 
-        <CheckBoxPreference android:key="acra.syslog.enable"
-            android:summaryOn="@string/pref_acra_syslog_enabled"
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="acra.syslog.enable"
             android:summaryOff="@string/pref_acra_syslog_disabled"
-            android:title="@string/pref_acra_syslog"
-            android:defaultValue="true"/>
+            android:summaryOn="@string/pref_acra_syslog_enabled"
+            android:title="@string/pref_acra_syslog" />
 
-        <CheckBoxPreference android:key="acra.deviceid.enable"
-            android:title="@string/pref_acra_deviceid"
-            android:summaryOn="@string/pref_acra_deviceid_enabled"
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="acra.deviceid.enable"
             android:summaryOff="@string/pref_acra_deviceid_disabled"
-            android:defaultValue="true"/>
+            android:summaryOn="@string/pref_acra_deviceid_enabled"
+            android:title="@string/pref_acra_deviceid" />
 
     </PreferenceCategory>
 

@@ -80,6 +80,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_bandwidth_monitoring_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_bandwidth_monitoring_title;
     }

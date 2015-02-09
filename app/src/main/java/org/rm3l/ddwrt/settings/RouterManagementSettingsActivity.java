@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -29,6 +30,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
 
@@ -45,7 +47,14 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new RouterManagementSettingsFragment())
                 .commit();
+    }
 
+    @Override
+    public void finish() {
+        final Intent data = new Intent();
+        setResult(RESULT_OK, data);
+
+        super.finish();
     }
 
     public static class RouterManagementSettingsFragment extends PreferenceFragment {
@@ -62,6 +71,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
+            bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
 
             bindPreferenceSummaryToValue(findPreference("acra.enable"));
             bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));

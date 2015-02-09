@@ -59,6 +59,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_wan_config_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_wan_config_title;
     }

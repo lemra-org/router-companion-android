@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.fragments.status;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -56,7 +58,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 /**
  *
@@ -68,6 +71,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     @Nullable
     private Collection<DDWRTTile> mIfaceTiles = null;
 
+    private Loader<Collection<DDWRTTile>> mLoader;
+
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
@@ -78,7 +83,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
     @Override
     protected Loader<Collection<DDWRTTile>> getLoader(final int id, @NonNull final Bundle args) {
 
-        return new AsyncTaskLoader<Collection<DDWRTTile>>(getActivity()) {
+        mLoader = new AsyncTaskLoader<Collection<DDWRTTile>>(getActivity()) {
 
             @Nullable
             @Override
@@ -116,10 +121,15 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
                     final List<DDWRTTile> tiles = Lists.newArrayList();
 
-                    for (final String landev : splitToList) {
-                        if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
+                    for (final String landevRaw : splitToList) {
+                        if (landevRaw == null) {
                             continue;
                         }
+                        final String landev = landevRaw.trim();
+                        if (!(startsWithIgnoreCase(landev, "wl") || startsWithIgnoreCase(landev, "wl"))) {
+                            continue;
+                        }
+
                         tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
                         //Also get Virtual Interfaces
                         try {
@@ -163,6 +173,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                 }
             }
         };
+        return mLoader;
 
     }
 
@@ -216,8 +227,8 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
         final FragmentActivity fragmentActivity = getActivity();
 
-        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
-        final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity, themeBackgroundColor);
+//        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
+        final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity);
 
         final LinearLayout dynamicTilessViewGroup =
                 (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);
@@ -225,11 +236,26 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         //Remove everything first
         dynamicTilessViewGroup.removeAllViews();
 
+        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+
+        final Resources resources = fragmentActivity.getResources();
+
         for (final DDWRTTile tile : tiles) {
             final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
             if (tileViewGroupLayout == null) {
                 continue;
             }
+
+            //Set header background color
+//            final View hdrView = tileViewGroupLayout.findViewById(tile.getTileHeaderViewId());
+//            if (hdrView != null) {
+//                hdrView.setBackgroundColor(fragmentColor);
+//            }
 
             if (isThemeLight) {
                 final View titleView = tileViewGroupLayout.findViewById(tile.getTileTitleViewId());
@@ -247,10 +273,26 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
 
             //Add row for this iface
             final CardView cardView = new CardView(fragmentActivity);
-            cardView.setCardBackgroundColor(themeBackgroundColor);
+//            cardView.setCardBackgroundColor(themeBackgroundColor);
 
             cardView.setOnClickListener(tile);
             tileViewGroupLayout.setOnClickListener(tile);
+
+            cardView.setContentPadding(15, 5, 15, 5);
+            cardView.setLayoutParams(cardViewLayoutParams);
+//                cardView.setCardBackgroundColor(themeBackgroundColor);
+            //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+            cardView.setPreventCornerOverlap(true);
+            //Add padding in API v21+ as well to have the same measurements with previous versions.
+            cardView.setUseCompatPadding(true);
+
+            if (isThemeLight) {
+                //Light
+                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+            } else {
+                //Default is Dark
+                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+            }
 
             cardView.addView(tileViewGroupLayout);
 
@@ -261,7 +303,30 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
         //Make it visible now
         dynamicTilessViewGroup.setVisibility(View.VISIBLE);
 
+        //Schedule next run
+        mHandler.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (ddwrtMainActivity != null) {
+                                ddwrtMainActivity.getSupportLoaderManager()
+                                        .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
+                            } else {
+                                Log.w(LOG_TAG, "ddwrtMainActivity == null => next loader run will NOT be scheduled!");
+                            }
+                        } catch (final Exception e) {
+                            //No worries
+                            Log.w(LOG_TAG, e);
+                        }
+
+                    }
+                },
+                getActivity().getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
+                        getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
+        );
     }
+
 
     /**
      * Called when a previously created loader is being reset, and thus

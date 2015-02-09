@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.about;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,9 +76,9 @@ public class AboutDialog extends Dialog {
      * @param textView the text view
      * @param text     the text to set as content
      */
-    private static void setTextContentAndLinkify(@NonNull final TextView textView, @NonNull final String text) {
+    private void setTextContentAndLinkify(@NonNull final TextView textView, @NonNull final String text) {
         textView.setText(Html.fromHtml(text));
-        textView.setLinkTextColor(Color.WHITE);
+        textView.setLinkTextColor(mContext.getResources().getColor(R.color.ddwrt_green));
         for (final int bitFieldToLinkify : BIT_FIELDS_TO_LINKIFY) {
             Linkify.addLinks(textView, bitFieldToLinkify);
         }
@@ -109,6 +108,7 @@ public class AboutDialog extends Dialog {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.about);
 
         boolean fileFound;

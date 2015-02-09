@@ -183,7 +183,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_nvram_menu);
 
-        if (!ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
@@ -378,6 +378,11 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     @Override
     public boolean isEmbeddedWithinScrollView() {
         return false;
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_admin_nvram_hdr;
     }
 
     @Override

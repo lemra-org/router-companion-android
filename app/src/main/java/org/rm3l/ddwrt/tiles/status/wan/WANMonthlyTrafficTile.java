@@ -127,6 +127,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_wan_monthly_traffic_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_wan_monthly_traffic_title;
     }
@@ -264,7 +269,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 } else if (traffData == null || traffData.isEmpty()) {
                     preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
                 }
-        }
+            }
 
         if (preliminaryCheckException != null) {
             data = new NVRAMInfo().setException(preliminaryCheckException);
@@ -463,7 +468,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         // Creating an  XYSeries for Outbound
         final XYSeries outboundSeries = new XYSeries("Outbound");
         // Adding data to In and Out Series
-        for(int j = 0; j < i; j++){
+        for (int j = 0; j < i; j++) {
             inboundSeries.add(j, inData[j]);
             outboundSeries.add(j, outData[j]);
         }

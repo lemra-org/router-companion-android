@@ -62,6 +62,11 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     }
 
     @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_router_router_state_hdr;
+    }
+
+    @Override
     public int getTileTitleViewId() {
         return R.id.tile_status_router_router_state_title;
     }

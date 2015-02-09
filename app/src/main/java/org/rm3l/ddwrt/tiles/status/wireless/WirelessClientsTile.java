@@ -47,6 +47,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -137,7 +138,6 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
-import static org.rm3l.ddwrt.utils.ColorUtils.getThemeBackgroundColor;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
@@ -285,7 +285,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
 //        Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
-        if (!ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid())) {
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
@@ -381,6 +381,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 doneLoading(this.mCurrentLoader);
             }
         }
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_status_wireless_clients_hdr;
     }
 
     @Nullable
@@ -859,14 +864,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     .setText(numActiveDhcpLeases >= 0 ? String.valueOf(numActiveDhcpLeases) : EMPTY_VALUE_TO_DISPLAY);
 
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
-            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
-            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity, mRouter.getUuid());
+
+//            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
+            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
             final String expandedClientsPrefKey = \"fake-key\";
 
             Set<String> expandedClients;
 
             currentDevicesViewsMap.clear();
+
+            final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT);
+            cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+            cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+            cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
 
             for (final Device device : devices) {
 
@@ -889,12 +902,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
                 }
 
-                cardView.setCardBackgroundColor(themeBackgroundColor);
-
                 //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                 cardView.setPreventCornerOverlap(true);
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
+
+                if (isThemeLight) {
+                    //Light
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                } else {
+                    //Default is Dark
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                }
+
+                //Highlight CardView
+                cardView.setCardElevation(20f);
 
                 final String macAddress = device.getMacAddress();
 
@@ -1089,11 +1111,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
                             ouiAndLastSeenView.setVisibility(View.GONE);
                             clientsExpanded.remove(macAddress);
-                            cardView.setCardElevation(20f);
+                            cardView.setCardElevation(40f);
                         } else {
                             ouiAndLastSeenView.setVisibility(View.VISIBLE);
                             clientsExpanded.add(macAddress);
-                            cardView.setCardElevation(0f);
+                            cardView.setCardElevation(2f);
                         }
                         if (hideGraphPlaceHolder) {
                             trafficGraphPlaceHolderView.setVisibility(View.GONE);
@@ -1119,6 +1141,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
                         new HashSet<String>());
                 if (expandedClients.contains(macAddress)) {
+                    cardView.setCardElevation(40f);
                     //Expand detailed view
                     ouiAndLastSeenView.setVisibility(View.VISIBLE);
                     if (hideGraphPlaceHolder) {
@@ -1128,14 +1151,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
                         noDataView.setVisibility(View.GONE);
                     }
-                    //Highlight CardView
-                    cardView.setCardElevation(20f);
                 } else {
                     //Collapse detailed view
                     ouiAndLastSeenView.setVisibility(View.GONE);
                     trafficGraphPlaceHolderView.setVisibility(View.GONE);
                     noDataView.setVisibility(View.GONE);
-                    cardView.setCardElevation(0f);
                 }
 
                 tileMenu.setOnClickListener(new View.OnClickListener() {

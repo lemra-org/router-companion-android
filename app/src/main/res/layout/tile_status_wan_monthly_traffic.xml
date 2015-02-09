@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -42,6 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:weightSum="1">
 
         <LinearLayout
+            android:id="@+id/tile_status_wan_monthly_traffic_hdr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
@@ -115,15 +115,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/display"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
 
             <ProgressBar
                 android:id="@+id/tile_status_wan_monthly_month_loading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:gravity="center" />
 
         </LinearLayout>
 
@@ -137,26 +137,26 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/previous_sign"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_current"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/current_month"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_sign"
-                android:visibility="gone"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
 
-            </LinearLayout>
+        </LinearLayout>
 
         <GridLayout
             android:layout_width="fill_parent"
@@ -182,13 +182,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space"
                 android:visibility="gone" />
 
-            <Switch
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="15dp"
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/tile_status_wan_monthly_traffic_togglebutton"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tile_status_wan_monthly_traffic_togglebutton"
                 android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"

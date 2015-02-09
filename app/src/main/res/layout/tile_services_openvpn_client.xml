@@ -33,6 +33,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/tile_services_openvpn_client_hdr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4.0dip">
@@ -429,7 +430,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/tile_services_openvpn_client_togglebutton"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"

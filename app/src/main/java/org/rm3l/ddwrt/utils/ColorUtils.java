@@ -38,12 +38,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static android.content.Context.MODE_PRIVATE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public final class ColorUtils {
 
+    public static final long LIGHT_THEME = 30l;
+    public static final long DARK_THEME = DEFAULT_THEME;
+    @Deprecated
     private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
 
     static {
@@ -53,7 +55,7 @@ public final class ColorUtils {
 
     private static final Random RANDOM_COLOR_GEN = new Random();
     private static final double COLOR_SIMILARITY_TOLERANCE = 100;
-    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(10) {
+    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(20) {
         @Override
         protected Integer create(final String key) {
             final Map<String, Integer> currentItems = snapshot();
@@ -74,11 +76,11 @@ public final class ColorUtils {
     private ColorUtils() {
     }
 
-    public static int getColor(final String keyInCache) {
+    public static int getColor(@NonNull final String keyInCache) {
         return colorsCache.get(keyInCache);
     }
 
-    public static int genColor(Collection<Integer> colorsToSkip) {
+    public static int genColor(@NonNull final Collection<Integer> colorsToSkip) {
         //Generate a Random Color, excluding colors similar to the colors specified
         int aNextColor;
         int rNextColor;
@@ -98,7 +100,7 @@ public final class ColorUtils {
         return newColor;
     }
 
-    public static boolean isColorSimilarToAtLeastOne(int color, Collection<Integer> colorsColl) {
+    public static boolean isColorSimilarToAtLeastOne(int color, @NonNull final Collection<Integer> colorsColl) {
 
         //Apply color maths to determine a color which is not visually similar to any of the existing ones.
         //Based upon Euclidian distance in the ARGB color space.
@@ -129,23 +131,8 @@ public final class ColorUtils {
         return false;
     }
 
-    public static int getThemeBackgroundColor(@NonNull final Context context, @NonNull final String routerUuid) {
-        final long theme = context.getSharedPreferences(routerUuid, MODE_PRIVATE).getLong(THEMING_PREF, DEFAULT_THEME);
-        final BiMap<Integer, Integer> colorToThemeInverse = colorToTheme.inverse();
-        Integer color = colorToThemeInverse.get(Long.valueOf(theme).intValue());
-        if (color == null) {
-            color = colorToThemeInverse.get(Long.valueOf(DEFAULT_THEME).intValue());
-        }
-        return context.getResources().getColor(color);
-    }
-
-    public static boolean isThemeLight(@NonNull final Context context, @NonNull final String routerUuid) {
-        return (getThemeBackgroundColor(context, routerUuid) ==
-                context.getResources().getColor(R.color.cardview_light_background));
-    }
-
-    public static boolean isThemeLight(@NonNull final Context context, final int themeBackgroundColor) {
-        return (themeBackgroundColor ==
-                context.getResources().getColor(R.color.cardview_light_background));
+    public static boolean isThemeLight(@NonNull final Context context) {
+        return (context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
     }
 }

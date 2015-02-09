@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.tiles.services.vpn;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -55,12 +56,13 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -92,9 +94,16 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -107,10 +116,18 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     public static final String N_A = "-";
     public static final String OPENVPNCL_NVRAMINFO = "OPENVPNCL_NVRAMINFO";
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
+    private final SharedPreferences mSharedPreferences;
     private NVRAMInfo mNvramInfo;
 
     public OpenVPNClientTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_client, R.id.tile_services_openvpn_client_togglebutton);
+        mSharedPreferences = mParentFragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
+    }
+
+    @Override
+    public int getTileHeaderViewId() {
+        return R.id.tile_services_openvpn_client_hdr;
     }
 
     @Override
@@ -217,6 +234,84 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             nvramInfo.putAll(nvramInfoTmp);
                         }
 
+                        boolean applyNewPrefs = false;
+                        String property = nvramInfo.getProperty(OPENVPNCL_REMOTEIP);
+                        final SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        property = nvramInfo.getProperty(OPENVPNCL_REMOTEPORT);
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        property = nvramInfo.getProperty(OPENVPNCL_IP);
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        property = nvramInfo.getProperty(OPENVPNCL_MASK);
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        property = nvramInfo.getProperty(OPENVPNCL_MTU);
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        property = nvramInfo.getProperty(OPENVPNCL_FRAGMENT);
+                        if (!Strings.isNullOrEmpty(property)) {
+                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF,
+                                    new HashSet<String>()));
+                            if (!mSharedPreferencesStringSet.contains(property)) {
+                                mSharedPreferencesStringSet.add(property);
+                                editor
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                applyNewPrefs = true;
+                            }
+                        }
+
+                        if (applyNewPrefs) {
+                            editor.apply();
+                        }
+
                         final String[] devDeviceLine = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
                                 "cat /tmp/openvpncl/openvpn.conf | grep \"dev \"");
                         String openvpnclIface = null;
@@ -233,13 +328,13 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             final Long txBps = ifaceRxAndTxRates.get(TX_BYTES);
                             if (rxBps != null) {
                                 nvramInfo.setProperty(OPENVPNCL__DEV_RX_RATE,
-                                        rxBps + " B/s (" + FileUtils.byteCountToDisplaySize(rxBps)
-                                                + "/s)");
+                                        rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                                + ")");
                             }
                             if (txBps != null) {
                                 nvramInfo.setProperty(OPENVPNCL__DEV_TX_RATE,
-                                        txBps + " B/s (" + FileUtils.byteCountToDisplaySize(txBps)
-                                                + "/s)");
+                                        txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps)
+                                                + ")");
                             }
 
                             //Packet Info
@@ -544,9 +639,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
         final String mRouterUuid = mRouter.getUuid();
         final Intent editOpenVPNClSettingsIntent =
-                new Intent(mParentFragment.getActivity(),
-                        ColorUtils.isThemeLight(mParentFragmentActivity, mRouterUuid) ?
-                                EditOpenVPNClientSettingsActivityLight.class : EditOpenVPNClientSettingsActivity.class);
+                new Intent(mParentFragment.getActivity(), EditOpenVPNClientSettingsActivity.class);
         editOpenVPNClSettingsIntent.putExtra(OPENVPNCL_NVRAMINFO, mNvramInfo);
         editOpenVPNClSettingsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterUuid);
 
