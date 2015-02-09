@@ -160,8 +160,12 @@ public final class SSHUtils {
                 //No worries
                 e.printStackTrace();
             } finally {
-                lock.unlock();
-                SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
+                try {
+                    lock.unlock();
+                    SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
+                } catch (final Exception e) {
+                    Log.w(TAG, e);
+                }
             }
         }
     }
@@ -230,7 +234,12 @@ public final class SSHUtils {
             destroySession(uuid);
             throw jsche;
         } finally {
-            lock.unlock();
+            try {
+                lock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+            }
+
             //Display stats every 1h
             final Long lastUpdate = cacheStatsElapsedTimeForDebugging.get();
             final long currentTimeMillis = System.currentTimeMillis();
@@ -247,6 +256,7 @@ public final class SSHUtils {
                         "holdCount=" + lock.getHoldCount());
                 cacheStatsElapsedTimeForDebugging.set(currentTimeMillis);
             }
+
         }
     }
 
@@ -271,8 +281,12 @@ public final class SSHUtils {
 
         } finally {
             //Now drop from LRU Cache
-            reentrantLock.unlock();
-            destroySession(tempUuid);
+            try {
+                reentrantLock.unlock();
+                destroySession(tempUuid);
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+            }
         }
     }
 
@@ -311,11 +325,15 @@ public final class SSHUtils {
             return 0;
 
         } finally {
-            reentrantLock.unlock();
-            Closeables.closeQuietly(in);
-            Closeables.closeQuietly(err);
-            if (channelExec != null) {
-                channelExec.disconnect();
+            try {
+                reentrantLock.unlock();
+                Closeables.closeQuietly(in);
+                Closeables.closeQuietly(err);
+                if (channelExec != null) {
+                    channelExec.disconnect();
+                }
+            } catch (final Exception e) {
+                Log.w(TAG, e);
             }
         }
 
@@ -370,12 +388,17 @@ public final class SSHUtils {
             return Utils.getLines(new BufferedReader(new InputStreamReader(in)));
 
         } finally {
-            reentrantLock.unlock();
-            Closeables.closeQuietly(in);
-            Closeables.closeQuietly(err);
-            if (channelExec != null) {
-                channelExec.disconnect();
+            try {
+                reentrantLock.unlock();
+                Closeables.closeQuietly(in);
+                Closeables.closeQuietly(err);
+                if (channelExec != null) {
+                    channelExec.disconnect();
+                }
+            } catch (final Exception e) {
+                Log.w(TAG, e);
             }
+
         }
 
     }
@@ -552,12 +575,17 @@ public final class SSHUtils {
             return false;
 
         } finally {
-            reentrantLock.unlock();
-            Closeables.closeQuietly(in);
-//            Closeables.closeQuietly(err);
-            if (channelExec != null && channelExec.isConnected()) {
-                channelExec.disconnect();
+            try {
+                reentrantLock.unlock();
+                Closeables.closeQuietly(in);
+                //            Closeables.closeQuietly(err);
+                if (channelExec != null && channelExec.isConnected()) {
+                    channelExec.disconnect();
+                }
+            } catch (final Exception e) {
+                Log.w(TAG, e);
             }
+
         }
 
         return true;
@@ -701,12 +729,17 @@ public final class SSHUtils {
             }
             return false;
         } finally {
-            reentrantLock.unlock();
-            Closeables.closeQuietly(in);
+            try {
+                reentrantLock.unlock();
+                Closeables.closeQuietly(in);
 //            Closeables.closeQuietly(err);
-            if (channelExec != null && channelExec.isConnected()) {
-                channelExec.disconnect();
+                if (channelExec != null && channelExec.isConnected()) {
+                    channelExec.disconnect();
+                }
+            } catch (final Exception e) {
+                Log.w(TAG, e);
             }
+
         }
 
         return true;
