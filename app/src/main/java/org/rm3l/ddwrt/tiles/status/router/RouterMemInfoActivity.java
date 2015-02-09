@@ -21,8 +21,8 @@
  */
 package org.rm3l.ddwrt.tiles.status.router;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -42,7 +42,6 @@ import com.google.common.base.Joiner;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -54,8 +53,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class RouterMemInfoActivity extends ActionBarActivity {
 
@@ -73,9 +70,8 @@ public class RouterMemInfoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
         } else {
@@ -84,6 +80,14 @@ public class RouterMemInfoActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.tile_status_router_meminfo);
+
+        if (themeLight) {
+            final Resources resources = getResources();
+            getWindow().getDecorView()
+                    .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
+            ((TextView) findViewById(R.id.tile_status_router_meminfo))
+                    .setTextColor(resources.getColor(R.color.black));
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_router_meminfo_view_toolbar);
         if (mToolbar != null) {

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import org.rm3l.ddwrt.R;
@@ -54,6 +55,9 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     @NonNull
     private String mRouterUuid;
 
+    @NonNull
+    private Router mRouter;
+
     @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
         if (isNullOrEmpty(this.mRouterUuid)) {
@@ -68,24 +72,28 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
-        final Router router;
-        if ((router = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
+        //noinspection ConstantConditions
+        if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         super.onCreate(savedInstanceState);
+    }
 
-        final String routerName = router.getName();
-        setTitle(String.format("Settings for '%s'",
-                isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName));
+    @NonNull
+    @Override
+    protected PreferenceFragment getPreferenceFragment() {
+        return new RouterSettingsFragment();
+    }
 
-        // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new RouterSettingsFragment())
-                .commit();
-
+    @Nullable
+    @Override
+    protected String getToolbarTitle() {
+        final String mRouterName = mRouter.getName();
+        return String.format("Settings for '%s'",
+                isNullOrEmpty(mRouterName) ? mRouter.getRemoteIpAddress() : mRouterName);
     }
 
     @Override

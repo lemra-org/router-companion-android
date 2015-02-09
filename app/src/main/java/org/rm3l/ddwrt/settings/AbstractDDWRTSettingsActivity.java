@@ -30,21 +30,27 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.preference.RingtonePreference;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+
+import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
 
+    public static final String SETTINGS = "Settings";
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -125,9 +131,11 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+
+        super.onCreate(savedInstanceState);
+
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
         } else {
@@ -135,6 +143,34 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
             setTheme(R.style.AppThemeDark);
         }
 
-        super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+        if (toolbar != null) {
+            final String title = this.getToolbarTitle();
+            toolbar.setTitle(Strings.isNullOrEmpty(title) ? SETTINGS : title);
+            setSupportActionBar(toolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(false);
+        }
+
+        if (themeLight) {
+            getWindow().getDecorView()
+                    .setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        }
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.settings_content_frame, this.getPreferenceFragment()).commit();
     }
+
+    @NonNull
+    protected abstract PreferenceFragment getPreferenceFragment();
+
+    @Nullable
+    protected abstract String getToolbarTitle();
 }

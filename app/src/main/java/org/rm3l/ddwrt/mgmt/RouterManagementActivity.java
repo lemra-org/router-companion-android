@@ -425,7 +425,11 @@ public class RouterManagementActivity
                     view.setBackgroundResource(android.R.color.transparent);
                 } else if (currentSelectedItemCount == previousSelectedItemCount + 1) {
                     //Selection: apply background
-                    view.setBackgroundResource(android.R.color.background_light);
+                    if (ColorUtils.isThemeLight(this)) {
+                        view.setBackgroundResource(android.R.color.background_dark);
+                    } else {
+                        view.setBackgroundResource(android.R.color.background_light);
+                    }
                 } //other cases should not occur (as this is a single selection)
 
                 //Now hide ActionMode if selected items count falls to 0

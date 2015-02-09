@@ -33,12 +33,12 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -269,7 +269,8 @@ public class DDWRTMainActivity extends ActionBarActivity
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
                 mDrawerLayout, /* DrawerLayout object */
-                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+                mToolbar,
+//                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
                 R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close /* "close drawer" description for accessibility */
         ) {
@@ -290,6 +291,15 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

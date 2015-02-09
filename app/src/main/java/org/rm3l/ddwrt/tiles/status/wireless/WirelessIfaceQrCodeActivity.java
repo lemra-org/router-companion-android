@@ -22,7 +22,6 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -54,7 +53,6 @@ import com.google.zxing.common.BitMatrix;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -69,8 +67,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
@@ -156,9 +152,8 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
         } else {
@@ -167,6 +162,11 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.tile_status_wireless_iface_qrcode);
+
+        if (themeLight) {
+            getWindow().getDecorView()
+                    .setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
         if (mToolbar != null) {

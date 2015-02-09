@@ -226,7 +226,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="crash_toast_text">Whoops - App Crash detected! Thank you for taking the time to report the issues, so our monkeys can fix them all.</string>
     <string name="crash_ok_dialog_text">Great. We\'ll look into the issue as soon as possible. Thank you very much.</string>
     <string name="title">Title</string>
-    <string name="loading">Loading…</string>
+    <string name="loading">-</string>
     <string name="tile_status_router_router_state_title">Router State</string>
     <string name="router_state_tile_dl_rate">DL</string>
     <string name="router_state_tile_ul_rate">UL</string>
@@ -343,7 +343,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="feedback_send">Send</string>
     <string name="feedback_cancel">Cancel</string>
     <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello?\nWe would love to hear from you.</string>
-    <string name="feedback_dialog_comments_text">If you are reporting a bug, please specify your Router model and DD-WRT Build Number.\nPlease also provide an email address for us to get back to you…</string>
+    <string name="feedback_dialog_comments_text">If you are reporting a bug, please specify your Router model and DD-WRT Build Number.\n\nPlease also provide an email address for us to get back to you…</string>
     <string name="feedback_toast_msg">Thank you - we\'ll get back to you as soon as possible!</string>
     <string name="feedback_bug">Bug</string>
     <string name="feedback_idea">Idea</string>

@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -39,14 +41,16 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
         return super.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, mode);
     }
 
+    @NonNull
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected PreferenceFragment getPreferenceFragment() {
+        return new RouterManagementSettingsFragment();
+    }
 
-        // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new RouterManagementSettingsFragment())
-                .commit();
+    @Nullable
+    @Override
+    protected String getToolbarTitle() {
+        return "Settings";
     }
 
     @Override
