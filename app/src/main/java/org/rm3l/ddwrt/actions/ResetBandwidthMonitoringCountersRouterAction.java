@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,10 +34,13 @@ import static org.rm3l.ddwrt.actions.RouterAction.RESET_COUNTERS;
 
 public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouterAction<Void> {
 
-    public ResetBandwidthMonitoringCountersRouterAction(@Nullable RouterActionListener listener,
-                                                        @NonNull SharedPreferences globalSharedPreferences) {
+    @NonNull
+    private final Context mContext;
 
+    public ResetBandwidthMonitoringCountersRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
+                                                        @NonNull SharedPreferences globalSharedPreferences) {
         super(listener, RESET_COUNTERS, globalSharedPreferences);
+        this.mContext = context;
     }
 
     @NonNull
@@ -44,7 +48,7 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
     protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
-            final String[] exitStatus = SSHUtils.getManualProperty(router, globalSharedPreferences,
+            final String[] exitStatus = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
                     "rm -f " + WirelessClientsTile.USAGE_DB + "; echo $?");
 
             if (exitStatus == null || exitStatus.length == 0) {

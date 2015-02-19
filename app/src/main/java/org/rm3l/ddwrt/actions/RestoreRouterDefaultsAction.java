@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,8 +33,12 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 
 public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
-    public RestoreRouterDefaultsAction(@Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
+    @NonNull
+    private final Context mContext;
+
+    public RestoreRouterDefaultsAction(@NonNull Context context, @Nullable RouterActionListener listener, @NonNull final SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.RESTORE_FACTORY_DEFAULTS, globalSharedPreferences);
+        this.mContext = context;
     }
 
     @NonNull
@@ -42,7 +47,7 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
         Exception exception = null;
         try {
             final int exitStatus = SSHUtils
-                    .runCommands(globalSharedPreferences, router,
+                    .runCommands(mContext, globalSharedPreferences, router,
                             Joiner.on(" ; ").skipNulls(),
                             "erase nvram", "reboot");
             if (exitStatus != 0) {

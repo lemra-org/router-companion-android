@@ -623,10 +623,10 @@ public class DDWRTMainActivity extends ActionBarActivity
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case REBOOT:
-                        new RebootRouterAction(this, mGlobalPreferences).execute(mRouter);
+                        new RebootRouterAction(this, this, mGlobalPreferences).execute(mRouter);
                         break;
                     case RESTORE_FACTORY_DEFAULTS:
-                        new RestoreRouterDefaultsAction(this, mGlobalPreferences).execute(mRouter);
+                        new RestoreRouterDefaultsAction(this, this, mGlobalPreferences).execute(mRouter);
                         break;
                     case UPGRADE_FIRMWARE:
                         //TODO

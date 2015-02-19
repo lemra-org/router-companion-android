@@ -105,7 +105,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     final Map<String, ProcMountPoint> mountPointMap = new HashMap<String, ProcMountPoint>();
                     final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
 
-                    final String[] catProcMounts = SSHUtils.getManualProperty(mRouter,
+                    final String[] catProcMounts = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                             mGlobalPreferences, "nvram show 2>&1 1>/dev/null", "cat /proc/mounts");
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
@@ -172,7 +172,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     for (final String itemToDf : itemsToDf) {
-                        final String[] itemToDfResult = SSHUtils.getManualProperty(mRouter,
+                        final String[] itemToDfResult = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
                         Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {

@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,10 +37,14 @@ public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Device mDevice;
 
-    public DisableWANAccessRouterAction(@Nullable RouterActionListener listener,
+    @NonNull
+    private final Context mContext;
+
+    public DisableWANAccessRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
                                         @NonNull SharedPreferences globalSharedPreferences,
                                         @NonNull Device device) {
         super(listener, RouterAction.DISABLE_WAN_ACCESS, globalSharedPreferences);
+        this.mContext = context;
         this.mDevice = device;
     }
 
@@ -49,7 +54,7 @@ public class DisableWANAccessRouterAction extends AbstractRouterAction<Void> {
         Exception exception = null;
         try {
             final String macAddr = mDevice.getMacAddress();
-            final int exitStatus = SSHUtils.runCommands(globalSharedPreferences, router,
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                     "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " | grep -i \"" + macAddr + "\" > /dev/null 2>&1; " +
                             "if [ $? -ne 0 ]; then " +
                             "iptables -A " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " -m mac --mac-source \"" + macAddr + "\" -j DROP; " +

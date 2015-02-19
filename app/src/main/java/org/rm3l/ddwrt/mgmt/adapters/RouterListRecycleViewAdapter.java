@@ -174,7 +174,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
                     public void run() {
                         try {
                             //Delete iptables chains created for monitoring and wan access (in a thread)
-                            SSHUtils.runCommands(context
+                            SSHUtils.runCommands(context, context
                                             .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                                     router,
                                     Joiner.on(" ; ").skipNulls(),

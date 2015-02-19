@@ -130,6 +130,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -428,7 +430,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     //Get Broadcast Addresses (for WOL)
                     try {
-                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
+                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                 "ifconfig `nvram get wan_iface` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'",
                                 "ifconfig `nvram get lan_ifname` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
                         if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
@@ -445,13 +447,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Active clients
-                    activeClients = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences, "arp -a");
+                    activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, "arp -a");
                     if (activeClients != null) {
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
                     //Active DHCP Leases
-                    activeDhcpLeases = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
+                    activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
                     if (activeDhcpLeases != null) {
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
@@ -460,7 +462,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     String gatewayAddress = EMPTY_STRING;
                     try {
                         final NVRAMInfo nvRamInfoFromRouter = SSHUtils
-                                .getNVRamInfoFromRouter(mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
+                                .getNVRamInfoFromRouter(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
                         if (nvRamInfoFromRouter != null) {
                             //noinspection ConstantConditions
                             gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
@@ -470,7 +472,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         //No worries
                     }
 
-                    final String[] output = SSHUtils.getManualProperty(mRouterCopy,
+                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
@@ -480,6 +482,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             "awk 'NR>1{print \"" +
                                     MAP_KEYWORD +
                                     "\",$4,$1,\"*\"}' /proc/net/arp",
+                            "arp -a | awk '{print \"" +
+                                    MAP_KEYWORD +
+                                    "\",$4,$2,$1}'",
                             "echo done");
 
                     Log.d(LOG_TAG, "output: " + Arrays.toString(output));
@@ -491,11 +496,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final Map<String, Device> macToDevice = Maps.newHashMap();
                     final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
 
+                    final Splitter splitter = Splitter.on(" ");
+
+                    String ipAddress;
+                    final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
                     for (final String stdoutLine : output) {
                         if ("done".equals(stdoutLine)) {
                             break;
                         }
-                        final List<String> as = Splitter.on(" ").splitToList(stdoutLine);
+                        final List<String> as = splitter.splitToList(stdoutLine);
                         if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
                             final String macAddress = as.get(1);
                             if (isNullOrEmpty(macAddress) || "00:00:00:00:00:00".equals(macAddress)) {
@@ -503,11 +512,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 continue;
                             }
 
-                            final String ipAddress = as.get(2);
-                            if (StringUtils.equalsIgnoreCase(ipAddress, gatewayAddress)) {
-                                //Skip Gateway
-                                continue;
+                            ipAddress = as.get(2);
+                            if (ipAddress != null) {
+                                final Matcher matcher = betweenParenthesisPattern.matcher(ipAddress);
+                                if (matcher.find()) {
+                                    ipAddress = matcher.group(1);
+                                }
                             }
+
+//                            if (StringUtils.equalsIgnoreCase(ipAddress, gatewayAddress)) {
+//                                //Skip Gateway
+//                                continue;
+//                            }
 
                             final Device device = new Device(macAddress);
                             device.setIpAddress(ipAddress);
@@ -569,7 +585,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             //Compute checksum of remote script, and see if usage DB exists remotely
                             final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
-                                    .getManualProperty(mRouterCopy, mGlobalPreferences,
+                                    .getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                             "[ -f " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " ] && " +
                                                     "md5sum " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " | awk '{print $1}'",
                                             "[ -f " + USAGE_DB + " ]; echo $?");
@@ -581,7 +597,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         file.exists() &&
                                         !"0".equals(doesUsageDataExistRemotely.trim())) {
                                     //Usage Data File does not exist - restore what we have on file (if any)
-                                    SSHUtils.scpTo(mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                                    SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
                                 }
                             }
 
@@ -606,7 +622,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         if (!remoteChecksum.equalsIgnoreCase(localChecksum)) {
                             Log.i(LOG_TAG, "Local and remote Checksums for the per-client monitoring script are different " +
                                     "=> uploading the local one...");
-                            SSHUtils.scpTo(mRouterCopy, mGlobalPreferences,
+                            SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                     wrtbwmonScriptPath.getAbsolutePath(),
                                     WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE);
                         }
@@ -614,7 +630,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         //Run Setup (does not matter if already done)
                         Log.d(LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
 
-                        final String[] usageDbOutLines = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
+                        final String[] usageDbOutLines = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                 "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
                                 WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup",
                                 WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read",
@@ -701,7 +717,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     //WAN Access
                     try {
-                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mRouterCopy, mGlobalPreferences,
+                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                 "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " --line-numbers -n 2>/dev/null; echo $?");
                         if (wanAccessIptablesChainDump != null) {
                             int exitStatus = -1;
@@ -747,7 +763,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             if (!isNullOrEmpty(mUsageDbBackupPath)) {
                                 //Backup to new data file
                                 synchronized (usageDataLock) {
-                                    SSHUtils.scpFrom(mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
+                                    SSHUtils.scpFrom(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
                                 }
                             }
                         } catch (final Exception e) {
@@ -939,6 +955,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
                 deviceMac.setText(macAddress);
+                if (StringUtils.equals(name, macAddress)) {
+                    //Hide the view to avoid repeating the MAC info, but leave room
+                    deviceMac.setVisibility(View.INVISIBLE);
+                } else {
+                    deviceMac.setVisibility(View.VISIBLE);
+                }
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
                 final String ipAddress = device.getIpAddress();
@@ -1493,7 +1515,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 @Override
                                 public void run() {
                                     synchronized (usageDataLock) {
-                                        new ResetBandwidthMonitoringCountersRouterAction(MenuActionItemClickListener.this,
+                                        new ResetBandwidthMonitoringCountersRouterAction(
+                                                mParentFragmentActivity,
+                                                MenuActionItemClickListener.this,
                                                 mGlobalPreferences)
                                                 .execute(mRouter);
                                     }
@@ -1725,15 +1749,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
                                 return;
                             }
-                            new WakeOnLANRouterAction(this, mGlobalPreferences, device,
+                            new WakeOnLANRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device,
                                     broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
                                     .execute(mRouter);
                             break;
                         case DISABLE_WAN_ACCESS:
-                            new DisableWANAccessRouterAction(this, mGlobalPreferences, device).execute(mRouter);
+                            new DisableWANAccessRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device).execute(mRouter);
                             break;
                         case ENABLE_WAN_ACCESS:
-                            new EnableWANAccessRouterAction(this, mGlobalPreferences, device).execute(mRouter);
+                            new EnableWANAccessRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device).execute(mRouter);
                             break;
                         default:
                             //Ignored

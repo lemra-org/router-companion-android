@@ -28,7 +28,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -47,6 +49,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
 import org.rm3l.ddwrt.donate.DonateActivity;
+import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
@@ -253,6 +256,39 @@ public final class Utils {
                         //Cancelled - nothing more to do!
                     }
                 }).create().show();
+    }
+
+    public static boolean isOnline(@NonNull final Context ctx) {
+        final ConnectivityManager connMgr = (ConnectivityManager) ctx
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    public static void checkDataSyncAlllowedByUsagePreference(@Nullable final Context ctx) {
+        if (ctx == null) {
+            Utils.reportException(new IllegalStateException("ctx is NULL"));
+            return;
+        }
+
+        final long dataUsageCtrl = ctx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
+        if (dataUsageCtrl == 333) {
+            //Only On Wi-Fi
+            final ConnectivityManager connMgr = (ConnectivityManager) ctx.
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            final boolean isWifiConn = wifiNetworkInfo.isConnected();
+            final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            final boolean isMobileConn = mobileNetworkInfo.isConnected();
+            Log.d(TAG, "Wifi connected: " + isWifiConn);
+            Log.d(TAG, "Mobile connected: " + isMobileConn);
+            if (isMobileConn && !isWifiConn) {
+                throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
+                        ("Data Sync on Mobile Networks disabled!");
+            }
+        }
+        Log.d(TAG, "Data Sync Allowed By Usage Preference!");
     }
 
 }

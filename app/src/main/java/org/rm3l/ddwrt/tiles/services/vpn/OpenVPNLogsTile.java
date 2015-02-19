@@ -81,7 +81,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                     int openvpnclMgmtPort = -1;
                     try {
                         //Find OpenVPN Management Port
-                        final String[] openvpnclConf = SSHUtils.getManualProperty(mRouter,
+                        final String[] openvpnclConf = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "cat /tmp/openvpncl/openvpn.conf | grep \"management \" 2>/dev/null");
                         if (openvpnclConf != null && openvpnclConf.length > 0) {
                             final String managementLine = openvpnclConf[0];
@@ -101,7 +101,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                         try {
                             //Telnet on Management Port to retrieve latest logs
                             if (openvpnclMgmtPort > 0) {
-                                logs = SSHUtils.execCommandOverTelnet(mRouter, mGlobalPreferences, openvpnclMgmtPort,
+                                logs = SSHUtils.execCommandOverTelnet(mParentFragmentActivity, mRouter, mGlobalPreferences, openvpnclMgmtPort,
                                         String.format("log %s", MAX_LOG_LINES));
                                 if (logs != null) {
                                     logsStr = LOGS_JOINER.join(logs);
@@ -109,7 +109,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                             }
                         } finally {
                             try {
-                                nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
+                                nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
                             } finally {
 
                                 if (nvramInfoTmp != null) {
@@ -118,7 +118,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
 
                                 try {
                                     //Get last log lines
-                                    logs = SSHUtils.getManualProperty(mRouter,
+                                    logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                             mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
                                                     MAX_LOG_LINES, " | grep -i -E \"" + OPENVPN + "\""));
                                 } finally {

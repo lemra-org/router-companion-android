@@ -108,7 +108,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
                     try {
                         nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences, NVRAMInfo.ROUTER_NAME,
                                         NVRAMInfo.WAN_IPADDR,
                                         NVRAMInfo.MODEL,
@@ -123,7 +123,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
                         //Add FW, Kernel and Uptime
                         final String[] otherCmds = SSHUtils
-                                .getManualProperty(mRouter, mGlobalPreferences,
+                                .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                         //date
                                         "date",
                                         //date since last reboot

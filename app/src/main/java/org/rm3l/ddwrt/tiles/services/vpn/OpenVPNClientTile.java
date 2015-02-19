@@ -163,7 +163,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                     try {
                         nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
                                         //Status: {1,0}
                                         OPENVPNCL_ENABLE,
@@ -312,7 +312,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             editor.apply();
                         }
 
-                        final String[] devDeviceLine = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                        final String[] devDeviceLine = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "cat /tmp/openvpncl/openvpn.conf | grep \"dev \"");
                         String openvpnclIface = null;
                         if (devDeviceLine != null && devDeviceLine.length > 0) {
@@ -341,7 +341,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, openvpnclIface);
                             try {
                                 final String[] packetsInfo = SSHUtils
-                                        .getManualProperty(mRouter, mGlobalPreferences,
+                                        .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                                 String.format("%s/rx_packets", sysClassNetStatsFolder),
                                                 String.format("%s/rx_errors", sysClassNetStatsFolder),
                                                 String.format("%s/tx_packets", sysClassNetStatsFolder),
@@ -390,7 +390,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                         .format("%s/tx_bytes", sysClassNetStatsFolder);
 
                 try {
-                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     rxBytesCmd,
                                     txBytesCmd,
                                     "sleep 1",
@@ -685,7 +685,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case SET_NVRAM_VARIABLES:
-                        new SetNVRAMVariablesAction(
+                        new SetNVRAMVariablesAction(mParentFragmentActivity,
                                 (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO),
                                 true, //Reboot Router at the end of the operation
                                 this,

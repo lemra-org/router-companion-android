@@ -100,7 +100,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, NVRAMInfo.LAN_PROTO,
                                 NVRAMInfo.DHCP_DNSMASQ,
                                 NVRAMInfo.DHCP_START,

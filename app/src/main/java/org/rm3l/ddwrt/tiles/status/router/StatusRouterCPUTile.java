@@ -122,7 +122,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
                     } finally {
                         if (nvramInfoTmp != null) {
@@ -138,7 +138,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
                         }
 
-                        final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                        final String[] otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences,
                                 "uptime | awk -F'average:' '{ print $2}'",
                                 GREP_MODEL_PROC_CPUINFO + "| uniq",
@@ -166,7 +166,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Now cache whole /proc/cpuinfo, for detailed activity
-                        cpuInfoContents = SSHUtils.getManualProperty(mRouter,
+                        cpuInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "cat /proc/cpuinfo");
                     }
 

@@ -101,7 +101,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                                 new WirelessIfaceTile("eth2.test", parentFragment, args, router));
                     }
 
-                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
+                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(this.getContext(), StatusWirelessFragment.this.router,
                             getActivity()
                                     .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE), NVRAMInfo.LANDEVS);
 
@@ -134,7 +134,7 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                         //Also get Virtual Interfaces
                         try {
                             final String landevVifsKeyword = landev + "_vifs";
-                            final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(StatusWirelessFragment.this.router,
+                            final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(getContext(), StatusWirelessFragment.this.router,
                                     getActivity()
                                             .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
                                     landevVifsKeyword);

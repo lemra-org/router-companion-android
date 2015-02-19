@@ -201,7 +201,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
             try {
                 final int exitStatus = SSHUtils
-                        .runCommands(mGlobalPreferences, router,
+                        .runCommands(context, mGlobalPreferences, router,
                                 String.format("nvram set %s=\"%s\"", key, value), "nvram commit");
                 if (exitStatus == 0) {
                     //Notify item changed

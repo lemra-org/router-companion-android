@@ -144,7 +144,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     } else {
                         NVRAMInfo nvramInfoTmp = null;
                         try {
-                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
                         } finally {
                             if (nvramInfoTmp != null) {
                                 nvramInfo.putAll(nvramInfoTmp);
@@ -153,7 +153,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                             String[] logs = null;
                             try {
                                 //Get last log lines
-                                logs = SSHUtils.getManualProperty(mRouter,
+                                logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
                                                 MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\""));
                             } finally {

@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -79,6 +80,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPN_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_DSS_HOST_KEY;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_RSA_HOST_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.Utils.checkDataSyncAlllowedByUsagePreference;
 
 /**
  * SSH Utilities
@@ -100,7 +102,6 @@ public final class SSHUtils {
                 }
             } catch (final Exception e) {
                 e.printStackTrace();
-                Utils.reportException(e);
             } finally {
                 super.entryRemoved(evicted, key, oldValue, newValue);
             }
@@ -111,6 +112,7 @@ public final class SSHUtils {
             return new ReentrantLock();
         }
     };
+
     private static final List<String> MULTI_OUTPUT_NVRAM_VARS =
             Arrays.asList(SSHD_RSA_HOST_KEY,
                     SSHD_DSS_HOST_KEY,
@@ -162,10 +164,12 @@ public final class SSHUtils {
             } finally {
                 try {
                     lock.unlock();
-                    SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
                 } catch (final Exception e) {
                     Log.w(TAG, e);
+                } finally {
+                    SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
                 }
+
             }
         }
     }
@@ -238,6 +242,7 @@ public final class SSHUtils {
                 lock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
+                destroySession(uuid);
             }
 
             //Display stats every 1h
@@ -283,17 +288,20 @@ public final class SSHUtils {
             //Now drop from LRU Cache
             try {
                 reentrantLock.unlock();
-                destroySession(tempUuid);
             } catch (final Exception e) {
                 Log.w(TAG, e);
+            } finally {
+                destroySession(tempUuid);
             }
         }
     }
 
-    public static int runCommands(@NonNull SharedPreferences globalSharedPreferences,
+    public static int runCommands(Context context, @NonNull SharedPreferences globalSharedPreferences,
                                   @NonNull final Router router, @NonNull final Joiner commandsJoiner, @NonNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+
+        checkDataSyncAlllowedByUsagePreference(context);
 
         ChannelExec channelExec = null;
         InputStream in = null;
@@ -327,26 +335,34 @@ public final class SSHUtils {
         } finally {
             try {
                 reentrantLock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+                destroySession(router);
+            } finally {
                 Closeables.closeQuietly(in);
                 Closeables.closeQuietly(err);
                 if (channelExec != null) {
                     channelExec.disconnect();
                 }
-            } catch (final Exception e) {
-                Log.w(TAG, e);
             }
         }
 
     }
 
-    public static int runCommands(@NonNull SharedPreferences globalSharedPreferences,
+    public static int runCommands(Context context, @NonNull SharedPreferences globalSharedPreferences,
                                   @NonNull final Router router, @NonNull final String... cmdToExecute)
             throws Exception {
-        return runCommands(globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
+
+        checkDataSyncAlllowedByUsagePreference(context);
+
+        return runCommands(context, globalSharedPreferences, router, Joiner.on(" && ").skipNulls(), cmdToExecute);
     }
 
-    public static String[] execCommandOverTelnet(@NonNull final Router router, SharedPreferences globalPreferences,
+    public static String[] execCommandOverTelnet(Context ctx, @NonNull final Router router, SharedPreferences globalPreferences,
                                                  final int telnetPort, @NonNull final String... cmdToExecute) throws Exception {
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
+
         //( echo "log 15"; sleep 1 ) | telnet localhost 16
         final List<String> cmdToRun = Lists.newArrayList();
         if (cmdToExecute.length > 0) {
@@ -355,13 +371,15 @@ public final class SSHUtils {
             }
         }
 
-        return getManualProperty(router, globalPreferences,
+        return getManualProperty(ctx, router, globalPreferences,
                 String.format("( %s ; sleep 1 ) | telnet localhost %d", Joiner.on(";").skipNulls().join(cmdToRun), telnetPort));
     }
 
     @Nullable
-    public static String[] getManualProperty(@NonNull final Router router, SharedPreferences globalPreferences, @NonNull final String... cmdToExecute) throws Exception {
+    public static String[] getManualProperty(Context ctx, @NonNull final Router router, SharedPreferences globalPreferences, @NonNull final String... cmdToExecute) throws Exception {
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
 
         ChannelExec channelExec = null;
         InputStream in = null;
@@ -390,13 +408,15 @@ public final class SSHUtils {
         } finally {
             try {
                 reentrantLock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+                destroySession(router);
+            } finally {
                 Closeables.closeQuietly(in);
                 Closeables.closeQuietly(err);
                 if (channelExec != null) {
                     channelExec.disconnect();
                 }
-            } catch (final Exception e) {
-                Log.w(TAG, e);
             }
 
         }
@@ -404,11 +424,13 @@ public final class SSHUtils {
     }
 
     @Nullable
-    public static NVRAMInfo getNVRamInfoFromRouter(@Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... fieldsToFetch) throws Exception {
+    public static NVRAMInfo getNVRamInfoFromRouter(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... fieldsToFetch) throws Exception {
 
         if (router == null) {
             throw new IllegalArgumentException("No connection parameters");
         }
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
 
         boolean getMultiOutput = false;
         final List<String> grep = Lists.newArrayList();
@@ -429,7 +451,7 @@ public final class SSHUtils {
             }
         }
 
-        final String[] nvramShow = SSHUtils.getManualProperty(router,
+        final String[] nvramShow = SSHUtils.getManualProperty(ctx, router,
                 globalPreferences, "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
                         Joiner.on("|").join(grep) + "\"")));
 
@@ -437,7 +459,7 @@ public final class SSHUtils {
         int i = 0;
         for (final String multiOutputNvramVar : MULTI_OUTPUT_NVRAM_VARS) {
             final String[] completeValue = getMultiOutput ?
-                    SSHUtils.getManualProperty(router, globalPreferences, "nvram get " + multiOutputNvramVar) : null;
+                    SSHUtils.getManualProperty(ctx, router, globalPreferences, "nvram get " + multiOutputNvramVar) : null;
             varsToFix[i++] = (multiOutputNvramVar + "=" + (completeValue != null ? JOINER_CARRIAGE_RETURN.join(completeValue) : EMPTY_STRING));
         }
 
@@ -472,7 +494,7 @@ public final class SSHUtils {
     }
 
 
-    public static boolean scpTo(@Nullable final Router router, SharedPreferences globalPreferences,
+    public static boolean scpTo(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
                                 @NonNull final String fromLocalPath, @NonNull final String toRemotePath)
             throws Exception {
         Log.d(TAG, "scpTo: <router=" + router + " / fromLocalPath=" + fromLocalPath +
@@ -480,6 +502,8 @@ public final class SSHUtils {
         if (router == null) {
             throw new IllegalArgumentException("No connection parameters");
         }
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
 
         FileInputStream fis = null;
         ChannelExec channelExec = null;
@@ -577,22 +601,23 @@ public final class SSHUtils {
         } finally {
             try {
                 reentrantLock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+                destroySession(router);
+            } finally {
                 Closeables.closeQuietly(in);
                 //            Closeables.closeQuietly(err);
                 if (channelExec != null && channelExec.isConnected()) {
                     channelExec.disconnect();
                 }
-            } catch (final Exception e) {
-                Log.w(TAG, e);
             }
-
         }
 
         return true;
 
     }
 
-    public static boolean scpFrom(@Nullable final Router router, SharedPreferences globalPreferences,
+    public static boolean scpFrom(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
                                   @NonNull final String fromRemotePath, @NonNull final String toLocalPath)
             throws Exception {
         Log.d(TAG, "scpFrom: <router=" + router + " / fromRemotePath=" + fromRemotePath +
@@ -600,6 +625,8 @@ public final class SSHUtils {
         if (router == null) {
             throw new IllegalArgumentException("No connection parameters");
         }
+//
+        checkDataSyncAlllowedByUsagePreference(ctx);
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -731,13 +758,15 @@ public final class SSHUtils {
         } finally {
             try {
                 reentrantLock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+                destroySession(router);
+            } finally {
                 Closeables.closeQuietly(in);
 //            Closeables.closeQuietly(err);
                 if (channelExec != null && channelExec.isConnected()) {
                     channelExec.disconnect();
                 }
-            } catch (final Exception e) {
-                Log.w(TAG, e);
             }
 
         }

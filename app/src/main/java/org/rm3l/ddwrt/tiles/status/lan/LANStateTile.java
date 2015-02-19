@@ -85,7 +85,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
-                    return SSHUtils.getNVRamInfoFromRouter(mRouter,
+                    return SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                             mGlobalPreferences, NVRAMInfo.LAN_IPADDR,
                             NVRAMInfo.LAN_DOMAIN,
                             NVRAMInfo.LAN_GATEWAY,

@@ -42,6 +42,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_general"
         android:title="General">
 
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:defaultValue="444"
+            android:entries="@array/data_usage_titles"
+            android:entryValues="@array/data_usage_values"
+            android:key="data_usage_network"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/data_usage_theme" />
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:enabled="true"

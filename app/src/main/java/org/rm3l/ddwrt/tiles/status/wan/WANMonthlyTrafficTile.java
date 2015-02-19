@@ -168,7 +168,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         //noinspection ConstantConditions
                         nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
-                                SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "nvram show 2>/dev/null | grep traff[-_]"));
+                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "nvram show 2>/dev/null | grep traff[-_]"));
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);

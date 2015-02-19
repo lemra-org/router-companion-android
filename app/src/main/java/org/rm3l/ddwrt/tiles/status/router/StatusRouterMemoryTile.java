@@ -118,7 +118,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                    final String[] otherCmds = SSHUtils.getManualProperty(mRouter,
+                    final String[] otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                             mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
                     if (otherCmds != null && otherCmds.length >= 2) {
                         //Total
@@ -156,7 +156,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Now cache whole /proc/cpuinfo, for detailed activity
-                        memInfoContents = SSHUtils.getManualProperty(mRouter,
+                        memInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "cat /proc/meminfo");
 
                     }

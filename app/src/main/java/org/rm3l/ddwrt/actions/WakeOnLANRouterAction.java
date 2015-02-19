@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,16 +48,19 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
 
     private final int port;
 
-    public WakeOnLANRouterAction(@Nullable RouterActionListener listener,
+    private final Context context;
+
+    public WakeOnLANRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
                                  @NonNull SharedPreferences globalSharedPreferences,
                                  @NonNull Device device, @Nullable String... broadcastAddressCandidates) {
-        this(listener, globalSharedPreferences, device, -1, broadcastAddressCandidates);
+        this(context, listener, globalSharedPreferences, device, -1, broadcastAddressCandidates);
     }
 
-    public WakeOnLANRouterAction(@Nullable RouterActionListener listener,
+    public WakeOnLANRouterAction(@NonNull Context ctx, @Nullable RouterActionListener listener,
                                  @NonNull SharedPreferences globalSharedPreferences,
                                  @NonNull Device device, int port, @Nullable String... broadcastAddressCandidates) {
         super(listener, WAKE_ON_LAN, globalSharedPreferences);
+        this.context = ctx;
         if (broadcastAddressCandidates != null) {
             this.mBroadcastAddressCandidates = Arrays.asList(broadcastAddressCandidates);
         } else {
@@ -85,7 +89,7 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
                         mDevice.getMacAddress());
             }
             final int exitStatus = SSHUtils
-                    .runCommands(globalSharedPreferences, router, Joiner.on(" ; ").skipNulls(), wolCmd);
+                    .runCommands(context, globalSharedPreferences, router, Joiner.on(" ; ").skipNulls(), wolCmd);
             if (exitStatus != 0) {
                 throw new IllegalStateException();
             }

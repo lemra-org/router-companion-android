@@ -71,6 +71,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item>-1</item>-->
     </string-array>
 
+    <string-array name="data_usage_titles">
+        <item>Only when on Wi-Fi</item>
+        <item>On any network</item>
+    </string-array>
+    <string-array name="data_usage_values">
+        <item>333</item>
+        <item>444</item>
+    </string-array>
+
     <string-array name="pref_theme_titles">
         <item>Light</item>
         <item>Dark</item>

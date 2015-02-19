@@ -94,7 +94,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
                                 NVRAMInfo.WAN_IFNAME,
                                 NVRAMInfo.LANDEVS);
@@ -116,7 +116,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                                     //Also get Virtual Interfaces
                                     try {
                                         final String landevVifsKeyword = landev + "_vifs";
-                                        final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                        final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                                 mGlobalPreferences,
                                                 landevVifsKeyword);
                                         if (landevVifsNVRAMInfo == null) {

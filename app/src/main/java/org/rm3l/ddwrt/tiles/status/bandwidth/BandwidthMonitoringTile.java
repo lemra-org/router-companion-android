@@ -142,7 +142,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
         final Set<String> ifacesConsidered = Sets.newHashSet();
 
-        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mRouter,
+        final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                 mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
                 NVRAMInfo.WAN_IFNAME,
                 NVRAMInfo.LANDEVS);

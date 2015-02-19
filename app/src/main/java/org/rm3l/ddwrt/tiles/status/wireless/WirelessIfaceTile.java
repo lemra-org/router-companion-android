@@ -208,7 +208,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                 NVRAMInfo nvramInfoTmp = null;
                 try {
-                    nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mRouter,
+                    nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                             mGlobalPreferences,
                             wlIface + "_radio",
                             wlIface + "_mode",
@@ -262,7 +262,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
                         try {
                             final String[] packetsInfo = SSHUtils
-                                    .getManualProperty(mRouter, mGlobalPreferences,
+                                    .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                             String.format("%s/rx_packets", sysClassNetStatsFolder),
                                             String.format("%s/rx_errors", sysClassNetStatsFolder),
                                             String.format("%s/tx_packets", sysClassNetStatsFolder),
@@ -295,7 +295,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 final Map<TemperatureUnit, String> result = Maps.newHashMapWithExpectedSize(2);
                 final String phyIfaceVarNameInRouter = WirelessIfaceTile.class.getSimpleName() + "TemperatureCelsius";
                 try {
-                    final String[] temperatures = SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                    final String[] temperatures = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                             String.format("%s=$(echo $((`wl -i %s phy_tempsense | awk {' print $1 '}`/2+20))); echo \"C:$%s\"; echo \"F:$(($%s*9/5+32))\"",
                                     phyIfaceVarNameInRouter, phyIface, phyIfaceVarNameInRouter, phyIfaceVarNameInRouter));
                     if (temperatures != null && temperatures.length >= 2) {
@@ -326,7 +326,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         .format("%s/tx_bytes", sysClassNetStatsFolder);
 
                 try {
-                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mRouter, mGlobalPreferences,
+                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     rxBytesCmd,
                                     txBytesCmd,
                                     "sleep 1",

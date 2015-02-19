@@ -102,7 +102,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
                     try {
                         nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mRouter,
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences, NVRAMInfo.NTP_ENABLE,
                                         NVRAMInfo.NTP_MODE,
                                         NVRAMInfo.NTP_SERVER,
@@ -113,7 +113,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
 
-                        final String[] currentDate = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "date");
+                        final String[] currentDate = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "date");
                         if (currentDate != null && currentDate.length > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, currentDate[0]);
                         }

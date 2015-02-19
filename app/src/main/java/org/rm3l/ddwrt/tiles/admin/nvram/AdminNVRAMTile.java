@@ -586,13 +586,13 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
                     try {
                         nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mRouter, mGlobalPreferences);
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences);
                     } finally {
                         if (nvramInfoTmp != null) {
                             mNvramInfoDefaultSorting.putAll(nvramInfoTmp);
                         }
 
-                        final String[] nvramSize = SSHUtils.getManualProperty(mRouter, mGlobalPreferences, "nvram show 2>&1 1>/dev/null");
+                        final String[] nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "nvram show 2>&1 1>/dev/null");
                         if (nvramSize != null && nvramSize.length > 0) {
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
                                     .splitToList(nvramSize[0]);

@@ -21,6 +21,7 @@
  */
 package org.rm3l.ddwrt.actions;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,16 +43,14 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
     private final boolean withReboot;
 
-    public SetNVRAMVariablesAction(@NonNull NVRAMInfo nvramInfo,
-                                   @Nullable RouterActionListener listener,
-                                   @NonNull SharedPreferences globalSharedPreferences) {
-        this(nvramInfo, false, listener, globalSharedPreferences);
-    }
+    @NonNull
+    private final Context mContext;
 
-    public SetNVRAMVariablesAction(@NonNull NVRAMInfo nvramInfo, boolean withReboot,
+    public SetNVRAMVariablesAction(@NonNull Context context, @NonNull NVRAMInfo nvramInfo, boolean withReboot,
                                    @Nullable RouterActionListener listener,
                                    @NonNull SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
+        this.mContext = context;
         this.nvramInfo = nvramInfo;
         this.withReboot = withReboot;
     }
@@ -76,7 +75,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
             Log.d(LOG_TAG, "cmd: [" + Arrays.toString(cmd) + "]");
 
-            final int exitStatus = SSHUtils.runCommands(globalSharedPreferences, router, cmd);
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router, cmd);
             if (exitStatus != 0) {
                 throw new IllegalStateException("Error when running command.");
             }
