@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Set;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
 
@@ -62,6 +64,8 @@ public class Device implements Comparable<Device> {
     private double txTotal = -1.;
 
     private long lastSeen;
+
+    private Set<String> activeIpConnections;
 
     /**
      * Constructor
@@ -263,6 +267,19 @@ public class Device implements Comparable<Device> {
 
     public void setLastSeen(long lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    @Nullable
+    public Set<String> getActiveIpConnections() {
+        return activeIpConnections;
+    }
+
+    public void setActiveIpConnections(@Nullable Set<String> activeIpConnections) {
+        this.activeIpConnections = activeIpConnections;
+    }
+
+    public int getActiveIpConnectionsCount() {
+        return (activeIpConnections != null ? activeIpConnections.size() : -1);
     }
 
     public enum WANAccessState {

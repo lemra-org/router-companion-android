@@ -106,6 +106,7 @@ public class RouterMemInfoActivity extends ActionBarActivity {
         if (mMemInfo == null || mMemInfo.length == 0) {
             Toast.makeText(this, "Internal Error - No Mem Info available!", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         mMemInfoMultiLine = Joiner.on("\n").join(mMemInfo);

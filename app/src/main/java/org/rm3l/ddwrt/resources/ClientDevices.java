@@ -38,6 +38,7 @@ public class ClientDevices {
 
     private int activeClientsNum;
     private int activeDhcpLeasesNum;
+    private int activeIPConnections;
 
     public int getActiveClientsNum() {
         return activeClientsNum;
@@ -97,5 +98,13 @@ public class ClientDevices {
                 "devices=" + devices +
                 ", exception=" + exception +
                 '}';
+    }
+
+    public int getActiveIPConnections() {
+        return activeIPConnections;
+    }
+
+    public void setActiveIPConnections(int activeIPConnections) {
+        this.activeIPConnections = activeIPConnections;
     }
 }

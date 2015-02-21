@@ -25,12 +25,14 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,8 +40,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
+import android.text.Spannable;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -96,12 +102,13 @@ import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
-import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
@@ -139,10 +146,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
-import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_GATEWAY;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
@@ -255,6 +260,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private String mCurrentMacAddress;
     private String[] activeClients;
     private String[] activeDhcpLeases;
+    private String[] activeIPConnections;
     @Nullable
     private List<String> broadcastAddresses;
     private File wrtbwmonScriptPath;
@@ -392,6 +398,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     }
 
     @Nullable
+    private Set<String> getActiveIPConnectionsForClient(@Nullable final String clientIpAddr) {
+        if (activeIPConnections == null || clientIpAddr == null || clientIpAddr.isEmpty()) {
+            return null;
+        }
+        final Set<String> activeIpConnectionsForClient = new HashSet<>();
+        for (final String activeIPConnection : activeIPConnections) {
+            if (StringUtils.containsIgnoreCase(activeIPConnection, clientIpAddr)) {
+                activeIpConnectionsForClient.add(activeIPConnection);
+            }
+        }
+        return activeIpConnectionsForClient;
+    }
+
+    @Nullable
     @Override
     protected Loader<ClientDevices> getLoader(int id, Bundle args) {
         this.mCurrentLoader = new AsyncTaskLoader<ClientDevices>(this.mParentFragmentActivity) {
@@ -447,30 +467,39 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Active clients
-                    activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, "arp -a");
+                    activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            "arp -a");
                     if (activeClients != null) {
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
                     //Active DHCP Leases
-                    activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, "cat /tmp/dnsmasq.leases");
+                    activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            "cat /tmp/dnsmasq.leases");
                     if (activeDhcpLeases != null) {
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
-                    //Get WAN Gateway Address (we skip it!)
-                    String gatewayAddress = EMPTY_STRING;
-                    try {
-                        final NVRAMInfo nvRamInfoFromRouter = SSHUtils
-                                .getNVRamInfoFromRouter(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
-                        if (nvRamInfoFromRouter != null) {
-                            //noinspection ConstantConditions
-                            gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
-                        }
-                    } catch (final Exception e) {
-                        e.printStackTrace();
-                        //No worries
+                    //Active IP Connections
+                    activeIPConnections = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            "cat /proc/net/ip_conntrack");
+                    if (activeIPConnections != null) {
+                        devices.setActiveIPConnections(activeIPConnections.length);
                     }
+
+                    //Get WAN Gateway Address (we skip it!)
+//                    String gatewayAddress = EMPTY_STRING;
+//                    try {
+//                        final NVRAMInfo nvRamInfoFromRouter = SSHUtils
+//                                .getNVRamInfoFromRouter(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
+//                        if (nvRamInfoFromRouter != null) {
+//                            //noinspection ConstantConditions
+//                            gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
+//                        }
+//                    } catch (final Exception e) {
+//                        e.printStackTrace();
+//                        //No worries
+//                    }
 
                     final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
@@ -489,8 +518,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     Log.d(LOG_TAG, "output: " + Arrays.toString(output));
 
-                    if (output == null) {
-                        return devices;
+                    if (output == null || output.length == 0) {
+                        Utils.reportException(new DDWRTCompanionException() {
+                            @Override
+                            public String getMessage() {
+                                return "GET Wireless Clients Tile returns an empty list!";
+                            }
+                        });
+                        if (output == null) {
+                            return devices;
+                        }
                     }
 
                     final Map<String, Device> macToDevice = Maps.newHashMap();
@@ -527,6 +564,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             final Device device = new Device(macAddress);
                             device.setIpAddress(ipAddress);
+
+                            device.setActiveIpConnections(getActiveIPConnectionsForClient(ipAddress));
 
                             if (activeClients != null) {
                                 for (final String activeClient : activeClients) {
@@ -880,6 +919,39 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_dhcp_leases_num))
                     .setText(numActiveDhcpLeases >= 0 ? String.valueOf(numActiveDhcpLeases) : EMPTY_VALUE_TO_DISPLAY);
 
+            //Number of Active IP Connections
+            final int numActiveIPConnections = data.getActiveIPConnections();
+            final TextView activeIpConnectionsNumView = (TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_ip_connections_num);
+            activeIpConnectionsNumView
+                    .setText(numActiveIPConnections >= 0 ? String.valueOf(numActiveIPConnections) : EMPTY_VALUE_TO_DISPLAY);
+            if (numActiveIPConnections > 0) {
+                activeIpConnectionsNumView.setMovementMethod(LinkMovementMethod.getInstance());
+                final Spannable spans = (Spannable) activeIpConnectionsNumView.getText();
+                final ClickableSpan clickSpan = new ClickableSpan() {
+
+                    @Override
+                    public void onClick(View widget) {
+                        final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+                        intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
+                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                        intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+                        //noinspection ConstantConditions
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                "Loading...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mParentFragmentActivity.startActivity(intent);
+                                alertDialog.cancel();
+                            }
+                        }, 1000);
+                    }
+                };
+                spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
 
 //            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
@@ -939,7 +1011,53 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final TextView deviceNameView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_name);
                 final String name = device.getName();
-                deviceNameView.setText(name);
+                if (isNullOrEmpty(device.getAlias()) &&
+                        isNullOrEmpty(device.getSystemName()) &&
+                        StringUtils.equals(name, macAddress)) {
+                    deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
+                } else {
+                    deviceNameView.setText(name);
+                }
+
+                final Set<String> activeIpConnections = device.getActiveIpConnections();
+                final TextView activeIpConnectionsView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_active_ip_connections_num);
+                if (activeIpConnections == null) {
+                    activeIpConnectionsView.setText(EMPTY_VALUE_TO_DISPLAY);
+                } else {
+                    final int activeIpConnectionsCount = device.getActiveIpConnectionsCount();
+                    activeIpConnectionsView.setText(String.valueOf(activeIpConnectionsCount));
+                    if (activeIpConnectionsCount > 0) {
+                        activeIpConnectionsView.setMovementMethod(LinkMovementMethod.getInstance());
+                        final Spannable spans = (Spannable) activeIpConnectionsView.getText();
+                        final ClickableSpan clickSpan = new ClickableSpan() {
+
+                            @Override
+                            public void onClick(View widget) {
+                                final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIpConnections
+                                        .toArray(new String[activeIpConnections.size()]));
+                                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
+                                        "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+
+                                //noinspection ConstantConditions
+                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                        "Loading.", false, false);
+                                alertDialog.show();
+                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mParentFragmentActivity.startActivity(intent);
+                                        alertDialog.cancel();
+                                    }
+                                }, 1000);
+                            }
+                        };
+                        spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
 
                 final Device.WANAccessState wanAccessState = device.getWanAccessState();
                 final boolean isDeviceWanAccessEnabled = (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
@@ -955,12 +1073,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_mac);
                 deviceMac.setText(macAddress);
-                if (StringUtils.equals(name, macAddress)) {
-                    //Hide the view to avoid repeating the MAC info, but leave room
-                    deviceMac.setVisibility(View.INVISIBLE);
-                } else {
-                    deviceMac.setVisibility(View.VISIBLE);
-                }
 
                 final TextView deviceIp = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_ip);
                 final String ipAddress = device.getIpAddress();
@@ -1125,41 +1237,42 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final View ouiAndLastSeenView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_lastseen_table);
                 final View trafficGraphPlaceHolderView = cardView.findViewById(R.id.tile_status_wireless_client_device_details_graph_placeholder);
 
-                cardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final Set<String> clientsExpanded = new HashSet<>(mParentFragmentPreferences
-                                .getStringSet(expandedClientsPrefKey, new HashSet<String>()));
+                cardView.findViewById(R.id.tile_status_wireless_client_first_glance_view)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Set<String> clientsExpanded = new HashSet<>(mParentFragmentPreferences
+                                        .getStringSet(expandedClientsPrefKey, new HashSet<String>()));
 
-                        if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
-                            ouiAndLastSeenView.setVisibility(View.GONE);
-                            clientsExpanded.remove(macAddress);
-                            cardView.setCardElevation(40f);
-                        } else {
-                            ouiAndLastSeenView.setVisibility(View.VISIBLE);
-                            clientsExpanded.add(macAddress);
-                            cardView.setCardElevation(2f);
-                        }
-                        if (hideGraphPlaceHolder) {
-                            trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                            if (noDataView.getVisibility() == View.VISIBLE) {
-                                noDataView.setVisibility(View.GONE);
-                            } else {
-                                noDataView.setVisibility(View.VISIBLE);
+                                if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
+                                    ouiAndLastSeenView.setVisibility(View.GONE);
+                                    clientsExpanded.remove(macAddress);
+                                    cardView.setCardElevation(40f);
+                                } else {
+                                    ouiAndLastSeenView.setVisibility(View.VISIBLE);
+                                    clientsExpanded.add(macAddress);
+                                    cardView.setCardElevation(2f);
+                                }
+                                if (hideGraphPlaceHolder) {
+                                    trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                                    if (noDataView.getVisibility() == View.VISIBLE) {
+                                        noDataView.setVisibility(View.GONE);
+                                    } else {
+                                        noDataView.setVisibility(View.VISIBLE);
+                                    }
+                                } else {
+                                    noDataView.setVisibility(View.GONE);
+                                    if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
+                                        trafficGraphPlaceHolderView.setVisibility(View.GONE);
+                                    } else {
+                                        trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                                mParentFragmentPreferences.edit()
+                                        .putStringSet(expandedClientsPrefKey, clientsExpanded)
+                                        .apply();
                             }
-                        } else {
-                            noDataView.setVisibility(View.GONE);
-                            if (trafficGraphPlaceHolderView.getVisibility() == View.VISIBLE) {
-                                trafficGraphPlaceHolderView.setVisibility(View.GONE);
-                            } else {
-                                trafficGraphPlaceHolderView.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        mParentFragmentPreferences.edit()
-                                .putStringSet(expandedClientsPrefKey, clientsExpanded)
-                                .apply();
-                    }
-                });
+                        });
 
                 expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
                         new HashSet<String>());

@@ -52,21 +52,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
 
-            <!--<TextView-->
-            <!--android:id="@+id/tile_status_wireless_clients_title"-->
-            <!--android:layout_width="0.0dip"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="20.23"-->
-            <!--android:ellipsize="end"-->
-            <!--android:singleLine="true"-->
-            <!--android:text="@string/clients"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:textStyle="bold"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_alignParentLeft="true"/>-->
-
-            <!-- TODO Add Sorting capabilities (A->Z, Z->A, Top talkers, Active/Inactive, ...) + Ability to reset counters -->
-            <!-- TODO Show inactive / Hide inactive / ... -->
             <ImageButton
                 android:id="@+id/tile_status_wireless_clients_menu"
                 android:layout_width="wrap_content"
@@ -188,6 +173,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+            <!-- Number of active IP Connections -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@string/num_active_ip_connections"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_clients_active_ip_connections_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="4dp"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:singleLine="false"

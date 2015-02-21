@@ -19,7 +19,7 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.tiles.status.router;
+package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -52,19 +52,28 @@ import java.io.OutputStream;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class RouterCpuInfoActivity extends ActionBarActivity {
+public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
-    public static final String CPU_INFO_OUTPUT = "CPU_INFO_OUTPUT";
+    public static final String ACTIVE_IP_CONNECTIONS_OUTPUT = "ACTIVE_IP_CONNECTIONS_OUTPUT";
+
+    public static final String CONNECTED_HOST = "CONNECTED_HOST";
+
+    public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
 
     private ShareActionProvider mShareActionProvider;
-    private String mRouterUuid;
+    private String mRouterRemoteIp;
     private File mFileToShare;
 
-    private String mCpuInfoMultiLine;
+    private String mActiveIPConnectionsMultiLine;
 
-    private Toolbar mToolbar;
+    private String mTitle;
+
+    private String mObservationDate;
+
+    private String mConnectedHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +88,26 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
             setTheme(R.style.AppThemeDark);
         }
 
-        setContentView(R.layout.tile_status_router_cpuinfo);
+        setContentView(R.layout.tile_status_active_ip_connections);
 
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
                     .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
-            ((TextView) findViewById(R.id.tile_status_router_cpuinfo))
+            ((TextView) findViewById(R.id.tile_status_active_ip_connections))
                     .setTextColor(resources.getColor(R.color.black));
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.tile_status_router_cpuinfo_view_toolbar);
+        final Intent intent = getIntent();
+        mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
+        mConnectedHost = intent.getStringExtra(CONNECTED_HOST);
+
+        final Toolbar mToolbar = (Toolbar) findViewById(R.id.tile_status_active_ip_connections_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("CPU Information");
+            mTitle = "Active IP Connections" + (isNullOrEmpty(mConnectedHost) ? "" :
+                    (" for " + mConnectedHost));
+            mToolbar.setTitle(mTitle);
             setSupportActionBar(mToolbar);
         }
 
@@ -100,30 +116,28 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        final Intent intent = getIntent();
-        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        final String[] mCpuInfo = intent.getStringArrayExtra(CPU_INFO_OUTPUT);
-
-        if (mCpuInfo == null || mCpuInfo.length == 0) {
-            Toast.makeText(this, "Internal Error - No CPU Info available!", Toast.LENGTH_SHORT).show();
+        final String[] activeIPConnections = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
+        if (activeIPConnections == null || activeIPConnections.length == 0) {
+            Toast.makeText(this, "Internal Error - No Detailed Active IP Connections list available!",
+                    Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        mCpuInfoMultiLine = Joiner.on("\n").join(mCpuInfo);
+        mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(activeIPConnections);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        ((TextView) findViewById(R.id.tile_status_router_cpuinfo)).setText(mCpuInfoMultiLine);
+        ((TextView) findViewById(R.id.tile_status_active_ip_connections)).setText(mActiveIPConnectionsMultiLine);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tile_status_router_cpuinfo_options, menu);
+        getMenuInflater().inflate(R.menu.tile_status_active_ip_connections_options, menu);
 
-        final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_router_cpuinfo_share);
+        final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_active_ip_connections_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat
                 .getActionProvider(shareMenuItem);
         if (mShareActionProvider == null) {
@@ -132,14 +146,14 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid)));
+                String.format("%s on Router %s on %s.txt", mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate));
 
         Exception exception = null;
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
             //noinspection ConstantConditions
-            outputStream.write(mCpuInfoMultiLine.getBytes());
+            outputStream.write(mActiveIPConnectionsMultiLine.getBytes());
         } catch (IOException e) {
             exception = e;
             e.printStackTrace();
@@ -155,7 +169,7 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
 
         if (exception != null) {
             Crouton.makeText(this,
-                    "Error while trying to share CPU Info - please try again later",
+                    "Error while trying to share Active IP Connections - please try again later",
                     Style.ALERT).show();
             return true;
         }
@@ -205,7 +219,11 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "CPU Info");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Active IP Connections on Router '" +
+                mRouterRemoteIp + "' on " + mObservationDate);
+        if (!isNullOrEmpty(mConnectedHost)) {
+            sendIntent.putExtra(Intent.EXTRA_TEXT, mTitle + " on " + mObservationDate);
+        }
 
         sendIntent.setData(uriForFile);
         sendIntent.setType("text/plain");

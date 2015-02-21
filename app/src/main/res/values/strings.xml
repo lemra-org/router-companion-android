@@ -452,6 +452,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="num_active_dhcp_leases"># Active DHCP Leases</string>
     <string name="num_active_clients"># Active Clients</string>
     <string name="title_meminfo">Memory Information</string>
+    <string name="title_ip_connections">IP Connections</string>
     <string name="connected_hosts">Connected Hosts</string>
     <string name="nic_manufacturer">NIC Manufacturer</string>
     <string name="last_seen">Last Seen</string>
@@ -476,4 +477,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="transition_router">transition from list to router details</string>
     <string name="rt_graphs">Real-time graphs</string>
     <string name="data_usage_theme">Data Usage Control</string>
+    <string name="num_active_ip_connections"># Active IP Connections</string>
 </resources>

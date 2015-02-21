@@ -168,6 +168,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
         </activity>
 
+        <activity
+            android:name=".tiles.status.wireless.ActiveIPConnectionsDetailActivity"
+            android:label="@string/title_ip_connections"
+            android:parentActivityName=".DDWRTMainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.rm3l.ddwrt.DDWRTMainActivity" />
+        </activity>
+
     </application>
 
 </manifest>
