@@ -34,10 +34,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/wake_on_lan"
         app:showAsAction="never" />
 
+    <!-- Active IP Connections -->
+    <item
+        android:id="@+id/tile_status_wireless_client_view_active_ip_connections"
+        android:checkable="true"
+        android:checked="true"
+        android:orderInCategory="3"
+        android:title="@string/view_active_ip_connections"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/tile_status_wireless_client_wan_access_state"
         android:checkable="true"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/wan_access"
         app:showAsAction="never" />
 

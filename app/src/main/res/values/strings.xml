@@ -478,4 +478,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="rt_graphs">Real-time graphs</string>
     <string name="data_usage_theme">Data Usage Control</string>
     <string name="num_active_ip_connections"># Active IP Connections</string>
+    <string name="view_active_ip_connections">View Active IP Connections</string>
 </resources>
