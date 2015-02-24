@@ -25,12 +25,14 @@ package org.rm3l.ddwrt.utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.LruCache;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -54,7 +56,7 @@ public final class ColorUtils {
     }
 
     private static final Random RANDOM_COLOR_GEN = new Random();
-    private static final double COLOR_SIMILARITY_TOLERANCE = 100;
+    private static final double COLOR_SIMILARITY_TOLERANCE = 255;
     private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(20) {
         @Override
         protected Integer create(final String key) {
@@ -131,7 +133,16 @@ public final class ColorUtils {
         return false;
     }
 
-    public static boolean isThemeLight(@NonNull final Context context) {
+    public static boolean isThemeLight(@Nullable final Context context) {
+        if (context == null) {
+            Utils.reportException(new DDWRTCompanionException() {
+                @Override
+                public String getMessage() {
+                    return "Context is NULL";
+                }
+            });
+            return false;
+        }
         return (context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .getLong(THEMING_PREF, DEFAULT_THEME) == LIGHT_THEME);
     }
