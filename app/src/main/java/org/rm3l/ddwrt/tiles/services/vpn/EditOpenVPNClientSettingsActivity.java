@@ -21,14 +21,15 @@
  */
 package org.rm3l.ddwrt.tiles.services.vpn;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -84,7 +85,7 @@ import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRA
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
-public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
+public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
 
     public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsUDPFragments";
     public static final String EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF = "EditOpenVPNClientSettingsMTUSettings";
@@ -140,6 +141,8 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
     private String mRouterUuid;
     private SharedPreferences sharedPreferences;
 
+    private Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,9 +159,15 @@ public class EditOpenVPNClientSettingsActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_openvpn_client_settings);
 
-        final ActionBar actionBar = getActionBar();
+        mToolbar = (Toolbar) findViewById(R.id.openvpn_client_settings_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("OpenVPN Client Settings");
+            setSupportActionBar(mToolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         final Intent intent = getIntent();

@@ -21,9 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/openvpn_client_settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
 
     <LinearLayout
         android:id="@+id/openvpn_client_settings_viewgroup"
