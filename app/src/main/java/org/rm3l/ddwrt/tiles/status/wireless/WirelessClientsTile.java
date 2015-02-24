@@ -370,6 +370,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 activeIpConnectionsMenuItem
                         .setEnabled(activeIpConnectionsMenuItemEnabled);
                 if (activeIpConnectionsMenuItemEnabled) {
+                    activeIpConnectionsMenuItem
+                            .setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
+                                    " (" + activeIPConnections.length + ")");
                     activeIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
@@ -1355,6 +1358,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 !(deviceActiveIpConnections == null || deviceActiveIpConnections.size() == 0);
                         activeIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
                         if (activeIpConnectionsMenuItemEnabled) {
+                            activeIpConnectionsMenuItem
+                                    .setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
+                                            " (" + deviceActiveIpConnections.size() + ")");
                             activeIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
