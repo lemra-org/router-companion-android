@@ -157,8 +157,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- Active IP Connections -->
     <item
         android:id="@+id/tile_status_wireless_clients_view_active_ip_connections"
-        android:checkable="true"
-        android:checked="true"
+        android:checkable="false"
         android:orderInCategory="4"
         android:title="@string/view_active_ip_connections"
         app:showAsAction="never" />
