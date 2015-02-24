@@ -55,8 +55,10 @@ public final class ColorUtils {
         colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
     }
 
+    private static final int MAX_ITERATIONS = 10;
+
     private static final Random RANDOM_COLOR_GEN = new Random();
-    private static final double COLOR_SIMILARITY_TOLERANCE = 255;
+    private static final double COLOR_SIMILARITY_TOLERANCE = 77;
     private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(20) {
         @Override
         protected Integer create(final String key) {
@@ -90,6 +92,7 @@ public final class ColorUtils {
         int bNextColor;
 
         int newColor;
+        int iterationNb = 0;
         do {
             aNextColor = 255;
             rNextColor = 1 + RANDOM_COLOR_GEN.nextInt(254);
@@ -97,7 +100,8 @@ public final class ColorUtils {
             bNextColor = 1 + RANDOM_COLOR_GEN.nextInt(254);
             newColor = Color.argb(aNextColor, rNextColor, gNextColor, bNextColor);
 
-        } while (isColorSimilarToAtLeastOne(newColor, colorsToSkip));
+        }
+        while ((iterationNb++) <= MAX_ITERATIONS && isColorSimilarToAtLeastOne(newColor, colorsToSkip));
 
         return newColor;
     }
