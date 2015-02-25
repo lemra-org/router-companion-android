@@ -40,7 +40,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
 import android.text.Spannable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -65,6 +67,7 @@ import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
@@ -268,6 +271,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private String mUsageDbBackupPath = null;
 
     private Loader<ClientDevices> mCurrentLoader;
+    private MenuItem mActiveIpConnectionsMenuItem;
 
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
@@ -365,15 +369,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final boolean activeIpConnectionsMenuItemEnabled =
                         (activeIPConnections != null && activeIPConnections.length > 0);
-                final MenuItem activeIpConnectionsMenuItem = menu
+                mActiveIpConnectionsMenuItem = menu
                         .findItem(R.id.tile_status_wireless_clients_view_active_ip_connections);
-                activeIpConnectionsMenuItem
+                mActiveIpConnectionsMenuItem
                         .setEnabled(activeIpConnectionsMenuItemEnabled);
                 if (activeIpConnectionsMenuItemEnabled) {
-                    activeIpConnectionsMenuItem
+                    mActiveIpConnectionsMenuItem
                             .setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
                                     " (" + activeIPConnections.length + ")");
-                    activeIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    mActiveIpConnectionsMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             final Intent intent = new Intent(mParentFragmentActivity, ActiveIPConnectionsDetailActivity.class);
@@ -400,6 +404,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 popup.show();
             }
         });
+
+        ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_active_ip_connections_num))
+                .addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (mActiveIpConnectionsMenuItem != null) {
+                            if (s == null || Strings.isNullOrEmpty(s.toString()) ||
+                                    EMPTY_VALUE_TO_DISPLAY.equals(s.toString())) {
+                                mActiveIpConnectionsMenuItem.setEnabled(false);
+                            } else {
+                                mActiveIpConnectionsMenuItem.setEnabled(true);
+                                mActiveIpConnectionsMenuItem.setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
+                                        " (" + s + ")");
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -1054,15 +1085,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
 
                 final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
-                final TextView activeIpConnectionsView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_active_ip_connections_num);
+                final TextView deviceActiveIpConnectionsView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_active_ip_connections_num);
+
                 if (deviceActiveIpConnections == null) {
-                    activeIpConnectionsView.setText(EMPTY_VALUE_TO_DISPLAY);
+                    deviceActiveIpConnectionsView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     final int deviceActiveIpConnectionsCount = device.getActiveIpConnectionsCount();
-                    activeIpConnectionsView.setText(String.valueOf(deviceActiveIpConnectionsCount));
+                    deviceActiveIpConnectionsView.setText(String.valueOf(deviceActiveIpConnectionsCount));
                     if (deviceActiveIpConnectionsCount > 0) {
-                        activeIpConnectionsView.setMovementMethod(LinkMovementMethod.getInstance());
-                        final Spannable spans = (Spannable) activeIpConnectionsView.getText();
+                        deviceActiveIpConnectionsView.setMovementMethod(LinkMovementMethod.getInstance());
+                        final Spannable spans = (Spannable) deviceActiveIpConnectionsView.getText();
                         final ClickableSpan clickSpan = new ClickableSpan() {
 
                             @Override
@@ -1354,6 +1386,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                         final MenuItem activeIpConnectionsMenuItem = menu
                                 .findItem(R.id.tile_status_wireless_client_view_active_ip_connections);
+//                        mClientsActiveConnectionsMenuMap.put(macAddress, activeIpConnectionsMenuItem);
                         final boolean activeIpConnectionsMenuItemEnabled =
                                 !(deviceActiveIpConnections == null || deviceActiveIpConnections.size() == 0);
                         activeIpConnectionsMenuItem.setEnabled(activeIpConnectionsMenuItemEnabled);
@@ -1392,6 +1425,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         popup.show();
                     }
                 });
+
+//                deviceActiveIpConnectionsView.addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//                        final MenuItem menuItem = mClientsActiveConnectionsMenuMap.get(macAddress);
+//                        if (menuItem != null) {
+//                            if (s == null || Strings.isNullOrEmpty(s.toString()) ||
+//                                    EMPTY_VALUE_TO_DISPLAY.equals(s.toString())) {
+//                                menuItem.setEnabled(false);
+//                            } else {
+//                                menuItem.setEnabled(true);
+//                                menuItem.setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
+//                                        " (" + s + ")");
+//                            }
+//                        }
+//                    }
+//                });
 
                 currentDevicesViewsMap.put(device, cardView);
             }
