@@ -43,6 +43,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:textColor">#0F0F0F</item>
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
     </style>
@@ -53,6 +54,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:textColor">#F0F0F0</item>
         <!--<item name="android:windowBackground">@android:color/background_dark</item>-->
         <!--<item name="cardBackgroundColor">@color/cardview_dark_background</item>-->
     </style>
