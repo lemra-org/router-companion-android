@@ -225,12 +225,24 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                     if (nvramInfoTmp != null) {
                         nvramInfo.putAll(nvramInfoTmp);
                     }
+
                     nvramInfo.setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""),
                             wlIface);
 
                     //Set Temp, RX and TX Network Bandwidths on Physical Interface
                     final String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
                     if (!isNullOrEmpty(phyIface)) {
+
+                        try {
+                            final String[] noise = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences,
+                                    String.format("( wl -i %s noise || wl_atheros -i %s noise || wl noise ) 2>/dev/null", phyIface, phyIface));
+                            if (noise != null && noise.length > 0) {
+                                nvramInfo.setProperty(wlIface + "_noise", noise[0]);
+                            }
+                        } catch (final Exception e) {
+                            //No worries
+                        }
 
                         //Set temperature
                         //noinspection ConstantConditions
@@ -249,13 +261,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
                         if (rxBps != null) {
                             nvramInfo.setProperty(wlIface + "_rx_rate_human_readable",
-                                    rxBps + " B/s (" + FileUtils.byteCountToDisplaySize(rxBps)
-                                            + "/s)");
+                                    rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                            + ")");
                         }
                         if (txBps != null) {
                             nvramInfo.setProperty(wlIface + "_tx_rate_human_readable",
-                                    txBps + " B/s (" + FileUtils.byteCountToDisplaySize(txBps)
-                                            + "/s)");
+                                    txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps) + ")");
                         }
 
                         //Packet Info
@@ -513,6 +524,10 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             //TX Power
             final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
             xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "-")));
+
+            //Noise
+            final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
+            noiseView.setText(data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-")));
 
             //Encryption
             final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);

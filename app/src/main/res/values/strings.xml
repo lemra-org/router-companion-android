@@ -292,6 +292,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wireless_iface_network">Network</string>
     <string name="wireless_iface_channel">Channel</string>
     <string name="wireless_iface_tx_power">TX Power</string>
+    <string name="wireless_iface_noise_dBm">Noise (dBm)</string>
     <string name="wireless_iface_rate">Rate</string>
     <string name="wireless_iface_encryption">Encryption</string>
     <string name="syslog">Syslog</string>

@@ -67,6 +67,9 @@ public class Device implements Comparable<Device> {
 
     private Set<String> activeIpConnections;
 
+    @Nullable
+    private WirelessConnectionInfo wirelessConnectionInfo;
+
     /**
      * Constructor
      *
@@ -136,6 +139,15 @@ public class Device implements Comparable<Device> {
     public Device setSystemName(@Nullable final String systemName) {
         this.systemName = systemName;
         return this;
+    }
+
+    @Nullable
+    public WirelessConnectionInfo getWirelessConnectionInfo() {
+        return wirelessConnectionInfo;
+    }
+
+    public void setWirelessConnectionInfo(@Nullable WirelessConnectionInfo wirelessConnectionInfo) {
+        this.wirelessConnectionInfo = wirelessConnectionInfo;
     }
 
     @Override
@@ -298,6 +310,67 @@ public class Device implements Comparable<Device> {
         @Override
         public String toString() {
             return mToString;
+        }
+    }
+
+    public static class WirelessConnectionInfo {
+        @Nullable
+        private String ssid;
+        @Nullable
+        private String snr;
+        @Nullable
+        private String rssi;
+
+        public WirelessConnectionInfo() {
+        }
+
+        @Nullable
+        public String getSsid() {
+            return ssid;
+        }
+
+        public void setSsid(@Nullable String ssid) {
+            this.ssid = ssid;
+        }
+
+        @Nullable
+        public String getSnr() {
+            return snr;
+        }
+
+        public void setSnr(@Nullable String snr) {
+            this.snr = snr;
+        }
+
+        @Nullable
+        public String getRssi() {
+            return rssi;
+        }
+
+        public void setRssi(@Nullable String rssi) {
+            this.rssi = rssi;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            WirelessConnectionInfo that = (WirelessConnectionInfo) o;
+
+            if (rssi != null ? !rssi.equals(that.rssi) : that.rssi != null) return false;
+            if (snr != null ? !snr.equals(that.snr) : that.snr != null) return false;
+            if (ssid != null ? !ssid.equals(that.ssid) : that.ssid != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = ssid != null ? ssid.hashCode() : 0;
+            result = 31 * result + (snr != null ? snr.hashCode() : 0);
+            result = 31 * result + (rssi != null ? rssi.hashCode() : 0);
+            return result;
         }
     }
 }

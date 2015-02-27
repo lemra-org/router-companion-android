@@ -69,6 +69,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.HashBiMap;
@@ -126,6 +127,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
+import org.rm3l.ddwrt.widgets.TextProgressBar;
 
 import java.io.File;
 import java.io.InputStream;
@@ -566,6 +568,64 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                        //No worries
 //                    }
 
+                    //Get list of wireless clients connected
+                    final Multimap<String, String> wirelessIfaceAssocList = ArrayListMultimap.create();
+                    try {
+                        final String[] assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                "for i in `nvram get landevs`; do " +
+                                        "phy=`nvram get ${i}_ifname 2>/dev/null`; " +
+                                        "if [ ! -z \"$phy\" ]; then " +
+                                        "echo iface $i ; " +
+                                        "( wl -i $phy assoclist 2>/dev/null || " +
+                                        " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                        "echo 'done';  " +
+                                        "fi; " +
+                                        "done; " +
+                                        "for j in `nvram get landevs`; do " +
+                                        "for i in `nvram get ${j}_vifs`; do " +
+                                        "phy=`nvram get ${i}_ifname 2>/dev/null`; " +
+                                        "if [ ! -z \"$phy\" ]; then " +
+                                        "echo iface $i ; " +
+                                        "( wl -i $phy assoclist 2>/dev/null || " +
+                                        "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                        "echo 'done';  " +
+                                        "fi; " +
+                                        "done; " +
+                                        "done"
+                        );
+                        Log.d(LOG_TAG, "assocList: " + Arrays.toString(assocList));
+                        if (assocList != null) {
+                            String iface;
+                            for (int idx = 0; idx < assocList.length; idx++) {
+                                final String assoc = assocList[idx];
+                                iface = null;
+                                if (StringUtils.startsWithIgnoreCase(assoc, "iface ")) {
+                                    iface = assoc.replaceAll("iface ", "").trim();
+                                }
+                                if (iface == null) {
+                                    continue;
+                                }
+
+                                for (int i = idx; i < assocList.length; i++) {
+                                    final String assocForIface = assocList[i];
+                                    if ("done".equalsIgnoreCase(assocForIface)) {
+                                        break;
+                                    }
+                                    if (StringUtils.startsWithIgnoreCase(assocForIface, "iface ")) {
+                                        continue;
+                                    }
+                                    wirelessIfaceAssocList.put(iface, assocForIface);
+                                }
+
+                            }
+                        }
+                        Log.d(LOG_TAG, "wirelessIfaceAssocList: " + wirelessIfaceAssocList);
+
+                    } catch (final Exception e) {
+                        //No worries
+                        e.printStackTrace();
+                    }
+
                     final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
@@ -594,6 +654,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             return devices;
                         }
                     }
+
+                    final Map<String, Collection<String>> wlAssocListMap = wirelessIfaceAssocList.asMap();
+                    final Collection<String> wlAssocListMacAddrs = wirelessIfaceAssocList.values();
 
                     final Map<String, Device> macToDevice = Maps.newHashMap();
                     final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
@@ -631,6 +694,63 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             device.setIpAddress(ipAddress);
 
                             device.setActiveIpConnections(getActiveIPConnectionsForClient(ipAddress));
+
+                            boolean isOnWirelessNetwork = false;
+                            for (final String wlAssocListMacAddr : wlAssocListMacAddrs) {
+                                if (StringUtils.equalsIgnoreCase(macAddress, wlAssocListMacAddr)) {
+                                    isOnWirelessNetwork = true;
+                                    break;
+                                }
+                            }
+                            if (isOnWirelessNetwork) {
+                                final Device.WirelessConnectionInfo wirelessConnectionInfo = new Device.WirelessConnectionInfo();
+                                String iface = null;
+                                for (Map.Entry<String, Collection<String>> entry : wlAssocListMap.entrySet()) {
+                                    final String wlIface = entry.getKey();
+                                    final Collection<String> assocList = entry.getValue();
+                                    for (final String assoc : assocList) {
+                                        if (StringUtils.equalsIgnoreCase(macAddress, assoc)) {
+                                            iface = wlIface;
+                                            break;
+                                        }
+                                    }
+                                    if (!isNullOrEmpty(iface)) {
+                                        break;
+                                    }
+                                }
+                                if (!isNullOrEmpty(iface)) {
+                                    //Fetch SSID, SNR and RSSI
+                                    try {
+                                        final String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
+                                                mGlobalPreferences,
+                                                String.format("nvram get %s_ssid || echo \"-\"", iface),
+                                                String.format("wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s",
+                                                        iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase()),
+                                                String.format("( wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s ; " +
+                                                                "echo \" \"; wl -i `nvram get %s_ifname` noise || wl_atheros -i `nvram get %s_ifname` noise ) | " +
+                                                                "tr -d '\\n' | awk '{print $1-$2}'",
+                                                        iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
+                                        Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                        if (ssidAndrssiAndSNROutput != null) {
+                                            if (ssidAndrssiAndSNROutput.length >= 1) {
+                                                wirelessConnectionInfo.setSsid(ssidAndrssiAndSNROutput[0]);
+                                            }
+                                            if (ssidAndrssiAndSNROutput.length >= 2) {
+                                                wirelessConnectionInfo.setRssi(ssidAndrssiAndSNROutput[1]);
+                                            }
+                                            if (ssidAndrssiAndSNROutput.length >= 3) {
+                                                wirelessConnectionInfo.setSnr(ssidAndrssiAndSNROutput[2]);
+                                            }
+                                        }
+                                    } catch (final Exception e) {
+                                        //No worries
+                                        e.printStackTrace();
+                                    }
+                                    device.setWirelessConnectionInfo(wirelessConnectionInfo);
+                                } else {
+                                    Utils.reportException(new IllegalStateException("Found device in assocList, but with invalid iface name!"));
+                                }
+                            }
 
                             if (activeClients != null) {
                                 for (final String activeClient : activeClients) {
@@ -1082,6 +1202,83 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     deviceNameView.setText(name);
+                }
+
+                final TextView rssiTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_title);
+                final TextView rssiSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi_sep);
+                final TextView rssiView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_rssi);
+
+                final TextView ssidTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_title);
+                final TextView ssidSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_sep);
+                final TextView ssidView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid);
+
+                final TextView snrTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_title);
+                final TextView snrSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_sep);
+                final TextProgressBar snrView = (TextProgressBar) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr);
+
+                final View[] wirelessRelatedViews = new View[]{
+                        rssiTitleView, rssiSepView, rssiView,
+                        ssidTitleView, ssidSepView, ssidView,
+                        snrTitleView, snrSepView, snrView
+                };
+
+                //Now if is wireless client or not
+                final Device.WirelessConnectionInfo wirelessConnectionInfo = device.getWirelessConnectionInfo();
+                if (wirelessConnectionInfo != null) {
+                    for (View wirelessRelatedView : wirelessRelatedViews) {
+                        wirelessRelatedView.setVisibility(View.VISIBLE);
+                    }
+
+                    //SSID
+                    final String ssid = wirelessConnectionInfo.getSsid();
+                    ssidView.setText(isNullOrEmpty(ssid) ? EMPTY_VALUE_TO_DISPLAY : ssid);
+
+                    //SNR
+                    try {
+                        final String snrStr = wirelessConnectionInfo.getSnr();
+                        final int snr = Integer.parseInt(snrStr);
+                        if (snr < 5) {
+                            deviceNameView
+                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_0_bar, 0, 0, 0);
+                        } else if (snr < 20) {
+                            deviceNameView
+                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_1_bar, 0, 0, 0);
+                        } else if (snr <= 40) {
+                            deviceNameView
+                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_2_bar, 0, 0, 0);
+                        } else if (snr <= 70) {
+                            deviceNameView
+                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_3_bar, 0, 0, 0);
+                        } else {
+                            deviceNameView
+                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_4_bar, 0, 0, 0);
+                        }
+                        snrView.setProgress(Math.min(snr, 100));
+                        snrView.setText(String.valueOf(snr));
+                        snrTitleView.setVisibility(View.VISIBLE);
+                        snrSepView.setVisibility(View.VISIBLE);
+                        snrView.setVisibility(View.VISIBLE);
+                    } catch (final NumberFormatException nfe) {
+                        nfe.printStackTrace();
+                        snrTitleView.setVisibility(View.GONE);
+                        snrSepView.setVisibility(View.GONE);
+                        snrView.setVisibility(View.GONE);
+                        deviceNameView
+                                .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_network_wifi, 0, 0, 0);
+                    }
+
+                    //RSSI
+                    final String rssi = wirelessConnectionInfo.getRssi();
+                    if (isNullOrEmpty(rssi)) {
+                        rssiView.setText(EMPTY_VALUE_TO_DISPLAY);
+                    } else {
+                        rssiView.setText(rssi + " dBm");
+                    }
+
+                } else {
+                    for (View wirelessRelatedView : wirelessRelatedViews) {
+                        wirelessRelatedView.setVisibility(View.GONE);
+                    }
                 }
 
                 final Set<String> deviceActiveIpConnections = device.getActiveIpConnections();
