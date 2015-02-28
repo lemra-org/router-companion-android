@@ -747,7 +747,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                     final int signal = Integer.parseInt(wirelessConnectionInfo.getRssi());
                                                     final int noise = Integer.parseInt(noiseStr);
                                                     if (noise != 0) {
-                                                        final int snrAbs = 100 * (1 - Math.abs((signal / noise)));
+                                                        final int snrAbs = 100 * Math.abs(signal / noise);
                                                         wirelessConnectionInfo.setSnr(String.valueOf(snrAbs));
                                                     }
                                                 } catch (final NumberFormatException e) {
@@ -1255,34 +1255,60 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final String ssid = wirelessConnectionInfo.getSsid();
                     ssidView.setText(isNullOrEmpty(ssid) ? EMPTY_VALUE_TO_DISPLAY : ssid);
 
-                    //Signal Strength (based upon SNR Ratio)
+                    //SNR Margin
+                    final String snrMargin = wirelessConnectionInfo.getSnrMargin();
+                    if (isNullOrEmpty(snrMargin)) {
+                        snrMarginView.setText(EMPTY_VALUE_TO_DISPLAY);
+                    } else {
+                        snrMarginView.setText(snrMargin + " dB");
+                    }
+
+                    //Signal Strength (based upon SNR Margin)
                     try {
-                        final String snrStr = wirelessConnectionInfo.getSnr();
-                        final int snr = Integer.parseInt(snrStr);
-                        if (snr < 5) {
+                        final int snr = Integer.parseInt(snrMargin);
+
+                        /*
+                        cf. http://www.wireless-nets.com/resources/tutorials/define_SNR_values.html
+
+                        > 40dB SNR = Excellent signal (5 bars); always associated; lightening fast.
+
+                        25dB to 40dB SNR = Very good signal (3 - 4 bars); always associated; very fast.
+
+                        15dB to 25dB SNR = Low signal (2 bars); always associated; usually fast.
+
+                        10dB - 15dB SNR = Very low signal (1 bar); mostly associated; mostly slow.
+
+                        5dB to 10dB SNR = No signal; not associated; no go.
+                         */
+                        if (snr <= 10) {
+                            //No signal; not associated; no go.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_0_bar :
                                                     R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
-                        } else if (snr < 20) {
+                        } else if (snr <= 15) {
+                            //Very low signal (1 bar); mostly associated; mostly slow.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_1_bar :
                                                     R.drawable.ic_action_device_signal_wifi_1_bar_white, 0, 0, 0);
-                        } else if (snr <= 40) {
+                        } else if (snr <= 25) {
+                            //Low signal (2 bars); always associated; usually fast.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_2_bar :
                                                     R.drawable.ic_action_device_signal_wifi_2_bar_white, 0, 0, 0);
-                        } else if (snr <= 70) {
+                        } else if (snr <= 40) {
+                            //Very good signal (3 - 4 bars); always associated; very fast.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ? R.drawable.ic_action_device_signal_wifi_3_bar :
                                                     R.drawable.ic_action_device_signal_wifi_3_bar_white, 0, 0, 0);
                         } else {
+                            //Excellent signal (5 bars); always associated; lightening fast.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ? R.drawable.ic_action_device_signal_wifi_4_bar :
@@ -1302,14 +1328,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 .setCompoundDrawablesWithIntrinsicBounds(
                                         isThemeLight ? R.drawable.ic_action_device_signal_wifi_0_bar :
                                                 R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
-                    }
-
-                    //SNR Margin
-                    final String snrMargin = wirelessConnectionInfo.getSnrMargin();
-                    if (isNullOrEmpty(snrMargin)) {
-                        snrMarginView.setText(EMPTY_VALUE_TO_DISPLAY);
-                    } else {
-                        snrMarginView.setText(snrMargin + " dB");
                     }
 
                     //RSSI
