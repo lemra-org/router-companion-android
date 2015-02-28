@@ -1314,7 +1314,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             isThemeLight ? R.drawable.ic_action_device_signal_wifi_4_bar :
                                                     R.drawable.ic_action_device_signal_wifi_4_bar_white, 0, 0, 0);
                         }
-                        signalStrengthView.setProgress(Math.min(snr, 100));
+
+                        //Postulate: we consider that a value of 45dB SNR corresponds to 100% in our progress bar
+                        signalStrengthView.setProgress(Math.min(snr * 100 / 45, 100));
 
                         signalStrengthTitleView.setVisibility(View.VISIBLE);
                         signalStrengthSepView.setVisibility(View.VISIBLE);
