@@ -60,6 +60,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,7 +128,6 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
-import org.rm3l.ddwrt.widgets.TextProgressBar;
 
 import java.io.File;
 import java.io.InputStream;
@@ -672,7 +672,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final List<String> as = splitter.splitToList(stdoutLine);
                         if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
                             final String macAddress = as.get(1);
-                            if (isNullOrEmpty(macAddress) || "00:00:00:00:00:00".equals(macAddress)) {
+                            if (isNullOrEmpty(macAddress) ||
+                                    "00:00:00:00:00:00".equals(macAddress) ||
+                                    StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
                                 //Skip clients with incomplete ARP set-up
                                 continue;
                             }
@@ -726,6 +728,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 String.format("nvram get %s_ssid || echo \"-\"", iface),
                                                 String.format("wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s",
                                                         iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase()),
+                                                String.format("wl -i `nvram get %s_ifname` noise || wl_atheros -i `nvram get %s_ifname` noise", iface, iface),
                                                 String.format("( wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s ; " +
                                                                 "echo \" \"; wl -i `nvram get %s_ifname` noise || wl_atheros -i `nvram get %s_ifname` noise ) | " +
                                                                 "tr -d '\\n' | awk '{print $1-$2}'",
@@ -739,7 +742,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 wirelessConnectionInfo.setRssi(ssidAndrssiAndSNROutput[1]);
                                             }
                                             if (ssidAndrssiAndSNROutput.length >= 3) {
-                                                wirelessConnectionInfo.setSnr(ssidAndrssiAndSNROutput[2]);
+                                                final String noiseStr = ssidAndrssiAndSNROutput[2];
+                                                try {
+                                                    final int signal = Integer.parseInt(wirelessConnectionInfo.getRssi());
+                                                    final int noise = Integer.parseInt(noiseStr);
+                                                    if (noise != 0) {
+                                                        final int snrAbs = 100 * (1 - Math.abs((signal / noise)));
+                                                        wirelessConnectionInfo.setSnr(String.valueOf(snrAbs));
+                                                    }
+                                                } catch (final NumberFormatException e) {
+                                                    //No worries
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                            if (ssidAndrssiAndSNROutput.length >= 4) {
+                                                wirelessConnectionInfo.setSnrMargin(ssidAndrssiAndSNROutput[3]);
                                             }
                                         }
                                     } catch (final Exception e) {
@@ -1212,14 +1229,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 final TextView ssidSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid_sep);
                 final TextView ssidView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_ssid);
 
-                final TextView snrTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_title);
-                final TextView snrSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_sep);
-                final TextProgressBar snrView = (TextProgressBar) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr);
+                final TextView signalStrengthTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_title);
+                final TextView signalStrengthSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength_sep);
+                final ProgressBar signalStrengthView = (ProgressBar) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_signal_strength);
+
+                final TextView snrMarginTitleView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_title);
+                final TextView snrMarginSepView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin_sep);
+                final TextView snrMarginView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wireless_network_snr_margin);
 
                 final View[] wirelessRelatedViews = new View[]{
                         rssiTitleView, rssiSepView, rssiView,
                         ssidTitleView, ssidSepView, ssidView,
-                        snrTitleView, snrSepView, snrView
+                        signalStrengthTitleView, signalStrengthSepView, signalStrengthView,
+                        snrMarginTitleView, snrMarginSepView, snrMarginView
                 };
 
                 //Now if is wireless client or not
@@ -1233,38 +1255,61 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final String ssid = wirelessConnectionInfo.getSsid();
                     ssidView.setText(isNullOrEmpty(ssid) ? EMPTY_VALUE_TO_DISPLAY : ssid);
 
-                    //SNR
+                    //Signal Strength (based upon SNR Ratio)
                     try {
                         final String snrStr = wirelessConnectionInfo.getSnr();
                         final int snr = Integer.parseInt(snrStr);
                         if (snr < 5) {
                             deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_0_bar, 0, 0, 0);
+                                    .setCompoundDrawablesWithIntrinsicBounds(
+                                            isThemeLight ?
+                                                    R.drawable.ic_action_device_signal_wifi_0_bar :
+                                                    R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
                         } else if (snr < 20) {
                             deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_1_bar, 0, 0, 0);
+                                    .setCompoundDrawablesWithIntrinsicBounds(
+                                            isThemeLight ?
+                                                    R.drawable.ic_action_device_signal_wifi_1_bar :
+                                                    R.drawable.ic_action_device_signal_wifi_1_bar_white, 0, 0, 0);
                         } else if (snr <= 40) {
                             deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_2_bar, 0, 0, 0);
+                                    .setCompoundDrawablesWithIntrinsicBounds(
+                                            isThemeLight ?
+                                                    R.drawable.ic_action_device_signal_wifi_2_bar :
+                                                    R.drawable.ic_action_device_signal_wifi_2_bar_white, 0, 0, 0);
                         } else if (snr <= 70) {
                             deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_3_bar, 0, 0, 0);
+                                    .setCompoundDrawablesWithIntrinsicBounds(
+                                            isThemeLight ? R.drawable.ic_action_device_signal_wifi_3_bar :
+                                                    R.drawable.ic_action_device_signal_wifi_3_bar_white, 0, 0, 0);
                         } else {
                             deviceNameView
-                                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_signal_wifi_4_bar, 0, 0, 0);
+                                    .setCompoundDrawablesWithIntrinsicBounds(
+                                            isThemeLight ? R.drawable.ic_action_device_signal_wifi_4_bar :
+                                                    R.drawable.ic_action_device_signal_wifi_4_bar_white, 0, 0, 0);
                         }
-                        snrView.setProgress(Math.min(snr, 100));
-                        snrView.setText(String.valueOf(snr));
-                        snrTitleView.setVisibility(View.VISIBLE);
-                        snrSepView.setVisibility(View.VISIBLE);
-                        snrView.setVisibility(View.VISIBLE);
+                        signalStrengthView.setProgress(Math.min(snr, 100));
+
+                        signalStrengthTitleView.setVisibility(View.VISIBLE);
+                        signalStrengthSepView.setVisibility(View.VISIBLE);
+                        signalStrengthView.setVisibility(View.VISIBLE);
                     } catch (final NumberFormatException nfe) {
                         nfe.printStackTrace();
-                        snrTitleView.setVisibility(View.GONE);
-                        snrSepView.setVisibility(View.GONE);
-                        snrView.setVisibility(View.GONE);
+                        signalStrengthTitleView.setVisibility(View.GONE);
+                        signalStrengthSepView.setVisibility(View.GONE);
+                        signalStrengthView.setVisibility(View.GONE);
                         deviceNameView
-                                .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_device_network_wifi, 0, 0, 0);
+                                .setCompoundDrawablesWithIntrinsicBounds(
+                                        isThemeLight ? R.drawable.ic_action_device_signal_wifi_0_bar :
+                                                R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
+                    }
+
+                    //SNR Margin
+                    final String snrMargin = wirelessConnectionInfo.getSnrMargin();
+                    if (isNullOrEmpty(snrMargin)) {
+                        snrMarginView.setText(EMPTY_VALUE_TO_DISPLAY);
+                    } else {
+                        snrMarginView.setText(snrMargin + " dB");
                     }
 
                     //RSSI
@@ -1622,33 +1667,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         popup.show();
                     }
                 });
-
-//                deviceActiveIpConnectionsView.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                        final MenuItem menuItem = mClientsActiveConnectionsMenuMap.get(macAddress);
-//                        if (menuItem != null) {
-//                            if (s == null || Strings.isNullOrEmpty(s.toString()) ||
-//                                    EMPTY_VALUE_TO_DISPLAY.equals(s.toString())) {
-//                                menuItem.setEnabled(false);
-//                            } else {
-//                                menuItem.setEnabled(true);
-//                                menuItem.setTitle(mParentFragmentActivity.getResources().getString(R.string.view_active_ip_connections) +
-//                                        " (" + s + ")");
-//                            }
-//                        }
-//                    }
-//                });
 
                 currentDevicesViewsMap.put(device, cardView);
             }

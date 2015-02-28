@@ -320,6 +320,8 @@ public class Device implements Comparable<Device> {
         private String snr;
         @Nullable
         private String rssi;
+        @Nullable
+        private String snrMargin;
 
         public WirelessConnectionInfo() {
         }
@@ -340,6 +342,15 @@ public class Device implements Comparable<Device> {
 
         public void setSnr(@Nullable String snr) {
             this.snr = snr;
+        }
+
+        @Nullable
+        public String getSnrMargin() {
+            return snrMargin;
+        }
+
+        public void setSnrMargin(@Nullable String snrMargin) {
+            this.snrMargin = snrMargin;
         }
 
         @Nullable

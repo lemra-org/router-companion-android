@@ -527,7 +527,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //Noise
             final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
-            noiseView.setText(data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-")));
+            final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-"));
+            noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
 
             //Encryption
             final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);

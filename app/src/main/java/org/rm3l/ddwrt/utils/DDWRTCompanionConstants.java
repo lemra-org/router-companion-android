@@ -70,6 +70,7 @@ public final class DDWRTCompanionConstants {
     public static final String DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN = "DDWRTCompWANAccess";
     public static final String OPENED_AT_LEAST_ONCE_PREF_KEY = \"fake-key\";
     public static final String EMPTY_VALUE_TO_DISPLAY = "-";
+    public static final int MAX_ROUTERS_FREE_VERSION = 1;
     public String[] mMonth = new String[]{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

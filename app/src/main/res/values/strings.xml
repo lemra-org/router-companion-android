@@ -292,7 +292,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wireless_iface_network">Network</string>
     <string name="wireless_iface_channel">Channel</string>
     <string name="wireless_iface_tx_power">TX Power</string>
-    <string name="wireless_iface_noise_dBm">Noise (dBm)</string>
+    <string name="wireless_iface_noise_dBm">Noise</string>
     <string name="wireless_iface_rate">Rate</string>
     <string name="wireless_iface_encryption">Encryption</string>
     <string name="syslog">Syslog</string>
@@ -478,6 +478,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="transition_router">transition from list to router details</string>
     <string name="rt_graphs">Real-time graphs</string>
     <string name="data_usage_theme">Data Usage Control</string>
-    <string name="num_active_ip_connections"># Active IP Connections</string>
-    <string name="view_active_ip_connections">View Active IP Connections</string>
+    <string name="num_active_ip_connections"># IP Connections</string>
+    <string name="view_active_ip_connections">View IP Connections</string>
 </resources>

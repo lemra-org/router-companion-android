@@ -249,12 +249,53 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="false"
                 android:text="@string/loading" />
 
+            <!-- Signal Strength (If any) -->
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Signal Strength"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength_sep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <!--<org.rm3l.ddwrt.widgets.TextProgressBar-->
+            <!--android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr"-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="15dp"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:gravity="start"-->
+            <!--android:minHeight="15dp"-->
+            <!--android:maxHeight="16dp"-->
+            <!--android:indeterminate="false"-->
+            <!--android:max="100"-->
+            <!--android:progress="0"-->
+            <!--components:textSize="12sp"/>-->
+            <ProgressBar
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_signal_strength"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="start"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0" />
+
             <!-- RSSI (If any) -->
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_wireless_network_rssi_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Signal Strength (RSSI)"
+                android:text="RSSI"
                 android:textStyle="bold" />
 
             <TextView
@@ -276,16 +317,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="false"
                 android:text="@string/loading" />
 
-            <!-- SNR (If any) -->
+            <!-- SNR Margin -->
             <TextView
-                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_title"
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SNR"
+                android:text="SNR Margin"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_sep"
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin_sep"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -293,16 +334,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginRight="8.0dip"
                 android:text="@string/one_space" />
 
-            <org.rm3l.ddwrt.widgets.TextProgressBar
-                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr"
-                style="?android:attr/progressBarStyleHorizontal"
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_wireless_network_snr_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:ellipsize="end"
                 android:gravity="start"
-                android:indeterminate="false"
-                android:max="100"
-                android:progress="0" />
+                android:singleLine="false"
+                android:text="@string/loading" />
 
             <!-- Total Upload -->
             <TextView

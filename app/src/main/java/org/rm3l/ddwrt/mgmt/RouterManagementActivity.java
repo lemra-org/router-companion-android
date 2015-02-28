@@ -80,6 +80,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
@@ -263,6 +264,17 @@ public class RouterManagementActivity
         if (addRouter instanceof DialogFragment) {
             ((DialogFragment) addRouter).dismiss();
         }
+
+        //Display Donate Message if trying to add more than the max routers for Free version
+        final List<Router> allRouters = dao.getAllRouters();
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if (BuildConfig.DONATIONS &&
+                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+            //Download the full version to unlock this version
+            Utils.displayUpgradeMessage(this);
+            return;
+        }
+
         final DialogFragment addFragment = new RouterAddDialogFragment();
         addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }

@@ -49,6 +49,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:title="@string/show_only_hosts_with_wan_access_disabled"
                 app:showAsAction="never" />
 
+            <!-- Display/Hide WLAN Hosts -->
+            <!--<item-->
+            <!--android:id="@+id/tile_status_wireless_clients_show_only_wireless_hosts"-->
+            <!--android:checkable="true"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_action_device_network_wifi"-->
+            <!--android:orderInCategory="3"-->
+            <!--android:title="Show Wireless Hosts only"-->
+            <!--app:showAsAction="never" />-->
+
         </menu>
 
     </item>
