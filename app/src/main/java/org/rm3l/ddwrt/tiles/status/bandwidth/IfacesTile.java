@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -110,7 +111,8 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                             if (splitToList != null && !splitToList.isEmpty()) {
 
                                 for (final String landev : splitToList) {
-                                    if (landev == null || !(landev.startsWith("wl") || landev.startsWith("ath"))) {
+                                    if (landev == null || landev.isEmpty() ||
+                                            StringUtils.startsWithIgnoreCase(landev, "vlan")) {
                                         continue;
                                     }
                                     //Also get Virtual Interfaces

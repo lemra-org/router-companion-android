@@ -122,11 +122,11 @@ public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTi
                     final List<DDWRTTile> tiles = Lists.newArrayList();
 
                     for (final String landevRaw : splitToList) {
-                        if (landevRaw == null) {
+                        if (landevRaw == null || landevRaw.isEmpty()) {
                             continue;
                         }
                         final String landev = landevRaw.trim();
-                        if (!(startsWithIgnoreCase(landev, "wl") || startsWithIgnoreCase(landev, "wl"))) {
+                        if (startsWithIgnoreCase(landev, "vlan")) {
                             continue;
                         }
 
