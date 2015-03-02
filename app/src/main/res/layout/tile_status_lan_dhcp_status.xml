@@ -231,7 +231,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/tile_status_lan_dhcp_status_togglebutton"
-                    android:layout_width="130dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginBottom="15dp"

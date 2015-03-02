@@ -26,13 +26,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_wan_monthly_traffic"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -184,7 +177,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/tile_status_wan_monthly_traffic_togglebutton"
-                android:layout_width="130dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="15dp"
