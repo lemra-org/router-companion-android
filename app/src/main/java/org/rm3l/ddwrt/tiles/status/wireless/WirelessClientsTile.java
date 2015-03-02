@@ -1279,29 +1279,31 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         10dB - 15dB SNR = Very low signal (1 bar); mostly associated; mostly slow.
 
                         5dB to 10dB SNR = No signal; not associated; no go.
+
+                        Added +5dB to the values above to approximate Android bar indicators
                          */
-                        if (snr <= 10) {
+                        if (snr <= 20) {
                             //No signal; not associated; no go.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_0_bar :
                                                     R.drawable.ic_action_device_signal_wifi_0_bar_white, 0, 0, 0);
-                        } else if (snr <= 15) {
+                        } else if (snr <= 25) {
                             //Very low signal (1 bar); mostly associated; mostly slow.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_1_bar :
                                                     R.drawable.ic_action_device_signal_wifi_1_bar_white, 0, 0, 0);
-                        } else if (snr <= 25) {
+                        } else if (snr <= 35) {
                             //Low signal (2 bars); always associated; usually fast.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
                                             isThemeLight ?
                                                     R.drawable.ic_action_device_signal_wifi_2_bar :
                                                     R.drawable.ic_action_device_signal_wifi_2_bar_white, 0, 0, 0);
-                        } else if (snr <= 40) {
+                        } else if (snr <= 50) {
                             //Very good signal (3 - 4 bars); always associated; very fast.
                             deviceNameView
                                     .setCompoundDrawablesWithIntrinsicBounds(
@@ -1316,7 +1318,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
 
                         //Postulate: we consider that a value of 45dB SNR corresponds to 100% in our progress bar
-                        signalStrengthView.setProgress(Math.min(snr * 100 / 45, 100));
+                        signalStrengthView.setProgress(Math.min(snr * 100 / 55, 100));
 
                         signalStrengthTitleView.setVisibility(View.VISIBLE);
                         signalStrengthSepView.setVisibility(View.VISIBLE);
