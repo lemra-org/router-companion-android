@@ -54,7 +54,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <ListView
                 android:id="@+id/left_drawer"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:background="#151515"

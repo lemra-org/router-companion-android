@@ -242,21 +242,20 @@ public class DDWRTMainActivity extends ActionBarActivity
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        final boolean isThemeLight = ColorUtils.isThemeLight(this);
-        if (isThemeLight) {
-            //Light
-            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_light_background));
-        } else {
-            //Default is Dark
-            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_dark_background));
-        }
+//        final boolean isThemeLight = ColorUtils.isThemeLight(this);
+//        if (isThemeLight) {
+//            //Light
+//            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_light_background));
+//        } else {
+//            //Default is Dark
+//            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_dark_background));
+//        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
         // opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-                GravityCompat.START);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
         mNavigationDrawerAdapter = new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
