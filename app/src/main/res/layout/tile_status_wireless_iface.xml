@@ -492,36 +492,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/loading" />
 
                 <!-- Auto-refresh -->
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_togglebutton_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_refresh"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                <!--<TextView-->
+                <!--android:id="@+id/tile_status_wireless_iface_togglebutton_title"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/auto_refresh"-->
+                <!--android:textStyle="bold"-->
+                <!--android:visibility="gone" />-->
 
-                <TextView
-                    android:id="@+id/tile_status_wireless_iface_togglebutton_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:visibility="gone" />
+                <!--<TextView-->
+                <!--android:id="@+id/tile_status_wireless_iface_togglebutton_separator"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text="@string/one_space"-->
+                <!--android:visibility="gone" />-->
 
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/tile_status_wireless_iface_togglebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="7dp"
-                    android:checked="true"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
-                    android:visibility="gone" />
+                <!--<android.support.v7.widget.SwitchCompat-->
+                <!--android:id="@+id/tile_status_wireless_iface_togglebutton"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="start"-->
+                <!--android:layout_marginBottom="15dp"-->
+                <!--android:layout_marginTop="7dp"-->
+                <!--android:checked="true"-->
+                <!--android:textAppearance="?android:textAppearanceSmall"-->
+                <!--android:textOff="OFF"-->
+                <!--android:textOn="ON"-->
+                <!--android:visibility="gone" />-->
 
             </GridLayout>
 

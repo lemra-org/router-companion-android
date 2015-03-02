@@ -102,7 +102,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     }
 
     public WirelessIfaceTile(@NonNull String iface, @Nullable String parentIface, @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
+//        super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, null);
         this.iface = iface;
         this.parentIface = parentIface;
         ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
@@ -583,8 +584,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
+//        doneWithLoaderInstance(this, loader,
+//                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
+        doneWithLoaderInstance(this, loader);
 
         Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
