@@ -57,6 +57,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -302,23 +303,54 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             displayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Intent intent = WANMonthlyTrafficTile.this.renderTraffDateForMonth(monthYearDisplayed.getText().toString());
-                    if (intent == null) {
+
+                    final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
+
+                    final String monthFormatted = monthYearDisplayedText.toString();
+                    final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
+                            getTraffDataForMonth(monthFormatted);
+
+                    if (traffDataForMonth == null || traffDataForMonth.isEmpty()) {
                         Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
-                                String.format("No traffic data for '%s'", monthYearDisplayed.getText()), Toast.LENGTH_SHORT).show();
+                                String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
                     } else {
+                        final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
+                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                                mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
+                        intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
+                        intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
+
+                        //noinspection ConstantConditions
                         final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                String.format("Loading traffic data for '%s'", monthYearDisplayed.getText()), false, false);
+                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                WANMonthlyTrafficTile.this.mParentFragmentActivity.startActivity(intent);
+                                mParentFragmentActivity.startActivity(intent);
                                 alertDialog.cancel();
                             }
-                        }, 2500);
+                        }, 1000);
                     }
+
+//                    final Intent intent = WANMonthlyTrafficTile.this.renderTraffDateForMonth(monthYearDisplayedText.toString());
+//                    if (intent == null) {
+//                        Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
+//                                String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
+//                        alertDialog.show();
+//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                WANMonthlyTrafficTile.this.mParentFragmentActivity.startActivity(intent);
+//                                alertDialog.cancel();
+//                            }
+//                        }, 2500);
+//                    }
                 }
             });
 
@@ -418,6 +450,17 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ? new SimpleDateFormat("MM").format(currentDate) : monthDisplayed);
 
         return currentYearAndMonth;
+    }
+
+    @Nullable
+    private ImmutableMap<Integer, ArrayList<Double>> getTraffDataForMonth(@NonNull final String monthFormatted) {
+        Log.d(LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
+
+        if (traffData == null) {
+            return null;
+        }
+
+        return traffData.row(monthFormatted);
     }
 
     private Intent renderTraffDateForMonth(@NonNull final String monthFormatted) {

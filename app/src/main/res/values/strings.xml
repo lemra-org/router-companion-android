@@ -480,4 +480,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="data_usage_theme">Data Usage Control</string>
     <string name="num_active_ip_connections"># IP Connections</string>
     <string name="view_active_ip_connections">View IP Connections</string>
+    <string name="SSID">SSID</string>
 </resources>

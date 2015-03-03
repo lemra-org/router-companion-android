@@ -59,7 +59,7 @@ public final class ColorUtils {
 
     private static final Random RANDOM_COLOR_GEN = new Random();
     private static final double COLOR_SIMILARITY_TOLERANCE = 77;
-    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(20) {
+    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(30) {
         @Override
         protected Integer create(final String key) {
             final Map<String, Integer> currentItems = snapshot();

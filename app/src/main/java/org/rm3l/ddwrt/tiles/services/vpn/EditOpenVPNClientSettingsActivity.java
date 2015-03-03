@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -46,7 +47,6 @@ import com.google.common.collect.HashBiMap;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -83,7 +83,6 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
 import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRAMINFO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
 
@@ -147,9 +146,8 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-        if (currentTheme == ColorUtils.LIGHT_THEME) {
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
         } else {
@@ -158,6 +156,12 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.activity_openvpn_client_settings);
+
+        if (themeLight) {
+            final Resources resources = getResources();
+            getWindow().getDecorView()
+                    .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.openvpn_client_settings_toolbar);
         if (mToolbar != null) {

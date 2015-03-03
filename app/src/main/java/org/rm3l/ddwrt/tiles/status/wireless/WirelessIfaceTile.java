@@ -447,6 +447,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             this.wifiSsid = data.getProperty(this.iface + "_ssid", DDWRTCompanionConstants.EMPTY_STRING);
             ssidView.setText(this.wifiSsid);
 
+            ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_details_ssid))
+                    .setText(this.wifiSsid);
+
             this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", DDWRTCompanionConstants.EMPTY_STRING);
 
             //Ifname
