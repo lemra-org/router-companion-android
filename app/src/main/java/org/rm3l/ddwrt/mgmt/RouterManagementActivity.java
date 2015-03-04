@@ -438,9 +438,9 @@ public class RouterManagementActivity
                 } else if (currentSelectedItemCount == previousSelectedItemCount + 1) {
                     //Selection: apply background
                     if (ColorUtils.isThemeLight(this)) {
-                        view.setBackgroundResource(android.R.color.background_dark);
+                        view.setBackgroundResource(R.color.DarkOrange);
                     } else {
-                        view.setBackgroundResource(android.R.color.background_light);
+                        view.setBackgroundResource(R.color.yellow);
                     }
                 } //other cases should not occur (as this is a single selection)
 
@@ -697,7 +697,12 @@ public class RouterManagementActivity
             if (view == null) {
                 return;
             }
-            view.setBackgroundColor(getResources().getColor(R.color.cardview_longpress_background));
+            //Selection: apply background
+            if (ColorUtils.isThemeLight(RouterManagementActivity.this)) {
+                view.setBackgroundResource(R.color.DarkOrange);
+            } else {
+                view.setBackgroundResource(R.color.yellow);
+            }
             // Start the CAB using the ActionMode.Callback defined above
             actionMode = startActionMode(RouterManagementActivity.this);
             int idx = mRecyclerView.getChildPosition(view);
