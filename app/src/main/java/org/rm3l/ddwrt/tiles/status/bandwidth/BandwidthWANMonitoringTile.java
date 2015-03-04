@@ -23,6 +23,8 @@ package org.rm3l.ddwrt.tiles.status.bandwidth;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +63,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 
 /**
  *
@@ -287,6 +291,39 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
             // We want to avoid black border
             mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
             // Disable Pan on two axis
+//            mRenderer.setPanEnabled(false, false);
+//            mRenderer.setYAxisMax(maxY + 10);
+//            mRenderer.setYAxisMin(minY);
+//            mRenderer.setXAxisMin(minX);
+//            mRenderer.setXAxisMax(maxX + 10);
+//            mRenderer.setShowGrid(false);
+//            mRenderer.setClickEnabled(false);
+//            mRenderer.setZoomEnabled(true);
+//            mRenderer.setPanEnabled(false);
+//            mRenderer.setZoomRate(6.0f);
+//            mRenderer.setShowLabels(true);
+//            mRenderer.setFitLegend(true);
+//            mRenderer.setInScroll(true);
+
+            mRenderer.setYLabels(0);
+            if (maxY != 0) {
+                mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+                        .replace("bytes", "B"));
+                mRenderer.addYTextLabel(2 * maxY / 3, byteCountToDisplaySize(Double.valueOf(2 * maxY / 3).longValue())
+                        .replace("bytes", "B"));
+                mRenderer.addYTextLabel(maxY / 3, byteCountToDisplaySize(Double.valueOf(maxY / 3).longValue())
+                        .replace("bytes", "B"));
+            }
+
+            // We want to avoid black border
+            //setting text size of the title
+            mRenderer.setChartTitleTextSize(17);
+            //setting text size of the axis title
+            mRenderer.setAxisTitleTextSize(13);
+            //setting text size of the graph label
+            mRenderer.setLabelsTextSize(13);
+            mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+            // Disable Pan on two axis
             mRenderer.setPanEnabled(false, false);
             mRenderer.setYAxisMax(maxY + 10);
             mRenderer.setYAxisMin(minY);
@@ -294,12 +331,19 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
             mRenderer.setXAxisMax(maxX + 10);
             mRenderer.setShowGrid(false);
             mRenderer.setClickEnabled(false);
-            mRenderer.setZoomEnabled(true);
-            mRenderer.setPanEnabled(false);
+            mRenderer.setZoomEnabled(false, false);
+            mRenderer.setPanEnabled(false, false);
             mRenderer.setZoomRate(6.0f);
             mRenderer.setShowLabels(true);
             mRenderer.setFitLegend(true);
             mRenderer.setInScroll(true);
+            mRenderer.setXLabelsAlign(Paint.Align.CENTER);
+            mRenderer.setYLabelsAlign(Paint.Align.LEFT);
+            mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+            mRenderer.setAntialiasing(true);
+            mRenderer.setExternalZoomEnabled(false);
+            mRenderer.setInScroll(false);
+            mRenderer.setFitLegend(true);
 
             final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
                     .getContext(), dataset, mRenderer, null);

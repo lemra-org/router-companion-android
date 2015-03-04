@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -137,6 +139,7 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1450,6 +1453,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
                     final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
 
+                    final Map<Double, String> yLabels = new HashMap<>();
+
                     //noinspection ConstantConditions
                     for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
                         final String inOrOut = entry.getKey();
@@ -1463,6 +1468,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             minX = Math.min(minX, x);
                             maxY = Math.max(maxY, y);
                             minY = Math.min(minY, y);
+                            yLabels.put(y, byteCountToDisplaySize(Double.valueOf(y).longValue())
+                                    .replace("bytes", "B"));
                         }
 
                         // Now we add our series
@@ -1482,7 +1489,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         mRenderer.addSeriesRenderer(renderer);
                     }
 
+                    mRenderer.setYLabels(0);
+                    if (maxY != 0) {
+                        mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+                                .replace("bytes", "B"));
+                        mRenderer.addYTextLabel(2 * maxY / 3, byteCountToDisplaySize(Double.valueOf(2 * maxY / 3).longValue())
+                                .replace("bytes", "B"));
+                        mRenderer.addYTextLabel(maxY / 3, byteCountToDisplaySize(Double.valueOf(maxY / 3).longValue())
+                                .replace("bytes", "B"));
+                    }
+
                     // We want to avoid black border
+                    //setting text size of the title
+                    mRenderer.setChartTitleTextSize(17);
+                    //setting text size of the axis title
+                    mRenderer.setAxisTitleTextSize(13);
+                    //setting text size of the graph label
+                    mRenderer.setLabelsTextSize(13);
                     mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
                     // Disable Pan on two axis
                     mRenderer.setPanEnabled(false, false);
@@ -1492,12 +1515,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     mRenderer.setXAxisMax(maxX + 10);
                     mRenderer.setShowGrid(false);
                     mRenderer.setClickEnabled(false);
-                    mRenderer.setZoomEnabled(true);
-                    mRenderer.setPanEnabled(false);
+                    mRenderer.setZoomEnabled(false, false);
+                    mRenderer.setPanEnabled(false, false);
                     mRenderer.setZoomRate(6.0f);
                     mRenderer.setShowLabels(true);
                     mRenderer.setFitLegend(true);
                     mRenderer.setInScroll(true);
+                    mRenderer.setXLabelsAlign(Paint.Align.CENTER);
+                    mRenderer.setYLabelsAlign(Paint.Align.LEFT);
+                    mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+                    mRenderer.setAntialiasing(true);
+                    mRenderer.setExternalZoomEnabled(false);
+                    mRenderer.setInScroll(false);
+                    mRenderer.setFitLegend(true);
 
                     final GraphicalView chartView = ChartFactory.getTimeChartView(mParentFragmentActivity, dataset, mRenderer, null);
                     chartView.repaint();
