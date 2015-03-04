@@ -204,9 +204,13 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
                 maxX = Math.max(maxX, days[i]);
                 maxY = Math.max(maxY, Math.max(in, out));
 
-                breakdownLines[i] = String.format("- Day %d: Inbound=%s / Outbound=%s", i + 1,
-                        byteCountToDisplaySize(in.longValue() * MB).replace("bytes", "B"),
-                        byteCountToDisplaySize(out.longValue() * MB).replace("bytes", "B"));
+                final long inBytes = in.longValue() * MB;
+                final long outBytes = out.longValue() * MB;
+
+                breakdownLines[i] = String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
+                        i + 1,
+                        inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
+                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
 
                 i++;
             }
