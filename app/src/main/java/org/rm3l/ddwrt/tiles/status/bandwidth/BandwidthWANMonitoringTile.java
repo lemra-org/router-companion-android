@@ -306,12 +306,10 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 //            mRenderer.setInScroll(true);
 
             mRenderer.setYLabels(0);
-            if (maxY != 0) {
-                mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
-                        .replace("bytes", "B"));
-                mRenderer.addYTextLabel(2 * maxY / 3, byteCountToDisplaySize(Double.valueOf(2 * maxY / 3).longValue())
-                        .replace("bytes", "B"));
-                mRenderer.addYTextLabel(maxY / 3, byteCountToDisplaySize(Double.valueOf(maxY / 3).longValue())
+            mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
+                    .replace("bytes", "B"));
+            if (maxY != 0 && maxY / 2 >= 9000) {
+                mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
                         .replace("bytes", "B"));
             }
 
