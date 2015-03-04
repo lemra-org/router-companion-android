@@ -96,8 +96,8 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     private SortedMap<Integer, ArrayList<Double>> mTrafficDataForMonth;
     private Exception mException;
     private boolean themeLight;
-    private double totalIn;
-    private double totalOut;
+    private long totalIn;
+    private long totalOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,9 +242,9 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
             multiRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
             multiRenderer.setChartTitle(String.format("Month: %s / Total IN: %s / Total OUT: %s",
                     mMonthDisplayed,
-                    byteCountToDisplaySize(Double.valueOf(totalIn * MB).longValue())
+                    byteCountToDisplaySize(totalIn * MB)
                             .replace("bytes", "B"),
-                    byteCountToDisplaySize(Double.valueOf(totalOut * MB).longValue())
+                    byteCountToDisplaySize(totalOut * MB)
                             .replace("bytes", "B")));
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
@@ -446,16 +446,19 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
             }
         });
 
+        final long totalOutBytes = totalOut * MB;
+        final long totalInBytes = totalIn * MB;
+
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("WAN Monthly Traffic on '%s': %s", mRouter, mMonthDisplayed));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                String.format("Traffic Breakdown\n\n>>> Total Inbound: %s / Total Outbound: %s <<<\n\n%s",
-                        byteCountToDisplaySize(Double.valueOf(totalIn * MB).longValue())
+                String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s",
+                        totalInBytes, byteCountToDisplaySize(Double.valueOf(totalInBytes).longValue())
                                 .replace("bytes", "B"),
-                        byteCountToDisplaySize(Double.valueOf(totalOut * MB).longValue())
+                        totalOutBytes, byteCountToDisplaySize(Double.valueOf(totalOutBytes).longValue())
                                 .replace("bytes", "B"),
                         Joiner.on("\n").skipNulls().join(breakdownLines)));
 
