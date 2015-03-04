@@ -109,7 +109,6 @@ import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
-import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -647,12 +646,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     Log.d(LOG_TAG, "output: " + Arrays.toString(output));
 
                     if (output == null || output.length == 0) {
-                        Utils.reportException(new DDWRTCompanionException() {
-                            @Override
-                            public String getMessage() {
-                                return "GET Wireless Clients Tile returns an empty list!";
-                            }
-                        });
                         if (output == null) {
                             return devices;
                         }
