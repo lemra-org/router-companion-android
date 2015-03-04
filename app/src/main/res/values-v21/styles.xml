@@ -45,6 +45,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:statusBarColor">@color/primaryColor</item>
         <item name="android:textColor">#0F0F0F</item>
+        <item name="android:actionModeBackground">@color/holo_green_dark</item>
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
     </style>
@@ -57,6 +58,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:statusBarColor">@color/primaryColorDark</item>
         <item name="android:textColor">#F0F0F0</item>
+        <item name="android:actionModeBackground">@color/holo_green_dark</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
