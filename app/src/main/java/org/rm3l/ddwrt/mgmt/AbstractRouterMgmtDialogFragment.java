@@ -80,8 +80,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTE
 import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
 public abstract class AbstractRouterMgmtDialogFragment
-        extends DialogFragment
-        implements AdapterView.OnItemSelectedListener {
+        extends DialogFragment {
 
     private static final String LOG_TAG = AbstractRouterMgmtDialogFragment.class.getSimpleName();
     private static final int READ_REQUEST_CODE = 42;
@@ -101,6 +100,15 @@ public abstract class AbstractRouterMgmtDialogFragment
         router.setRouterConnectionProtocol(Router.RouterConnectionProtocol.valueOf(
                 (((Spinner) d.findViewById(R.id.router_add_proto))).getSelectedItem().toString()
         ));
+        final int pos = (((Spinner) d.findViewById(R.id.router_add_firmware))).getSelectedItemPosition();
+        final String[] fwStringArray = d.getContext().getResources().getStringArray(R.array.router_firmwares_array_values);
+        if (fwStringArray != null && pos < fwStringArray.length) {
+            final String fwSelection = fwStringArray[pos];
+            if (!"auto".equals(fwSelection)) {
+                router.setRouterFirmware(fwSelection);
+            } // else we will try to guess
+        } // else we will try to guess
+
         router.setUsername(((EditText) d.findViewById(R.id.router_add_username)).getText().toString(), true);
         router.setStrictHostKeyChecking(((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking)).isChecked());
 
@@ -167,7 +175,57 @@ public abstract class AbstractRouterMgmtDialogFragment
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
-        ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(this);
+        ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // An item was selected. You can retrieve the selected item using
+                // parent.getItemAtPosition(position)
+                //Since there is only one connection method for now, we won't do anything, but we may display only the relevant
+                //form items, and hide the others.
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ((Spinner) view.findViewById(R.id.router_add_firmware)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                final String[] fwStringArray = activity.getResources()
+                        .getStringArray(R.array.router_firmwares_array_values);
+                if (fwStringArray != null && pos < fwStringArray.length) {
+                    final String fwSelection = fwStringArray[pos];
+                    if (!"auto".equals(fwSelection)) {
+                        try {
+                            switch (Router.RouterFirmware.valueOf(fwSelection)) {
+                                case DDWRT:
+                                    view.findViewById(R.id.router_add_ddwrt_instructions)
+                                            .setVisibility(View.VISIBLE);
+                                    view.findViewById(R.id.router_add_openwrt_instructions)
+                                            .setVisibility(View.GONE);
+                                    break;
+                                case OPENWRT:
+                                    view.findViewById(R.id.router_add_ddwrt_instructions)
+                                            .setVisibility(View.GONE);
+                                    view.findViewById(R.id.router_add_openwrt_instructions)
+                                            .setVisibility(View.VISIBLE);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } catch (final Exception e) {
+                            Utils.reportException(e);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ((RadioGroup) view.findViewById(R.id.router_add_ssh_auth_method))
                 .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -488,19 +546,6 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
         final AlertDialog d = (AlertDialog) getDialog();
         Crouton.makeText(getActivity(), msg, style, (ViewGroup) (d == null ? getView() : d.findViewById(R.id.router_add_notification_viewgroup))).show();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
-        //Since there is only one connection method for now, we won't do anything, but we may display only the relevant
-        //form items, and hide the others.
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
     }
 
     @Nullable

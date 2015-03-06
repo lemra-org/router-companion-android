@@ -121,6 +121,8 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         holder.routerIp.setText(routerAt.getRemoteIpAddress());
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsernamePlain());
+        final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
+        holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware : "-"));
     }
 
     @Override
@@ -250,6 +252,8 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         final TextView routerUuid;
         @NonNull
         final TextView routerUsername;
+        @NonNull
+        final TextView routerFirmware;
 
         private final Context context;
         private final View itemView;
@@ -264,6 +268,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             this.routerConnProto = (TextView) this.itemView.findViewById(R.id.router_connection_protocol);
             this.routerUuid = (TextView) this.itemView.findViewById(R.id.router_uuid);
             this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
+            this.routerFirmware = (TextView) this.itemView.findViewById(R.id.router_firmware);
         }
 
     }

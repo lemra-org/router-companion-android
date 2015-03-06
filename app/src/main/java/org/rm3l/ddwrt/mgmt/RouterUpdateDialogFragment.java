@@ -109,6 +109,25 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             default:
                 break;
         }
+
+        final Spinner fwDropdown = (Spinner) d.findViewById(R.id.router_add_firmware);
+        final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+        if (routerFirmware == null) {
+            //Auto-detect
+            fwDropdown.setSelection(0);
+        } else {
+            switch (routerFirmware) {
+                case DDWRT:
+                    fwDropdown.setSelection(1);
+                    break;
+                case OPENWRT:
+                    fwDropdown.setSelection(2);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain(), EDITABLE);
         ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain(), EDITABLE);
         ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());

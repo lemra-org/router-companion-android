@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.resources.conn;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.utils.Utils;
+
 import java.io.Serializable;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -94,6 +96,9 @@ public class Router implements Serializable {
 
     private boolean strictHostKeyChecking = false;
 
+    @Nullable
+    private RouterFirmware routerFirmware;
+
     /**
      * Default constructor
      */
@@ -118,6 +123,7 @@ public class Router implements Serializable {
             this.password = router.password;
             this.privKey = \"fake-key\";
             this.strictHostKeyChecking = router.strictHostKeyChecking;
+            this.routerFirmware = router.routerFirmware;
         }
     }
 
@@ -348,6 +354,7 @@ public class Router implements Serializable {
                 ", id=" + id +
                 ", strictHostKeyChecking=" + strictHostKeyChecking +
                 ", uuid='" + uuid + '\'' +
+                ", routerFirmware=" + routerFirmware +
                 '}';
     }
 
@@ -387,6 +394,7 @@ public class Router implements Serializable {
             return false;
         if (!remoteIpAddress.equals(router.remoteIpAddress)) return false;
         if (routerConnectionProtocol != router.routerConnectionProtocol) return false;
+        if (routerFirmware != router.routerFirmware) return false;
         if (!username.equals(router.username)) return false;
         if (!uuid.equals(router.uuid)) return false;
 
@@ -417,6 +425,25 @@ public class Router implements Serializable {
             return SSHAuthenticationMethod.PASSWORD;
         }
         return SSHAuthenticationMethod.NONE;
+    }
+
+    @Nullable
+    public RouterFirmware getRouterFirmware() {
+        return routerFirmware;
+    }
+
+    public void setRouterFirmware(@Nullable String routerFirmwareStr) {
+        RouterFirmware routerFirmware = null;
+        try {
+            routerFirmware = RouterFirmware.valueOf(routerFirmwareStr);
+        } catch (final Exception e) {
+            Utils.reportException(e);
+        }
+        setRouterFirmware(routerFirmware);
+    }
+
+    public void setRouterFirmware(@Nullable RouterFirmware routerFirmware) {
+        this.routerFirmware = routerFirmware;
     }
 
     /**
@@ -495,5 +522,11 @@ public class Router implements Serializable {
         NONE,
         PASSWORD,
         PUBLIC_PRIVATE_KEY;
+    }
+
+    public enum RouterFirmware {
+        DDWRT,
+        OPENWRT,
+        UNKNOWN;
     }
 }

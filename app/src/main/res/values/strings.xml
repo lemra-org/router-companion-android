@@ -57,6 +57,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
     <string name="router_connection_proto_select">Select connection method</string>
 
+    <string-array name="router_firmwares_array">
+        <item>-Autodetect-</item>
+        <item>DD-WRT</item>
+        <item>OpenWRT (Beta)</item>
+        <!--<item>Tomato</item>-->
+    </string-array>
+    <string name="router_firmware_select">Select firmware or let us guess</string>
+    <string-array name="router_firmwares_array_values">
+        <item>auto</item>
+        <item>DDWRT</item>
+        <item>OPENWRT</item>
+        <!--<item>TOMATO</item>-->
+    </string-array>
+
     <!-- OpenVPN -->
     <string-array name="openvpn_client_settings_tunnel_device_array">
         <item>TUN</item>
@@ -243,6 +257,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="update_router">Update</string>
     <string name="router_add_msg">Add a new router</string>
     <string name="router_add_dialog_msg">See http://goo.gl/2dBCkl for instructions on how to setup SSH on your router.</string>
+    <string name="router_add_dialog_msg_openwrt">See http://goo.gl/jEb7tP for instructions on how to setup SSH on your router.</string>
     <string name="router_update_msg">Update router</string>
     <string name="router_add_connection_unsuccessful">Could not connect to router</string>
     <string name="router_add_dns_or_ip_invalid">Invalid DNS name or IP Address</string>

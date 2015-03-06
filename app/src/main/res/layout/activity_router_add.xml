@@ -32,12 +32,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoLink="web"
-        android:text="@string/router_add_dialog_msg" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,6 +41,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!-- Link to Instructions -->
+            <TextView
+                android:id="@+id/router_add_ddwrt_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:text="@string/router_add_dialog_msg"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/router_add_openwrt_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:text="@string/router_add_dialog_msg_openwrt"
+                android:visibility="gone" />
 
             <!-- UUID -->
             <TextView
@@ -96,6 +107,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="text"
                 android:maxLines="1"/>
+
+            <!-- Firmware -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Router Firmware" />
+
+            <Spinner
+                android:id="@+id/router_add_firmware"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:entries="@array/router_firmwares_array"
+                android:entryValues="@array/router_firmwares_array_values"
+                android:imeOptions="flagNoExtractUi"
+                android:prompt="@string/router_firmware_select" />
 
             <!-- Connection Protocol -->
             <TextView
