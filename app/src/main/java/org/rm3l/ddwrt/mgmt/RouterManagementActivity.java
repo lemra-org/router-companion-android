@@ -292,6 +292,16 @@ public class RouterManagementActivity
     }
 
     private void openDuplicateRouterForm(@Nullable Router router) {
+        //Display Donate Message if trying to add more than the max routers for Free version
+        final List<Router> allRouters = dao.getAllRouters();
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if (BuildConfig.DONATIONS &&
+                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+            //Download the full version to unlock this version
+            Utils.displayUpgradeMessage(this);
+            return;
+        }
+
         if (router != null) {
             final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
             final Bundle args = new Bundle();
