@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_FIRMWARE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_IP;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_NAME;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_PASSWORD;
@@ -73,7 +74,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING,
             ROUTER_USERNAME,
             ROUTER_PASSWORD,
-            ROUTER_PRIVKEY};
+            ROUTER_PRIVKEY,
+            ROUTER_FIRMWARE};
 
     public DDWRTCompanionSqliteDAOImpl(Context context) {
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
@@ -94,6 +96,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setUsername(cursor.getString(7), false);
         router.setPassword(cursor.getString(8), false);
         router.setPrivKey(cursor.getString(9), false);
+        router.setRouterFirmware(cursor.getString(10));
 
         return router;
     }
@@ -164,6 +167,10 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 router.isStrictHostKeyChecking() ? 1 : 0);
         values.put(ROUTER_USERNAME, router.getUsername());
         values.put(ROUTER_PROTOCOL, router.getRouterConnectionProtocol().toString());
+        final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+        if (routerFirmware != null) {
+            values.put(ROUTER_FIRMWARE, routerFirmware.toString());
+        }
         return values;
     }
 

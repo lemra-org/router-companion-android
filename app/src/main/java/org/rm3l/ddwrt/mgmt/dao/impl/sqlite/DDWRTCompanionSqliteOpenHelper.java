@@ -27,6 +27,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
+import org.rm3l.ddwrt.resources.conn.Router;
+
+import java.util.Map;
+
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_ROUTERS = "routers";
@@ -39,6 +46,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String ROUTER_PASSWORD = "password";
     public static final String ROUTER_PRIVKEY = \"fake-key\";
     public static final String ROUTER_PORT = "port";
+    public static final String ROUTER_FIRMWARE = "firmware";
     public static final String ROUTER_SSH_STRICT_HOST_KEY_CHECKING = "ssh_strict_host_key_checking";
     // Database creation sql statement
     private static final String DATABASE_CREATE = "CREATE TABLE " + TABLE_ROUTERS +
@@ -52,11 +60,30 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_SSH_STRICT_HOST_KEY_CHECKING + " INTEGER NOT NULL DEFAULT 0, " +
             ROUTER_USERNAME + " TEXT NOT NULL, " +
             ROUTER_PASSWORD + " TEXT DEFAULT NULL, " +
-            ROUTER_PRIVKEY + " TEXT DEFAULT NULL" +
+            ROUTER_PRIVKEY + " TEXT DEFAULT NULL, " +
+            ROUTER_FIRMWARE + " TEXT DEFAULT NULL" +
             ");";
     private static final String DATABASE_NAME = "routers.db";
-    private static final int DATABASE_VERSION = 1;
 
+    /*
+     TODO In case of DB upgrades, don't forget to increment this field,
+     update DATABASE_CREATE (for newer installs), and
+     add an entry into DATABASE_UPGRADES map
+    */
+    private static final int DATABASE_VERSION = 2;
+
+    private static final Map<Integer, String> DATABASE_UPGRADES = Maps.newHashMap();
+
+    static {
+        //V2: Add Router Firmware
+        DATABASE_UPGRADES.put(2,
+                String.format("ALTER TABLE %s ADD COLUMN %s TEXT DEFAULT NULL; " +
+                                "UPDATE %s SET %s=\"%s\";",
+                        TABLE_ROUTERS, ROUTER_FIRMWARE,
+                        TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
+    }
+
+    //10 au 11 avril => compact diesel
     public DDWRTCompanionSqliteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -67,7 +94,36 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //this assumes monotonically increasing version numbers for upgrades.
 
+        /*
+         Leverage Incremental Updates, as described here:
+         http://blog.adamsbros.org/2012/02/28/upgrade-android-sqlite-database/
+         */
+        int upgradeTo = oldVersion + 1;
+        while (upgradeTo <= newVersion) {
+            //Loop because we do not know what version users will be converted from or to
+            final String upgradeToSql = DATABASE_UPGRADES.get(upgradeTo);
+            if (!Strings.isNullOrEmpty(upgradeToSql)) {
+                db.execSQL(upgradeToSql);
+            }
+            upgradeTo++;
+//            }
+//            switch (upgradeTo)
+//            {
+//                case 2:
+//                    db.execSQL(SQLiteSet.V5_ADD_LAST_CARD);
+//                    db.execSQL(SQLiteCard.V5_ADD_FAILED);
+//                    break;
+//                case 6:
+//                    db.execSQL(SQLiteSet.V6_ADD_IMPORT_TYPE);
+//                    break;
+//                case 7:
+//                    db.execSQL(SQLiteSet.V7_ADD_SHORT_FNAME);
+//                    break;
+//            }
+//            upgradeTo++;
+        }
     }
 }
