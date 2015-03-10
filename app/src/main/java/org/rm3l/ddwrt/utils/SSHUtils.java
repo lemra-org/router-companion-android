@@ -79,6 +79,8 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPN_STATIC;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPN_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_DSS_HOST_KEY;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_RSA_HOST_KEY;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware.DDWRT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.Utils.checkDataSyncAlllowedByUsagePreference;
 
@@ -118,6 +120,14 @@ public final class SSHUtils {
                     SSHD_DSS_HOST_KEY,
                     OPENVPNCL_CA, OPENVPNCL_CLIENT, OPENVPNCL_KEY, OPENVPNCL_TLSAUTH, OPENVPNCL_STATIC, OPENVPNCL_ROUTE,
                     OPENVPN_CA, OPENVPN_CLIENT, OPENVPN_KEY, OPENVPN_TLSAUTH, OPENVPN_CRT, OPENVPN_CRL, OPENVPN_STATIC);
+
+    private static final Map<RouterFirmware, String> FIRMWARE_AUTODETECT_CMDS =
+            Maps.newHashMapWithExpectedSize(RouterFirmware.values().length);
+
+    static {
+        FIRMWARE_AUTODETECT_CMDS.put(DDWRT, "grep -qi \"dd-wrt\" /tmp/loginprompt");
+        //TODO Add other firmware commands
+    }
 
     static {
         JSch.setLogger(SSHLogger.getInstance());
@@ -284,6 +294,54 @@ public final class SSHUtils {
                 jschSession.connect(connectTimeoutMillis);
             }
 
+            if (router.getRouterFirmware() == null) {
+                //AutoDetect firmware
+                ChannelExec channelExec = null;
+                InputStream in = null;
+                InputStream err = null;
+                try {
+                    channelExec = (ChannelExec) jschSession.openChannel("exec");
+
+                    //Build command to execute
+                    final String[] autoDetectCommand = new String[FIRMWARE_AUTODETECT_CMDS.size() + 1];
+                    int i = 0;
+                    for (Map.Entry<RouterFirmware, String> routerFirmwareCmdEntry : FIRMWARE_AUTODETECT_CMDS.entrySet()) {
+                        final String cmd = routerFirmwareCmdEntry.getValue();
+                        final RouterFirmware fw = routerFirmwareCmdEntry.getKey();
+                        autoDetectCommand[i++] = String.format("( %s && echo \"%s\" )", cmd, fw.name());
+                    }
+                    autoDetectCommand[i] = ("( echo " + RouterFirmware.UNKNOWN + " )");
+
+                    channelExec.setCommand(Joiner.on(" || ").skipNulls().join(autoDetectCommand));
+                    channelExec.setInputStream(null);
+                    in = channelExec.getInputStream();
+                    err = channelExec.getErrStream();
+                    channelExec.connect();
+
+                    final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+                    if (output == null || output.length == 0) {
+                        router.setRouterFirmware(RouterFirmware.UNKNOWN);
+                    } else {
+                        router.setRouterFirmware(RouterFirmware.valueOf(output[0]));
+                    }
+
+                } catch (final Exception e) {
+                    //No worries
+                    e.printStackTrace();
+                    router.setRouterFirmware(RouterFirmware.UNKNOWN);
+                } finally {
+                    if (in != null) {
+                        Closeables.closeQuietly(in);
+                    }
+                    if (err != null) {
+                        Closeables.closeQuietly(err);
+                    }
+                    if (channelExec != null) {
+                        channelExec.disconnect();
+                    }
+                }
+            }
+
         } finally {
             //Now drop from LRU Cache
             try {
@@ -326,7 +384,7 @@ public final class SSHUtils {
             channelExec.connect();
 
             final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
-            Log.d(TAG, "output: " + Arrays.toString(output));
+//            Log.d(TAG, "output: " + Arrays.toString(output));
 
             //FIXME does not return the actual status
 //            return channelExec.getExitStatus();

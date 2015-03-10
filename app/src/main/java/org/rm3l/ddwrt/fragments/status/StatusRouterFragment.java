@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.fragments.status;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterCPUTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterMemoryTile;
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  *
  */
-public class StatusRouterFragment extends DDWRTBaseFragment {
+public class StatusRouterFragment extends BaseFragment {
 
     @Nullable
     @Override

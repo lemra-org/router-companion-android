@@ -20,7 +20,7 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.ddwrt.fragments.admin;
+package org.rm3l.ddwrt.fragments.services;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,16 +30,12 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.List;
 
-/**
- * 'Admin > Upgrade' fragment
- * <p/>
- * TODO To Implement
- */
-public class AdminUpgradeFragment extends BaseFragment {
+public class ServicesOpenVPNServerFragment extends BaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return null;
     }
+
 }

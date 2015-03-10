@@ -84,7 +84,7 @@ public class RouterMemInfoActivity extends ActionBarActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
+                    .setBackgroundColor(resources.getColor(android.R.color.white));
             ((TextView) findViewById(R.id.tile_status_router_meminfo))
                     .setTextColor(resources.getColor(R.color.black));
         }

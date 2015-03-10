@@ -44,7 +44,9 @@ import com.android.common.view.SlidingTabLayout;
 
 import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -75,6 +77,7 @@ public class PageSlidingTabStripFragment extends Fragment {
      * above, but is designed to give continuous feedback to the user when scrolling.
      */
     private SlidingTabLayout mSlidingTabLayout;
+    private Router mRouter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -87,7 +90,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         final Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
+        args.putString(BaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
         fragment.mOnPageChangeListener = onPageChangeListener;
         return fragment;
@@ -102,7 +105,9 @@ public class PageSlidingTabStripFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        final String routerUuid = getArguments().getString(DDWRTBaseFragment.ROUTER_CONNECTION_INFO);
+        final String routerUuid = getArguments().getString(BaseFragment.ROUTER_CONNECTION_INFO);
+        mRouter = RouterManagementActivity.getDao(getActivity()).getRouter(routerUuid);
+
         final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
 
         mFragmentTabsAdapter = new FragmentTabsAdapter(
@@ -132,21 +137,41 @@ public class PageSlidingTabStripFragment extends Fragment {
         mPager.setOnPageChangeListener(mOnPageChangeListener);
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
+        int colorForOpenWrt = -1;
+        if (mRouter != null) {
+            final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+            if (routerFirmware != null) {
+                switch (routerFirmware) {
+                    case OPENWRT:
+                        //Change background color
+                        colorForOpenWrt = getResources().getColor(R.color.android_green);
+                        mSlidingTabLayout.setBackgroundColor(colorForOpenWrt);
+                        break;
+                    default:
+                        //Use default theme
+                        break;
+                }
+            }
+        }
+
         mSlidingTabLayout.setViewPager(this.mPager);
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
 
         final ArrayList<Integer> colorsToSkip = new ArrayList<>();
+        if (colorForOpenWrt > 0) {
+            colorsToSkip.add(colorForOpenWrt);
+        }
         final Drawable tabsBackground = mSlidingTabLayout.getBackground();
         if (tabsBackground instanceof ColorDrawable) {
             colorsToSkip.add(((ColorDrawable) tabsBackground).getColor());
         }
 
         //Generate random colors to use for selection
-        final DDWRTBaseFragment[] tabs = mFragmentTabsAdapter.tabs;
-        if (tabs != null && tabs.length > 0) {
+        final BaseFragment[] tabs = mFragmentTabsAdapter.tabs;
+        if (tabs.length > 0) {
             final int[] selectedIndicatorColors = new int[tabs.length];
             int i = 0;
-            for (final DDWRTBaseFragment tab : tabs) {
+            for (final BaseFragment tab : tabs) {
                 selectedIndicatorColors[i++] = (tab != null ?
                         ColorUtils.getColor(tab.getClass().getSimpleName()) : ColorUtils.genColor(colorsToSkip));
             }
@@ -173,7 +198,7 @@ public class PageSlidingTabStripFragment extends Fragment {
     private class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NonNull
-        final DDWRTBaseFragment[] tabs;
+        final BaseFragment[] tabs;
 
         private final Resources resources;
         private final int parentSectionNumber;
@@ -183,7 +208,7 @@ public class PageSlidingTabStripFragment extends Fragment {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = DDWRTBaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
+            this.tabs = BaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
         @Override
@@ -208,7 +233,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 Log.d(TAG, "tabs contains less than " + position + " items");
                 return null;
             }
-            final DDWRTBaseFragment tab = this.tabs[position];
+            final BaseFragment tab = this.tabs[position];
             Log.d(TAG, "Tab @position #" + position + ": " + tab);
             if (tab == null) {
                 return null;

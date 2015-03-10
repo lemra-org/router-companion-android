@@ -24,14 +24,14 @@ package org.rm3l.ddwrt.fragments.status;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.lan.DHCPClientsTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class StatusClientsFragment extends DDWRTBaseFragment {
+public class StatusClientsFragment extends BaseFragment {
 
     @Nullable
     @Override

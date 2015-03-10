@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public class NoDataFragment extends DDWRTBaseFragment {
+public class NoDataFragment extends BaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {

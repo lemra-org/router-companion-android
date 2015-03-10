@@ -20,29 +20,27 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.ddwrt.fragments.services;
+package org.rm3l.ddwrt.exceptions;
 
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
-import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile;
-import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNLogsTile;
-
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * TODO
+ * TODO For User-generated reports: add a menu item
  */
-public class ServicesOpenVPNFragment extends DDWRTBaseFragment {
+public class UserGeneratedReportException extends DDWRTCompanionException {
 
-    @Nullable
-    @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new OpenVPNClientTile(this, savedInstanceState, this.router),
-                new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
+    public UserGeneratedReportException() {
+    }
+
+    public UserGeneratedReportException(@Nullable String detailMessage) {
+        super(detailMessage);
+    }
+
+    public UserGeneratedReportException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+        super(detailMessage, throwable);
+    }
+
+    public UserGeneratedReportException(@Nullable Throwable throwable) {
+        super(throwable);
     }
 }

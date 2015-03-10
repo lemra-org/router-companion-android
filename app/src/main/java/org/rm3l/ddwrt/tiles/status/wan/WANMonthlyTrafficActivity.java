@@ -117,7 +117,7 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
+                    .setBackgroundColor(resources.getColor(android.R.color.white));
 
         }
 

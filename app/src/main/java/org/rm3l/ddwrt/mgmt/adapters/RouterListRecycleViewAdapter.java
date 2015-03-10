@@ -122,7 +122,7 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsernamePlain());
         final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
-        holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware : "-"));
+        holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware.getDisplayName() : "-"));
     }
 
     @Override

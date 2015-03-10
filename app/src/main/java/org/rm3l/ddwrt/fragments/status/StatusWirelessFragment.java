@@ -44,7 +44,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
@@ -64,7 +64,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 /**
  *
  */
-public class StatusWirelessFragment extends DDWRTBaseFragment<Collection<DDWRTTile>> {
+public class StatusWirelessFragment extends BaseFragment<Collection<DDWRTTile>> {
 
     public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
     private static final String LOG_TAG = StatusWirelessFragment.class.getSimpleName();

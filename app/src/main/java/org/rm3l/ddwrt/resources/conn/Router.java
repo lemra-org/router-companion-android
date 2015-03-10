@@ -432,18 +432,19 @@ public class Router implements Serializable {
         return routerFirmware;
     }
 
+    public void setRouterFirmware(@Nullable RouterFirmware routerFirmware) {
+        this.routerFirmware = routerFirmware;
+    }
+
     public void setRouterFirmware(@Nullable String routerFirmwareStr) {
-        RouterFirmware routerFirmware = null;
+        if (isNullOrEmpty(routerFirmwareStr)) {
+            return;
+        }
         try {
-            routerFirmware = RouterFirmware.valueOf(routerFirmwareStr);
+            setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
         } catch (final Exception e) {
             Utils.reportException(e);
         }
-        setRouterFirmware(routerFirmware);
-    }
-
-    public void setRouterFirmware(@Nullable RouterFirmware routerFirmware) {
-        this.routerFirmware = routerFirmware;
     }
 
     /**
@@ -525,8 +526,20 @@ public class Router implements Serializable {
     }
 
     public enum RouterFirmware {
-        DDWRT,
-        OPENWRT,
-        UNKNOWN;
+        DDWRT("DD-WRT"),
+        OPENWRT("OpenWrt (Beta)"),
+        UNKNOWN("???");
+
+        @NonNull
+        final String displayName;
+
+        RouterFirmware(@NonNull final String displayName) {
+            this.displayName = displayName;
+        }
+
+        @NonNull
+        public String getDisplayName() {
+            return displayName;
+        }
     }
 }

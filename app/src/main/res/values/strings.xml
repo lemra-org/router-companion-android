@@ -412,6 +412,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_acra_deviceid_enabled">Enabled</string>
     <string name="pref_acra_deviceid_disabled">Disabled</string>
     <string name="services_openvpn">OpenVPN</string>
+    <string name="services_openvpn_client">OpenVPN Client</string>
+    <string name="services_openvpn_logs">OpenVPN Logs</string>
+    <string name="services_openvpn_server">OpenVPN Server</string>
     <string name="title_openvpncl_settings">OpenVPN Client Settings</string>
     <string name="openvpn_client_settings_tunnel_device">Tunnel Device</string>
     <string name="openvpn_client_settings_tunnel_protocol">Tunnel Protocol</string>
@@ -496,4 +499,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="num_active_ip_connections"># IP Connections</string>
     <string name="view_active_ip_connections">View IP Connections</string>
     <string name="SSID">SSID</string>
+    <string name="alias">Alias</string>
 </resources>

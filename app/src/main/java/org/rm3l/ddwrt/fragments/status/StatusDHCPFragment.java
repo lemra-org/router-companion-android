@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.fragments.status;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.lan.DHCPStatusTile;
 
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  *
  */
-public class StatusDHCPFragment extends DDWRTBaseFragment {
+public class StatusDHCPFragment extends BaseFragment {
 
     @Nullable
     @Override

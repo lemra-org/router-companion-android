@@ -559,7 +559,9 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         public CheckRouterConnectionAsyncTask(String routerIpOrDns, boolean checkActualConnection) {
             this.routerIpOrDns = routerIpOrDns;
-            this.checkActualConnection = checkActualConnection;
+            //Disabling 'checkActualConnection' setting, as we are now trying to detect the firmware used
+//            this.checkActualConnection = checkActualConnection;
+            this.checkActualConnection = true;
         }
 
         @Override

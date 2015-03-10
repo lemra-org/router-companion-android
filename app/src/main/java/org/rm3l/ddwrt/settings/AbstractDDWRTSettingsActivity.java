@@ -160,7 +160,7 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
 
         if (themeLight) {
             getWindow().getDecorView()
-                    .setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                    .setBackgroundColor(getResources().getColor(android.R.color.white));
         }
 
         getFragmentManager()

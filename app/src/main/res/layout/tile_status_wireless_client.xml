@@ -56,7 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentTop="true"
                     android:layout_gravity="start"
                     android:ellipsize="end"
-                    android:maxLength="17"
+                    android:maxLength="10"
                     android:scrollHorizontally="true"
                     android:textAppearance="?android:textAppearanceMedium" />
 
@@ -159,6 +159,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <TextView
                 android:id="@+id/tile_status_wireless_client_device_details_system_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+            <!-- Alias -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alias"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_wireless_client_device_details_alias"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"

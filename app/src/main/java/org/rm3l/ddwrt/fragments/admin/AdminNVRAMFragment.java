@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.fragments.admin;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.admin.nvram.AdminNVRAMTile;
 
@@ -37,7 +37,7 @@ import java.util.List;
  * 'Admin > NVRAM' fragment
  * <p/>
  */
-public class AdminNVRAMFragment extends DDWRTBaseFragment {
+public class AdminNVRAMFragment extends BaseFragment {
 
     @Nullable
     @Override

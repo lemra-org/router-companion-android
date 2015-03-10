@@ -165,7 +165,7 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
         if (themeLight) {
             getWindow().getDecorView()
-                    .setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                    .setBackgroundColor(getResources().getColor(android.R.color.white));
         }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);

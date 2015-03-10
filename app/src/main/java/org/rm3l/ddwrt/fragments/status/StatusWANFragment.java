@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.fragments.status;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wan.WANConfigTile;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  *
  */
-public class StatusWANFragment extends DDWRTBaseFragment {
+public class StatusWANFragment extends BaseFragment {
 
     @Nullable
     @Override

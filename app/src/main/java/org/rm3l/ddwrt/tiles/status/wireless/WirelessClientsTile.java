@@ -1547,6 +1547,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     deviceSystemNameView.setText(systemName);
                 }
 
+                final TextView deviceAliasView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_alias);
+                final String alias = device.getAlias();
+                if (isNullOrEmpty(alias)) {
+                    deviceAliasView.setText(EMPTY_VALUE_TO_DISPLAY);
+                } else {
+                    deviceAliasView.setText(alias);
+                }
+
                 //OUI Addr
                 final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
                 final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();

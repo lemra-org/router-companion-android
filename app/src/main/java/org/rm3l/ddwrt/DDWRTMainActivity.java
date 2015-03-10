@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -45,6 +46,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -242,16 +245,28 @@ public class DDWRTMainActivity extends ActionBarActivity
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-//        final boolean isThemeLight = ColorUtils.isThemeLight(this);
-//        if (isThemeLight) {
-//            //Light
-//            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_light_background));
-//        } else {
-//            //Default is Dark
-//            mDrawerList.setBackgroundColor(this.getResources().getColor(R.color.left_drawer_dark_background));
-//        }
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+            if (routerFirmware != null) {
+                switch (routerFirmware) {
+                    case OPENWRT:
+                        //Change background color
+                        final int colorForOpenWrt = getResources().getColor(R.color.android_green);
+                        mToolbar.setBackgroundColor(colorForOpenWrt);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            final Window window = getWindow();
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                            window.setStatusBarColor(colorForOpenWrt);
+                        }
+                        break;
+                    default:
+                        //Use default theme
+                        break;
+                }
+            }
+        }
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set a custom shadow that overlays the main content when the drawer
         // opens

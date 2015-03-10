@@ -31,7 +31,6 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
@@ -75,7 +74,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
+//            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
             bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
 

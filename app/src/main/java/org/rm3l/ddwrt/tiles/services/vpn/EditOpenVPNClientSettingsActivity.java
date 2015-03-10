@@ -160,7 +160,7 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.darker_gray));
+                    .setBackgroundColor(resources.getColor(android.R.color.white));
         }
 
         mToolbar = (Toolbar) findViewById(R.id.openvpn_client_settings_toolbar);

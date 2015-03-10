@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.fragments.wireless;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * TODO
  */
-public class WirelessMACFilteringFragment extends DDWRTBaseFragment {
+public class WirelessMACFilteringFragment extends BaseFragment {
 
     @Nullable
     @Override

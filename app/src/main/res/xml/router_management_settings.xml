@@ -40,7 +40,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- General -->
     <PreferenceCategory
         android:key="@string/pref_header_general"
-        android:title="General">
+        android:title="Data Sync">
 
         <org.rm3l.ddwrt.utils.LongListPreference
             android:defaultValue="444"
@@ -51,12 +51,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="@string/data_usage_theme" />
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:enabled="true"
-            android:key="alwaysCheckConnection"
-            android:summary="Always check actual connection prior to adding or updating an entry"
-            android:title="Connection Check" />
+        <!--<CheckBoxPreference-->
+        <!--android:defaultValue="true"-->
+        <!--android:enabled="true"-->
+        <!--android:key="alwaysCheckConnection"-->
+        <!--android:summary="Always check actual connection prior to adding or updating an entry"-->
+        <!--android:title="Connection Check" />-->
 
     </PreferenceCategory>
 

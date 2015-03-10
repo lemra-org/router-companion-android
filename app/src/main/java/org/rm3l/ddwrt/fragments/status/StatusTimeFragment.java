@@ -24,14 +24,14 @@ package org.rm3l.ddwrt.fragments.status;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.DDWRTBaseFragment;
+import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.time.StatusTimeTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class StatusTimeFragment extends DDWRTBaseFragment {
+public class StatusTimeFragment extends BaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
