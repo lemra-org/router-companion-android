@@ -154,6 +154,13 @@ public class DDWRTMainActivity extends ActionBarActivity
         this.mRouterUuid = router.getUuid();
         this.mRouter = router;
 
+        final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+        if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+            Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
+                    "Consider editing the Router record to manually specify a supported firmware.", Style.ALERT);
+            finish();
+        }
+
         final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
         this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 

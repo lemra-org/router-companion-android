@@ -469,6 +469,14 @@ public class RouterManagementActivity
                         "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
                 return;
             }
+
+            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+                Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
+                        "Consider editing this entry to manually specify a supported firmware.", Style.ALERT);
+                return;
+            }
+
             final String routerUuid = router.getUuid();
 
             final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
