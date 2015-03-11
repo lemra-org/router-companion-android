@@ -472,8 +472,8 @@ public class RouterManagementActivity
 
             final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
             if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-                Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
-                        "Consider editing this entry to manually specify a supported firmware.", Style.ALERT);
+                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
+                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
                 return;
             }
 
