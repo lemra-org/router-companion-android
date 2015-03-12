@@ -25,15 +25,21 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +47,7 @@ import com.google.common.base.Joiner;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 import java.io.BufferedOutputStream;
@@ -67,6 +74,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     private String mRouterRemoteIp;
     private File mFileToShare;
 
+    private String[] mActiveIPConnections;
     private String mActiveIPConnectionsMultiLine;
 
     private String mTitle;
@@ -90,13 +98,13 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
         setContentView(R.layout.tile_status_active_ip_connections);
 
-        if (themeLight) {
-            final Resources resources = getResources();
-            getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
-            ((TextView) findViewById(R.id.tile_status_active_ip_connections))
-                    .setTextColor(resources.getColor(R.color.black));
-        }
+//        if (themeLight) {
+//            final Resources resources = getResources();
+//            getWindow().getDecorView()
+//                    .setBackgroundColor(resources.getColor(android.R.color.white));
+////            ((TextView) findViewById(R.id.tile_status_active_ip_connections))
+////                    .setTextColor(resources.getColor(R.color.black));
+//        }
 
         final Intent intent = getIntent();
         mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
@@ -116,21 +124,144 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        final String[] activeIPConnections = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
-        if (activeIPConnections == null || activeIPConnections.length == 0) {
+        mActiveIPConnections = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
+        if (mActiveIPConnections == null || mActiveIPConnections.length == 0) {
             Toast.makeText(this, "Internal Error - No Detailed Active IP Connections list available!",
                     Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(activeIPConnections);
+        mActiveIPConnectionsMultiLine = Joiner.on("\n\n").join(mActiveIPConnections);
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        ((TextView) findViewById(R.id.tile_status_active_ip_connections)).setText(mActiveIPConnectionsMultiLine);
+
+        new Handler(Looper.getMainLooper()).
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Remove all views
+                        final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+                        containerLayout.removeAllViews();
+
+                        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+                                FrameLayout.LayoutParams.MATCH_PARENT,
+                                FrameLayout.LayoutParams.WRAP_CONTENT);
+                        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+                        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+                        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+
+                        final boolean isThemeLight = ColorUtils.isThemeLight(ActiveIPConnectionsDetailActivity.this);
+                        final Resources resources = getResources();
+                        int i = 0;
+                        for (final String activeIPConnection : mActiveIPConnections) {
+                            final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
+                            if (ipConntrackRow == null) {
+                                continue;
+                            }
+                            final CardView cardView = (CardView) getLayoutInflater()
+                                    .inflate(R.layout.activity_ip_connections_cardview, null);
+
+                            //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                            cardView.setPreventCornerOverlap(true);
+                            //Add padding in API v21+ as well to have the same measurements with previous versions.
+                            cardView.setUseCompatPadding(true);
+
+                            if (isThemeLight) {
+                                //Light
+                                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                            } else {
+                                //Default is Dark
+                                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                            }
+
+                            //Highlight CardView
+                            cardView.setCardElevation(20f);
+
+                            final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_source_ip))
+                                    .setText(sourceAddressOriginalSide);
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_ip))
+                                    .setText(sourceAddressOriginalSide);
+
+                            final long ttl = ipConntrackRow.getTimeout();
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_ttl))
+                                    .setText(ttl > 0 ? String.valueOf(ttl) : "-");
+
+                            final long packets = ipConntrackRow.getPackets();
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_packets))
+                                    .setText(packets > 0 ? String.valueOf(packets) : "-");
+
+                            final long bytes = ipConntrackRow.getBytes();
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_bytes))
+                                    .setText(bytes > 0 ? String.valueOf(bytes) : "-");
+
+                            final String destinationAddressOriginalSide = ipConntrackRow.getDestinationAddressOriginalSide();
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_dest_ip))
+                                    .setText(destinationAddressOriginalSide);
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip))
+                                    .setText(destinationAddressOriginalSide);
+
+                            final TextView proto = (TextView) cardView.findViewById(R.id.activity_ip_connections_device_proto);
+                            final String protocol = ipConntrackRow.getTransportProtocol().getDisplayName();
+                            proto.setText(protocol);
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
+                                    .setText(protocol.toUpperCase());
+
+                            final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
+                            final TextView tcpConnectionStateView = (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
+                            final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
+                            if (!isNullOrEmpty(tcpConnectionState)) {
+                                tcpConnectionStateView.setText(tcpConnectionState);
+                                tcpConnectionStateDetailedView.setText(tcpConnectionState);
+                                tcpConnectionStateView.setVisibility(View.VISIBLE);
+                            } else {
+                                tcpConnectionStateView.setVisibility(View.GONE);
+                                tcpConnectionStateDetailedView.setText("-");
+                            }
+
+                            final int sourcePortOriginalSide = ipConntrackRow.getSourcePortOriginalSide();
+                            final String srcPortToDisplay = sourcePortOriginalSide > 0 ? String.valueOf(sourcePortOriginalSide) : "-";
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_sport))
+                                    .setText(srcPortToDisplay);
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_source_port))
+                                    .setText(srcPortToDisplay);
+
+                            final int destinationPortOriginalSide = ipConntrackRow.getDestinationPortOriginalSide();
+                            final String dstPortToDisplay = destinationPortOriginalSide > 0 ? String.valueOf(destinationPortOriginalSide) : "-";
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_dport))
+                                    .setText(dstPortToDisplay);
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_port))
+                                    .setText(dstPortToDisplay);
+
+                            final TextView rawLineView = (TextView) cardView.findViewById(R.id.activity_ip_connections_raw_line);
+                            rawLineView.setText(activeIPConnection);
+
+                            if (i == 0) {
+                                rawLineView.setVisibility(View.VISIBLE);
+                            }
+                            i++;
+
+                            cardView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final View placeholderView = cardView.findViewById(R.id.activity_ip_connections_details_placeholder);
+                                    if (placeholderView.getVisibility() == View.VISIBLE) {
+                                        placeholderView.setVisibility(View.GONE);
+                                    } else {
+                                        placeholderView.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            });
+
+                            containerLayout.addView(cardView);
+                        }
+                    }
+                });
     }
 
     @Override
