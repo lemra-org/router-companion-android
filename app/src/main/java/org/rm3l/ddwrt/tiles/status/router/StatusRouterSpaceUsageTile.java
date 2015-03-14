@@ -106,7 +106,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
 
                     final String[] catProcMounts = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, "nvram show 2>&1 1>/dev/null", "cat /proc/mounts");
+                            mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {

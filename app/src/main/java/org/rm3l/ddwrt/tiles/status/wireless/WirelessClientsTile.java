@@ -520,8 +520,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //Get Broadcast Addresses (for WOL)
                     try {
                         final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                "ifconfig `nvram get wan_iface` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'",
-                                "ifconfig `nvram get lan_ifname` | grep Bcast | awk -F'Bcast:' '{print $2}' | awk -F'Mask:' '{print $1}'");
+                                "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
+                                "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
                         if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
                             for (final String wanAndLanBcast : wanAndLanBroadcast) {
                                 if (wanAndLanBcast == null) {
@@ -574,8 +574,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final Multimap<String, String> wirelessIfaceAssocList = ArrayListMultimap.create();
                     try {
                         final String[] assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                "for i in `nvram get landevs`; do " +
-                                        "phy=`nvram get ${i}_ifname 2>/dev/null`; " +
+                                "for i in `/usr/sbin/nvram get landevs`; do " +
+                                        "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
                                         "if [ ! -z \"$phy\" ]; then " +
                                         "echo iface $i ; " +
                                         "( wl -i $phy assoclist 2>/dev/null || " +
@@ -583,9 +583,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         "echo 'done';  " +
                                         "fi; " +
                                         "done; " +
-                                        "for j in `nvram get landevs`; do " +
-                                        "for i in `nvram get ${j}_vifs`; do " +
-                                        "phy=`nvram get ${i}_ifname 2>/dev/null`; " +
+                                        "for j in `/usr/sbin/nvram get landevs`; do " +
+                                        "for i in `/usr/sbin/nvram get ${j}_vifs`; do " +
+                                        "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
                                         "if [ ! -z \"$phy\" ]; then " +
                                         "echo iface $i ; " +
                                         "( wl -i $phy assoclist 2>/dev/null || " +
@@ -721,13 +721,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     try {
                                         final String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
                                                 mGlobalPreferences,
-                                                String.format("nvram get %s_ssid || echo \"-\"", iface),
-                                                String.format("wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s",
+                                                String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", iface),
+                                                String.format("wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
                                                         iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase()),
-                                                String.format("wl -i `nvram get %s_ifname` noise || wl_atheros -i `nvram get %s_ifname` noise", iface, iface),
-                                                String.format("( wl -i `nvram get %s_ifname` rssi %s || wl_atheros -i `nvram get %s_ifname` rssi %s ; " +
-                                                                "echo \" \"; wl -i `nvram get %s_ifname` noise || wl_atheros -i `nvram get %s_ifname` noise ) | " +
-                                                                "tr -d '\\n' | awk '{print $1-$2}'",
+                                                String.format("wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", iface, iface),
+                                                String.format("( wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
+                                                                "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
+                                                                "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
                                                         iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
                                         Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput != null) {

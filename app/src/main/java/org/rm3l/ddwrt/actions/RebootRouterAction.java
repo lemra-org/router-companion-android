@@ -45,9 +45,14 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
 
         Exception exception = null;
         try {
-            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router, "reboot");
-            if (exitStatus != 0) {
-                throw new IllegalStateException();
+            final String[] exitStatus = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
+                    "/sbin/reboot; echo $?");
+
+            if (exitStatus == null || exitStatus.length == 0) {
+                throw new IllegalStateException("Unable to get the Reset Command Status.");
+            }
+            if (!"0".equals(exitStatus[0])) {
+                throw new IllegalStateException("Command execution status: " + exitStatus[0]);
             }
         } catch (Exception e) {
             e.printStackTrace();
