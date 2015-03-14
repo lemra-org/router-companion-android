@@ -81,6 +81,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_DSS_HOST_KEY;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SSHD_RSA_HOST_KEY;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware.DDWRT;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware.OPENWRT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.Utils.checkDataSyncAlllowedByUsagePreference;
 
@@ -126,6 +127,7 @@ public final class SSHUtils {
 
     static {
         FIRMWARE_AUTODETECT_CMDS.put(DDWRT, "grep -qi \"dd-wrt\" /tmp/loginprompt");
+        FIRMWARE_AUTODETECT_CMDS.put(OPENWRT, "uname -a | grep -qi \"openwrt\"");
         //TODO Add other firmware commands
     }
 
