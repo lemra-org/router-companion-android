@@ -379,18 +379,28 @@ public final class SSHUtils {
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
-            channelExec.setCommand(commandsJoiner.join(cmdToExecute));
+            channelExec.setCommand("( " + commandsJoiner.join(cmdToExecute) + " ) ; echo $?");
             channelExec.setInputStream(null);
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
             channelExec.connect();
 
             final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+            if (output == null || output.length == 0) {
+                return -10;
+            }
+            try {
+                //Last line is the status code
+                return Integer.parseInt(output[output.length - 1]);
+            } catch (final Exception e) {
+                e.printStackTrace();
+                return -100;
+            }
 //            Log.d(TAG, "output: " + Arrays.toString(output));
 
-            //FIXME does not return the actual status
+            //Line below does not return the actual status
 //            return channelExec.getExitStatus();
-            return 0;
+//            return 0;
 
         } finally {
             try {
@@ -512,14 +522,14 @@ public final class SSHUtils {
         }
 
         final String[] nvramShow = SSHUtils.getManualProperty(ctx, router,
-                globalPreferences, "nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
+                globalPreferences, "/usr/sbin/nvram show" + (grep.isEmpty() ? "" : (" | grep -E \"" +
                         Joiner.on("|").join(grep) + "\"")));
 
         final String[] varsToFix = new String[MULTI_OUTPUT_NVRAM_VARS.size()];
         int i = 0;
         for (final String multiOutputNvramVar : MULTI_OUTPUT_NVRAM_VARS) {
             final String[] completeValue = getMultiOutput ?
-                    SSHUtils.getManualProperty(ctx, router, globalPreferences, "nvram get " + multiOutputNvramVar) : null;
+                    SSHUtils.getManualProperty(ctx, router, globalPreferences, "/usr/sbin/nvram get " + multiOutputNvramVar) : null;
             varsToFix[i++] = (multiOutputNvramVar + "=" + (completeValue != null ? JOINER_CARRIAGE_RETURN.join(completeValue) : EMPTY_STRING));
         }
 
