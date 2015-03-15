@@ -330,7 +330,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                     currentItem = i;
                 }
                 final String routerName = router.getName();
-                routersNamesArray[i++] = isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName;
+                routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
+                        router.getRemoteIpAddress() + ")");
             }
 
             final ArrayAdapter<String> routersListAdapter = new ArrayAdapter<>(this,

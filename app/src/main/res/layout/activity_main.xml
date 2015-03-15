@@ -57,12 +57,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="116dp"
-                android:background="@drawable/router_picker_background">
+                android:background="@drawable/router_picker_background"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    style="?android:textAppearanceLarge"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/one_space" />
+                    android:text="@string/routers"
+                    android:textColor="@color/primary_material_light" />
 
                 <Spinner
                     android:id="@+id/left_drawer_routers_dropdown"

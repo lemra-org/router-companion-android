@@ -4,5 +4,5 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:background="?android:attr/listChoiceBackgroundIndicator"
     android:gravity="center_vertical"
-    android:textAppearance="?android:attr/textAppearanceListItem"
+    android:textAppearance="?android:attr/textAppearanceMedium"
     android:textColor="@color/win8_teal" />
