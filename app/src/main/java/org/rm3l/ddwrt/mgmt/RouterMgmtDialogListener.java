@@ -24,9 +24,11 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.support.v4.app.DialogFragment;
 
+import org.rm3l.ddwrt.resources.conn.Router;
+
 public interface RouterMgmtDialogListener {
 
-    void onRouterAdd(DialogFragment dialog, boolean error);
+    void onRouterAdd(DialogFragment dialog, Router router, boolean error);
 
-    void onRouterUpdated(DialogFragment dialog, int position, boolean error);
+    void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error);
 }

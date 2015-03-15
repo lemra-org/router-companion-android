@@ -518,7 +518,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onRouterAdd(DialogFragment dialog, boolean error) {
+    public void onRouterAdd(DialogFragment dialog, Router router, boolean error) {
         if (!error) {
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
@@ -527,7 +527,7 @@ public class RouterManagementActivity
     }
 
     @Override
-    public void onRouterUpdated(DialogFragment dialog, int position, boolean error) {
+    public void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error) {
         if (!error) {
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);

@@ -52,7 +52,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
     @Override
     protected void onPositiveButtonActionSuccess(@NonNull RouterMgmtDialogListener mListener, Router router, boolean error) {
-        mListener.onRouterAdd(this, error);
+        mListener.onRouterAdd(this, router, error);
         if (!error) {
             if (router != null) {
                 //Add default preferences values

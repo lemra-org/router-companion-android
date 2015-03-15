@@ -66,7 +66,7 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     @Override
     protected void onPositiveButtonActionSuccess(@NonNull final RouterMgmtDialogListener mListener,
                                                  @Nullable final Router router, final boolean error) {
-        mListener.onRouterAdd(this, error);
+        mListener.onRouterAdd(this, router, error);
         if (!error) {
             if (router != null) {
                 //Add default preferences values

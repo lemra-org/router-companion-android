@@ -34,6 +34,8 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -68,7 +70,9 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
+import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -80,6 +84,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -90,6 +95,7 @@ import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
@@ -101,7 +107,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  * <p/>
  */
 public class DDWRTMainActivity extends ActionBarActivity
-        implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
+        implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener, RouterActionListener, RouterMgmtDialogListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
@@ -109,6 +115,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     public static final int ROUTER_SETTINGS_ACTIVITY_CODE = 1;
     public static final String IS_SORTING_STRATEGY_CHANGED = "isSortingStrategyChanged";
     public static final String ROUTER_ACTION = "ROUTER_ACTION";
+    public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     private static final int LISTENED_REQUEST_CODE = 77;
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
@@ -139,6 +146,8 @@ public class DDWRTMainActivity extends ActionBarActivity
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
     private ArrayAdapter<String> mNavigationDrawerAdapter;
+    private ArrayAdapter<String> mRoutersListAdapter;
+    private ArrayList<Router> mRoutersListForPicker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -300,7 +309,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         //Routers picker
         final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
-        final List<Router> allRouters = RouterManagementActivity.getDao(this).getAllRouters();
+        final List<Router> allRouters = dao.getAllRouters();
         if (allRouters == null || allRouters.isEmpty()) {
             Utils.reportException(new
                     IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
@@ -310,7 +319,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
             final int allRoutersSize = allRouters.size();
 //            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
-            final ArrayList<Router> routersList = Lists.newArrayListWithCapacity(allRoutersSize);
+            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
             for (final Router router : allRouters) {
                 final RouterFirmware routerFirmware;
                 if (router == null ||
@@ -318,14 +327,15 @@ public class DDWRTMainActivity extends ActionBarActivity
                         RouterFirmware.UNKNOWN.equals(routerFirmware)) {
                     continue;
                 }
-                routersList.add(router);
+                mRoutersListForPicker.add(router);
             }
 
-            final String[] routersNamesArray = new String[routersList.size()];
+            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
+            routersNamesArray[0] = "--- ADD NEW ---";
 
-            int i = 0;
+            int i = 1;
             int currentItem = -1;
-            for (final Router router : routersList) {
+            for (final Router router : mRoutersListForPicker) {
                 if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
                     currentItem = i;
                 }
@@ -334,22 +344,33 @@ public class DDWRTMainActivity extends ActionBarActivity
                         router.getRemoteIpAddress() + ")");
             }
 
-            final ArrayAdapter<String> routersListAdapter = new ArrayAdapter<>(this,
-                    R.layout.routers_picker_spinner_item, routersNamesArray);
-            routersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-            routersPicker.setAdapter(routersListAdapter);
+            mRoutersListAdapter = new ArrayAdapter<>(this,
+                    R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
+            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            routersPicker.setAdapter(mRoutersListAdapter);
             if (currentItem >= 0) {
                 routersPicker.setSelection(currentItem);
             }
+            final int currentItemPos = currentItem;
             routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     //Recreate UI with new Router selected
-                    if (position < 0 || position >= routersList.size()) {
+                    final int size = mRoutersListForPicker.size();
+                    if (position < 0 || position > size) {
                         return;
                     }
-                    final Router selectedRouter = routersList.get(position);
+                    if (position == 0) {
+                        openAddRouterForm();
+                        if (currentItemPos >= 0) {
+                            routersPicker.setSelection(currentItemPos);
+                        }
+                        return;
+                    }
+
+                    final Router selectedRouter = mRoutersListForPicker.get(position - 1);
                     if (selectedRouter == null) {
                         return;
                     }
@@ -383,7 +404,37 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                 }
             });
+
+            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //On long click open up Router Management activity
+                    finish();
+                    startActivity(new Intent(DDWRTMainActivity.this, RouterManagementActivity.class));
+                    return true;
+                }
+            });
         }
+    }
+
+    private void openAddRouterForm() {
+        final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+        if (addRouter instanceof DialogFragment) {
+            ((DialogFragment) addRouter).dismiss();
+        }
+
+        //Display Donate Message if trying to add more than the max routers for Free version
+        final List<Router> allRouters = dao.getAllRouters();
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if (BuildConfig.DONATIONS &&
+                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+            //Download the full version to unlock this version
+            Utils.displayUpgradeMessage(this);
+            return;
+        }
+
+        final DialogFragment addFragment = new RouterAddDialogFragment();
+        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
     private void initDrawer() {
@@ -802,6 +853,57 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
         mCurrentActivityResultListener = listener;
         startActivityForResult(intent, LISTENED_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRouterAdd(DialogFragment dialog, Router newRouter, boolean error) {
+        if (!error) {
+            final List<Router> allRouters = dao.getAllRouters();
+            final int allRoutersSize = allRouters.size();
+            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
+            for (final Router wrt : allRouters) {
+                final RouterFirmware routerFirmware;
+                if (wrt == null ||
+                        (routerFirmware = wrt.getRouterFirmware()) == null ||
+                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+                    continue;
+                }
+                mRoutersListForPicker.add(wrt);
+            }
+
+            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
+            routersNamesArray[0] = "--- ADD NEW ---";
+
+            int i = 1;
+            int currentItem = -1;
+            for (final Router router : mRoutersListForPicker) {
+                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
+                    currentItem = i;
+                }
+                final String routerName = router.getName();
+                routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
+                        router.getRemoteIpAddress() + ")");
+            }
+
+            mRoutersListAdapter = new ArrayAdapter<>(this,
+                    R.layout.routers_picker_spinner_item, routersNamesArray);
+            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
+            routersPicker.setAdapter(mRoutersListAdapter);
+
+            if (currentItem >= 0) {
+                routersPicker.setSelection(currentItem);
+            }
+
+            //Open Spinner right away
+            routersPicker.performClick();
+        }
+    }
+
+    @Override
+    public void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error) {
+        //Nothing to do here, as we are not updating routers from here!
     }
 
     // The click listener for ListView in the navigation drawer
