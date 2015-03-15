@@ -13,6 +13,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.resources.conn.openwrt.UCIInfo;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterStateTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -77,7 +78,9 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                         //WAN IPAddress, Router Model
                         final String[] infoFromUci = SSHUtils.getManualProperty(
                                 mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                "/sbin/uci -P/var/state show network | grep \"network.wan.ipaddr\" | /usr/bin/awk -F'=' '{print $2}' ; " +
+                                "/sbin/uci -P/var/state show network | grep \"" +
+                                        UCIInfo.NETWORK_WAN_IPADDR +
+                                        "\" | /usr/bin/awk -F'=' '{print $2}' ; " +
                                         "cat /proc/diag/model"
                         );
                         if (infoFromUci != null) {

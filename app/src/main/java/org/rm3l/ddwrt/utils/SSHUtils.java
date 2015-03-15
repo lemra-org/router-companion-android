@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.resources.conn.openwrt.UCIInfo;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -63,6 +64,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_CA;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_CLIENT;
@@ -490,6 +492,46 @@ public final class SSHUtils {
             }
 
         }
+
+    }
+
+    @Nullable
+    public static UCIInfo getUCIInfoFromOpenWrtRouter(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences, @Nullable final String... uciCommandsToRun) throws Exception {
+
+        if (router == null) {
+            throw new IllegalArgumentException("No connection parameters");
+        }
+
+        if (uciCommandsToRun == null) {
+            return null;
+        }
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
+
+        final String[] uciOutputLines = SSHUtils.getManualProperty(ctx, router,
+                globalPreferences, Joiner.on(" ; ").join(uciCommandsToRun));
+
+        if (uciOutputLines == null || uciOutputLines.length == 0) {
+            return null;
+        }
+
+        final UCIInfo uciInfo = new UCIInfo();
+
+        int size;
+        for (final String uciOutputLine : uciOutputLines) {
+            if (uciOutputLine == null) {
+                continue;
+            }
+            final List<String> strings = NVRAMParser.SPLITTER.splitToList(uciOutputLine);
+            size = strings.size();
+            if (size == 1) {
+                uciInfo.setProperty(strings.get(0), EMPTY_STRING);
+            } else if (size >= 2) {
+                uciInfo.setProperty(strings.get(0), nullToEmpty(strings.get(1)));
+            }
+        }
+
+        return uciInfo;
 
     }
 

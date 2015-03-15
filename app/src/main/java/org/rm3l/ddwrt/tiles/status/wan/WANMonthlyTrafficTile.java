@@ -83,13 +83,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
+    protected static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
+    protected static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
     private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
-    private static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
+    protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
 
-    private ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
-
-    private ImmutableTable<String, Integer, ArrayList<Double>> traffData;
+    protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);

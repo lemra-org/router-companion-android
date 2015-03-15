@@ -632,7 +632,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
 
-            final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
+//            final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
 
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
