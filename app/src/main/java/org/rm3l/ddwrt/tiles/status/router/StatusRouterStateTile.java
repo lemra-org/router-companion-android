@@ -259,6 +259,9 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
             routerNameView.setText(routerNameToSet);
 
+            ((TextView) layout.findViewById(R.id.tile_status_router_router_state_name))
+                    .setText(routerNameNull ? "-" : routerName);
+
             //WAN IP
             final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
             wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));

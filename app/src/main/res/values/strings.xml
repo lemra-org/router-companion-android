@@ -500,4 +500,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="view_active_ip_connections">View IP Connections</string>
     <string name="SSID">SSID</string>
     <string name="alias">Alias</string>
+    <string name="router_state_name">Name</string>
 </resources>

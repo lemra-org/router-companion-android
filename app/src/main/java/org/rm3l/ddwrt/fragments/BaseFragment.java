@@ -43,7 +43,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -56,6 +55,7 @@ import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
+import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragment;
@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.fragments.status.StatusTimeFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
+import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragment;
@@ -244,9 +245,18 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
             case 0:
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-                tabsToSort = new BaseFragment[1];
+                tabsToSort = new BaseFragment[2];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
+                tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
+                        resources.getString(R.string.status_wan), router);
+                break;
+            case 2:
+                parentSectionTitle = resources.getString(R.string.admin_area);
+                tabsToSort = new BaseFragment[1];
+                tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
+                        resources.getString(R.string.admin_area_nvram), router);
+                //TODO Also Add UCI Config if possible
                 break;
             default:
                 //This should NOT happen => Error
@@ -606,6 +616,9 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
         boolean atLeastOneTileAdded = false;
 
         final FragmentActivity fragmentActivity = getActivity();
+        final boolean isThemeLight = ColorUtils.isThemeLight(this.getActivity());
+        final Resources resources = fragmentActivity.getResources();
+
         if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
 
             final List<CardView> cards = new ArrayList<CardView>();
@@ -620,10 +633,6 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
             boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
 
             final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
-
-            final boolean isThemeLight = ColorUtils.isThemeLight(this.getActivity());
-
-            final Resources resources = this.getActivity().getResources();
 
             for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
 
@@ -712,17 +721,28 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
         }
 
         if (viewGroup == null || !atLeastOneTileAdded) {
-            if (viewGroup == null) {
-                viewGroup = new FrameLayout(fragmentActivity);
-            }
+
+            viewGroup = (LinearLayout) getActivity().getLayoutInflater()
+                    .inflate(R.layout.base_tiles_container_linearlayout, new LinearLayout(fragmentActivity));
 
             final TextView view = new TextView(fragmentActivity);
             view.setGravity(Gravity.CENTER);
             view.setText(getResources().getString(R.string.no_data));
-            view.setBackgroundResource(R.drawable.background_card);
+
+            if (isThemeLight) {
+                //Light
+                view.setBackgroundColor(resources.getColor(R.color.cardview_light_background));
+            } else {
+                //Default is Dark
+                view.setBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+            }
+
+//            view.setBackgroundResource(R.drawable.background_card);
             view.setLayoutParams(params);
 
-            viewGroup.addView(view);
+            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+
+            mLayout.addView(view);
         }
 
         viewGroup.setBackgroundColor(getResources().getColor(android.R.color.transparent));

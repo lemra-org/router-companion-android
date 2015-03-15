@@ -259,7 +259,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                 switch (routerFirmware) {
                     case OPENWRT:
                         //Change background color
-                        final int colorForOpenWrt = getResources().getColor(R.color.android_green);
+                        final int colorForOpenWrt = getResources().getColor(R.color.win8_orange);
                         mToolbar.setBackgroundColor(colorForOpenWrt);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             final Window window = getWindow();

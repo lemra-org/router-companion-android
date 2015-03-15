@@ -144,7 +144,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 switch (routerFirmware) {
                     case OPENWRT:
                         //Change background color
-                        colorForOpenWrt = getResources().getColor(R.color.android_green);
+                        colorForOpenWrt = getResources().getColor(R.color.win8_orange);
                         mSlidingTabLayout.setBackgroundColor(colorForOpenWrt);
                         break;
                     default:

@@ -113,12 +113,43 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:columnCount="4"
                 android:visibility="gone">
 
-                <!-- Model -->
+                <!-- Router Name -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="0"
+                    android:text="@string/router_state_name"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:layout_row="0"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_router_router_state_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="3"
+                    android:layout_gravity="start"
+                    android:layout_row="0"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading" />
+
+                <!-- Model -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="1"
                     android:text="@string/router_state_model"
                     android:textStyle="bold" />
 
@@ -129,7 +160,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="0"
+                    android:layout_row="1"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -138,7 +169,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="0"
+                    android:layout_row="1"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -149,7 +180,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="1"
+                    android:layout_row="2"
                     android:text="@string/router_state_firmware"
                     android:textStyle="bold" />
 
@@ -160,7 +191,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="1"
+                    android:layout_row="2"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -169,7 +200,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="1"
+                    android:layout_row="2"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -180,7 +211,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="2"
+                    android:layout_row="3"
                     android:text="@string/router_state_kernel"
                     android:textStyle="bold" />
 
@@ -191,7 +222,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="2"
+                    android:layout_row="3"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -200,7 +231,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="2"
+                    android:layout_row="3"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -211,7 +242,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="3"
+                    android:layout_row="4"
                     android:text="@string/router_state_lan_ip"
                     android:textStyle="bold" />
 
@@ -222,7 +253,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="3"
+                    android:layout_row="4"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -231,7 +262,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="3"
+                    android:layout_row="4"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -242,7 +273,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="4"
+                    android:layout_row="5"
                     android:text="@string/router_state_date_time"
                     android:textStyle="bold" />
 
@@ -253,7 +284,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="4"
+                    android:layout_row="5"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -262,7 +293,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="4"
+                    android:layout_row="5"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -273,7 +304,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="5"
+                    android:layout_row="6"
                     android:text="@string/router_state_uptime"
                     android:textStyle="bold" />
 
@@ -284,7 +315,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="5"
+                    android:layout_row="6"
                     android:text="@string/one_space" />
 
                 <TextView
@@ -293,7 +324,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="5"
+                    android:layout_row="6"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -305,7 +336,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="0"
-                    android:layout_row="6"
+                    android:layout_row="7"
                     android:text="@string/auto_refresh"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -318,7 +349,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="6"
+                    android:layout_row="7"
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
@@ -330,7 +361,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="start"
                     android:layout_marginBottom="15dp"
                     android:layout_marginTop="7dp"
-                    android:layout_row="6"
+                    android:layout_row="7"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"

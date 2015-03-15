@@ -137,6 +137,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- JFFS2 -->
                 <TextView
+                    android:id="@+id/tile_status_router_router_space_usage_jffs2_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/router_space_jffs2"

@@ -8,8 +8,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -18,6 +16,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterStateTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
 
@@ -66,29 +67,71 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences, NVRAMInfo.ROUTER_NAME,
-                                        NVRAMInfo.WAN_IPADDR,
-                                        NVRAMInfo.MODEL,
                                         NVRAMInfo.DIST_TYPE,
                                         NVRAMInfo.LAN_IPADDR);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
-                        //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
-                        //date -d @$(sed -n '/^btime /s///p' /proc/stat)
 
-                        //Add FW, Kernel and Uptime
+                        //WAN IPAddress, Router Model
+                        final String[] infoFromUci = SSHUtils.getManualProperty(
+                                mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                "/sbin/uci -P/var/state show network | grep \"network.wan.ipaddr\" | /usr/bin/awk -F'=' '{print $2}' ; " +
+                                        "cat /proc/diag/model"
+                        );
+                        if (infoFromUci != null) {
+                            if (infoFromUci.length >= 1) {
+                                nvramInfo.setProperty(NVRAMInfo.WAN_IPADDR, infoFromUci[0]);
+                            }
+                            if (infoFromUci.length >= 2) {
+                                nvramInfo.setProperty(NVRAMInfo.MODEL, infoFromUci[1]);
+                            }
+                        }
+
+                        String firmwareInfo = "";
+                        //FW
+                        String[] fwInfo = SSHUtils.getManualProperty(
+                                mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                "cat /etc/openwrt_release | grep -E \"DISTRIB_ID.*|DISTRIB_CODENAME.*\";"
+                        );
+                        String codename = "";
+                        if (fwInfo != null) {
+                            for (int i = 0; i < fwInfo.length; i++) {
+                                final String str = fwInfo[i];
+                                if (StringUtils.startsWith(str, "DISTRIB_ID")) {
+                                    firmwareInfo = str.replace("DISTRIB_ID=", "")
+                                            .replaceAll("\"", "");
+                                } else if (StringUtils.startsWith(str, "DISTRIB_CODENAME")) {
+                                    codename = str.replace("DISTRIB_CODENAME=", "")
+                                            .replaceAll("\"", "");
+                                }
+                                if (!(isNullOrEmpty(codename) || isNullOrEmpty(firmwareInfo))) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isNullOrEmpty(codename)) {
+                            fwInfo = SSHUtils.getManualProperty(
+                                    mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                    "cat /etc/banner | grep -i \"" + codename + "\";"
+                            );
+                            if (fwInfo != null && fwInfo.length > 0) {
+                                firmwareInfo += (nullToEmpty(fwInfo[0]).replaceAll("-", ""));
+                            }
+                        }
+                        nvramInfo.setProperty(NVRAMInfo.FIRMWARE, firmwareInfo);
+
+                        //Add Kernel and Uptime
                         final String[] otherCmds = SSHUtils
                                 .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                         //date
-                                        "date",
+                                        "/bin/date",
                                         //date since last reboot
-                                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))",
+                                        "/bin/date -D '%s' -d $(( $(/bin/date +%s) - $(/usr/bin/cut -f1 -d. /proc/uptime) ))",
                                         //elapsed from current date
-                                        "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
-                                        "uname -a",
-                                        "echo \"`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
-                                                "`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
+                                        "/usr/bin/uptime | /usr/bin/awk -F'up' '{print $2}' | /usr/bin/awk -F'load' '{print $1}'",
+                                        "/bin/uname -a");
 
                         if (otherCmds != null) {
                             if (otherCmds.length >= 1) {
@@ -98,9 +141,9 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                             if (otherCmds.length >= 3) {
                                 String uptime = otherCmds[1];
                                 final String uptimeCmd = otherCmds[2];
-                                if (!Strings.isNullOrEmpty(uptimeCmd)) {
+                                if (!isNullOrEmpty(uptimeCmd)) {
                                     final String elapsedFromUptime = Utils.removeLastChar(uptimeCmd.trim());
-                                    if (!Strings.isNullOrEmpty(elapsedFromUptime)) {
+                                    if (!isNullOrEmpty(elapsedFromUptime)) {
                                         uptime += ("\n(up " + elapsedFromUptime + ")");
                                     }
                                 }
@@ -113,11 +156,6 @@ public class StatusRouterStateTileOpenWrt extends StatusRouterStateTile {
                                         StringUtils.replace(
                                                 StringUtils.replace(otherCmds[3], "GNU/Linux", ""),
                                                 nvramInfo.getProperty(NVRAMInfo.ROUTER_NAME), ""));
-                            }
-
-                            if (otherCmds.length >= 5) {
-                                //Firmware
-                                nvramInfo.setProperty(NVRAMInfo.FIRMWARE, otherCmds[4]);
                             }
                         }
                     }

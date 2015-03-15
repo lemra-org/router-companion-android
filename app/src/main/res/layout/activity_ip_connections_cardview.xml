@@ -271,7 +271,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. IP"
+                    android:text="Destination IP"
                     android:textStyle="bold" />
 
                 <TextView
@@ -297,7 +297,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dest. Port"
+                    android:text="Destination Port"
                     android:textStyle="bold" />
 
                 <TextView
