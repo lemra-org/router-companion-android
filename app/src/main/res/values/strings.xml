@@ -501,4 +501,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="SSID">SSID</string>
     <string name="alias">Alias</string>
     <string name="router_state_name">Name</string>
+    <string name="routers">Routers</string>
 </resources>

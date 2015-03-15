@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="?android:attr/listChoiceBackgroundIndicator"
+    android:gravity="center_vertical"
+    android:textAppearance="?android:attr/textAppearanceListItem"
+    android:textColor="@color/win8_teal" />

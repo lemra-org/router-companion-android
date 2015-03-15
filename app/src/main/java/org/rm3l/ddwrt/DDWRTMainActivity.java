@@ -51,12 +51,15 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.google.common.collect.Lists;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
@@ -76,9 +79,15 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
@@ -137,7 +146,8 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
-        String uuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final Intent intent = getIntent();
+        String uuid = intent.getStringExtra(ROUTER_SELECTED);
         if (uuid == null) {
             if (savedInstanceState != null) {
                 uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
@@ -154,8 +164,8 @@ public class DDWRTMainActivity extends ActionBarActivity
         this.mRouterUuid = router.getUuid();
         this.mRouter = router;
 
-        final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
-        if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+        final RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+        if (routerFirmware == null || RouterFirmware.UNKNOWN.equals(routerFirmware)) {
             Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
                     "Consider editing the Router record to manually specify a supported firmware.", Style.ALERT);
             finish();
@@ -218,10 +228,14 @@ public class DDWRTMainActivity extends ActionBarActivity
         initDrawer();
 
         final Integer savedPosition;
-        int position = 0;
+        int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 0);
         if (savedInstanceState != null && (savedPosition = savedInstanceState.getInt(SAVE_ITEM_SELECTED)) != null) {
             position = savedPosition;
         }
+        if (position < 0) {
+            position = 0;
+        }
+
         mDrawerList.performItemClick(
                 mDrawerList.getChildAt(position),
                 position,
@@ -254,7 +268,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {
-            final Router.RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
+            final RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
             if (routerFirmware != null) {
                 switch (routerFirmware) {
                     case OPENWRT:
@@ -283,6 +297,92 @@ public class DDWRTMainActivity extends ActionBarActivity
                 R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
         mDrawerList.setAdapter(mNavigationDrawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        //Routers picker
+        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
+        final List<Router> allRouters = RouterManagementActivity.getDao(this).getAllRouters();
+        if (allRouters == null || allRouters.isEmpty()) {
+            Utils.reportException(new
+                    IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
+            routersPicker.setVisibility(View.GONE);
+        } else {
+            routersPicker.setVisibility(View.VISIBLE);
+
+            final int allRoutersSize = allRouters.size();
+//            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
+            final ArrayList<Router> routersList = Lists.newArrayListWithCapacity(allRoutersSize);
+            for (final Router router : allRouters) {
+                final RouterFirmware routerFirmware;
+                if (router == null ||
+                        (routerFirmware = router.getRouterFirmware()) == null ||
+                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+                    continue;
+                }
+                routersList.add(router);
+            }
+
+            final String[] routersNamesArray = new String[routersList.size()];
+
+            int i = 0;
+            int currentItem = -1;
+            for (final Router router : routersList) {
+                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
+                    currentItem = i;
+                }
+                final String routerName = router.getName();
+                routersNamesArray[i++] = isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName;
+            }
+
+            final ArrayAdapter<String> routersListAdapter = new ArrayAdapter<>(this,
+                    R.layout.routers_picker_spinner_item, routersNamesArray);
+            routersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            routersPicker.setAdapter(routersListAdapter);
+            if (currentItem >= 0) {
+                routersPicker.setSelection(currentItem);
+            }
+            routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //Recreate UI with new Router selected
+                    if (position < 0 || position >= routersList.size()) {
+                        return;
+                    }
+                    final Router selectedRouter = routersList.get(position);
+                    if (selectedRouter == null) {
+                        return;
+                    }
+                    final String selectedRouterUuid = selectedRouter.getUuid();
+                    final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
+                    if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
+                            || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
+                        return;
+                    }
+
+                    //Reload UI
+                    final AlertDialog alertDialog = Utils.
+                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                    final Intent intent = getIntent();
+                    intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
+                    intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                            startActivity(intent);
+                            alertDialog.cancel();
+                        }
+                    }, 2000);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
     }
 
     private void initDrawer() {
@@ -368,7 +468,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         }
 
-        if (!Router.RouterFirmware.DDWRT.equals(mRouter)) {
+        if (!RouterFirmware.DDWRT.equals(mRouter)) {
             //FIXME Command used to restore factory defaults works best on DD-WRT, not on OpenWRT and other firmwares
             // So hide this menu item until we find a better way to achieve this!
             final MenuItem item = menu.findItem(R.id.action_ddwrt_actions_restore_factory_defaults);
@@ -412,7 +512,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_settings:
                 //Open Settings activity for this item
                 final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
-                ddWrtMainIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, this.mRouterUuid);
+                ddWrtMainIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
                 this.startActivityForResult(ddWrtMainIntent, ROUTER_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.action_donate:
