@@ -514,11 +514,7 @@ public final class SSHUtils {
                     exitStatus = channelExec.getExitStatus();
                     break;
                 }
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception ee) {
-                    ee.printStackTrace();
-                }
+                Thread.sleep(300l);
             }
 
         } finally {
