@@ -30,7 +30,8 @@ public enum RouterAction {
     WAKE_ON_LAN("Wake On LAN (WOL)"),
     RESET_COUNTERS("Reset Bandwidth Counters"),
     DISABLE_WAN_ACCESS("Disable WAN Access"),
-    ENABLE_WAN_ACCESS("Enable WAN Access");
+    ENABLE_WAN_ACCESS("Enable WAN Access"),
+    PING("Ping");
 
     private final String displayName;
 

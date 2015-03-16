@@ -84,6 +84,10 @@ import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxSubnetCalculatorFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragment;
@@ -136,8 +140,8 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 
     @Nullable
     public static BaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NonNull final Class<? extends BaseFragment> clazz,
-                                                @NonNull final CharSequence parentSectionTitle, @NonNull final CharSequence tabTitle,
-                                                @Nullable final String router) {
+                                           @NonNull final CharSequence parentSectionTitle, @NonNull final CharSequence tabTitle,
+                                           @Nullable final String router) {
         try {
             final BaseFragment fragment = clazz.newInstance()
                     .setTabTitle(tabTitle)
@@ -168,8 +172,8 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 
     @NonNull
     public static BaseFragment[] getFragments(@NonNull PageSlidingTabStripFragment parentFragment, @NonNull final Resources resources, int parentSectionNumber,
-                                                   String sortingStrategy,
-                                                   @Nullable final String router) {
+                                              String sortingStrategy,
+                                              @Nullable final String router) {
         Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
@@ -257,6 +261,19 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_nvram), router);
                 //TODO Also Add UCI Config if possible
+                break;
+            case 3:
+                parentSectionTitle = resources.getString(R.string.toolbox);
+                tabsToSort = new BaseFragment[4];
+                tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_ping), router);
+                tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_traceroute), router);
+                tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_nslookup), router);
+                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_subnet_calculator), router);
+
                 break;
             default:
                 //This should NOT happen => Error
@@ -426,6 +443,19 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 //                        resources.getString(R.string.admin_area_upgrade), router);
 //                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_backup), router);
+                break;
+            case 3:
+                parentSectionTitle = resources.getString(R.string.toolbox);
+                tabsToSort = new BaseFragment[4];
+                tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_ping), router);
+                tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_traceroute), router);
+                tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_nslookup), router);
+                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_subnet_calculator), router);
+
                 break;
             default:
                 //This should NOT happen => Error

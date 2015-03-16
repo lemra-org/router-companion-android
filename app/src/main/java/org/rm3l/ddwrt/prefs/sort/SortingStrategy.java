@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.fragments.BaseFragment;
 
 import java.util.Comparator;
@@ -53,13 +54,13 @@ public abstract class SortingStrategy {
             final TreeMap<String, BaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
             for (int i = 0; i < tabs.length; i++) {
                 final BaseFragment tab = tabs[i];
-                tabsMap.put(tab.getTabTitle().toString(), tab);
+                tabsMap.put(StringUtils.lowerCase(tab.getTabTitle().toString()), tab);
             }
 
             final BaseFragment[] output = new BaseFragment[tabsMap.size()];
             int j = 0;
-            for (Map.Entry<String, BaseFragment> DDWRTBaseFragmentEntry : tabsMap.entrySet()) {
-                output[j++] = DDWRTBaseFragmentEntry.getValue();
+            for (Map.Entry<String, BaseFragment> ddWRTBaseFragmentEntry : tabsMap.entrySet()) {
+                output[j++] = ddWRTBaseFragmentEntry.getValue();
             }
             return output;
         }

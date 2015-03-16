@@ -49,6 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item>Access</item>-->
         <!--<item>NAT &amp; QoS</item>-->
         <item>Admin Area</item>
+        <item>Toolbox</item>
     </string-array>
 
     <string-array name="router_connection_protocols_array">
@@ -60,7 +61,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string-array name="router_firmwares_array">
         <item>-Autodetect-</item>
         <item>DD-WRT</item>
-        <item>OpenWRT (Beta)</item>
+        <item>OpenWrt (Beta)</item>
         <!--<item>Tomato</item>-->
     </string-array>
     <string name="router_firmware_select">Select firmware or let us guess</string>
@@ -251,6 +252,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="title_activity_router_management">RouterManagementActivity</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="toolbox">Toolbox</string>
+
     <string name="router_add_new">New</string>
     <string name="cancel">Cancel</string>
     <string name="add_router">Add</string>
@@ -368,6 +371,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="feedback_reply_rate">Rate!</string>
     <string name="feedback_reply_title">Message from the Developer</string>
     <string name="syslog_filter_hint">   Search…</string>
+    <string name="ping_edit_text_hint">   Host to ping…</string>
     <string name="clear">Clear</string>
     <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
     <string name="first_sign"><![CDATA[<<]]></string>
@@ -502,4 +506,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="alias">Alias</string>
     <string name="router_state_name">Name</string>
     <string name="routers">Routers</string>
+    <string name="toolbox_ping">Ping</string>
+    <string name="toolbox_traceroute">Traceroute</string>
+    <string name="toolbox_nslookup">nslookup</string>
+    <string name="toolbox_subnet_calculator">Subnet Calc.</string>
+    <string name="ping">ping</string>
 </resources>

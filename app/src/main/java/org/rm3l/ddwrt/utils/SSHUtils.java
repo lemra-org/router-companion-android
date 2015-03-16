@@ -41,6 +41,8 @@ import com.jcraft.jsch.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterStreamActionListener;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.resources.conn.openwrt.UCIInfo;
@@ -445,6 +447,96 @@ public final class SSHUtils {
 
         return getManualProperty(ctx, router, globalPreferences,
                 String.format("( %s ; sleep 1 ) | telnet localhost %d", Joiner.on(";").skipNulls().join(cmdToRun), telnetPort));
+    }
+
+    public static int execStreamableCommand(Context ctx,
+                                            @NonNull final Router router,
+                                            SharedPreferences globalPreferences,
+                                            @NonNull final RouterAction routerAction,
+                                            @Nullable final RouterStreamActionListener routerStreamActionListener,
+                                            @NonNull final String... cmdToExecute) throws Exception {
+
+        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+
+        checkDataSyncAlllowedByUsagePreference(ctx);
+
+        ChannelExec channelExec = null;
+        InputStream in = null;
+        InputStream err = null;
+
+        final Router routerCopy = new Router(router);
+        final String tempUuid = UUID.randomUUID().toString();
+        routerCopy.setUuid(tempUuid);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(tempUuid);
+        reentrantLock.lock();
+        Integer exitStatus = null;
+        try {
+            Session jschSession = getSSHSession(globalPreferences, routerCopy, CONNECT_TIMEOUT_MILLIS);
+            if (jschSession == null) {
+                throw new IllegalStateException("Unable to retrieve session - please retry again later!");
+            }
+            if (!jschSession.isConnected()) {
+                jschSession.connect(CONNECT_TIMEOUT_MILLIS);
+            }
+
+            channelExec = (ChannelExec) jschSession.openChannel("exec");
+            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+            channelExec.setInputStream(null);
+            channelExec.setErrStream(System.err);
+            in = channelExec.getInputStream();
+            err = channelExec.getErrStream();
+
+            channelExec.connect();
+
+            if (routerStreamActionListener != null) {
+                routerStreamActionListener
+                        .notifyRouterActionProgress(routerAction, routerCopy, 0, null);
+            }
+
+            byte[] tmp = new byte[1024];
+            int progress = 1;
+            while (true) {
+                while (in.available() > 0) {
+                    int i = in.read(tmp, 0, 1024);
+                    if (i < 0) {
+                        break;
+                    }
+                    if (routerStreamActionListener != null) {
+                        routerStreamActionListener
+                                .notifyRouterActionProgress(routerAction, routerCopy, progress++, new String(tmp, 0, i));
+                    }
+                }
+                if (channelExec.isClosed()) {
+                    if (in.available() > 0) {
+                        continue;
+                    }
+                    exitStatus = channelExec.getExitStatus();
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+            }
+
+        } finally {
+            try {
+                reentrantLock.unlock();
+            } catch (final Exception e) {
+                Log.w(TAG, e);
+                destroySession(routerCopy);
+            } finally {
+                Closeables.closeQuietly(in);
+                Closeables.closeQuietly(err);
+                if (channelExec != null) {
+                    channelExec.disconnect();
+                }
+            }
+        }
+
+        return (exitStatus != null ? exitStatus : -1);
     }
 
     @Nullable

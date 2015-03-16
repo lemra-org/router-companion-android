@@ -39,9 +39,9 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
     @NonNull
     protected final SharedPreferences globalSharedPreferences;
     @Nullable
-    private final RouterActionListener listener;
+    protected final RouterActionListener listener;
     @NonNull
-    private final RouterAction routerAction;
+    protected final RouterAction routerAction;
 
     protected AbstractRouterAction(@Nullable final RouterActionListener listener, @NonNull final RouterAction routerAction,
                                    @NonNull final SharedPreferences globalSharedPreferences) {

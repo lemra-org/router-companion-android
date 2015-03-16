@@ -226,6 +226,29 @@ public class StatusWirelessFragment extends BaseFragment<Collection<DDWRTTile>> 
         }
 
         final FragmentActivity fragmentActivity = getActivity();
+        if (fragmentActivity == null) {
+            //Schedule next run
+            if (ddwrtMainActivity != null) {
+                mHandler.postDelayed(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ddwrtMainActivity.getSupportLoaderManager()
+                                            .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
+                                } catch (final Exception e) {
+                                    //No worries
+                                    Log.w(LOG_TAG, e);
+                                }
+
+                            }
+                        },
+                        ddwrtMainActivity.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
+                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
+                );
+            }
+            return;
+        }
 
 //        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
         final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity);
