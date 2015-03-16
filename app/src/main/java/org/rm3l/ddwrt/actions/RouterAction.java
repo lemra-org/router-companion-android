@@ -31,7 +31,9 @@ public enum RouterAction {
     RESET_COUNTERS("Reset Bandwidth Counters"),
     DISABLE_WAN_ACCESS("Disable WAN Access"),
     ENABLE_WAN_ACCESS("Enable WAN Access"),
-    PING("Ping");
+    PING("Ping"),
+    TRACEROUTE("Traceroute"),
+    NSLOOKUP("NSLookup");
 
     private final String displayName;
 

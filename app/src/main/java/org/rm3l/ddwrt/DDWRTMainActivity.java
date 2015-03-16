@@ -408,9 +408,8 @@ public class DDWRTMainActivity extends ActionBarActivity
             routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    //On long click open up Router Management activity
+                    //On long click open up Router Management activity by finishing this activity
                     finish();
-                    startActivity(new Intent(DDWRTMainActivity.this, RouterManagementActivity.class));
                     return true;
                 }
             });

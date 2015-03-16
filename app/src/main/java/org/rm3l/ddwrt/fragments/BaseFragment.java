@@ -86,7 +86,6 @@ import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxSubnetCalculatorFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragment;
@@ -264,15 +263,15 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 break;
             case 3:
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new BaseFragment[4];
+                tabsToSort = new BaseFragment[3];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
                 tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_subnet_calculator), router);
+//                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.toolbox_subnet_calculator), router);
 
                 break;
             default:
@@ -446,15 +445,15 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 break;
             case 3:
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new BaseFragment[4];
+                tabsToSort = new BaseFragment[3];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
                 tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_subnet_calculator), router);
+//                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
+//                        resources.getString(R.string.toolbox_subnet_calculator), router);
 
                 break;
             default:

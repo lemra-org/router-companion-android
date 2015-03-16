@@ -8,20 +8,19 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
-public class PingFromRouterAction extends AbstractRouterAction<Void> {
+public class TracerouteFromRouterAction extends AbstractRouterAction<Void> {
 
-    private static final int MAX_PING_PACKETS_TO_SEND = 5;
     @NonNull
     private final Context mContext;
     @NonNull
-    private final String mHostToPing;
+    private final String mHost;
 
-    public PingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
-                                @NonNull final SharedPreferences globalSharedPreferences,
-                                @NonNull final String hostToPing) {
-        super(listener, RouterAction.PING, globalSharedPreferences);
+    public TracerouteFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+                                      @NonNull final SharedPreferences globalSharedPreferences,
+                                      @NonNull final String hostToPing) {
+        super(listener, RouterAction.TRACEROUTE, globalSharedPreferences);
         this.mContext = context;
-        this.mHostToPing = hostToPing;
+        this.mHost = hostToPing;
     }
 
     @NonNull
@@ -32,7 +31,7 @@ public class PingFromRouterAction extends AbstractRouterAction<Void> {
             final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
                     routerAction,
                     (RouterStreamActionListener) listener,
-                    String.format("/bin/ping -c %d %s 2>&1", MAX_PING_PACKETS_TO_SEND, mHostToPing));
+                    String.format("/usr/bin/traceroute -l -v %s 2>&1", mHost));
 
             if (exitStatus != 0) {
                 throw new IllegalStateException("Command execution status: " + exitStatus);
