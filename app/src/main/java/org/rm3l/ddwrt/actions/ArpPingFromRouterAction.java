@@ -30,15 +30,12 @@ public class ArpPingFromRouterAction extends AbstractRouterAction<Void> {
     protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
-            final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
+            //Don't care about the exit status
+            SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
                     routerAction,
                     (RouterStreamActionListener) listener,
                     String.format("for ifname in `/sbin/ifconfig | grep -i 'HWaddr' | awk '{print $1}'`; do " +
                             "arping -c %s -I ${ifname} %s; done", MAX_ARPING_PACKETS_TO_SEND, mHost));
-
-            if (exitStatus != 0) {
-                throw new IllegalStateException("Command execution status: " + exitStatus);
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
