@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
-import org.rm3l.ddwrt.actions.PingFromRouterAction;
+import org.rm3l.ddwrt.actions.ArpPingFromRouterAction;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 public class ToolboxArpPingTile extends AbstractToolboxTile {
@@ -40,7 +40,6 @@ public class ToolboxArpPingTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
-        //TODO
-        return new PingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        return new ArpPingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
 }

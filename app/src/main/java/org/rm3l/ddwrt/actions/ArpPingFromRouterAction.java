@@ -8,17 +8,19 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
-public class NsLookupFromRouterAction extends AbstractRouterAction<Void> {
+public class ArpPingFromRouterAction extends AbstractRouterAction<Void> {
+
+    private static final int MAX_ARPING_PACKETS_TO_SEND = 5;
 
     @NonNull
     private final Context mContext;
     @NonNull
     private final String mHost;
 
-    public NsLookupFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
-                                    @NonNull final SharedPreferences globalSharedPreferences,
-                                    @NonNull final String hostToPing) {
-        super(listener, RouterAction.NSLOOKUP, globalSharedPreferences);
+    public ArpPingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+                                   @NonNull final SharedPreferences globalSharedPreferences,
+                                   @NonNull final String hostToPing) {
+        super(listener, RouterAction.ARPING, globalSharedPreferences);
         this.mContext = context;
         this.mHost = hostToPing;
     }
@@ -31,7 +33,8 @@ public class NsLookupFromRouterAction extends AbstractRouterAction<Void> {
             final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
                     routerAction,
                     (RouterStreamActionListener) listener,
-                    String.format("/usr/bin/nslookup %s 2>&1", mHost));
+                    String.format("for ifname in `/sbin/ifconfig | grep -i 'HWaddr' | awk '{print $1}'`; do " +
+                            "arping -c %s -I ${ifname} %s; done", MAX_ARPING_PACKETS_TO_SEND, mHost));
 
             if (exitStatus != 0) {
                 throw new IllegalStateException("Command execution status: " + exitStatus);
@@ -44,5 +47,4 @@ public class NsLookupFromRouterAction extends AbstractRouterAction<Void> {
 
         return new RouterActionResult(null, exception);
     }
-
 }

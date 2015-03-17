@@ -32,6 +32,7 @@ public enum RouterAction {
     DISABLE_WAN_ACCESS("Disable WAN Access"),
     ENABLE_WAN_ACCESS("Enable WAN Access"),
     PING("Ping"),
+    ARPING("Arping"),
     TRACEROUTE("Traceroute"),
     NSLOOKUP("NSLookup");
 
