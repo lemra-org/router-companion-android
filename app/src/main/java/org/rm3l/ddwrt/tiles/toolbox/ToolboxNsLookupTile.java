@@ -16,6 +16,12 @@ public class ToolboxNsLookupTile extends AbstractToolboxTile {
         super(parentFragment, arguments, router);
     }
 
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.nslookup_info;
+    }
+
     @Override
     protected int getEditTextHint() {
         return R.string.nslookup_edit_text_hint;

@@ -84,6 +84,7 @@ import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxArpingFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
@@ -263,13 +264,15 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 break;
             case 3:
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new BaseFragment[3];
+                tabsToSort = new BaseFragment[4];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
                 tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
+                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_arping), router);
 //                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
 
@@ -445,13 +448,15 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 break;
             case 3:
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new BaseFragment[3];
+                tabsToSort = new BaseFragment[4];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
                 tabsToSort[2] = BaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
+                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_arping), router);
 //                tabsToSort[3] = BaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
 

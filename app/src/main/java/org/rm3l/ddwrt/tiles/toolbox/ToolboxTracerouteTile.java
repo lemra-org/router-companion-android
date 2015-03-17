@@ -10,11 +10,17 @@ import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.TracerouteFromRouterAction;
 import org.rm3l.ddwrt.resources.conn.Router;
 
-public class ToolboxTraceroutePingTile extends AbstractToolboxTile {
+public class ToolboxTracerouteTile extends AbstractToolboxTile {
 
-    public ToolboxTraceroutePingTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
+    public ToolboxTracerouteTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router);
 
+    }
+
+    @Nullable
+    @Override
+    protected Integer getInfoText() {
+        return R.string.traceroute_info;
     }
 
     @Override

@@ -374,6 +374,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="ping_edit_text_hint">   Host to ping…</string>
     <string name="nslookup_edit_text_hint">   Host to nslookup…</string>
     <string name="traceroute_edit_text_hint">   Host to traceroute…</string>
+    <string name="host_edit_text_hint">   Host…</string>
     <string name="clear">Clear</string>
     <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
     <string name="first_sign"><![CDATA[<<]]></string>
@@ -512,7 +513,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="toolbox_traceroute">Traceroute</string>
     <string name="toolbox_nslookup">nslookup</string>
     <string name="toolbox_subnet_calculator">Subnet Calc.</string>
+    <string name="toolbox_arping">Arping</string>
     <string name="ping">ping</string>
     <string name="traceroute">traceroute</string>
     <string name="nslookup">nslookup</string>
+    <string name="arping">arping</string>
+    <string name="nslookup_info">Query Domain Name Servers (DNS) for resource records</string>
+    <string name="ping_info">Test the reachability of a Host from the Router and measure the round-trip time (RTT)</string>
+    <string name="traceroute_info">Display the route (path) and measure transit delays of packets from the Router to a given Host</string>
+    <string name="arping_info">Test whether a given IP address is in use on the router local network</string>
 </resources>

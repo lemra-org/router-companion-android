@@ -59,6 +59,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginTop="8.0dip"
             android:background="#ffcccccc" />
 
+        <!-- Command description -->
+        <TextView
+            android:id="@+id/tile_toolbox_abstract_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="3"
+            android:singleLine="false"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:visibility="gone" />
+
         <!-- Error message placeholder -->
         <TextView
             android:id="@+id/tile_toolbox_abstract_error"
@@ -119,7 +133,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/black">
 
                 <TextView
                     android:id="@+id/tile_toolbox_abstract_content"
@@ -128,13 +143,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:gravity="bottom"
                     android:maxLength="9000"
                     android:maxLines="200"
-                    android:singleLine="false" />
+                    android:singleLine="false"
+                    android:textColor="@color/white" />
 
                 <ProgressBar
                     android:id="@+id/tile_toolbox_ping_abstract_loading_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:progressDrawable="@color/white"
                     android:visibility="gone" />
 
             </RelativeLayout>

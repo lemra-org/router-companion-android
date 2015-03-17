@@ -53,6 +53,15 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         ((TextView) layout.findViewById(R.id.tile_toolbox_abstract_title))
                 .setText(this.getTileTitle());
 
+        final TextView infoTextView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_info);
+        final Integer infoText = this.getInfoText();
+        if (infoText == null) {
+            infoTextView.setVisibility(View.GONE);
+        } else {
+            infoTextView.setVisibility(View.VISIBLE);
+            infoTextView.setText(infoText);
+        }
+
         final Button button = (Button) layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
         button.setText(this.getSubmitButtonText());
 
@@ -99,8 +108,12 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         final String errorMsgToDisplay;
                         if (exception != null) {
                             //noinspection ThrowableResultOfMethodCallIgnored
-                            final Throwable rootCause = Throwables.getRootCause(exception);
-                            errorMsgToDisplay = "Error: " + (rootCause != null ? rootCause.getMessage() : "null");
+                            if (exception instanceof InterruptedException) {
+                                errorMsgToDisplay = "Action Aborted.";
+                            } else {
+                                final Throwable rootCause = Throwables.getRootCause(exception);
+                                errorMsgToDisplay = "Error: " + (rootCause != null ? rootCause.getMessage() : "null");
+                            }
                         } else {
                             errorMsgToDisplay = "Internal error! Please try again later.";
                         }
@@ -109,8 +122,8 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                             @Override
                             public void onClick(final View v) {
                                 Toast.makeText(mParentFragmentActivity,
-                                        exception != null ?
-                                                ExceptionUtils.getRootCauseMessage(exception) : errorMsgToDisplay,
+                                        (exception == null || exception instanceof InterruptedException) ?
+                                                errorMsgToDisplay : ExceptionUtils.getRootCauseMessage(exception),
                                         Toast.LENGTH_LONG).show();
                             }
                         });
@@ -163,6 +176,12 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                                     .putStringSet(LAST_HOSTS, new HashSet<String>())
                                     .apply();
                         }
+
+                        final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
+                                .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
+                        editText
+                                .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
+                                        lastHosts.toArray(new String[lastHosts.size()])));
                         return true;
                     }
                 }
@@ -210,6 +229,11 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         editor.apply();
 
                     }
+                    final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
+                            .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
+                    editText
+                            .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
+                                    lastHosts.toArray(new String[lastHosts.size()])));
 
                     //Run ping command
                     progressBar.setVisibility(View.VISIBLE);
@@ -254,6 +278,12 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         editor.apply();
                     }
                 }
+
+                final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
+                        .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
+                editText
+                        .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
+                                lastHosts.toArray(new String[lastHosts.size()])));
 
                 //Run command
                 progressBar.setVisibility(View.VISIBLE);
@@ -331,6 +361,9 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
     public boolean isEmbeddedWithinScrollView() {
         return false;
     }
+
+    @Nullable
+    protected abstract Integer getInfoText();
 
     protected abstract int getEditTextHint();
 

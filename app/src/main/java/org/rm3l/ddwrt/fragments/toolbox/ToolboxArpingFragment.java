@@ -5,15 +5,15 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.toolbox.ToolboxTracerouteTile;
+import org.rm3l.ddwrt.tiles.toolbox.ToolboxArpPingTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ToolboxTracerouteFragment extends BaseFragment {
+public class ToolboxArpingFragment extends BaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new ToolboxTracerouteTile(this, savedInstanceState, this.router));
+        return Arrays.<DDWRTTile>asList(new ToolboxArpPingTile(this, savedInstanceState, this.router));
     }
 }
