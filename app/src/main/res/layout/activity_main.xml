@@ -26,30 +26,26 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:transitionName="@string/transition_router"
-    tools:context="org.rm3l.ddwrt.DDWRTMainActivity">
+    tools:context="org.rm3l.ddwrt.main.DDWRTMainActivity">
 
+    <!-- Toolbar -->
     <include layout="@layout/activity_main_toolbar" />
 
+    <!-- The navigation drawer -->
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- activity view -->
-        <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
+        <!-- Main Content View -->
         <FrameLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!--</RelativeLayout>-->
-
-        <!-- The navigation drawer -->
+        <!-- Left drawer: made up of the Routers Picker Spinner, and the actual nav. drawer -->
         <LinearLayout
-            android:layout_width="210dp"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:orientation="vertical">
@@ -59,7 +55,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="116dp"
                 android:background="@drawable/router_picker_background"
                 android:orientation="vertical">
-
                 <TextView
                     style="?android:textAppearanceLarge"
                     android:layout_width="match_parent"
@@ -72,9 +67,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start" />
-
             </LinearLayout>
 
+            <!-- Left Navigation Drawer -->
             <ListView
                 android:id="@+id/left_drawer"
                 android:layout_width="match_parent"
@@ -82,8 +77,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="start"
                 android:background="#151515"
                 android:choiceMode="singleChoice"
-                android:divider="#444"
-                android:dividerHeight="1dp" />
+                android:dividerHeight="0dp" />
+
         </LinearLayout>
 
     </android.support.v4.widget.DrawerLayout>

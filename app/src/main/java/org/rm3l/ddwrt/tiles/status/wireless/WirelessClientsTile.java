@@ -152,7 +152,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
-import static org.rm3l.ddwrt.DDWRTMainActivity.ROUTER_ACTION;
+import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;

@@ -42,8 +42,8 @@ import android.view.ViewGroup;
 
 import com.android.common.view.SlidingTabLayout;
 
-import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;

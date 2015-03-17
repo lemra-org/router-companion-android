@@ -61,10 +61,10 @@ import android.widget.TextView;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.rm3l.ddwrt.BuildConfig;
-import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;

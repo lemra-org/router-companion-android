@@ -20,7 +20,7 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.ddwrt;
+package org.rm3l.ddwrt.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,6 +64,8 @@ import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
@@ -145,7 +148,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
-    private ArrayAdapter<String> mNavigationDrawerAdapter;
+    private NavigationDrawerArrayAdapter mNavigationDrawerAdapter;
     private ArrayAdapter<String> mRoutersListAdapter;
     private ArrayList<Router> mRoutersListForPicker;
 
@@ -213,20 +216,6 @@ public class DDWRTMainActivity extends ActionBarActivity
             setSupportActionBar(mToolbar);
         }
 
-//        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-//
-//        // set a custom shadow that overlays the main content when the drawer
-//        // opens
-//        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-//                GravityCompat.START);
-//        // set up the drawer's list view with items and click listener
-//        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
-//                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
-//        mDrawerList.setAdapter(mNavigationDrawerAdapter);
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
         // enable ActionBar app icon to behave as action to toggle nav drawer
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -276,13 +265,14 @@ public class DDWRTMainActivity extends ActionBarActivity
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Resources resources = getResources();
         if (mToolbar != null) {
             final RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
             if (routerFirmware != null) {
                 switch (routerFirmware) {
                     case OPENWRT:
                         //Change background color
-                        final int colorForOpenWrt = getResources().getColor(R.color.win8_orange);
+                        final int colorForOpenWrt = resources.getColor(R.color.win8_orange);
                         mToolbar.setBackgroundColor(colorForOpenWrt);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             final Window window = getWindow();
@@ -301,9 +291,12 @@ public class DDWRTMainActivity extends ActionBarActivity
         // set a custom shadow that overlays the main content when the drawer
         // opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDDWRTNavigationMenuSections = getResources().getStringArray(R.array.navigation_drawer_items_array);
-        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
-                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
+        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
+
+        initNavigationDrawerAdapter();
+
+//        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
+//                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
         mDrawerList.setAdapter(mNavigationDrawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -413,6 +406,46 @@ public class DDWRTMainActivity extends ActionBarActivity
                     return true;
                 }
             });
+        }
+    }
+
+    protected int getCurrentPositionIndexInNavigationDrawer() {
+        return this.mPosition;
+    }
+
+    private void initNavigationDrawerAdapter() {
+        final Resources resources = getResources();
+
+        mNavigationDrawerAdapter = new NavigationDrawerArrayAdapter(this);
+        // Section 1: No Header
+        String[] menuItems = resources.getStringArray(
+                R.array.navigation_drawer_items_array_item1);
+        for (final String item : menuItems) {
+            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+        }
+
+        //Section 2: Services: {OpenVPN, ...}
+        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item2_header));
+        menuItems = resources.getStringArray(
+                R.array.navigation_drawer_items_array_item2_items);
+        for (final String item : menuItems) {
+            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+        }
+
+        //Section 3: Admin Area: {Commands, NVRAM, ...}
+        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item3_header));
+        menuItems = resources.getStringArray(
+                R.array.navigation_drawer_items_array_item3_items);
+        for (final String item : menuItems) {
+            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+        }
+
+        //Section 4: Toolbox: {Network, System, ...}
+        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item4_header));
+        menuItems = resources.getStringArray(
+                R.array.navigation_drawer_items_array_item4_items);
+        for (final String item : menuItems) {
+            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
         }
     }
 
@@ -911,6 +944,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
+            view.setSelected(true);
             selectItem(position);
         }
     }

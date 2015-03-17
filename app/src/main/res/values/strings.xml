@@ -40,6 +40,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string name="donation_paypal_item">Donation</string>
 
+    <string-array name="navigation_drawer_items_array_item1">
+        <item>Status</item>
+    </string-array>
+
+    <string name="navigation_drawer_items_array_item2_header">Services</string>
+    <string-array name="navigation_drawer_items_array_item2_items">
+        <item>OpenVPN</item>
+    </string-array>
+
+    <string name="navigation_drawer_items_array_item3_header">Admin Area</string>
+    <string-array name="navigation_drawer_items_array_item3_items">
+        <item>Commands</item>
+        <item>NVRAM</item>
+    </string-array>
+
+    <string name="navigation_drawer_items_array_item4_header">Toolbox</string>
+    <string-array name="navigation_drawer_items_array_item4_items">
+        <item>Network</item>
+        <item>System</item>
+    </string-array>
+
     <string-array name="navigation_drawer_items_array">
         <item>Status</item>
         <!--NOT NEEDED ANYMORE <item>Setup</item>-->

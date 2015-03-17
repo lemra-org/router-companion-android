@@ -51,7 +51,6 @@ import android.widget.Toast;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.rm3l.ddwrt.DDWRTMainActivity;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
@@ -92,6 +91,7 @@ import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessSecurityFragment;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
@@ -255,14 +255,14 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 break;
-            case 2:
+            case 5:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 tabsToSort = new BaseFragment[1];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_nvram), router);
                 //TODO Also Add UCI Config if possible
                 break;
-            case 3:
+            case 7:
                 parentSectionTitle = resources.getString(R.string.toolbox);
                 tabsToSort = new BaseFragment[4];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
@@ -354,7 +354,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[3] = BaseFragment.newInstance(parentFragment, WirelessMACFilteringFragment.class, parentSectionTitle,
                         resources.getString(R.string.wireless_mac_filter), router);
                 break;
-            case 1:
+            case 2:
 //            case 2:
                 parentSectionTitle = resources.getString(R.string.services);
                 //4 = Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
@@ -421,7 +421,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[5] = BaseFragment.newInstance(parentFragment, NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
                 break;
-            case 2:
+            case 5:
 //            case 6:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 //8 => Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
@@ -446,7 +446,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 //                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_backup), router);
                 break;
-            case 3:
+            case 7:
                 parentSectionTitle = resources.getString(R.string.toolbox);
                 tabsToSort = new BaseFragment[4];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
