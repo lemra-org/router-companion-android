@@ -409,10 +409,6 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     }
 
-    protected int getCurrentPositionIndexInNavigationDrawer() {
-        return this.mPosition;
-    }
-
     private void initNavigationDrawerAdapter() {
         final Resources resources = getResources();
 
@@ -421,7 +417,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         String[] menuItems = resources.getStringArray(
                 R.array.navigation_drawer_items_array_item1);
         for (final String item : menuItems) {
-            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+            mNavigationDrawerAdapter.addItem(item, false);
         }
 
         //Section 2: Services: {OpenVPN, ...}
@@ -429,7 +425,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         menuItems = resources.getStringArray(
                 R.array.navigation_drawer_items_array_item2_items);
         for (final String item : menuItems) {
-            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+            mNavigationDrawerAdapter.addItem(item, false);
         }
 
         //Section 3: Admin Area: {Commands, NVRAM, ...}
@@ -437,7 +433,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         menuItems = resources.getStringArray(
                 R.array.navigation_drawer_items_array_item3_items);
         for (final String item : menuItems) {
-            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+            mNavigationDrawerAdapter.addItem(item, false);
         }
 
         //Section 4: Toolbox: {Network, System, ...}
@@ -445,7 +441,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         menuItems = resources.getStringArray(
                 R.array.navigation_drawer_items_array_item4_items);
         for (final String item : menuItems) {
-            mNavigationDrawerAdapter.add(new NavigationDrawerMenuItem(item));
+            mNavigationDrawerAdapter.addItem(item, false);
         }
     }
 
@@ -945,6 +941,9 @@ public class DDWRTMainActivity extends ActionBarActivity
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
             selectItem(position);
+            mNavigationDrawerAdapter.setSelectedItem(position);
+            mNavigationDrawerAdapter.notifyDataSetChanged();
+            mDrawerLayout.invalidate();
         }
     }
 

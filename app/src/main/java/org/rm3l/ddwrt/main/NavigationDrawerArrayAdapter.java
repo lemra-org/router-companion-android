@@ -1,6 +1,8 @@
 package org.rm3l.ddwrt.main;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +14,32 @@ import org.rm3l.ddwrt.R;
 
 public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerMenuItem> {
 
-    private final Context mContext;
+    private final Resources mResources;
+
+    /**
+     * Selected item position
+     */
+    private int mSelectedItem;
 
     public NavigationDrawerArrayAdapter(@NonNull final Context context) {
         super(context, 0);
-        this.mContext = context;
+        mResources = getContext().getResources();
+    }
+
+    public int getSelectedItem() {
+        return mSelectedItem;
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        mSelectedItem = selectedItem;
     }
 
     public void addHeader(String title) {
-        add(new NavigationDrawerMenuItem(title, true));
+        addItem(title, true);
     }
 
-    public void addItem(String title) {
-        add(new NavigationDrawerMenuItem(title, false));
+    public void addItem(String title, boolean isHeader) {
+        addItem(new NavigationDrawerMenuItem(title, isHeader));
     }
 
     public void addItem(@NonNull final NavigationDrawerMenuItem itemModel) {
@@ -50,7 +65,7 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        NavigationDrawerMenuItem item = getItem(position);
+        final NavigationDrawerMenuItem item = getItem(position);
         ViewHolder holder = null;
         View view = convertView;
 
@@ -77,10 +92,12 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
                 holder.textHolder.setText(item.title);
         }
 
-        if (this.mContext instanceof DDWRTMainActivity) {
-            final DDWRTMainActivity mainActivity = (DDWRTMainActivity) mContext;
-            if (position == mainActivity.getCurrentPositionIndexInNavigationDrawer()) {
-                view.setBackgroundColor(mContext.getResources().getColor(R.color.DarkGray));
+        if (holder != null && holder.textHolder != null) {
+            if (position == mSelectedItem) {
+                holder.textHolder.setTextColor(mResources.getColor(android.R.color.holo_blue_dark));
+                holder.textHolder.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.textHolder.setTextColor(mResources.getColor(android.R.color.white));
             }
         }
 
