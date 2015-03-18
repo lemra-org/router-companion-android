@@ -53,6 +53,7 @@ import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
+import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
@@ -255,6 +256,12 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 break;
+            case 3:
+                parentSectionTitle = resources.getString(R.string.commands);
+                tabsToSort = new BaseFragment[1];
+                tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
+                        resources.getString(R.string.admin_area_cmds), router);
+                break;
             case 5:
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 tabsToSort = new BaseFragment[1];
@@ -420,6 +427,12 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                         resources.getString(R.string.nat_qos_dmz), router);
                 tabsToSort[5] = BaseFragment.newInstance(parentFragment, NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
+                break;
+            case 3:
+                parentSectionTitle = resources.getString(R.string.commands);
+                tabsToSort = new BaseFragment[1];
+                tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
+                        resources.getString(R.string.admin_area_cmds), router);
                 break;
             case 5:
 //            case 6:
@@ -734,13 +747,23 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 
             atLeastOneTileAdded = (!cards.isEmpty());
 
+
+            final boolean disableNowLayoutAnim = (cards.size() <= 1);
+
             Log.d(LOG_TAG, "atLeastOneTileAdded: " + atLeastOneTileAdded + ", rows: " + cards.size());
 
             if (atLeastOneTileAdded) {
                 //Drop Everything
 //                viewGroup.removeAllViews();
 
-                mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+                if (disableNowLayoutAnim) {
+                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
+                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
+                } else {
+                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim).setVisibility(View.GONE);
+                }
+                mLayout.setVisibility(View.VISIBLE);
 
                 for (final CardView card : cards) {
 //                    mTableLayout.removeView(row);
@@ -774,7 +797,10 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 //            view.setBackgroundResource(R.drawable.background_card);
             view.setLayoutParams(params);
 
-            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+//            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
+            viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
+            mLayout.setVisibility(View.VISIBLE);
 
             mLayout.addView(view);
         }
@@ -783,7 +809,6 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 //        viewGroup.setLayoutParams(params);
 
         return viewGroup;
-
     }
 
     /**

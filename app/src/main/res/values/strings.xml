@@ -543,4 +543,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="ping_info">Test the reachability of a Host from the Router and measure the round-trip time (RTT)</string>
     <string name="traceroute_info">Display the route (path) and measure transit delays of packets from the Router to a given Host</string>
     <string name="arping_info">Test whether a given IP address is in use on the router local network</string>
+    <string name="commands">Commands</string>
 </resources>
