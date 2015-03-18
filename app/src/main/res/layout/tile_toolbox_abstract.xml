@@ -109,18 +109,30 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
                 android:maxLines="1" />
 
-            <Button
-                android:id="@+id/tile_toolbox_abstract_submit_button"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/toolbox_ping" />
+                android:paddingTop="1.0dip"
+                android:weightSum="1">
 
-            <Button
-                android:id="@+id/tile_toolbox_abstract_cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="@string/cancel" />
+                <Button
+                    android:id="@+id/tile_toolbox_abstract_cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:enabled="false"
+                    android:text="@string/cancel" />
+
+                <Button
+                    android:id="@+id/tile_toolbox_abstract_submit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/submit" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
