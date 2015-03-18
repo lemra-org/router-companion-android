@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tiles.toolbox;
+package org.rm3l.ddwrt.tiles.admin.commands;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,15 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,67 +22,43 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
+import org.rm3l.ddwrt.actions.ExecStreamableCommandRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterStreamActionListener;
-import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.Utils;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
-public abstract class AbstractToolboxTile extends DDWRTTile<None> {
+public class AdminCommandsTile extends DDWRTTile<Void> {
 
-    public static final String LAST_HOSTS = "lastHosts";
-    private static final String LAST_HOST = "lastHost";
-    protected final RouterStreamActionListener mRouterActionListener;
+    private static final String LOG_TAG = AdminCommandsTile.class.getSimpleName();
 
+    private static final String LAST_COMMANDS = "lastCommands";
+
+    private final RouterStreamActionListener mRouterActionListener;
     private AbstractRouterAction<?> mCurrentRouterActionTask = null;
 
-    public AbstractToolboxTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments,
-                               @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_toolbox_abstract, null);
+    public AdminCommandsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_admin_commands, null);
 
-        ((TextView) layout.findViewById(R.id.tile_toolbox_abstract_title))
-                .setText(this.getTileTitle());
-
-        final TextView infoTextView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_info);
-        final Integer infoText = this.getInfoText();
-        if (infoText == null) {
-            infoTextView.setVisibility(View.GONE);
-        } else {
-            infoTextView.setVisibility(View.VISIBLE);
-            infoTextView.setText(infoText);
-        }
-
-        final Button button = (Button) layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
-        button.setText(this.getSubmitButtonText());
-
-        final Button cancelButton = (Button) layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
+        final Button button = (Button) layout.findViewById(R.id.tile_admin_commands_submit_button);
+        final Button cancelButton = (Button) layout.findViewById(R.id.tile_admin_commands_cancel_button);
 
         final View progressBar = layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view);
 
-        final TextView outputView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_content);
+        final TextView outputView = (TextView) layout.findViewById(R.id.tile_admin_commands_content);
 
         //Handle for Search EditText
-        final AutoCompleteTextView editText = (AutoCompleteTextView) this.layout
-                .findViewById(R.id.tile_toolbox_abstract_edittext);
-        editText.setHint(this.getEditTextHint());
+        final EditText editText = (EditText) this.layout.findViewById(R.id.tile_admin_commands_edittext);
         //Initialize with existing search data
-        final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
-                .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
-        editText
-                .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
-                        lastHosts.toArray(new String[lastHosts.size()])));
         editText.setText(mParentFragmentPreferences != null ?
-                mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_HOST), EMPTY_STRING) : EMPTY_STRING, EDITABLE);
+                mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_COMMANDS), EMPTY_STRING) : EMPTY_STRING, EDITABLE);
 
-        final TextView errorView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_error);
+        final TextView errorView = (TextView) layout.findViewById(R.id.tile_admin_commands_error);
 
         this.mRouterActionListener = new RouterStreamActionListener() {
             @Override
@@ -172,16 +146,10 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         if (mParentFragmentPreferences != null) {
                             final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
                             editor
-                                    .putString(getFormattedPrefKey(LAST_HOST), EMPTY_STRING)
-                                    .putStringSet(LAST_HOSTS, new HashSet<String>())
+                                    .putString(getFormattedPrefKey(LAST_COMMANDS), EMPTY_STRING)
                                     .apply();
                         }
 
-                        final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
-                                .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
-                        editText
-                                .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
-                                        lastHosts.toArray(new String[lastHosts.size()])));
                         return true;
                     }
                 }
@@ -203,40 +171,19 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         return true;
                     }
 
-                    if (!(Patterns.IP_ADDRESS.matcher(textToFind).matches()
-                            || Patterns.DOMAIN_NAME.matcher(textToFind).matches())) {
-                        errorView.setText(mParentFragmentActivity.getResources()
-                                .getString(R.string.router_add_dns_or_ip_invalid) + ":" + textToFind);
-                        errorView.setVisibility(View.VISIBLE);
-                        editText.requestFocus();
-                        openKeyboard(editText);
-                        return true;
-                    }
-
                     final String existingSearch = mParentFragmentPreferences != null ?
-                            mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_HOST), null) : null;
+                            mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_COMMANDS), null) : null;
 
                     if (mParentFragmentPreferences != null) {
                         final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
                         if (!textToFind.equalsIgnoreCase(existingSearch)) {
-                            editor.putString(getFormattedPrefKey(LAST_HOST), textToFind);
-                        }
-                        final Set<String> mSharedPreferencesStringSet = new HashSet<>(mParentFragmentPreferences.getStringSet(LAST_HOSTS,
-                                new HashSet<String>()));
-                        if (!mSharedPreferencesStringSet.contains(textToFind)) {
-                            mSharedPreferencesStringSet.add(textToFind);
-                            editor.putStringSet(LAST_HOSTS, mSharedPreferencesStringSet);
+                            editor.putString(getFormattedPrefKey(LAST_COMMANDS), textToFind);
                         }
                         editor.apply();
 
                     }
-                    final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
-                            .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
-                    editText
-                            .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
-                                    lastHosts.toArray(new String[lastHosts.size()])));
 
-                    //Run ping command
+                    //Run command
                     progressBar.setVisibility(View.VISIBLE);
                     button.setEnabled(false);
 
@@ -260,32 +207,16 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     return;
                 }
 
-                if (!(Patterns.IP_ADDRESS.matcher(textToFind).matches()
-                        || Patterns.DOMAIN_NAME.matcher(textToFind).matches())) {
-                    errorView.setText(mParentFragmentActivity.getResources()
-                            .getString(R.string.router_add_dns_or_ip_invalid) + ":" + textToFind);
-                    errorView.setVisibility(View.VISIBLE);
-                    editText.requestFocus();
-                    openKeyboard(editText);
-                    return;
-                }
-
                 final String existingSearch = mParentFragmentPreferences != null ?
-                        mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_HOST), null) : null;
+                        mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_COMMANDS), null) : null;
 
                 if (mParentFragmentPreferences != null) {
                     if (!textToFind.equalsIgnoreCase(existingSearch)) {
                         final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-                        editor.putString(getFormattedPrefKey(LAST_HOST), textToFind);
+                        editor.putString(getFormattedPrefKey(LAST_COMMANDS), textToFind);
                         editor.apply();
                     }
                 }
-
-                final Set<String> lastHosts = mParentFragmentPreferences != null ? mParentFragmentPreferences
-                        .getStringSet(LAST_HOSTS, new HashSet<String>()) : new HashSet<String>();
-                editText
-                        .setAdapter(new ArrayAdapter<>(mParentFragmentActivity, android.R.layout.simple_list_item_1,
-                                lastHosts.toArray(new String[lastHosts.size()])));
 
                 //Run command
                 progressBar.setVisibility(View.VISIBLE);
@@ -317,6 +248,11 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         });
     }
 
+    @NonNull
+    private AbstractRouterAction getRouterAction(String cmdToRun) {
+        return new ExecStreamableCommandRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, cmdToRun);
+    }
+
     private void openKeyboard(final TextView mTextView) {
         final InputMethodManager imm = (InputMethodManager)
                 mParentFragmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -327,25 +263,30 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
     }
 
     @Override
+    public boolean isEmbeddedWithinScrollView() {
+        return false;
+    }
+
+    @Override
     public int getTileHeaderViewId() {
-        return R.id.tile_toolbox_abstract_title;
+        return -1;
     }
 
     @Override
     public int getTileTitleViewId() {
-        return -1;
+        return R.id.tile_admin_commands_title;
     }
 
     @Nullable
     @Override
-    protected Loader<None> getLoader(int id, Bundle args) {
+    protected Loader<Void> getLoader(int id, Bundle args) {
         return null;
     }
 
     @Nullable
     @Override
     protected String getLogTag() {
-        return null;
+        return LOG_TAG;
     }
 
     @Nullable
@@ -355,25 +296,6 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
     }
 
     @Override
-    public void onLoadFinished(Loader<None> loader, None data) {
-
+    public void onLoadFinished(Loader<Void> loader, Void data) {
     }
-
-    @Override
-    public boolean isEmbeddedWithinScrollView() {
-        return false;
-    }
-
-    @Nullable
-    protected abstract Integer getInfoText();
-
-    protected abstract int getEditTextHint();
-
-    protected abstract int getSubmitButtonText();
-
-    protected abstract int getTileTitle();
-
-    @NonNull
-    protected abstract AbstractRouterAction<?> getRouterAction(String textToFind);
-
 }

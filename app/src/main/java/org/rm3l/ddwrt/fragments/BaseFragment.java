@@ -256,11 +256,11 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 break;
-            case 3:
+            case 4:
                 parentSectionTitle = resources.getString(R.string.commands);
                 tabsToSort = new BaseFragment[1];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.admin_area_cmds), router);
+                        resources.getString(R.string.command_shell), router);
                 break;
             case 5:
                 parentSectionTitle = resources.getString(R.string.admin_area);
@@ -428,11 +428,11 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort[5] = BaseFragment.newInstance(parentFragment, NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
                 break;
-            case 3:
+            case 4:
                 parentSectionTitle = resources.getString(R.string.commands);
                 tabsToSort = new BaseFragment[1];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.admin_area_cmds), router);
+                        resources.getString(R.string.command_shell), router);
                 break;
             case 5:
 //            case 6:

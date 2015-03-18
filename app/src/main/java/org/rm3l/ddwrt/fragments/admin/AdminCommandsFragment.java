@@ -27,19 +27,19 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.BaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.admin.commands.AdminCommandsTile;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * 'Admin > Commands' fragment
- * <p/>
- * TODO To Implement
  */
 public class AdminCommandsFragment extends BaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
+        return Arrays.<DDWRTTile>asList(new AdminCommandsTile(this, savedInstanceState, this.router));
     }
 }

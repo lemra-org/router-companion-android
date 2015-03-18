@@ -544,4 +544,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="traceroute_info">Display the route (path) and measure transit delays of packets from the Router to a given Host</string>
     <string name="arping_info">Test whether a given IP address is in use on the router local network</string>
     <string name="commands">Commands</string>
+    <string name="submit">Submit</string>
+    <string name="commands_edit_text_hint">Command(s) to run...</string>
+    <string name="command_shell">Command Shell</string>
 </resources>
