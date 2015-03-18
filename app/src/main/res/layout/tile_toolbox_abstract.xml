@@ -73,6 +73,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="italic"
             android:visibility="gone" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:singleLine="false"
+            android:visibility="invisible" />
+
         <!-- Error message placeholder -->
         <TextView
             android:id="@+id/tile_toolbox_abstract_error"
@@ -87,54 +94,59 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:singleLine="false"
+            android:visibility="invisible" />
+
+        <!-- Filter -->
+        <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
+            android:id="@+id/tile_toolbox_abstract_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@color/win8_teal"
+            android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+            android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+            android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+            android:hint="@string/ping_edit_text_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+            android:maxLines="1" />
+
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="1.0dip"
             android:weightSum="1">
 
-            <!-- Filter -->
-            <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                android:id="@+id/tile_toolbox_abstract_edittext"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/tile_toolbox_abstract_cancel_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                android:hint="@string/ping_edit_text_hint"
-                android:imeOptions="actionSearch"
-                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:maxLines="1" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:enabled="false"
+                android:text="@string/cancel" />
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
+            <Button
+                android:id="@+id/tile_toolbox_abstract_submit_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="1.0dip"
-                android:weightSum="1">
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/submit" />
 
-                <Button
-                    android:id="@+id/tile_toolbox_abstract_cancel_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:enabled="false"
-                    android:text="@string/cancel" />
+        </RelativeLayout>
 
-                <Button
-                    android:id="@+id/tile_toolbox_abstract_submit_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/submit" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:singleLine="false"
+            android:visibility="invisible" />
 
         <ScrollView
             android:id="@+id/tile_toolbox_abstract_content_scrollview"
