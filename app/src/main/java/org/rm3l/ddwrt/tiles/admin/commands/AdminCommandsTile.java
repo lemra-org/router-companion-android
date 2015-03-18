@@ -232,20 +232,25 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCurrentRouterActionTask == null) {
-                    return;
-                }
-                try {
-                    mCurrentRouterActionTask.cancel(true);
-                } catch (final Exception e) {
-                    Utils.reportException(e);
-                } finally {
-                    progressBar.setVisibility(View.GONE);
-                    button.setEnabled(true);
-                    cancelButton.setEnabled(false);
-                }
+                onStop();
             }
         });
+    }
+
+    @Override
+    public void onStop() {
+        if (mCurrentRouterActionTask == null) {
+            return;
+        }
+        try {
+            mCurrentRouterActionTask.cancel(true);
+        } catch (final Exception e) {
+            Utils.reportException(e);
+        } finally {
+            layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_admin_commands_submit_button).setEnabled(true);
+            layout.findViewById(R.id.tile_admin_commands_cancel_button).setEnabled(false);
+        }
     }
 
     @NonNull

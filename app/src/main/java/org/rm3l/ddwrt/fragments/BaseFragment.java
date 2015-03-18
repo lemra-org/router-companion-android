@@ -605,6 +605,16 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
     }
 
     private void stopLoaders() {
+
+        if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
+            for (final DDWRTTile fragmentTile : fragmentTiles) {
+                if (fragmentTile == null) {
+                    continue;
+                }
+                fragmentTile.onStop();
+            }
+        }
+
         final LoaderManager loaderManager = getLoaderManager();
         for (final Map.Entry<Integer, Object> loaderIdInUse : loaderIdsInUse.entrySet()) {
             loaderManager.destroyLoader(loaderIdInUse.getKey());

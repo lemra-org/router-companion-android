@@ -317,6 +317,22 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         });
     }
 
+    @Override
+    public void onStop() {
+        if (mCurrentRouterActionTask == null) {
+            return;
+        }
+        try {
+            mCurrentRouterActionTask.cancel(true);
+        } catch (final Exception e) {
+            Utils.reportException(e);
+        } finally {
+            layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_toolbox_abstract_submit_button).setEnabled(true);
+            layout.findViewById(R.id.tile_toolbox_abstract_cancel_button).setEnabled(false);
+        }
+    }
+
     private void openKeyboard(final TextView mTextView) {
         final InputMethodManager imm = (InputMethodManager)
                 mParentFragmentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);

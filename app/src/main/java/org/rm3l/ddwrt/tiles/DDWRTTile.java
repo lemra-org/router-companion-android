@@ -269,6 +269,10 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         }
     }
 
+    public void onStop() {
+
+    }
+
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
 
