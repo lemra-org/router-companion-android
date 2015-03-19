@@ -274,8 +274,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
     private String mUsageDbBackupPath = null;
 
-    private HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<>();
-
     private Loader<ClientDevices> mCurrentLoader;
     private MenuItem mActiveIpConnectionsMenuItem;
 
@@ -390,6 +388,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+
+                            final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
+                            if (currentDevicesViewsMap != null) {
+                                for (Device device : currentDevicesViewsMap.keySet()) {
+                                    if (device == null) {
+                                        continue;
+                                    }
+                                    currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                                }
+                            }
+
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
                             //noinspection ConstantConditions
                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -513,8 +522,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
                 }
                 nbRunsLoader++;
-
-                currentIpToHostNameResolverMap.clear();
 
                 final ClientDevices devices = new ClientDevices();
 
@@ -815,7 +822,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final Device dev = deviceCollection.iterator().next();
 
                         macToDevice.put(macAddr, dev);
-                        currentIpToHostNameResolverMap.put(dev.getIpAddress(), dev.getName());
                     }
 
                     String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
@@ -1140,6 +1146,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
                         intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
                         intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+
+                        final HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<String, String>();
+                        if (currentDevicesViewsMap != null) {
+                            for (Device device : currentDevicesViewsMap.keySet()) {
+                                if (device == null) {
+                                    continue;
+                                }
+                                currentIpToHostNameResolverMap.put(device.getIpAddress(), device.getName());
+                            }
+                        }
                         intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
                         //noinspection ConstantConditions
                         final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
