@@ -22,12 +22,24 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:scrollbars="vertical">
 
-        <LinearLayout
-            android:id="@+id/tile_status_active_ip_connections_list_container"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible" />
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/tile_status_active_ip_connections_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/tile_status_active_ip_connections_list_container_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
 
     </ScrollView>
 

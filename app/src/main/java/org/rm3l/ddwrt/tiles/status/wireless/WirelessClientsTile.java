@@ -274,6 +274,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private Map<Device, View> currentDevicesViewsMap = Maps.newConcurrentMap();
     private String mUsageDbBackupPath = null;
 
+    private HashMap<String, String> currentIpToHostNameResolverMap = new HashMap<>();
+
     private Loader<ClientDevices> mCurrentLoader;
     private MenuItem mActiveIpConnectionsMenuItem;
 
@@ -388,6 +390,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
                             intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+                            intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
                             //noinspection ConstantConditions
                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
                                     "Loading...", false, false);
@@ -510,6 +513,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
                 }
                 nbRunsLoader++;
+
+                currentIpToHostNameResolverMap.clear();
 
                 final ClientDevices devices = new ClientDevices();
 
@@ -807,8 +812,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             continue;
                         }
 
-                        macToDevice.put(macAddr,
-                                deviceCollection.iterator().next());
+                        final Device dev = deviceCollection.iterator().next();
+
+                        macToDevice.put(macAddr, dev);
+                        currentIpToHostNameResolverMap.put(dev.getIpAddress(), dev.getName());
                     }
 
                     String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
@@ -1133,6 +1140,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         intent.putExtra(ActiveIPConnectionsDetailActivity.ACTIVE_IP_CONNECTIONS_OUTPUT, activeIPConnections);
                         intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
                         intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+                        intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
                         //noinspection ConstantConditions
                         final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
                                 "Loading...", false, false);
@@ -1366,6 +1374,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
                                         "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
                                 intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
+                                intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
 
                                 //noinspection ConstantConditions
                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1557,11 +1567,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 //OUI Addr
                 final TextView ouiVendorRowView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_oui_addr);
+                final TextView nicManufacturerView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_nic_manufacturer);
                 final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                if (macouiVendorDetails == null || isNullOrEmpty(macouiVendorDetails.getCompany())) {
+                final String company;
+                if (macouiVendorDetails == null || (company = macouiVendorDetails.getCompany()) == null || company.isEmpty()) {
                     ouiVendorRowView.setText(EMPTY_VALUE_TO_DISPLAY);
+                    nicManufacturerView.setVisibility(View.GONE);
                 } else {
-                    ouiVendorRowView.setText(macouiVendorDetails.getCompany());
+                    ouiVendorRowView.setText(company);
+                    nicManufacturerView.setText(company);
+                    nicManufacturerView.setVisibility(View.VISIBLE);
                 }
 
                 final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
@@ -1696,6 +1711,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouter.getRemoteIpAddress());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST,
                                             "'" + name + "' (" + macAddress + " - " + device.getIpAddress() + ")");
+                                    intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
+                                    intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
                                     //noinspection ConstantConditions

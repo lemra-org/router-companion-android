@@ -58,7 +58,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="navigation_drawer_items_array_item4_header">Toolbox</string>
     <string-array name="navigation_drawer_items_array_item4_items">
         <item>Network</item>
-        <item>System</item>
+        <!--<item>System</item>-->
     </string-array>
 
     <string-array name="navigation_drawer_items_array">
