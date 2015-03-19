@@ -409,7 +409,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
                     //... and Destination IP Address Organization (if available)
                     final TextView destIpOrg = (TextView) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org);
-                    final TextView destIpOrgDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip);
+                    final TextView destIpOrgDetails = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois);
                     final ProgressBar destIpOrgLoading = (ProgressBar) cardView.findViewById(R.id.activity_ip_connections_dest_ip_org_loading);
                     if (ipToHostResolvedMap == null) {
                         destIpOrg.setText("");
