@@ -459,7 +459,10 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 //                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_backup), router);
                 break;
+//            case 6:
+            //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
             case 7:
+                //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
                 tabsToSort = new BaseFragment[4];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,

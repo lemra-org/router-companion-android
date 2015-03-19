@@ -2,7 +2,6 @@ package org.rm3l.ddwrt.main;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,10 +93,9 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
 
         if (holder != null && holder.textHolder != null) {
             if (position == mSelectedItem) {
-                holder.textHolder.setTextColor(mResources.getColor(android.R.color.holo_blue_dark));
-                holder.textHolder.setTypeface(Typeface.DEFAULT_BOLD);
+                holder.textHolder.setTextColor(mResources.getColor(R.color.GreenYellow));
             } else {
-                holder.textHolder.setTextColor(mResources.getColor(android.R.color.white));
+                holder.textHolder.setTextColor(mResources.getColor(R.color.white));
             }
         }
 
