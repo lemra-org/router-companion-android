@@ -207,12 +207,11 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        initLoaderTask();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+    private void initLoaderTask() {
         //Remove all views
         final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
         containerLayout.removeAllViews();
@@ -435,12 +434,15 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                 //Nothing to do
             }
         });
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_active_ip_connections_options, menu);
+
+        //Hide 'Stats by Source' menu item (because it is the same source)
+        menu.findItem(R.id.tile_status_active_ip_connections_stats_by_source_ip)
+                .setVisible(isNullOrEmpty(mConnectedHost));
 
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_active_ip_connections_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat
@@ -490,6 +492,14 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.tile_status_active_ip_connections_stats_by_source_ip:
+                //TODO
+                Toast.makeText(this, "[FIXME] Stats by Source IPs", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.tile_status_active_ip_connections_stats_by_destination_ip:
+                //TODO
+                Toast.makeText(this, "[FIXME] Stats by Destination IPs", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 break;

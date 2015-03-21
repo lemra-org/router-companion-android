@@ -547,4 +547,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="submit">Submit</string>
     <string name="commands_edit_text_hint">Command(s) to run...</string>
     <string name="command_shell">Command Shell</string>
+    <string name="stats">Stats</string>
+    <string name="by_source">By Source</string>
+    <string name="by_destination">By Destination</string>
 </resources>

@@ -193,22 +193,28 @@ public abstract class AbstractRouterMgmtDialogFragment
         ((Spinner) view.findViewById(R.id.router_add_firmware)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View childView, int pos, long id) {
+                final View ddwrtInstructionsView = view.findViewById(R.id.router_add_ddwrt_instructions);
+                final View openwrtInstructionsView = view.findViewById(R.id.router_add_openwrt_instructions);
                 switch (pos) {
                     case 1:
                         //DD-WRT
-                        view.findViewById(R.id.router_add_ddwrt_instructions)
+                        ddwrtInstructionsView
                                 .setVisibility(View.VISIBLE);
-                        view.findViewById(R.id.router_add_openwrt_instructions)
+                        openwrtInstructionsView
                                 .setVisibility(View.GONE);
                         break;
                     case 2:
                         //OpenWrt
-                        view.findViewById(R.id.router_add_ddwrt_instructions)
+                        ddwrtInstructionsView
                                 .setVisibility(View.GONE);
-                        view.findViewById(R.id.router_add_openwrt_instructions)
+                        openwrtInstructionsView
                                 .setVisibility(View.VISIBLE);
                         break;
                     default:
+                        ddwrtInstructionsView
+                                .setVisibility(View.GONE);
+                        openwrtInstructionsView
+                                .setVisibility(View.GONE);
                         break;
                 }
             }
