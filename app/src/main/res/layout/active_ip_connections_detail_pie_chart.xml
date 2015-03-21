@@ -37,19 +37,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ScrollView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/active_ip_connections_detail_pie_chart_placeholder"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
-
-            <LinearLayout
-                android:id="@+id/active_ip_connections_detail_pie_chart_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" />
-        </ScrollView>
+            android:orientation="vertical"
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/active_ip_connections_detail_pie_chart_loading_view"

@@ -21,8 +21,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.CategorySeries;
@@ -44,6 +42,7 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
 /**
@@ -148,7 +147,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
 
             final int size = mConnectionsCountMap.size();
 
-            final int limit = (size < MAX_ITEMS_IN_PIE_CHART) ? size : MAX_ITEMS_IN_PIE_CHART;
+            final int limit = Math.min(size, MAX_ITEMS_IN_PIE_CHART);
 
             final CategorySeries distributionSeries =
                     new CategorySeries("Distribution of Connections Count (by " + mByFilter + ")");
@@ -157,7 +156,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             for (final Map.Entry<String, Integer> entry : mConnectionsCountMap.entrySet()) {
                 final String ip = entry.getKey();
                 final String name = mLocalIpToHostname.get(ip);
-                distributionSeries.add(ip + (Strings.isNullOrEmpty(name) ? "" : ("(" + name + ")")),
+                distributionSeries.add(ip + (isNullOrEmpty(name) ? "" : ("(" + name + ")")),
                         entry.getValue());
                 if ((j++) >= limit) {
                     break;
@@ -173,6 +172,8 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
                 // Adding a renderer for a slice
                 defaultRenderer.addSeriesRenderer(seriesRenderer);
             }
+
+            defaultRenderer.setDisplayValues(true);
 
             defaultRenderer.setChartTitle("Distribution of Connections (by " + mByFilter + ") on " + mObservationDate);
             defaultRenderer.setChartTitleTextSize(20);
