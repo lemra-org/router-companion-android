@@ -272,18 +272,29 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         final Map<String, String> result = new HashMap<>();
                         String existingRecord;
 
+                        final int totalLength = mActiveIPConnections.length;
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mProgressBarDesc.setText("Resolving IPs...\n\n");
+                                mProgressBarDesc.setText("Resolving IPs (0/" + totalLength + ")...\n\n");
                             }
                         });
 
+                        int i = 1;
                         for (final String activeIPConnection : mActiveIPConnections) {
                             final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
                             if (ipConntrackRow == null) {
                                 continue;
                             }
+
+                            final int j = (i++);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBarDesc.setText("Resolving IPs ( " + j + "/" + totalLength + ")...\n\n");
+                                }
+                            });
 
                             final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
                             existingRecord = result.get(sourceAddressOriginalSide);
@@ -334,17 +345,6 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                                 }
                             });
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mMenu != null) {
-                                    final MenuItem statsMenuItem = mMenu.findItem(R.id.tile_status_active_ip_connections_stats);
-                                    if (statsMenuItem != null) {
-                                        statsMenuItem.setVisible(true);
-                                    }
-                                }
-                            }
-                        });
 
                         return result;
                     }
@@ -356,6 +356,13 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             @Override
             public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> ipToHostResolvedMap) {
                 int i = 0;
+
+                if (mMenu != null) {
+                    final MenuItem statsMenuItem = mMenu.findItem(R.id.tile_status_active_ip_connections_stats);
+                    if (statsMenuItem != null) {
+                        statsMenuItem.setVisible(true);
+                    }
+                }
 
                 mProgressBarDesc.setText("Building Views...\n\n");
 
