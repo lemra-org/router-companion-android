@@ -60,6 +60,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -192,32 +193,23 @@ public abstract class AbstractRouterMgmtDialogFragment
         ((Spinner) view.findViewById(R.id.router_add_firmware)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                final String[] fwStringArray = activity.getResources()
-                        .getStringArray(R.array.router_firmwares_array_values);
-                if (fwStringArray != null && pos < fwStringArray.length) {
-                    final String fwSelection = fwStringArray[pos];
-                    if (!"auto".equals(fwSelection)) {
-                        try {
-                            switch (Router.RouterFirmware.valueOf(fwSelection)) {
-                                case DDWRT:
-                                    view.findViewById(R.id.router_add_ddwrt_instructions)
-                                            .setVisibility(View.VISIBLE);
-                                    view.findViewById(R.id.router_add_openwrt_instructions)
-                                            .setVisibility(View.GONE);
-                                    break;
-                                case OPENWRT:
-                                    view.findViewById(R.id.router_add_ddwrt_instructions)
-                                            .setVisibility(View.GONE);
-                                    view.findViewById(R.id.router_add_openwrt_instructions)
-                                            .setVisibility(View.VISIBLE);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        } catch (final Exception e) {
-                            Utils.reportException(e);
-                        }
-                    }
+                switch (pos) {
+                    case 1:
+                        //DD-WRT
+                        view.findViewById(R.id.router_add_ddwrt_instructions)
+                                .setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.router_add_openwrt_instructions)
+                                .setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        //OpenWrt
+                        view.findViewById(R.id.router_add_ddwrt_instructions)
+                                .setVisibility(View.GONE);
+                        view.findViewById(R.id.router_add_openwrt_instructions)
+                                .setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -609,6 +601,21 @@ public abstract class AbstractRouterMgmtDialogFragment
                 final Throwable rootCause = Throwables.getRootCause(e);
                 displayMessage(getString(R.string.router_add_connection_unsuccessful) +
                         ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), Style.ALERT);
+                if (rootCause != null &&
+                        (rootCause instanceof IOException) &&
+                        StringUtils.containsIgnoreCase(rootCause.getMessage(), "End of IO Stream Read")) {
+                    //Common issue with some routers
+                    Utils.buildAlertDialog(getActivity(),
+                            "SSH Error: End of IO Stream Read",
+                            "Some firmware builds (like DD-WRT r21061) reportedly have non-working SSH server versions (e.g., 'dropbear_2013.56'). \n" +
+                                    "This might be the cause of this error. \n" +
+                                    "Make sure you can manually SSH into the router from a computer, using the same credentials you provided to the app. \n" +
+                                    "If the error persists, we recommend you upgrade or downgrade your router to a build " +
+                                    "with a working SSH server, then try again.\n\n" +
+                                    "Please reach out to us at apps@rm3l.org for assistance.\n" +
+                                    "Sorry for the inconvenience.",
+                            true, true).show();
+                }
                 Utils.reportException(
                         new DDWRTCompanionExceptionForConnectionChecksException(
                                 router != null ?
