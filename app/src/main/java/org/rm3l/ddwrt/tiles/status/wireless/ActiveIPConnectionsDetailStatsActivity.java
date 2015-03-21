@@ -19,7 +19,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.common.base.Functions;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Ordering;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -36,7 +42,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -45,9 +53,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
-/**
- * Created by rm3l on 21/03/15.
- */
 public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
 
     public static final String BY = "BY";
@@ -57,18 +62,19 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
     public static final int COMPRESSION_QUALITY = 100;
     public static final int DEFAULT_BITMAP_WIDTH = 640;
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
-    private static final int MAX_ITEMS_IN_PIE_CHART = 20;
+    private static final int MAX_ITEMS_IN_PIE_CHART = 10;
     private boolean themeLight;
     private String mRouter;
     private Toolbar mToolbar;
     private ByFilter mByFilter;
-    private HashMap<String, Integer> mConnectionsCountMap;
+    private Map<String, Integer> mConnectionsCountMap;
     private Exception mException;
     private Menu optionsMenu;
     private File mFileToShare;
     private ShareActionProvider mShareActionProvider;
     private String mObservationDate;
     private HashMap<String, String> mLocalIpToHostname;
+    private ProgressBar mLoadingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +103,20 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         mObservationDate = intent.getStringExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE);
 
         //noinspection unchecked
-        mConnectionsCountMap = (HashMap<String, Integer>) intent.getSerializableExtra(CONNECTIONS_COUNT_MAP);
+        final HashMap<String, Integer> connectionsCountMap = (HashMap<String, Integer>) intent.getSerializableExtra(CONNECTIONS_COUNT_MAP);
 
-        if (mConnectionsCountMap == null || mConnectionsCountMap.isEmpty()) {
+        if (connectionsCountMap == null || connectionsCountMap.isEmpty()) {
             Toast.makeText(this, "Internal Error - No Data available!", Toast.LENGTH_SHORT).show();
-            Utils.reportException(new IllegalStateException("mConnectionsCountMap NULL or empty"));
+            Utils.reportException(new IllegalStateException("connectionsCountMap NULL or empty"));
             finish();
             return;
         }
+
+        final Ordering<String> reverseValuesAndNaturalKeysOrdering =
+                Ordering.natural().reverse().nullsLast().onResultOf(Functions.forMap(connectionsCountMap, null)) // natural for values
+                        .compound(Ordering.natural()); // secondary - natural ordering of keys
+
+        this.mConnectionsCountMap = ImmutableSortedMap.copyOf(connectionsCountMap, reverseValuesAndNaturalKeysOrdering);
 
         //noinspection unchecked
         mLocalIpToHostname = (HashMap<String, String>) intent
@@ -113,13 +125,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             mLocalIpToHostname = new HashMap<>();
         }
 
-        try {
-            mByFilter = ByFilter.valueOf(intent.getStringExtra(BY));
-        } catch (final Exception e) {
-            Utils.reportException(e);
-            mByFilter = ByFilter.SOURCE;
-        }
-
+        mByFilter = (ByFilter) intent.getSerializableExtra(BY);
 
         mToolbar = (Toolbar) findViewById(R.id.active_ip_connections_detail_pie_chart_view_toolbar);
         if (mToolbar != null) {
@@ -132,58 +138,66 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        mLoadingView = (ProgressBar) findViewById(R.id.active_ip_connections_detail_pie_chart_loading_view);
+
         doPaintPieChart();
 
     }
 
     private void doPaintPieChart() {
-        final View loadingView = findViewById(R.id.active_ip_connections_detail_pie_chart_loading_view);
-        loadingView.setVisibility(View.VISIBLE);
+        mLoadingView.setVisibility(View.VISIBLE);
 
         final LinearLayout chartPlaceholderView = (LinearLayout)
                 findViewById(R.id.active_ip_connections_detail_pie_chart_placeholder);
 
         try {
-
             final int size = mConnectionsCountMap.size();
 
             final int limit = Math.min(size, MAX_ITEMS_IN_PIE_CHART);
 
             final CategorySeries distributionSeries =
-                    new CategorySeries("Distribution of Connections Count (by " + mByFilter + ")");
+                    new CategorySeries("Connections Count (by " + mByFilter.getDisplayName() + ")");
 
-            int j = 0;
+            int j = 1;
+            final List<Integer> colorsMap = new ArrayList<>();
             for (final Map.Entry<String, Integer> entry : mConnectionsCountMap.entrySet()) {
-                final String ip = entry.getKey();
-                final String name = mLocalIpToHostname.get(ip);
-                distributionSeries.add(ip + (isNullOrEmpty(name) ? "" : ("(" + name + ")")),
-                        entry.getValue());
-                if ((j++) >= limit) {
+                if (j > limit) {
                     break;
                 }
+
+                final String ip = entry.getKey();
+                final String name = mLocalIpToHostname.get(ip);
+                colorsMap.add(ColorUtils.getColor(ip));
+                distributionSeries.add(
+                        isNullOrEmpty(name) ? ip : (name + " (" + ip + ")"),
+                        entry.getValue());
+
+                j++;
             }
 
             // Instantiating a renderer for the Pie Chart
             final DefaultRenderer defaultRenderer = new DefaultRenderer();
             for (int i = 0; i < limit; i++) {
                 final SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
-                seriesRenderer.setColor(ColorUtils.getColor("ActiveIpConnections-" + i));
+                if (i < colorsMap.size()) {
+                    seriesRenderer.setColor(colorsMap.get(i));
+                }
 //                seriesRenderer.setDisplayChartValues(true);
-                // Adding a renderer for a slice
                 defaultRenderer.addSeriesRenderer(seriesRenderer);
             }
 
             defaultRenderer.setDisplayValues(true);
 
-            defaultRenderer.setChartTitle("Distribution of Connections (by " + mByFilter + ") on " + mObservationDate);
-            defaultRenderer.setChartTitleTextSize(20);
+            defaultRenderer.setChartTitle("Connections count (by " +
+                    mByFilter.getDisplayName() + ") \n" +
+                    "on " + mObservationDate);
             defaultRenderer.setZoomButtonsVisible(false);
 
             //setting text size of the title
-            defaultRenderer.setChartTitleTextSize(24);
+            defaultRenderer.setChartTitleTextSize(26);
             //setting text size of the graph label
-            defaultRenderer.setLabelsTextSize(20);
-            //setting pan enablity which uses graph to move on both axis
+            defaultRenderer.setLabelsTextSize(24);
+            //setting pan ability which uses graph to move on both axis
             defaultRenderer.setPanEnabled(false);
             //setting click false on graph
             defaultRenderer.setClickEnabled(false);
@@ -206,6 +220,12 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             defaultRenderer.setInScroll(false);
             //setting text style
             defaultRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+            final Resources resources = getResources();
+
+            defaultRenderer.setLabelsColor(themeLight ?
+                    resources.getColor(R.color.black) :
+                    resources.getColor(R.color.white));
+
             //Setting background color of the graph to transparent
             defaultRenderer.setBackgroundColor(Color.TRANSPARENT);
             defaultRenderer.setApplyBackgroundColor(true);
@@ -220,7 +240,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             chartPlaceholderView.addView(chartView);
 
             chartPlaceholderView.setVisibility(View.VISIBLE);
-            loadingView.setVisibility(View.GONE);
+            mLoadingView.setVisibility(View.GONE);
             findViewById(R.id.active_ip_connections_detail_pie_chart_error).setVisibility(View.GONE);
 
         } catch (final Exception e) {
@@ -229,7 +249,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
             Utils.reportException(e);
             findViewById(R.id.active_ip_connections_detail_pie_chart_error)
                     .setVisibility(View.VISIBLE);
-            loadingView.setVisibility(View.GONE);
+            mLoadingView.setVisibility(View.GONE);
             chartPlaceholderView.setVisibility(View.GONE);
             if (optionsMenu != null) {
                 optionsMenu.findItem(R.id.active_ip_connections_pie_chart_share)
@@ -267,8 +287,8 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         viewToShare.draw(canvas);
 
         mFileToShare = new File(getCacheDir(),
-                String.format("Active IP Connections Chart By %s on Router '%s' (on %s).png",
-                        mByFilter, nullToEmpty(mRouter), mObservationDate));
+                Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s).png",
+                        mByFilter, nullToEmpty(mRouter), mObservationDate)));
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
@@ -336,7 +356,13 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
-                        mByFilter, nullToEmpty(mRouter), mObservationDate));
+                        mByFilter.getDisplayName(), nullToEmpty(mRouter), mObservationDate));
+
+        final String fullConnectionCountMap = Joiner.on("\n").withKeyValueSeparator(": ").useForNull("???").join(mConnectionsCountMap);
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                String.format("Connections Count Breakdown (by %s) on %s\n\n%s",
+                        mByFilter.getDisplayName(), mObservationDate, fullConnectionCountMap));
 
         sendIntent.setData(uriForFile);
         sendIntent.setType("image/png");
@@ -354,7 +380,17 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
     }
 
     public enum ByFilter {
-        SOURCE,
-        DESTINATION;
+        SOURCE("source"),
+        DESTINATION("destination");
+
+        private final String displayName;
+
+        ByFilter(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
     }
 }

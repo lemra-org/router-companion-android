@@ -65,6 +65,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -525,8 +526,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
             Exception exception = null;
             File file = new File(mParentFragmentActivity.getCacheDir(),
-                    String.format("nvram_data_%s_%s_%s.txt",
-                            mRouter.getUuid(), mRouter.getName(), mRouter.getRemoteIpAddress()));
+                    Utils.getEscapedFileName(String.format("nvram_data_%s_%s_%s.txt",
+                            mRouter.getUuid(), mRouter.getName(), mRouter.getRemoteIpAddress())));
             OutputStream outputStream = null;
             try {
                 outputStream = new BufferedOutputStream(new FileOutputStream(file, false));

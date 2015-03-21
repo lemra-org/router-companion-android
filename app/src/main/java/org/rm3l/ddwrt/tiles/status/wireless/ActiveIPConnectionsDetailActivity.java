@@ -79,12 +79,14 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
 public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
@@ -123,6 +125,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         final Gson gson = gsonBuilder.create();
                         final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
                         Log.d(LOG_TAG, "--> Result of GET " + url + ": " + ipWhoisInfo);
+
                         return ipWhoisInfo;
 
                     } finally {
@@ -157,6 +160,9 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
     private Multimap<String, String> mSourceIpToDestinationIp = ArrayListMultimap.create();
     private Multimap<String, String> mDestinationIpToSourceIp = ArrayListMultimap.create();
+    private ProgressBar mProgressBar;
+    private TextView mProgressBarDesc;
+    private AtomicInteger mCurrentProgress = new AtomicInteger(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +188,28 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         }
 
         setContentView(R.layout.tile_status_active_ip_connections);
+
+        if (themeLight) {
+            final Resources resources = getResources();
+            getWindow().getDecorView()
+                    .setBackgroundColor(resources.getColor(android.R.color.white));
+        }
+
+        mProgressBar = (ProgressBar) findViewById(R.id.tile_status_active_ip_connections_list_container_loading);
+        /*
+        Multiplied by 2, because the doInBackground method first resolved WHOIS,
+        and the loadFinished() method handles the views
+         */
+        mProgressBar.setMax(mActiveIPConnections.length + 2);
+
+        mProgressBarDesc = (TextView) findViewById(R.id.tile_status_active_ip_connections_list_container_loading_desc);
+        mProgressBarDesc.setTextColor(getResources().getColor(R.color.LimeGreen));
+        if (themeLight) {
+            mProgressBarDesc.setTextColor(getResources().getColor(R.color.black));
+        } else {
+            mProgressBarDesc.setTextColor(getResources().getColor(R.color.white));
+        }
+        mProgressBarDesc.setText("Loading...\n\n");
 
         mRouterRemoteIp = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mObservationDate = intent.getStringExtra(OBSERVATION_DATE);
@@ -243,11 +271,20 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     public Map<String, String> loadInBackground() {
                         final Map<String, String> result = new HashMap<>();
                         String existingRecord;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBarDesc.setText("Resolving IPs...\n\n");
+                            }
+                        });
+
                         for (final String activeIPConnection : mActiveIPConnections) {
                             final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
                             if (ipConntrackRow == null) {
                                 continue;
                             }
+
                             final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
                             existingRecord = result.get(sourceAddressOriginalSide);
                             if (isNullOrEmpty(existingRecord)) {
@@ -279,6 +316,9 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                                         dstIpWhoisResolved = "-";
                                     } else {
                                         dstIpWhoisResolved = org;
+                                        if (!mLocalIpToHostname.containsKey(destinationAddressOriginalSide)) {
+                                            mLocalIpToHostname.put(destinationAddressOriginalSide, org);
+                                        }
                                     }
                                 }
                                 result.put(destinationAddressOriginalSide, dstIpWhoisResolved);
@@ -286,6 +326,13 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
                             mSourceIpToDestinationIp.put(sourceAddressOriginalSide, destinationAddressOriginalSide);
                             mDestinationIpToSourceIp.put(destinationAddressOriginalSide, sourceAddressOriginalSide);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
+                                }
+                            });
                         }
                         runOnUiThread(new Runnable() {
                             @Override
@@ -309,6 +356,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             @Override
             public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> ipToHostResolvedMap) {
                 int i = 0;
+
+                mProgressBarDesc.setText("Building Views...\n\n");
 
                 for (final String activeIPConnection : mActiveIPConnections) {
                     final IPConntrack ipConntrackRow = IPConntrack.parseIpConntrackRow(activeIPConnection);
@@ -443,10 +492,11 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     destIpOrg.setVisibility(View.VISIBLE);
                     destIpOrgLoading.setVisibility(View.GONE);
 
+//                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
                 }
 
-                findViewById(R.id.tile_status_active_ip_connections_list_container_loading)
-                        .setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mProgressBarDesc.setVisibility(View.GONE);
                 containerLayout.setVisibility(View.VISIBLE);
 
             }
@@ -477,7 +527,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                String.format("%s on Router %s on %s.txt", mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate));
+                getEscapedFileName(String.format("%s on Router %s on %s.txt", mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate)));
 
         Exception exception = null;
         OutputStream outputStream = null;
@@ -518,9 +568,9 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
 
-            case R.id.tile_status_active_ip_connections_stats_by_source_ip:
+            case R.id.tile_status_active_ip_connections_stats_by_source_ip: {
                 final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
-                        "Loading...", false, false);
+                        "Loading Pie Chart (distribution by Source IPs)...", false, false);
                 alertDialog.show();
                 ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                 new Handler().postDelayed(new Runnable() {
@@ -539,17 +589,19 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         srcStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
                         srcStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
                         srcStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE.toString());
+                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE);
                         srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountBySourceIp);
                         startActivity(srcStatsIntent);
+                        alertDialog.cancel();
                     }
-                }, 500);
+                }, 1000l);
+            }
 
                 return true;
 
-            case R.id.tile_status_active_ip_connections_stats_by_destination_ip:
+            case R.id.tile_status_active_ip_connections_stats_by_destination_ip: {
                 final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
-                        "Loading...", false, false);
+                        "Loading Pie Chart (distribution by Destination IPs)...", false, false);
                 alertDialog2.show();
                 ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                 new Handler().postDelayed(new Runnable() {
@@ -568,12 +620,13 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
                         destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
                         destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION.toString());
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION);
                         destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
                         startActivity(destStatsIntent);
                         alertDialog2.cancel();
                     }
-                }, 500);
+                }, 1000l);
+            }
 
                 return true;
 

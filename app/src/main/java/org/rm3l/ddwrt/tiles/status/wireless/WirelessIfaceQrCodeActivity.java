@@ -266,8 +266,8 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         viewToShare.draw(canvas);
 
         mFileToShare = new File(getCacheDir(),
-                String.format("QR-Code_for_Wireless_Network__%s__on_router_%s.png",
-                        nullToEmpty(mSsid), nullToEmpty(mRouterUuid)));
+                Utils.getEscapedFileName(String.format("QR-Code_for_Wireless_Network__%s__on_router_%s.png",
+                        nullToEmpty(mSsid), nullToEmpty(mRouterUuid))));
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));

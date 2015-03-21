@@ -42,6 +42,7 @@ import com.google.common.base.Joiner;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -132,7 +133,7 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid)));
+                Utils.getEscapedFileName(String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid))));
 
         Exception exception = null;
         OutputStream outputStream = null;

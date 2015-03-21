@@ -291,4 +291,15 @@ public final class Utils {
         Log.d(TAG, "Data Sync Allowed By Usage Preference!");
     }
 
+    /**
+     * Replaces any character that isn't a number, letter or underscore with an underscore
+     *
+     * @param filename the filename to escape
+     * @return the filename escaped
+     */
+    @NonNull
+    public static String getEscapedFileName(@NonNull final String filename) {
+        return filename.replaceAll("\\W+", "_");
+    }
+
 }
