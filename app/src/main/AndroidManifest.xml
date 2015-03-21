@@ -94,20 +94,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:finishOnTaskLaunch="true"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- FIXME Deprecated REMOVE ME-->
-        <activity
-            android:name="org.achartengine.GraphicalActivity"
-            android:excludeFromRecents="true"
-            android:label="Chart"
-            android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main.DDWRTMainActivity" />
-        </activity>
         <activity
             android:name=".tiles.status.wan.WANMonthlyTrafficActivity"
-            android:excludeFromRecents="true"
             android:label="WAN Monthly Traffic"
             android:parentActivityName=".main.DDWRTMainActivity"
             android:screenOrientation="landscape"
@@ -117,6 +105,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value=".main.DDWRTMainActivity" />
         </activity>
 
+        <activity
+            android:name=".tiles.status.wireless.ActiveIPConnectionsDetailStatsActivity"
+            android:label="IP Connections Pie Chart"
+            android:parentActivityName=".main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.DDWRTMainActivity" />
+        </activity>
 
         <activity
             android:name=".settings.RouterSettingsActivity"

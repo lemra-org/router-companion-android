@@ -21,12 +21,12 @@
  */
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.AsyncTaskLoader;
@@ -40,6 +40,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +51,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -73,6 +76,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,7 +96,6 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     public static final String CONNECTED_HOST_IP = "CONNECTED_HOST_IP";
 
     public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
-    public static final Handler HANDLER = new Handler(Looper.getMainLooper());
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
     private static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
         @Override
@@ -150,6 +153,10 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     private String mTitle;
     private String mObservationDate;
     private String mConnectedHost;
+    private Menu mMenu;
+
+    private Multimap<String, String> mSourceIpToDestinationIp = ArrayListMultimap.create();
+    private Multimap<String, String> mDestinationIpToSourceIp = ArrayListMultimap.create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,7 +283,21 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                                 }
                                 result.put(destinationAddressOriginalSide, dstIpWhoisResolved);
                             }
+
+                            mSourceIpToDestinationIp.put(sourceAddressOriginalSide, destinationAddressOriginalSide);
+                            mDestinationIpToSourceIp.put(destinationAddressOriginalSide, sourceAddressOriginalSide);
                         }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mMenu != null) {
+                                    final MenuItem statsMenuItem = mMenu.findItem(R.id.tile_status_active_ip_connections_stats);
+                                    if (statsMenuItem != null) {
+                                        statsMenuItem.setVisible(true);
+                                    }
+                                }
+                            }
+                        });
 
                         return result;
                     }
@@ -427,6 +448,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                 findViewById(R.id.tile_status_active_ip_connections_list_container_loading)
                         .setVisibility(View.GONE);
                 containerLayout.setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -439,6 +461,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_active_ip_connections_options, menu);
+
+        this.mMenu = menu;
 
         //Hide 'Stats by Source' menu item (because it is the same source)
         menu.findItem(R.id.tile_status_active_ip_connections_stats_by_source_ip)
@@ -493,14 +517,66 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
             case R.id.tile_status_active_ip_connections_stats_by_source_ip:
-                //TODO
-                Toast.makeText(this, "[FIXME] Stats by Source IPs", Toast.LENGTH_SHORT).show();
+                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null,
+                        "Loading...", false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final HashMap<String, Integer> connectionsCountBySourceIp = new HashMap<>();
+                        for (final Map.Entry<String, Collection<String>> entry : mSourceIpToDestinationIp.asMap().entrySet()) {
+                            final Collection<String> value = entry.getValue();
+                            if (value == null) {
+                                continue;
+                            }
+                            connectionsCountBySourceIp.put(entry.getKey(), value.size());
+                        }
+                        final Intent srcStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+                                ActiveIPConnectionsDetailStatsActivity.class);
+                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+                        srcStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+                        srcStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.SOURCE);
+                        srcStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountBySourceIp);
+                        startActivity(srcStatsIntent);
+                    }
+                }, 500);
+
                 return true;
+
             case R.id.tile_status_active_ip_connections_stats_by_destination_ip:
-                //TODO
-                Toast.makeText(this, "[FIXME] Stats by Destination IPs", Toast.LENGTH_SHORT).show();
+                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
+                        "Loading...", false, false);
+                alertDialog2.show();
+                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final HashMap<String, Integer> connectionsCountByDestinationIp = new HashMap<>();
+                        for (final Map.Entry<String, Collection<String>> entry : mDestinationIpToSourceIp.asMap().entrySet()) {
+                            final Collection<String> value = entry.getValue();
+                            if (value == null) {
+                                continue;
+                            }
+                            connectionsCountByDestinationIp.put(entry.getKey(), value.size());
+                        }
+                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+                                ActiveIPConnectionsDetailStatsActivity.class);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
+                        startActivity(destStatsIntent);
+                        alertDialog2.cancel();
+                    }
+                }, 500);
+
                 return true;
+
             default:
                 break;
         }
