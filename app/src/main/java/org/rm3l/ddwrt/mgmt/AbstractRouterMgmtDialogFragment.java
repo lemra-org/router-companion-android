@@ -192,7 +192,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         });
         ((Spinner) view.findViewById(R.id.router_add_firmware)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View childView, int pos, long id) {
                 switch (pos) {
                     case 1:
                         //DD-WRT
