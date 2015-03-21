@@ -79,17 +79,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
     <string name="router_connection_proto_select">Select connection method</string>
 
+    <!-- TODO Other items disabled for now, until we get the right implementation for OpenWrt
+    (and provide an external no-launcher app plugin for it) -->
     <string-array name="router_firmwares_array">
-        <item>-Autodetect-</item>
+        <!--<item>-Autodetect-</item>-->
         <item>DD-WRT</item>
-        <item>OpenWrt (Beta)</item>
+        <!--<item>OpenWrt (Beta)</item>-->
         <!--<item>Tomato</item>-->
     </string-array>
     <string name="router_firmware_select">Select firmware or let us guess</string>
     <string-array name="router_firmwares_array_values">
-        <item>auto</item>
+        <!--<item>auto</item>-->
         <item>DDWRT</item>
-        <item>OPENWRT</item>
+        <!--<item>OPENWRT</item>-->
         <!--<item>TOMATO</item>-->
     </string-array>
 
