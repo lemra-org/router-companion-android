@@ -10,9 +10,9 @@ import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.ArpPingFromRouterAction;
 import org.rm3l.ddwrt.resources.conn.Router;
 
-public class ToolboxArpPingTile extends AbstractToolboxTile {
+public class ToolboxArpingTile extends AbstractToolboxTile {
 
-    public ToolboxArpPingTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
+    public ToolboxArpingTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router);
     }
 

@@ -456,6 +456,15 @@ public final class SSHUtils {
                                             @Nullable final RouterStreamActionListener routerStreamActionListener,
                                             @NonNull final String... cmdToExecute) throws Exception {
 
+        final Router routerCopy = new Router(router);
+        final String tempUuid = UUID.randomUUID().toString();
+        routerCopy.setUuid(tempUuid);
+
+        if (routerStreamActionListener != null) {
+            routerStreamActionListener
+                    .notifyRouterActionProgress(routerAction, routerCopy, 0, null);
+        }
+
         Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         checkDataSyncAlllowedByUsagePreference(ctx);
@@ -463,10 +472,6 @@ public final class SSHUtils {
         ChannelExec channelExec = null;
         InputStream in = null;
         InputStream err = null;
-
-        final Router routerCopy = new Router(router);
-        final String tempUuid = UUID.randomUUID().toString();
-        routerCopy.setUuid(tempUuid);
 
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(tempUuid);
         reentrantLock.lock();
@@ -488,11 +493,6 @@ public final class SSHUtils {
             err = channelExec.getErrStream();
 
             channelExec.connect();
-
-            if (routerStreamActionListener != null) {
-                routerStreamActionListener
-                        .notifyRouterActionProgress(routerAction, routerCopy, 0, null);
-            }
 
             byte[] tmp = new byte[1024];
             int progress = 1;

@@ -99,7 +99,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
     public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
-    private static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
+    public static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
         @Override
         protected IPWhoisInfo create(String ipAddr) {
             if (isNullOrEmpty(ipAddr)) {

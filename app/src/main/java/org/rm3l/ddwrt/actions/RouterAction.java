@@ -35,7 +35,8 @@ public enum RouterAction {
     ARPING("Arping"),
     TRACEROUTE("Traceroute"),
     NSLOOKUP("NSLookup"),
-    CMD_SHELL("Execute Command");
+    CMD_SHELL("Execute Command"),
+    WHOIS("WHOIS");
 
     private final String displayName;
 
