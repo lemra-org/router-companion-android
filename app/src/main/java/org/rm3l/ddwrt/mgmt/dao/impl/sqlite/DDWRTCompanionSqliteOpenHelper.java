@@ -28,11 +28,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.rm3l.ddwrt.resources.conn.Router;
 
-import java.util.Map;
+import java.util.Collection;
 
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
@@ -66,24 +67,29 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "routers.db";
 
     /*
-     TODO In case of DB upgrades, don't forget to increment this field,
+     TODO In case of DB upgrades, don't forget to increment (by 2) this field,
      update DATABASE_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
-    private static final Map<Integer, String> DATABASE_UPGRADES = Maps.newHashMap();
+    private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
 
     static {
         //V2: Add Router Firmware
+        // Queries are executed in this order
         DATABASE_UPGRADES.put(2,
-                String.format("ALTER TABLE %s ADD COLUMN %s TEXT DEFAULT NULL; " +
-                                "UPDATE %s SET %s=\"%s\";",
-                        TABLE_ROUTERS, ROUTER_FIRMWARE,
+                String.format("ALTER TABLE %s ADD COLUMN %s TEXT DEFAULT NULL; ",
+                        TABLE_ROUTERS, ROUTER_FIRMWARE));
+        DATABASE_UPGRADES.put(2,
+                String.format("UPDATE %s SET %s=\"%s\";",
                         TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
+
+        //V4: Add Router Firmware: Fix following 3.0.0 update
+        DATABASE_UPGRADES.put(4, String.format("UPDATE %s SET %s=\"%s\";",
+                TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
     }
 
-    //10 au 11 avril => compact diesel
     public DDWRTCompanionSqliteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -104,26 +110,15 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion) {
             //Loop because we do not know what version users will be converted from or to
-            final String upgradeToSql = DATABASE_UPGRADES.get(upgradeTo);
-            if (!Strings.isNullOrEmpty(upgradeToSql)) {
-                db.execSQL(upgradeToSql);
+            final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
+            if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
+                for (final String upgradeToSql : upgradeToSqlCollection) {
+                    if (!Strings.isNullOrEmpty(upgradeToSql)) {
+                        db.execSQL(upgradeToSql);
+                    }
+                }
             }
             upgradeTo++;
-//            }
-//            switch (upgradeTo)
-//            {
-//                case 2:
-//                    db.execSQL(SQLiteSet.V5_ADD_LAST_CARD);
-//                    db.execSQL(SQLiteCard.V5_ADD_FAILED);
-//                    break;
-//                case 6:
-//                    db.execSQL(SQLiteSet.V6_ADD_IMPORT_TYPE);
-//                    break;
-//                case 7:
-//                    db.execSQL(SQLiteSet.V7_ADD_SHORT_FNAME);
-//                    break;
-//            }
-//            upgradeTo++;
         }
     }
 }
