@@ -158,7 +158,10 @@ public class IPConntrack {
                 } else {
                     s = toList.get(4);
                 }
-                ipConntrack.setSourceAddressOriginalSide(EQUALS_SPLITTER.splitToList(s).get(1));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setSourceAddressOriginalSide(stringList.get(1));
+                }
             }
 
             if (toList.size() >= 6) {
@@ -169,7 +172,10 @@ public class IPConntrack {
                 } else {
                     s = toList.get(5);
                 }
-                ipConntrack.setDestinationAddressOriginalSide(EQUALS_SPLITTER.splitToList(s).get(1));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setDestinationAddressOriginalSide(stringList.get(1));
+                }
             }
 
             if (toList.size() >= 7) {
@@ -180,7 +186,10 @@ public class IPConntrack {
                 } else {
                     s = toList.get(6);
                 }
-                ipConntrack.setSourcePortOriginalSide(Integer.parseInt(EQUALS_SPLITTER.splitToList(s).get(1)));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setSourcePortOriginalSide(Integer.parseInt(stringList.get(1)));
+                }
             }
 
             if (toList.size() >= 8) {
@@ -191,7 +200,10 @@ public class IPConntrack {
                 } else {
                     s = toList.get(7);
                 }
-                ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(EQUALS_SPLITTER.splitToList(s).get(1)));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(stringList.get(1)));
+                }
             }
 
             if (toList.size() >= 9) {
@@ -202,7 +214,10 @@ public class IPConntrack {
                 } else {
                     s = toList.get(8);
                 }
-                ipConntrack.setPackets(Long.parseLong(EQUALS_SPLITTER.splitToList(s).get(1)));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setPackets(Long.parseLong(stringList.get(1)));
+                }
             }
 
             if (toList.size() >= 10) {
@@ -213,16 +228,18 @@ public class IPConntrack {
                 } else {
                     s = toList.get(9);
                 }
-                ipConntrack.setBytes(Long.parseLong(EQUALS_SPLITTER.splitToList(s).get(1)));
+                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
+                if (stringList != null && stringList.size() >= 2) {
+                    ipConntrack.setBytes(Long.parseLong(stringList.get(1)));
+                }
             }
 
 
         } catch (final Exception e) {
-            Utils.reportException(e);
+            Utils.reportException(new IllegalStateException("Error when parsing IP Conntrack row: " + row,
+                    e));
             return null;
         }
-
-        //TODO Parse row
 
         return ipConntrack;
     }

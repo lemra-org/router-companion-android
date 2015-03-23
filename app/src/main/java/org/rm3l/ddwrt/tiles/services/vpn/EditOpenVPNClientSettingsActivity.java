@@ -369,6 +369,13 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
         //Compare each variable
 
         boolean applyNewPrefs = false;
+
+        if (sharedPreferences == null) {
+            setResult(RESULT_CANCELED, data);
+            super.finish();
+            return;
+        }
+
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         final String isOpenVPNClientOn = ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag))

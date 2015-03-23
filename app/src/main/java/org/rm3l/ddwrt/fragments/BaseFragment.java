@@ -197,7 +197,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
 
         final BaseFragment[] tabsToSort;
 
-        final Router.RouterFirmware routerFirmwareForFragments;
+        Router.RouterFirmware routerFirmwareForFragments;
         final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
         if (parentFragmentOnPageChangeListener instanceof Context) {
             final Router routerFromDao = RouterManagementActivity
@@ -217,6 +217,13 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
             Utils.reportException(
                     new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
         }
+
+        //FIXME Once full support of other firmwares is implemented
+        if (routerFirmwareForFragments == null ||
+                Router.RouterFirmware.UNKNOWN.equals(routerFirmwareForFragments)) {
+            routerFirmwareForFragments = Router.RouterFirmware.DDWRT;
+        }
+        //FIXME End
 
         switch (routerFirmwareForFragments) {
             case OPENWRT:

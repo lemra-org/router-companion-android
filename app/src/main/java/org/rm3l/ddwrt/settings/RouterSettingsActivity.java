@@ -72,14 +72,20 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.mRouterUuid = getIntent().getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
+        boolean doFinish = false;
         //noinspection ConstantConditions
         if ((mRouter = RouterManagementActivity.getDao(this).getRouter(this.mRouterUuid)) == null) {
             Toast.makeText(this, "No router set or router no longer exists", Toast.LENGTH_LONG).show();
-            finish();
-            return;
+            doFinish = true;
         }
 
+        //Need to call super.onCreate prior to calling finish()
         super.onCreate(savedInstanceState);
+
+        if (doFinish) {
+            finish();
+        }
+
     }
 
     @NonNull

@@ -470,12 +470,14 @@ public class RouterManagementActivity
                 return;
             }
 
-            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
-            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
-                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
-                return;
-            }
+            //FIXME Uncomment once other firmwares are fully supported
+//            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+//            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+//                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
+//                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
+//                return;
+//            }
+            //FIXME End
 
             final String routerUuid = router.getUuid();
 
@@ -502,7 +504,7 @@ public class RouterManagementActivity
                         startActivity(view, ddWrtMainIntent);
                         alertDialog.cancel();
                     }
-                }, 2000);
+                }, 1000);
             }
 
         }

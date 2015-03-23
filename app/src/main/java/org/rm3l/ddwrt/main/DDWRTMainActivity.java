@@ -177,11 +177,14 @@ public class DDWRTMainActivity extends ActionBarActivity
         this.mRouter = router;
 
         final RouterFirmware routerFirmware = this.mRouter.getRouterFirmware();
-        if (routerFirmware == null || RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-            Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
-                    "Consider editing the Router record to manually specify a supported firmware.", Style.ALERT);
-            finish();
-        }
+
+        //FIXME Uncomment once support for other firmwares is provided
+//        if (routerFirmware == null || RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+//            Utils.displayMessage(this, "Router Firmware unknown or not supported! " +
+//                    "Consider editing the Router record to manually specify a supported firmware.", Style.ALERT);
+//            finish();
+//        }
+        //FIXME End
 
         final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
         this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -314,12 +317,14 @@ public class DDWRTMainActivity extends ActionBarActivity
 //            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
             mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
             for (final Router router : allRouters) {
-                final RouterFirmware routerFirmware;
-                if (router == null ||
-                        (routerFirmware = router.getRouterFirmware()) == null ||
-                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-                    continue;
-                }
+                //FIXME Uncomment once full support of other firmwares is implemented
+//                final RouterFirmware routerFirmware;
+//                if (router == null ||
+//                        (routerFirmware = router.getRouterFirmware()) == null ||
+//                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+//                    continue;
+//                }
+                //FIXME End
                 mRoutersListForPicker.add(router);
             }
 
@@ -890,12 +895,14 @@ public class DDWRTMainActivity extends ActionBarActivity
             final int allRoutersSize = allRouters.size();
             mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
             for (final Router wrt : allRouters) {
-                final RouterFirmware routerFirmware;
-                if (wrt == null ||
-                        (routerFirmware = wrt.getRouterFirmware()) == null ||
-                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-                    continue;
-                }
+                //FIXME Uncomment once other firmwares are fully supported
+//                final RouterFirmware routerFirmware;
+//                if (wrt == null ||
+//                        (routerFirmware = wrt.getRouterFirmware()) == null ||
+//                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+//                    continue;
+//                }
+                //FIXME End
                 mRoutersListForPicker.add(wrt);
             }
 
