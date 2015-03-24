@@ -382,8 +382,8 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         viewToShare.draw(canvas);
 
         mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("WAN Monthly Traffic for '%s' on Router '%s'.png",
-                        nullToEmpty(mMonthDisplayed), nullToEmpty(mRouter))));
+                Utils.getEscapedFileName(String.format("WAN Monthly Traffic for '%s' on Router '%s'",
+                        nullToEmpty(mMonthDisplayed), nullToEmpty(mRouter))) + ".png");
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));

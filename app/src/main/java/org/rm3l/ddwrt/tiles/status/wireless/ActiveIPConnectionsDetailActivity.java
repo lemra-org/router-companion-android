@@ -534,7 +534,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                getEscapedFileName(String.format("%s on Router %s on %s.txt", mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate)));
+                getEscapedFileName(String.format("%s on Router %s on %s",
+                        mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate)) + ".txt");
 
         Exception exception = null;
         OutputStream outputStream = null;

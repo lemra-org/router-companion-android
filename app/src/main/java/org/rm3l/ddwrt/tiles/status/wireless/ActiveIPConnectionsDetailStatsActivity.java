@@ -287,8 +287,8 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         viewToShare.draw(canvas);
 
         mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s).png",
-                        mByFilter, nullToEmpty(mRouter), mObservationDate)));
+                Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
+                        mByFilter, nullToEmpty(mRouter), mObservationDate)) + ".png");
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));

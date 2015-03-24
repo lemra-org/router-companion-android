@@ -526,8 +526,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
             Exception exception = null;
             File file = new File(mParentFragmentActivity.getCacheDir(),
-                    Utils.getEscapedFileName(String.format("nvram_data_%s_%s_%s.txt",
-                            mRouter.getUuid(), mRouter.getName(), mRouter.getRemoteIpAddress())));
+                    Utils.getEscapedFileName(String.format("nvram_data_%s_%s_%s",
+                            mRouter.getUuid(), mRouter.getName(), mRouter.getRemoteIpAddress())) + ".txt");
             OutputStream outputStream = null;
             try {
                 outputStream = new BufferedOutputStream(new FileOutputStream(file, false));

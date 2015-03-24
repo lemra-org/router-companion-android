@@ -133,7 +133,7 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("CPU_Info__%s.txt", nullToEmpty(mRouterUuid))));
+                Utils.getEscapedFileName(String.format("CPU_Info__%s", nullToEmpty(mRouterUuid))) + ".txt");
 
         Exception exception = null;
         OutputStream outputStream = null;

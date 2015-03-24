@@ -132,7 +132,7 @@ public class RouterMemInfoActivity extends ActionBarActivity {
         }
 
         mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("Mem_Info__%s.txt", nullToEmpty(mRouterUuid))));
+                Utils.getEscapedFileName(String.format("Mem_Info__%s", nullToEmpty(mRouterUuid))) + ".txt");
 
         Exception exception = null;
         OutputStream outputStream = null;
