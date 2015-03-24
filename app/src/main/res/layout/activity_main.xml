@@ -52,7 +52,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="116dp"
+                android:layout_height="100dp"
                 android:background="@drawable/router_picker_background"
                 android:orientation="vertical">
                 <TextView

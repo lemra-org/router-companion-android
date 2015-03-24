@@ -40,8 +40,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string name="donation_paypal_item">Donation</string>
 
-    <string-array name="navigation_drawer_items_array_item1">
+    <string name="navigation_drawer_items_array_item1_header">Status</string>
+    <string-array name="navigation_drawer_items_array_item1_items">
         <item>Status</item>
+        <item>Wireless</item>
+        <item>Clients</item>
+        <item>Monitoring</item>
     </string-array>
 
     <string name="navigation_drawer_items_array_item2_header">Services</string>

@@ -229,12 +229,12 @@ public class DDWRTMainActivity extends ActionBarActivity
         initDrawer();
 
         final Integer savedPosition;
-        int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 0);
+        int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 1);
         if (savedInstanceState != null && (savedPosition = savedInstanceState.getInt(SAVE_ITEM_SELECTED)) != null) {
             position = savedPosition;
         }
-        if (position < 0) {
-            position = 0;
+        if (position < 1) {
+            position = 1;
         }
 
         mDrawerList.performItemClick(
@@ -418,9 +418,11 @@ public class DDWRTMainActivity extends ActionBarActivity
         final Resources resources = getResources();
 
         mNavigationDrawerAdapter = new NavigationDrawerArrayAdapter(this);
-        // Section 1: No Header
+
+        // Section 1: Status: { Status, Wireless, Clients, Monitoring}
+        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item1_header));
         String[] menuItems = resources.getStringArray(
-                R.array.navigation_drawer_items_array_item1);
+                R.array.navigation_drawer_items_array_item1_items);
         for (final String item : menuItems) {
             mNavigationDrawerAdapter.addItem(item, false);
         }
