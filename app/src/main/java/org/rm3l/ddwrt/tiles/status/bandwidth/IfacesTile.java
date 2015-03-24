@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +98,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
+                                NVRAMInfo.LAN_IFNAMES,
                                 NVRAMInfo.WAN_IFNAME,
                                 NVRAMInfo.LANDEVS);
                     } finally {
@@ -105,6 +107,14 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS, null);
+                        if (Strings.isNullOrEmpty(landevs)) {
+                            //Atheros
+                            landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+                            if (!Strings.isNullOrEmpty(landevs)) {
+                                //noinspection ConstantConditions
+                                nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+                            }
+                        }
                         if (landevs != null) {
                             final List<String> splitToList =
                                     SPLITTER.splitToList(landevs);

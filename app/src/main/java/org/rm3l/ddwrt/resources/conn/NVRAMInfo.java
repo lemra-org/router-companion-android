@@ -121,6 +121,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String OPENVPN_CRT = "openvpn_crt";
     public static final String OPENVPN_CRL = "openvpn_crl";
     public static final String OPENVPN_STATIC = "openvpn_static";
+    public static final String LAN_IFNAMES = "lan_ifnames";
 
     /**
      * Default constructor: initialized an empty Properties set

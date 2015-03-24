@@ -41,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.R;
@@ -103,15 +104,23 @@ public class StatusWirelessFragment extends BaseFragment<Collection<DDWRTTile>> 
 
                     final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(this.getContext(), StatusWirelessFragment.this.router,
                             getActivity()
-                                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE), NVRAMInfo.LANDEVS);
+                                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                            Context.MODE_PRIVATE),
+                            NVRAMInfo.LANDEVS,
+                            NVRAMInfo.LAN_IFNAMES);
 
                     if (nvramInfo == null) {
                         return null;
                     }
 
-                    final String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-                    if (landevs == null) {
-                        return null;
+                    String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+                    if (Strings.isNullOrEmpty(landevs)) {
+                        //Atheros
+                        landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+                        if (!Strings.isNullOrEmpty(landevs)) {
+                            //noinspection ConstantConditions
+                            nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+                        }
                     }
 
                     final List<String> splitToList = SPLITTER.splitToList(landevs);
