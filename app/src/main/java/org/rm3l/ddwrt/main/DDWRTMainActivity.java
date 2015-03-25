@@ -555,7 +555,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         }
 
-        if (!RouterFirmware.DDWRT.equals(mRouter)) {
+        if (!RouterFirmware.DDWRT.equals(mRouter.getRouterFirmware())) {
             //FIXME Command used to restore factory defaults works best on DD-WRT, not on OpenWRT and other firmwares
             // So hide this menu item until we find a better way to achieve this!
             final MenuItem item = menu.findItem(R.id.action_ddwrt_actions_restore_factory_defaults);
