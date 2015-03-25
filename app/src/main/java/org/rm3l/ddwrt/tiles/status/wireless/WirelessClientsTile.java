@@ -178,7 +178,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String TEMP_ROUTER_UUID = UUID.randomUUID().toString();
     public static final String RT_GRAPHS = "rt_graphs";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
-    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 199;
+    private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
     private static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
 
         @Override
@@ -277,10 +277,30 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private Loader<ClientDevices> mCurrentLoader;
     private MenuItem mActiveIpConnectionsMenuItem;
 
+    private ProgressBar mProgressBar;
+    private TextView mProgressBarDesc;
+    private boolean isThemeLight;
+
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
                 router,
                 R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
+
+        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+        //FIXME
+        mProgressBar = (ProgressBar) layout
+                .findViewById(R.id.tile_status_wireless_clients_loading_view);
+        mProgressBar.setMax(100);
+        mProgressBarDesc = (TextView) layout
+                .findViewById(R.id.tile_status_wireless_clients_loading_view_desc);
+
+        if (isThemeLight) {
+            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.black));
+        } else {
+            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
+        }
+        mProgressBarDesc.setText("Loading...\n\n");
 
         //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
         //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
@@ -302,7 +322,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
 //        Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
-        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+        if (!isThemeLight) {
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
@@ -501,6 +521,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             @Override
             public ClientDevices loadInBackground() {
 
+                isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
                 Log.d(LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
                         mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -529,6 +551,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 try {
 
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(10);
+                            mProgressBarDesc.setText("Fetching Broadcast address (for Wake on LAN (WOL)...\n\n");
+                        }
+                    });
+
                     //Get Broadcast Addresses (for WOL)
                     try {
                         final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
@@ -547,6 +577,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         e.printStackTrace();
                     }
 
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(20);
+                            mProgressBarDesc.setText("Loading active clients...\n\n");
+                        }
+                    });
+
                     //Active clients
                     activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                             "arp -a 2>/dev/null");
@@ -554,6 +592,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(30);
+                            mProgressBarDesc.setText("Loading DHCP Leases...\n\n");
+                        }
+                    });
                     //Active DHCP Leases
                     activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                             "cat /tmp/dnsmasq.leases 2>/dev/null");
@@ -561,6 +606,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(40);
+                            mProgressBarDesc.setText("Loading Active IP Connections...\n\n");
+                        }
+                    });
                     //Active IP Connections
                     activeIPConnections = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                             "cat /proc/net/ip_conntrack 2>/dev/null");
@@ -582,6 +634,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                        //No worries
 //                    }
 
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(50);
+                            mProgressBarDesc.setText("Loading wireless clients...\n\n");
+                        }
+                    });
                     //Get list of wireless clients connected
                     final Multimap<String, String> wirelessIfaceAssocList = ArrayListMultimap.create();
                     try {
@@ -671,12 +730,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final Splitter splitter = Splitter.on(" ");
 
+                    final int outputLen = output.length;
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(60);
+                            mProgressBarDesc.setText("Processing a total of " + outputLen + " connected hosts...\n\n");
+                        }
+                    });
                     String ipAddress;
                     final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
+                    int u = 1;
                     for (final String stdoutLine : output) {
                         if ("done".equals(stdoutLine)) {
                             break;
                         }
+                        final int v = u++;
                         final List<String> as = splitter.splitToList(stdoutLine);
                         if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
                             final String macAddress = as.get(1);
@@ -799,6 +868,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 }
                             }
 
+                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBarDesc.setText("Resolving IPs (" +
+                                            v + "/" + outputLen +
+                                            ")...\n\n");
+                                }
+                            });
                             device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
 
                             macToDeviceOutput.put(macAddress, device);
@@ -827,6 +904,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
 
                     synchronized (usageDataLock) {
+
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setProgress(70);
+                                mProgressBarDesc.setText("Retrieving bandwidth monitoring data...\n\n");
+                            }
+                        });
 
                         try {
                             final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
@@ -892,7 +977,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                         if (usageDbOutLines != null) {
 
+                            final int z = 80;
+                            int t = 1;
+                            final int usageDbOutLinesLen = usageDbOutLines.length;
                             for (final String usageDbOutLine : usageDbOutLines) {
+                                final int x = t;
+                                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setProgress(z);
+                                        mProgressBarDesc.setText("Retrieving bandwidth monitoring data (" +
+                                                x + "/" + usageDbOutLinesLen +
+                                                "...\n\n");
+                                    }
+                                });
                                 if (isNullOrEmpty(usageDbOutLine)) {
                                     continue;
                                 }
@@ -964,6 +1062,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             }
                         }
                     }
+
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(90);
+                            mProgressBarDesc.setText("Getting WAN Access Status for each client...\n\n");
+                        }
+                    });
 
                     //WAN Access
                     try {
@@ -1088,13 +1194,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public void onLoadFinished(Loader<ClientDevices> loader, ClientDevices data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_wireless_clients_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
-                .setVisibility(View.VISIBLE);
-
         //noinspection ThrowableResultOfMethodCallIgnored
         if (data == null ||
                 (data.getDevices().isEmpty() &&
@@ -1109,6 +1208,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         final Exception exception = data.getException();
 
         if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+            mProgressBar.setProgress(97);
+            mProgressBarDesc.setText("Generating views...\n\n");
 
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
@@ -1177,7 +1279,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
 
 //            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
-            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
             final String expandedClientsPrefKey = \"fake-key\";
 
@@ -1784,6 +1885,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
 
         }
+
+        mProgressBar.setVisibility(View.GONE);
+        mProgressBarDesc.setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)
+                .setVisibility(View.VISIBLE);
+        layout.findViewById(R.id.tile_status_wireless_clients_togglebutton_container)
+                .setVisibility(View.VISIBLE);
+
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
             //noinspection ThrowableResultOfMethodCallIgnored

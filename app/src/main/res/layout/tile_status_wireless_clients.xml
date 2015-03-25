@@ -236,12 +236,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/show_more"
             android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/tile_status_wireless_clients_loading_view"
+        <TextView
+            android:id="@+id/tile_status_wireless_clients_loading_view_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:textStyle="italic" />
 
+        <ProgressBar
+            android:id="@+id/tile_status_wireless_clients_loading_view"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="false"
+            android:indeterminateOnly="false"
+            android:maxHeight="35dip"
+            android:minHeight="35dip" />
 
     </LinearLayout>
 </LinearLayout>
