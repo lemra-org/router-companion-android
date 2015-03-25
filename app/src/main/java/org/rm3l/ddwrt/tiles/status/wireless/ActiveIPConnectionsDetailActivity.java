@@ -600,6 +600,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     for (final CardView cardView : ipConntrackMap.values()) {
                         containerLayout.addView(cardView);
                     }
+                    //Hide it now
+                    searchView.setIconified(true);
                 }
             });
         }
