@@ -46,6 +46,12 @@ public class IPConntrack {
     @NonNull
     private TransportProtocol transportProtocol;
 
+    @Nullable
+    private String sourceHostname;
+
+    @Nullable
+    private String destWhoisOrHostname;
+
     /**
      * Seconds until this entry expires.
      */
@@ -244,6 +250,81 @@ public class IPConntrack {
         return ipConntrack;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IPConntrack that = (IPConntrack) o;
+
+        if (assured != that.assured) return false;
+        if (bytes != that.bytes) return false;
+        if (destinationPortOriginalSide != that.destinationPortOriginalSide) return false;
+        if (destinationPortReplySide != that.destinationPortReplySide) return false;
+        if (hasSeenTrafficInBothDirections != that.hasSeenTrafficInBothDirections) return false;
+        if (packets != that.packets) return false;
+        if (sourcePortOriginalSide != that.sourcePortOriginalSide) return false;
+        if (sourcePortReplySide != that.sourcePortReplySide) return false;
+        if (structUseCount != that.structUseCount) return false;
+        if (timeout != that.timeout) return false;
+        if (destinationAddressOriginalSide != null ? !destinationAddressOriginalSide.equals(that.destinationAddressOriginalSide) : that.destinationAddressOriginalSide != null)
+            return false;
+        if (destinationAddressReplySide != null ? !destinationAddressReplySide.equals(that.destinationAddressReplySide) : that.destinationAddressReplySide != null)
+            return false;
+        if (sourceAddressOriginalSide != null ? !sourceAddressOriginalSide.equals(that.sourceAddressOriginalSide) : that.sourceAddressOriginalSide != null)
+            return false;
+        if (sourceAddressReplySide != null ? !sourceAddressReplySide.equals(that.sourceAddressReplySide) : that.sourceAddressReplySide != null)
+            return false;
+        if (tcpConnectionState != null ? !tcpConnectionState.equals(that.tcpConnectionState) : that.tcpConnectionState != null)
+            return false;
+        if (transportProtocol != that.transportProtocol) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transportProtocol.hashCode();
+        result = 31 * result + (int) (timeout ^ (timeout >>> 32));
+        result = 31 * result + (tcpConnectionState != null ? tcpConnectionState.hashCode() : 0);
+        result = 31 * result + (sourceAddressOriginalSide != null ? sourceAddressOriginalSide.hashCode() : 0);
+        result = 31 * result + (destinationAddressOriginalSide != null ? destinationAddressOriginalSide.hashCode() : 0);
+        result = 31 * result + sourcePortOriginalSide;
+        result = 31 * result + destinationPortOriginalSide;
+        result = 31 * result + (hasSeenTrafficInBothDirections ? 1 : 0);
+        result = 31 * result + (sourceAddressReplySide != null ? sourceAddressReplySide.hashCode() : 0);
+        result = 31 * result + (destinationAddressReplySide != null ? destinationAddressReplySide.hashCode() : 0);
+        result = 31 * result + sourcePortReplySide;
+        result = 31 * result + destinationPortReplySide;
+        result = 31 * result + (assured ? 1 : 0);
+        result = 31 * result + structUseCount;
+        result = 31 * result + (int) (packets ^ (packets >>> 32));
+        result = 31 * result + (int) (bytes ^ (bytes >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "IPConntrack{" +
+                "transportProtocol=" + transportProtocol +
+                ", timeout=" + timeout +
+                ", tcpConnectionState='" + tcpConnectionState + '\'' +
+                ", sourceAddressOriginalSide='" + sourceAddressOriginalSide + '\'' +
+                ", destinationAddressOriginalSide='" + destinationAddressOriginalSide + '\'' +
+                ", sourcePortOriginalSide=" + sourcePortOriginalSide +
+                ", destinationPortOriginalSide=" + destinationPortOriginalSide +
+                ", hasSeenTrafficInBothDirections=" + hasSeenTrafficInBothDirections +
+                ", sourceAddressReplySide='" + sourceAddressReplySide + '\'' +
+                ", destinationAddressReplySide='" + destinationAddressReplySide + '\'' +
+                ", sourcePortReplySide=" + sourcePortReplySide +
+                ", destinationPortReplySide=" + destinationPortReplySide +
+                ", assured=" + assured +
+                ", structUseCount=" + structUseCount +
+                ", packets=" + packets +
+                ", bytes=" + bytes +
+                '}';
+    }
+
     @NonNull
     public TransportProtocol getTransportProtocol() {
         return transportProtocol;
@@ -378,9 +459,28 @@ public class IPConntrack {
         this.bytes = bytes;
     }
 
+    @Nullable
+    public String getSourceHostname() {
+        return sourceHostname;
+    }
+
+    public void setSourceHostname(@Nullable String sourceHostname) {
+        this.sourceHostname = sourceHostname;
+    }
+
+    @Nullable
+    public String getDestWhoisOrHostname() {
+        return destWhoisOrHostname;
+    }
+
+    public void setDestWhoisOrHostname(@Nullable String destWhoisOrHostname) {
+        this.destWhoisOrHostname = destWhoisOrHostname;
+    }
+
     public enum TransportProtocol {
         TCP("TCP", 6),
-        UDP("UDP", 17);
+        UDP("UDP", 17),
+        ICMP("ICMP", 1);
 
         @NonNull
         private final String displayName;

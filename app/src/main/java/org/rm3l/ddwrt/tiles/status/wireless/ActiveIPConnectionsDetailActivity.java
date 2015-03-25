@@ -22,6 +22,8 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -37,6 +39,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,13 +48,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
@@ -86,6 +93,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
 public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
@@ -147,6 +155,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             return null;
         }
     };
+    private final Map<IPConntrack, CardView> ipConntrackMap = Maps.newHashMap();
     private HashMap<String, String> mLocalIpToHostname;
     private ShareActionProvider mShareActionProvider;
     private String mRouterRemoteIp;
@@ -157,7 +166,6 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     private String mObservationDate;
     private String mConnectedHost;
     private Menu mMenu;
-
     private Multimap<String, String> mSourceIpToDestinationIp = ArrayListMultimap.create();
     private Multimap<String, String> mDestinationIpToSourceIp = ArrayListMultimap.create();
     private ProgressBar mProgressBar;
@@ -169,6 +177,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         final Intent intent = getIntent();
+
+        handleIntent(intent);
 
         mActiveIPConnections = intent.getStringArrayExtra(ACTIVE_IP_CONNECTIONS_OUTPUT);
         if (mActiveIPConnections == null || mActiveIPConnections.length == 0) {
@@ -203,7 +213,6 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         mProgressBar.setMax(mActiveIPConnections.length + 2);
 
         mProgressBarDesc = (TextView) findViewById(R.id.tile_status_active_ip_connections_list_container_loading_desc);
-        mProgressBarDesc.setTextColor(getResources().getColor(R.color.LimeGreen));
         if (themeLight) {
             mProgressBarDesc.setTextColor(getResources().getColor(R.color.black));
         } else {
@@ -246,6 +255,47 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            if (Strings.isNullOrEmpty(query)) {
+                return;
+            }
+            final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+            containerLayout.removeAllViews();
+
+            final Map<IPConntrack, CardView> ipConntrackCardViewFilteredMap = Maps.filterKeys(ipConntrackMap, new Predicate<IPConntrack>() {
+                @Override
+                public boolean apply(IPConntrack input) {
+                    if (input == null) {
+                        return false;
+                    }
+                    //Filter on visible fields: source IP/port, dest. IP/port, transport protocol and TCP State, device name, dest. WHOIS
+                    return (containsIgnoreCase(input.getSourceAddressOriginalSide(), query) ||
+                            containsIgnoreCase("" + input.getSourcePortOriginalSide(), query) ||
+                            containsIgnoreCase("" + input.getDestinationAddressOriginalSide(), query) ||
+                            containsIgnoreCase("" + input.getDestinationPortOriginalSide(), query) ||
+                            containsIgnoreCase(input.getTransportProtocol().toString(), query) ||
+                            containsIgnoreCase(input.getTcpConnectionState(), query) ||
+                            containsIgnoreCase(input.getSourceHostname(), query) ||
+                            containsIgnoreCase(input.getDestWhoisOrHostname(), query));
+                }
+            });
+            if (ipConntrackCardViewFilteredMap != null) {
+                for (final CardView cardView : ipConntrackCardViewFilteredMap.values()) {
+                    containerLayout.addView(cardView);
+                }
+            } else {
+                Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void initLoaderTask() {
         //Remove all views
         final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
@@ -269,6 +319,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                 final AsyncTaskLoader<Map<String, String>> asyncTaskLoader = new AsyncTaskLoader<Map<String, String>>(ActiveIPConnectionsDetailActivity.this) {
                     @Override
                     public Map<String, String> loadInBackground() {
+                        ipConntrackMap.clear();
+
                         final Map<String, String> result = new HashMap<>();
                         String existingRecord;
 
@@ -358,10 +410,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                 int i = 0;
 
                 if (mMenu != null) {
-                    final MenuItem statsMenuItem = mMenu.findItem(R.id.tile_status_active_ip_connections_stats);
-                    if (statsMenuItem != null) {
-                        statsMenuItem.setVisible(true);
-                    }
+                    mMenu.findItem(R.id.tile_status_active_ip_connections_stats).setVisible(true);
+                    mMenu.findItem(R.id.tile_status_active_ip_connections_search).setVisible(true);
                 }
 
                 mProgressBarDesc.setText("Building Views...\n\n");
@@ -479,6 +529,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         final String srcIpHostnameResolved = ipToHostResolvedMap.get(sourceAddressOriginalSide);
                         srcIpHostname.setText(isNullOrEmpty(srcIpHostnameResolved) ? "" : srcIpHostnameResolved);
                         srcIpHostnameDetails.setText(isNullOrEmpty(srcIpHostnameResolved) ? "-" : srcIpHostnameResolved);
+                        ipConntrackRow.setSourceHostname(srcIpHostnameResolved);
                     }
                     srcIpHostname.setVisibility(View.VISIBLE);
                     srcIpHostnameLoading.setVisibility(View.GONE);
@@ -494,12 +545,14 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                         final String dstIpHostnameResolved = ipToHostResolvedMap.get(destinationAddressOriginalSide);
                         destIpOrg.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
                         destIpOrgDetails.setText(isNullOrEmpty(dstIpHostnameResolved) ? "" : dstIpHostnameResolved);
+                        ipConntrackRow.setDestWhoisOrHostname(dstIpHostnameResolved);
                     }
 
                     destIpOrg.setVisibility(View.VISIBLE);
                     destIpOrgLoading.setVisibility(View.GONE);
 
 //                    mProgressBar.setProgress(mCurrentProgress.incrementAndGet());
+                    ipConntrackMap.put(ipConntrackRow, cardView);
                 }
 
                 mProgressBar.setVisibility(View.GONE);
@@ -524,6 +577,32 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         //Hide 'Stats by Source' menu item (because it is the same source)
         menu.findItem(R.id.tile_status_active_ip_connections_stats_by_source_ip)
                 .setVisible(isNullOrEmpty(mConnectedHost));
+
+        //Search
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        final SearchView searchView = (SearchView) menu
+                .findItem(R.id.tile_status_active_ip_connections_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        // Get the search close button image view
+        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        if (closeButton != null) {
+            // Set on click listener
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Reset views
+                    final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+                    containerLayout.removeAllViews();
+
+                    for (final CardView cardView : ipConntrackMap.values()) {
+                        containerLayout.addView(cardView);
+                    }
+                }
+            });
+        }
 
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_active_ip_connections_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat
