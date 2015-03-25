@@ -871,7 +871,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mProgressBarDesc.setText("Resolving IPs (" +
+                                    mProgressBarDesc.setText("Resolving MAC Addresses (" +
                                             v + "/" + outputLen +
                                             ")...\n\n");
                                 }
