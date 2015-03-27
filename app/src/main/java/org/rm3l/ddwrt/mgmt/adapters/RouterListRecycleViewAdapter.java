@@ -29,14 +29,19 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -50,13 +55,15 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
-public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> {
+public class RouterListRecycleViewAdapter extends
+        RecyclerView.Adapter<RouterListRecycleViewAdapter.ViewHolder> implements Filterable {
 
     public static final String EMPTY = "(empty)";
     final DDWRTCompanionDAO dao;
@@ -235,6 +242,54 @@ public class RouterListRecycleViewAdapter extends RecyclerView.Adapter<RouterLis
             items.add(selectedItems.keyAt(i));
         }
         return items;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(final CharSequence constraint) {
+                final List<Router> routers = dao.getAllRouters();
+                final FilterResults oReturn = new FilterResults();
+                if (routers == null || routers.isEmpty()) {
+                    return oReturn;
+                }
+
+                if (TextUtils.isEmpty(constraint)) {
+                    oReturn.values = routers;
+                } else {
+                    //Filter routers list
+                    oReturn.values = FluentIterable
+                            .from(routers)
+                            .filter(new Predicate<Router>() {
+                                @Override
+                                public boolean apply(Router input) {
+                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method)
+                                    final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
+                                    final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
+                                    //noinspection ConstantConditions
+                                    return containsIgnoreCase(input.getName(), constraint)
+                                            || containsIgnoreCase(input.getRemoteIpAddress(), constraint)
+                                            || (routerFirmware != null && containsIgnoreCase(routerFirmware.toString(), constraint))
+                                            || containsIgnoreCase(input.getUsernamePlain(), constraint)
+                                            || (routerConnectionProtocol != null && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
+                                }
+                            }).toList();
+                }
+
+                return oReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                final Object values = results.values;
+                if (values instanceof List) {
+                    //noinspection unchecked
+                    setRoutersList((List<Router>) values);
+                    notifyDataSetChanged();
+                }
+            }
+        };
     }
 
     // Provide a reference to the views for each data item

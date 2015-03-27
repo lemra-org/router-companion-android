@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,7 +45,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.GestureDetector;
@@ -56,6 +59,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.suredigit.inappfeedback.FeedbackDialog;
@@ -87,7 +91,10 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class RouterManagementActivity
         extends ActionBarActivity
-        implements View.OnClickListener, RouterMgmtDialogListener, ActionMode.Callback, RecyclerView.OnItemTouchListener {
+        implements View.OnClickListener,
+        RouterMgmtDialogListener,
+        ActionMode.Callback, RecyclerView.OnItemTouchListener,
+        SearchView.OnQueryTextListener {
 
     public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -116,8 +123,28 @@ public class RouterManagementActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            if (query == null) {
+                adapter.setRoutersList(dao.getAllRouters());
+                adapter.notifyDataSetChanged();
+                return;
+            }
+            adapter.getFilter().filter(query);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        handleIntent(getIntent());
 
         //Default values are not set by default
         //Android bug workaround: http://code.google.com/p/android/issues/detail?id=6641
@@ -324,6 +351,34 @@ public class RouterManagementActivity
                 item.setVisible(false);
             }
         }
+
+        //Search
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        final SearchView searchView = (SearchView) menu
+                .findItem(R.id.router_list_refresh_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(this);
+
+        // Get the search close button image view
+        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        if (closeButton != null) {
+            // Set on click listener
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Reset views
+                    final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+                    adapter.setRoutersList(dao.getAllRouters());
+                    adapter.notifyDataSetChanged();
+                    //Hide it now
+                    searchView.setIconified(true);
+                }
+            });
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -694,6 +749,23 @@ public class RouterManagementActivity
         if (deleteButton != null) {
             deleteButton.setVisible(selectedItemCount > 0);
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        if (TextUtils.isEmpty(s)) {
+            adapter.setRoutersList(dao.getAllRouters());
+            adapter.notifyDataSetChanged();
+        } else {
+            adapter.getFilter().filter(s);
+        }
+        return true;
     }
 
     public enum RoutersListRefreshCause {

@@ -24,11 +24,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
+
+    <!-- Search, should appear as action button -->
+    <item
+        android:id="@+id/router_list_refresh_search"
+        android:alphabeticShortcut="l"
+        android:icon="@android:drawable/ic_menu_search"
+        android:orderInCategory="1"
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
+
     <item
         android:id="@+id/router_list_refresh"
         android:alphabeticShortcut="r"
         android:icon="@drawable/ic_menu_refresh"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/menuitem_refresh"
         app:showAsAction="ifRoom" />
 
@@ -36,7 +47,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/router_list_feedback"
         android:alphabeticShortcut="f"
         android:icon="@drawable/ic_action_action_thumbs_up_down"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/feedback"
         app:showAsAction="ifRoom" />
 
@@ -44,7 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/menuitem_settings"
         app:showAsAction="ifRoom" />
 
@@ -52,17 +63,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/router_list_donate"
         android:alphabeticShortcut="d"
         android:icon="@drawable/ic_action_action_payment"
-        android:orderInCategory="3"
-        android:showAsAction="ifRoom"
+        android:orderInCategory="4"
         android:title="@string/menuitem_donate"
+        app:showAsAction="ifRoom"
         />
 
     <item
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
         android:icon="@drawable/ic_action_social_person"
-        android:orderInCategory="5"
-        android:showAsAction="ifRoom"
-        android:title="@string/menuitem_about" />
+        android:orderInCategory="6"
+        android:title="@string/menuitem_about"
+        app:showAsAction="ifRoom" />
 
 </menu>
