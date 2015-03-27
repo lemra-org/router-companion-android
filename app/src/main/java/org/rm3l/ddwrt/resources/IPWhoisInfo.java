@@ -154,6 +154,20 @@ public class IPWhoisInfo {
         this.organization = organization;
     }
 
+    public boolean isNone() {
+        return (asn == null &&
+                city == null &&
+                country == null &&
+                country_code == null &&
+                hostname == null &&
+                ip == null &&
+                latitude == null &&
+                longitude == null &&
+                organization == null &&
+                prefix == null &&
+                region == null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
