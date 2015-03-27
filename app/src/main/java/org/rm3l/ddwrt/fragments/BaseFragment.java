@@ -265,6 +265,7 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort = new BaseFragment[2];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
+                //TODO Add Time
                 tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 break;
@@ -446,22 +447,14 @@ public abstract class BaseFragment<T> extends Fragment implements LoaderManager.
                 tabsToSort = new BaseFragment[5];
                 tabsToSort[0] = BaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
-                tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wan), router);
-                tabsToSort[2] = BaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_lan), router);
-//                tabsToSort[3] = BaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.status_clients), router);
-                tabsToSort[3] = BaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
+                tabsToSort[1] = BaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_time), router);
-//                tabsToSort[5] = BaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.status_wireless), router);
-//                tabsToSort[4] = BaseFragment.newInstance(parentFragment, StatusBandwidthFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.status_bandwidth), router);
+                tabsToSort[2] = BaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
+                        resources.getString(R.string.status_wan), router);
+                tabsToSort[3] = BaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
+                        resources.getString(R.string.status_lan), router);
                 tabsToSort[4] = BaseFragment.newInstance(parentFragment, StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(StatusSysinfoFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.status_sysinfo), router);
                 break;
             case 2:
                 //Status > Wireless

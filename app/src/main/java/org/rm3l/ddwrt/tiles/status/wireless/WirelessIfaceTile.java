@@ -139,6 +139,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     }
 
+    @NonNull
+    public String getIface() {
+        return iface;
+    }
+
     @Override
     public int getTileHeaderViewId() {
         return R.id.tile_status_wireless_iface_hdr;
