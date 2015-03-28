@@ -30,7 +30,6 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
     public static final String USAGE_DATA = "usageData";
     public static final String ROUTER_PREFERENCES = "routerPreferences";
     private static final String LOG_TAG = DDWRTCompanionBackupAgent.class.getSimpleName();
-    private boolean withUsageDataBackup;
 
     private DDWRTCompanionDAO dao;
 
@@ -46,42 +45,11 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
         addHelper(ROUTERS_DB, routers);
 
         //Preferences
-//        final ArrayList<String> prefsToBackup = Lists
-//                .newArrayList(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY);
-
-//        final List<Router> allRouters = dao.getAllRouters();
-//
-//        Collection<String> routerUuids = null;
-//        if (allRouters != null) {
-//            routerUuids = Collections2.transform(allRouters, new Function<Router, String>() {
-//                @Override
-//                public String apply(Router input) {
-//                    // We use router uuid as shared preference group name for this router.
-//                    return input.getUuid();
-//                }
-//            });
-//            prefsToBackup.addAll(routerUuids);
-//        }
-//        final SharedPreferencesBackupHelper prefs = new SharedPreferencesBackupHelper(this,
-//                prefsToBackup.toArray(new String[prefsToBackup.size()]));
         final SharedPreferencesBackupHelper prefs = new SharedPreferencesBackupHelper(this,
                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY);
 
         addHelper(PREFERENCES, prefs);
 
-        //Usage Data
-//        withUsageDataBackup = (routerUuids != null);
-//        if (withUsageDataBackup) {
-//            final Collection<String> pathsToRoutersUsageDataFiles = Collections2.transform(routerUuids, new Function<String, String>() {
-//                @Override
-//                public String apply(String input) {
-//                    return String.format("../files/%s_Usage_%s.bak", BuildConfig.APPLICATION_ID, input);
-//                }
-//            });
-//            final FileBackupHelper usageData = new FileBackupHelper(this,
-//                    pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
-//            addHelper(USAGE_DATA, usageData);
-//        }
     }
 
     private void addFileHelper(@NonNull final String keyPrefix, @NonNull final String... files) {
