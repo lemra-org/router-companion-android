@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.mgmt;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -580,6 +581,8 @@ public class RouterManagementActivity
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.INSERTED, 0);
             mLayoutManager.scrollToPosition(0);
+            //Request Backup
+            new BackupManager(this).dataChanged();
         }
     }
 
@@ -589,6 +592,8 @@ public class RouterManagementActivity
             //Always added to the top
             doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
             mLayoutManager.scrollToPosition(position);
+            //Reqest Backup
+            new BackupManager(this).dataChanged();
         }
     }
 
@@ -659,6 +664,8 @@ public class RouterManagementActivity
                                 }
 
                                 Crouton.makeText(RouterManagementActivity.this, selectedItemCount + " item(s) deleted", Style.CONFIRM).show();
+                                //Request Backup
+                                new BackupManager(RouterManagementActivity.this).dataChanged();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -64,7 +64,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_PRIVKEY + " TEXT DEFAULT NULL, " +
             ROUTER_FIRMWARE + " TEXT DEFAULT NULL" +
             ");";
-    private static final String DATABASE_NAME = "routers.db";
+    public static final String DATABASE_NAME = "routers.db";
+
+    public static final Object[] dbLock = new Object[0];
 
     /*
      TODO In case of DB upgrades, don't forget to increment (by 2) this field,

@@ -117,12 +117,15 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     public Router insertRouter(@NonNull Router router) {
         SQLiteDatabase database = null;
         try {
-            database = dbHelper.getWritableDatabase();
-            final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
-                    UUID.randomUUID().toString() : router.getUuid());
-            long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
-            Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
-            return getRouter(uuid);
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                database = dbHelper.getWritableDatabase();
+                final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
+                        UUID.randomUUID().toString() : router.getUuid());
+                final long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
+                Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
+
+                return getRouter(uuid);
+            }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
             throw e;
@@ -138,11 +141,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     public Router updateRouter(@NonNull Router router) {
         SQLiteDatabase database = null;
         try {
-            database = dbHelper.getWritableDatabase();
-            final String uuid = router.getUuid();
-            final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
-            Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
-            return getRouter(uuid);
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                database = dbHelper.getWritableDatabase();
+                final String uuid = router.getUuid();
+                final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
+                Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
+                return getRouter(uuid);
+            }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
             throw e;
@@ -177,10 +182,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     public void deleteRouter(String uuid) {
         SQLiteDatabase database = null;
         try {
-            database = dbHelper.getWritableDatabase();
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
 
-            System.out.println("Delete Router with uuid: " + uuid);
-            database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
+                database = dbHelper.getWritableDatabase();
+
+                System.out.println("Delete Router with uuid: " + uuid);
+                database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
+            }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
             throw e;
@@ -196,26 +204,28 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     public List<Router> getAllRouters() {
         SQLiteDatabase database = null;
         try {
-            database = dbHelper.getWritableDatabase();
-            final List<Router> routers = new ArrayList<Router>();
-            final Cursor cursor = database.query(TABLE_ROUTERS,
-                    allColumns, null, null, null, null, COLUMN_ID + " DESC");
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                database = dbHelper.getWritableDatabase();
+                final List<Router> routers = new ArrayList<Router>();
+                final Cursor cursor = database.query(TABLE_ROUTERS,
+                        allColumns, null, null, null, null, COLUMN_ID + " DESC");
 
-            try {
-                if (cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    while (!cursor.isAfterLast()) {
-                        Router router = cursorToRouter(cursor);
-                        routers.add(router);
-                        cursor.moveToNext();
+                try {
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        while (!cursor.isAfterLast()) {
+                            Router router = cursorToRouter(cursor);
+                            routers.add(router);
+                            cursor.moveToNext();
+                        }
                     }
+                } finally {
+                    // make sure to close the cursor
+                    cursor.close();
                 }
-            } finally {
-                // make sure to close the cursor
-                cursor.close();
-            }
 
-            return Utils.dbIdsToPosition(routers);
+                return Utils.dbIdsToPosition(routers);
+            }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
             throw e;
@@ -232,26 +242,27 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     public Router getRouter(String uuid) {
         SQLiteDatabase database = null;
         try {
-            database = dbHelper.getWritableDatabase();
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                database = dbHelper.getWritableDatabase();
 
+                final Cursor cursor = database.query(TABLE_ROUTERS,
+                        allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, COLUMN_ID + " DESC");
+                try {
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        final Router router = cursorToRouter(cursor);
+                        updateRouterIds();
 
-            final Cursor cursor = database.query(TABLE_ROUTERS,
-                    allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, COLUMN_ID + " DESC");
-            try {
-                if (cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    final Router router = cursorToRouter(cursor);
-                    updateRouterIds();
+                        router.setId(routersToIds.get(router.getUuid()));
+                        return router;
+                    }
 
-                    router.setId(routersToIds.get(router.getUuid()));
-                    return router;
+                } finally {
+                    cursor.close();
                 }
 
-            } finally {
-                cursor.close();
+                return null;
             }
-
-            return null;
         } catch (final RuntimeException e) {
             Utils.reportException(e);
             throw e;

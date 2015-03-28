@@ -47,11 +47,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <application
         android:name=".DDWRTApplication"
         android:allowBackup="true"
+        android:backupAgent=".backup.DDWRTCompanionBackupAgent"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppThemeDark"
         tools:replace="android:theme">
+
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.rm3l.fileprovider"
