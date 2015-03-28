@@ -116,16 +116,18 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             //Auto-detect
             fwDropdown.setSelection(0);
         } else {
-            switch (routerFirmware) {
-                case DDWRT:
-                    fwDropdown.setSelection(1);
-                    break;
-                case OPENWRT:
-                    fwDropdown.setSelection(2);
-                    break;
-                default:
-                    break;
-            }
+            //FIXME Fix when other firmwares are supported
+            fwDropdown.setSelection(0);
+//            switch (routerFirmware) {
+//                case DDWRT:
+//                    fwDropdown.setSelection(1);
+//                    break;
+//                case OPENWRT:
+//                    fwDropdown.setSelection(2);
+//                    break;
+//                default:
+//                    break;
+//            }
         }
 
         ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain(), EDITABLE);
