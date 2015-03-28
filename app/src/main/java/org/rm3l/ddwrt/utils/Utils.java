@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -300,6 +301,10 @@ public final class Utils {
     @NonNull
     public static String getEscapedFileName(@NonNull final String filename) {
         return filename.replaceAll("\\W+", "_");
+    }
+
+    public static void requestBackup(@NonNull final Context ctx) {
+        new BackupManager(ctx).dataChanged();
     }
 
 }

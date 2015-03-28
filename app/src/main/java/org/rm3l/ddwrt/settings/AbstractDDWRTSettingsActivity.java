@@ -21,7 +21,6 @@
  */
 package org.rm3l.ddwrt.settings;
 
-import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
@@ -44,6 +43,7 @@ import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Map;
 
@@ -113,7 +113,6 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
      * preference title) is updated to reflect the value. The summary is also
      * immediately updated upon calling this method. The exact display format is
      * dependent on the type of preference.
-     *
      */
     protected static void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
@@ -233,7 +232,8 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
                 preference.setSummary(stringValue);
             }
 
-            new BackupManager(mCtx).dataChanged();
+            //Request Backup
+            Utils.requestBackup(mCtx);
 
             return true;
         }
