@@ -40,16 +40,14 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
         dao = RouterManagementActivity.getDao(this);
 
         //Database
-        final FileBackupHelper routers = new FileBackupHelper(this, "../databases/"
-                + DDWRTCompanionSqliteOpenHelper.DATABASE_NAME);
+        final FileBackupHelper routers = new FileBackupHelper(this,
+                "../databases/" + DDWRTCompanionSqliteOpenHelper.DATABASE_NAME);
         addHelper(ROUTERS_DB, routers);
 
         //Preferences
         final SharedPreferencesBackupHelper prefs = new SharedPreferencesBackupHelper(this,
                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY);
-
         addHelper(PREFERENCES, prefs);
-
     }
 
     private void addFileHelper(@NonNull final String keyPrefix, @NonNull final String... files) {
@@ -78,12 +76,14 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
                         routerUuids.toArray(new String[routerUuids.size()]));
 
                 //Usage Data
-                final Collection<String> pathsToRoutersUsageDataFiles = Collections2.transform(routerUuids, new Function<String, String>() {
-                    @Override
-                    public String apply(String input) {
-                        return String.format("../files/%s_Usage_%s.bak", BuildConfig.APPLICATION_ID, input);
-                    }
-                });
+                final Collection<String> pathsToRoutersUsageDataFiles = Collections2
+                        .transform(routerUuids, new Function<String, String>() {
+                            @Override
+                            public String apply(String input) {
+                                return String.format("../files/%s_Usage_%s.bak",
+                                        BuildConfig.APPLICATION_ID, input);
+                            }
+                        });
                 if (pathsToRoutersUsageDataFiles != null) {
                     addFileHelper(USAGE_DATA,
                             pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
