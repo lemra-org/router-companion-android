@@ -44,6 +44,8 @@ import android.widget.TextView;
 import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.fragments.BaseFragment;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -70,6 +72,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected final LoaderManager mSupportLoaderManager;
     @Nullable
     protected final Router mRouter;
+    @NonNull
+    private final DDWRTCompanionDAO mDao;
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
     @Nullable
@@ -82,6 +86,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments, @Nullable Router router) {
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getActivity();
+        mDao = RouterManagementActivity.getDao(mParentFragmentActivity);
         this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
                 .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
         this.mGlobalPreferences = this.mParentFragmentActivity
@@ -208,8 +213,14 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
 
         mSupportLoaderManager.destroyLoader(loader.getId());
 
-        if (nextRunMillis > 0 && !this.mLoaderStopped) {
-//        Re-schedule it if loader has not been stopped!
+        /*
+         * Check if router still exists - if not, entry may have been deleted.
+         * In this case, do NOT schedule next run.
+         * Also re-schedule it if loader has not been stopped!
+         */
+        final boolean schedNextRun = !(this.mLoaderStopped || nextRunMillis <= 0 ||
+                mRouter == null || mDao.getRouter(mRouter.getUuid()) == null);
+        if (schedNextRun) {
             HANDLER.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -218,8 +229,13 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             }, nextRunMillis);
         }
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading: " + loader +
-                "\n->this.mLoaderStopped: " + this.mLoaderStopped + " - delay: " + nextRunMillis + "ms");
+        Log.d(LOG_TAG, String.format("onLoadFinished(): done loading: %s" +
+                        "\n" +
+                        "-> schedNextRun: %s\n" +
+                        "->this.mLoaderStopped: %s" +
+                        "\n" +
+                        " - delay: %dms",
+                loader, schedNextRun, this.mLoaderStopped, nextRunMillis));
     }
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
