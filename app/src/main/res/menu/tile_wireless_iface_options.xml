@@ -25,6 +25,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/tile_status_wireless_iface_qrcode"
         android:orderInCategory="1"
-        android:title="Generate QR Code"
-        app:showAsAction="ifRoom" />
+        android:title="@string/gen_qr_code"
+        app:showAsAction="never" />
+
+    <!-- tc filter add dev $IF_LAN parent 1: protocol ip prio 7 u32 match ip dst 0.0.0.0/0 flowid 1:190 -->
+    <!-- FIXME Disabled for now! -->
+    <item
+        android:id="@+id/tile_status_wireless_iface_traffic_shaping"
+        android:orderInCategory="2"
+        android:title="Traffic Shaping"
+        android:visible="false"
+        app:showAsAction="never" />
+
 </menu>

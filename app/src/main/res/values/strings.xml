@@ -561,4 +561,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="by_destination">By Destination</string>
     <string name="action_search">Search</string>
     <string name="search_hint">Search</string>
+    <string name="gen_qr_code">Generate QR Code</string>
 </resources>

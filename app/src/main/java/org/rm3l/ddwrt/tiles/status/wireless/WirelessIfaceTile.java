@@ -48,6 +48,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -644,6 +645,15 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                     }
                 }, 2500);
 
+                return true;
+            case R.id.tile_status_wireless_iface_traffic_shaping:
+                if (BuildConfig.DONATIONS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity);
+                    return true;
+                }
+
+                //TODO
                 return true;
             default:
                 break;
