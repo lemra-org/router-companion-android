@@ -128,7 +128,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
-            throw e;
+            return null;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "insertRouter: close db");
@@ -150,7 +150,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
-            throw e;
+            return null;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "updateRouter: close db");
@@ -191,7 +191,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
-            throw e;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "deleteRouter: close db");
@@ -206,10 +205,11 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         try {
             synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
                 database = dbHelper.getWritableDatabase();
-                final List<Router> routers = new ArrayList<Router>();
+                final List<Router> routers = new ArrayList<>();
                 final Cursor cursor = database.query(TABLE_ROUTERS,
                         allColumns, null, null, null, null, COLUMN_ID + " DESC");
 
+                //noinspection TryFinallyCanBeTryWithResources
                 try {
                     if (cursor.getCount() > 0) {
                         cursor.moveToFirst();
@@ -247,6 +247,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
                 final Cursor cursor = database.query(TABLE_ROUTERS,
                         allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, COLUMN_ID + " DESC");
+                //noinspection TryFinallyCanBeTryWithResources
                 try {
                     if (cursor.getCount() > 0) {
                         cursor.moveToFirst();
@@ -265,7 +266,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
-            throw e;
+            return null;
         } finally {
             if (database != null && database.isOpen()) {
                 Log.d(LOG_TAG, "getAllRouters: close db");
