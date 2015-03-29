@@ -58,8 +58,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -106,6 +108,80 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
     public static final String CONNECTED_HOST_IP = "CONNECTED_HOST_IP";
 
     public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
+    public static final Table<Integer, Integer, String> ICMP_TYPE_CODE_DESCRIPTION_TABLE = HashBasedTable.create();
+
+    static {
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(0, 0, "Echo Reply");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 0, "Network unreachable");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 1, "Host unreachable");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 2, "Protocol unreachable");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 3, "Port unreachable");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 4, "Fragmentation needed but no frag. bit set");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 5, "Source routing failed");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 6, "Dest. network unknown");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 7, "Dest. host unknown");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 8, "Source host isolated");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 9, "Network administratively prohibited");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 10, "Host administratively prohibited");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 11, "Network unreachable for TOS");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 12, "Host unreachable for TOS");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 13, "Communication administratively prohibited");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 14, "Host Precedence Violation");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(3, 15, "Precedence cutoff in effect");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(4, 0, "Source quench");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(5, 0, "Redirect Datagram for Network");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(5, 1, "Redirect Datagram for Host");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(5, 2, "Redirect Datagram for TOS & network");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(5, 3, "Redirect Datagram for the TOS & host");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(8, 0, "Echo request");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(9, 0, "Router Advertisement (Normal)");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(9, 16, "Router advertisement - No traffic routing");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(10, 0, "Route Selection");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(11, 0, "TTL expired in transit");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(11, 1, "Fragment reassembly time exceeded");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(12, 0, "IP header bad");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(12, 1, "Required options missing");
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(12, 2, "Bad length for IP header");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(13, 0, "Timestamp request");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(14, 0, "Timestamp reply");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(15, 0, "Information request");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(16, 0, "Information reply");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(17, 0, "Address Mask Request");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(18, 0, "Address Mask Reply");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(30, 0, "Traceroute");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(31, 0, "Datagram Conversion Error");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(32, 0, "Mobile Host Redirect");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(33, 0, "IPv6 Where-Are-You");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(34, 0, "IPv6 I-Am-Here");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(35, 0, "Mobile Registration Request");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(36, 0, "Mobile Registration Reply");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(39, 0, "SKIP Algorithm Discovery Protocol");
+
+        ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(40, 0, "Photuris, Security failures");
+    }
+
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
     public static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
         @Override
@@ -280,7 +356,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                             containsIgnoreCase("" + input.getSourcePortOriginalSide(), query) ||
                             containsIgnoreCase("" + input.getDestinationAddressOriginalSide(), query) ||
                             containsIgnoreCase("" + input.getDestinationPortOriginalSide(), query) ||
-                            containsIgnoreCase(input.getTransportProtocol().toString(), query) ||
+                            containsIgnoreCase(input.getTransportProtocol(), query) ||
                             containsIgnoreCase(input.getTcpConnectionState(), query) ||
                             containsIgnoreCase(input.getSourceHostname(), query) ||
                             containsIgnoreCase(input.getDestWhoisOrHostname(), query));
@@ -464,15 +540,16 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_ip))
                             .setText(destinationAddressOriginalSide);
 
+                    final String protocol = ipConntrackRow.getTransportProtocol();
                     final TextView proto = (TextView) cardView.findViewById(R.id.activity_ip_connections_device_proto);
-                    final String protocol = ipConntrackRow.getTransportProtocol().getDisplayName();
-                    proto.setText(protocol);
+                    proto.setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
                     ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_protocol))
-                            .setText(protocol.toUpperCase());
+                            .setText(isNullOrEmpty(protocol) ? "-" : protocol.toUpperCase());
 
                     final String tcpConnectionState = ipConntrackRow.getTcpConnectionState();
                     final TextView tcpConnectionStateView = (TextView) cardView.findViewById(R.id.activity_ip_connections_tcp_connection_state);
                     final TextView tcpConnectionStateDetailedView = (TextView) cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state);
+
                     if (!isNullOrEmpty(tcpConnectionState)) {
                         tcpConnectionStateView.setText(tcpConnectionState);
                         tcpConnectionStateDetailedView.setText(tcpConnectionState);
@@ -480,6 +557,82 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     } else {
                         tcpConnectionStateView.setVisibility(View.GONE);
                         tcpConnectionStateDetailedView.setText("-");
+                    }
+
+                    final View tcpConnectionStateDetailedViewSep = cardView
+                            .findViewById(R.id.activity_ip_connections_details_tcp_connection_state_sep);
+                    final View tcpConnectionStateDetailedViewTitle = cardView.findViewById(R.id.activity_ip_connections_details_tcp_connection_state_title);
+                    if ("TCP".equalsIgnoreCase(protocol)) {
+                        tcpConnectionStateDetailedView.setVisibility(View.VISIBLE);
+                        tcpConnectionStateDetailedViewSep
+                                .setVisibility(View.VISIBLE);
+                        tcpConnectionStateDetailedViewTitle
+                                .setVisibility(View.VISIBLE);
+                    } else {
+                        tcpConnectionStateDetailedView.setVisibility(View.GONE);
+                        tcpConnectionStateDetailedViewSep
+                                .setVisibility(View.GONE);
+                        tcpConnectionStateDetailedViewTitle
+                                .setVisibility(View.GONE);
+                    }
+
+                    //ICMP
+                    //ID
+                    final View icmpIdTitle = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_id_title);
+                    final View icmpIdSep = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_id_sep);
+                    final TextView icmpId = (TextView) cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_id);
+                    //Type
+                    final View icmpTypeTitle = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_type_title);
+                    final View icmpTypeSep = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_type_sep);
+                    final TextView icmpType = (TextView) cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_type);
+                    //Code
+                    final View icmpCodeTitle = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_code_title);
+                    final View icmpCodeSep = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_code_sep);
+                    final TextView icmpCode = (TextView) cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_code);
+                    //Ctrl Message
+                    final View icmpCtrlMsgTitle = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_title);
+                    final View icmpCtrlMsgSep = cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg_sep);
+                    final TextView icmpCtrlMsg = (TextView) cardView
+                            .findViewById(R.id.activity_ip_connections_details_icmp_ctrl_msg);
+
+                    final View[] icmpViews = new View[]{
+                            icmpIdTitle, icmpIdSep, icmpId,
+                            icmpTypeTitle, icmpTypeSep, icmpType,
+                            icmpCodeTitle, icmpCodeSep, icmpCode,
+                            icmpCtrlMsgTitle, icmpCtrlMsgSep, icmpCtrlMsg
+                    };
+
+                    if ("ICMP".equalsIgnoreCase(protocol)) {
+                        final int ipConntrackRowIcmpType = ipConntrackRow.getIcmpType();
+                        final int ipConntrackRowIcmpCode = ipConntrackRow.getIcmpCode();
+                        icmpId.setText(isNullOrEmpty(ipConntrackRow.getIcmpId()) ?
+                                "-" : ipConntrackRow.getIcmpId());
+                        icmpType.setText((ipConntrackRowIcmpType < 0) ?
+                                "-" : String.valueOf(ipConntrackRowIcmpType));
+                        icmpCode.setText((ipConntrackRowIcmpCode < 0) ?
+                                "-" : String.valueOf(ipConntrackRowIcmpCode));
+
+                        final String ctrlMsg = ICMP_TYPE_CODE_DESCRIPTION_TABLE.get(ipConntrackRowIcmpType, ipConntrackRowIcmpCode);
+                        icmpCtrlMsg.setText(isNullOrEmpty(ctrlMsg) ? "-" : ctrlMsg);
+
+                        for (final View icmpView : icmpViews) {
+                            icmpView.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        for (final View icmpView : icmpViews) {
+                            icmpView.setVisibility(View.GONE);
+                        }
                     }
 
                     final int sourcePortOriginalSide = ipConntrackRow.getSourcePortOriginalSide();

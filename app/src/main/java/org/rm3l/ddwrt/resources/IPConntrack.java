@@ -43,8 +43,8 @@ public class IPConntrack {
     /**
      * Protocol name and number
      */
-    @NonNull
-    private TransportProtocol transportProtocol;
+    @Nullable
+    private String transportProtocol;
 
     @Nullable
     private String sourceHostname;
@@ -131,6 +131,15 @@ public class IPConntrack {
     private long bytes;
 
     @Nullable
+    private String icmpId;
+
+    @Nullable
+    private int icmpType;
+
+    @Nullable
+    private int icmpCode;
+
+    @Nullable
     public static IPConntrack parseIpConntrackRow(@NonNull final String row) {
         if (Strings.isNullOrEmpty(row)) {
             return null;
@@ -144,102 +153,230 @@ public class IPConntrack {
         final IPConntrack ipConntrack = new IPConntrack();
 
         try {
-            ipConntrack.setTransportProtocol(TransportProtocol.valueOf(nullToEmpty(toList.get(0)).toUpperCase()));
+
+            final String proto = nullToEmpty(toList.get(0)).toUpperCase();
+            ipConntrack.setTransportProtocol(proto);
             if (toList.size() >= 3) {
                 ipConntrack.setTimeout(Long.parseLong(toList.get(2)));
             }
-            if (toList.size() >= 4) {
-                final String s = toList.get(3);
-                if (!StringUtils.startsWithIgnoreCase(s, "src=")) {
-                    //udp
-                    ipConntrack.setTcpConnectionState(s);
-                }
+            switch (proto) {
+                case "TCP":
+                    if (toList.size() >= 4) {
+                        ipConntrack.setTcpConnectionState(toList.get(3));
+                    }
+                    if (toList.size() >= 5) {
+                        for (int i = 4; i < toList.size(); i++) {
+                            final String sequence = toList.get(i);
+                            if (sequence == null || sequence.isEmpty()) {
+                                continue;
+                            }
+                            final List<String> stringList = EQUALS_SPLITTER.splitToList(sequence);
+                            if (stringList != null && stringList.size() >= 2) {
+                                final String firstPart = stringList.get(0);
+                                final String secondPart = stringList.get(1);
+                                if ("src".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourceAddressOriginalSide() == null) {
+                                        ipConntrack.setSourceAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setSourceAddressReplySide(secondPart);
+                                    }
+                                } else if ("sport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourcePortOriginalSide() <= 0) {
+                                        ipConntrack.setSourcePortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setSourcePortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if ("dst".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationAddressOriginalSide() == null) {
+                                        ipConntrack.setDestinationAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setDestinationAddressReplySide(secondPart);
+                                    }
+                                } else if ("dport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationPortOriginalSide() <= 0) {
+                                        ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setDestinationPortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if (ipConntrack.getPackets() <= 0l &&
+                                        "packets".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setPackets(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getBytes() <= 0l &&
+                                        "bytes".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setBytes(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getStructUseCount() <= 0 &&
+                                        "use".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setStructUseCount(Integer.parseInt(secondPart));
+                                }
+                            } else if (StringUtils.startsWith(sequence, "[")) {
+                                ipConntrack.setAssured(StringUtils.containsIgnoreCase(sequence, "assured"));
+                            }
+                        }
+                    }
+                    break;
+                case "UDP":
+                    if (toList.size() >= 4) {
+                        for (int i = 3; i < toList.size(); i++) {
+                            final String sequence = toList.get(i);
+                            if (sequence == null || sequence.isEmpty()) {
+                                continue;
+                            }
+                            final List<String> stringList = EQUALS_SPLITTER.splitToList(sequence);
+                            if (stringList != null && stringList.size() >= 2) {
+                                final String firstPart = stringList.get(0);
+                                final String secondPart = stringList.get(1);
+                                if ("src".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourceAddressOriginalSide() == null) {
+                                        ipConntrack.setSourceAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setSourceAddressReplySide(secondPart);
+                                    }
+                                } else if ("sport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourcePortOriginalSide() <= 0) {
+                                        ipConntrack.setSourcePortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setSourcePortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if ("dst".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationAddressOriginalSide() == null) {
+                                        ipConntrack.setDestinationAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setDestinationAddressReplySide(secondPart);
+                                    }
+                                } else if ("dport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationPortOriginalSide() <= 0) {
+                                        ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setDestinationPortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if (ipConntrack.getPackets() <= 0l &&
+                                        "packets".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setPackets(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getBytes() <= 0l &&
+                                        "bytes".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setBytes(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getStructUseCount() <= 0 &&
+                                        "use".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setStructUseCount(Integer.parseInt(secondPart));
+                                }
+                            } else if (StringUtils.startsWith(sequence, "[")) {
+                                ipConntrack.setAssured(StringUtils.containsIgnoreCase(sequence, "assured"));
+                            }
+                        }
+                    }
+                    break;
+                case "ICMP":
+                    if (toList.size() >= 4) {
+                        for (int i = 3; i < toList.size(); i++) {
+                            final String sequence = toList.get(i);
+                            if (sequence == null || sequence.isEmpty()) {
+                                continue;
+                            }
+                            final List<String> stringList = EQUALS_SPLITTER.splitToList(sequence);
+                            if (stringList != null && stringList.size() >= 2) {
+                                final String firstPart = stringList.get(0);
+                                final String secondPart = stringList.get(1);
+                                if ("src".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourceAddressOriginalSide() == null) {
+                                        ipConntrack.setSourceAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setSourceAddressReplySide(secondPart);
+                                    }
+                                } else if ("sport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourcePortOriginalSide() <= 0) {
+                                        ipConntrack.setSourcePortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setSourcePortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if ("dst".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationAddressOriginalSide() == null) {
+                                        ipConntrack.setDestinationAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setDestinationAddressReplySide(secondPart);
+                                    }
+                                } else if ("dport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationPortOriginalSide() <= 0) {
+                                        ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setDestinationPortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if (ipConntrack.getPackets() <= 0l &&
+                                        "packets".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setPackets(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getBytes() <= 0l &&
+                                        "bytes".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setBytes(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getStructUseCount() <= 0 &&
+                                        "use".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setStructUseCount(Integer.parseInt(secondPart));
+                                } else if (ipConntrack.getIcmpId() == null &&
+                                        "id".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setIcmpId(secondPart);
+                                } else if (ipConntrack.getIcmpType() <= 0 &&
+                                        "type".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setIcmpType(Integer.parseInt(secondPart));
+                                } else if (ipConntrack.getIcmpCode() <= 0 &&
+                                        "code".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setIcmpCode(Integer.parseInt(secondPart));
+                                }
+                            } else if (StringUtils.startsWith(sequence, "[")) {
+                                ipConntrack.setAssured(StringUtils.containsIgnoreCase(sequence, "assured"));
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    if (toList.size() >= 4) {
+                        for (int i = 3; i < toList.size(); i++) {
+                            final String sequence = toList.get(i);
+                            if (sequence == null || sequence.isEmpty()) {
+                                continue;
+                            }
+                            final List<String> stringList = EQUALS_SPLITTER.splitToList(sequence);
+                            if (stringList != null && stringList.size() >= 2) {
+                                final String firstPart = stringList.get(0);
+                                final String secondPart = stringList.get(1);
+                                if ("src".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourceAddressOriginalSide() == null) {
+                                        ipConntrack.setSourceAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setSourceAddressReplySide(secondPart);
+                                    }
+                                } else if ("sport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getSourcePortOriginalSide() <= 0) {
+                                        ipConntrack.setSourcePortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setSourcePortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if ("dst".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationAddressOriginalSide() == null) {
+                                        ipConntrack.setDestinationAddressOriginalSide(secondPart);
+                                    } else {
+                                        ipConntrack.setDestinationAddressReplySide(secondPart);
+                                    }
+                                } else if ("dport".equalsIgnoreCase(firstPart)) {
+                                    if (ipConntrack.getDestinationPortOriginalSide() <= 0) {
+                                        ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(secondPart));
+                                    } else {
+                                        ipConntrack.setDestinationPortReplySide(Integer.parseInt(secondPart));
+                                    }
+                                } else if (ipConntrack.getPackets() <= 0l &&
+                                        "packets".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setPackets(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getBytes() <= 0l &&
+                                        "bytes".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setBytes(Long.parseLong(secondPart));
+                                } else if (ipConntrack.getStructUseCount() <= 0 &&
+                                        "use".equalsIgnoreCase(firstPart)) {
+                                    ipConntrack.setStructUseCount(Integer.parseInt(secondPart));
+                                }
+                            } else if (StringUtils.startsWith(sequence, "[")) {
+                                ipConntrack.setAssured(StringUtils.containsIgnoreCase(sequence, "assured"));
+                            }
+                        }
+                    }
+                    break;
             }
-
-            if (toList.size() >= 5) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(3);
-                } else {
-                    s = toList.get(4);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setSourceAddressOriginalSide(stringList.get(1));
-                }
-            }
-
-            if (toList.size() >= 6) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(4);
-                } else {
-                    s = toList.get(5);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setDestinationAddressOriginalSide(stringList.get(1));
-                }
-            }
-
-            if (toList.size() >= 7) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(5);
-                } else {
-                    s = toList.get(6);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setSourcePortOriginalSide(Integer.parseInt(stringList.get(1)));
-                }
-            }
-
-            if (toList.size() >= 8) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(6);
-                } else {
-                    s = toList.get(7);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setDestinationPortOriginalSide(Integer.parseInt(stringList.get(1)));
-                }
-            }
-
-            if (toList.size() >= 9) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(7);
-                } else {
-                    s = toList.get(8);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setPackets(Long.parseLong(stringList.get(1)));
-                }
-            }
-
-            if (toList.size() >= 10) {
-                final String s;
-                if (ipConntrack.getTcpConnectionState() == null) {
-                    //udp
-                    s = toList.get(8);
-                } else {
-                    s = toList.get(9);
-                }
-                final List<String> stringList = EQUALS_SPLITTER.splitToList(s);
-                if (stringList != null && stringList.size() >= 2) {
-                    ipConntrack.setBytes(Long.parseLong(stringList.get(1)));
-                }
-            }
-
 
         } catch (final Exception e) {
             Utils.reportException(new IllegalStateException("Error when parsing IP Conntrack row: " + row,
@@ -250,87 +387,37 @@ public class IPConntrack {
         return ipConntrack;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IPConntrack that = (IPConntrack) o;
-
-        if (assured != that.assured) return false;
-        if (bytes != that.bytes) return false;
-        if (destinationPortOriginalSide != that.destinationPortOriginalSide) return false;
-        if (destinationPortReplySide != that.destinationPortReplySide) return false;
-        if (hasSeenTrafficInBothDirections != that.hasSeenTrafficInBothDirections) return false;
-        if (packets != that.packets) return false;
-        if (sourcePortOriginalSide != that.sourcePortOriginalSide) return false;
-        if (sourcePortReplySide != that.sourcePortReplySide) return false;
-        if (structUseCount != that.structUseCount) return false;
-        if (timeout != that.timeout) return false;
-        if (destinationAddressOriginalSide != null ? !destinationAddressOriginalSide.equals(that.destinationAddressOriginalSide) : that.destinationAddressOriginalSide != null)
-            return false;
-        if (destinationAddressReplySide != null ? !destinationAddressReplySide.equals(that.destinationAddressReplySide) : that.destinationAddressReplySide != null)
-            return false;
-        if (sourceAddressOriginalSide != null ? !sourceAddressOriginalSide.equals(that.sourceAddressOriginalSide) : that.sourceAddressOriginalSide != null)
-            return false;
-        if (sourceAddressReplySide != null ? !sourceAddressReplySide.equals(that.sourceAddressReplySide) : that.sourceAddressReplySide != null)
-            return false;
-        if (tcpConnectionState != null ? !tcpConnectionState.equals(that.tcpConnectionState) : that.tcpConnectionState != null)
-            return false;
-        if (transportProtocol != that.transportProtocol) return false;
-
-        return true;
+    @Nullable
+    public String getIcmpId() {
+        return icmpId;
     }
 
-    @Override
-    public int hashCode() {
-        int result = transportProtocol.hashCode();
-        result = 31 * result + (int) (timeout ^ (timeout >>> 32));
-        result = 31 * result + (tcpConnectionState != null ? tcpConnectionState.hashCode() : 0);
-        result = 31 * result + (sourceAddressOriginalSide != null ? sourceAddressOriginalSide.hashCode() : 0);
-        result = 31 * result + (destinationAddressOriginalSide != null ? destinationAddressOriginalSide.hashCode() : 0);
-        result = 31 * result + sourcePortOriginalSide;
-        result = 31 * result + destinationPortOriginalSide;
-        result = 31 * result + (hasSeenTrafficInBothDirections ? 1 : 0);
-        result = 31 * result + (sourceAddressReplySide != null ? sourceAddressReplySide.hashCode() : 0);
-        result = 31 * result + (destinationAddressReplySide != null ? destinationAddressReplySide.hashCode() : 0);
-        result = 31 * result + sourcePortReplySide;
-        result = 31 * result + destinationPortReplySide;
-        result = 31 * result + (assured ? 1 : 0);
-        result = 31 * result + structUseCount;
-        result = 31 * result + (int) (packets ^ (packets >>> 32));
-        result = 31 * result + (int) (bytes ^ (bytes >>> 32));
-        return result;
+    public void setIcmpId(@Nullable String icmpId) {
+        this.icmpId = icmpId;
     }
 
-    @Override
-    public String toString() {
-        return "IPConntrack{" +
-                "transportProtocol=" + transportProtocol +
-                ", timeout=" + timeout +
-                ", tcpConnectionState='" + tcpConnectionState + '\'' +
-                ", sourceAddressOriginalSide='" + sourceAddressOriginalSide + '\'' +
-                ", destinationAddressOriginalSide='" + destinationAddressOriginalSide + '\'' +
-                ", sourcePortOriginalSide=" + sourcePortOriginalSide +
-                ", destinationPortOriginalSide=" + destinationPortOriginalSide +
-                ", hasSeenTrafficInBothDirections=" + hasSeenTrafficInBothDirections +
-                ", sourceAddressReplySide='" + sourceAddressReplySide + '\'' +
-                ", destinationAddressReplySide='" + destinationAddressReplySide + '\'' +
-                ", sourcePortReplySide=" + sourcePortReplySide +
-                ", destinationPortReplySide=" + destinationPortReplySide +
-                ", assured=" + assured +
-                ", structUseCount=" + structUseCount +
-                ", packets=" + packets +
-                ", bytes=" + bytes +
-                '}';
+    public int getIcmpType() {
+        return icmpType;
     }
 
-    @NonNull
-    public TransportProtocol getTransportProtocol() {
+    public void setIcmpType(int icmpType) {
+        this.icmpType = icmpType;
+    }
+
+    public int getIcmpCode() {
+        return icmpCode;
+    }
+
+    public void setIcmpCode(int icmpCode) {
+        this.icmpCode = icmpCode;
+    }
+
+    @Nullable
+    public String getTransportProtocol() {
         return transportProtocol;
     }
 
-    public void setTransportProtocol(@NonNull TransportProtocol transportProtocol) {
+    public void setTransportProtocol(@Nullable String transportProtocol) {
         this.transportProtocol = transportProtocol;
     }
 
@@ -477,24 +564,96 @@ public class IPConntrack {
         this.destWhoisOrHostname = destWhoisOrHostname;
     }
 
-    public enum TransportProtocol {
-        TCP("TCP", 6),
-        UDP("UDP", 17),
-        ICMP("ICMP", 1);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        @NonNull
-        private final String displayName;
-        private final int protocolNumber;
+        final IPConntrack that = (IPConntrack) o;
 
-        TransportProtocol(@NonNull final String displayName, final int protocolNumber) {
-            this.displayName = displayName;
-            this.protocolNumber = protocolNumber;
-        }
+        if (assured != that.assured) return false;
+        if (bytes != that.bytes) return false;
+        if (destinationPortOriginalSide != that.destinationPortOriginalSide) return false;
+        if (destinationPortReplySide != that.destinationPortReplySide) return false;
+        if (hasSeenTrafficInBothDirections != that.hasSeenTrafficInBothDirections) return false;
+        if (icmpCode != that.icmpCode) return false;
+        if (icmpType != that.icmpType) return false;
+        if (packets != that.packets) return false;
+        if (sourcePortOriginalSide != that.sourcePortOriginalSide) return false;
+        if (sourcePortReplySide != that.sourcePortReplySide) return false;
+        if (structUseCount != that.structUseCount) return false;
+        if (timeout != that.timeout) return false;
+        if (destWhoisOrHostname != null ? !destWhoisOrHostname.equals(that.destWhoisOrHostname) : that.destWhoisOrHostname != null)
+            return false;
+        if (destinationAddressOriginalSide != null ? !destinationAddressOriginalSide.equals(that.destinationAddressOriginalSide) : that.destinationAddressOriginalSide != null)
+            return false;
+        if (destinationAddressReplySide != null ? !destinationAddressReplySide.equals(that.destinationAddressReplySide) : that.destinationAddressReplySide != null)
+            return false;
+        if (icmpId != null ? !icmpId.equals(that.icmpId) : that.icmpId != null) return false;
+        if (sourceAddressOriginalSide != null ? !sourceAddressOriginalSide.equals(that.sourceAddressOriginalSide) : that.sourceAddressOriginalSide != null)
+            return false;
+        if (sourceAddressReplySide != null ? !sourceAddressReplySide.equals(that.sourceAddressReplySide) : that.sourceAddressReplySide != null)
+            return false;
+        if (sourceHostname != null ? !sourceHostname.equals(that.sourceHostname) : that.sourceHostname != null)
+            return false;
+        if (tcpConnectionState != null ? !tcpConnectionState.equals(that.tcpConnectionState) : that.tcpConnectionState != null)
+            return false;
+        if (transportProtocol != null ? !transportProtocol.equals(that.transportProtocol) : that.transportProtocol != null)
+            return false;
 
-        @NonNull
-        public String getDisplayName() {
-            return displayName;
-        }
+        return true;
     }
 
+    @Override
+    public int hashCode() {
+        int result = transportProtocol != null ? transportProtocol.hashCode() : 0;
+        result = 31 * result + (sourceHostname != null ? sourceHostname.hashCode() : 0);
+        result = 31 * result + (destWhoisOrHostname != null ? destWhoisOrHostname.hashCode() : 0);
+        result = 31 * result + (int) (timeout ^ (timeout >>> 32));
+        result = 31 * result + (tcpConnectionState != null ? tcpConnectionState.hashCode() : 0);
+        result = 31 * result + (sourceAddressOriginalSide != null ? sourceAddressOriginalSide.hashCode() : 0);
+        result = 31 * result + (destinationAddressOriginalSide != null ? destinationAddressOriginalSide.hashCode() : 0);
+        result = 31 * result + sourcePortOriginalSide;
+        result = 31 * result + destinationPortOriginalSide;
+        result = 31 * result + (hasSeenTrafficInBothDirections ? 1 : 0);
+        result = 31 * result + (sourceAddressReplySide != null ? sourceAddressReplySide.hashCode() : 0);
+        result = 31 * result + (destinationAddressReplySide != null ? destinationAddressReplySide.hashCode() : 0);
+        result = 31 * result + sourcePortReplySide;
+        result = 31 * result + destinationPortReplySide;
+        result = 31 * result + (assured ? 1 : 0);
+        result = 31 * result + structUseCount;
+        result = 31 * result + (int) (packets ^ (packets >>> 32));
+        result = 31 * result + (int) (bytes ^ (bytes >>> 32));
+        result = 31 * result + (icmpId != null ? icmpId.hashCode() : 0);
+        result = 31 * result + icmpType;
+        result = 31 * result + icmpCode;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "IPConntrack{" +
+                "transportProtocol='" + transportProtocol + '\'' +
+                ", sourceHostname='" + sourceHostname + '\'' +
+                ", destWhoisOrHostname='" + destWhoisOrHostname + '\'' +
+                ", timeout=" + timeout +
+                ", tcpConnectionState='" + tcpConnectionState + '\'' +
+                ", sourceAddressOriginalSide='" + sourceAddressOriginalSide + '\'' +
+                ", destinationAddressOriginalSide='" + destinationAddressOriginalSide + '\'' +
+                ", sourcePortOriginalSide=" + sourcePortOriginalSide +
+                ", destinationPortOriginalSide=" + destinationPortOriginalSide +
+                ", hasSeenTrafficInBothDirections=" + hasSeenTrafficInBothDirections +
+                ", sourceAddressReplySide='" + sourceAddressReplySide + '\'' +
+                ", destinationAddressReplySide='" + destinationAddressReplySide + '\'' +
+                ", sourcePortReplySide=" + sourcePortReplySide +
+                ", destinationPortReplySide=" + destinationPortReplySide +
+                ", assured=" + assured +
+                ", structUseCount=" + structUseCount +
+                ", packets=" + packets +
+                ", bytes=" + bytes +
+                ", icmpId='" + icmpId + '\'' +
+                ", icmpType=" + icmpType +
+                ", icmpCode=" + icmpCode +
+                '}';
+    }
 }
