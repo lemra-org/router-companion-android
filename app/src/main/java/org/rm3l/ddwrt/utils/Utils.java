@@ -303,7 +303,10 @@ public final class Utils {
         return filename.replaceAll("\\W+", "_");
     }
 
-    public static void requestBackup(@NonNull final Context ctx) {
+    public static void requestBackup(@Nullable final Context ctx) {
+        if (ctx == null) {
+            return;
+        }
         new BackupManager(ctx).dataChanged();
     }
 

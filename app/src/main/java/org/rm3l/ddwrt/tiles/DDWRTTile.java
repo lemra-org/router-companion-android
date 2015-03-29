@@ -144,6 +144,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             final SharedPreferences.Editor editor = this.mParentFragmentPreferences.edit();
             editor.putBoolean(getAutoRefreshPreferenceKey(), this.mAutoRefreshToggle);
             editor.apply();
+            Utils.requestBackup(mParentFragmentActivity);
         }
         this.onAutoRefreshToggleCheckedChanged(compoundButton, isChecked);
     }
