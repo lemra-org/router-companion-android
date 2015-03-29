@@ -7,17 +7,20 @@ import android.app.backup.FileBackupHelper;
 import android.app.backup.SharedPreferencesBackupHelper;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -60,50 +63,74 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
     @Override
     public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data,
                          ParcelFileDescriptor newState) throws IOException {
-        Log.d(LOG_TAG, "onBackup called");
-        final List<Router> allRouters = dao.getAllRouters();
+        try {
+            Log.d(LOG_TAG, "onBackup called");
+            final List<Router> allRouters = dao.getAllRouters();
 
-        if (allRouters != null) {
-            final Collection<String> routerUuids = Collections2.transform(allRouters, new Function<Router, String>() {
-                @Override
-                public String apply(Router input) {
-                    // We use router uuid as shared preference group name for this router.
-                    return input.getUuid();
-                }
-            });
-            if (routerUuids != null) {
-                addFileHelper(ROUTER_PREFERENCES,
-                        routerUuids.toArray(new String[routerUuids.size()]));
+            if (allRouters != null) {
+                final Collection<String> routerUuids = Collections2.transform(allRouters, new Function<Router, String>() {
+                    @Override
+                    public String apply(Router input) {
+                        // We use router uuid as shared preference group name for this router.
+                        return input.getUuid();
+                    }
+                });
+                if (routerUuids != null) {
+                    addFileHelper(ROUTER_PREFERENCES,
+                            routerUuids.toArray(new String[routerUuids.size()]));
 
-                //Usage Data
-                final Collection<String> pathsToRoutersUsageDataFiles = Collections2
-                        .transform(routerUuids, new Function<String, String>() {
-                            @Override
-                            public String apply(String input) {
-                                return String.format("../files/%s_Usage_%s.bak",
-                                        BuildConfig.APPLICATION_ID, input);
-                            }
-                        });
-                if (pathsToRoutersUsageDataFiles != null) {
-                    addFileHelper(USAGE_DATA,
-                            pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
+                    //Usage Data
+                    final Collection<String> pathsToRoutersUsageDataFiles = Collections2
+                            .transform(routerUuids, new Function<String, String>() {
+                                @Override
+                                public String apply(String input) {
+                                    return String.format("../files/%s_Usage_%s.bak",
+                                            BuildConfig.APPLICATION_ID, input);
+                                }
+                            });
+                    if (pathsToRoutersUsageDataFiles != null) {
+                        addFileHelper(USAGE_DATA,
+                                pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
+                    }
                 }
             }
-        }
 
-        synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-            Log.d(LOG_TAG, "onBackup called after synchronized block");
-            super.onBackup(oldState, data, newState);
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                Log.d(LOG_TAG, "onBackup called after synchronized block");
+                super.onBackup(oldState, data, newState);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Utils.reportException(new DDWRTCompanionBackupException(e));
         }
     }
 
     @Override
     public void onRestore(BackupDataInput data, int appVersionCode,
                           ParcelFileDescriptor newState) throws IOException {
-        Log.d(LOG_TAG, "onRestore called");
-        synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-            Log.d(LOG_TAG, "onRestore called after synchronized synchronized block");
-            super.onRestore(data, appVersionCode, newState);
+        try {
+            Log.d(LOG_TAG, "onRestore called");
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                Log.d(LOG_TAG, "onRestore called after synchronized synchronized block");
+                super.onRestore(data, appVersionCode, newState);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Utils.reportException(new DDWRTCompanionBackupRestoreException(e));
+        }
+    }
+
+    class DDWRTCompanionBackupException extends DDWRTCompanionException {
+
+        DDWRTCompanionBackupException(@Nullable Throwable throwable) {
+            super(throwable);
+        }
+    }
+
+    class DDWRTCompanionBackupRestoreException extends DDWRTCompanionException {
+
+        DDWRTCompanionBackupRestoreException(@Nullable Throwable throwable) {
+            super(throwable);
         }
     }
 
