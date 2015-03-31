@@ -43,7 +43,7 @@ import android.widget.TextView;
 
 import com.google.common.base.Strings;
 
-import org.rm3l.ddwrt.fragments.BaseFragment;
+import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -278,7 +278,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ((BaseFragment) mParentFragment)
+                    ((AbstractBaseFragment) mParentFragment)
                             .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
                     alertDialog.cancel();
                 }

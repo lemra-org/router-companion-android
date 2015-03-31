@@ -28,7 +28,7 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.ddwrt.fragments.BaseFragment;
+import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -48,18 +48,18 @@ public abstract class SortingStrategy {
     public abstract String getShortDescription();
 
     @NonNull
-    public final BaseFragment[] sort(@NonNull final BaseFragment[] tabs) {
+    public final AbstractBaseFragment[] sort(@NonNull final AbstractBaseFragment[] tabs) {
         if (doCompare()) {
 
-            final TreeMap<String, BaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
+            final TreeMap<String, AbstractBaseFragment> tabsMap = Maps.newTreeMap(this.getComparator());
             for (int i = 0; i < tabs.length; i++) {
-                final BaseFragment tab = tabs[i];
+                final AbstractBaseFragment tab = tabs[i];
                 tabsMap.put(StringUtils.lowerCase(tab.getTabTitle().toString()), tab);
             }
 
-            final BaseFragment[] output = new BaseFragment[tabsMap.size()];
+            final AbstractBaseFragment[] output = new AbstractBaseFragment[tabsMap.size()];
             int j = 0;
-            for (Map.Entry<String, BaseFragment> ddWRTBaseFragmentEntry : tabsMap.entrySet()) {
+            for (Map.Entry<String, AbstractBaseFragment> ddWRTBaseFragmentEntry : tabsMap.entrySet()) {
                 output[j++] = ddWRTBaseFragmentEntry.getValue();
             }
             return output;

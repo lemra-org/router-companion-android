@@ -90,7 +90,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         final PageSlidingTabStripFragment fragment = new PageSlidingTabStripFragment();
         final Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(BaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
+        args.putString(AbstractBaseFragment.ROUTER_CONNECTION_INFO, routerUuid);
         fragment.setArguments(args);
         fragment.mOnPageChangeListener = onPageChangeListener;
         return fragment;
@@ -105,7 +105,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        final String routerUuid = getArguments().getString(BaseFragment.ROUTER_CONNECTION_INFO);
+        final String routerUuid = getArguments().getString(AbstractBaseFragment.ROUTER_CONNECTION_INFO);
         mRouter = RouterManagementActivity.getDao(getActivity()).getRouter(routerUuid);
 
         final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
@@ -167,11 +167,11 @@ public class PageSlidingTabStripFragment extends Fragment {
         }
 
         //Generate random colors to use for selection
-        final BaseFragment[] tabs = mFragmentTabsAdapter.tabs;
+        final AbstractBaseFragment[] tabs = mFragmentTabsAdapter.tabs;
         if (tabs.length > 0) {
             final int[] selectedIndicatorColors = new int[tabs.length];
             int i = 0;
-            for (final BaseFragment tab : tabs) {
+            for (final AbstractBaseFragment tab : tabs) {
                 selectedIndicatorColors[i++] = (tab != null ?
                         ColorUtils.getColor(tab.getClass().getSimpleName()) : ColorUtils.genColor(colorsToSkip));
             }
@@ -198,7 +198,7 @@ public class PageSlidingTabStripFragment extends Fragment {
     private class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NonNull
-        final BaseFragment[] tabs;
+        final AbstractBaseFragment[] tabs;
 
         private final Resources resources;
         private final int parentSectionNumber;
@@ -208,7 +208,7 @@ public class PageSlidingTabStripFragment extends Fragment {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = BaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
+            this.tabs = AbstractBaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
         @Override
@@ -233,7 +233,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 Log.d(TAG, "tabs contains less than " + position + " items");
                 return null;
             }
-            final BaseFragment tab = this.tabs[position];
+            final AbstractBaseFragment tab = this.tabs[position];
             Log.d(TAG, "Tab @position #" + position + ": " + tab);
             if (tab == null) {
                 return null;
