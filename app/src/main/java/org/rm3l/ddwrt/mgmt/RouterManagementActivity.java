@@ -62,7 +62,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -119,6 +122,8 @@ public class RouterManagementActivity
     private Toolbar mToolbar;
     private SharedPreferences mPreferences;
 
+    private InterstitialAd mInterstitialAd;
+
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
         return new DDWRTCompanionSqliteDAOImpl(context);
@@ -166,6 +171,8 @@ public class RouterManagementActivity
         setContentView(R.layout.activity_router_management);
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
@@ -552,18 +559,63 @@ public class RouterManagementActivity
 
             //Animate
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startActivity(view, ddWrtMainIntent);
-            } else {
-                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                final AdRequest adRequest = AdUtils.buildAdRequest(RouterManagementActivity.this);
+                                if (adRequest != null) {
+                                    mInterstitialAd.loadAd(adRequest);
+                                }
+                                startActivity(view, ddWrtMainIntent);
+                            }
+                        });
+                    } else {
                         startActivity(view, ddWrtMainIntent);
-                        alertDialog.cancel();
                     }
-                }, 1000);
+                } else {
+                    startActivity(view, ddWrtMainIntent);
+                }
+            } else {
+                if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                final AdRequest adRequest = AdUtils.buildAdRequest(RouterManagementActivity.this);
+                                if (adRequest != null) {
+                                    mInterstitialAd.loadAd(adRequest);
+                                }
+                                startActivity(view, ddWrtMainIntent);
+                            }
+                        });
+                    } else {
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(view, ddWrtMainIntent);
+                                alertDialog.cancel();
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(view, ddWrtMainIntent);
+                            alertDialog.cancel();
+                        }
+                    }, 1000);
+                }
             }
 
         }
