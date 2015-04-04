@@ -163,19 +163,22 @@ android {
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "true"
+            buildConfigField "boolean", "WITH_ADS", "false"
         }
         amazon {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "false"
         }
-        // For FOSS version only
+        // For FOSS version only (no ads)
         fdroid {
             //Enable 'Donations' menu item
             buildConfigField "boolean", "DONATIONS", "true"
             //F-Droid (pure OSS) will contain links to Google Play IAB, Paypal, Flattr, and Bitcoin
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "false"
         }
     }
     buildTypes {
