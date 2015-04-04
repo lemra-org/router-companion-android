@@ -116,6 +116,11 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     @Nullable
+    public Integer getTileBackgroundColor() {
+        return null; //Automatic
+    }
+
+    @Nullable
     public Integer getLayoutId() {
         return layoutId;
     }

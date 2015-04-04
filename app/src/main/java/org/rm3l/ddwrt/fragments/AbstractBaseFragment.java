@@ -32,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
@@ -48,9 +49,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
@@ -101,6 +104,7 @@ import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -168,8 +172,12 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
             return fragment;
 
-        } catch (java.lang.InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (java.lang.InstantiationException ie) {
+            ie.printStackTrace();
+            Utils.reportException(ie);
+        } catch (IllegalAccessException iae) {
+            Utils.reportException(iae);
+            iae.printStackTrace();
         }
         return null;
     }
@@ -729,10 +737,72 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             }
         }
         this.loaderIdsInUse.clear();
-        viewGroup = (ScrollView) getActivity().getLayoutInflater()
-                .inflate(R.layout.base_tiles_container_scrollview, new ScrollView(getActivity()));
 
-        this.fragmentTiles = this.getTiles(savedInstanceState);
+
+        final FragmentActivity activity = getActivity();
+
+        viewGroup = (ScrollView) activity.getLayoutInflater()
+                .inflate(R.layout.base_tiles_container_scrollview, new ScrollView(activity));
+
+        final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
+        if (BuildConfig.WITH_ADS) {
+            //Inject tile wth a specific AdView
+            this.fragmentTiles = new ArrayList<>();
+            this.fragmentTiles.add(new DDWRTTile<Void>(this, savedInstanceState, this.router, R.layout.tile_adview, null) {
+                @Override
+                public int getTileHeaderViewId() {
+                    return -1;
+                }
+
+                @Override
+                public int getTileTitleViewId() {
+                    return -1;
+                }
+
+                @Override
+                @Nullable
+                public Integer getTileBackgroundColor() {
+                    return activity.getResources().getColor(android.R.color.transparent);
+                }
+
+                @Nullable
+                @Override
+                protected Loader<Void> getLoader(int id, Bundle args) {
+                    return new AsyncTaskLoader<Void>(activity) {
+                        @Override
+                        public Void loadInBackground() {
+                            //Nothing to do
+                            return null;
+                        }
+                    };
+                }
+
+                @Nullable
+                @Override
+                protected String getLogTag() {
+                    return null;
+                }
+
+                @Nullable
+                @Override
+                protected OnClickIntent getOnclickIntent() {
+                    return null;
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Void> loader, Void data) {
+                    AdUtils.buildAndDisplayAdViewIfNeeded(activity,
+                            (AdView) layout.findViewById(R.id.router_main_activity_tile_adView));
+                }
+            });
+
+            if (tiles != null) {
+                this.fragmentTiles.addAll(tiles);
+            }
+
+        } else {
+            this.fragmentTiles = tiles;
+        }
     }
 
     /**
@@ -929,12 +999,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
 
-                if (isThemeLight) {
-                    //Light
-                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                final Integer tileBackgroundColor = ddwrtTile.getTileBackgroundColor();
+                if (tileBackgroundColor != null) {
+                    cardView.setCardBackgroundColor(tileBackgroundColor);
                 } else {
-                    //Default is Dark
-                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                    if (isThemeLight) {
+                        //Light
+                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                    } else {
+                        //Default is Dark
+                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                    }
                 }
 
                 cardView.addView(viewGroupLayout);
