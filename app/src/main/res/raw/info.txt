@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <h3>%APP_NAME%</h3>
-Version %VERSION_NAME%<br/><br/>
+v%VERSION_NAME%<br/><br/>
 Copyright &copy; 2014 Armel S.<br/><br/>
 
 <b><a href="http://apps.rm3l.org/ddwrt" target="_blank">http://apps.rm3l.org/ddwrt</a></b>
