@@ -25,9 +25,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
-        and the F-Droid version will not feature Google In-App Billng -->
-    <!--<uses-permission android:name="com.android.vending.BILLING" />-->
+    <!--
+         This permission is actually no longer needed, as the PlayStore version is paying (to support the project),
+        and the F-Droid version will not feature Google In-App Billng
+    -->
+    <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
+
 
     <!-- To get DhcpInfo, so as to default forms with the current gateway -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -53,7 +56,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:label="@string/app_name"
         android:theme="@style/AppThemeDark"
         tools:replace="android:theme">
-
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
@@ -75,9 +77,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -103,7 +108,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".tiles.status.wan.WANMonthlyTrafficActivity"
             android:label="WAN Monthly Traffic"
@@ -114,7 +118,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".tiles.status.wireless.ActiveIPConnectionsDetailStatsActivity"
             android:label="IP Connections Pie Chart"
@@ -124,7 +127,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".settings.RouterSettingsActivity"
             android:label="@string/title_activity_router_settings"
@@ -134,7 +136,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
             android:label="@string/wifi_qr_code"
@@ -144,21 +145,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".settings.RouterManagementSettingsActivity"
             android:label="@string/title_activity_router_settings"
-            android:parentActivityName="org.rm3l.ddwrt.mgmt.RouterManagementActivity"
+            android:parentActivityName=".mgmt.RouterManagementActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivity"
             android:label="@string/title_openvpncl_settings"
@@ -168,7 +169,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".tiles.status.router.RouterCpuInfoActivity"
             android:label="@string/title_cpuinfo"
@@ -178,7 +178,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".tiles.status.router.RouterMemInfoActivity"
             android:label="@string/title_meminfo"
@@ -188,7 +187,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
-
         <activity
             android:name=".tiles.status.wireless.ActiveIPConnectionsDetailActivity"
             android:label="@string/title_ip_connections"
@@ -207,6 +205,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </activity>
 
+        <receiver android:name=".WOLWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wolwidget_info" />
+        </receiver>
+
+        <activity android:name=".WOLWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

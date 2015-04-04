@@ -52,10 +52,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragmentAbstract;
-import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragmentAbstract;
-import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragmentAbstract;
-import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrtAbstract;
+import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
+import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
+import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
+import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragmentAbstract;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragmentAbstract;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragmentAbstract;
@@ -66,6 +66,7 @@ import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragmentAbstract;
 import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragmentAbstract;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragmentAbstract;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragmentAbstract;
+import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupBasicFragmentAbstract;
 import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragmentAbstract;
 import org.rm3l.ddwrt.fragments.setup.SetupEoIPFragmentAbstract;
@@ -331,27 +332,33 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragmentAbstract.class, parentSectionTitle,
 //                        resources.getString(R.string.services_webserver), router);
                 break;
+            case 7:
+                //Services > Wake On LAN
+                //TODO
+                parentSectionTitle = resources.getString(R.string.services);
+                tabsToSort = new AbstractBaseFragment[0];
+                break;
             //Admin: {Commands, NVRAM}
             //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-            case 8:
+            case 9:
                 //Admin > Commands
                 parentSectionTitle = resources.getString(R.string.commands);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
                         resources.getString(R.string.command_shell), router);
                 break;
-            case 9:
+            case 10:
                 //Admin > NVRAM
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrtAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_nvram), router);
                 //TODO Also Add UCI Config if possible
                 break;
             //Toolbox
             //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
             //In DD-WRT: N/A
-            case 11:
+            case 12:
                 //Toolbox > Network
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
@@ -395,13 +402,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //            case 4:
 //                parentSectionTitle = resources.getString(R.string.commands);
 //                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.command_shell), router);
 //                break;
 //            case 5:
 //                parentSectionTitle = resources.getString(R.string.admin_area);
 //                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrtAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_nvram), router);
 //                //TODO Also Add UCI Config if possible
 //                break;
@@ -514,43 +521,51 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragmentAbstract.class, parentSectionTitle,
 //                        resources.getString(R.string.services_webserver), router);
                 break;
+            case 7:
+                //Services > Wake On LAN
+                //TODO
+                parentSectionTitle = resources.getString(R.string.services);
+                tabsToSort = new AbstractBaseFragment[1];
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesWakeOnLanFragment.class, parentSectionTitle,
+                        resources.getString(R.string.services_wol), router);
+                break;
             //Admin: {Commands, NVRAM}
             //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-            case 8:
+            case 9:
                 //Admin > Commands
                 parentSectionTitle = resources.getString(R.string.commands);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
                         resources.getString(R.string.command_shell), router);
                 break;
-            case 9:
+            case 10:
                 //Admin > NVRAM
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminCommandsFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_cmds), router);
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragment.class, parentSectionTitle,
                         resources.getString(R.string.admin_area_nvram), router);
 //                tabsToSort = new DDWRTBaseFragment[7];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_mgmt), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminKeepAliveFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminKeepAliveFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_keep_alive), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(AdminCommandsFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[2] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_cmds), router);
-//                tabsToSort[3] = DDWRTBaseFragment.newInstance(AdminWOLFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[3] = DDWRTBaseFragment.newInstance(AdminWOLFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_wol), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(AdminFactoryDefaultsFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[4] = DDWRTBaseFragment.newInstance(AdminFactoryDefaultsFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_factory), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(AdminUpgradeFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[5] = DDWRTBaseFragment.newInstance(AdminUpgradeFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_upgrade), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.admin_area_backup), router);
                 break;
             //Toolbox
             //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
             //In DD-WRT: N/A
-            case 11:
+            case 12:
                 //Toolbox > Network
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
@@ -622,7 +637,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //6 = Access => {WAN}
                 parentSectionTitle = resources.getString(R.string.access_restrictions);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AccessWANAccessFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AccessWANAccessFragment.class, parentSectionTitle,
                         resources.getString(R.string.access_restrictions_wan), router);
                 break;
             case 555:

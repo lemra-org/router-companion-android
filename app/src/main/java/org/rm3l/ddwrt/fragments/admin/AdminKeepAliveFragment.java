@@ -31,11 +31,11 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import java.util.List;
 
 /**
- * 'Admin > Upgrade' fragment
+ * 'Admin > Keep Alive' fragment
  * <p/>
  * TODO To Implement
  */
-public class AdminUpgradeFragmentAbstract extends AbstractBaseFragment {
+public class AdminKeepAliveFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override

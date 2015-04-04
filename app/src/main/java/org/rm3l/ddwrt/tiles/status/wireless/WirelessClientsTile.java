@@ -179,7 +179,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String RT_GRAPHS = "rt_graphs";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
-    private static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
+    public static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
 
         @Override
         protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
@@ -288,7 +288,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-        //FIXME
         mProgressBar = (ProgressBar) layout
                 .findViewById(R.id.tile_status_wireless_clients_loading_view);
         mProgressBar.setMax(100);

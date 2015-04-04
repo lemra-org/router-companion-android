@@ -19,24 +19,27 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.fragments.admin.openwrt;
+
+package org.rm3l.ddwrt.fragments.admin;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragmentAbstract;
+import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.admin.nvram.AdminNVRAMTile;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class AdminNVRAMFragmentOpenWrtAbstract extends AdminNVRAMFragmentAbstract {
+/**
+ * 'Admin > Upgrade' fragment
+ * <p/>
+ * TODO To Implement
+ */
+public class AdminUpgradeFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        //TODO
-        return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+        return null;
     }
 }

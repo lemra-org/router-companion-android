@@ -20,7 +20,7 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.ddwrt.fragments.access;
+package org.rm3l.ddwrt.fragments.admin;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,11 +31,11 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import java.util.List;
 
 /**
- * WAN Access Fragment
+ * 'Admin > Factory Defaults' fragment
  * <p/>
- * TODO To implement
+ * TODO To Implement
  */
-public class AccessWANAccessFragmentAbstract extends AbstractBaseFragment {
+public class AdminFactoryDefaultsFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override

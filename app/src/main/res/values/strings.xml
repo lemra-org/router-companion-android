@@ -51,6 +51,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="navigation_drawer_items_array_item2_header">Services</string>
     <string-array name="navigation_drawer_items_array_item2_items">
         <item>OpenVPN</item>
+        <item>Wake On LAN</item>
     </string-array>
 
     <string name="navigation_drawer_items_array_item3_header">Admin Area</string>
@@ -449,6 +450,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="services_openvpn_client">OpenVPN Client</string>
     <string name="services_openvpn_logs">OpenVPN Logs</string>
     <string name="services_openvpn_server">OpenVPN Server</string>
+    <string name="services_wol">Wake On LAN (WOL)</string>
     <string name="title_openvpncl_settings">OpenVPN Client Settings</string>
     <string name="openvpn_client_settings_tunnel_device">Tunnel Device</string>
     <string name="openvpn_client_settings_tunnel_protocol">Tunnel Protocol</string>
@@ -562,4 +564,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="action_search">Search</string>
     <string name="search_hint">Search</string>
     <string name="gen_qr_code">Generate QR Code</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
 </resources>

@@ -35,7 +35,7 @@ import java.util.List;
  * <p/>
  * TODO To Implement
  */
-public class AdminManagementFragmentAbstract extends AbstractBaseFragment {
+public class AdminManagementFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override
