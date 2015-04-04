@@ -22,13 +22,14 @@
 
 package org.rm3l.ddwrt;
 
-import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.multidex.MultiDexApplication;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -51,7 +52,7 @@ import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
         sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
         sharedPreferencesMode = Context.MODE_PRIVATE
 )
-public class DDWRTApplication extends Application {
+public class DDWRTApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {
@@ -66,19 +67,14 @@ public class DDWRTApplication extends Application {
         if (isFirstLaunch(this)) {
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
             final FirstLaunch firstLaunchReport;
-            switch (FLAVOR) {
-                case "google":
-                    firstLaunchReport = new GoogleFirstLaunch();
-                    break;
-                case "amazon":
-                    firstLaunchReport = new AmazonFirstLaunch();
-                    break;
-                case "fdroid":
-                    firstLaunchReport = new FDroidFirstLaunch();
-                    break;
-                default:
-                    firstLaunchReport = new FirstLaunch(FLAVOR);
-                    break;
+            if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+                firstLaunchReport = new GoogleFirstLaunch();
+            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
+                firstLaunchReport = new AmazonFirstLaunch();
+            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "fdroid")) {
+                firstLaunchReport = new FDroidFirstLaunch();
+            } else {
+                firstLaunchReport = new FirstLaunch(FLAVOR);
             }
             Utils.reportException(firstLaunchReport);
         }

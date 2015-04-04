@@ -104,8 +104,9 @@ android {
             storePassword ''
         }
     }
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -135,7 +136,8 @@ android {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22// Enabling multidex support.
+        multiDexEnabled true
         // Fetch the version according to git latest tag and "how far are we from last tag"
         def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
         def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
@@ -156,6 +158,16 @@ android {
         // For debugging, friendly print the version output to the Gradle console
         printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
                 "- NAME: " + versionName + "\n----------------------------\n")
+
+        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
+    }
+    //Those files, from Apache Commons lib cause build errors
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
     }
     /**
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
@@ -217,6 +229,10 @@ android {
          * =========================================================================================
          */
     }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "2048M"
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -224,14 +240,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    //Those files, from Apache Commons lib cause build errors
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-    }
-    lintOptions {
-        abortOnError false
-    }
+
 
 }
 
@@ -266,11 +275,15 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:22.0.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.2'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.cocosw:undobar:1.+@aar'
     compile 'com.google.zxing:core:3.1.0'
     compile 'com.github.curioustechizen.android-ago:library:1.2.0'
+    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.android.support:multidex:1.0.0'
+    
+    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'
 }
