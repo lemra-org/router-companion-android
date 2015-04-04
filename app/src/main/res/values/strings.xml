@@ -25,6 +25,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
+    <!-- Placeholder for Ads unit IDs -->
+    <string name="banner_ad_unit_id_router_management_activity">ca-app-pub-1638989008889479/2952127644</string>
+    <string name="banner_ad_unit_id_main_activity">xxx</string>
+    <string name="interstitial_ad_unit_id_router_list_to_router_main">xxx</string>
+    <string name="interstitial_ad_unit_id_tile_click">ca-app-pub-1638989008889479/8719459641</string>
+    <string name="interstitial_ad_unit_id_wireless_network_generate_qr_code">ca-app-pub-1638989008889479/5626392448</string>
+    <string name="interstitial_ad_unit_id_open_active_ip_connections_activity">ca-app-pub-1638989008889479/6963524848</string>
+    <string name="banner_ad_unit_id_wan_monthly_traffic_chart">ca-app-pub-1638989008889479/8440258049</string>
+    <string name="interstitial_ad_unit_id_openvpn_settings">ca-app-pub-1638989008889479/9777390442</string>
+
     <string-array name="donation_google_catalog_values">
         <item>1 Euro</item>
         <item>2 Euros</item>

@@ -62,6 +62,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -74,6 +75,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -162,6 +164,8 @@ public class RouterManagementActivity
         }
 
         setContentView(R.layout.activity_router_management);
+
+        AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
 
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
