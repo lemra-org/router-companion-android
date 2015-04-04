@@ -34,7 +34,10 @@ gradle.taskGraph.whenReady { taskGraph ->
     if (taskGraph.hasTask(':app:assembleRelease') ||
             taskGraph.hasTask(':app:assembleFdroidRelease') ||
             taskGraph.hasTask(':app:assembleGoogleRelease') ||
-            taskGraph.hasTask(':app:assembleAmazonRelease')) {
+            taskGraph.hasTask(':app:assembleAmazonRelease') ||
+            taskGraph.hasTask(':app:assembleAmazonFullWithAdsRelease') ||
+            taskGraph.hasTask(':app:assembleGoogleFullWithAdsRelease') ||
+            taskGraph.hasTask(':app:assembleFdroidFullWithAdsRelease')) {
         def password = ''
         def storeFile = null
         if (System.console() == null) {
@@ -129,6 +132,7 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
+        //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
         targetSdkVersion 21
@@ -180,6 +184,38 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
         }
+
+        /*
+         * =========================================================================================
+         * -BEGIN- Full-featured product flavors (but backed by Ads)
+         * =========================================================================================
+         */
+        googleFullWithAds {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "true"
+        }
+        amazonFullWithAds {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "true"
+        }
+        // For FOSS version only (with ads)
+        fdroidFullWithAds {
+            //Disable 'Donations' menu item
+            buildConfigField "boolean", "DONATIONS", "false"
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "true"
+        }
+        /*
+         * =========================================================================================
+         * -END- Full-featured product flavors (but backed by Ads)
+         * =========================================================================================
+         */
     }
     buildTypes {
         release {
