@@ -181,7 +181,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
     public static final String TEMP_ROUTER_UUID = UUID.randomUUID().toString();
     public static final String RT_GRAPHS = "rt_graphs";
-    public static final String USAGE_DB_OUT = USAGE_DB + ".out";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
     public static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
@@ -244,6 +243,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     };
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
+    public static final String USAGE_DB_OUT = USAGE_DB + ".out";
     //Generate a random string, to use as discriminator for determining dhcp clients
     private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
