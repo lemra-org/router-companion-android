@@ -32,8 +32,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="interstitial_ad_unit_id_tile_click">ca-app-pub-1638989008889479/8719459641</string>
     <string name="interstitial_ad_unit_id_wireless_network_generate_qr_code">ca-app-pub-1638989008889479/5626392448</string>
     <string name="interstitial_ad_unit_id_open_active_ip_connections_activity">ca-app-pub-1638989008889479/6963524848</string>
+    <string name="interstitial_ad_unit_id_transtion_to_wan_monthly_chart">ca-app-pub-1638989008889479/6998720844</string>
     <string name="banner_ad_unit_id_wan_monthly_traffic_chart">ca-app-pub-1638989008889479/8440258049</string>
-    <string name="interstitial_ad_unit_id_openvpn_settings">ca-app-pub-1638989008889479/9777390442</string>
+    <string name="banner_ad_unit_id_active_ip_connections">ca-app-pub-1638989008889479/9805913241</string>
+    <!-- Deprecated, as we are using the tile click unit ID-->
+    <!--<string name="interstitial_ad_unit_id_openvpn_settings">ca-app-pub-1638989008889479/9777390442</string>-->
+    <string name="interstitial_ad_unit_id_app_exit">ca-app-pub-1638989008889479/5015786845</string>
 
     <string-array name="donation_google_catalog_values">
         <item>1 Euro</item>

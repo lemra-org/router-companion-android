@@ -59,6 +59,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.collect.Lists;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
@@ -81,6 +84,7 @@ import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -152,6 +156,9 @@ public class DDWRTMainActivity extends ActionBarActivity
     private ArrayAdapter<String> mRoutersListAdapter;
     private ArrayList<Router> mRoutersListForPicker;
 
+    @Nullable
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -208,6 +215,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                 .apply();
 
         setContentView(R.layout.activity_main);
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         final String routerName = router.getName();
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
@@ -361,6 +370,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                         return;
                     }
                     if (position == 0) {
+                        //Add New Button
                         openAddRouterForm();
                         if (currentItemPos >= 0) {
                             routersPicker.setSelection(currentItemPos);
@@ -379,22 +389,54 @@ public class DDWRTMainActivity extends ActionBarActivity
                         return;
                     }
 
-                    //Reload UI
-                    final AlertDialog alertDialog = Utils.
-                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                     final Intent intent = getIntent();
                     intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
                     intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                            startActivity(intent);
-                            alertDialog.cancel();
+
+                    if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                            mInterstitialAd.setAdListener(new AdListener() {
+                                @Override
+                                public void onAdClosed() {
+                                    final AdRequest adRequest = AdUtils.buildAdRequest(DDWRTMainActivity.this);
+                                    if (adRequest != null) {
+                                        mInterstitialAd.loadAd(adRequest);
+                                    }
+                                    finish();
+                                    startActivity(intent);
+                                }
+                            });
+                        } else {
+                            //Reload UI
+                            final AlertDialog alertDialog = Utils.
+                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                            alertDialog.show();
+                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                    startActivity(intent);
+                                    alertDialog.cancel();
+                                }
+                            }, 2000);
                         }
-                    }, 2000);
+                    } else {
+                        //Reload UI
+                        final AlertDialog alertDialog = Utils.
+                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                                startActivity(intent);
+                                alertDialog.cancel();
+                            }
+                        }, 2000);
+                    }
                 }
 
                 @Override
@@ -461,7 +503,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
         //noinspection PointlessBooleanExpression,ConstantConditions
-        if (BuildConfig.DONATIONS &&
+        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
             Utils.displayUpgradeMessage(this);

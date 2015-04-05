@@ -49,6 +49,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -225,7 +226,8 @@ public final class Utils {
     public static void displayUpgradeMessage(@NonNull final Context ctx) {
         //Download the full version to unlock this version
         new AlertDialog.Builder(ctx)
-                .setMessage("Unlock this feature by upgrading to the full version on Google Play Store. \n\n" +
+                .setMessage("Unlock this feature by upgrading to the full-featured version " +
+                        (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
                         "Thank you for supporting this initiative!")
                 .setCancelable(true)
                 .setPositiveButton("Upgrade!", new DialogInterface.OnClickListener() {

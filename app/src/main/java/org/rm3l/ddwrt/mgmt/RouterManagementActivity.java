@@ -122,6 +122,7 @@ public class RouterManagementActivity
     private Toolbar mToolbar;
     private SharedPreferences mPreferences;
 
+    @Nullable
     private InterstitialAd mInterstitialAd;
 
     @NonNull
@@ -306,7 +307,7 @@ public class RouterManagementActivity
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
         //noinspection PointlessBooleanExpression,ConstantConditions
-        if (BuildConfig.DONATIONS &&
+        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
             Utils.displayUpgradeMessage(this);
@@ -333,7 +334,7 @@ public class RouterManagementActivity
         //Display Donate Message if trying to add more than the max routers for Free version
         final List<Router> allRouters = dao.getAllRouters();
         //noinspection PointlessBooleanExpression,ConstantConditions
-        if (BuildConfig.DONATIONS &&
+        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
             Utils.displayUpgradeMessage(this);
@@ -489,6 +490,31 @@ public class RouterManagementActivity
                 }
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
+                        RouterManagementActivity.super.onBackPressed();
+                    }
+                });
+            } else {
+                super.onBackPressed();
+            }
+        } else {
+            super.onBackPressed();
+        }
+
     }
 
     @Override

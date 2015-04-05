@@ -44,14 +44,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -100,6 +104,9 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
     private ShareActionProvider mShareActionProvider;
 
     private Menu optionsMenu;
+
+    @Nullable
+    private InterstitialAd mInterstitialAd;
 
     @Nullable
     private static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
@@ -167,6 +174,9 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
             getWindow().getDecorView()
                     .setBackgroundColor(getResources().getColor(android.R.color.white));
         }
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
         if (mToolbar != null) {
@@ -351,6 +361,30 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
             mFileToShare.delete();
         }
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
+    @Override
+    public void finish() {
+        if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
+                        WirelessIfaceQrCodeActivity.super.finish();
+                    }
+                });
+            } else {
+                super.finish();
+            }
+        } else {
+            super.finish();
+        }
     }
 
 }

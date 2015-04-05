@@ -35,9 +35,8 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleFdroidRelease') ||
             taskGraph.hasTask(':app:assembleGoogleRelease') ||
             taskGraph.hasTask(':app:assembleAmazonRelease') ||
-            taskGraph.hasTask(':app:assembleAmazonFullWithAdsRelease') ||
-            taskGraph.hasTask(':app:assembleGoogleFullWithAdsRelease') ||
-            taskGraph.hasTask(':app:assembleFdroidFullWithAdsRelease')) {
+            taskGraph.hasTask(':app:assembleAmazonFreeWithAdsRelease') ||
+            taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease')) {
         def password = ''
         def storeFile = null
         if (System.console() == null) {
@@ -136,8 +135,9 @@ android {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 14
-        targetSdkVersion 22// Enabling multidex support.
-        multiDexEnabled true
+        targetSdkVersion 22
+        // Enabling multidex support.
+//        multiDexEnabled true
         // Fetch the version according to git latest tag and "how far are we from last tag"
         def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
         def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
@@ -159,7 +159,7 @@ android {
         printf("\n--------" + "VERSION DATA--------" + "\n" + "- CODE: " + versionCode + "\n" +
                 "- NAME: " + versionName + "\n----------------------------\n")
 
-        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
+//        testInstrumentationRunner "android.support.multidex.MultiDexTestRunner"
     }
     //Those files, from Apache Commons lib cause build errors
     packagingOptions {
@@ -199,30 +199,33 @@ android {
 
         /*
          * =========================================================================================
-         * -BEGIN- Full-featured product flavors (but backed by Ads)
+         * -BEGIN- Free product flavors (but backed by Ads)
          * =========================================================================================
          */
-        googleFullWithAds {
+        googleFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+
             buildConfigField "boolean", "WITH_ADS", "true"
         }
-        amazonFullWithAds {
+        amazonFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+
             buildConfigField "boolean", "WITH_ADS", "true"
         }
-        // For FOSS version only (with ads)
-        fdroidFullWithAds {
-            //Disable 'Donations' menu item
-            buildConfigField "boolean", "DONATIONS", "false"
-            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
-            buildConfigField "boolean", "WITH_ADS", "true"
-        }
+//        // For FOSS version only (with ads)
+//        fdroidFreeWithAds {
+//            //Disable 'Donations' menu item
+//            buildConfigField "boolean", "DONATIONS", "false"
+//            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+//
+//            buildConfigField "boolean", "WITH_ADS", "true"
+//        }
         /*
          * =========================================================================================
          * -END- Full-featured product flavors (but backed by Ads)
@@ -235,9 +238,13 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -283,7 +290,7 @@ dependencies {
     compile 'com.google.zxing:core:3.1.0'
     compile 'com.github.curioustechizen.android-ago:library:1.2.0'
     compile 'com.google.android.gms:play-services:7.0.0'
-    compile 'com.android.support:multidex:1.0.0'
-    
-    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'
+//    compile 'com.android.support:multidex:1.0.0'
+
+//    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'
 }

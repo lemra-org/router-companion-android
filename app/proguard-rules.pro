@@ -37,3 +37,42 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-dontwarn javax.annotation.**
+-dontwarn org.ietf.jgss.**
+-dontwarn com.jcraft.jzlib.**
+-dontwarn sun.misc.**
+#ACRA specifics
+# Restore some Source file names and restore approximate line numbers in the stack traces,
+# otherwise the stack traces are pretty useless
+-keepattributes SourceFile,LineNumberTable
+
+# ACRA needs "annotations" so add this...
+# Note: This may already be defined in the default "proguard-android-optimize.txt"
+# file in the SDK. If it is, then you don't need to duplicate it. See your
+# "project.properties" file to get the path to the default "proguard-android-optimize.txt".
+-keepattributes *Annotation*
+# Keep all the ACRA classes
+-keep class org.acra.** { *; }
+
+-keep public class com.google.android.gms.ads.** {
+   public *;
+}
+
+-keep public class com.google.ads.** {
+   public *;
+}
+
+# ensure that the appcompat libraries are in the Proguard exclusion list
+-keep class android.support.v4.app.** { *; }
+-keep class android.support.v4.view.** { *; }
+-keep class android.support.v4.widget.** { *; }
+
+-keep interface android.support.v4.app.** { *; }
+-keep interface android.support.v4.view.** { *; }
+
+-keep class android.support.v7.app.** { *; }
+-keep interface android.support.v7.app.** { *; }
+-keep class android.support.v7.widget.** { *; }
+
+-keep class com.jcraft.jsch.**
+

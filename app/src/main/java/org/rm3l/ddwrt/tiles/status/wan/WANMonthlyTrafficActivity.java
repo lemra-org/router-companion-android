@@ -30,6 +30,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -44,6 +45,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 
 import org.achartengine.ChartFactory;
@@ -53,8 +57,10 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -99,6 +105,9 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     private long totalIn;
     private long totalOut;
 
+    @Nullable
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +129,11 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
                     .setBackgroundColor(resources.getColor(android.R.color.white));
 
         }
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart);
+
+        AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_adView));
 
         final Intent intent = getIntent();
         mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
@@ -153,6 +167,30 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         mTrafficDataForMonth = new TreeMap<>(traffDataRaw);
 
         doPaintBarChart();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
+    @Override
+    public void finish() {
+        if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
+                        WANMonthlyTrafficActivity.super.finish();
+                    }
+                });
+            } else {
+                super.finish();
+            }
+        } else {
+            super.finish();
+        }
     }
 
     private void doPaintBarChart() {

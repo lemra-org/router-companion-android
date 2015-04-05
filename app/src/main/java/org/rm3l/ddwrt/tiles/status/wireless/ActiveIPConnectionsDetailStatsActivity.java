@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSortedMap;
@@ -55,6 +56,7 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -118,6 +120,8 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
                     .setBackgroundColor(resources.getColor(android.R.color.white));
 
         }
+
+        AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.active_ip_connections_detail_pie_chart_view_adView));
 
         final Intent intent = getIntent();
         mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);

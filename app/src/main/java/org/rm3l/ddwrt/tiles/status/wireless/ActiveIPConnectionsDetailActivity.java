@@ -54,6 +54,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -74,6 +75,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -109,6 +111,55 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
     public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
     public static final Table<Integer, Integer, String> ICMP_TYPE_CODE_DESCRIPTION_TABLE = HashBasedTable.create();
+    private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
+    public static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
+        @Override
+        protected IPWhoisInfo create(String ipAddr) {
+            if (isNullOrEmpty(ipAddr)) {
+                return null;
+            }
+            //Get to MAC OUI Vendor Lookup API
+            try {
+                final String url = String.format("%s/%s.json",
+                        IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
+                Log.d(LOG_TAG, "--> GET " + url);
+                final HttpGet httpGet = new HttpGet(url);
+                final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
+                final StatusLine statusLine = httpResponse.getStatusLine();
+                final int statusCode = statusLine.getStatusCode();
+
+                if (statusCode == 200) {
+                    final HttpEntity entity = httpResponse.getEntity();
+                    final InputStream content = entity.getContent();
+                    try {
+                        //Read the server response and attempt to parse it as JSON
+                        final Reader reader = new InputStreamReader(content);
+                        final GsonBuilder gsonBuilder = new GsonBuilder();
+                        final Gson gson = gsonBuilder.create();
+                        final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
+                        Log.d(LOG_TAG, "--> Result of GET " + url + ": " + ipWhoisInfo);
+
+                        return ipWhoisInfo;
+
+                    } finally {
+                        Closeables.closeQuietly(content);
+                        entity.consumeContent();
+                    }
+                } else {
+                    Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                    if (statusCode == 204) {
+                        //No Content found on the remote server - no need to retry later
+                        return new IPWhoisInfo();
+                    }
+                }
+
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    };
 
     static {
         ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(0, 0, "Echo Reply");
@@ -182,55 +233,6 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(40, 0, "Photuris, Security failures");
     }
 
-    private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
-    public static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
-        @Override
-        protected IPWhoisInfo create(String ipAddr) {
-            if (isNullOrEmpty(ipAddr)) {
-                return null;
-            }
-            //Get to MAC OUI Vendor Lookup API
-            try {
-                final String url = String.format("%s/%s.json",
-                        IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
-                Log.d(LOG_TAG, "--> GET " + url);
-                final HttpGet httpGet = new HttpGet(url);
-                final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
-                final StatusLine statusLine = httpResponse.getStatusLine();
-                final int statusCode = statusLine.getStatusCode();
-
-                if (statusCode == 200) {
-                    final HttpEntity entity = httpResponse.getEntity();
-                    final InputStream content = entity.getContent();
-                    try {
-                        //Read the server response and attempt to parse it as JSON
-                        final Reader reader = new InputStreamReader(content);
-                        final GsonBuilder gsonBuilder = new GsonBuilder();
-                        final Gson gson = gsonBuilder.create();
-                        final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
-                        Log.d(LOG_TAG, "--> Result of GET " + url + ": " + ipWhoisInfo);
-
-                        return ipWhoisInfo;
-
-                    } finally {
-                        Closeables.closeQuietly(content);
-                        entity.consumeContent();
-                    }
-                } else {
-                    Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                    if (statusCode == 204) {
-                        //No Content found on the remote server - no need to retry later
-                        return new IPWhoisInfo();
-                    }
-                }
-
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    };
     private final Map<IPConntrack, CardView> ipConntrackMap = Maps.newHashMap();
     private HashMap<String, String> mLocalIpToHostname;
     private ShareActionProvider mShareActionProvider;
@@ -280,6 +282,8 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             getWindow().getDecorView()
                     .setBackgroundColor(resources.getColor(android.R.color.white));
         }
+
+        AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_active_ip_connections_view_adView));
 
         mProgressBar = (ProgressBar) findViewById(R.id.tile_status_active_ip_connections_list_container_loading);
         /*

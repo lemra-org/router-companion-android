@@ -647,7 +647,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                 return true;
             case R.id.tile_status_wireless_iface_traffic_shaping:
-                if (BuildConfig.DONATIONS) {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
                     Utils.displayUpgradeMessage(mParentFragmentActivity);
                     return true;

@@ -118,6 +118,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
             }
         });
+
     }
 
     private static void setVisibility(@NonNull final View[] views, final int visibility) {
@@ -333,23 +334,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                         }, 1000);
                     }
 
-//                    final Intent intent = WANMonthlyTrafficTile.this.renderTraffDateForMonth(monthYearDisplayedText.toString());
-//                    if (intent == null) {
-//                        Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
-//                                String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                WANMonthlyTrafficTile.this.mParentFragmentActivity.startActivity(intent);
-//                                alertDialog.cancel();
-//                            }
-//                        }, 2500);
-//                    }
                 }
             });
 

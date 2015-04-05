@@ -22,9 +22,9 @@
 
 package org.rm3l.ddwrt;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.multidex.MultiDexApplication;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -52,7 +52,7 @@ import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
         sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
         sharedPreferencesMode = Context.MODE_PRIVATE
 )
-public class DDWRTApplication extends MultiDexApplication {
+public class DDWRTApplication extends Application {
 
     @Override
     public void onCreate() {
