@@ -50,7 +50,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.List;
 
-import static org.rm3l.ddwrt.fragments.status.StatusWirelessFragmentAbstract.SPLITTER;
+import static org.rm3l.ddwrt.fragments.status.StatusWirelessFragment.SPLITTER;
 
 /**
  *

@@ -59,41 +59,41 @@ import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrt;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragmentAbstract;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortTriggeringFragmentAbstract;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSQoSFragmentAbstract;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSUPnPFragmentAbstract;
-import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragmentAbstract;
-import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragmentAbstract;
-import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragmentAbstract;
-import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragmentAbstract;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragment;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragment;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortTriggeringFragment;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSQoSFragment;
+import org.rm3l.ddwrt.fragments.nat_qos.NATQoSUPnPFragment;
+import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragment;
+import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupBasicFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupEoIPFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupIPv6FragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupMacCloningFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupNetworkingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupRoutingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.setup.SetupVLANFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusClientsFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusLANFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusMonitoringWANFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusRouterFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusSyslogFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusTimeFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusWANFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.StatusWirelessFragmentAbstract;
-import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrtAbstract;
-import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrtAbstract;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxArpingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragmentAbstract;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragmentAbstract;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragmentAbstract;
-import org.rm3l.ddwrt.fragments.toolbox.ToolboxWhoisFragmentAbstract;
+import org.rm3l.ddwrt.fragments.setup.SetupBasicFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupEoIPFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupIPv6Fragment;
+import org.rm3l.ddwrt.fragments.setup.SetupMacCloningFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupNetworkingFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupRoutingFragment;
+import org.rm3l.ddwrt.fragments.setup.SetupVLANFragment;
+import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
+import org.rm3l.ddwrt.fragments.status.StatusClientsFragment;
+import org.rm3l.ddwrt.fragments.status.StatusLANFragment;
+import org.rm3l.ddwrt.fragments.status.StatusMonitoringWANFragment;
+import org.rm3l.ddwrt.fragments.status.StatusRouterFragment;
+import org.rm3l.ddwrt.fragments.status.StatusSyslogFragment;
+import org.rm3l.ddwrt.fragments.status.StatusTimeFragment;
+import org.rm3l.ddwrt.fragments.status.StatusWANFragment;
+import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
+import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
+import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxArpingFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxWhoisFragment;
 import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragmentAbstract;
 import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragmentAbstract;
 import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragmentAbstract;
@@ -272,10 +272,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.status);
                 //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
                 tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrtAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
                 //TODO Add Time
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrtAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
                 break;
             case 2:
@@ -283,7 +283,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.status);
                 //TODO
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
                 break;
             case 3:
@@ -291,7 +291,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.status);
                 //TODO
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_clients), router);
                 break;
             case 4:
@@ -299,9 +299,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[2];
                 //TODO
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_bandwidth), router);
                 break;
 
@@ -312,32 +312,32 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //TODO
                 parentSectionTitle = resources.getString(R.string.services);
                 tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_openvpn_client), router);
                 //TODO Add OpenVPN Server between Client and Logs
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_openvpn_logs), router);
 
 //                tabsToSort = new DDWRTBaseFragment[10];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_services), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_freeradius), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_ppoe), router);
 //                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_vpn), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_usb), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_nas), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_hostspot), router);
-//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_sip), router);
-//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_adblocking), router);
-//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_webserver), router);
                 break;
             case 7:
@@ -371,17 +371,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
                 tabsToSort = new AbstractBaseFragment[5];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_arping), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_whois), router);
-//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
                 break;
 
@@ -389,7 +389,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //This should NOT happen => Error
                 parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
                         resources.getString(R.string.unknown), router);
                 break;
 
@@ -402,9 +402,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //                parentSectionTitle = resources.getString(R.string.status);
 //                //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
 //                tabsToSort = new AbstractBaseFragment[2];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrtAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
 //                        resources.getString(R.string.status_router), router);
-//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrtAbstract.class, parentSectionTitle,
+//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
 //                        resources.getString(R.string.status_wan), router);
 //                break;
 //            case 4:
@@ -423,17 +423,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //            case 7:
 //                parentSectionTitle = resources.getString(R.string.toolbox);
 //                tabsToSort = new AbstractBaseFragment[5];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_ping), router);
-//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_traceroute), router);
-//                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_nslookup), router);
-//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_arping), router);
-//                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_whois), router);
-////                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragmentAbstract.class, parentSectionTitle,
+////                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 ////                        resources.getString(R.string.toolbox_subnet_calculator), router);
 //
 //                break;
@@ -441,7 +441,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //                //This should NOT happen => Error
 //                parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
 //                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.unknown), router);
 //                break;
 //
@@ -460,38 +460,38 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             case 1:
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[5];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_router), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_time), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, StatusLANFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_lan), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, StatusSyslogFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, StatusSyslogFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_syslog), router);
                 break;
             case 2:
                 //Status > Wireless
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
                 break;
             case 3:
                 //Status > Clients
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_clients), router);
                 break;
             case 4:
                 //Status > Monitoring
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wan), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_bandwidth), router);
                 break;
 
@@ -501,32 +501,32 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //Services > OpenVPN
                 parentSectionTitle = resources.getString(R.string.services);
                 tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_openvpn_client), router);
                 //TODO Add OpenVPN Server between Client and Logs
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_openvpn_logs), router);
 
 //                tabsToSort = new DDWRTBaseFragment[10];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_services), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_freeradius), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_ppoe), router);
 //                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_vpn), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_usb), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_nas), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_hostspot), router);
-//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_sip), router);
-//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_adblocking), router);
-//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_webserver), router);
                 break;
             case 7:
@@ -578,17 +578,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
                 tabsToSort = new AbstractBaseFragment[5];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_traceroute), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_arping), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_whois), router);
-//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragmentAbstract.class, parentSectionTitle,
+//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
 
                 break;
@@ -599,21 +599,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.setup);
                 //2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP}
                 tabsToSort = new AbstractBaseFragment[8];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SetupBasicFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SetupBasicFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_basic), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SetupIPv6FragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SetupIPv6Fragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_ipv6), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, SetupDDNSFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, SetupDDNSFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_ddns), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, SetupMacCloningFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, SetupMacCloningFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_mac_cloning), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, SetupRoutingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, SetupRoutingFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_routing), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, SetupVLANFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, SetupVLANFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_vlans), router);
-                tabsToSort[6] = AbstractBaseFragment.newInstance(parentFragment, SetupNetworkingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[6] = AbstractBaseFragment.newInstance(parentFragment, SetupNetworkingFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_networking), router);
-                tabsToSort[7] = AbstractBaseFragment.newInstance(parentFragment, SetupEoIPFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[7] = AbstractBaseFragment.newInstance(parentFragment, SetupEoIPFragment.class, parentSectionTitle,
                         resources.getString(R.string.setup_eoip), router);
                 break;
             case 111:
@@ -636,9 +636,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //5 = Security => {Firewall, VPN Passthrough}
                 parentSectionTitle = resources.getString(R.string.security);
                 tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SecurityFirewallFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SecurityFirewallFragment.class, parentSectionTitle,
                         resources.getString(R.string.security_firewall), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SecurityVPNPassthroughFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SecurityVPNPassthroughFragment.class, parentSectionTitle,
                         resources.getString(R.string.security_vpn_passthrough), router);
                 break;
             case 444:
@@ -652,17 +652,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 parentSectionTitle = resources.getString(R.string.nat_qos);
                 //7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}
                 tabsToSort = new AbstractBaseFragment[6];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortForwardingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortForwardingFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_forwarding), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortRangeForwardingFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortRangeForwardingFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_range_forwarding), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortTriggeringFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortTriggeringFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_port_trigger), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, NATQoSUPnPFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, NATQoSUPnPFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_upnp), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, NATQoSDMZFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, NATQoSDMZFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_dmz), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, NATQoSQoSFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, NATQoSQoSFragment.class, parentSectionTitle,
                         resources.getString(R.string.nat_qos_qos), router);
                 break;
 
@@ -673,7 +673,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //This should NOT happen => Error
                 parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragmentAbstract.class, parentSectionTitle,
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
                         resources.getString(R.string.unknown), router);
                 break;
 
