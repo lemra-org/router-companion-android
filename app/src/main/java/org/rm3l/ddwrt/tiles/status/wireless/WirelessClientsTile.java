@@ -100,10 +100,6 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
@@ -134,10 +130,13 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -198,40 +197,41 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
             //Get to MAC OUI Vendor Lookup API
             try {
-                final String url = String.format("%s/%s",
+                final String urlStr = String.format("%s/%s",
                         MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-                Log.d(LOG_TAG, "--> GET " + url);
-                final HttpGet httpGet = new HttpGet(url);
-                final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
-                final StatusLine statusLine = httpResponse.getStatusLine();
-                final int statusCode = statusLine.getStatusCode();
+                Log.d(LOG_TAG, "--> GET " + urlStr);
+                final URL url = new URL(urlStr);
+                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    final int statusCode = urlConnection.getResponseCode();
+                    if (statusCode == 200) {
+                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+                        try {
+                            //Read the server response and attempt to parse it as JSON
+                            final Reader reader = new InputStreamReader(content);
+                            final GsonBuilder gsonBuilder = new GsonBuilder();
+                            final Gson gson = gsonBuilder.create();
+                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
+                            Log.d(LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
+                            if (macouiVendors == null || macouiVendors.length == 0) {
+                                //Returning null so we can try again later
+                                return null;
+                            }
+                            return macouiVendors[0];
 
-                if (statusCode == 200) {
-                    final HttpEntity entity = httpResponse.getEntity();
-                    final InputStream content = entity.getContent();
-                    try {
-                        //Read the server response and attempt to parse it as JSON
-                        final Reader reader = new InputStreamReader(content);
-                        final GsonBuilder gsonBuilder = new GsonBuilder();
-                        final Gson gson = gsonBuilder.create();
-                        final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-                        Log.d(LOG_TAG, "--> Result of GET " + url + ": " + Arrays.toString(macouiVendors));
-                        if (macouiVendors == null || macouiVendors.length == 0) {
-                            //Returning null so we can try again later
-                            return null;
+                        } finally {
+                            Closeables.closeQuietly(content);
                         }
-                        return macouiVendors[0];
+                    } else {
+                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                        if (statusCode == 204) {
+                            //No Content found on the remote server - no need to retry later
+                            return new MACOUIVendor();
+                        }
+                    }
 
-                    } finally {
-                        Closeables.closeQuietly(content);
-                        entity.consumeContent();
-                    }
-                } else {
-                    Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                    if (statusCode == 204) {
-                        //No Content found on the remote server - no need to retry later
-                        return new MACOUIVendor();
-                    }
+                } finally {
+                    urlConnection.disconnect();
                 }
 
             } catch (final Exception e) {
@@ -1829,6 +1829,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                 final long lastSeen = device.getLastSeen();
+                Log.d(LOG_TAG, "XXX lastSeen=[" + lastSeen +"]");
                 if (lastSeen <= 0l) {
                     lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                     lastSeenRowView.setReferenceTime(-1l);

@@ -67,10 +67,6 @@ import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
@@ -79,6 +75,7 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -87,6 +84,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,37 +119,39 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
             }
             //Get to MAC OUI Vendor Lookup API
             try {
-                final String url = String.format("%s/%s.json",
+                final String urlStr = String.format("%s/%s.json",
                         IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
-                Log.d(LOG_TAG, "--> GET " + url);
-                final HttpGet httpGet = new HttpGet(url);
-                final HttpResponse httpResponse = Utils.getThreadSafeClient().execute(httpGet);
-                final StatusLine statusLine = httpResponse.getStatusLine();
-                final int statusCode = statusLine.getStatusCode();
+                Log.d(LOG_TAG, "--> GET " + urlStr);
+                final URL url = new URL(urlStr);
+                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    final int statusCode = urlConnection.getResponseCode();
+                    if (statusCode == 200) {
+                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+                        try {
+                            //Read the server response and attempt to parse it as JSON
+                            final Reader reader = new InputStreamReader(content);
+                            final GsonBuilder gsonBuilder = new GsonBuilder();
+                            final Gson gson = gsonBuilder.create();
+                            final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
+                            Log.d(LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
 
-                if (statusCode == 200) {
-                    final HttpEntity entity = httpResponse.getEntity();
-                    final InputStream content = entity.getContent();
-                    try {
-                        //Read the server response and attempt to parse it as JSON
-                        final Reader reader = new InputStreamReader(content);
-                        final GsonBuilder gsonBuilder = new GsonBuilder();
-                        final Gson gson = gsonBuilder.create();
-                        final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
-                        Log.d(LOG_TAG, "--> Result of GET " + url + ": " + ipWhoisInfo);
+                            return ipWhoisInfo;
 
-                        return ipWhoisInfo;
 
-                    } finally {
-                        Closeables.closeQuietly(content);
-                        entity.consumeContent();
+                        } finally {
+                            Closeables.closeQuietly(content);
+                        }
+                    } else {
+                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                        if (statusCode == 204) {
+                            //No Content found on the remote server - no need to retry later
+                            return new IPWhoisInfo();
+                        }
                     }
-                } else {
-                    Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                    if (statusCode == 204) {
-                        //No Content found on the remote server - no need to retry later
-                        return new IPWhoisInfo();
-                    }
+
+                } finally {
+                    urlConnection.disconnect();
                 }
 
             } catch (final Exception e) {

@@ -37,14 +37,61 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-libraryjars libs
+
 -dontwarn javax.annotation.**
 -dontwarn org.ietf.jgss.**
 -dontwarn com.jcraft.jzlib.**
 -dontwarn sun.misc.**
+
+# Because the following classes make use of reflection (clazz.newInstance(...))
+-keep class org.rm3l.ddwrt.fragments.**
+-keep class org.rm3l.ddwrt.prefs.sort.**
+
 #ACRA specifics
 # Restore some Source file names and restore approximate line numbers in the stack traces,
 # otherwise the stack traces are pretty useless
 -keepattributes SourceFile,LineNumberTable
+
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+
+-dump class_files.txt
+-printseeds seeds.txt
+-printusage unused.txt
+-printmapping mapping.txt
+
+-keepattributes SourceFile,LineNumberTable,Exceptions,Signature,Enclosing
+
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context,android.util.AttributeSet);
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context, android.util.AttributeSet,int);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
 # ACRA needs "annotations" so add this...
 # Note: This may already be defined in the default "proguard-android-optimize.txt"
@@ -74,5 +121,41 @@
 -keep interface android.support.v7.app.** { *; }
 -keep class android.support.v7.widget.** { *; }
 
--keep class com.jcraft.jsch.**
+-keep class com.jcraft.jsch.** { *; }
 
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.billing.IInAppBillingService
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+-keepclassmembers class * extends android.content.Context {
+    public void *(android.view.View);
+    public void *(android.view.MenuItem);
+}
+
+-keep class com.android.common.view.** { *; }
+-keep class com.github.curioustechizen.ago.** { *; }
+
+# Add the gson class
+-keep class com.google.gson.** { *; }
+
+-keepattributes Signature
+-keep class sun.misc.Unsafe { *; }
+
+-keep class org.rm3l.ddwrt.resources.** {
+    *;
+}
+#-keepclassmembers class org.rm3l.ddwrt.resources.* { *; }
