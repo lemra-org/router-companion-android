@@ -245,7 +245,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
     //Generate a random string, to use as discriminator for determining dhcp clients
-    private static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
+    public static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
 
     static {
@@ -333,7 +333,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
         });
 
-//        Create Options Menu
+        // Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wireless_clients_menu);
         if (!isThemeLight) {
             //Set menu background to white

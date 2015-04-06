@@ -55,6 +55,8 @@ public class Device implements Comparable<Device> {
     @Nullable
     private String systemName;
 
+    private int wolPort = -1;
+
     private boolean active = false;
 
     private double txRate = -1.;
@@ -292,6 +294,14 @@ public class Device implements Comparable<Device> {
 
     public int getActiveIpConnectionsCount() {
         return (activeIpConnections != null ? activeIpConnections.size() : -1);
+    }
+
+    public int getWolPort() {
+        return wolPort;
+    }
+
+    public void setWolPort(int wolPort) {
+        this.wolPort = wolPort;
     }
 
     public enum WANAccessState {
