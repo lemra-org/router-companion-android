@@ -74,6 +74,7 @@ import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
@@ -252,6 +253,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                 mDrawerList.getAdapter().getItemId(position));
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
 
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
@@ -653,8 +655,11 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_feedback:
                 if (mFeedbackDialog == null) {
                     mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
                 }
                 mFeedbackDialog.show();
+                //Generate a custom error-report (for ACRA)
+                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
                 return true;
             case R.id.action_ddwrt_actions_reboot_router:
 

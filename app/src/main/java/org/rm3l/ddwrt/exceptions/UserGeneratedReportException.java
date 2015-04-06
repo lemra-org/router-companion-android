@@ -25,7 +25,7 @@ package org.rm3l.ddwrt.exceptions;
 import android.support.annotation.Nullable;
 
 /**
- * TODO For User-generated reports: add a menu item
+ * For User-generated reports: generated when user sends a Feedback
  */
 public class UserGeneratedReportException extends DDWRTCompanionException {
 

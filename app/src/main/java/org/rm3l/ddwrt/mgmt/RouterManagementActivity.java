@@ -71,6 +71,7 @@ import com.suredigit.inappfeedback.FeedbackDialog;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -260,6 +261,7 @@ public class RouterManagementActivity
         }
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
 
         initOpenAddRouterFormIfNecessary();
     }
@@ -416,8 +418,11 @@ public class RouterManagementActivity
             case R.id.router_list_feedback:
                 if (mFeedbackDialog == null) {
                     mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
+                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
                 }
                 mFeedbackDialog.show();
+                //Generate a custom error-report (for ACRA)
+                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
                 return true;
             default:
                 break;
