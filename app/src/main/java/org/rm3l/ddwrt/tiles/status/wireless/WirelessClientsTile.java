@@ -684,32 +684,68 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             mProgressBarDesc.setText("Loading wireless clients...\n\n");
                         }
                     });
+
+
                     //Get list of wireless clients connected
                     final Multimap<String, String> wirelessIfaceAssocList = ArrayListMultimap.create();
                     try {
-                        final String[] assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                "for i in `/usr/sbin/nvram get landevs`; do " +
-                                        "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
-                                        "if [ ! -z \"$phy\" ]; then " +
-                                        "echo iface $i ; " +
-                                        "( wl -i $phy assoclist 2>/dev/null || " +
-                                        " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                        "echo 'done';  " +
-                                        "fi; " +
-                                        "done; " +
-                                        "for j in `/usr/sbin/nvram get landevs`; do " +
-                                        "for i in `/usr/sbin/nvram get ${j}_vifs`; do " +
-                                        "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
-                                        "if [ ! -z \"$phy\" ]; then " +
-                                        "echo iface $i ; " +
-                                        "( wl -i $phy assoclist 2>/dev/null || " +
-                                        "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                        "echo 'done';  " +
-                                        "fi; " +
-                                        "done; " +
-                                        "done"
-                        );
-                        Log.d(LOG_TAG, "assocList: " + Arrays.toString(assocList));
+
+                        //Detect if Atheros or not
+                        final String[] manualProperty = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                "/usr/sbin/nvram get landevs 2>/dev/null");
+                        final boolean useAtheros = (manualProperty == null || manualProperty.length == 0);
+
+                        final String[] assocList;
+                        if (useAtheros) {
+                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                    "for phy in `/usr/sbin/nvram get lan_ifnames`; do " +
+                                            "if [ ! -z \"$phy\" ]; then " +
+                                            "echo iface $phy ; " +
+                                            "( wl -i $phy assoclist 2>/dev/null || " +
+                                            " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                            "echo 'done';  " +
+                                            "fi; " +
+                                            "done; " +
+                                            "for j in `/usr/sbin/nvram get lan_ifnames`; do " +
+                                            "for i in `/usr/sbin/nvram get ${j}_vifs`; do " +
+                                            "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
+                                            "if [ -z \"$phy\" ]; then " +
+                                            "phy=$i ; " +
+                                            "fi; " +
+                                            "if [ ! -z \"$phy\" ]; then " +
+                                            "echo iface $i ; " +
+                                            "( wl -i $phy assoclist 2>/dev/null || " +
+                                            "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                            "echo 'done';  " +
+                                            "fi; " +
+                                            "done; " +
+                                            "done"
+                            );
+                        } else {
+                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                    "for i in `/usr/sbin/nvram get landevs`; do " +
+                                            "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
+                                            "if [ ! -z \"$phy\" ]; then " +
+                                            "echo iface $i ; " +
+                                            "( wl -i $phy assoclist 2>/dev/null || " +
+                                            " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                            "echo 'done';  " +
+                                            "fi; " +
+                                            "done; " +
+                                            "for j in `/usr/sbin/nvram get landevs`; do " +
+                                            "for i in `/usr/sbin/nvram get ${j}_vifs`; do " +
+                                            "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
+                                            "if [ ! -z \"$phy\" ]; then " +
+                                            "echo iface $i ; " +
+                                            "( wl -i $phy assoclist 2>/dev/null || " +
+                                            "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
+                                            "echo 'done';  " +
+                                            "fi; " +
+                                            "done; " +
+                                            "done"
+                            );
+                        }
+                        Log.d(LOG_TAG, "useAtheros= " + useAtheros + " / assocList: " + Arrays.toString(assocList));
                         if (assocList != null) {
                             String iface;
                             for (int idx = 0; idx < assocList.length; idx++) {
