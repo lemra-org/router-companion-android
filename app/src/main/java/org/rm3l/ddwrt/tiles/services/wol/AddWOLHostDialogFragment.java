@@ -65,7 +65,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
     @Nullable
     protected SharedPreferences mRouterPreferences;
 
-    private String mPreferencesKey;
+    protected String mPreferencesKey;
 
     private Device mDevice;
 
@@ -129,9 +129,9 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
 
         builder
                 .setMessage("For this to work properly:\n" +
-                                "- Target hardware must support WOL. You can enable it in the BIOS or in the System Settings.\n" +
+                                "- Target hardware must support WOL, which can be enabled in the BIOS or in the System Settings.\n" +
                                 "- WOL magic packet will be sent from the router. To wake over the Internet, " +
-                                "you must forward packets from any port you want to the device you wish to wake.\n" +
+                                "you must forward packets from any port you want to the device to wake.\n" +
                                 "Note: some devices support WOL only in Sleep or Hibernated mode, " +
                                 "not powered off. Some may also require a SecureOn password, which is not supported (yet)!")
                 .setView(view)

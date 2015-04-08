@@ -50,7 +50,8 @@ import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
         formUri = DDWRTCompanionConstants.ACRA_BACKEND_URL,
         mode = ReportingInteractionMode.SILENT,
         sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-        sharedPreferencesMode = Context.MODE_PRIVATE
+        sharedPreferencesMode = Context.MODE_PRIVATE,
+        buildConfigClass = BuildConfig.class
 )
 public class DDWRTApplication extends Application {
 

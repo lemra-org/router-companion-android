@@ -1,10 +1,13 @@
 package org.rm3l.ddwrt.tiles.services.wol;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -14,28 +17,38 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
-import org.rm3l.ddwrt.resources.None;
+import org.rm3l.ddwrt.resources.RouterData;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
@@ -50,31 +63,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.TEMP_ROUTER_UUID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 
 
-public class WakeOnLanTile extends DDWRTTile<None> {
+public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
-    private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
     public static final GsonBuilder GSON_BUILDER = new GsonBuilder();
-    @NonNull
-    private final ArrayList<Device> mDevices = new ArrayList<>();
+    public static final String ADD_HOST_FRAGMENT_TAG = "add_wol_host";
+    public static final String EDIT_HOST_FRAGMENT_TAG = "edit_wol_host";
+    private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
+    final Router mRouterCopy;
     private final String wolHostsPrefKey;
+    private final ArrayList<String> broadcastAddresses = new ArrayList<>();
     private boolean isThemeLight;
     private String mCurrentIpAddress;
     private String mCurrentMacAddress;
-    private ArrayList<String> broadcastAddresses;
 
-    final Router mRouterCopy;
-
-    public static final String ADD_HOST_FRAGMENT_TAG = "add_wol_host";
+    private final ArrayList<Device> mCurrentDevicesList = new ArrayList<>();
 
     public WakeOnLanTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_wol_clients,
@@ -87,13 +104,14 @@ public class WakeOnLanTile extends DDWRTTile<None> {
         wolHostsPrefKey = \"fake-key\";
 
         // Create Options Menu
-        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_services_wol_clients_menu);
+
+        final ImageButton addMenu = (ImageButton) layout.findViewById(R.id.tile_services_wol_add_menu);
 
         if (mRouter == null || mParentFragmentPreferences == null) {
-            tileMenu.setVisibility(View.GONE);
+            addMenu.setVisibility(View.GONE);
         } else {
-            tileMenu.setVisibility(View.VISIBLE);
-            tileMenu.setOnClickListener(new View.OnClickListener() {
+            addMenu.setVisibility(View.VISIBLE);
+            addMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -132,12 +150,12 @@ public class WakeOnLanTile extends DDWRTTile<None> {
 
     @Nullable
     @Override
-    protected Loader<None> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<None>(this.mParentFragmentActivity) {
+    protected Loader<RouterData<ArrayList<Device>>> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<RouterData<ArrayList<Device>>>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
-            public None loadInBackground() {
+            public RouterData<ArrayList<Device>> loadInBackground() {
 
                 isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
@@ -159,13 +177,15 @@ public class WakeOnLanTile extends DDWRTTile<None> {
                 if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                     //Skip run
                     Log.d(LOG_TAG, "Skip loader run");
-                    return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    return new RouterData<ArrayList<Device>>() {
+                    }.setException(new DDWRTTileAutoRefreshNotAllowedException());
                 }
                 nbRunsLoader++;
 
-                mDevices.clear();
+                final ArrayList<Device> mDevices = new ArrayList<>();
 
-                broadcastAddresses = Lists.newArrayList();
+                mCurrentDevicesList.clear();
+                broadcastAddresses.clear();
 
                 try {
 
@@ -206,7 +226,8 @@ public class WakeOnLanTile extends DDWRTTile<None> {
 
                     if (output == null || output.length == 0) {
                         if (output == null) {
-                            return new None();
+                            return new RouterData<ArrayList<Device>>() {
+                            };
                         }
                     }
                     final Map<String, Device> macToDevice = Maps.newHashMap();
@@ -315,6 +336,8 @@ public class WakeOnLanTile extends DDWRTTile<None> {
                                     deviceFromJson.setIpAddress(ipAddress1.toString());
                                 }
 
+                                deviceFromJson.setIsEditableForWol(true);
+
                                 deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
                                         .mMacOuiVendorLookupCache.get(macAddress.toString()));
 
@@ -332,13 +355,16 @@ public class WakeOnLanTile extends DDWRTTile<None> {
                     //Final operation
                     for (final Device device : macToDevice.values()) {
                         mDevices.add(device);
+                        mCurrentDevicesList.add(device);
                     }
 
-                    return new None();
+                    return new RouterData<ArrayList<Device>>() {
+                    }.setData(mDevices);
 
                 } catch (@NonNull final Exception e) {
                     Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
-                    return (None) new None().setException(e);
+                    return new RouterData<ArrayList<Device>>() {
+                    }.setException(e);
                 }
 
             }
@@ -358,17 +384,199 @@ public class WakeOnLanTile extends DDWRTTile<None> {
     }
 
     @Override
-    public void onLoadFinished(Loader<None> loader, None data) {
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data +
-            " / mDevices=" + mDevices);
+    public void onLoadFinished(Loader<RouterData<ArrayList<Device>>> loader, RouterData<ArrayList<Device>> data) {
+        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        final ImageButton globalTileMenu = (ImageButton) layout.findViewById(R.id.tile_services_wol_clients_menu);
+        if (!isThemeLight) {
+            //Set menu background to white
+            globalTileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+        if (mCurrentDevicesList.isEmpty()) {
+            globalTileMenu.setVisibility(View.GONE);
+        } else {
+            globalTileMenu.setVisibility(View.VISIBLE);
+
+            final Collection<Device> devicesEditableForWol = Collections2.filter(mCurrentDevicesList, new Predicate<Device>() {
+                @Override
+                public boolean apply(@Nullable Device input) {
+                    return (input != null && input.isEditableForWol());
+                }
+            });
+
+            globalTileMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.tile_services_wol_clients_wake_all:
+                                    final Bundle token = new Bundle();
+                                    token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
+
+                                    new UndoBarController.UndoBar(mParentFragmentActivity)
+                                            .message(String.format("WOL Request will be sent from router to %d hosts",
+                                                    mCurrentDevicesList.size()))
+                                            .listener(new UndoBarController.AdvancedUndoListener() {
+                                                @Override
+                                                public void onHide(@Nullable Parcelable parcelable) {
+
+                                                    if (parcelable instanceof Bundle) {
+                                                        final Bundle token = (Bundle) parcelable;
+                                                        final String routerAction = token.getString(ROUTER_ACTION);
+                                                        Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                                                        if (isNullOrEmpty(routerAction)) {
+                                                            return;
+                                                        }
+                                                        try {
+                                                            switch (RouterAction.valueOf(routerAction)) {
+                                                                case WAKE_ON_LAN:
+
+                                                                    final AtomicInteger currentNum = new AtomicInteger(0);
+                                                                    final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
+                                                                    final int totalNumOfDevices = mCurrentDevicesList.size();
+
+                                                                    for (final Device device : mCurrentDevicesList) {
+                                                                        new WakeOnLANRouterAction(mParentFragmentActivity,
+                                                                                new RouterActionListener() {
+                                                                                    @Override
+                                                                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                                                                        if (incrementAndGet >= totalNumOfDevices) {
+                                                                                            final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+                                                                                            if (numActionsThatDidNotSucceed > 0) {
+                                                                                                //An error occurred
+                                                                                                Utils.displayMessage(mParentFragmentActivity,
+                                                                                                        String.format("Action '%s' executed but %d error(s) occurred",
+                                                                                                                routerAction.toString(), numActionsThatDidNotSucceed),
+                                                                                                        Style.INFO);
+                                                                                            } else {
+                                                                                                //No error
+                                                                                                Utils.displayMessage(mParentFragmentActivity,
+                                                                                                        String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                                                                                        Style.CONFIRM);
+                                                                                            }
+                                                                                        }
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                                                                        numActionsWithNoSuccess.incrementAndGet();
+                                                                                        if (incrementAndGet >= totalNumOfDevices) {
+                                                                                            //An error occurred
+                                                                                            Utils.displayMessage(mParentFragmentActivity,
+                                                                                                    String.format("Action '%s' executed but %d error(s) occurred: %s",
+                                                                                                            routerAction.toString(),
+                                                                                                            numActionsWithNoSuccess.get(),
+                                                                                                            ExceptionUtils.getRootCauseMessage(exception)),
+                                                                                                    Style.INFO);
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                mGlobalPreferences,
+                                                                                device,
+                                                                                device.getWolPort(),
+                                                                                broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
+                                                                                .execute(mRouter);
+                                                                    }
+                                                                    break;
+                                                                default:
+                                                                    //Ignored
+                                                                    break;
+                                                            }
+                                                        } catch (IllegalArgumentException | NullPointerException e) {
+                                                            e.printStackTrace();
+                                                            Utils.displayMessage(mParentFragmentActivity,
+                                                                    "WOL Internal Error. Try again later.", Style.ALERT);
+                                                            Utils.reportException(e);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onClear
+                                                        (@NonNull Parcelable[] parcelables) {
+
+                                                }
+
+                                                @Override
+                                                public void onUndo
+                                                        (@Nullable Parcelable parcelable) {
+
+                                                }
+                                            })
+                                            .token(token)
+                                            .show();
+                                    return true;
+                                case R.id.tile_services_wol_clients_delete_all:
+                                    new AlertDialog.Builder(mParentFragmentActivity)
+                                            .setIcon(R.drawable.ic_action_alert_warning)
+                                            .setTitle("Delete WOL Hosts?")
+                                            .setMessage("Only hosts defined manually (" + devicesEditableForWol.size() + ") will be removed!")
+                                            .setCancelable(true)
+                                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(final DialogInterface dialogInterface, final int i) {
+                                                    if (mParentFragmentPreferences != null) {
+                                                        mParentFragmentPreferences.edit()
+                                                                .remove(wolHostsPrefKey)
+                                                                .apply();
+
+                                                        Crouton.makeText(mParentFragmentActivity,
+                                                                mCurrentDevicesList.size() + " item(s) deleted - list will refresh upon next sync",
+                                                                Style.CONFIRM).show();
+                                                        //Request Backup
+                                                        Utils.requestBackup(mParentFragmentActivity);
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    //Cancelled - nothing more to do!
+                                                }
+                                            }).create().show();
+                                    return true;
+                                default:
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+
+                    final MenuInflater inflater = popup.getMenuInflater();
+
+                    final Menu menu = popup.getMenu();
+
+                    inflater.inflate(R.menu.tile_services_wol_clients_options, menu);
+
+                    if (mCurrentDevicesList.isEmpty()) {
+                        menu.findItem(R.id.tile_services_wol_clients_wake_all).setVisible(false);
+                    }
+                    if (devicesEditableForWol.isEmpty()) {
+                        menu.findItem(R.id.tile_services_wol_clients_delete_all).setVisible(false);
+                    }
+
+                    popup.show();
+                }
+            });
+        }
 
         //noinspection ThrowableResultOfMethodCallIgnored
-        if (data == null ||
-                (mDevices.isEmpty() &&
-                        !(data.getException() instanceof DDWRTTileAutoRefreshNotAllowedException))) {
-            if (data == null) {
-                data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
-            }
+        if (data == null) {
+            data = new RouterData<ArrayList<Device>>() {
+            }.setException(new DDWRTNoDataException("No Data!"));
+        }
+
+        final ArrayList<Device> mDevices = (data.getData() != null ? data.getData() : new ArrayList<Device>());
+        if (mDevices.isEmpty() &&
+                !(data.getException() instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            data = new RouterData<ArrayList<Device>>() {
+            }.setException(new DDWRTNoDataException("No Data!"));
+
         }
 
         final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_wol_clients_error);
@@ -386,7 +594,6 @@ public class WakeOnLanTile extends DDWRTTile<None> {
             final Resources resources = mParentFragmentActivity.getResources();
             clientsContainer.setBackgroundColor(resources.getColor(android.R.color.transparent));
 
-
             final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -397,14 +604,6 @@ public class WakeOnLanTile extends DDWRTTile<None> {
             for (final Device device : mDevices) {
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()
                         .inflate(R.layout.tile_services_wol_client, null);
-
-                //Create Options Menu
-                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_services_wol_client_device_menu);
-
-                if (!isThemeLight) {
-                    //Set menu background to white
-                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-                }
 
                 //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                 cardView.setPreventCornerOverlap(true);
@@ -464,19 +663,102 @@ public class WakeOnLanTile extends DDWRTTile<None> {
                     nicManufacturerView.setVisibility(View.VISIBLE);
                 }
 
+                //Create Options Menu
+                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_services_wol_client_device_menu);
+
+                if (!isThemeLight) {
+                    //Set menu background to white
+                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+                }
+
+                tileMenu.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                                                    popup.setOnMenuItemClickListener(buildDeviceMenuItemClickListener(device));
+
+                                                    final MenuInflater inflater = popup.getMenuInflater();
+
+                                                    final Menu menu = popup.getMenu();
+
+                                                    inflater.inflate(R.menu.tile_services_wol_client_options, menu);
+
+                                                    final boolean editableForWol = device.isEditableForWol();
+
+                                                    menu.findItem(R.id.tile_services_wol_client_delete)
+                                                            .setVisible(editableForWol);
+                                                    menu.findItem(R.id.tile_services_wol_client_rename)
+                                                            .setVisible(editableForWol);
+
+                                                    popup.show();
+                                                }
+                                            }
+
+                );
+
+                cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                        popup.setOnMenuItemClickListener(buildDeviceMenuItemClickListener(device));
+
+                        final MenuInflater inflater = popup.getMenuInflater();
+
+                        final Menu menu = popup.getMenu();
+
+                        inflater.inflate(R.menu.tile_services_wol_client_options, menu);
+
+                        final boolean editableForWol = device.isEditableForWol();
+
+                        menu.findItem(R.id.tile_services_wol_client_delete)
+                                .setVisible(editableForWol);
+                        menu.findItem(R.id.tile_services_wol_client_rename)
+                                .setVisible(editableForWol);
+
+                        popup.show();
+
+                        return true;
+                    }
+                });
+
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Bundle token = new Bundle();
+                        token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
+
+                        new UndoBarController.UndoBar(mParentFragmentActivity)
+                                .message(String.format("WOL Request will be sent from router to '%s' (%s)",
+                                        device.getName(), device.getMacAddress()))
+                                .listener(getUndoBarListener(device))
+                                .token(token)
+                                .show();
+                    }
+                });
+
                 clientsContainer.addView(cardView);
 
             }
         }
 
         layout.findViewById(R.id.tile_services_wol_clients_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_services_wol_clients_layout_list_container)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_services_wol_clients_togglebutton_container)
-                .setVisibility(View.VISIBLE);
+                .
 
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                        setVisibility(View.GONE);
+
+        layout.findViewById(R.id.tile_services_wol_clients_layout_list_container)
+                .
+
+                        setVisibility(View.VISIBLE);
+
+        layout.findViewById(R.id.tile_services_wol_clients_togglebutton_container)
+                .
+
+                        setVisibility(View.VISIBLE);
+
+        if(exception!=null&&!(exception instanceof DDWRTTileAutoRefreshNotAllowedException))
+
+        {
             //noinspection ThrowableResultOfMethodCallIgnored
             final Throwable rootCause = Throwables.getRootCause(exception);
             errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
@@ -494,11 +776,162 @@ public class WakeOnLanTile extends DDWRTTile<None> {
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
 
-        doneWithLoaderInstance(this, loader,
+        doneWithLoaderInstance(this,loader,
                 R.id.tile_services_wol_clients_togglebutton_title, R.id.tile_services_wol_clients_togglebutton_separator);
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-        
+        Log.d(LOG_TAG,"onLoadFinished(): done loading!");
+
+    }
+
+    private PopupMenu.OnMenuItemClickListener buildDeviceMenuItemClickListener(final Device device) {
+        return new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.tile_services_wol_client_rename:
+                        try {
+                            final FragmentManager supportFragmentManager = mParentFragmentActivity
+                                    .getSupportFragmentManager();
+
+                            final Fragment editFragmentExisting = supportFragmentManager.findFragmentByTag(EDIT_HOST_FRAGMENT_TAG);
+                            if (editFragmentExisting instanceof DialogFragment) {
+                                ((DialogFragment) editFragmentExisting).dismiss();
+                            }
+                            final DialogFragment editFragment = EditWOLHostDialogFragment
+                                    .newInstance(mRouter.getUuid(), broadcastAddresses, wolHostsPrefKey, GSON_BUILDER.create().toJson(device));
+                            editFragment.show(supportFragmentManager, EDIT_HOST_FRAGMENT_TAG);
+                        } catch (final Exception e) {
+                            Utils.reportException(e);
+                            Toast.makeText(mParentFragmentActivity, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        return true;
+                    case R.id.tile_services_wol_client_delete:
+                        if (!device.isEditableForWol()) {
+                            Crouton.makeText(mParentFragmentActivity,"Operation allowed for user-defined hosts only",
+                                    Style.INFO).show();
+                            return true;
+                        }
+                        new AlertDialog.Builder(mParentFragmentActivity)
+                                .setIcon(R.drawable.ic_action_alert_warning)
+                                .setTitle("Delete?")
+                                .setMessage(String.format("'%s' (%s) will be removed!", device.getName(), device.getMacAddress()))
+                                        .setCancelable(true)
+                                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                                if (mParentFragmentPreferences != null) {
+                                                    final HashSet<String> stringHashSet =
+                                                            new HashSet<>(mParentFragmentPreferences.getStringSet(wolHostsPrefKey, new HashSet<String>()));
+                                                    final HashSet<String> newSet = new HashSet<>();
+                                                    for (final String s : stringHashSet) {
+                                                        if (StringUtils.containsIgnoreCase(s, device.getMacAddress())) {
+                                                            continue;
+                                                        }
+                                                        newSet.add(s);
+                                                    }
+                                                    mParentFragmentPreferences.edit()
+                                                            .putStringSet(wolHostsPrefKey, newSet)
+                                                            .apply();
+
+                                                    Crouton.makeText(mParentFragmentActivity,
+                                                            "Item dropped - list will refresh upon next sync",
+                                                            Style.CONFIRM).show();
+                                                    //Request Backup
+                                                    Utils.requestBackup(mParentFragmentActivity);
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                //Cancelled - nothing more to do!
+                                            }
+                                        }).create().show();
+                        return true;
+                    case R.id.tile_services_wol_client_wol:
+                        final Bundle token = new Bundle();
+                        token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
+
+                        new UndoBarController.UndoBar(mParentFragmentActivity)
+                                .message(String.format("WOL Request will be sent from router to '%s' (%s)",
+                                        device.getName(), device.getMacAddress()))
+                                .listener(getUndoBarListener(device))
+                                .token(token)
+                                .show();
+
+                        return true;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        };
+    }
+
+    private UndoBarController.AdvancedUndoListener getUndoBarListener(final Device device) {
+        return new UndoBarController.AdvancedUndoListener() {
+            @Override
+            public void onHide(@Nullable Parcelable parcelable) {
+
+                if (parcelable instanceof Bundle) {
+                    final Bundle token = (Bundle) parcelable;
+                    final String routerAction = token.getString(ROUTER_ACTION);
+                    Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                    if (isNullOrEmpty(routerAction)) {
+                        return;
+                    }
+                    try {
+                        switch (RouterAction.valueOf(routerAction)) {
+                            case WAKE_ON_LAN:
+                                new WakeOnLANRouterAction(mParentFragmentActivity,
+                                        new RouterActionListener() {
+                                            @Override
+                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                                        Style.CONFIRM);
+
+                                            }
+
+                                            @Override
+                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                Utils.displayMessage(mParentFragmentActivity,
+                                                        String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                                                        Style.ALERT);
+                                            }
+                                        },
+                                        mGlobalPreferences,
+                                        device,
+                                        device.getWolPort(),
+                                        broadcastAddresses.toArray(new String[broadcastAddresses.size()]))
+                                        .execute(mRouter);
+                                break;
+                            default:
+                                //Ignored
+                                break;
+                        }
+                    } catch (IllegalArgumentException | NullPointerException e) {
+                        e.printStackTrace();
+                        Utils.displayMessage(mParentFragmentActivity,
+                                "WOL Internal Error. Try again later.", Style.ALERT);
+                        Utils.reportException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onClear
+                    (@NonNull Parcelable[]parcelables){
+
+            }
+
+            @Override
+            public void onUndo
+                    (@Nullable Parcelable parcelable){
+
+            }
+        };
     }
 
 }

@@ -52,15 +52,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/tile_services_wol_clients_menu"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/menu"
-                android:src="@android:drawable/ic_menu_add"/>
+                android:gravity="end">
+
+                <ImageButton
+                    android:id="@+id/tile_services_wol_add_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu"
+                    android:src="@android:drawable/ic_menu_add"/>
+
+                <ImageButton
+                    android:id="@+id/tile_services_wol_clients_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu"
+                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 

@@ -22,28 +22,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Add Host -->
-    <!--<item-->
-        <!--android:id="@+id/tile_services_wol_clients_add_host"-->
-        <!--android:checkable="false"-->
-        <!--android:orderInCategory="4"-->
-        <!--android:title="Add Host"-->
-        <!--app:showAsAction="never" />-->
-
-    <!-- Wake all -->
     <item
-        android:id="@+id/tile_services_wol_clients_wake_all"
-        android:checkable="false"
+        android:id="@+id/tile_services_wol_client_rename"
         android:orderInCategory="1"
-        android:title="Wake All"
+        android:title="Edit"
         app:showAsAction="never" />
 
-    <!-- Delete all -->
     <item
-        android:id="@+id/tile_services_wol_clients_delete_all"
-        android:checkable="false"
+        android:id="@+id/tile_services_wol_client_delete"
         android:orderInCategory="2"
-        android:title="Delete All"
+        android:title="Delete"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/tile_services_wol_client_wol"
+        android:orderInCategory="3"
+        android:title="@string/wake_on_lan"
         app:showAsAction="never" />
 
 </menu>

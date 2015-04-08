@@ -72,6 +72,8 @@ public class Device implements Comparable<Device> {
     @Nullable
     private WirelessConnectionInfo wirelessConnectionInfo;
 
+    private boolean isEditableForWol = false;
+
     /**
      * Constructor
      *
@@ -302,6 +304,14 @@ public class Device implements Comparable<Device> {
 
     public void setWolPort(int wolPort) {
         this.wolPort = wolPort;
+    }
+
+    public boolean isEditableForWol() {
+        return isEditableForWol;
+    }
+
+    public void setIsEditableForWol(boolean isEditableForWol) {
+        this.isEditableForWol = isEditableForWol;
     }
 
     public enum WANAccessState {
