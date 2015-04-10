@@ -57,6 +57,8 @@ public class Device implements Comparable<Device> {
 
     private int wolPort = -1;
 
+    private String deviceUuidForWol;
+
     private boolean active = false;
 
     private double txRate = -1.;
@@ -312,6 +314,14 @@ public class Device implements Comparable<Device> {
 
     public void setIsEditableForWol(boolean isEditableForWol) {
         this.isEditableForWol = isEditableForWol;
+    }
+
+    public String getDeviceUuidForWol() {
+        return deviceUuidForWol;
+    }
+
+    public void setDeviceUuidForWol(String deviceUuidForWol) {
+        this.deviceUuidForWol = deviceUuidForWol;
     }
 
     public enum WANAccessState {

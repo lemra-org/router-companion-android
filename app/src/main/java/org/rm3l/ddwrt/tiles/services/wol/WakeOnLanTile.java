@@ -49,10 +49,12 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.RouterData;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -73,8 +75,10 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.MANUAL_WOL_MAC;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.MANUAL_WOL_PORT;
+import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WOL_HOSTS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
-import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.TEMP_ROUTER_UUID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 
 
@@ -84,7 +88,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     public static final String ADD_HOST_FRAGMENT_TAG = "add_wol_host";
     public static final String EDIT_HOST_FRAGMENT_TAG = "edit_wol_host";
     private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
-    final Router mRouterCopy;
+    public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings();
     private final String wolHostsPrefKey;
     private final ArrayList<String> broadcastAddresses = new ArrayList<>();
     private boolean isThemeLight;
@@ -97,9 +101,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
         super(parentFragment, arguments, router, R.layout.tile_services_wol_clients,
                 R.id.tile_services_wol_clients_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-        //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
-        //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
-        mRouterCopy = new Router(mRouter).setUuid(TEMP_ROUTER_UUID);
 
         wolHostsPrefKey = \"fake-key\";
 
@@ -191,7 +192,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
                     //Get Broadcast Addresses (for WOL)
                     try {
-                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
                                 "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
                         if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
@@ -207,7 +208,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         e.printStackTrace();
                     }
 
-                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
+
+                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                             mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
@@ -342,6 +344,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                         .mMacOuiVendorLookupCache.get(macAddress.toString()));
 
                                 mDevices.add(deviceFromJson);
+                                mCurrentDevicesList.add(deviceFromJson);
 
                             } catch (final Exception e) {
                                 //No worries
@@ -352,10 +355,59 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         }
                     }
 
-                    //Final operation
+                    //Connected Hosts
                     for (final Device device : macToDevice.values()) {
                         mDevices.add(device);
                         mCurrentDevicesList.add(device);
+                    }
+
+                    //Hosts defined from Admin > WOL
+                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                            WOL_HOSTS,
+                            MANUAL_WOL_MAC,
+                            MANUAL_WOL_PORT);
+                    if (nvRamInfoFromRouter != null) {
+                        //Manual Hosts
+                        String property = nvRamInfoFromRouter.getProperty(MANUAL_WOL_MAC, DDWRTCompanionConstants.EMPTY_STRING);
+                        final List<String> macAddresses = SPLITTER.splitToList(property);
+
+                        if (!macAddresses.isEmpty()) {
+                            int wolPort = -1;
+                            try {
+                                wolPort = Integer.parseInt(nvRamInfoFromRouter.getProperty(MANUAL_WOL_PORT, "-1"));
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            for (final String mAddress : macAddresses) {
+                                final Device dev = new Device(mAddress);
+                                dev.setWolPort(wolPort);
+                                dev.setMacouiVendorDetails(WirelessClientsTile
+                                        .mMacOuiVendorLookupCache.get(mAddress));
+                                mDevices.add(dev);
+                                mCurrentDevicesList.add(dev);
+                            }
+                        }
+
+                        //Now Wol_Hosts
+                        property = nvRamInfoFromRouter.getProperty(WOL_HOSTS, DDWRTCompanionConstants.EMPTY_STRING);
+                        final List<String> wolHosts = SPLITTER.splitToList(property);
+                        for (final String wolHost : wolHosts) {
+                            final List<String> strings = Splitter.on("=").omitEmptyStrings().splitToList(wolHost);
+                            if (strings.isEmpty()) {
+                                continue;
+                            }
+                            final Device dev = new Device(strings.get(0));
+                            if (strings.size() >= 2) {
+                                dev.setAlias(strings.get(1));
+                            }
+                            dev.setMacouiVendorDetails(WirelessClientsTile
+                                    .mMacOuiVendorLookupCache.get(dev.getMacAddress()));
+
+                            mDevices.add(dev);
+                            mCurrentDevicesList.add(dev);
+                        }
+
                     }
 
                     return new RouterData<ArrayList<Device>>() {
@@ -413,6 +465,14 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.tile_services_wol_clients_wake_all:
+
+                                    //        //FIXME Uncomment for final release
+                                    //        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                    //            Utils.displayUpgradeMessage(mParentFragmentActivity);
+                                    //            return true;
+                                    //        }
+                                    //        //FIXME End
+
                                     final Bundle token = new Bundle();
                                     token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
 
@@ -526,7 +586,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                 .apply();
 
                                                         Crouton.makeText(mParentFragmentActivity,
-                                                                mCurrentDevicesList.size() + " item(s) deleted - list will refresh upon next sync",
+                                                                devicesEditableForWol.size() + " item(s) deleted - list will refresh upon next sync",
                                                                 Style.CONFIRM).show();
                                                         //Request Backup
                                                         Utils.requestBackup(mParentFragmentActivity);

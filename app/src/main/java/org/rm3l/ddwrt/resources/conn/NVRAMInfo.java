@@ -122,6 +122,14 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String OPENVPN_CRL = "openvpn_crl";
     public static final String OPENVPN_STATIC = "openvpn_static";
     public static final String LAN_IFNAMES = "lan_ifnames";
+    public static final String WOL_HOSTS = "wol_hosts";
+    public static final String MANUAL_WOL_MAC = "manual_wol_mac";
+    public static final String MANUAL_WOL_PORT = "manual_wol_port";
+    public static final String WOL_ENABLE = "wol_enable";
+    public static final String WOL_INTERVAL = "wol_interval";
+    public static final String WOL_HOSTNAME = "wol_hostname";
+    public static final String WOL_PASSWD = "wol_passwd";
+    public static final String WOL_MACS = "wol_macs";
 
     /**
      * Default constructor: initialized an empty Properties set

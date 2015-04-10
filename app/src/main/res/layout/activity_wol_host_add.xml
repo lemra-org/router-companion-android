@@ -51,7 +51,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="Host Name" />
 
-            <EditText
+            <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
                 android:id="@+id/wol_host_add_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,9 +70,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="MAC Address" />
+                android:text="MAC Address (separator is ':')" />
 
-            <EditText
+            <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
                 android:id="@+id/wol_host_add_mac_addr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +93,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="Port (leave blank if unknown)" />
 
-            <EditText
+            <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
                 android:id="@+id/wol_host_add_port"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:ems="10"
-                android:hint="Port of Magic Packet Dest."
+                android:hint="Port of Magic Packet Destination"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberSigned"
                 android:maxLines="1"

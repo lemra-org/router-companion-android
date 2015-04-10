@@ -6,22 +6,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
@@ -37,22 +39,24 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
-import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
-public class AddWOLHostDialogFragment extends DialogFragment implements
-        UndoBarController.AdvancedUndoListener, RouterActionListener {
+public class AddWOLHostDialogFragment extends DialogFragment {
 
     private static final String LOG_TAG =  AddWOLHostDialogFragment.class.getSimpleName();
     public static final String BROADCAST_ADDRESSES = "BROADCAST_ADDRESSES";
     public static final String WOL_PREF_KEY = \"fake-key\";
-    private FragmentActivity activity;
+    public static final String ADD_OR_EDIT_WOLHOSTS_HOSTNAMES = "AddOrEditWOLHosts.Hostnames";
+    public static final String ADD_OR_EDIT_WOL_HOSTS_PORTS = "AddOrEditWolHosts.Ports";
+    public static final String ADD_OR_EDIT_WOL_HOSTS_MAC_ADDRESSES = "AddOrEditWolHosts.MacAddresses";
 
     @Nullable
     private Router mRouter;
@@ -68,6 +72,8 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
     protected String mPreferencesKey;
 
     private Device mDevice;
+
+    protected AlertDialog mWaitingDialog = null;
 
     public static AddWOLHostDialogFragment newInstance(@NonNull final String routerUuid,
                                                        @NonNull final ArrayList<String> bcastAddresses,
@@ -88,7 +94,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity = getActivity();
+        final FragmentActivity activity = getActivity();
 
         mGlobalPreferences = activity
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -102,6 +108,9 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
             Utils.reportException(new IllegalStateException("Internal Error: unknown router"));
             dismiss();
         }
+
+        mWaitingDialog = Utils.buildAlertDialog(getActivity(), null,
+                "Sending magic packet...", false, false);
 
         mRouterPreferences = (routerSelected != null ? activity
                 .getSharedPreferences(routerSelected, Context.MODE_PRIVATE) : null);
@@ -117,7 +126,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final FragmentActivity activity = this.activity;
+        final FragmentActivity activity = getActivity();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -136,7 +145,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
                                 "not powered off. Some may also require a SecureOn password, which is not supported (yet)!")
                 .setView(view)
                         // Add action buttons
-                .setPositiveButton("Send Magic Packet", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Send Magic Packet!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //Do nothing here because we override this button later to change the close behaviour.
@@ -146,7 +155,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dismiss();
+                        AddWOLHostDialogFragment.this.getDialog().cancel();
                     }
                 });
         builder.setTitle("Add a new WOL Host");
@@ -156,44 +165,202 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
     }
 
     @Override
+    public void onCancel(DialogInterface dialog) {
+        try {
+            if (mWaitingDialog != null) {
+                mWaitingDialog.cancel();
+            }
+        } catch (final Exception e) {
+            Utils.reportException(e);
+        }
+        super.onCancel(dialog);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
-            d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+
+            if (mRouterPreferences != null) {
+                //Set AutoComplete Fields data
+
+                final AutoCompleteTextView wolHostNameView = (AutoCompleteTextView) d.findViewById(R.id.wol_host_add_name);
+                final Set<String> wolHostNames = mRouterPreferences
+                        .getStringSet(ADD_OR_EDIT_WOLHOSTS_HOSTNAMES, new HashSet<String>());
+                if (wolHostNames != null) {
+                    wolHostNameView
+                            .setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
+                                    wolHostNames.toArray(new String[wolHostNames.size()])));
+                }
+
+                final AutoCompleteTextView wolHostMacAddrView = (AutoCompleteTextView) d.findViewById(R.id.wol_host_add_mac_addr);
+                final Set<String> wolHostMacAddresses = mRouterPreferences
+                        .getStringSet(ADD_OR_EDIT_WOL_HOSTS_MAC_ADDRESSES, new HashSet<String>());
+                if (wolHostMacAddresses != null) {
+                    wolHostMacAddrView
+                            .setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
+                                    wolHostMacAddresses.toArray(new String[wolHostMacAddresses.size()])));
+                }
+
+                final AutoCompleteTextView wolHostPortView = (AutoCompleteTextView) d.findViewById(R.id.wol_host_add_port);
+                final Set<String> wolHostPorts = mRouterPreferences
+                        .getStringSet(ADD_OR_EDIT_WOL_HOSTS_PORTS, new HashSet<String>());
+                if (wolHostPorts != null) {
+                    wolHostPortView
+                            .setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
+                                    wolHostPorts.toArray(new String[wolHostPorts.size()])));
+                }
+            }
+
+            final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Validate form
-                    boolean validForm = validateForm(d);
+                    positiveButton.setEnabled(false);
 
-                    if (validForm) {
+                    try {
+                        //Validate form
+                        boolean validForm = validateForm(d);
 
-                        mDevice = new Device(((EditText) d.findViewById(R.id.wol_host_add_mac_addr)).getText().toString());
-                        mDevice.setAlias(((EditText) d.findViewById(R.id.wol_host_add_name)).getText().toString());
-                        try {
-                            mDevice.setWolPort(Integer.parseInt(((EditText) d.findViewById(R.id.wol_host_add_port)).getText().toString()));
-                        } catch (@NonNull final Exception e) {
-                            e.printStackTrace();
+                        if (validForm) {
+
+                            mDevice = new Device(((EditText) d.findViewById(R.id.wol_host_add_mac_addr)).getText().toString().toLowerCase());
+                            mDevice.setAlias(((EditText) d.findViewById(R.id.wol_host_add_name)).getText().toString());
+                            try {
+                                mDevice.setWolPort(Integer.parseInt(((EditText) d.findViewById(R.id.wol_host_add_port)).getText().toString()));
+                            } catch (@NonNull final Exception e) {
+                                //No worries
+                            }
+
+                            if (mRouterPreferences != null) {
+                                final Set<String> existingHostNames = new HashSet<>(
+                                        mRouterPreferences.getStringSet(ADD_OR_EDIT_WOLHOSTS_HOSTNAMES, new HashSet<String>()));
+                                existingHostNames.add(mDevice.getAlias());
+
+                                final Set<String> existingHostMacs = new HashSet<>(
+                                        mRouterPreferences.getStringSet(ADD_OR_EDIT_WOL_HOSTS_MAC_ADDRESSES, new HashSet<String>()));
+                                existingHostMacs.add(mDevice.getMacAddress());
+
+                                final Set<String> existingHostPorts = new HashSet<>(
+                                        mRouterPreferences.getStringSet(ADD_OR_EDIT_WOL_HOSTS_PORTS, new HashSet<String>()));
+                                if (mDevice.getWolPort() > 0) {
+                                    existingHostPorts.add(String.valueOf(mDevice.getWolPort()));
+                                }
+
+                                mRouterPreferences.edit()
+                                        .putStringSet(ADD_OR_EDIT_WOLHOSTS_HOSTNAMES, existingHostNames)
+                                        .putStringSet(ADD_OR_EDIT_WOL_HOSTS_MAC_ADDRESSES, existingHostMacs)
+                                        .putStringSet(ADD_OR_EDIT_WOL_HOSTS_PORTS, existingHostPorts)
+                                        .apply();
+
+                                Utils.requestBackup(getActivity());
+                            }
+
+                            if (bcastAddresses == null) {
+                                Utils.displayMessage(getActivity(),
+                                        "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
+                                        Style.ALERT);
+                                Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
+                                return;
+                            }
+
+                            final AlertDialog d = (AlertDialog) getDialog();
+                            if (d == null) {
+                                Utils.displayMessage(getActivity(),
+                                        "WOL Internal Error. Try again later.",
+                                        Style.ALERT);
+                                Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                                return;
+                            }
+
+
+                            if (mWaitingDialog == null) {
+                                mWaitingDialog = Utils.buildAlertDialog(getActivity(), null,
+                                        "Sending magic packet...", false, false);
+                            }
+                            mWaitingDialog.show();
+
+                            ((TextView) mWaitingDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new WakeOnLANRouterAction(getActivity(), getRouterActionListener(), mGlobalPreferences, mDevice,
+                                            mDevice.getWolPort(),
+                                            bcastAddresses.toArray(new String[bcastAddresses.size()]))
+                                            .execute(mRouter);
+                                }
+                            }, 2000);
                         }
-
-                        final Bundle token = new Bundle();
-                        token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
-
-                        dismiss();
-
-                        new UndoBarController.UndoBar(activity)
-                                .message(String.format("WOL Request will be sent from router to '%s' (%s)",
-                                        ((EditText) d.findViewById(R.id.wol_host_add_name)).getText().toString(),
-                                        ((EditText) d.findViewById(R.id.wol_host_add_mac_addr)).getText().toString()))
-                                .listener(AddWOLHostDialogFragment.this)
-                                .token(token)
-                                .show();
+                        ///else dialog stays open. 'Cancel' button can still close it.
+                    } catch (final Exception e) {
+                        Utils.reportException(e);
+                    } finally {
+                        if (positiveButton != null) {
+                            positiveButton.setEnabled(true);
+                        }
                     }
-                    ///else dialog stays open. 'Cancel' button can still close it.
                 }
             });
         }
+    }
+
+    @NonNull
+    protected RouterActionListener getRouterActionListener() {
+        return new RouterActionListener() {
+            @Override
+            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                try {
+                    final AlertDialog d = (AlertDialog) getDialog();
+                    if (d == null) {
+                        Utils.displayMessage(getActivity(),
+                                "WOL Internal Error. Action succeeded, but failed to save entry",
+                                Style.INFO);
+                        Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                        return;
+                    }
+
+                    Utils.displayMessage(getActivity(),
+                            String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                            Style.CONFIRM);
+
+                    if (mRouterPreferences == null) {
+                        return;
+                    }
+
+                    final HashSet<String> wolHosts = new HashSet<>(mRouterPreferences.getStringSet(mPreferencesKey, new HashSet<String>()));
+
+                    mDevice.setDeviceUuidForWol(UUID.randomUUID().toString());
+
+                    final Gson gson = WakeOnLanTile.GSON_BUILDER.create();
+                    wolHosts.add(gson.toJson(mDevice));
+
+                    mRouterPreferences.edit()
+                            .putStringSet(mPreferencesKey, wolHosts)
+                            .apply();
+                } finally {
+                    if (mWaitingDialog != null) {
+                        mWaitingDialog.cancel();
+                    }
+                    dismiss();
+                }
+            }
+
+            @Override
+            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                try {
+                    Utils.displayMessage(getActivity(),
+                            String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                            Style.ALERT);
+                    Utils.reportException(exception);
+                } finally {
+                    if (mWaitingDialog != null) {
+                        mWaitingDialog.cancel();
+                    }
+                }
+            }
+        };
     }
 
     private boolean validateForm(AlertDialog d) {
@@ -212,7 +379,7 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
 
     private void openKeyboard(final TextView mTextView) {
         final InputMethodManager imm = (InputMethodManager)
-                activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             // only will trigger it if no physical keyboard is open
             imm.showSoftInput(mTextView, 0);
@@ -224,112 +391,8 @@ public class AddWOLHostDialogFragment extends DialogFragment implements
             return;
         }
         final AlertDialog d = (AlertDialog) getDialog();
-        Crouton.makeText(activity, msg, style,
+        Crouton.makeText(getActivity(), msg, style,
                 (ViewGroup) (d == null ? getView() : d.findViewById(R.id.wol_host_add_notification_viewgroup))).show();
     }
 
-    @Override
-    public void onHide(Parcelable parcelable) {
-        if (parcelable instanceof Bundle) {
-            final Bundle token = (Bundle) parcelable;
-            final String routerAction = token.getString(ROUTER_ACTION);
-            Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
-            if (isNullOrEmpty(routerAction)) {
-                return;
-            }
-            try {
-                switch (RouterAction.valueOf(routerAction)) {
-                    case WAKE_ON_LAN:
-                        if (bcastAddresses == null) {
-                            Utils.displayMessage(activity,
-                                    "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
-                                    Style.ALERT);
-                            Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
-                            return;
-                        }
-
-                        final AlertDialog d = (AlertDialog) getDialog();
-                        if (d == null) {
-                            Utils.displayMessage(activity,
-                                    "WOL Internal Error. Try again later.",
-                                    Style.ALERT);
-                            Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
-                            return;
-                        }
-
-                        new WakeOnLANRouterAction(activity, this, mGlobalPreferences, mDevice,
-                                mDevice.getWolPort(),
-                                bcastAddresses.toArray(new String[bcastAddresses.size()]))
-                                .execute(mRouter);
-                        break;
-                    default:
-                        //Ignored
-                        break;
-                }
-            } catch (IllegalArgumentException | NullPointerException e) {
-                e.printStackTrace();
-                Utils.displayMessage(activity,
-                        "WOL Internal Error. Try again later.",
-                        Style.ALERT);
-                Utils.reportException(e);
-            }
-        }
-    }
-
-    @Override
-    public void onClear(@NonNull Parcelable[] parcelables) {
-
-    }
-
-    @Override
-    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-        //Save (and dismiss)
-        try {
-            final AlertDialog d = (AlertDialog) getDialog();
-            if (d == null) {
-                Utils.displayMessage(activity,
-                        "WOL Internal Error. Action succeeded, but failed to save entry",
-                        Style.INFO);
-                Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
-                return;
-            }
-
-            Utils.displayMessage(activity,
-                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
-                    Style.CONFIRM);
-
-            if (mRouterPreferences == null) {
-                return;
-            }
-
-            final HashSet<String> wolHosts = new HashSet<>(mRouterPreferences.getStringSet(mPreferencesKey, new HashSet<String>()));
-
-            final Gson gson = WakeOnLanTile.GSON_BUILDER.create();
-            wolHosts.add(gson.toJson(mDevice));
-
-            mRouterPreferences.edit()
-                    .putStringSet(mPreferencesKey, wolHosts)
-                    .apply();
-        } catch (final Exception e) {
-            Utils.reportException(e);
-        } finally {
-            dismiss();
-        }
-    }
-
-    @Override
-    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-
-        dismiss();
-        Utils.displayMessage(activity,
-                String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
-                Style.ALERT);
-        Utils.reportException(exception);
-
-    }
-
-    @Override
-    public void onUndo(@Nullable Parcelable parcelable) {
-
-    }
 }

@@ -69,6 +69,7 @@ import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragment;
 import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanDaemonFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupBasicFragment;
 import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragment;
@@ -533,9 +534,11 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //Services > Wake On LAN
                 //TODO
                 parentSectionTitle = resources.getString(R.string.services);
-                tabsToSort = new AbstractBaseFragment[1];
+                tabsToSort = new AbstractBaseFragment[2];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesWakeOnLanFragment.class, parentSectionTitle,
                         resources.getString(R.string.services_wol), router);
+                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesWakeOnLanDaemonFragment.class, parentSectionTitle,
+                        resources.getString(R.string.services_wol_daemon), router);
                 break;
             //Admin: {Commands, NVRAM}
             //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}

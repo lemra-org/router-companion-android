@@ -48,7 +48,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="WOL Hosts"
+                android:text="Available Hosts"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold" />
 
@@ -143,11 +143,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </GridLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
-            android:visibility="invisible" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="@dimen/net_traffic_multi_text_size"-->
+            <!--android:visibility="invisible" />-->
 
         <GridLayout
             android:id="@+id/tile_services_wol_clients_layout_list_container"

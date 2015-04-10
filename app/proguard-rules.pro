@@ -37,6 +37,10 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# please KEEP ALL THE NAMES
+-keepnames class ** { *; }
+
 -libraryjars libs
 
 -dontwarn javax.annotation.**

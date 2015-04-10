@@ -581,4 +581,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
+    <string name="services_wol_daemon">Auto WOL</string>
+    <string name="title_auto_wol_settings">Auto WOL Settings</string>
 </resources>

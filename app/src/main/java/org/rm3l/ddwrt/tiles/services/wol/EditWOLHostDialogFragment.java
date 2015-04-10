@@ -3,14 +3,17 @@ package org.rm3l.ddwrt.tiles.services.wol;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -32,9 +35,11 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
 
     private Device mDeviceToEdit;
 
+    private String mDeviceToEditUuid;
+
     public static EditWOLHostDialogFragment newInstance(@NonNull final String routerUuid,
-                                                       @NonNull final ArrayList<String> bcastAddresses,
-                                                       @NonNull final String preferenceKey,
+                                                        @NonNull final ArrayList<String> bcastAddresses,
+                                                        @NonNull final String preferenceKey,
                                                         @NonNull final String deviceJsonString) {
         final EditWOLHostDialogFragment fragment = new EditWOLHostDialogFragment();
 
@@ -59,6 +64,7 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
             if (mDeviceToEdit == null) {
                 throw new IllegalArgumentException("Device string malformed: " + wolHostString);
             }
+            mDeviceToEditUuid = mDeviceToEdit.getDeviceUuidForWol();
         } catch (final Exception e) {
             Utils.reportException(e);
             Toast.makeText(getActivity(), "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
@@ -82,58 +88,83 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
         }
     }
 
+    @NonNull
     @Override
-    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-        //Save (and dismiss)
-        try {
-            final AlertDialog d = (AlertDialog) getDialog();
-            final FragmentActivity activity = getActivity();
-            if (d == null) {
-                Utils.displayMessage(activity,
-                        "WOL Internal Error. Action succeeded, but failed to save entry",
-                        Style.INFO);
-                Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
-                return;
-            }
-
-            Utils.displayMessage(activity,
-                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
-                    Style.CONFIRM);
-
-            if (mRouterPreferences == null) {
-                return;
-            }
-
-            mDeviceToEdit = new Device(((EditText) d.findViewById(R.id.wol_host_add_mac_addr)).getText().toString());
-            mDeviceToEdit.setAlias(((EditText) d.findViewById(R.id.wol_host_add_name)).getText().toString());
-            try {
-                mDeviceToEdit.setWolPort(Integer.parseInt(((EditText) d.findViewById(R.id.wol_host_add_port)).getText().toString()));
-            } catch (@NonNull final Exception e) {
-                e.printStackTrace();
-            }
-
-            final Set<String> wolHosts = mRouterPreferences.getStringSet(mPreferencesKey, new HashSet<String>());
-            final Set<String> newWolHosts = new HashSet<>();
-            newWolHosts.add(WakeOnLanTile.GSON_BUILDER.create().toJson(mDeviceToEdit));
-            if (wolHosts != null) {
-                for (final String wolHost : wolHosts) {
-                    if (StringUtils.containsIgnoreCase(wolHost, mDeviceToEdit.getMacAddress())) {
-                        continue;
+    protected RouterActionListener getRouterActionListener() {
+        return new RouterActionListener() {
+            @Override
+            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                //Save (and dismiss)
+                try {
+                    final AlertDialog d = (AlertDialog) getDialog();
+                    final FragmentActivity activity = getActivity();
+                    if (d == null) {
+                        Utils.displayMessage(activity,
+                                "WOL Internal Error. Action succeeded, but failed to save entry",
+                                Style.INFO);
+                        Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                        return;
                     }
-                    newWolHosts.add(wolHost);
+
+                    Utils.displayMessage(activity,
+                            String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                            Style.CONFIRM);
+
+                    if (mRouterPreferences == null) {
+                        return;
+                    }
+
+                    mDeviceToEdit = new Device(((EditText) d.findViewById(R.id.wol_host_add_mac_addr)).getText().toString());
+                    mDeviceToEdit.setAlias(((EditText) d.findViewById(R.id.wol_host_add_name)).getText().toString());
+                    try {
+                        mDeviceToEdit.setWolPort(Integer.parseInt(((EditText) d.findViewById(R.id.wol_host_add_port)).getText().toString()));
+                    } catch (@NonNull final Exception e) {
+                        e.printStackTrace();
+                    }
+                    mDeviceToEdit.setDeviceUuidForWol(mDeviceToEditUuid);
+
+                    final Set<String> wolHosts = mRouterPreferences.getStringSet(mPreferencesKey, new HashSet<String>());
+                    final Set<String> newWolHosts = new HashSet<>();
+                    newWolHosts.add(WakeOnLanTile.GSON_BUILDER.create().toJson(mDeviceToEdit));
+                    if (wolHosts != null) {
+                        for (final String wolHost : wolHosts) {
+                            if (StringUtils.containsIgnoreCase(wolHost, mDeviceToEditUuid)) {
+                                continue;
+                            }
+                            newWolHosts.add(wolHost);
+                        }
+                    }
+
+                    mRouterPreferences.edit()
+                            .putStringSet(mPreferencesKey, newWolHosts)
+                            .apply();
+
+                    Utils.requestBackup(activity);
+
+                } catch (final Exception e) {
+                    Utils.reportException(e);
+                } finally {
+                    if (mWaitingDialog != null) {
+                        mWaitingDialog.cancel();
+                    }
+                    dismiss();
                 }
             }
 
-            mRouterPreferences.edit()
-                    .putStringSet(mPreferencesKey, newWolHosts)
-                    .apply();
-
-            Utils.requestBackup(activity);
-
-        } catch (final Exception e) {
-            Utils.reportException(e);
-        } finally {
-            dismiss();
-        }
+            @Override
+            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                try {
+                    Utils.displayMessage(getActivity(),
+                            String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                            Style.ALERT);
+                    Utils.reportException(exception);
+                } finally {
+                    if (mWaitingDialog != null) {
+                        mWaitingDialog.cancel();
+                    }
+                }
+            }
+        };
     }
+
 }

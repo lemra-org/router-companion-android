@@ -286,7 +286,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
             //DNS
             final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
             final String property = data.getProperty(NVRAMInfo.WAN_DNS, "-");
-            wanDNSView.setText(property != null ? property.replaceAll(" ", ", ") : "-");
+            wanDNSView.setText(property != null ? property.replaceAll(" ", "\n") : "-");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
