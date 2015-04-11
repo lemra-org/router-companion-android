@@ -1,9 +1,11 @@
-package org.rm3l.ddwrt;
+package org.rm3l.ddwrt.widgets.home;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
+
+import org.rm3l.ddwrt.R;
 
 
 /**

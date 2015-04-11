@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt;
+package org.rm3l.ddwrt.widgets.home;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -9,13 +9,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import org.rm3l.ddwrt.R;
+
 
 /**
  * The configuration screen for the {@link WOLWidget WOLWidget} AppWidget.
  */
 public class WOLWidgetConfigureActivity extends Activity {
 
-    private static final String PREFS_NAME = "org.rm3l.ddwrt.WOLWidget";
+    private static final String PREFS_NAME = "org.rm3l.ddwrt.widgets.home.WOLWidget";
     private static final String PREF_PREFIX_KEY = \"fake-key\";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {

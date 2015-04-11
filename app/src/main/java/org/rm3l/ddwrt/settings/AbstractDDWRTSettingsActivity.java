@@ -38,6 +38,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 
 import com.google.common.base.Strings;
 
@@ -160,7 +161,7 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(false);
+//            actionBar.setHomeButtonEnabled(false);
         }
 
         if (themeLight) {
@@ -171,6 +172,17 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings_content_frame, this.getPreferenceFragment()).commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @NonNull

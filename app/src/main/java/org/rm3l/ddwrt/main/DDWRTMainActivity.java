@@ -620,6 +620,10 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         switch (item.getItemId()) {
 
+            case android.R.id.home:
+                finish();
+                return true;
+
 //            case android.R.id.home: {
 //                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
 //                    mDrawerLayout.closeDrawer(mDrawerList);

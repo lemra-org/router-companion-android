@@ -209,7 +209,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </activity>
 
-        <receiver android:name=".WOLWidget">
+        <receiver android:name=".widgets.home.WOLWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -219,7 +219,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:resource="@xml/wolwidget_info" />
         </receiver>
 
-        <activity android:name=".WOLWidgetConfigureActivity">
+        <activity android:name=".widgets.home.WOLWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
