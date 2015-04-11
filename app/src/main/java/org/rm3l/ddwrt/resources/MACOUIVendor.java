@@ -186,6 +186,19 @@ public class MACOUIVendor {
         this.type = type;
     }
 
+    public boolean isNone() {
+        return (startHex == null &&
+                endHex == null &&
+                startDec == null &&
+                endDec == null &&
+                company == null &&
+                addressL1 == null &&
+                addressL2 == null &&
+                addressL3 == null &&
+                country == null &&
+                type == null);
+    }
+
     @Override
     public String toString() {
         return "MACOUIVendor{" +
@@ -200,6 +213,20 @@ public class MACOUIVendor {
                 ", country='" + country + '\'' +
                 ", type='" + type + '\'' +
                 '}';
+    }
+
+    public String toCommandOutputString() {
+        return "\n" +
+                "startHex: " + startHex + "\n\n" +
+                ", endHex: " + endHex + "\n\n" +
+                ", startDec: " + startDec + "\n\n" +
+                ", endDec: " + endDec + "\n\n" +
+                ", company: " + company + "\n\n" +
+                ", addressL1: " + addressL1 + "\n\n" +
+                ", addressL2: " + addressL2 + "\n\n" +
+                ", addressL3: " + addressL3 + "\n\n" +
+                ", country: " + country + "\n\n" +
+                ", type: " + type ;
     }
 
     @Override

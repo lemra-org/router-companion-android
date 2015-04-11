@@ -91,6 +91,7 @@ import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusRouterFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.status.openwrt.StatusWANFragmentOpenWrt;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxArpingFragment;
+import org.rm3l.ddwrt.fragments.toolbox.ToolboxMACOUILookupFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
@@ -371,7 +372,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //Toolbox > Network
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new AbstractBaseFragment[5];
+                tabsToSort = new AbstractBaseFragment[6];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
@@ -382,6 +383,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         resources.getString(R.string.toolbox_arping), router);
                 tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_whois), router);
+                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, ToolboxMACOUILookupFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_oui_lookup), router);
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
                 break;
@@ -580,7 +583,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 //Toolbox > Network
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new AbstractBaseFragment[5];
+                tabsToSort = new AbstractBaseFragment[6];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_ping), router);
                 tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
@@ -591,6 +594,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         resources.getString(R.string.toolbox_arping), router);
                 tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
                         resources.getString(R.string.toolbox_whois), router);
+                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, ToolboxMACOUILookupFragment.class, parentSectionTitle,
+                        resources.getString(R.string.toolbox_oui_lookup), router);
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
 

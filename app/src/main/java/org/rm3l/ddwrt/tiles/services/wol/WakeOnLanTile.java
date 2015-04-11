@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -692,6 +693,12 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     deviceNameView.setText(EMPTY_VALUE_TO_DISPLAY);
                 } else {
                     deviceNameView.setText(name);
+                }
+
+                if (device.isEditableForWol()) {
+                    deviceNameView.setTypeface(null, Typeface.ITALIC);
+                } else {
+                    deviceNameView.setTypeface(null, Typeface.NORMAL);
                 }
 
                 final TextView deviceMac = (TextView) cardView.findViewById(R.id.tile_services_wol_client_device_mac);

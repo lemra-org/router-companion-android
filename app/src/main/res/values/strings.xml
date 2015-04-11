@@ -583,4 +583,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="add_widget">Add widget</string>
     <string name="services_wol_daemon">Auto WOL</string>
     <string name="title_auto_wol_settings">Auto WOL Settings</string>
+    <string name="toolbox_oui_lookup">MAC Lookup</string>
+    <string name="oui_lookup_edit_text_hint">MAC Address, OUI, or IAB</string>
+    <string name="oui_lookup">MAC Address Lookup</string>
+    <string name="toolbox_oui_lookup_submit">Lookup</string>
+    <string name="oui_lookup_info">Look up details of the company that manufactured a given MAC Address. Just enter any MAC Address, Organizationally Unique Identifier (OUI), or Individual Address Block (IAB).</string>
 </resources>

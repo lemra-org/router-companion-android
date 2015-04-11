@@ -36,7 +36,8 @@ public enum RouterAction {
     TRACEROUTE("Traceroute"),
     NSLOOKUP("NSLookup"),
     CMD_SHELL("Execute Command"),
-    WHOIS("WHOIS");
+    WHOIS("WHOIS"),
+    MAC_OUI_LOOKUP("MAC OUI Lookup");
 
     private final String displayName;
 

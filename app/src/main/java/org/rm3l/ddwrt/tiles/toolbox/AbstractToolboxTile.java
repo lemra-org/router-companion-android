@@ -281,15 +281,24 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     return;
                 }
 
-                if (!(Patterns.IP_ADDRESS.matcher(textToFind).matches()
-                        || Patterns.DOMAIN_NAME.matcher(textToFind).matches())) {
-                    errorView.setText(mParentFragmentActivity.getResources()
-                            .getString(R.string.router_add_dns_or_ip_invalid) + ":" + textToFind);
+                final CharSequence errorMessageIfAny = checkInputAnReturnErrorMessage(textToFind);
+                if (errorMessageIfAny != null) {
+                    errorView.setText(errorMessageIfAny);
                     errorView.setVisibility(View.VISIBLE);
                     editText.requestFocus();
                     openKeyboard(editText);
                     return;
                 }
+
+//                if (!(Patterns.IP_ADDRESS.matcher(textToFind).matches()
+//                        || Patterns.DOMAIN_NAME.matcher(textToFind).matches())) {
+//                    errorView.setText(mParentFragmentActivity.getResources()
+//                            .getString(R.string.router_add_dns_or_ip_invalid) + ":" + textToFind);
+//                    errorView.setVisibility(View.VISIBLE);
+//                    editText.requestFocus();
+//                    openKeyboard(editText);
+//                    return;
+//                }
 
                 final String existingSearch = mParentFragmentPreferences != null ?
                         mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_HOST), null) : null;
@@ -336,6 +345,16 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 }
             }
         });
+    }
+
+    @Nullable
+    protected CharSequence checkInputAnReturnErrorMessage(@NonNull final String inputText) {
+        if (!(Patterns.IP_ADDRESS.matcher(inputText).matches()
+                || Patterns.DOMAIN_NAME.matcher(inputText).matches())) {
+            return (mParentFragmentActivity.getResources()
+                    .getString(R.string.router_add_dns_or_ip_invalid) + ":" + inputText);
+        }
+        return null;
     }
 
     @Override
