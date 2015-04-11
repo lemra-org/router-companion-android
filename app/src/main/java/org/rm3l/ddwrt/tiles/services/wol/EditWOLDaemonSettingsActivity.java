@@ -154,7 +154,6 @@ public class EditWOLDaemonSettingsActivity extends ActionBarActivity {
 
     }
 
-
     @Override
     public void finish() {
         final Intent data = new Intent();

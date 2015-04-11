@@ -53,7 +53,7 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
     public WakeOnLANRouterAction(@NonNull Context context, @Nullable RouterActionListener listener,
                                  @NonNull SharedPreferences globalSharedPreferences,
                                  @NonNull Device device, @Nullable String... broadcastAddressCandidates) {
-        this(context, listener, globalSharedPreferences, device, -1, broadcastAddressCandidates);
+        this(context, listener, globalSharedPreferences, device, device.getWolPort(), broadcastAddressCandidates);
     }
 
     public WakeOnLANRouterAction(@NonNull Context ctx, @Nullable RouterActionListener listener,

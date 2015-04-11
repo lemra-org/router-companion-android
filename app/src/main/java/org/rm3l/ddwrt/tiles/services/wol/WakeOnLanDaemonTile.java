@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -163,12 +164,10 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     @Override
     protected OnClickIntent getOnclickIntent() {
 
-//        //FIXME Uncomment for final release
-//        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-//            Utils.displayUpgradeMessage(mParentFragmentActivity);
-//            return null;
-//        }
-//        //FIXME End
+        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            Utils.displayUpgradeMessage(mParentFragmentActivity);
+            return null;
+        }
 
         if (mNvramInfo == null) {
             //Loading

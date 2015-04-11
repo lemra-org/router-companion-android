@@ -40,6 +40,7 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -116,12 +117,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 @Override
                 public void onClick(View view) {
 
-                    //FIXME Uncomment for final release
-//                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-//                        Utils.displayUpgradeMessage(mParentFragmentActivity);
-//                        return;
-//                    }
-                    //FIXME End Uncomment
+                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                        return;
+                    }
 
                     final FragmentManager supportFragmentManager = mParentFragmentActivity
                             .getSupportFragmentManager();
@@ -338,6 +337,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                     deviceFromJson.setIpAddress(ipAddress1.toString());
                                 }
 
+                                final Object deviceUuidForWolFromPrefs = objFromJson.get("deviceUuidForWol");
+                                deviceFromJson.setDeviceUuidForWol(deviceUuidForWolFromPrefs != null ?
+                                        deviceUuidForWolFromPrefs.toString() : null);
+
                                 deviceFromJson.setIsEditableForWol(true);
 
                                 deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
@@ -466,12 +469,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                             switch (menuItem.getItemId()) {
                                 case R.id.tile_services_wol_clients_wake_all:
 
-                                    //        //FIXME Uncomment for final release
-                                    //        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                                    //            Utils.displayUpgradeMessage(mParentFragmentActivity);
-                                    //            return true;
-                                    //        }
-                                    //        //FIXME End
+                                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                                        return true;
+                                    }
 
                                     final Bundle token = new Bundle();
                                     token.putString(ROUTER_ACTION, RouterAction.WAKE_ON_LAN.name());
