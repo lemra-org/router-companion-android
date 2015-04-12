@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.widgets.home;
+package org.rm3l.ddwrt.widgets.home.wol;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;

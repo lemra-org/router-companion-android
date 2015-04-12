@@ -5,17 +5,25 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/wol_widget_configure_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="@string/configure" />
+        android:text="@string/select_router" />
 
-    <EditText
-        android:id="@+id/appwidget_text"
+    <Spinner
+        android:id="@+id/wol_widget_routers_dropdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:layout_gravity="start" />
 
     <Button
         android:id="@+id/add_button"

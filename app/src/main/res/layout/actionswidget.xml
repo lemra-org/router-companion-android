@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:background="@drawable/appwidget_dark_bg_focused">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
+
+        <!-- Router Name -->
+        <TextView
+            android:id="@+id/actions_widget_router_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Name: -"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"/>
+
+        <!-- Router IP or Hostname -->
+        <TextView
+            android:id="@+id/actions_widget_router_ip_or_dns"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="IP: -"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"/>
+
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/actions_widget_reboot_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_refresh"/>
+
+        <!-- -->
+        <!--<Button-->
+            <!--android:id="@+id/actions_widget_reboot_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/reboot" />-->
+
+        <!--<Button -->
+            <!--android:id="@+id/next_button" -->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" -->
+            <!--android:text="@string/next" />-->
+    </LinearLayout>
+
+</LinearLayout>
+
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:padding="@dimen/widget_margin"-->
+    <!--android:background="@drawable/my_widget_background">-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/appwidget_text"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:contentDescription="@string/appwidget_text"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/play_button"-->
+            <!--android:layout_width="@dimen/my_button_width"-->
+            <!--android:layout_height="match_parent" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/skip_button"-->
+            <!--android:layout_width="@dimen/my_button_width"-->
+            <!--android:layout_height="match_parent" />-->
+    <!--</LinearLayout>-->
+
+<!--</FrameLayout>-->
+
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="#09C"-->
+    <!--android:padding="@dimen/widget_margin">-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/appwidget_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="#09C"-->
+        <!--android:contentDescription="@string/appwidget_text"-->
+        <!--android:text="@string/appwidget_text"-->
+        <!--android:textColor="#ffffff"-->
+        <!--android:textSize="24sp"-->
+        <!--android:textStyle="bold|italic" />-->
+
+<!--</RelativeLayout>-->

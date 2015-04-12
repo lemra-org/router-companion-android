@@ -1,23 +1,28 @@
-package org.rm3l.ddwrt.widgets.home;
+package org.rm3l.ddwrt.widgets.home.wol;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 
 /**
  * The configuration screen for the {@link WOLWidget WOLWidget} AppWidget.
  */
-public class WOLWidgetConfigureActivity extends Activity {
+public class WOLWidgetConfigureActivity extends ActionBarActivity {
 
-    private static final String PREFS_NAME = "org.rm3l.ddwrt.widgets.home.WOLWidget";
+    private static final String PREFS_NAME = DDWRTCompanionConstants.WIDGETS_PREFERENCES_KEY;
     private static final String PREF_PREFIX_KEY = \"fake-key\";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -40,6 +45,7 @@ public class WOLWidgetConfigureActivity extends Activity {
         }
     };
     EditText mAppWidgetText;
+    private Toolbar mToolbar;
 
     public WOLWidgetConfigureActivity() {
         super();
@@ -78,8 +84,35 @@ public class WOLWidgetConfigureActivity extends Activity {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
+        final boolean themeLight = ColorUtils.isThemeLight(this);
+        if (themeLight) {
+            //Light
+            setTheme(R.style.AppThemeLight);
+        } else {
+            //Default is Dark
+            setTheme(R.style.AppThemeDark);
+        }
+
         setContentView(R.layout.wolwidget_configure);
-        mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
+
+        if (themeLight) {
+            final Resources resources = getResources();
+            getWindow().getDecorView()
+                    .setBackgroundColor(resources.getColor(android.R.color.white));
+        }
+
+        mToolbar = (Toolbar) findViewById(R.id.wol_widget_configure_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("DD-WRT Companion - WOL Widget");
+            setSupportActionBar(mToolbar);
+        }
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setHomeButtonEnabled(false);
+        }
+
+//        mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.

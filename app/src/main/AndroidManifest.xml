@@ -209,17 +209,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widgets.home.WOLWidget">
+        <!-- Actions Widget -->
+        <receiver
+            android:name=".widgets.home.actions.RouterActionsWidget"
+            android:label="DD-WRT: Router Actions">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/rebootwidget_info" />
+        </receiver>
+        <activity android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <!-- WOL Widget -->
+        <receiver
+            android:name=".widgets.home.wol.WOLWidget"
+            android:label="Wake On LAN (DD-WRT Companion)">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/wolwidget_info" />
         </receiver>
-
-        <activity android:name=".widgets.home.WOLWidgetConfigureActivity">
+        <activity android:name=".widgets.home.wol.WOLWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
