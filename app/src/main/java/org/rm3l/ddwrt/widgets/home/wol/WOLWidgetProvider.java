@@ -12,7 +12,7 @@ import org.rm3l.ddwrt.R;
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in {@link WOLWidgetConfigureActivity WOLWidgetConfigureActivity}
  */
-public class WOLWidget extends AppWidgetProvider {
+public class WOLWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {

@@ -268,9 +268,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
 
                             final AlertDialog d = (AlertDialog) getDialog();
                             if (d == null) {
-                                Utils.displayMessage(getActivity(),
-                                        "WOL Internal Error. Try again later.",
-                                        Style.ALERT);
+                                displayMessage("WOL Internal Error. Try again later.", Style.ALERT);
                                 Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
                                 return;
                             }
@@ -314,15 +312,13 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                 try {
                     final AlertDialog d = (AlertDialog) getDialog();
                     if (d == null) {
-                        Utils.displayMessage(getActivity(),
-                                "WOL Internal Error. Action succeeded, but failed to save entry",
+                        displayMessage("WOL Internal Error. Action succeeded, but failed to save entry",
                                 Style.INFO);
                         Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
                         return;
                     }
 
-                    Utils.displayMessage(getActivity(),
-                            String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                    displayMessage(String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
                             Style.CONFIRM);
 
                     if (mRouterPreferences == null) {
@@ -350,7 +346,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
             @Override
             public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                 try {
-                    Utils.displayMessage(getActivity(),
+                    displayMessage(
                             String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                             Style.ALERT);
                     Utils.reportException(exception);

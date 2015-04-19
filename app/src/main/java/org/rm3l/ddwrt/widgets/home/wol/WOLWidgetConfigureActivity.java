@@ -18,7 +18,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 
 /**
- * The configuration screen for the {@link WOLWidget WOLWidget} AppWidget.
+ * The configuration screen for the {@link WOLWidgetProvider WOLWidgetProvider} AppWidget.
  */
 public class WOLWidgetConfigureActivity extends ActionBarActivity {
 
@@ -35,7 +35,7 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity {
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            WOLWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+            WOLWidgetProvider.updateAppWidget(context, appWidgetManager, mAppWidgetId);
 
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();

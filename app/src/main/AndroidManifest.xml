@@ -94,7 +94,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".main.DDWRTMainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
+            android:launchMode="standard"
             android:parentActivityName=".mgmt.RouterManagementActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -194,7 +194,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <activity
             android:name=".tiles.status.wireless.ActiveIPConnectionsDetailActivity"
             android:label="@string/title_ip_connections"
-            android:launchMode="singleTop"
+            android:launchMode="standard"
             android:parentActivityName=".main.DDWRTMainActivity"
             android:windowSoftInputMode="stateHidden">
             <meta-data
@@ -211,7 +211,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Actions Widget -->
         <receiver
-            android:name=".widgets.home.actions.RouterActionsWidget"
+            android:name=".widgets.home.actions.RouterActionsWidgetProvider"
             android:label="DD-WRT: Router Actions">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -219,7 +219,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/rebootwidget_info" />
+                android:resource="@xml/actionswidget_info" />
         </receiver>
         <activity android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity">
             <intent-filter>
@@ -229,7 +229,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- WOL Widget -->
         <receiver
-            android:name=".widgets.home.wol.WOLWidget"
+            android:name=".widgets.home.wol.WOLWidgetProvider"
             android:label="Wake On LAN (DD-WRT Companion)">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

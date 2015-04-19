@@ -58,6 +58,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -75,6 +76,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_P
 public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
+    public static final Random RANDOM = new Random();
 
     private static AtomicLong nextLoaderId = new AtomicLong(1);
 
@@ -310,6 +312,10 @@ public final class Utils {
             return;
         }
         new BackupManager(ctx).dataChanged();
+    }
+
+    public static int getRandomIntId(final int upperLimit) {
+        return RANDOM.nextInt(upperLimit);
     }
 
 }

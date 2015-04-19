@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/reboot_widget_configure_toolbar"
+            android:id="@+id/actions_widget_configure_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -27,7 +27,7 @@
             android:text="@string/select_router" />
 
         <Spinner
-            android:id="@+id/reboot_widget_routers_dropdown"
+            android:id="@+id/actions_widget_routers_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -37,8 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selected_router_uuid"
-            android:visibility="gone"/>
+            android:id="@+id/selected_router_uuid"/>
 
         <Button
             android:id="@+id/add_button"

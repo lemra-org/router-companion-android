@@ -4,7 +4,7 @@
     android:initialKeyguardLayout="@layout/wolwidget"
     android:initialLayout="@layout/wolwidget"
     android:minHeight="40dp"
-    android:minWidth="40dp"
+    android:minWidth="250dp"
     android:previewImage="@drawable/ic_launcher"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"
