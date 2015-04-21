@@ -590,4 +590,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="oui_lookup_info">Look up details of the company that manufactured a given MAC Address. Just enter any MAC Address, Organizationally Unique Identifier (OUI), or Individual Address Block (IAB).</string>
     <string name="select_router">Select Router</string>
     <string name="reboot">Reboot</string>
+    <string name="title_activity_dialog_as">DialogAsActivity</string>
 </resources>

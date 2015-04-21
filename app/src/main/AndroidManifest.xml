@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 DD-WRT Companion is a mobile app that lets you connect to,
 monitor and manage your DD-WRT routers on the go.
 
@@ -21,7 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.rm3l.ddwrt">
+    package="org.rm3l.ddwrt" >
 
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -55,11 +56,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppThemeDark"
-        tools:replace="android:theme">
+        tools:replace="android:theme" >
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
-        <!--This meta-data tag is required to use Google Play Services.-->
+        <!-- This meta-data tag is required to use Google Play Services. -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -68,7 +69,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.rm3l.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
@@ -78,7 +79,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".mgmt.RouterManagementActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -96,7 +97,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:label="@string/app_name"
             android:launchMode="standard"
             android:parentActivityName=".mgmt.RouterManagementActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
@@ -117,7 +118,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:label="WAN Monthly Traffic"
             android:parentActivityName=".main.DDWRTMainActivity"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -126,7 +127,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.ActiveIPConnectionsDetailStatsActivity"
             android:label="IP Connections Pie Chart"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -135,7 +136,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".settings.RouterSettingsActivity"
             android:label="@string/title_activity_router_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -144,7 +145,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.WirelessIfaceQrCodeActivity"
             android:label="@string/wifi_qr_code"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -153,7 +154,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".settings.RouterManagementSettingsActivity"
             android:label="@string/title_activity_router_settings"
             android:parentActivityName=".mgmt.RouterManagementActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
@@ -168,7 +169,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.EditOpenVPNClientSettingsActivity"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -177,7 +178,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterCpuInfoActivity"
             android:label="@string/title_cpuinfo"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -186,7 +187,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.router.RouterMemInfoActivity"
             android:label="@string/title_meminfo"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -196,7 +197,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:label="@string/title_ip_connections"
             android:launchMode="standard"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -212,16 +213,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- Actions Widget -->
         <receiver
             android:name=".widgets.home.actions.RouterActionsWidgetProvider"
-            android:label="DD-WRT: Router Actions">
+            android:label="DD-WRT: Router Actions" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER"/>
+                <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/actionswidget_info" />
         </receiver>
-        <activity android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity">
+
+        <activity android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -230,36 +233,43 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- WOL Widget -->
         <receiver
             android:name=".widgets.home.wol.WOLWidgetProvider"
-            android:label="Wake On LAN (DD-WRT Companion)">
+            android:label="Wake On LAN (DD-WRT Companion)" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/wolwidget_info" />
         </receiver>
-        <activity android:name=".widgets.home.wol.WOLWidgetConfigureActivity">
+
+        <activity android:name=".widgets.home.wol.WOLWidgetConfigureActivity" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
 
-        <!--Include the AdActivity configChanges and theme. -->
+        <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
-
         <activity
             android:name=".tiles.services.wol.EditWOLDaemonSettingsActivity"
             android:label="@string/title_auto_wol_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
         </activity>
 
+        <activity
+            android:name=".widgets.home.actions.RouterRebootWidgetConfirmationDialogFromWidgetActivity"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize"
+            android:excludeFromRecents="true" />
     </application>
 
 </manifest>

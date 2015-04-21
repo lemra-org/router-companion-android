@@ -1,32 +1,21 @@
 package org.rm3l.ddwrt.widgets.home.actions;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.actions.RebootRouterAction;
-import org.rm3l.ddwrt.actions.RouterAction;
-import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.ConfirmDialogAsActivity;
 import org.rm3l.ddwrt.widgets.home.wol.WOLWidgetConfigureActivity;
 
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -42,7 +31,6 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
     public static final String ACTION_REBOOT_ROUTER = "org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER";
 
     private static final String LOG_TAG = RouterActionsWidgetProvider.class.getSimpleName();
-    public static final Handler MAIN_THREAD_HANDLER = new Handler(Looper.getMainLooper());
 
     private static final String WIDGET_ID = "_WIDGET_ID";
 
@@ -100,15 +88,26 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.actions_widget_launch_action, launchPendingIntent);
 
             //Reboot Intent
-            final Intent rebootIntent = new Intent(context, RouterActionsWidgetProvider.class);
-            rebootIntent.setAction(ACTION_REBOOT_ROUTER);
+            final Intent rebootIntent = new Intent(context, RouterRebootWidgetConfirmationDialogFromWidgetActivity.class);
             rebootIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            rebootIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Reboot Router");
+            rebootIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
+                    String.format("Are you sure you wish to reboot router '%s' (%s)?", routerName, routerIp));
             rebootIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            //cf http://stackoverflow.com/questions/3168484/pendingintent-works-correctly-for-the-first-notification-but-incorrectly-for-the
+            rebootIntent.setAction(routerUuid + "-reboot-" +System.currentTimeMillis());
             final PendingIntent rebootPendingIntent = PendingIntent
-                    .getBroadcast(context, Utils.getRandomIntId(Integer.MAX_VALUE),
-                            rebootIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    .getActivity(context, 0, rebootIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.actions_widget_reboot_action, rebootPendingIntent);
+
+//            final Intent rebootIntent = new Intent(context, RouterActionsWidgetProvider.class);
+//            rebootIntent.setAction(ACTION_REBOOT_ROUTER);
+//            rebootIntent.putExtra(ROUTER_SELECTED, routerUuid);
+//            rebootIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+//            //cf http://stackoverflow.com/questions/3168484/pendingintent-works-correctly-for-the-first-notification-but-incorrectly-for-the
+//            final PendingIntent rebootPendingIntent = PendingIntent
+//                    .getBroadcast(context, Utils.getRandomIntId(Integer.MAX_VALUE),
+//                            rebootIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            views.setOnClickPendingIntent(R.id.actions_widget_reboot_action, rebootPendingIntent);
         }
 
         // Instruct the widget manager to update the widget
@@ -164,79 +163,8 @@ public class RouterActionsWidgetProvider extends AppWidgetProvider {
         }
 
         switch (intentAction) {
+            //Handle intent actions
 
-            case ACTION_REBOOT_ROUTER:
-                final String routerUuid = intent.getStringExtra(ROUTER_SELECTED);
-                final Router router;
-                if (routerUuid == null || (router = RouterManagementActivity.getDao(context).getRouter(routerUuid)) == null) {
-
-                    Toast.makeText(context,
-                            "Unknown Router. May have been removed. Please reconfigure the widget!",
-                            Toast.LENGTH_SHORT).show();
-                    super.onReceive(context, intent);
-                    return;
-                }
-
-                Log.d(LOG_TAG, "onReceive: " + intentAction);
-
-                //FIXME Make sure alert dialog works as expected
-
-                new AlertDialog.Builder(context)
-                        .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle("Reboot Router")
-                        .setMessage(String.format("Are you sure you wish to continue?\n'%s' (%s) will be rebooted, " +
-                                "and you might have to wait some time before connection is re-established.",
-                                router.getName(), router.getRemoteIpAddress()))
-                        .setCancelable(true)
-                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
-                                Toast.makeText(context,
-                                        String.format("Rebooting router '%s' (%s) ...", router.getName(), router.getRemoteIpAddress()),
-                                        Toast.LENGTH_SHORT).show();
-
-                                new RebootRouterAction(context,
-                                        new RouterActionListener() {
-                                            @Override
-                                            public void onRouterActionSuccess(@NonNull final RouterAction routerAction, @NonNull final Router router, Object returnData) {
-                                                MAIN_THREAD_HANDLER.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Toast.makeText(context,
-                                                                String.format("Action '%s' executed successfully on '%s'.",
-                                                                        routerAction.toString(), router.getRemoteIpAddress()),
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onRouterActionFailure(@NonNull final RouterAction routerAction, @NonNull final Router router,
-                                                                              @Nullable final Exception exception) {
-                                                MAIN_THREAD_HANDLER.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Toast.makeText(context,
-                                                                String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-                                        },
-                                        context.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE))
-                                        .execute(router);
-
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        }).create().show();
-
-
-                break;
             default:
                 break;
         }
