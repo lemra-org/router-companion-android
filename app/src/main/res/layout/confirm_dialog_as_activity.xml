@@ -11,6 +11,15 @@
     android:weightSum="1">
 
     <TextView
+        android:text="Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textStyle="bold"
+        android:id="@+id/confirm_dialog_as_activity_title"
+        android:layout_marginBottom="15dp"/>
+
+    <TextView
         android:text="Message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

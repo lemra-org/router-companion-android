@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -63,7 +64,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  */
 public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManager.LoaderCallbacks<T>, CompoundButton.OnCheckedChangeListener {
 
-    public static final Handler HANDLER = new Handler();
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NonNull
     protected final FragmentActivity mParentFragmentActivity;
@@ -80,6 +80,16 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     protected final Router mRouter;
     @NonNull
     private final DDWRTCompanionDAO mDao;
+    public static final Handler HANDLER;
+    static {
+        if (Looper.myLooper() == null) {
+            //Check for this - otherwise it yields the following error:
+            // "only one looper may be created per thread")
+            //cf. http://stackoverflow.com/questions/23038682/java-lang-runtimeexception-only-one-looper-may-be-created-per-thread
+            Looper.prepare();
+        }
+        HANDLER = new Handler();
+    }
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
     @Nullable
@@ -111,7 +121,6 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                         R.string.interstitial_ad_unit_id_tile_click);
             }
         });
-
     }
 
     public DDWRTTile(@NonNull final Fragment parentFragment, @NonNull final Bundle arguments,
@@ -131,6 +140,22 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                 this.mToggleAutoRefreshButton.setChecked(this.mAutoRefreshToggle);
             }
         }
+    }
+
+    public boolean ismAutoRefreshToggle() {
+        return mAutoRefreshToggle;
+    }
+
+    public void setmAutoRefreshToggle(boolean mAutoRefreshToggle) {
+        this.mAutoRefreshToggle = mAutoRefreshToggle;
+    }
+
+    public long getNbRunsLoader() {
+        return nbRunsLoader;
+    }
+
+    public void setNbRunsLoader(long nbRunsLoader) {
+        this.nbRunsLoader = nbRunsLoader;
     }
 
     @Nullable
@@ -186,7 +211,11 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
     }
 
     protected String getFormattedPrefKey(@NonNull final String scope) {
-        return this.getClass().getCanonicalName() + "::" + scope;
+        return getFormattedPrefKey(this.getClass(), scope);
+    }
+
+    public static <T extends DDWRTTile> String getFormattedPrefKey(@NonNull final Class<T> clazz, @NonNull final String scope) {
+        return clazz.getCanonicalName() + "::" + scope;
     }
 
     @Nullable
@@ -314,7 +343,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                             Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
                     alertDialog.show();
                     ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                    new Handler().postDelayed(new Runnable() {
+                    HANDLER.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             ((AbstractBaseFragment) mParentFragment)
@@ -330,7 +359,7 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
                         Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
                 alertDialog.show();
                 ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                new Handler().postDelayed(new Runnable() {
+                HANDLER.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         ((AbstractBaseFragment) mParentFragment)

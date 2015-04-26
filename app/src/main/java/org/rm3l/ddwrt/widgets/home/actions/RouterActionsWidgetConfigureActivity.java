@@ -141,7 +141,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("DD-WRT Companion - Reboot Widget");
+            mToolbar.setTitle("Add Reboot Widget");
             setSupportActionBar(mToolbar);
         }
         final ActionBar actionBar = getSupportActionBar();

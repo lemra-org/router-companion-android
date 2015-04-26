@@ -233,21 +233,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- WOL Widget -->
         <receiver
             android:name=".widgets.home.wol.WOLWidgetProvider"
-            android:label="Wake On LAN (DD-WRT Companion)" >
+            android:label="DD-WRT: Wake on LAN" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/wolwidget_info" />
         </receiver>
-
         <activity android:name=".widgets.home.wol.WOLWidgetConfigureActivity" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
+        <!-- The service serving the RemoteViews to the collection widget -->
+        <service
+            android:name=".widgets.home.wol.WOLWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
 
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
@@ -270,6 +276,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:theme="@style/Theme.AppCompat.Dialog"
             android:windowSoftInputMode="adjustResize"
             android:excludeFromRecents="true" />
+
+        <activity
+            android:name=".widgets.home.wol.RouterWolWidgetConfirmationDialogFromWidgetActivity"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize"
+            android:excludeFromRecents="true"
+            android:finishOnCloseSystemDialogs="true"/>
+
     </application>
 
 </manifest>

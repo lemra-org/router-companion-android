@@ -1,16 +1,15 @@
 package org.rm3l.ddwrt.widgets;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
 import org.rm3l.ddwrt.R;
 
-public abstract class ConfirmDialogAsActivity extends ActionBarActivity {
+public abstract class ConfirmDialogAsActivity extends Activity {
 
     public static final String TITLE = ConfirmDialogAsActivity.class.getSimpleName() + ".TITLE";
     public static final String MESSAGE = ConfirmDialogAsActivity.class.getSimpleName() + ".MESSAGE";
@@ -18,8 +17,8 @@ public abstract class ConfirmDialogAsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setFinishOnTouchOutside(false);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setFinishOnTouchOutside(true);
 
         super.onCreate(savedInstanceState);
 
@@ -27,10 +26,8 @@ public abstract class ConfirmDialogAsActivity extends ActionBarActivity {
 
         final Intent intent = getIntent();
 
-        final ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            supportActionBar.setTitle(intent.getStringExtra(TITLE));
-        }
+        ((TextView) findViewById(R.id.confirm_dialog_as_activity_title))
+                .setText(intent.getStringExtra(TITLE));
 
         ((TextView) findViewById(R.id.confirm_dialog_as_activity_message))
                 .setText(intent.getStringExtra(MESSAGE));

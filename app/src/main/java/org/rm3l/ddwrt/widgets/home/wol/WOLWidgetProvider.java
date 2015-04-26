@@ -1,11 +1,33 @@
 package org.rm3l.ddwrt.widgets.home.wol;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
+import android.widget.Toast;
+
+import com.google.gson.reflect.TypeToken;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.Device;
+import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
+import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.ConfirmDialogAsActivity;
+
+import java.util.ArrayList;
+
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.widgets.home.wol.RouterWolWidgetConfirmationDialogFromWidgetActivity.HOSTS_TO_WAKE;
 
 
 /**
@@ -14,13 +36,115 @@ import org.rm3l.ddwrt.R;
  */
 public class WOLWidgetProvider extends AppWidgetProvider {
 
+    public static final String EXTRA_ITEM = "org.rm3l.ddwrt.widgets.home.wol.EXTRA_ITEM";
+
+    public static final String ACTION_WAKE_HOST = "org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST";
+
+    private static final String LOG_TAG = WOLWidgetProvider.class.getSimpleName();
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = WOLWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(context);
+
+        final String routerUuid = WOLWidgetConfigureActivity.loadRouterUuidPref(context, appWidgetId);
+        final String routerName;
+        final String routerIp;
+
+        Router router = null;
+
+        if (routerUuid == null || routerUuid.isEmpty()) {
+            routerName = "-";
+            routerIp = "-";
+        } else {
+            router = dao.getRouter(routerUuid);
+            if (router == null) {
+                routerName = "-";
+                routerIp = "-";
+            } else {
+                routerName = router.getName();
+                routerIp = router.getRemoteIpAddress();
+            }
+        }
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.wolwidget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.wolwidget);
+        views.setTextViewText(R.id.wol_widget_router_name, routerName);
+        views.setTextViewText(R.id.wol_widget_router_ip_or_dns, routerIp);
+
+        if (router == null) {
+            views.setViewVisibility(R.id.wol_widget_launch_action, View.GONE);
+            views.setViewVisibility(R.id.wol_widget_wake_all_action, View.GONE);
+            views.setViewVisibility(R.id.wol_widget_hosts_list, View.GONE);
+            views.setViewVisibility(R.id.wol_widget_hosts_list_empty_view, View.GONE);
+        } else {
+
+            // Set up the intent that starts the ListView service, which will
+            // provide the views for this collection.
+            final Intent intent = new Intent(context, WOLWidgetService.class);
+            // Add the app widget ID to the intent extras.
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.putExtra(ROUTER_SELECTED, routerUuid);
+            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+            // Set up the RemoteViews object to use a RemoteViews adapter.
+            // This adapter connects
+            // to a RemoteViewsService  through the specified intent.
+            // This is how you populate the data.
+            views.setRemoteAdapter(R.id.wol_widget_hosts_list, intent);
+            // The empty view is displayed when the collection has no items.
+            // It should be in the same layout used to instantiate the RemoteViews
+            // object above.
+            views.setEmptyView(R.id.wol_widget_hosts_list, R.id.wol_widget_hosts_list_empty_view);
+
+            // Here we setup the a pending intent template. Individuals items of
+            // a collection
+            // cannot setup their own pending intents, instead, the collection
+            // as a whole can
+            // setup a pending intent template, and the individual items can set
+            // a fillInIntent
+            // to create unique before on an item to item basis.
+            // Adding collection list item handler
+            final Intent onItemClick = new Intent(context, WOLWidgetProvider.class);
+            onItemClick.setAction(ACTION_WAKE_HOST);
+            onItemClick.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            onItemClick.setData(Uri.parse(onItemClick.toUri(Intent.URI_INTENT_SCHEME)));
+            final PendingIntent onClickPendingIntent = PendingIntent
+                    .getBroadcast(context, 0, onItemClick, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setPendingIntentTemplate(R.id.wol_widget_hosts_list, onClickPendingIntent);
+
+            //Logo Intent
+            final Intent logoIntent = new Intent(context, RouterManagementActivity.class);
+            logoIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            logoIntent.setAction(routerUuid + "-logo-" +
+                    System.currentTimeMillis());
+            final PendingIntent logoPendingIntent = PendingIntent
+                    .getActivity(context, 0, logoIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.wol_widget_Logo, logoPendingIntent);
+
+            //Launch Intent
+            final Intent launchIntent = new Intent(context, DDWRTMainActivity.class);
+            launchIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            launchIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 7); //Open right on WOL Menu Item
+            launchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            launchIntent.setAction(routerUuid + "-launch-" +
+                    System.currentTimeMillis());
+            final PendingIntent launchPendingIntent = PendingIntent
+                    .getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.wol_widget_launch_action, launchPendingIntent);
+
+            //Wake all Intent
+            final Intent wakeAllIntent = new Intent(context, RouterWolWidgetConfirmationDialogFromWidgetActivity.class);
+            wakeAllIntent.putExtra(ROUTER_SELECTED, routerUuid);
+            wakeAllIntent.putExtra(RouterWolWidgetConfirmationDialogFromWidgetActivity.LOAD_HOSTS_FROM_PREFS, true);
+            wakeAllIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Wake all hosts");
+            wakeAllIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
+                    "Are you sure you wish to attempt waking all hosts?");
+            wakeAllIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            wakeAllIntent.setAction(routerUuid + "-wakeAll-" + System.currentTimeMillis());
+            final PendingIntent wakeAllPendingIntent = PendingIntent
+                    .getActivity(context, 0, wakeAllIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.wol_widget_wake_all_action, wakeAllPendingIntent);
+
+        }
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -40,7 +164,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
-            WOLWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
+            WOLWidgetConfigureActivity.deleteRouterUuidPref(context, appWidgetIds[i]);
         }
     }
 
@@ -52,6 +176,74 @@ public class WOLWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    /**
+     * Build {@link ComponentName} describing this specific
+     * {@link AppWidgetProvider}
+     */
+    public static ComponentName getComponentName(Context context) {
+        return new ComponentName(context, WOLWidgetProvider.class);
+    }
+
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+
+        Log.d(LOG_TAG, "onReceive: " + intent);
+
+        final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
+
+        final String intentAction;
+
+        if ((intentAction = intent.getAction()) != null) {
+            final String routerUuid = intent.getStringExtra(ROUTER_SELECTED);
+            if (routerUuid != null) {
+                final Router router = RouterManagementActivity.getDao(context).getRouter(routerUuid);
+                if (router == null) {
+                    Toast.makeText(context, "Invalid Router - entry may have been dropped!",Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    switch (intentAction) {
+                        case ACTION_WAKE_HOST:
+                            final String deviceToWakeStr = intent.getStringExtra(HOSTS_TO_WAKE);
+                            if (deviceToWakeStr != null) {
+                                try {
+                                    final ArrayList<Device> devices = WakeOnLanTile.GSON_BUILDER.create().fromJson(deviceToWakeStr,
+                                            new TypeToken<ArrayList<Device>>() {}.getType());
+                                    if (!(devices == null || devices.isEmpty())) {
+                                        final Device device = devices.get(0);
+                                        if (device != null) {
+                                            final Intent wakeIntent = new Intent(context, RouterWolWidgetConfirmationDialogFromWidgetActivity.class);
+                                            wakeIntent.putExtra(ROUTER_SELECTED, routerUuid);
+                                            wakeIntent.putExtra(HOSTS_TO_WAKE,
+                                                    intent.getStringExtra(HOSTS_TO_WAKE));
+                                            wakeIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Wake on LAN");
+                                            wakeIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
+                                                    String.format("Are you sure you wish to attempt waking this host: '%s' (%s)?",
+                                                            device.getName(), device.getMacAddress()));
+                                            wakeIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                                            wakeIntent.setAction(routerUuid + "-wakeHost-" + System.currentTimeMillis());
+                                            wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                                            context.startActivity(wakeIntent);
+                                        }
+                                    }
+
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    Utils.reportException(e);
+                                }
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        super.onReceive(context, intent);
     }
 }
 

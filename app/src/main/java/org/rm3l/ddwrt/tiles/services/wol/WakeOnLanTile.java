@@ -1,8 +1,10 @@
 package org.rm3l.ddwrt.tiles.services.wol;
 
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
@@ -59,6 +61,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.home.wol.WOLWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,7 +94,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     public static final String EDIT_HOST_FRAGMENT_TAG = "edit_wol_host";
     private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
     public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings();
-    private final String wolHostsPrefKey;
+    private static final String wolHostsPrefKey = \"fake-key\";
     private final ArrayList<String> broadcastAddresses = new ArrayList<>();
     private boolean isThemeLight;
     private String mCurrentIpAddress;
@@ -103,8 +106,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
         super(parentFragment, arguments, router, R.layout.tile_services_wol_clients,
                 R.id.tile_services_wol_clients_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
-        wolHostsPrefKey = \"fake-key\";
 
         // Create Options Menu
 
@@ -139,6 +140,26 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
     }
 
+    public String getmCurrentIpAddress() {
+        return mCurrentIpAddress;
+    }
+
+    public void setmCurrentIpAddress(String mCurrentIpAddress) {
+        this.mCurrentIpAddress = mCurrentIpAddress;
+    }
+
+    public String getmCurrentMacAddress() {
+        return mCurrentMacAddress;
+    }
+
+    public void setmCurrentMacAddress(String mCurrentMacAddress) {
+        this.mCurrentMacAddress = mCurrentMacAddress;
+    }
+
+    public ArrayList<Device> getmCurrentDevicesList() {
+        return mCurrentDevicesList;
+    }
+
     @Override
     public int getTileHeaderViewId() {
         return R.id.tile_services_wol_clients_hdr;
@@ -152,279 +173,311 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     @Nullable
     @Override
     protected Loader<RouterData<ArrayList<Device>>> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<RouterData<ArrayList<Device>>>(this.mParentFragmentActivity) {
+        return getWOLHostsLoader
+                (this, mParentFragmentActivity, mParentFragmentPreferences, mGlobalPreferences, mRouter, broadcastAddresses);
+    }
+
+    @NonNull
+    public static Loader<RouterData<ArrayList<Device>>> getWOLHostsLoader(
+            @Nullable final WakeOnLanTile wakeOnLanTile,
+            final Context mParentFragmentActivity,
+            final SharedPreferences mParentFragmentPreferences, final SharedPreferences mGlobalPreferences,
+            final Router mRouter,
+            final List<String> broadcastAddresses
+    ) {
+        return new AsyncTaskLoader<RouterData<ArrayList<Device>>>(mParentFragmentActivity) {
 
             @Nullable
             @Override
             public RouterData<ArrayList<Device>> loadInBackground() {
 
-                isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+                return getArrayListRouterDataSync(wakeOnLanTile, mRouter,
+                        mParentFragmentActivity, broadcastAddresses,
+                        mGlobalPreferences, mParentFragmentPreferences);
 
-                Log.d(LOG_TAG, "Init background loader for " + WakeOnLanTile.class + ": routerInfo=" +
-                        mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+            }
+        };
+    }
 
-                //Determine broadcast address at each run (because that might change if connected to another network)
-                try {
-                    final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
-                    final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+    public static RouterData<ArrayList<Device>> getArrayListRouterDataSync(@Nullable WakeOnLanTile wakeOnLanTile, Router mRouter, Context mParentFragmentActivity, List<String> broadcastAddresses, SharedPreferences mGlobalPreferences, SharedPreferences mParentFragmentPreferences) {
+        final boolean mAutoRefreshToggle =
+                (wakeOnLanTile == null || wakeOnLanTile.ismAutoRefreshToggle());
 
-                    mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
-                    mCurrentMacAddress = connectionInfo.getMacAddress();
-                } catch (@NonNull final Exception e) {
-                    e.printStackTrace();
-                    //No worries
+        final long nbRunsLoader = wakeOnLanTile != null ? wakeOnLanTile.getNbRunsLoader() : 0;
+
+        Log.d(LOG_TAG, "Init background loader for " + WakeOnLanTile.class + ": routerInfo=" +
+                mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" +
+                nbRunsLoader);
+
+        //Determine broadcast address at each run (because that might change if connected to another network)
+        try {
+            final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+
+            final String mCurrentIpAddress = Utils.intToIp(connectionInfo.getIpAddress());
+            final String mCurrentMacAddress = connectionInfo.getMacAddress();
+
+            if (wakeOnLanTile != null) {
+                wakeOnLanTile.setmCurrentIpAddress(mCurrentIpAddress);
+                wakeOnLanTile.setmCurrentMacAddress(mCurrentMacAddress);
+            }
+
+        } catch (@NonNull final Exception e) {
+            e.printStackTrace();
+            //No worries
+        }
+
+        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+            //Skip run
+            Log.d(LOG_TAG, "Skip loader run");
+            return new RouterData<ArrayList<Device>>() {
+            }.setException(new DDWRTTileAutoRefreshNotAllowedException());
+        }
+        if (wakeOnLanTile != null) {
+            wakeOnLanTile.setNbRunsLoader(nbRunsLoader+1);
+        }
+
+        final ArrayList<Device> mDevices = new ArrayList<>();
+
+        final List<Device> mCurrentDevicesList =
+                (wakeOnLanTile != null ? wakeOnLanTile.getmCurrentDevicesList() : new ArrayList<Device>());
+
+        mCurrentDevicesList.clear();
+        broadcastAddresses.clear();
+
+        try {
+
+            //Get Broadcast Addresses (for WOL)
+            try {
+                final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                        "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
+                        "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
+                if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
+                    for (final String wanAndLanBcast : wanAndLanBroadcast) {
+                        if (wanAndLanBcast == null) {
+                            continue;
+                        }
+                        broadcastAddresses.add(wanAndLanBcast.trim());
+                    }
                 }
+            } catch (final Exception e) {
+                //No worries
+                e.printStackTrace();
+            }
 
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
+
+            final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                    mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
+                            MAP_KEYWORD +
+                            "\",$1,$3 ,$2}'",
+                    "awk '{print \"" +
+                            MAP_KEYWORD +
+                            "\",$2,$3,$4}' /tmp/dnsmasq.leases",
+                    "awk 'NR>1{print \"" +
+                            MAP_KEYWORD +
+                            "\",$4,$1,\"*\"}' /proc/net/arp",
+                    "arp -a | awk '{print \"" +
+                            MAP_KEYWORD +
+                            "\",$4,$2,$1}'",
+                    "echo done");
+
+            Log.d(LOG_TAG, "output: " + Arrays.toString(output));
+
+            if (output == null || output.length == 0) {
+                if (output == null) {
                     return new RouterData<ArrayList<Device>>() {
-                    }.setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    };
                 }
-                nbRunsLoader++;
+            }
+            final Map<String, Device> macToDevice = Maps.newHashMap();
+            final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
 
-                final ArrayList<Device> mDevices = new ArrayList<>();
+            final Splitter splitter = Splitter.on(" ");
 
-                mCurrentDevicesList.clear();
-                broadcastAddresses.clear();
-
-                try {
-
-                    //Get Broadcast Addresses (for WOL)
-                    try {
-                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
-                                "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
-                        if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
-                            for (final String wanAndLanBcast : wanAndLanBroadcast) {
-                                if (wanAndLanBcast == null) {
-                                    continue;
-                                }
-                                broadcastAddresses.add(wanAndLanBcast.trim());
-                            }
-                        }
-                    } catch (final Exception e) {
-                        //No worries
-                        e.printStackTrace();
+            String ipAddress;
+            final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
+            for (final String stdoutLine : output) {
+                if ("done".equals(stdoutLine)) {
+                    break;
+                }
+                final List<String> as = splitter.splitToList(stdoutLine);
+                if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
+                    final String macAddress = as.get(1);
+                    if (isNullOrEmpty(macAddress) ||
+                            "00:00:00:00:00:00".equals(macAddress) ||
+                            StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
+                        //Skip clients with incomplete ARP set-up
+                        continue;
                     }
 
-
-                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
-                                    MAP_KEYWORD +
-                                    "\",$1,$3 ,$2}'",
-                            "awk '{print \"" +
-                                    MAP_KEYWORD +
-                                    "\",$2,$3,$4}' /tmp/dnsmasq.leases",
-                            "awk 'NR>1{print \"" +
-                                    MAP_KEYWORD +
-                                    "\",$4,$1,\"*\"}' /proc/net/arp",
-                            "arp -a | awk '{print \"" +
-                                    MAP_KEYWORD +
-                                    "\",$4,$2,$1}'",
-                            "echo done");
-
-                    Log.d(LOG_TAG, "output: " + Arrays.toString(output));
-
-                    if (output == null || output.length == 0) {
-                        if (output == null) {
-                            return new RouterData<ArrayList<Device>>() {
-                            };
+                    ipAddress = as.get(2);
+                    if (ipAddress != null) {
+                        final Matcher matcher = betweenParenthesisPattern.matcher(ipAddress);
+                        if (matcher.find()) {
+                            ipAddress = matcher.group(1);
                         }
                     }
-                    final Map<String, Device> macToDevice = Maps.newHashMap();
-                    final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
-
-                    final Splitter splitter = Splitter.on(" ");
-
-                    String ipAddress;
-                    final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
-                    for (final String stdoutLine : output) {
-                        if ("done".equals(stdoutLine)) {
-                            break;
-                        }
-                        final List<String> as = splitter.splitToList(stdoutLine);
-                        if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
-                            final String macAddress = as.get(1);
-                            if (isNullOrEmpty(macAddress) ||
-                                    "00:00:00:00:00:00".equals(macAddress) ||
-                                    StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
-                                //Skip clients with incomplete ARP set-up
-                                continue;
-                            }
-
-                            ipAddress = as.get(2);
-                            if (ipAddress != null) {
-                                final Matcher matcher = betweenParenthesisPattern.matcher(ipAddress);
-                                if (matcher.find()) {
-                                    ipAddress = matcher.group(1);
-                                }
-                            }
 
 //                            if (StringUtils.equalsIgnoreCase(ipAddress, gatewayAddress)) {
 //                                //Skip Gateway
 //                                continue;
 //                            }
 
-                            final Device device = new Device(macAddress);
-                            device.setIpAddress(ipAddress);
+                    final Device device = new Device(macAddress);
+                    device.setIpAddress(ipAddress);
 
-                            final String systemName = as.get(3);
-                            if (!"*".equals(systemName)) {
-                                device.setSystemName(systemName);
-                            }
+                    final String systemName = as.get(3);
+                    if (!"*".equals(systemName)) {
+                        device.setSystemName(systemName);
+                    }
 
-                            //Alias from SharedPreferences
-                            if (mParentFragmentPreferences != null) {
-                                final String deviceAlias = mParentFragmentPreferences.getString(macAddress, null);
-                                if (!isNullOrEmpty(deviceAlias)) {
-                                    device.setAlias(deviceAlias);
-                                }
-                            }
-
-                            device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
-
-                            macToDeviceOutput.put(macAddress, device);
+                    //Alias from SharedPreferences
+                    if (mParentFragmentPreferences != null) {
+                        final String deviceAlias = mParentFragmentPreferences.getString(macAddress, null);
+                        if (!isNullOrEmpty(deviceAlias)) {
+                            device.setAlias(deviceAlias);
                         }
                     }
 
-                    for (final Map.Entry<String, Collection<Device>> deviceEntry : macToDeviceOutput.asMap().entrySet()) {
-                        final String macAddr = deviceEntry.getKey();
-                        final Collection<Device> deviceCollection = deviceEntry.getValue();
-                        for (final Device device : deviceCollection) {
-                            //Consider the one that has a Name, if any
-                            if (!isNullOrEmpty(device.getSystemName())) {
-                                macToDevice.put(macAddr, device);
-                                break;
-                            }
-                        }
-                        if (deviceCollection.isEmpty() || macToDevice.containsKey(macAddr)) {
+                    device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
+
+                    macToDeviceOutput.put(macAddress, device);
+                }
+            }
+
+            for (final Map.Entry<String, Collection<Device>> deviceEntry : macToDeviceOutput.asMap().entrySet()) {
+                final String macAddr = deviceEntry.getKey();
+                final Collection<Device> deviceCollection = deviceEntry.getValue();
+                for (final Device device : deviceCollection) {
+                    //Consider the one that has a Name, if any
+                    if (!isNullOrEmpty(device.getSystemName())) {
+                        macToDevice.put(macAddr, device);
+                        break;
+                    }
+                }
+                if (deviceCollection.isEmpty() || macToDevice.containsKey(macAddr)) {
+                    continue;
+                }
+
+                final Device dev = deviceCollection.iterator().next();
+
+                macToDevice.put(macAddr, dev);
+            }
+
+
+            //Load user-defined hosts
+            if (mParentFragmentPreferences != null) {
+                final Set<String> userDefinedWolHosts = mParentFragmentPreferences.getStringSet(wolHostsPrefKey,
+                        new HashSet<String>());
+                //noinspection ConstantConditions
+                for (final String userDefinedWolHost : userDefinedWolHosts) {
+                    if (userDefinedWolHost == null || userDefinedWolHost.isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        final Map objFromJson = GSON_BUILDER.create()
+                                .fromJson(userDefinedWolHost, Map.class);
+
+                        final Object macAddress = objFromJson.get("macAddress");
+                        if (macAddress == null || macToDevice.containsKey(macAddress.toString())) {
                             continue;
                         }
 
-                        final Device dev = deviceCollection.iterator().next();
-
-                        macToDevice.put(macAddr, dev);
-                    }
-
-
-                    //Load user-defined hosts
-                    if (mParentFragmentPreferences != null) {
-                        final Set<String> userDefinedWolHosts = mParentFragmentPreferences.getStringSet(wolHostsPrefKey,
-                                new HashSet<String>());
-                        //noinspection ConstantConditions
-                        for (final String userDefinedWolHost : userDefinedWolHosts) {
-                            if (userDefinedWolHost == null || userDefinedWolHost.isEmpty()) {
-                                continue;
-                            }
-
-                            try {
-                                final Map objFromJson = GSON_BUILDER.create()
-                                        .fromJson(userDefinedWolHost, Map.class);
-
-                                final Object macAddress = objFromJson.get("macAddress");
-                                if (macAddress == null || macToDevice.containsKey(macAddress.toString())) {
-                                    continue;
-                                }
-
-                                final Device deviceFromJson = new Device(macAddress.toString());
-                                final Object alias = objFromJson.get("alias");
-                                if (alias != null) {
-                                    deviceFromJson.setAlias(alias.toString());
-                                }
-
-                                final Object ipAddress1 = objFromJson.get("ipAddress");
-                                if (ipAddress1 != null) {
-                                    deviceFromJson.setIpAddress(ipAddress1.toString());
-                                }
-
-                                final Object deviceUuidForWolFromPrefs = objFromJson.get("deviceUuidForWol");
-                                deviceFromJson.setDeviceUuidForWol(deviceUuidForWolFromPrefs != null ?
-                                        deviceUuidForWolFromPrefs.toString() : null);
-
-                                deviceFromJson.setIsEditableForWol(true);
-
-                                deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
-                                        .mMacOuiVendorLookupCache.get(macAddress.toString()));
-
-                                mDevices.add(deviceFromJson);
-                                mCurrentDevicesList.add(deviceFromJson);
-
-                            } catch (final Exception e) {
-                                //No worries
-                                e.printStackTrace();
-                                Utils.reportException(new
-                                        IllegalStateException("Failed to parse JSON: " + userDefinedWolHost, e));
-                            }
-                        }
-                    }
-
-                    //Connected Hosts
-                    for (final Device device : macToDevice.values()) {
-                        mDevices.add(device);
-                        mCurrentDevicesList.add(device);
-                    }
-
-                    //Hosts defined from Admin > WOL
-                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                            WOL_HOSTS,
-                            MANUAL_WOL_MAC,
-                            MANUAL_WOL_PORT);
-                    if (nvRamInfoFromRouter != null) {
-                        //Manual Hosts
-                        String property = nvRamInfoFromRouter.getProperty(MANUAL_WOL_MAC, DDWRTCompanionConstants.EMPTY_STRING);
-                        final List<String> macAddresses = SPLITTER.splitToList(property);
-
-                        if (!macAddresses.isEmpty()) {
-                            int wolPort = -1;
-                            try {
-                                wolPort = Integer.parseInt(nvRamInfoFromRouter.getProperty(MANUAL_WOL_PORT, "-1"));
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            for (final String mAddress : macAddresses) {
-                                final Device dev = new Device(mAddress);
-                                dev.setWolPort(wolPort);
-                                dev.setMacouiVendorDetails(WirelessClientsTile
-                                        .mMacOuiVendorLookupCache.get(mAddress));
-                                mDevices.add(dev);
-                                mCurrentDevicesList.add(dev);
-                            }
+                        final Device deviceFromJson = new Device(macAddress.toString());
+                        final Object alias = objFromJson.get("alias");
+                        if (alias != null) {
+                            deviceFromJson.setAlias(alias.toString());
                         }
 
-                        //Now Wol_Hosts
-                        property = nvRamInfoFromRouter.getProperty(WOL_HOSTS, DDWRTCompanionConstants.EMPTY_STRING);
-                        final List<String> wolHosts = SPLITTER.splitToList(property);
-                        for (final String wolHost : wolHosts) {
-                            final List<String> strings = Splitter.on("=").omitEmptyStrings().splitToList(wolHost);
-                            if (strings.isEmpty()) {
-                                continue;
-                            }
-                            final Device dev = new Device(strings.get(0));
-                            if (strings.size() >= 2) {
-                                dev.setAlias(strings.get(1));
-                            }
-                            dev.setMacouiVendorDetails(WirelessClientsTile
-                                    .mMacOuiVendorLookupCache.get(dev.getMacAddress()));
-
-                            mDevices.add(dev);
-                            mCurrentDevicesList.add(dev);
+                        final Object ipAddress1 = objFromJson.get("ipAddress");
+                        if (ipAddress1 != null) {
+                            deviceFromJson.setIpAddress(ipAddress1.toString());
                         }
 
+                        final Object deviceUuidForWolFromPrefs = objFromJson.get("deviceUuidForWol");
+                        deviceFromJson.setDeviceUuidForWol(deviceUuidForWolFromPrefs != null ?
+                                deviceUuidForWolFromPrefs.toString() : null);
+
+                        deviceFromJson.setIsEditableForWol(true);
+
+                        deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
+                                .mMacOuiVendorLookupCache.get(macAddress.toString()));
+
+                        mDevices.add(deviceFromJson);
+                        mCurrentDevicesList.add(deviceFromJson);
+
+                    } catch (final Exception e) {
+                        //No worries
+                        e.printStackTrace();
+                        Utils.reportException(new
+                                IllegalStateException("Failed to parse JSON: " + userDefinedWolHost, e));
+                    }
+                }
+            }
+
+            //Connected Hosts
+            for (final Device device : macToDevice.values()) {
+                mDevices.add(device);
+                mCurrentDevicesList.add(device);
+            }
+
+            //Hosts defined from Admin > WOL
+            final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                    WOL_HOSTS,
+                    MANUAL_WOL_MAC,
+                    MANUAL_WOL_PORT);
+            if (nvRamInfoFromRouter != null) {
+                //Manual Hosts
+                String property = nvRamInfoFromRouter.getProperty(MANUAL_WOL_MAC, DDWRTCompanionConstants.EMPTY_STRING);
+                final List<String> macAddresses = SPLITTER.splitToList(property);
+
+                if (!macAddresses.isEmpty()) {
+                    int wolPort = -1;
+                    try {
+                        wolPort = Integer.parseInt(nvRamInfoFromRouter.getProperty(MANUAL_WOL_PORT, "-1"));
+                    } catch (final Exception e) {
+                        e.printStackTrace();
                     }
 
-                    return new RouterData<ArrayList<Device>>() {
-                    }.setData(mDevices);
-
-                } catch (@NonNull final Exception e) {
-                    Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
-                    return new RouterData<ArrayList<Device>>() {
-                    }.setException(e);
+                    for (final String mAddress : macAddresses) {
+                        final Device dev = new Device(mAddress);
+                        dev.setWolPort(wolPort);
+                        dev.setMacouiVendorDetails(WirelessClientsTile
+                                .mMacOuiVendorLookupCache.get(mAddress));
+                        mDevices.add(dev);
+                        mCurrentDevicesList.add(dev);
+                    }
                 }
 
+                //Now Wol_Hosts
+                property = nvRamInfoFromRouter.getProperty(WOL_HOSTS, DDWRTCompanionConstants.EMPTY_STRING);
+                final List<String> wolHosts = SPLITTER.splitToList(property);
+                for (final String wolHost : wolHosts) {
+                    final List<String> strings = Splitter.on("=").omitEmptyStrings().splitToList(wolHost);
+                    if (strings.isEmpty()) {
+                        continue;
+                    }
+                    final Device dev = new Device(strings.get(0));
+                    if (strings.size() >= 2) {
+                        dev.setAlias(strings.get(1));
+                    }
+                    dev.setMacouiVendorDetails(WirelessClientsTile
+                            .mMacOuiVendorLookupCache.get(dev.getMacAddress()));
+
+                    mDevices.add(dev);
+                    mCurrentDevicesList.add(dev);
+                }
             }
-        };
+
+            return new RouterData<ArrayList<Device>>() {
+            }.setData(mDevices);
+
+        } catch (@NonNull final Exception e) {
+            Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
+            return new RouterData<ArrayList<Device>>() {
+            }.setException(e);
+        }
     }
 
     @Nullable
@@ -442,6 +495,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     @Override
     public void onLoadFinished(Loader<RouterData<ArrayList<Device>>> loader, RouterData<ArrayList<Device>> data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         final ImageButton globalTileMenu = (ImageButton) layout.findViewById(R.id.tile_services_wol_clients_menu);
         if (!isThemeLight) {
@@ -662,6 +717,49 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             cardViewLayoutParams.rightMargin = R.dimen.marginRight;
             cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
             cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+
+            if (!mDevices.isEmpty()) {
+//                if (mParentFragmentPreferences != null) {
+//                    //Get all widget IDs related to this router only, and multicast to that group only
+//                    final Set<String> widgetsWol = mParentFragmentPreferences
+//                            .getStringSet(WOLWidgetConfigureActivity.WIDGETS_WOL, new HashSet<String>());
+//                    if (widgetsWol != null && !widgetsWol.isEmpty()) {
+//                        final Integer[] widgetIds = FluentIterable.from(widgetsWol).transform(new Function<String, Integer>() {
+//                            @Override
+//                            public Integer apply(@Nullable String input) {
+//                                if (input == null) {
+//                                    return null;
+//                                }
+//                                try {
+//                                    return Integer.parseInt(input);
+//                                } catch (NumberFormatException nfe) {
+//                                    nfe.printStackTrace();
+//                                    Utils.reportException(nfe);
+//                                    return null;
+//                                }
+//                            }
+//                        }).filter(Predicates.notNull()).toArray(Integer.class);
+//
+//                        if (widgetIds != null) {
+//                            final int[] widgetIdsInt = new int[widgetIds.length];
+//                            for (int i = 0, widgetIdsLength = widgetIds.length; i < widgetIdsLength; i++) {
+//                                widgetIdsInt[i] = widgetIds[i];
+//                            }
+//
+//                            final AppWidgetManager widgetManager = AppWidgetManager.getInstance(mParentFragmentActivity);
+//                            widgetManager.notifyAppWidgetViewDataChanged(
+//                                    widgetIdsInt, R.id.wol_widget_hosts_list);
+//                        }
+//                    }
+//                }
+
+                //Notify widgets that data has changed
+                final AppWidgetManager widgetManager = AppWidgetManager.getInstance(mParentFragmentActivity);
+                widgetManager.notifyAppWidgetViewDataChanged(
+                        widgetManager
+                                .getAppWidgetIds(WOLWidgetProvider.getComponentName(mParentFragmentActivity)),
+                        R.id.wol_widget_hosts_list);
+            }
 
             for (final Device device : mDevices) {
                 final CardView cardView = (CardView) mParentFragmentActivity.getLayoutInflater()

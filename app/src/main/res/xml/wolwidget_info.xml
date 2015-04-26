@@ -3,9 +3,11 @@
     android:configure="org.rm3l.ddwrt.widgets.home.wol.WOLWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/wolwidget"
     android:initialLayout="@layout/wolwidget"
-    android:minHeight="40dp"
-    android:minWidth="250dp"
-    android:previewImage="@drawable/ic_launcher"
+    android:previewImage="@drawable/wol_widget_preview"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="86400000"
-    android:widgetCategory="home_screen" />
+    android:minHeight="250dip"
+    android:minResizeHeight="200dip"
+    android:minResizeWidth="250dip"
+    android:minWidth="250dip"
+    android:updatePeriodMillis="1800"
+    android:widgetCategory="keyguard|home_screen"/>
