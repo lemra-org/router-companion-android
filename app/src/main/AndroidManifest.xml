@@ -213,7 +213,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- Actions Widget -->
         <receiver
             android:name=".widgets.home.actions.RouterActionsWidgetProvider"
-            android:label="DD-WRT: Router Actions" >
+            android:label="DD-WRT: Router Actions"
+            android:icon="@drawable/actions_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="org.rm3l.ddwrt.widgets.home.actions.ACTION_REBOOT_ROUTER" />
@@ -233,7 +234,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- WOL Widget -->
         <receiver
             android:name=".widgets.home.wol.WOLWidgetProvider"
-            android:label="DD-WRT: Wake on LAN" >
+            android:label="DD-WRT: Wake on LAN"
+            android:icon="@drawable/wol_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST" />
