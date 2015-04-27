@@ -133,7 +133,7 @@ android {
     }
     defaultConfig {
         //FIXME Change applicationId for lite version
-        applicationId "org.rm3l.ddwrt"
+        applicationId "org.rm3l.ddwrt.free"
         minSdkVersion 14
         targetSdkVersion 22
         // Enabling multidex support.
