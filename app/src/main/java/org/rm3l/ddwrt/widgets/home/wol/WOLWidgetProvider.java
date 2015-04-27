@@ -39,6 +39,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
     public static final String EXTRA_ITEM = "org.rm3l.ddwrt.widgets.home.wol.EXTRA_ITEM";
 
     public static final String ACTION_WAKE_HOST = "org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST";
+    public static final String ACTION_REFRESH = "org.rm3l.ddwrt.widgets.home.wol.ACTION_REFRESH";
 
     private static final String LOG_TAG = WOLWidgetProvider.class.getSimpleName();
 
@@ -76,6 +77,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
             views.setViewVisibility(R.id.wol_widget_wake_all_action, View.GONE);
             views.setViewVisibility(R.id.wol_widget_hosts_list, View.GONE);
             views.setViewVisibility(R.id.wol_widget_hosts_list_empty_view, View.GONE);
+            views.setViewVisibility(R.id.wol_widget_refresh, View.GONE);
         } else {
 
             // Set up the intent that starts the ListView service, which will
@@ -119,6 +121,15 @@ public class WOLWidgetProvider extends AppWidgetProvider {
             final PendingIntent logoPendingIntent = PendingIntent
                     .getActivity(context, 0, logoIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.wol_widget_Logo, logoPendingIntent);
+
+            //Refresh Intent
+            final Intent refreshIntent = new Intent(context, WOLWidgetProvider.class);
+            refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            refreshIntent.setAction(ACTION_REFRESH);
+            refreshIntent.setData(Uri.parse(refreshIntent.toUri(Intent.URI_INTENT_SCHEME)));
+            final PendingIntent refreshPendingIntent = PendingIntent
+                    .getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.wol_widget_refresh, refreshPendingIntent);
 
             //Launch Intent
             final Intent launchIntent = new Intent(context, DDWRTMainActivity.class);
@@ -197,6 +208,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
         final String intentAction;
 
         if ((intentAction = intent.getAction()) != null) {
+            final AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
             final String routerUuid = intent.getStringExtra(ROUTER_SELECTED);
             if (routerUuid != null) {
                 final Router router = RouterManagementActivity.getDao(context).getRouter(routerUuid);
@@ -205,6 +217,13 @@ public class WOLWidgetProvider extends AppWidgetProvider {
                             .show();
                 } else {
                     switch (intentAction) {
+                        case ACTION_REFRESH:
+                            //Notify widgets that data has changed
+                            widgetManager.notifyAppWidgetViewDataChanged(
+                                    widgetManager
+                                            .getAppWidgetIds(getComponentName(context)),
+                                    R.id.wol_widget_hosts_list);
+                            break;
                         case ACTION_WAKE_HOST:
                             final String deviceToWakeStr = intent.getStringExtra(HOSTS_TO_WAKE);
                             if (deviceToWakeStr != null) {

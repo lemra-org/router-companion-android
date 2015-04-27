@@ -87,6 +87,17 @@
                 android:background="?android:attr/selectableItemBackground"/>
 
             <ImageButton
+                android:id="@+id/wol_widget_refresh"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_menu_refresh"
+                android:contentDescription="Refresh"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <ImageButton
                 android:id="@+id/wol_widget_wake_all_action"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

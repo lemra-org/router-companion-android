@@ -239,6 +239,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_WAKE_HOST" />
+                <action android:name="org.rm3l.ddwrt.widgets.home.wol.ACTION_REFRESH" />
             </intent-filter>
 
             <meta-data
@@ -250,12 +251,37 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
         <!-- The service serving the RemoteViews to the collection widget -->
         <service
             android:name=".widgets.home.wol.WOLWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
+
+        <!-- TODO Connected Hosts Widget -->
+        <!--<receiver-->
+            <!--android:name=".widgets.home.clients.ConnectedHostsWidgetProvider"-->
+            <!--android:label="DD-WRT: Clients"-->
+            <!--android:icon="@drawable/wol_widget">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+                <!--<action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_DISABLE_WAN_ACCESS" />-->
+                <!--<action android:name="org.rm3l.ddwrt.widgets.home.clients.ACTION_ENABLE_WAN_ACCESS" />-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.appwidget.provider"-->
+                <!--android:resource="@xml/wolwidget_info" />-->
+        <!--</receiver>-->
+        <!--<activity android:name=".widgets.home.clients.ConnectedHostsWidgetConfigureActivity" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+        <!--&lt;!&ndash; The service serving the RemoteViews to the collection widget &ndash;&gt;-->
+        <!--<service-->
+            <!--android:name=".widgets.home.clients.ConnectedHostsWidgetService"-->
+            <!--android:permission="android.permission.BIND_REMOTEVIEWS"-->
+            <!--android:exported="false" />-->
 
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
