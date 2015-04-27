@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.tiles.status.wan;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,6 +77,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.Encrypted.e;
 
 /**
  *
@@ -186,6 +188,14 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     @SuppressWarnings("ConstantConditions")
                     final Set<Map.Entry<Object, Object>> entries = nvramInfo.getData().entrySet();
 
+                    final SharedPreferences.Editor editor;
+                    if (mParentFragmentPreferences != null) {
+                        editor = mParentFragmentPreferences.edit();
+                    } else {
+                        editor = null;
+                    }
+                    boolean updatePreferences = false;
+
                     for (final Map.Entry<Object, Object> entry : entries) {
                         final Object key;
                         final Object value;
@@ -199,14 +209,20 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                         final String month = key.toString().replace("traff-", DDWRTCompanionConstants.EMPTY_STRING);
 
-                        final String yearlyTraffData = value.toString();
-                        final List<String> yearlyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(yearlyTraffData);
-                        if (yearlyTraffDataList == null || yearlyTraffDataList.isEmpty()) {
+                        final String monthlyTraffData = value.toString();
+
+                        if (editor != null) {
+                            editor.putString(key.toString(), e(monthlyTraffData));
+                            updatePreferences = true;
+                        }
+
+                        final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(monthlyTraffData);
+                        if (dailyTraffDataList == null || dailyTraffDataList.isEmpty()) {
                             continue;
                         }
 
                         int dayNum = 1;
-                        for (final String dailyInOutTraffData : yearlyTraffDataList) {
+                        for (final String dailyInOutTraffData : dailyTraffDataList) {
                             if (StringUtils.contains(dailyInOutTraffData, "[")) {
                                 continue;
                             }
@@ -222,6 +238,11 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                             ));
 
                         }
+                    }
+
+                    if (updatePreferences && editor != null) {
+                        editor.apply();
+                        Utils.requestBackup(mParentFragmentActivity);
                     }
 
                     traffData = traffDataTableBuilder.build();
