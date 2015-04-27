@@ -37,6 +37,9 @@ public final class DDWRTCompanionConstants {
     //FIXME Consider increasing this value prior to release
     public static final long TILE_REFRESH_MILLIS = 30 * 1000l;
 
+    public static final String AD_FREE_APP_APPLICATION_ID = BuildConfig.APPLICATION_ID
+            .replaceAll(".free", "");
+
     //This is only used to check feedback submitted by end-users
     public static final String PUBKEY = \"fake-key\";
             "AY5ab5Nbu" +

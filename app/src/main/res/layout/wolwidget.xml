@@ -79,8 +79,8 @@
             <!-- Buttons -->
             <ImageButton
                 android:id="@+id/wol_widget_launch_action"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:src="@android:drawable/ic_media_play"
                 android:contentDescription="Open"
                 android:layout_marginTop="8dp"
@@ -88,10 +88,10 @@
 
             <ImageButton
                 android:id="@+id/wol_widget_refresh"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/ic_menu_refresh"
                 android:contentDescription="Refresh"
@@ -99,10 +99,10 @@
 
             <ImageButton
                 android:id="@+id/wol_widget_wake_all_action"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/ic_action_av_snooze"
                 android:contentDescription="Wake All"

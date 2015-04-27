@@ -65,7 +65,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.content.Context.MODE_PRIVATE;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
-import static org.rm3l.ddwrt.BuildConfig.APPLICATION_ID;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
@@ -225,12 +225,25 @@ public final class Utils {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 
+    public static void displayUpgradeMessageForAdsRemoval(@NonNull final Context ctx) {
+        //Download the full version to unlock this version
+        displayUpgradeMessage(ctx, "Unlock all premium features " +
+                "by upgrading to the full-featured version " +
+                (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
+                "Thank you for supporting this initiative!");
+    }
+
     public static void displayUpgradeMessage(@NonNull final Context ctx) {
         //Download the full version to unlock this version
+        displayUpgradeMessage(ctx, "Unlock this feature by upgrading to the full-featured version " +
+                (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
+                "Thank you for supporting this initiative!");
+    }
+
+    public static void displayUpgradeMessage(@NonNull final Context ctx, @NonNull final String message) {
+        //Download the full version to unlock this version
         new AlertDialog.Builder(ctx)
-                .setMessage("Unlock this feature by upgrading to the full-featured version " +
-                        (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
-                        "Thank you for supporting this initiative!")
+                .setMessage(message)
                 .setCancelable(true)
                 .setPositiveButton("Upgrade!", new DialogInterface.OnClickListener() {
                     @Override
@@ -239,11 +252,10 @@ public final class Utils {
                         try {
                             //Check whether Google Play store is installed or not:
                             ctx.getPackageManager().getPackageInfo("com.android.vending", 0);
-                            url = "market://details?id=" + APPLICATION_ID;
+                            url = "market://details?id=" + AD_FREE_APP_APPLICATION_ID;
                         } catch (final Exception e) {
-                            url = "https://play.google.com/store/apps/details?id=" + APPLICATION_ID;
+                            url = "https://play.google.com/store/apps/details?id=" + AD_FREE_APP_APPLICATION_ID;
                         }
-
 
                         //Open the app page in Google Play store:
                         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

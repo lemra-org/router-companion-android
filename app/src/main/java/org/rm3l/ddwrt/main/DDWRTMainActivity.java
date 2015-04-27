@@ -599,6 +599,13 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         }
 
+        if (!BuildConfig.WITH_ADS) {
+            final MenuItem removeAdsMenuItem = menu.findItem(R.id.action_remove_ads);
+            if (removeAdsMenuItem != null) {
+                removeAdsMenuItem.setVisible(false);
+            }
+        }
+
         if (!RouterFirmware.DDWRT.equals(mRouter.getRouterFirmware())) {
             //FIXME Command used to restore factory defaults works best on DD-WRT, not on OpenWRT and other firmwares
             // So hide this menu item until we find a better way to achieve this!
@@ -664,6 +671,9 @@ public class DDWRTMainActivity extends ActionBarActivity
                 mFeedbackDialog.show();
                 //Generate a custom error-report (for ACRA)
                 Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
+                return true;
+            case R.id.action_remove_ads:
+                Utils.displayUpgradeMessageForAdsRemoval(this);
                 return true;
             case R.id.action_ddwrt_actions_reboot_router:
 

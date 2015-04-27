@@ -21,7 +21,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,16 +29,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <include layout="@layout/activity_router_management_toolbar" />
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/router_list_adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
+    <!--<com.google.android.gms.ads.AdView-->
+        <!--android:id="@+id/router_list_adView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginBottom="5dp"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:visibility="gone"-->
+        <!--ads:adSize="BANNER"-->
+        <!--ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />-->
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -49,24 +48,52 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/routersListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/routersListView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scrollbars="vertical" />-->
 
-        <ImageButton
-            android:id="@+id/router_list_add"
-            android:layout_width="@dimen/round_button_diameter"
-            android:layout_height="@dimen/round_button_diameter"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="end|bottom"
             android:layout_marginBottom="@dimen/add_button_margin"
             android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"
-            android:background="@drawable/shape"
-            android:contentDescription="@string/router_add_new"
-            android:src="@android:drawable/ic_input_add"
-            android:tint="@android:color/white" />
+            android:layout_marginRight="@dimen/add_button_margin">
+
+            <Button
+                android:id="@+id/router_list_remove_ads"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/remove_ads"
+                android:background="@color/accent_material_light"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/router_list_add"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_width="@dimen/round_button_diameter"
+                android:layout_height="@dimen/round_button_diameter"
+                android:background="@drawable/shape"
+                android:contentDescription="@string/router_add_new"
+                android:src="@android:drawable/ic_input_add"
+                android:tint="@android:color/white" />
+
+        </RelativeLayout>
+
 
     </FrameLayout>
 

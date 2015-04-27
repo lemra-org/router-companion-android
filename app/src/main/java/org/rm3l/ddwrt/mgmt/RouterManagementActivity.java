@@ -58,6 +58,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -171,6 +172,19 @@ public class RouterManagementActivity
         }
 
         setContentView(R.layout.activity_router_management);
+
+        final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
+        if (BuildConfig.WITH_ADS) {
+            removeAdsButton.setVisibility(View.VISIBLE);
+            removeAdsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
+                }
+            });
+        } else {
+            removeAdsButton.setVisibility(View.GONE);
+        }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
 

@@ -207,7 +207,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
 
         final String intentAction;
 
-        if ((intentAction = intent.getAction()) != null) {
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && (intentAction = intent.getAction()) != null) {
             final AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
             final String routerUuid = intent.getStringExtra(ROUTER_SELECTED);
             if (routerUuid != null) {
@@ -218,6 +218,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
                 } else {
                     switch (intentAction) {
                         case ACTION_REFRESH:
+                            Toast.makeText(context, "Refreshing list...", Toast.LENGTH_SHORT).show();
                             //Notify widgets that data has changed
                             widgetManager.notifyAppWidgetViewDataChanged(
                                     widgetManager
