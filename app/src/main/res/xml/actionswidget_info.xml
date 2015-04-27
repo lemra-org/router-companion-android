@@ -3,7 +3,7 @@
     android:configure="org.rm3l.ddwrt.widgets.home.actions.RouterActionsWidgetConfigureActivity"
     android:initialLayout="@layout/actionswidget"
     android:minHeight="40dp"
-    android:minWidth="250dp"
+    android:minWidth="294.0dip"
     android:previewImage="@drawable/actions_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"
