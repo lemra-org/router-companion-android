@@ -247,6 +247,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
                     .putString(WOLWidgetService.WOL_HOST_PREF_KEY,
                             WakeOnLanTile.GSON_BUILDER.create().toJson(mWidgetItems))
                     .apply();
+            Utils.requestBackup(mContext);
         } catch (final Exception e) {
             e.printStackTrace();
             Utils.reportException(e);

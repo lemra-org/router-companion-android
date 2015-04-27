@@ -97,6 +97,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
                 .putString(PREF_PREFIX_KEY + appWidgetId, text)
                 .apply();
+        Utils.requestBackup(context);
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
@@ -112,6 +113,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
                 .edit()
                 .remove(PREF_PREFIX_KEY + appWidgetId)
                 .apply();
+        Utils.requestBackup(context);
     }
 
     @Override

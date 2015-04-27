@@ -113,6 +113,8 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
                         .apply();
             }
         }
+
+        Utils.requestBackup(context);
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
@@ -152,6 +154,8 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
                 }
             }
         }
+
+        Utils.requestBackup(context);
     }
 
     @Override
