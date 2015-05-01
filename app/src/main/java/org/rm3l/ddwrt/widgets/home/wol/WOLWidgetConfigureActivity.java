@@ -19,15 +19,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.acra.WidgetInstalledACRANotification;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -73,7 +76,8 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
             if (text.isEmpty()) {
                 Toast.makeText(context, "No router selected!", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_CANCELED);
-                finish();
+//                finish();
+                return;
             }
 
             // When the button is clicked, store the string locally
@@ -87,6 +91,9 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
+
+            Utils.reportException(new WidgetInstalledACRANotification("Wake On LAN"));
+
             finish();
         }
     };
@@ -176,6 +183,9 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
         }
 
         setContentView(R.layout.actionswidget_configure);
+
+        AdUtils.buildAndDisplayAdViewIfNeeded(this,
+                (AdView) findViewById(R.id.widget_configure_adView));
 
         if (themeLight) {
             final Resources resources = getResources();
