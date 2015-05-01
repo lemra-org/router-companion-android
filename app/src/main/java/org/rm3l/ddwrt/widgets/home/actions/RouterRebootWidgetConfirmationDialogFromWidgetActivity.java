@@ -96,7 +96,6 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity extends Conf
 
     @Override
     protected View.OnClickListener getNoButtonOnClickListener() {
-        Toast.makeText(this, "Action Cancelled", Toast.LENGTH_SHORT).show();
         return null;
     }
 }
