@@ -196,7 +196,6 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
 
     @Override
     protected View.OnClickListener getNoButtonOnClickListener() {
-        Toast.makeText(this, "Action Cancelled", Toast.LENGTH_SHORT).show();
         return null;
     }
 }

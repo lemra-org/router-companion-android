@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.cocosw.undobar.UndoBarController;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -181,6 +182,10 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         @Override
         public void onClick(View v) {
+            if (BuildConfig.WITH_ADS) {
+                Utils.displayUpgradeMessage(context);
+                return;
+            }
             final DialogFragment editFragment =
                     EditNVRAMKeyValueDialogFragment.newInstance(NVRAMDataRecyclerViewAdapter.this, position, key.getText(), value.getText());
             editFragment.show(fragmentManager, EDIT_NVRAM_DATA_FRAGMENT_TAG);

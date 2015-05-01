@@ -22,15 +22,51 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/activity_router_add_adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_router_add_dialog" />
 
     <LinearLayout
         android:id="@+id/router_add_notification_viewgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
+
+    <!-- Link to Instructions -->
+    <!--<TextView-->
+    <!--android:id="@+id/router_add_ddwrt_instructions"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:autoLink="web"-->
+    <!--android:text="@string/router_add_dialog_msg"-->
+    <!--android:visibility="gone" />-->
+
+    <TextView
+        android:id="@+id/router_add_ddwrt_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg" />
+
+    <TextView
+        android:id="@+id/router_add_openwrt_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_openwrt"
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -41,29 +77,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- Link to Instructions -->
-            <!--<TextView-->
-            <!--android:id="@+id/router_add_ddwrt_instructions"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:autoLink="web"-->
-            <!--android:text="@string/router_add_dialog_msg"-->
-            <!--android:visibility="gone" />-->
-            <TextView
-                android:id="@+id/router_add_ddwrt_instructions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:text="@string/router_add_dialog_msg" />
-
-            <TextView
-                android:id="@+id/router_add_openwrt_instructions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:text="@string/router_add_dialog_msg_openwrt"
-                android:visibility="gone" />
 
             <!-- UUID -->
             <TextView

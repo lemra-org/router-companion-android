@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -23,6 +24,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.ConfirmDialogAsActivity;
+import org.rm3l.ddwrt.widgets.UpgradeDialogAsActivity;
 
 import java.util.ArrayList;
 
@@ -143,18 +145,22 @@ public class WOLWidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.wol_widget_launch_action, launchPendingIntent);
 
             //Wake all Intent
-            final Intent wakeAllIntent = new Intent(context, RouterWolWidgetConfirmationDialogFromWidgetActivity.class);
+            final Intent wakeAllIntent;
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                wakeAllIntent = new Intent(context, UpgradeDialogAsActivity.class);
+            } else {
+                wakeAllIntent = new Intent(context, RouterWolWidgetConfirmationDialogFromWidgetActivity.class);
+                wakeAllIntent.putExtra(RouterWolWidgetConfirmationDialogFromWidgetActivity.LOAD_HOSTS_FROM_PREFS, true);
+                wakeAllIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Wake all hosts");
+                wakeAllIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
+                        "Are you sure you wish to attempt waking all hosts?");
+            }
             wakeAllIntent.putExtra(ROUTER_SELECTED, routerUuid);
-            wakeAllIntent.putExtra(RouterWolWidgetConfirmationDialogFromWidgetActivity.LOAD_HOSTS_FROM_PREFS, true);
-            wakeAllIntent.putExtra(ConfirmDialogAsActivity.TITLE, "Wake all hosts");
-            wakeAllIntent.putExtra(ConfirmDialogAsActivity.MESSAGE,
-                    "Are you sure you wish to attempt waking all hosts?");
             wakeAllIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             wakeAllIntent.setAction(routerUuid + "-wakeAll-" + System.currentTimeMillis());
             final PendingIntent wakeAllPendingIntent = PendingIntent
                     .getActivity(context, 0, wakeAllIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.wol_widget_wake_all_action, wakeAllPendingIntent);
-
         }
 
         // Instruct the widget manager to update the widget

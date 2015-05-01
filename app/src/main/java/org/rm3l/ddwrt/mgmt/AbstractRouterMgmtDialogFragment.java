@@ -47,6 +47,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -56,15 +57,18 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -194,30 +198,31 @@ public abstract class AbstractRouterMgmtDialogFragment
         ((Spinner) view.findViewById(R.id.router_add_firmware)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View childView, int pos, long id) {
-                final View ddwrtInstructionsView = view.findViewById(R.id.router_add_ddwrt_instructions);
-                final View openwrtInstructionsView = view.findViewById(R.id.router_add_openwrt_instructions);
-                switch (pos) {
-                    case 1:
-                        //DD-WRT
-                        ddwrtInstructionsView
-                                .setVisibility(View.VISIBLE);
-                        openwrtInstructionsView
-                                .setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        //OpenWrt
-                        ddwrtInstructionsView
-                                .setVisibility(View.GONE);
-                        openwrtInstructionsView
-                                .setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        ddwrtInstructionsView
-                                .setVisibility(View.GONE);
-                        openwrtInstructionsView
-                                .setVisibility(View.GONE);
-                        break;
-                }
+                //FIXME Once we support other types of Router firmwares
+//                final View ddwrtInstructionsView = view.findViewById(R.id.router_add_ddwrt_instructions);
+//                final View openwrtInstructionsView = view.findViewById(R.id.router_add_openwrt_instructions);
+//                switch (pos) {
+//                    case 1:
+//                        //DD-WRT
+//                        ddwrtInstructionsView
+//                                .setVisibility(View.VISIBLE);
+//                        openwrtInstructionsView
+//                                .setVisibility(View.GONE);
+//                        break;
+//                    case 2:
+//                        //OpenWrt
+//                        ddwrtInstructionsView
+//                                .setVisibility(View.GONE);
+//                        openwrtInstructionsView
+//                                .setVisibility(View.VISIBLE);
+//                        break;
+//                    default:
+//                        ddwrtInstructionsView
+//                                .setVisibility(View.GONE);
+//                        openwrtInstructionsView
+//                                .setVisibility(View.GONE);
+//                        break;
+//                }
             }
 
             @Override
@@ -411,6 +416,16 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
+
+            if (BuildConfig.WITH_ADS) {
+                //For Ads to show up, otherwise we get the following error message:
+                //Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
+                d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+
+            AdUtils.buildAndDisplayAdViewIfNeeded(d.getContext(),
+                    (AdView) d.findViewById(R.id.activity_router_add_adView));
 
             d.findViewById(R.id.router_add_privkey).setOnClickListener(new View.OnClickListener() {
                 @TargetApi(Build.VERSION_CODES.KITKAT)
