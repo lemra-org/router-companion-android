@@ -299,6 +299,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
+            android:name=".widgets.UpgradeDialogAsActivity"
+            android:label="@string/title_activity_dialog_as"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:windowSoftInputMode="adjustResize"
+            android:excludeFromRecents="true"
+            android:finishOnCloseSystemDialogs="true"/>
+
+        <activity
             android:name=".widgets.home.actions.RouterRebootWidgetConfirmationDialogFromWidgetActivity"
             android:label="@string/title_activity_dialog_as"
             android:theme="@style/Theme.AppCompat.Dialog"
