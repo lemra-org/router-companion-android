@@ -459,7 +459,9 @@ public class RouterManagementActivity
                 return true;
             case R.id.router_list_actions_reboot_routers:
             {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                final List<Router> allRouters = dao.getAllRouters();
+                if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
+                        allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
                     //Download the full version to unlock this version
                     Utils.displayUpgradeMessage(this);
                     return true;
@@ -858,7 +860,9 @@ public class RouterManagementActivity
 
         switch (menuItem.getItemId()) {
             case R.id.action_actions_reboot_routers: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                final List<Router> allRouters = dao.getAllRouters();
+                if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
+                        allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
                     //Download the full version to unlock this version
                     Utils.displayUpgradeMessage(this);
                     return true;
