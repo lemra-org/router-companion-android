@@ -68,6 +68,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:text="@string/router_add_dialog_msg_openwrt"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/router_add_ddwrt_instructions_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_ads"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/router_add_openwrt_instructions_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:text="@string/router_add_dialog_msg_openwrt_ads"
+        android:visibility="gone" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
