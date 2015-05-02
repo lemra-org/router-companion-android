@@ -26,22 +26,64 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/menu_router_item_edit"
         android:icon="@drawable/ic_action_editor_mode_edit"
-        android:orderInCategory="10"
+        android:orderInCategory="1"
+        android:alphabeticShortcut="e"
         android:title="@string/action_edit"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_router_item_copy"
         android:icon="@drawable/ic_action_content_content_copy"
-        android:orderInCategory="10"
+        android:alphabeticShortcut="c"
+        android:orderInCategory="2"
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_router_list_delete"
         android:icon="@drawable/ic_action_remove"
-        android:orderInCategory="20"
+        android:orderInCategory="3"
+        android:alphabeticShortcut="r"
         android:title="@string/action_remove"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_actions"
+        android:alphabeticShortcut="A"
+        android:icon="@drawable/ic_action_action_launch"
+        android:orderInCategory="4"
+        android:title="@string/menuitem_actions"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_actions_reboot_routers"
+                android:alphabeticShortcut="R"
+                android:icon="@drawable/ic_action_action_settings_power"
+                android:orderInCategory="5"
+                android:title="@string/menuitem_actions_reboot_selected"
+                app:showAsAction="ifRoom" />
+
+            <!-- TODO Hidden for now-->
+            <item
+                android:id="@+id/action_actions_restore_factory_defaults"
+                android:alphabeticShortcut="D"
+                android:icon="@drawable/ic_action_action_restore"
+                android:orderInCategory="6"
+                android:title="@string/menuitem_actions_restore_factory_defaults"
+                app:showAsAction="ifRoom"
+                android:visible="false"/>
+
+            <!-- TODO Hidden for now -->
+            <item
+                android:id="@+id/action_actions_firmwares_upgrade"
+                android:alphabeticShortcut="U"
+                android:enabled="false"
+                android:icon="@drawable/ic_action_action_system_update_tv"
+                android:orderInCategory="7"
+                android:title="@string/menuitem_actions_upgrade_firmware"
+                android:visible="false"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 
 </menu>

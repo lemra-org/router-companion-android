@@ -417,11 +417,23 @@ public abstract class AbstractRouterMgmtDialogFragment
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
 
+            final View ddwrtInstructionsView = d.findViewById(R.id.router_add_ddwrt_instructions);
+            final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
+
             if (BuildConfig.WITH_ADS) {
                 //For Ads to show up, otherwise we get the following error message:
                 //Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
                 d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                         WindowManager.LayoutParams.WRAP_CONTENT);
+
+                //Also Display shorte.st link to instructions (monetized)
+                //FIXME Fix when support of other firmwares is in place
+                ddwrtInstructionsView.setVisibility(View.GONE);
+                ddwrtInstructionsWithAds.setVisibility(View.VISIBLE);
+            } else {
+                //FIXME Fix when support of other firmwares is in place
+                ddwrtInstructionsView.setVisibility(View.VISIBLE);
+                ddwrtInstructionsWithAds.setVisibility(View.GONE);
             }
 
             AdUtils.buildAndDisplayAdViewIfNeeded(d.getContext(),
