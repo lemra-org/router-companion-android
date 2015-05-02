@@ -459,14 +459,6 @@ public class RouterManagementActivity
                 return true;
             case R.id.router_list_actions_reboot_routers:
             {
-                final List<Router> allRouters = dao.getAllRouters();
-                if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
-                        allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
-                    return true;
-                }
-
                 final List<String> allRoutersStr = new ArrayList<>();
                 for (Router router : routersList) {
                     if (router == null) {
@@ -860,13 +852,6 @@ public class RouterManagementActivity
 
         switch (menuItem.getItemId()) {
             case R.id.action_actions_reboot_routers: {
-                final List<Router> allRouters = dao.getAllRouters();
-                if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
-                        allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
-                    return true;
-                }
                 final List<Integer> selectedItems = adapter.getSelectedItems();
                 final List<Router> selectedRouters = new ArrayList<>();
                 final List<String> selectedRoutersStr = new ArrayList<>();
