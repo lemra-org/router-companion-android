@@ -52,18 +52,58 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/router_list_actions"
+        android:alphabeticShortcut="A"
+        android:icon="@drawable/ic_action_action_launch"
+        android:orderInCategory="3"
+        android:title="@string/menuitem_actions"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/router_list_actions_reboot_routers"
+                android:alphabeticShortcut="R"
+                android:icon="@drawable/ic_action_action_settings_power"
+                android:orderInCategory="1"
+                android:title="@string/menuitem_actions_reboot_all"
+                app:showAsAction="ifRoom" />
+
+            <!-- TODO Hidden for now-->
+            <item
+                android:id="@+id/router_list_actions_restore_factory_defaults"
+                android:alphabeticShortcut="D"
+                android:icon="@drawable/ic_action_action_restore"
+                android:orderInCategory="2"
+                android:title="@string/menuitem_actions_restore_factory_defaults"
+                app:showAsAction="ifRoom"
+                android:visible="false"/>
+
+            <!-- TODO Hidden for now -->
+            <item
+                android:id="@+id/router_list_actions_firmwares_upgrade"
+                android:alphabeticShortcut="U"
+                android:enabled="false"
+                android:icon="@drawable/ic_action_action_system_update_tv"
+                android:orderInCategory="3"
+                android:title="@string/menuitem_actions_upgrade_firmware"
+                android:visible="false"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
         android:icon="@drawable/ic_action_action_settings"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/menuitem_settings"
         app:showAsAction="ifRoom" />
+
 
     <item
         android:id="@+id/router_list_donate"
         android:alphabeticShortcut="d"
         android:icon="@drawable/ic_action_action_payment"
-        android:orderInCategory="4"
+        android:orderInCategory="8"
         android:title="@string/menuitem_donate"
         app:showAsAction="ifRoom"
         />
@@ -72,7 +112,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
         android:icon="@drawable/ic_action_social_person"
-        android:orderInCategory="6"
+        android:orderInCategory="9"
         android:title="@string/menuitem_about"
         app:showAsAction="ifRoom" />
 

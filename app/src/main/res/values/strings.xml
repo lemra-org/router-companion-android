@@ -448,6 +448,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="nvram_var_value">NVRAM Variable Value</string>
     <string name="menuitem_actions">Actions</string>
     <string name="menuitem_actions_reboot_router">Reboot Router</string>
+    <string name="menuitem_actions_reboot_selected">Reboot Selected</string>
+    <string name="menuitem_actions_reboot_all">Reboot All</string>
     <string name="menuitem_actions_restore_factory_defaults">Restore Factory Defaults</string>
     <string name="menuitem_actions_upgrade_firmware">Upgrade Firmware</string>
     <string name="you">YOU</string>

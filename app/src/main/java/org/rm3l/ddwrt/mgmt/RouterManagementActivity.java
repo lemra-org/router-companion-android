@@ -67,11 +67,16 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.common.base.Joiner;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.actions.RebootRouterAction;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -85,7 +90,9 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -415,6 +422,9 @@ public class RouterManagementActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        final List<Router> routersList = adapter.getRoutersList();
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -441,6 +451,106 @@ public class RouterManagementActivity
                 //Generate a custom error-report (for ACRA)
                 Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
                 return true;
+            case R.id.router_list_actions_restore_factory_defaults:
+                //TODO Hidden for now
+                return true;
+            case R.id.router_list_actions_firmwares_upgrade:
+                //TODO Hidden for now
+                return true;
+            case R.id.router_list_actions_reboot_routers:
+            {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
+
+                final List<String> allRoutersStr = new ArrayList<>();
+                for (Router router : routersList) {
+                    if (router == null) {
+                        continue;
+                    }
+                    allRoutersStr.add(String.format("'%s' (%s)",
+                            router.getDisplayName(), router.getRemoteIpAddress()));
+                }
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Reboot All Router(s)?")
+                        .setMessage(String.format("Are you sure you wish to continue? " +
+                                        "The following Routers will be rebooted: \n\n%s",
+                                Joiner.on("\n").skipNulls().join(allRoutersStr)))
+                        .setCancelable(true)
+                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                                Utils.displayMessage(RouterManagementActivity.this,
+                                        String.format("Rebooting %d Router(s)....", routersList.size()),
+                                        Style.INFO);
+
+                                final AtomicInteger currentNum = new AtomicInteger(0);
+                                final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
+                                final int totalNumOfDevices = routersList.size();
+
+                                for (final Router selectedRouter : routersList) {
+                                    new RebootRouterAction(RouterManagementActivity.this,
+                                            new RouterActionListener() {
+                                                @Override
+                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                    final int incrementAndGet = currentNum.incrementAndGet();
+                                                    if (incrementAndGet >= totalNumOfDevices) {
+                                                        final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+                                                        if (numActionsThatDidNotSucceed > 0) {
+                                                            //An error occurred
+                                                            if (numActionsThatDidNotSucceed < totalNumOfDevices) {
+                                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                                        String.format("Action '%s' executed but %d error(s) occurred",
+                                                                                routerAction.toString(), numActionsThatDidNotSucceed),
+                                                                        Style.INFO);
+                                                            } else {
+                                                                //No action succeeded
+                                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                                        String.format("None of the '%s' actions submitted succeeded - please try again later.",
+                                                                                routerAction.toString()),
+                                                                        Style.INFO);
+                                                            }
+
+                                                        } else {
+                                                            //No error
+                                                            Utils.displayMessage(RouterManagementActivity.this,
+                                                                    String.format("Action '%s' executed successfully on %d Routers",
+                                                                            routerAction.toString(), routersList.size()),
+                                                                    Style.CONFIRM);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                    final int incrementAndGet = currentNum.incrementAndGet();
+                                                    numActionsWithNoSuccess.incrementAndGet();
+                                                    if (incrementAndGet >= totalNumOfDevices) {
+                                                        //An error occurred
+                                                        Utils.displayMessage(RouterManagementActivity.this,
+                                                                String.format("Action '%s' executed but %d error(s) occurred: %s",
+                                                                        routerAction.toString(), numActionsWithNoSuccess.get(),
+                                                                        ExceptionUtils.getRootCauseMessage(exception)),
+                                                                Style.INFO);
+                                                    }
+                                                }
+                                            },
+                                            mPreferences).execute(selectedRouter);
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+            }
+            return true;
             default:
                 break;
         }
@@ -744,12 +854,122 @@ public class RouterManagementActivity
     @Override
     public boolean onActionItemClicked(@NonNull final ActionMode actionMode, @NonNull final MenuItem menuItem) {
         final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+        final List<Router> routersList = adapter.getRoutersList();
+
         switch (menuItem.getItemId()) {
+            case R.id.action_actions_reboot_routers: {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
+                final List<Integer> selectedItems = adapter.getSelectedItems();
+                final List<Router> selectedRouters = new ArrayList<>();
+                final List<String> selectedRoutersStr = new ArrayList<>();
+                for (Integer selectedItem : selectedItems) {
+                    if (selectedItem == null || selectedItem < 0 || selectedItem >= routersList.size()) {
+                        continue;
+                    }
+                    final Router selectedRouter;
+                    if ((selectedRouter = routersList.get(selectedItem)) == null) {
+                        continue;
+                    }
+                    selectedRouters.add(selectedRouter);
+                    selectedRoutersStr.add(String.format("'%s' (%s)",
+                            selectedRouter.getDisplayName(), selectedRouter.getRemoteIpAddress()));
+                }
+
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Reboot %d Router(s)?", selectedItems.size()))
+                        .setMessage(String.format("Are you sure you wish to continue? " +
+                                        "The following Routers will be rebooted: \n\n%s",
+                                Joiner.on("\n").skipNulls().join(selectedRoutersStr)))
+                        .setCancelable(true)
+                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                                Utils.displayMessage(RouterManagementActivity.this,
+                                        String.format("Rebooting %d Router(s)....", selectedItems.size()),
+                                        Style.INFO);
+
+                                final AtomicInteger currentNum = new AtomicInteger(0);
+                                final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
+                                final int totalNumOfDevices = selectedRouters.size();
+
+                                for (final Router selectedRouter : selectedRouters) {
+                                    new RebootRouterAction(RouterManagementActivity.this,
+                                            new RouterActionListener() {
+                                                @Override
+                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                    final int incrementAndGet = currentNum.incrementAndGet();
+                                                    if (incrementAndGet >= totalNumOfDevices) {
+                                                        final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+                                                        if (numActionsThatDidNotSucceed > 0) {
+                                                            //An error occurred
+                                                            if (numActionsThatDidNotSucceed < totalNumOfDevices) {
+                                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                                        String.format("Action '%s' executed but %d error(s) occurred",
+                                                                                routerAction.toString(), numActionsThatDidNotSucceed),
+                                                                        Style.INFO);
+                                                            } else {
+                                                                //No action succeeded
+                                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                                        String.format("None of the '%s' actions submitted succeeded - please try again later.",
+                                                                                routerAction.toString()),
+                                                                        Style.INFO);
+                                                            }
+
+                                                        } else {
+                                                            //No error
+                                                            Utils.displayMessage(RouterManagementActivity.this,
+                                                                    String.format("Action '%s' executed successfully on %d Routers",
+                                                                            routerAction.toString(), selectedItems.size()),
+                                                                    Style.CONFIRM);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                    final int incrementAndGet = currentNum.incrementAndGet();
+                                                    numActionsWithNoSuccess.incrementAndGet();
+                                                    if (incrementAndGet >= totalNumOfDevices) {
+                                                        //An error occurred
+                                                        Utils.displayMessage(RouterManagementActivity.this,
+                                                                String.format("Action '%s' executed but %d error(s) occurred: %s",
+                                                                        routerAction.toString(), numActionsWithNoSuccess.get(),
+                                                                        ExceptionUtils.getRootCauseMessage(exception)),
+                                                                Style.INFO);
+                                                    }
+                                                }
+                                            },
+                                            mPreferences).execute(selectedRouter);
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+            }
+                return true;
+            case R.id.action_actions_restore_factory_defaults: {
+                //TODO Hidden for now
+
+            }
+                return true;
+            case R.id.action_actions_firmwares_upgrade:
+                //TODO Hidden for now
+                return true;
             case R.id.menu_router_list_delete:
                 final int selectedItemCount = adapter.getSelectedItemCount();
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Delete %s Router(s)?", selectedItemCount))
+                        .setTitle(String.format("Delete %d Router(s)?", selectedItemCount))
                         .setMessage("You'll lose those records!")
                         .setCancelable(true)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -780,7 +1000,6 @@ public class RouterManagementActivity
 
                 return true;
             case R.id.menu_router_item_edit: {
-                final List<Router> routersList = ((RouterListRecycleViewAdapter) this.mAdapter).getRoutersList();
                 final Integer itemPos = adapter.getSelectedItems().get(0);
                 this.openUpdateRouterForm(
                         (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
@@ -788,7 +1007,6 @@ public class RouterManagementActivity
             }
             return true;
             case R.id.menu_router_item_copy: {
-                final List<Router> routersList = ((RouterListRecycleViewAdapter) this.mAdapter).getRoutersList();
                 final Integer itemPos = adapter.getSelectedItems().get(0);
                 this.openDuplicateRouterForm(
                         (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)

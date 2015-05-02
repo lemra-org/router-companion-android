@@ -218,6 +218,11 @@ public class Router implements Serializable {
         return name;
     }
 
+    @NonNull
+    public String getDisplayName() {
+        return (isNullOrEmpty(name) ? "-" : name);
+    }
+
     /**
      * Set the name
      *

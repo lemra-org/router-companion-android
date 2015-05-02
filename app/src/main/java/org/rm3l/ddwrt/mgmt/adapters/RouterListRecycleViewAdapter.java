@@ -165,62 +165,64 @@ public class RouterListRecycleViewAdapter extends
      * @return the number of elements in the DB
      */
     public int removeData(int position) {
-        final Router router = this.routersList.get(position);
-        if (router != null) {
-            dao.deleteRouter(router.getUuid());
+        if (position >= 0 && position < this.routersList.size()) {
+            final Router router = this.routersList.get(position);
+            if (router != null) {
+                dao.deleteRouter(router.getUuid());
 
-            //Also Remove Usage Data Created
-            //noinspection ResultOfMethodCallIgnored
-            getClientsUsageDataFile(context, router.getUuid()).delete();
+                //Also Remove Usage Data Created
+                //noinspection ResultOfMethodCallIgnored
+                getClientsUsageDataFile(context, router.getUuid()).delete();
 
-            final SharedPreferences sharedPreferences = this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+                final SharedPreferences sharedPreferences = this.context.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
 
-            if (sharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
-                //Opened at least once, meaning that usage data might have been created.
-                //If never opened, do nothing, as usage data might be used by another router record
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            //Delete iptables chains created for monitoring and wan access (in a thread)
-                            SSHUtils.runCommands(context, context
-                                            .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
-                                    router,
-                                    Joiner.on(" ; ").skipNulls(),
+                if (sharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+                    //Opened at least once, meaning that usage data might have been created.
+                    //If never opened, do nothing, as usage data might be used by another router record
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                //Delete iptables chains created for monitoring and wan access (in a thread)
+                                SSHUtils.runCommands(context, context
+                                                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                                        router,
+                                        Joiner.on(" ; ").skipNulls(),
 
-                                    "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
-                                    "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
-                                    "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                        "iptables -D FORWARD -j " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                        "iptables -F " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
+                                        "iptables -X " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN,
 
-                                    "iptables -D FORWARD -j DDWRTCompanion",
-                                    "iptables -F DDWRTCompanion",
-                                    "iptables -X DDWRTCompanion",
+                                        "iptables -D FORWARD -j DDWRTCompanion",
+                                        "iptables -F DDWRTCompanion",
+                                        "iptables -X DDWRTCompanion",
 
-                                    "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
-                                    "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
-                                    "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
-                                    "rm -f " + WirelessClientsTile.USAGE_DB,
-                                    "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
+                                        "rm -f " + DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                        "rm -f /tmp/.DDWRTCompanion_traffic_55.tmp",
+                                        "rm -f /tmp/.DDWRTCompanion_traffic_66.tmp",
+                                        "rm -f " + WirelessClientsTile.USAGE_DB,
+                                        "rm -f " + WirelessClientsTile.USAGE_DB_OUT);
 
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                            //No Worries
-                        } finally {
-                            //Disconnect session
-                            destroySSHSession(router);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                //No Worries
+                            } finally {
+                                //Disconnect session
+                                destroySSHSession(router);
+                            }
                         }
-                    }
-                }).start();
+                    }).start();
+                }
+
+                //Drop SharedPreferences for this item too
+                sharedPreferences.edit().clear().apply();
+
+                //Now refresh list
+                final List<Router> allRouters = dao.getAllRouters();
+                setRoutersList(allRouters);
+                notifyItemRemoved(position);
+                return allRouters.size();
             }
-
-            //Drop SharedPreferences for this item too
-            sharedPreferences.edit().clear().apply();
-
-            //Now refresh list
-            final List<Router> allRouters = dao.getAllRouters();
-            setRoutersList(allRouters);
-            notifyItemRemoved(position);
-            return allRouters.size();
         }
         return dao.getAllRouters().size();
     }
