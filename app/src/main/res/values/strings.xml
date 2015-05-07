@@ -26,20 +26,37 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="default_router_name">DD-WRT Router</string>
 
     <!-- Placeholder for Ads unit IDs -->
-    <string name="banner_ad_unit_id_router_management_activity">ca-app-pub-1638989008889479/2952127644</string>
-    <string name="banner_ad_unit_id_main_activity">xxx</string>
-    <string name="interstitial_ad_unit_id_router_list_to_router_main">xxx</string>
-    <string name="interstitial_ad_unit_id_tile_click">ca-app-pub-1638989008889479/8719459641</string>
-    <string name="interstitial_ad_unit_id_wireless_network_generate_qr_code">ca-app-pub-1638989008889479/5626392448</string>
-    <string name="interstitial_ad_unit_id_open_active_ip_connections_activity">ca-app-pub-1638989008889479/6963524848</string>
-    <string name="interstitial_ad_unit_id_transtion_to_wan_monthly_chart">ca-app-pub-1638989008889479/6998720844</string>
-    <string name="banner_ad_unit_id_wan_monthly_traffic_chart">ca-app-pub-1638989008889479/8440258049</string>
-    <string name="banner_ad_unit_id_active_ip_connections">ca-app-pub-1638989008889479/9805913241</string>
+    <!-- armel.soro@gmail.com -->
+    <!--<string name="banner_ad_unit_id_router_management_activity">ca-app-pub-1638989008889479/2952127644</string>-->
+    <!--<string name="banner_ad_unit_id_main_activity">xxx</string>-->
+    <!--<string name="interstitial_ad_unit_id_router_list_to_router_main">xxx</string>-->
+    <!--<string name="interstitial_ad_unit_id_tile_click">ca-app-pub-1638989008889479/8719459641</string>-->
+    <!--<string name="interstitial_ad_unit_id_wireless_network_generate_qr_code">ca-app-pub-1638989008889479/5626392448</string>-->
+    <!--<string name="interstitial_ad_unit_id_open_active_ip_connections_activity">ca-app-pub-1638989008889479/6963524848</string>-->
+    <!--<string name="interstitial_ad_unit_id_transtion_to_wan_monthly_chart">ca-app-pub-1638989008889479/6998720844</string>-->
+    <!--<string name="banner_ad_unit_id_wan_monthly_traffic_chart">ca-app-pub-1638989008889479/8440258049</string>-->
+    <!--<string name="banner_ad_unit_id_active_ip_connections">ca-app-pub-1638989008889479/9805913241</string>-->
+    <!--&lt;!&ndash; Deprecated, as we are using the tile click unit ID&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="interstitial_ad_unit_id_openvpn_settings">ca-app-pub-1638989008889479/9777390442</string>&ndash;&gt;-->
+    <!--<string name="interstitial_ad_unit_id_app_exit">ca-app-pub-1638989008889479/5015786845</string>-->
+    <!--<string name="banner_ad_unit_id_router_selection_in_widgets">ca-app-pub-1638989008889479/9113714848</string>-->
+    <!--<string name="banner_ad_unit_id_router_add_dialog">ca-app-pub-1638989008889479/5741446044</string>-->
+
+    <!-- armel@rm3l.org AdMob account -->
+    <string name="banner_ad_unit_id_router_management_activity">ca-app-pub-3313772302702554/6719283628</string>
+    <string name="banner_ad_unit_id_main_activity">ca-app-pub-3313772302702554/8196016824</string>
+    <string name="interstitial_ad_unit_id_router_list_to_router_main">ca-app-pub-3313772302702554/6440082025</string>
+    <string name="interstitial_ad_unit_id_tile_click">ca-app-pub-3313772302702554/4963348824</string>
+    <string name="interstitial_ad_unit_id_wireless_network_generate_qr_code">ca-app-pub-3313772302702554/3486615626</string>
+    <string name="interstitial_ad_unit_id_open_active_ip_connections_activity">ca-app-pub-3313772302702554/2009882429</string>
+    <string name="interstitial_ad_unit_id_transtion_to_wan_monthly_chart">ca-app-pub-3313772302702554/9533149224</string>
+    <string name="banner_ad_unit_id_wan_monthly_traffic_chart">ca-app-pub-3313772302702554/9672750020</string>
+    <string name="banner_ad_unit_id_active_ip_connections">ca-app-pub-3313772302702554/2149483223</string>
     <!-- Deprecated, as we are using the tile click unit ID-->
     <!--<string name="interstitial_ad_unit_id_openvpn_settings">ca-app-pub-1638989008889479/9777390442</string>-->
-    <string name="interstitial_ad_unit_id_app_exit">ca-app-pub-1638989008889479/5015786845</string>
-    <string name="banner_ad_unit_id_router_selection_in_widgets">ca-app-pub-1638989008889479/9113714848</string>
-    <string name="banner_ad_unit_id_router_add_dialog">ca-app-pub-1638989008889479/5741446044</string>
+    <string name="interstitial_ad_unit_id_app_exit">ca-app-pub-3313772302702554/8056416028</string>
+    <string name="banner_ad_unit_id_router_selection_in_widgets">ca-app-pub-3313772302702554/5102949629</string>
+    <string name="banner_ad_unit_id_router_add_dialog">ca-app-pub-3313772302702554/6579682825</string>
 
     <string-array name="donation_google_catalog_values">
         <item>1 Euro</item>
