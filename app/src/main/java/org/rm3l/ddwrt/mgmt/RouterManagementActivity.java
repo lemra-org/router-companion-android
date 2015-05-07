@@ -62,6 +62,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -853,6 +854,12 @@ public class RouterManagementActivity
         switch (menuItem.getItemId()) {
             case R.id.action_actions_reboot_routers: {
                 final List<Integer> selectedItems = adapter.getSelectedItems();
+
+                if (selectedItems.isEmpty()) {
+                    Toast.makeText(this, "No Router selected", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
                 final List<Router> selectedRouters = new ArrayList<>();
                 final List<String> selectedRoutersStr = new ArrayList<>();
                 for (Integer selectedItem : selectedItems) {
