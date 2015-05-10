@@ -223,7 +223,8 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                     final CharSequence fileSelectorOriginalHint = fileSelectorButton.getHint();
                     final TextView backupFilePath = (TextView) d.findViewById(R.id.router_restore_backup_path);
                     if (!Strings.isNullOrEmpty(filename)) {
-                        fileSelectorButton.setHint(filename);
+                        fileSelectorButton.setHint(filename + " (" +
+                            Utils.toHumanReadableByteCount(fileSize) + ")");
                         backupFilePath.setText(filename);
                     } else {
                         backupFilePath.setText(null);
