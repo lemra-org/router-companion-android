@@ -41,6 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--<string name="interstitial_ad_unit_id_app_exit">ca-app-pub-1638989008889479/5015786845</string>-->
     <!--<string name="banner_ad_unit_id_router_selection_in_widgets">ca-app-pub-1638989008889479/9113714848</string>-->
     <!--<string name="banner_ad_unit_id_router_add_dialog">ca-app-pub-1638989008889479/5741446044</string>-->
+    <!-- TODO Create banner_ad_unit_id_router_restore_dialog -->
 
     <!-- armel@rm3l.org AdMob account -->
     <string name="banner_ad_unit_id_router_management_activity">ca-app-pub-3313772302702554/6719283628</string>
@@ -57,6 +58,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="interstitial_ad_unit_id_app_exit">ca-app-pub-3313772302702554/8056416028</string>
     <string name="banner_ad_unit_id_router_selection_in_widgets">ca-app-pub-3313772302702554/5102949629</string>
     <string name="banner_ad_unit_id_router_add_dialog">ca-app-pub-3313772302702554/6579682825</string>
+    <string name="banner_ad_unit_id_router_restore_dialog">ca-app-pub-3313772302702554/8875184422</string>
 
     <string-array name="donation_google_catalog_values">
         <item>1 Euro</item>

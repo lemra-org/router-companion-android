@@ -55,25 +55,9 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
             final String escapedFileName =
                     Utils.getEscapedFileName("nvrambak_" + router.getUuid() + "__" + mBackupDate) + "__.bin";
 
-//            if (Utils.isExternalStorageWritable()) {
-//                //Write to external storage, as a public file
-//                final File containerDir = new File(
-//                        Environment.getExternalStoragePublicDirectory(
-//                                Environment.DIRECTORY_DOWNLOADS),
-//                        BuildConfig.APPLICATION_ID);
-//
-//                if (!containerDir.mkdirs()) {
-//                    throw new IllegalStateException("Failed to create backup dir: " +
-//                            containerDir.getAbsolutePath());
-//                }
-//
-//                mLocalBackupFilePath = new File(containerDir,escapedFileName)
-//                    .getAbsolutePath();
-//            } else {
             //Write to app data storage on internal storage
             mLocalBackupFilePath = new File(mContext.getCacheDir(),
                     escapedFileName);
-//            }
 
             if (!SSHUtils
                     .scpFrom(mContext, router,
