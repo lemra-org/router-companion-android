@@ -342,12 +342,15 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                 new RestoreRouterFromBackupAction(activity, new RouterActionListener() {
                                     @Override
                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                        alertDialog.cancel();
-                                        Utils.displayMessage(activity,
-                                                String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
-                                                Style.CONFIRM);
-                                        //Also dismiss main activity
-                                        dismiss();
+                                        try {
+                                            Utils.displayMessage(activity,
+                                                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                                    Style.CONFIRM);
+                                        } finally {
+                                            alertDialog.cancel();
+                                            //Also dismiss main activity
+                                            dismiss();
+                                        }
 
                                     }
 
@@ -360,20 +363,27 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                         } catch (Exception e) {
                                             //No worries
                                         } finally {
+                                            alertDialog.cancel();
+
                                             mUriCursor = null;
 
-                                            //Reset everything
-                                            final Button fileSelectorButton = (Button)
-                                                    d.findViewById(R.id.router_restore_backup_select_button);
-                                            fileSelectorButton.setHint("Select Backup File to restore");
-                                            mSelectedBackupInputStream = null;
-                                            ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    //Reset everything
+                                                    final Button fileSelectorButton = (Button)
+                                                            d.findViewById(R.id.router_restore_backup_select_button);
+                                                    fileSelectorButton.setHint("Select Backup File to restore");
+                                                    mSelectedBackupInputStream = null;
+                                                    ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
 
-                                            alertDialog.cancel();
+                                                    fileSelectorButton.requestFocus();
+                                                }
+                                            });
+
                                             displayMessage(String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                                                     Style.ALERT);
 
-                                            fileSelectorButton.requestFocus();
                                         }
                                     }
                                 }, mGlobalSharedPreferences, mSelectedBackupInputStream)
