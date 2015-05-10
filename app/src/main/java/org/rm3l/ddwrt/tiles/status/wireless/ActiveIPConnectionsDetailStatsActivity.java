@@ -58,6 +58,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -365,7 +366,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override

@@ -42,10 +42,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 app:showAsAction="ifRoom" />
 
             <item
+                android:id="@+id/action_ddwrt_actions_backup_restore_router"
+                android:icon="@drawable/ic_action_action_settings_backup_restore"
+                android:orderInCategory="2"
+                android:title="Backup / Restore"
+                app:showAsAction="ifRoom" >
+
+                <menu>
+                    <item
+                        android:id="@+id/action_ddwrt_actions_backup_restore_router_backup"
+                        android:alphabeticShortcut="R"
+                        android:icon="@drawable/ic_action_action_backup"
+                        android:orderInCategory="1"
+                        android:title="Backup"
+                        app:showAsAction="ifRoom" />
+                    <item
+                        android:id="@+id/action_ddwrt_actions_backup_restore_router_restore"
+                        android:alphabeticShortcut="R"
+                        android:icon="@drawable/ic_action_action_restore"
+                        android:orderInCategory="2"
+                        android:title="Restore"
+                        app:showAsAction="ifRoom" />
+                </menu>
+
+            </item>
+
+            <item
                 android:id="@+id/action_ddwrt_actions_restore_factory_defaults"
                 android:alphabeticShortcut="D"
                 android:icon="@drawable/ic_action_action_restore"
-                android:orderInCategory="2"
+                android:orderInCategory="3"
                 android:title="@string/menuitem_actions_restore_factory_defaults"
                 app:showAsAction="ifRoom" />
 
@@ -55,7 +81,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:alphabeticShortcut="U"
                 android:enabled="false"
                 android:icon="@drawable/ic_action_action_system_update_tv"
-                android:orderInCategory="3"
+                android:orderInCategory="4"
                 android:title="@string/menuitem_actions_upgrade_firmware"
                 android:visible="false"
                 app:showAsAction="ifRoom" />

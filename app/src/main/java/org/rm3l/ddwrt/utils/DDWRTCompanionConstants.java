@@ -76,6 +76,7 @@ public final class DDWRTCompanionConstants {
     public static final int MAX_ROUTERS_FREE_VERSION = 1;
 
     public static final String WIDGETS_PREFERENCES_KEY = \"fake-key\";
+    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
 
     private DDWRTCompanionConstants() {
     }

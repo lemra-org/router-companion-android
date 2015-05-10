@@ -1198,9 +1198,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             if (!isNullOrEmpty(mUsageDbBackupPath)) {
                                 //Backup to new data file
                                 synchronized (usageDataLock) {
-                                    SSHUtils
-                                            .scpFrom(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath);
-                                    Utils.requestBackup(mParentFragmentActivity);
+                                    if (SSHUtils
+                                            .scpFrom(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath, false)) {
+                                        Utils.requestBackup(mParentFragmentActivity);
+                                    }
 
                                 }
                             }

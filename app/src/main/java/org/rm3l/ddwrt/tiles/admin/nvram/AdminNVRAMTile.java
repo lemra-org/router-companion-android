@@ -64,6 +64,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -404,7 +405,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(mParentFragmentActivity, "org.rm3l.fileprovider", file);
+                .getUriForFile(mParentFragmentActivity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override

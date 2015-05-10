@@ -24,6 +24,8 @@ package org.rm3l.ddwrt.actions;
 public enum RouterAction {
 
     REBOOT("Reboot"),
+    BACKUP("Backup"),
+    RESTORE("Restore"),
     RESTORE_FACTORY_DEFAULTS("Restore Factory Defaults"),
     SET_NVRAM_VARIABLES("Set NVRAM Variables"),
     UPGRADE_FIRMWARE("Upgrade Firmware"),

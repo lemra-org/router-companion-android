@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -70,6 +72,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
+import org.rm3l.ddwrt.actions.BackupRouterAction;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -91,8 +94,10 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -622,8 +627,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(
             @NonNull MenuItem item) {
 
-        final String routerName = mRouter.getName();
-        final String displayName = isNullOrEmpty(routerName) ? mRouter.getRemoteIpAddress() : routerName;
+        final String displayName = mRouter.getDisplayName();
 
         switch (item.getItemId()) {
 
@@ -679,9 +683,10 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Reboot '%s'", displayName))
-                        .setMessage(String.format("Are you sure you wish to continue?\n'%s' will be rebooted, " +
-                                "and you might have to wait some time before connection is re-established.", displayName))
+                        .setTitle(String.format("Reboot '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
+                        .setMessage(String.format("Are you sure you wish to continue?\n'%s' (%s) will be rebooted, " +
+                                "and you might have to wait some time before connection is re-established.",
+                                displayName, mRouter.getRemoteIpAddress()))
                         .setCancelable(true)
                         .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                             @Override
@@ -690,8 +695,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                                 token.putString(ROUTER_ACTION, RouterAction.REBOOT.name());
 
                                 new UndoBarController.UndoBar(DDWRTMainActivity.this)
-                                        .message(String.format("Router '%s' will be rebooted",
-                                                displayName))
+                                        .message(String.format("Router '%s' (%s) will be rebooted",
+                                                displayName, mRouter.getRemoteIpAddress()))
                                         .listener(DDWRTMainActivity.this)
                                         .token(token)
                                         .show();
@@ -706,10 +711,15 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                 return true;
             case R.id.action_ddwrt_actions_restore_factory_defaults:
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
 
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Reset '%s'", displayName))
+                        .setTitle(String.format("Reset '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
                         .setMessage(String.format("Are you sure you wish to continue?\n" +
                                 "This will erase the entire NVRAM, thus resetting all settings back to factory defaults. " +
                                 "All of your settings will be erased and '%s' will be rebooted. " +
@@ -726,8 +736,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                                 token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
 
                                 new UndoBarController.UndoBar(DDWRTMainActivity.this)
-                                        .message(String.format("Router '%s' will be reset",
-                                                displayName))
+                                        .message(String.format("Router '%s' (%s) will be reset",
+                                                displayName, mRouter.getRemoteIpAddress()))
                                         .listener(DDWRTMainActivity.this)
                                         .token(token)
                                         .show();
@@ -741,7 +751,58 @@ public class DDWRTMainActivity extends ActionBarActivity
                         }).create().show();
 
                 return true;
+            case R.id.action_ddwrt_actions_backup_restore_router_backup:
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Backup '%s' (%s)", displayName, mRouter.getRemoteIpAddress()))
+                        .setMessage(String.format(
+                                "You may backup the current configuration in case you need to reset " +
+                                        "the router back to its factory default settings.\n\n" +
+                                        "Click the \"Backup\" button to download the configuration backup file of " +
+                                        "'%s' (%s) to this device.\n" +
+                                        "You will be able to share the file once the operation is done.",
+                                displayName, mRouter.getRemoteIpAddress()))
+                        .setCancelable(true)
+                        .setPositiveButton("Backup!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                final Bundle token = new Bundle();
+                                token.putString(ROUTER_ACTION, RouterAction.BACKUP.name());
+
+                                new UndoBarController.UndoBar(DDWRTMainActivity.this)
+                                        .message(String.format("Backup of Router '%s' (%s) is going to start...",
+                                                displayName, mRouter.getRemoteIpAddress()))
+                                        .listener(DDWRTMainActivity.this)
+                                        .token(token)
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+                return true;
+            case R.id.action_ddwrt_actions_backup_restore_router_restore:
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
+                //TODO Restore provide file selection view
+                return true;
             case R.id.action_ddwrt_actions_firmware_upgrade:
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(this);
+                    return true;
+                }
                 //TODO
                 return true;
             default:
@@ -908,6 +969,114 @@ public class DDWRTMainActivity extends ActionBarActivity
                         new RestoreRouterDefaultsAction(this, this, mGlobalPreferences).execute(mRouter);
                         break;
                     case UPGRADE_FIRMWARE:
+                        //TODO
+                        break;
+                    case BACKUP:
+                        final AlertDialog alertDialog = Utils.
+                                buildAlertDialog(DDWRTMainActivity.this, null, "Backing up - please hold on...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                new BackupRouterAction(DDWRTMainActivity.this, new RouterActionListener() {
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        try {
+                                            String msg;
+                                            if (!((returnData instanceof Object[]) &&
+                                                    ((Object[]) returnData).length >= 2)) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but an internal error occurred. " +
+                                                                "The issue will be reported. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(DDWRTMainActivity.this,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(new IllegalStateException(msg));
+                                                return;
+                                            }
+
+                                            final Object[] returnDataObjectArray = ((Object[]) returnData);
+                                            final Object backupDateObject = returnDataObjectArray[0];
+                                            final Object localBackupFileObject = returnDataObjectArray[1];
+
+                                            if (!((backupDateObject instanceof Date) &&
+                                                    (localBackupFileObject instanceof File))) {
+                                                msg = String.format("Action '%s' executed " +
+                                                                "successfully on host '%s', but could not determine where " +
+                                                                "local backup file has been saved. Please try again later.",
+                                                        routerAction.toString(),
+                                                        router.getRemoteIpAddress());
+                                                Utils.displayMessage(DDWRTMainActivity.this,
+                                                        msg,
+                                                        Style.INFO);
+                                                Utils.reportException(new IllegalStateException(msg));
+                                                return;
+                                            }
+
+                                            Utils.displayMessage(DDWRTMainActivity.this,
+                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                                            "Now loading the file sharing activity chooser...",
+                                                            routerAction.toString(), router.getRemoteIpAddress()),
+                                                    Style.CONFIRM);
+
+                                            final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                                            final Date backupDate = (Date) (((Object[]) returnData)[0]);
+
+                                            final Uri uriForFile = FileProvider.getUriForFile(DDWRTMainActivity.this,
+                                                    DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                    localBackupFile);
+                                            grantUriPermission(getPackageName(),
+                                                    uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                            final Intent shareIntent = new Intent();
+                                            shareIntent.setAction(Intent.ACTION_SEND);
+                                            shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                                    String.format("Backup of '%s' (%s)",
+                                                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                                            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                                                    "Backup Date: " + backupDate + "\n\n" +
+                                                            "You may restore your router later to " +
+                                                            "overwrite all current configurations " +
+                                                            "with the ones in this backup file.\n" +
+                                                            "\n" +
+                                                            "Please note that you must only " +
+                                                            "restore configurations with files " +
+                                                            "backed up using the same firmware and " +
+                                                            "the same model of router.\n\n\n" +
+                                                            "-- Generated by 'DD-WRT Companion'");
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                                            shareIntent.setType("*/*");
+                                            startActivity(Intent.createChooser(shareIntent,
+                                                    getResources().getText(R.string.send_to)));
+
+                                        } finally {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    alertDialog.cancel();
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router,
+                                                                      @Nullable Exception exception) {
+                                        Utils.displayMessage(DDWRTMainActivity.this,
+                                                String.format("Error on action '%s': %s",
+                                                        routerAction.toString(),
+                                                        ExceptionUtils.getRootCauseMessage(exception)),
+                                                Style.ALERT);
+                                    }
+                                }, mGlobalPreferences)
+                                        .execute(mRouter);
+                            }
+                        }, 1500);
+                        break;
+                    case RESTORE:
                         //TODO
                         break;
                     default:
