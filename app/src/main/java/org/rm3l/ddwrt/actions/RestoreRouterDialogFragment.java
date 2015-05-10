@@ -109,16 +109,22 @@ public class RestoreRouterDialogFragment extends DialogFragment {
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_restore, null);
 
-        return builder
+        builder
                 .setTitle(String.format("Restore '%s' (%s)",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
                 .setMessage(String.format("Browse for a configuration file and click the " +
-                        "'Restore' button to overwrite all current configurations of '%s' (%s) " +
-                        "with the ones in the backup file.",
+                                "'Restore' button to overwrite all current configurations of '%s' (%s) " +
+                                "with the ones in the backup file.\n\n" +
+                                "[CAUTION]\n" +
+                                "- Make sure to *backup* your settings first!!!\n" +
+                                "- It is your responsibility to ensure the backup file to restore is fully compatible " +
+                                "with the firmware and model of your router.\n" +
+                                "- The Router will be rebooted at the end of the operation, and " +
+                                "you might have to wait some time before connection is re-established.",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
                 .setView(view)
                         // Add action buttons
-                .setPositiveButton("Restore!", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Got it! Proceed!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //Do nothing here because we override this button later to change the close behaviour.
@@ -130,7 +136,9 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         RestoreRouterDialogFragment.this.getDialog().cancel();
                     }
-                }).create();
+                });
+
+        return builder.create();
     }
 
     private void displayMessage(final String msg, final Style style) {
