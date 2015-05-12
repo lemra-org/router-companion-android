@@ -598,7 +598,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(10);
-                            mProgressBarDesc.setText("Fetching Broadcast address (for Wake on LAN (WOL)...\n\n");
+                            mProgressBarDesc.setText("Fetching Broadcast address (for Wake on LAN (WOL))...\n\n");
                         }
                     });
 
