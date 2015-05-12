@@ -1068,11 +1068,13 @@ public class DDWRTMainActivity extends ActionBarActivity
                                                             mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
                                             shareIntent.putExtra(Intent.EXTRA_TEXT,
                                                     "Backup Date: " + backupDate + "\n\n" +
-                                                            "You may restore your router later to " +
-                                                            "overwrite all current configurations " +
+                                                            "You may restore your router later using this Backup Configuration file.\n" +
+                                                            "Restoring can be performed either via the 'DD-WRT Companion' app, or using " +
+                                                            "the Web Management Interface.\n" +
+                                                            "Restoring will overwrite all current configurations " +
                                                             "with the ones in this backup file.\n" +
                                                             "\n" +
-                                                            "Please note that you must only " +
+                                                            "Please also note that you must only " +
                                                             "restore configurations with files " +
                                                             "backed up using the same firmware and " +
                                                             "the same model of router.\n\n\n" +
@@ -1080,7 +1082,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                                             shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
                                             shareIntent.setType("*/*");
                                             startActivity(Intent.createChooser(shareIntent,
-                                                    getResources().getText(R.string.send_to)));
+                                                    getResources().getText(R.string.share_backup)));
 
                                         } finally {
                                             runOnUiThread(new Runnable() {

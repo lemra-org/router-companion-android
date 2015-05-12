@@ -595,7 +595,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="whois_info">Look up records in the databases maintained by several Network Information Centers (NICs)</string>
     <string name="commands">Commands</string>
     <string name="submit">Submit</string>
-    <string name="commands_edit_text_hint">Command(s) to run...</string>
+    <string name="commands_edit_text_hint">Command(s) to run…</string>
     <string name="command_shell">Command Shell</string>
     <string name="stats">Stats</string>
     <string name="by_source">By Source</string>
@@ -618,4 +618,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="title_activity_dialog_as">DialogAsActivity</string>
     <string name="remove_ads">Remove Ads</string>
     <string name="send_to">Send to</string>
+    <string name="share_backup">Share Backup File via</string>
 </resources>
