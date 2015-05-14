@@ -620,6 +620,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         e.printStackTrace();
                     }
 
+                    Log.d(LOG_TAG, "broadcastAddresses: " + broadcastAddresses);
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -635,6 +637,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
+                    Log.d(LOG_TAG, "activeClients: " + Arrays.toString(activeClients));
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -649,6 +653,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
+                    Log.d(LOG_TAG, "activeDhcpLeases: " + Arrays.toString(activeDhcpLeases));
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -662,6 +668,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     if (activeIPConnections != null) {
                         devices.setActiveIPConnections(activeIPConnections.length);
                     }
+
+                    Log.d(LOG_TAG, "activeIPConnections: " + Arrays.toString(activeIPConnections));
 
                     //Get WAN Gateway Address (we skip it!)
 //                    String gatewayAddress = EMPTY_STRING;
@@ -745,7 +753,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             "done"
                             );
                         }
+
                         Log.d(LOG_TAG, "useAtheros= " + useAtheros + " / assocList: " + Arrays.toString(assocList));
+
                         if (assocList != null) {
                             String iface;
                             for (int idx = 0; idx < assocList.length; idx++) {
@@ -776,6 +786,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
+                        Utils.reportException(e);
                     }
 
                     final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
@@ -982,6 +993,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
 
+                    Log.d(LOG_TAG, "Before usageDataLock");
+
                     synchronized (usageDataLock) {
 
                         mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -1142,6 +1155,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     }
 
+                    Log.d(LOG_TAG, "AFTER usageDataLock");
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1216,6 +1231,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.addDevice(device);
                     }
 
+                    Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " devices!");
+
                     return devices;
 
                 } catch (@NonNull final Exception e) {
@@ -1275,6 +1292,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
      */
     @Override
     public void onLoadFinished(Loader<ClientDevices> loader, ClientDevices data) {
+
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         //noinspection ThrowableResultOfMethodCallIgnored
