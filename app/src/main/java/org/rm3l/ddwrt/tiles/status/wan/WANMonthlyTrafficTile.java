@@ -331,8 +331,10 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                 (SwitchCompat) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_status);
         enableTraffDataButton.setVisibility(View.VISIBLE);
 
+        final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData().containsKey(NVRAMInfo.TTRAFF_ENABLE));
+
         synchronized (mStateToggleLock) {
-            if (data != null && data.getData() != null && data.getData().containsKey(NVRAMInfo.TTRAFF_ENABLE)) {
+            if (makeToogleEnabled) {
                 if ("1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
                     //Enabled
                     enableTraffDataButton.setChecked(true);
@@ -479,9 +481,6 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
             setVisibility(ctrlViews, View.GONE);
-
-            enableTraffDataButton.setChecked(false);
-            enableTraffDataButton.setEnabled(false);
 
         } else {
             if (traffData == null || traffData.isEmpty()) {
