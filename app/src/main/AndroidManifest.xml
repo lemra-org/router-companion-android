@@ -81,11 +81,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" >
+
             <intent-filter>
+                <action android:name="android.intent.action.APP_ERROR" />
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
@@ -100,6 +100,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:parentActivityName=".mgmt.RouterManagementActivity"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.APP_ERROR" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />

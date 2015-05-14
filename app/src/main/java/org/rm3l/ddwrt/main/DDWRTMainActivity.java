@@ -611,6 +611,14 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         }
 
+        if (!StringUtils.containsIgnoreCase(BuildConfig.FLAVOR, "google")) {
+            //Only available on Google Play Store
+            final MenuItem item = menu.findItem(R.id.action_take_bug_report);
+            if (item != null) {
+                item.setVisible(false);
+            }
+        }
+
         if (!BuildConfig.WITH_ADS) {
             final MenuItem removeAdsMenuItem = menu.findItem(R.id.action_remove_ads);
             if (removeAdsMenuItem != null) {
@@ -667,6 +675,9 @@ public class DDWRTMainActivity extends ActionBarActivity
                 final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
                 ddWrtMainIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
                 this.startActivityForResult(ddWrtMainIntent, ROUTER_SETTINGS_ACTIVITY_CODE);
+                return true;
+            case R.id.action_take_bug_report:
+                Utils.takeBugReport(this);
                 return true;
             case R.id.action_donate:
                 Utils.openDonateActivity(this);

@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ApplicationErrorReport;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -51,11 +53,14 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.HttpParams;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.donate.DonateActivity;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Random;
@@ -328,6 +333,60 @@ public final class Utils {
 
     public static int getRandomIntId(final int upperLimit) {
         return RANDOM.nextInt(upperLimit);
+    }
+
+    public static void takeBugReport(@NonNull final Activity activity) {
+
+        BugReportException bugReportException = new BugReportException();
+
+        try {
+
+            final ApplicationErrorReport report = new ApplicationErrorReport();
+            report.packageName = report.processName = activity.getApplication().getPackageName();
+            report.time = System.currentTimeMillis();
+            report.type = ApplicationErrorReport.TYPE_CRASH;
+            report.systemApp = false;
+
+            final ApplicationErrorReport.CrashInfo crash = new ApplicationErrorReport.CrashInfo();
+            crash.exceptionClassName = bugReportException.getClass().getSimpleName();
+            crash.exceptionMessage = bugReportException.getMessage();
+
+            final StringWriter writer = new StringWriter();
+            PrintWriter printer = new PrintWriter(writer);
+            bugReportException.printStackTrace(printer);
+
+            crash.stackTrace = writer.toString();
+
+            final StackTraceElement stack = bugReportException.getStackTrace()[0];
+            crash.throwClassName = stack.getClassName();
+            crash.throwFileName = stack.getFileName();
+            crash.throwLineNumber = stack.getLineNumber();
+            crash.throwMethodName = stack.getMethodName();
+
+            report.crashInfo = crash;
+
+            final Intent intent = new Intent(Intent.ACTION_APP_ERROR);
+            intent.putExtra(Intent.EXTRA_BUG_REPORT, report);
+            activity.startActivity(intent);
+
+        } catch (final Exception e) {
+            Toast.makeText(activity, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+                    .show();
+            bugReportException = new BugReportException(e.getMessage(), e);
+
+        } finally {
+            Utils.reportException(bugReportException);
+        }
+    }
+
+    protected static final class BugReportException extends DDWRTCompanionException {
+
+        public BugReportException() {
+        }
+
+        public BugReportException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+            super(detailMessage, throwable);
+        }
     }
 
 }

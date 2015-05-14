@@ -44,14 +44,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/router_list_feedback"
-        android:alphabeticShortcut="f"
-        android:icon="@drawable/ic_action_action_thumbs_up_down"
-        android:orderInCategory="5"
-        android:title="@string/feedback"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/router_list_actions"
         android:alphabeticShortcut="A"
         android:icon="@drawable/ic_action_action_launch"
@@ -90,6 +82,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </menu>
     </item>
 
+
     <item
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
@@ -98,6 +91,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/menuitem_settings"
         app:showAsAction="ifRoom" />
 
+
+    <item
+        android:id="@+id/router_list_feedback"
+        android:alphabeticShortcut="f"
+        android:icon="@drawable/ic_action_action_thumbs_up_down"
+        android:orderInCategory="5"
+        android:title="@string/feedback"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/router_list_take_bug_report"
+        android:orderInCategory="6"
+        android:title="Take Bug Report"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/router_list_donate"

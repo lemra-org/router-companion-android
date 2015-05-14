@@ -71,6 +71,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -388,6 +389,14 @@ public class RouterManagementActivity
             }
         }
 
+        if (!StringUtils.containsIgnoreCase(BuildConfig.FLAVOR, "google")) {
+            //Only available on Google Play Store
+            final MenuItem item = menu.findItem(R.id.router_list_take_bug_report);
+            if (item != null) {
+                item.setVisible(false);
+            }
+        }
+
         //Search
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
@@ -429,6 +438,9 @@ public class RouterManagementActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.router_list_take_bug_report:
+                Utils.takeBugReport(this);
                 return true;
             case R.id.router_list_refresh:
                 doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
