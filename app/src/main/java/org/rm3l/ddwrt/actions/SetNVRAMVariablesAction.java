@@ -71,7 +71,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                 cmd[i++] = String.format("/usr/sbin/nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
             }
             cmd[cmd.length - 2] = "/usr/sbin/nvram commit";
-            cmd[cmd.length - 1] = withReboot ? "/sbin/reboot" : "";
+            cmd[cmd.length - 1] = (withReboot ? "/sbin/reboot" : "");
 
             Log.d(LOG_TAG, "cmd: [" + Arrays.toString(cmd) + "]");
 
