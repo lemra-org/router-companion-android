@@ -89,6 +89,9 @@ import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
+import com.purplebrain.adbuddiz.sdk.AdBuddizError;
+import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -285,7 +288,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private boolean isThemeLight;
 
     @Nullable
-    private InterstitialAd mInterstitialAdFoActiveIPConnections;
+    private InterstitialAd mInterstitialAdForActiveIPConnections;
 
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
@@ -328,8 +331,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         mParentFragmentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mInterstitialAdFoActiveIPConnections = AdUtils.requestNewInterstitial(mParentFragmentActivity,
+                mInterstitialAdForActiveIPConnections = AdUtils.requestNewInterstitial(mParentFragmentActivity,
                         R.string.interstitial_ad_unit_id_open_active_ip_connections_activity);
+
+                if (BuildConfig.WITH_ADS) {
+                    AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
+                    if (BuildConfig.DEBUG) {
+                        AdBuddiz.setTestModeActive();
+                        AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
+                    } else {
+                        AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
+                    }
+                    AdBuddiz.cacheAds(mParentFragmentActivity);
+                }
             }
         });
 
@@ -434,19 +448,77 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
 
-                            if (BuildConfig.WITH_ADS && mInterstitialAdFoActiveIPConnections != null) {
-                                if (mInterstitialAdFoActiveIPConnections.isLoaded()) {
-                                    mInterstitialAdFoActiveIPConnections.show();
-                                    mInterstitialAdFoActiveIPConnections.setAdListener(new AdListener() {
-                                        @Override
-                                        public void onAdClosed() {
-                                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                            if (adRequest != null) {
-                                                mInterstitialAdFoActiveIPConnections.loadAd(adRequest);
+                            if (BuildConfig.WITH_ADS) {
+
+                                AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                                    @Override
+                                    public void didFailToShowAd(AdBuddizError adBuddizError) {
+                                        super.didFailToShowAd(adBuddizError);
+                                        if (mInterstitialAdForActiveIPConnections != null) {
+                                            mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                                @Override
+                                                public void onAdClosed() {
+                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                    if (adRequest != null) {
+                                                        mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+                                                    }
+                                                    mParentFragmentActivity.startActivity(intent);
+                                                }
+                                            });
+
+                                            if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                                mInterstitialAdForActiveIPConnections.show();
+                                            } else {
+                                                //noinspection ConstantConditions
+                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                        "Loading...", false, false);
+                                                alertDialog.show();
+                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mParentFragmentActivity.startActivity(intent);
+                                                        alertDialog.cancel();
+                                                    }
+                                                }, 1000);
                                             }
-                                            mParentFragmentActivity.startActivity(intent);
+
+                                        } else {
+                                            //noinspection ConstantConditions
+                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                    "Loading...", false, false);
+                                            alertDialog.show();
+                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mParentFragmentActivity.startActivity(intent);
+                                                    alertDialog.cancel();
+                                                }
+                                            }, 1000);
                                         }
-                                    });
+                                    }
+
+                                    @Override
+                                    public void didHideAd() {
+                                        super.didHideAd();
+                                        //noinspection ConstantConditions
+                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                "Loading...", false, false);
+                                        alertDialog.show();
+                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mParentFragmentActivity.startActivity(intent);
+                                                alertDialog.cancel();
+                                            }
+                                        }, 1000);
+                                    }
+                                });
+
+                                if (AdBuddiz.isReadyToShowAd(mParentFragmentActivity)) {
+                                    AdBuddiz.showAd(mParentFragmentActivity);
                                 } else {
                                     //noinspection ConstantConditions
                                     final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -461,6 +533,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         }
                                     }, 1000);
                                 }
+
                             } else {
                                 //noinspection ConstantConditions
                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -475,6 +548,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     }
                                 }, 1000);
                             }
+
                             return true;
                         }
                     });
@@ -1361,19 +1435,77 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                         intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
 
-                        if (BuildConfig.WITH_ADS && mInterstitialAdFoActiveIPConnections != null) {
-                            if (mInterstitialAdFoActiveIPConnections.isLoaded()) {
-                                mInterstitialAdFoActiveIPConnections.show();
-                                mInterstitialAdFoActiveIPConnections.setAdListener(new AdListener() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                        if (adRequest != null) {
-                                            mInterstitialAdFoActiveIPConnections.loadAd(adRequest);
+                        if (BuildConfig.WITH_ADS) {
+
+                            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                                @Override
+                                public void didFailToShowAd(AdBuddizError adBuddizError) {
+                                    super.didFailToShowAd(adBuddizError);
+                                    if (mInterstitialAdForActiveIPConnections != null) {
+                                        mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                            @Override
+                                            public void onAdClosed() {
+                                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                if (adRequest != null) {
+                                                    mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+                                                }
+                                                mParentFragmentActivity.startActivity(intent);
+                                            }
+                                        });
+
+                                        if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                            mInterstitialAdForActiveIPConnections.show();
+                                        } else {
+                                            //noinspection ConstantConditions
+                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                    "Loading...", false, false);
+                                            alertDialog.show();
+                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mParentFragmentActivity.startActivity(intent);
+                                                    alertDialog.cancel();
+                                                }
+                                            }, 1000);
                                         }
-                                        mParentFragmentActivity.startActivity(intent);
+
+                                    } else {
+                                        //noinspection ConstantConditions
+                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                "Loading...", false, false);
+                                        alertDialog.show();
+                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mParentFragmentActivity.startActivity(intent);
+                                                alertDialog.cancel();
+                                            }
+                                        }, 1000);
                                     }
-                                });
+                                }
+
+                                @Override
+                                public void didHideAd() {
+                                    super.didHideAd();
+                                    //noinspection ConstantConditions
+                                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                            "Loading...", false, false);
+                                    alertDialog.show();
+                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mParentFragmentActivity.startActivity(intent);
+                                            alertDialog.cancel();
+                                        }
+                                    }, 1000);
+                                }
+                            });
+
+                            if (AdBuddiz.isReadyToShowAd(mParentFragmentActivity)) {
+                                AdBuddiz.showAd(mParentFragmentActivity);
                             } else {
                                 //noinspection ConstantConditions
                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1388,6 +1520,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     }
                                 }, 1000);
                             }
+
+
                         } else {
                             //noinspection ConstantConditions
                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1402,19 +1536,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 }
                             }, 1000);
                         }
-
-//                        //noinspection ConstantConditions
-//                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mParentFragmentActivity.startActivity(intent);
-//                                alertDialog.cancel();
-//                            }
-//                        }, 1000);
                     }
                 };
                 spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -1638,19 +1759,77 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
                                 intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
 
-                                if (BuildConfig.WITH_ADS && mInterstitialAdFoActiveIPConnections != null) {
-                                    if (mInterstitialAdFoActiveIPConnections.isLoaded()) {
-                                        mInterstitialAdFoActiveIPConnections.show();
-                                        mInterstitialAdFoActiveIPConnections.setAdListener(new AdListener() {
-                                            @Override
-                                            public void onAdClosed() {
-                                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                if (adRequest != null) {
-                                                    mInterstitialAdFoActiveIPConnections.loadAd(adRequest);
+                                if (BuildConfig.WITH_ADS) {
+
+                                    AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                                        @Override
+                                        public void didFailToShowAd(AdBuddizError adBuddizError) {
+                                            super.didFailToShowAd(adBuddizError);
+                                            if (mInterstitialAdForActiveIPConnections != null) {
+                                                mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                                    @Override
+                                                    public void onAdClosed() {
+                                                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                        if (adRequest != null) {
+                                                            mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+                                                        }
+                                                        mParentFragmentActivity.startActivity(intent);
+                                                    }
+                                                });
+
+                                                if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                                    mInterstitialAdForActiveIPConnections.show();
+                                                } else {
+                                                    //noinspection ConstantConditions
+                                                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                            "Loading...", false, false);
+                                                    alertDialog.show();
+                                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            mParentFragmentActivity.startActivity(intent);
+                                                            alertDialog.cancel();
+                                                        }
+                                                    }, 1000);
                                                 }
-                                                mParentFragmentActivity.startActivity(intent);
+
+                                            } else {
+                                                //noinspection ConstantConditions
+                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                        "Loading...", false, false);
+                                                alertDialog.show();
+                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mParentFragmentActivity.startActivity(intent);
+                                                        alertDialog.cancel();
+                                                    }
+                                                }, 1000);
                                             }
-                                        });
+                                        }
+
+                                        @Override
+                                        public void didHideAd() {
+                                            super.didHideAd();
+                                            //noinspection ConstantConditions
+                                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                    "Loading...", false, false);
+                                            alertDialog.show();
+                                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mParentFragmentActivity.startActivity(intent);
+                                                    alertDialog.cancel();
+                                                }
+                                            }, 1000);
+                                        }
+                                    });
+
+                                    if (AdBuddiz.isReadyToShowAd(mParentFragmentActivity)) {
+                                        AdBuddiz.showAd(mParentFragmentActivity);
                                     } else {
                                         //noinspection ConstantConditions
                                         final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1665,6 +1844,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             }
                                         }, 1000);
                                     }
+
                                 } else {
                                     //noinspection ConstantConditions
                                     final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1679,19 +1859,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         }
                                     }, 1000);
                                 }
-
-//                                //noinspection ConstantConditions
-//                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                        "Loading.", false, false);
-//                                alertDialog.show();
-//                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                                new Handler().postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        mParentFragmentActivity.startActivity(intent);
-//                                        alertDialog.cancel();
-//                                    }
-//                                }, 1000);
                             }
                         };
                         spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -2019,19 +2186,77 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
-                                    if (BuildConfig.WITH_ADS && mInterstitialAdFoActiveIPConnections != null) {
-                                        if (mInterstitialAdFoActiveIPConnections.isLoaded()) {
-                                            mInterstitialAdFoActiveIPConnections.show();
-                                            mInterstitialAdFoActiveIPConnections.setAdListener(new AdListener() {
-                                                @Override
-                                                public void onAdClosed() {
-                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                    if (adRequest != null) {
-                                                        mInterstitialAdFoActiveIPConnections.loadAd(adRequest);
+                                    if (BuildConfig.WITH_ADS) {
+
+                                        AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                                            @Override
+                                            public void didFailToShowAd(AdBuddizError adBuddizError) {
+                                                super.didFailToShowAd(adBuddizError);
+                                                if (mInterstitialAdForActiveIPConnections != null) {
+                                                    mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                                        @Override
+                                                        public void onAdClosed() {
+                                                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                            if (adRequest != null) {
+                                                                mInterstitialAdForActiveIPConnections.loadAd(adRequest);
+                                                            }
+                                                            mParentFragmentActivity.startActivity(intent);
+                                                        }
+                                                    });
+
+                                                    if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                                        mInterstitialAdForActiveIPConnections.show();
+                                                    } else {
+                                                        //noinspection ConstantConditions
+                                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                                "Loading...", false, false);
+                                                        alertDialog.show();
+                                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                mParentFragmentActivity.startActivity(intent);
+                                                                alertDialog.cancel();
+                                                            }
+                                                        }, 1000);
                                                     }
-                                                    mParentFragmentActivity.startActivity(intent);
+
+                                                } else {
+                                                    //noinspection ConstantConditions
+                                                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                            "Loading...", false, false);
+                                                    alertDialog.show();
+                                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            mParentFragmentActivity.startActivity(intent);
+                                                            alertDialog.cancel();
+                                                        }
+                                                    }, 1000);
                                                 }
-                                            });
+                                            }
+
+                                            @Override
+                                            public void didHideAd() {
+                                                super.didHideAd();
+                                                //noinspection ConstantConditions
+                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                                        "Loading...", false, false);
+                                                alertDialog.show();
+                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mParentFragmentActivity.startActivity(intent);
+                                                        alertDialog.cancel();
+                                                    }
+                                                }, 1000);
+                                            }
+                                        });
+
+                                        if (AdBuddiz.isReadyToShowAd(mParentFragmentActivity)) {
+                                            AdBuddiz.showAd(mParentFragmentActivity);
                                         } else {
                                             //noinspection ConstantConditions
                                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -2046,6 +2271,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 }
                                             }, 1000);
                                         }
+
                                     } else {
                                         //noinspection ConstantConditions
                                         final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -2060,19 +2286,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             }
                                         }, 1000);
                                     }
-
-//                                    //noinspection ConstantConditions
-//                                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                            "Loading.", false, false);
-//                                    alertDialog.show();
-//                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                                    new Handler().postDelayed(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            mParentFragmentActivity.startActivity(intent);
-//                                            alertDialog.cancel();
-//                                        }
-//                                    }, 1000);
 
                                     return true;
                                 }

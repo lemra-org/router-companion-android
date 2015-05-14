@@ -78,6 +78,8 @@ public final class DDWRTCompanionConstants {
     public static final String WIDGETS_PREFERENCES_KEY = \"fake-key\";
     public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
 
+    public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
+
     private DDWRTCompanionConstants() {
     }
 

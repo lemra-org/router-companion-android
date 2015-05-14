@@ -162,4 +162,8 @@
 -keep class org.rm3l.ddwrt.resources.** {
     *;
 }
+
+-keep enum com.purplebrain.adbuddiz.sdk.** { *; }
+-keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
+
 #-keepclassmembers class org.rm3l.ddwrt.resources.* { *; }

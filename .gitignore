@@ -31,10 +31,6 @@ build
 
 **/*.apk
 
-# Package Files #
-**/*.jar
-**/*.war
-**/*.ear
 
 samples
 DEPLOYMENT
