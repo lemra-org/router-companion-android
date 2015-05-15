@@ -165,7 +165,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
     protected OnClickIntent getOnclickIntent() {
 
         if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-            Utils.displayUpgradeMessage(mParentFragmentActivity);
+            Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit WOL Settings");
             return null;
         }
 

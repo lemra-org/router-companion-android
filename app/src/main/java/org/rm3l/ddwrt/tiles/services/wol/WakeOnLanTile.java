@@ -120,7 +120,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 public void onClick(View view) {
 
                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                        Utils.displayUpgradeMessage(mParentFragmentActivity, "Add new WOL Host");
                         return;
                     }
 
@@ -526,7 +526,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                 case R.id.tile_services_wol_clients_wake_all:
 
                                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                                        Utils.displayUpgradeMessage(mParentFragmentActivity, "Wake all hosts");
                                         return true;
                                     }
 

@@ -349,7 +349,7 @@ public class RouterManagementActivity
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(this);
+            Utils.displayUpgradeMessage(this, "Manage a new Router");
             return;
         }
 
@@ -376,7 +376,7 @@ public class RouterManagementActivity
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(this);
+            Utils.displayUpgradeMessage(this, "Duplicate Router");
             return;
         }
 

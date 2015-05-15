@@ -131,7 +131,6 @@ public final class AdUtils {
         @Override
         public void didHideAd() {
             Log.d(TAG, "ad hidden");
-            Utils.reportException(new AdHiddenEvent("AdBuddiz"));
         }
     }
 

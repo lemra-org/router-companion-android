@@ -580,7 +580,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(this);
+            Utils.displayUpgradeMessage(this, "Manage a new Router");
             return;
         }
 
@@ -791,7 +791,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_ddwrt_actions_restore_factory_defaults:
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
+                    Utils.displayUpgradeMessage(this, "Restore Factory Defaults");
                     return true;
                 }
 
@@ -843,7 +843,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_ddwrt_actions_backup_restore_router_backup:
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
+                    Utils.displayUpgradeMessage(this, "Backup Router");
                     return true;
                 }
                 displayBackupDialog(displayName);
@@ -851,7 +851,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_ddwrt_actions_backup_restore_router_restore:
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
+                    Utils.displayUpgradeMessage(this, "Restore Router");
                     return true;
                 }
 
@@ -867,7 +867,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.action_ddwrt_actions_firmware_upgrade:
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(this);
+                    Utils.displayUpgradeMessage(this, "Upgrade Firmware");
                     return true;
                 }
                 //TODO

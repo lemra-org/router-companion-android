@@ -2691,7 +2691,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 case R.id.tile_status_wireless_client_wan_access_state:
                     if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                         //Download the full version to unlock this version
-                        Utils.displayUpgradeMessage(mParentFragmentActivity);
+                        Utils.displayUpgradeMessage(mParentFragmentActivity, "Enable/Disable Internet Access");
                         return true;
                     }
                     final boolean disableWanAccess = item.isChecked();

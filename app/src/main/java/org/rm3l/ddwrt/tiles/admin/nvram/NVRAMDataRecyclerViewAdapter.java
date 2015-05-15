@@ -183,7 +183,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         @Override
         public void onClick(View v) {
             if (BuildConfig.WITH_ADS) {
-                Utils.displayUpgradeMessage(context);
+                Utils.displayUpgradeMessage(context, "Update NVRAM Variable");
                 return;
             }
             final DialogFragment editFragment =
