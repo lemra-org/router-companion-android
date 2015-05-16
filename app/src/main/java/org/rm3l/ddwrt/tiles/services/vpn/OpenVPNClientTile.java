@@ -627,7 +627,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Override
     protected OnClickIntent getOnclickIntent() {
 
-        if (BuildConfig.WITH_ADS) {
+        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
             //Not allowed
             Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit OpenVPN Client Settings");
             return null;
