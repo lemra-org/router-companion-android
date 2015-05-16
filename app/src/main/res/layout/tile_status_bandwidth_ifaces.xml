@@ -28,7 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.74"
         android:orientation="vertical">
@@ -73,137 +73,147 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold"
             android:visibility="gone" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <GridLayout
+            android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:visibility="gone">
 
-            <GridLayout
-                android:id="@+id/tile_status_bandwidth_ifaces_gridLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:visibility="gone">
-
-                <!-- LAN -->
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bw_lan"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_lan_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_lan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Wireless -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bw_wireless"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_wireless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- WAN -->
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_wan_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bw_wan"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_wan_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_wan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
-
-                <!-- Auto-refresh -->
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_refresh"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space"
-                    android:visibility="gone" />
-
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/tile_status_bandwidth_ifaces_togglebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="7dp"
-                    android:checked="true"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
-                    android:visibility="gone" />
-
-            </GridLayout>
-
-            <ProgressBar
-                android:id="@+id/tile_status_bandwidth_ifaces_loading_view"
+            <!-- Auto-refresh -->
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+                android:text="@string/auto_refresh"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/tile_status_bandwidth_ifaces_togglebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="7dp"
+                android:checked="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textOff="OFF"
+                android:textOn="ON"
+                android:visibility="gone" />
+
+            <!-- LAN -->
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_lan_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bw_lan"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_lan_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_lan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+            <!-- Wireless -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bw_wireless"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wireless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+            <!-- WAN -->
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wan_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bw_wan"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wan_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_bandwidth_ifaces_wan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="false"
+                android:text="@string/loading" />
+
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
+            android:visibility="invisible" />
+
+        <GridLayout
+            android:id="@+id/tile_status_bandwidth_ifaces_list_container"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.74"
+            android:columnCount="2"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/tile_status_bandwidth_ifaces_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
     </LinearLayout>
+
 </LinearLayout>

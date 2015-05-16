@@ -1593,7 +1593,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
 
                 //Highlight CardView
-                cardView.setCardElevation(20f);
+                cardView.setCardElevation(10f);
 
                 final String macAddress = device.getMacAddress();
 
