@@ -38,6 +38,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -359,11 +360,13 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("QR Code for Wireless Network '%s'", mSsid));
-        sendIntent.putExtra(Intent.EXTRA_TEXT,
-                ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText());
+        sendIntent.setType("text/html");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(String.format("%s%s",
+            ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText(),
+                Utils.getShareIntentFooter()).replaceAll("\n","<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("image/png");
+//        sendIntent.setType("image/png");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
 
