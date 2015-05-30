@@ -27,6 +27,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
@@ -34,6 +35,8 @@ import android.widget.TextView;
 import org.apache.commons.io.IOUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
@@ -54,6 +57,8 @@ public class AboutDialog extends Dialog {
 
     private final Context mContext;
 
+    private boolean isThemeLight;
+
     /**
      * Constructor
      *
@@ -63,6 +68,7 @@ public class AboutDialog extends Dialog {
         super(context);
         mContext = context;
         super.setTitle(mContext.getString(R.string.menuitem_about));
+        isThemeLight = ColorUtils.isThemeLight(mContext);
     }
 
     /**
@@ -71,9 +77,13 @@ public class AboutDialog extends Dialog {
      * @param textView the text view
      * @param text     the text to set as content
      */
-    private void setTextContentAndLinkify(@NonNull final TextView textView, @NonNull final String text) {
+    private void setTextContentAndLinkify(@NonNull final TextView textView,
+                                          @NonNull final String text) {
+        textView.setLinkTextColor(mContext.getResources().getColor(
+                isThemeLight ? R.color.ddwrt_green : R.color.win8_lime));
+        textView.setLinksClickable(true);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setText(Utils.linkifyHtml(text, Linkify.ALL));
-        textView.setLinkTextColor(mContext.getResources().getColor(R.color.win8_lime));
     }
 
     /**
@@ -126,8 +136,7 @@ public class AboutDialog extends Dialog {
                             .replaceAll(APP_NAME_INFO_TXT, mContext.getString(mContext.getApplicationInfo().labelRes))
                             .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
                             .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)
-                            .replaceAll(SUPPORT_WEBSITE_HREF, "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
-                                    ((BuildConfig.WITH_ADS ? "_" : "") + "home")));
+                            .replaceAll(SUPPORT_WEBSITE_HREF, DDWRTCompanionConstants.SUPPORT_WEBSITE));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
 
@@ -139,7 +148,8 @@ public class AboutDialog extends Dialog {
                     contributorsTxt
                             .replaceAll(DONATIONS_LIB_INFO_TXT,
                                     BuildConfig.DONATIONS ?
-                                            "&#8226; <a href=\"https://github.com/dschuermann/android-donations-lib\" target=\"_blank\">android-donations-lib</a>" :
+                                            "&#8226; <a href=\"https://github.com/dschuermann/" +
+                                                    "android-donations-lib\" target=\"_blank\">android-donations-lib</a>" :
                                             ""));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
