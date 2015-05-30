@@ -100,11 +100,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/feedback"
         app:showAsAction="ifRoom" />
 
+    <!-- Seems redundant with the Feedback menu item -->
     <item
         android:id="@+id/router_list_take_bug_report"
         android:orderInCategory="6"
         android:title="Take Bug Report"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:visible="false"/>
 
     <item
         android:id="@+id/router_list_donate"
