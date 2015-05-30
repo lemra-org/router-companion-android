@@ -153,7 +153,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("Add Reboot Widget");
+            mToolbar.setTitle("Add Actions Widget");
             setSupportActionBar(mToolbar);
         }
         final ActionBar actionBar = getSupportActionBar();
