@@ -153,7 +153,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle("Add Reboot Widget");
+            mToolbar.setTitle("Add Actions Widget");
             setSupportActionBar(mToolbar);
         }
         final ActionBar actionBar = getSupportActionBar();
@@ -280,7 +280,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
         if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
                 allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
             //Download the full version to unlock this version
-            Utils.displayUpgradeMessage(this);
+            Utils.displayUpgradeMessage(this, "Manage a new Router");
             return;
         }
 

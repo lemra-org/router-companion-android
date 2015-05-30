@@ -26,6 +26,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.exceptions.RouterActionException;
+import org.rm3l.ddwrt.exceptions.acra.RouterActionTriggered;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -52,6 +54,13 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
 
     @Override
     protected final RouterActionResult doInBackground(Router... params) {
+        try {
+            //To get stats over the number of actions executed
+            Utils.reportException(new RouterActionTriggered("Action triggered: '" + routerAction + "'"));
+        } catch (final Exception e) {
+            //No worries
+        }
+
         final Router router = params[0];
         RouterActionResult actionResult = null;
         try {
@@ -59,7 +68,8 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
         } catch (final Exception e) {
             actionResult = new RouterActionResult(null, e);
             //Report exception
-            Utils.reportException(e);
+            Utils.reportException(new RouterActionException("Exception on Action '" + routerAction + "'",
+                    e));
         } finally {
             if (actionResult != null && listener != null) {
                 final Exception exception = actionResult.getException();
@@ -72,7 +82,8 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
                 } catch (final Exception listenerException) {
                     listenerException.printStackTrace();
                     //No Worries, but report exception
-                    Utils.reportException(listenerException);
+                    Utils.reportException(new RouterActionException("Listener Exception on Action '"
+                            + routerAction + "'", listenerException));
                 }
             }
         }
@@ -104,4 +115,5 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
             return exception;
         }
     }
+
 }

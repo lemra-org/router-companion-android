@@ -27,13 +27,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.common.base.Joiner;
+
+import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
@@ -59,6 +65,9 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
     @Override
     protected RouterActionResult doActionInBackground(@NonNull Router router) {
         Exception exception = null;
+        File outputFile = null;
+        final String remotePath = "/tmp/." + this.getClass().getSimpleName() + "_" + UUID.randomUUID() + ".sh";
+
         try {
             if (nvramInfo.isEmpty()) {
                 throw new IllegalArgumentException("No vars to set");
@@ -71,17 +80,52 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                 cmd[i++] = String.format("/usr/sbin/nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
             }
             cmd[cmd.length - 2] = "/usr/sbin/nvram commit";
-            cmd[cmd.length - 1] = withReboot ? "/sbin/reboot" : "";
+            cmd[cmd.length - 1] = (withReboot ? "/sbin/reboot" : "echo");
 
-            Log.d(LOG_TAG, "cmd: [" + Arrays.toString(cmd) + "]");
+            Log.d(LOG_TAG, "cmd: " + Arrays.toString(cmd));
 
-            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router, cmd);
+            //FIXME Seems there is a limit on the number of characters we can pass to the SSH server console
+            // => copy all those in a temporary file, upload the file to the router and exec it
+            outputFile = File.createTempFile(this.getClass().getSimpleName(), ".sh", mContext.getCacheDir());
+            FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmd));
+
+            //Now upload this file onto the remote router
+            if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, outputFile.getAbsolutePath(), remotePath)) {
+                throw new IllegalStateException("Failed to copy set of remote commands to the router");
+            }
+
+            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                    String.format("/bin/sh %s", remotePath));
             if (exitStatus != 0) {
                 throw new IllegalStateException("Error when running command.");
             }
+
+
+//            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router, cmd);
+//            if (exitStatus != 0) {
+//                throw new IllegalStateException("Error when running command.");
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             exception = e;
+        } finally {
+            try {
+                if (outputFile != null) {
+                    //noinspection ResultOfMethodCallIgnored
+                    outputFile.delete();
+                }
+            } catch (final Exception e) {
+                Utils.reportException(e);
+                //No worries
+            } finally {
+                try {
+                    SSHUtils.runCommands(mContext, globalSharedPreferences, router,
+                            "rm -rf " + remotePath);
+                } catch (final Exception e) {
+                    Utils.reportException(e);
+                    //No worries
+                }
+            }
         }
 
         return new RouterActionResult(null, exception);

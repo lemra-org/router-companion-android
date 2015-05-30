@@ -81,97 +81,101 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             @Override
             public NVRAMInfo loadInBackground() {
 
-                try {
-                    Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
-
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
-                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    nbRunsLoader++;
-
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-                    NVRAMInfo nvramInfoTmp = null;
-                    try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
-                                NVRAMInfo.LAN_IFNAMES,
-                                NVRAMInfo.WAN_IFNAME,
-                                NVRAMInfo.LANDEVS);
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
-
-                        String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS, null);
-                        if (Strings.isNullOrEmpty(landevs)) {
-                            //Atheros
-                            landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
-                            if (!Strings.isNullOrEmpty(landevs)) {
-                                //noinspection ConstantConditions
-                                nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
-                            }
-                        }
-                        if (landevs != null) {
-                            final List<String> splitToList =
-                                    SPLITTER.splitToList(landevs);
-                            if (splitToList != null && !splitToList.isEmpty()) {
-
-                                for (final String landev : splitToList) {
-                                    if (landev == null || landev.isEmpty() ||
-                                            StringUtils.startsWithIgnoreCase(landev, "vlan")) {
-                                        continue;
-                                    }
-                                    //Also get Virtual Interfaces
-                                    try {
-                                        final String landevVifsKeyword = landev + "_vifs";
-                                        final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                                mGlobalPreferences,
-                                                landevVifsKeyword);
-                                        if (landevVifsNVRAMInfo == null) {
-                                            continue;
-                                        }
-                                        final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
-                                        if (landevVifsNVRAMInfoProp == null) {
-                                            continue;
-                                        }
-                                        final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
-                                        if (list == null) {
-                                            continue;
-                                        }
-                                        for (final String landevVif : list) {
-                                            if (landevVif == null || landevVif.isEmpty()) {
-                                                continue;
-                                            }
-                                            landevs += (" " + landevVif);
-                                        }
-                                    } catch (final Exception e) {
-                                        e.printStackTrace();
-                                        //No worries
-                                    }
-                                }
-                            }
-
-                            nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
-                        }
-
-                    }
-
-                    if (nvramInfo.isEmpty()) {
-                        throw new DDWRTNoDataException("No Data");
-                    }
-
-                    return nvramInfo;
-
-                } catch (@NonNull final Exception e) {
-                    e.printStackTrace();
-                    return new NVRAMInfo().setException(e);
-                }
+                return IfacesTile.this.doLoadInBackground();
             }
         };
+    }
+
+    public NVRAMInfo doLoadInBackground() {
+        try {
+            Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
+                    mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+
+            if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                //Skip run
+                Log.d(LOG_TAG, "Skip loader run");
+                return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+            }
+            nbRunsLoader++;
+
+            final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+            NVRAMInfo nvramInfoTmp = null;
+            try {
+                nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                        mGlobalPreferences, NVRAMInfo.LAN_IFNAME,
+                        NVRAMInfo.LAN_IFNAMES,
+                        NVRAMInfo.WAN_IFNAME,
+                        NVRAMInfo.LANDEVS);
+            } finally {
+                if (nvramInfoTmp != null) {
+                    nvramInfo.putAll(nvramInfoTmp);
+                }
+
+                String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS, null);
+                if (Strings.isNullOrEmpty(landevs)) {
+                    //Atheros
+                    landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+                    if (!Strings.isNullOrEmpty(landevs)) {
+                        //noinspection ConstantConditions
+                        nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+                    }
+                }
+                if (landevs != null) {
+                    final List<String> splitToList =
+                            SPLITTER.splitToList(landevs);
+                    if (splitToList != null && !splitToList.isEmpty()) {
+
+                        for (final String landev : splitToList) {
+                            if (landev == null || landev.isEmpty() ||
+                                    StringUtils.startsWithIgnoreCase(landev, "vlan")) {
+                                continue;
+                            }
+                            //Also get Virtual Interfaces
+                            try {
+                                final String landevVifsKeyword = landev + "_vifs";
+                                final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                        mGlobalPreferences,
+                                        landevVifsKeyword);
+                                if (landevVifsNVRAMInfo == null) {
+                                    continue;
+                                }
+                                final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                                if (landevVifsNVRAMInfoProp == null) {
+                                    continue;
+                                }
+                                final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+                                if (list == null) {
+                                    continue;
+                                }
+                                for (final String landevVif : list) {
+                                    if (landevVif == null || landevVif.isEmpty()) {
+                                        continue;
+                                    }
+                                    landevs += (" " + landevVif);
+                                }
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                //No worries
+                            }
+                        }
+                    }
+
+                    nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
+                }
+
+            }
+
+            if (nvramInfo.isEmpty()) {
+                throw new DDWRTNoDataException("No Data");
+            }
+
+            return nvramInfo;
+
+        } catch (@NonNull final Exception e) {
+            e.printStackTrace();
+            return new NVRAMInfo().setException(e);
+        }
     }
 
     @Override
@@ -187,7 +191,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
         layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view)
                 .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_bandwidth_ifaces_gridLayout)
+        layout.findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
                 .setVisibility(View.VISIBLE);
 
         if (data == null) {

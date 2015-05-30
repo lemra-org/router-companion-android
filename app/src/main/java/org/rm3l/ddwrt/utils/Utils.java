@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ApplicationErrorReport;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,24 +39,30 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.HttpParams;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.donate.DonateActivity;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Random;
@@ -67,6 +74,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.FIRST_APP_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
 
@@ -191,26 +199,29 @@ public final class Utils {
         final SharedPreferences defaultSharedPreferences = context
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
 
-        final boolean isFirstLaunch = defaultSharedPreferences.getBoolean(IS_FIRST_LAUNCH_PREF_KEY, true);
+        final boolean isFirstLaunch = defaultSharedPreferences.getBoolean(FIRST_APP_LAUNCH_PREF_KEY, true);
         Log.i(TAG, "isFirstLaunch: " + isFirstLaunch);
         if (isFirstLaunch) {
             //Store flag
             defaultSharedPreferences.edit()
                     .remove(OLD_IS_FIRST_LAUNCH_PREF_KEY)
-                    .putBoolean(IS_FIRST_LAUNCH_PREF_KEY, false)
+                    .remove(IS_FIRST_LAUNCH_PREF_KEY)
+                    .putBoolean(FIRST_APP_LAUNCH_PREF_KEY, false)
                     .apply();
         }
         return isFirstLaunch;
     }
 
-    @NonNull
-    public static DefaultHttpClient getThreadSafeClient() {
-        final DefaultHttpClient client = new DefaultHttpClient();
-        final ClientConnectionManager mgr = client.getConnectionManager();
-        final HttpParams params = client.getParams();
-
-        return new DefaultHttpClient(new ThreadSafeClientConnManager(params,
-                mgr.getSchemeRegistry()), params);
+    @Nullable
+    public static String getAppOriginInstallerPackageName(@NonNull final Context context) {
+        try {
+            return context.getPackageManager()
+                    .getInstallerPackageName(context.getPackageName());
+        } catch (final Exception e) {
+            //just in case...
+            Utils.reportException(e);
+            return null;
+        }
     }
 
     /* Checks if external storage is available for read and write */
@@ -227,22 +238,25 @@ public final class Utils {
 
     public static void displayUpgradeMessageForAdsRemoval(@NonNull final Context ctx) {
         //Download the full version to unlock this version
-        displayUpgradeMessage(ctx, "Unlock all premium features " +
+        displayUpgradeMessage(ctx, "Go Premium",
+                "Unlock all premium features " +
                 "by upgrading to the full-featured version " +
                 (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
                 "Thank you for supporting this initiative!");
     }
 
-    public static void displayUpgradeMessage(@NonNull final Context ctx) {
+    public static void displayUpgradeMessage(@NonNull final Context ctx, String featureTitle) {
         //Download the full version to unlock this version
-        displayUpgradeMessage(ctx, "Unlock this feature by upgrading to the full-featured version " +
+        displayUpgradeMessage(ctx, featureTitle, "Unlock this feature by upgrading to the full-featured version " +
                 (BuildConfig.WITH_ADS ? " (ad-free)" : "") + " on Google Play Store. \n\n" +
                 "Thank you for supporting this initiative!");
     }
 
-    public static void displayUpgradeMessage(@NonNull final Context ctx, @NonNull final String message) {
+    public static void displayUpgradeMessage(@NonNull final Context ctx, @Nullable final String featureTitle,
+                                             @NonNull final String message) {
         //Download the full version to unlock this version
         new AlertDialog.Builder(ctx)
+                .setTitle(featureTitle)
                 .setMessage(message)
                 .setCancelable(true)
                 .setPositiveButton("Upgrade!", new DialogInterface.OnClickListener() {
@@ -328,6 +342,82 @@ public final class Utils {
 
     public static int getRandomIntId(final int upperLimit) {
         return RANDOM.nextInt(upperLimit);
+    }
+
+    public static Spannable linkifyHtml(@NonNull final String html, final int linkifyMask) {
+        final Spanned text = Html.fromHtml(html);
+        final URLSpan[] currentSpans = text.getSpans(0, text.length(), URLSpan.class);
+
+        final SpannableString buffer = new SpannableString(text);
+
+        Linkify.addLinks(buffer, linkifyMask);
+
+        for (final URLSpan span : currentSpans) {
+            int end = text.getSpanEnd(span);
+            int start = text.getSpanStart(span);
+            buffer.setSpan(span, start, end, 0);
+        }
+
+        return buffer;
+    }
+
+    public static String getShareIntentFooter() {
+        return String.format("<br/><br/>-- Generated by '<a href=\"%s\">DD-WRT Companion</a>'",
+                DDWRTCompanionConstants.SUPPORT_WEBSITE);
+    }
+
+    public static void takeBugReport(@NonNull final Activity activity) {
+
+        BugReportException bugReportException = new BugReportException();
+
+        try {
+
+            final ApplicationErrorReport report = new ApplicationErrorReport();
+            report.packageName = report.processName = activity.getApplication().getPackageName();
+            report.time = System.currentTimeMillis();
+            report.type = ApplicationErrorReport.TYPE_CRASH;
+            report.systemApp = false;
+
+            final ApplicationErrorReport.CrashInfo crash = new ApplicationErrorReport.CrashInfo();
+            crash.exceptionClassName = bugReportException.getClass().getSimpleName();
+            crash.exceptionMessage = bugReportException.getMessage();
+
+            final StringWriter writer = new StringWriter();
+            PrintWriter printer = new PrintWriter(writer);
+            bugReportException.printStackTrace(printer);
+
+            crash.stackTrace = writer.toString();
+
+            final StackTraceElement stack = bugReportException.getStackTrace()[0];
+            crash.throwClassName = stack.getClassName();
+            crash.throwFileName = stack.getFileName();
+            crash.throwLineNumber = stack.getLineNumber();
+            crash.throwMethodName = stack.getMethodName();
+
+            report.crashInfo = crash;
+
+            final Intent intent = new Intent(Intent.ACTION_APP_ERROR);
+            intent.putExtra(Intent.EXTRA_BUG_REPORT, report);
+            activity.startActivity(intent);
+
+        } catch (final Exception e) {
+            Toast.makeText(activity, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+                    .show();
+            bugReportException = new BugReportException(e.getMessage(), e);
+
+        } finally {
+            Utils.reportException(bugReportException);
+        }
+    }
+
+    protected static final class BugReportException extends DDWRTCompanionException {
+
+        public BugReportException() {
+        }
+
+        public BugReportException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+            super(detailMessage, throwable);
+        }
     }
 
 }

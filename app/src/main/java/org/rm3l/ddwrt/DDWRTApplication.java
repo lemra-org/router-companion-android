@@ -35,6 +35,11 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -51,9 +56,19 @@ import static org.rm3l.ddwrt.utils.Utils.isFirstLaunch;
         mode = ReportingInteractionMode.SILENT,
         sharedPreferencesName = DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
         sharedPreferencesMode = Context.MODE_PRIVATE,
-        buildConfigClass = BuildConfig.class
+        buildConfigClass = BuildConfig.class,
+        additionalSharedPreferences = {DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY}
 )
 public class DDWRTApplication extends Application {
+
+    private static final List<String> GOOGLE_INSTALLER_PACKAGE_NAMES =
+            Arrays.asList("com.android.vending", "com.google.android.feedback");
+
+    private static final List<String> AMAZON_INSTALLER_PACKAGE_NAMES =
+            Collections.singletonList("com.amazon.venezia");
+
+    private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
+            Collections.singletonList("");
 
     @Override
     public void onCreate() {
@@ -66,14 +81,30 @@ public class DDWRTApplication extends Application {
                 .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
 
         if (isFirstLaunch(this)) {
+            final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
             final FirstLaunch firstLaunchReport;
             if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
-                firstLaunchReport = new GoogleFirstLaunch();
+                if (GOOGLE_INSTALLER_PACKAGE_NAMES.contains(
+                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+                    firstLaunchReport = new GoogleFirstLaunch();
+                } else {
+                    firstLaunchReport = new GoogleUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+                }
             } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
-                firstLaunchReport = new AmazonFirstLaunch();
+                if (AMAZON_INSTALLER_PACKAGE_NAMES.contains(
+                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+                    firstLaunchReport = new AmazonFirstLaunch();
+                } else {
+                    firstLaunchReport = new AmazonUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+                }
             } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "fdroid")) {
-                firstLaunchReport = new FDroidFirstLaunch();
+                if (FDROID_INSTALLER_PACKAGE_NAMES.contains(
+                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+                    firstLaunchReport = new FDroidFirstLaunch();
+                } else {
+                    firstLaunchReport = new FDroidUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+                }
             } else {
                 firstLaunchReport = new FirstLaunch(FLAVOR);
             }
@@ -103,15 +134,33 @@ public class DDWRTApplication extends Application {
         }
     }
 
+    private final class GoogleUnknownOriginFirstLaunch extends FirstLaunch {
+        private GoogleUnknownOriginFirstLaunch(@Nullable final String installer) {
+            super("google: " + installer);
+        }
+    }
+
     private final class AmazonFirstLaunch extends FirstLaunch {
         private AmazonFirstLaunch() {
             super("amazon");
         }
     }
 
+    private final class AmazonUnknownOriginFirstLaunch extends FirstLaunch {
+        private AmazonUnknownOriginFirstLaunch(@Nullable final String installer) {
+            super("amazon: " + installer);
+        }
+    }
+
     private final class FDroidFirstLaunch extends FirstLaunch {
         private FDroidFirstLaunch() {
             super("fdroid");
+        }
+    }
+
+    private final class FDroidUnknownOriginFirstLaunch extends FirstLaunch {
+        private FDroidUnknownOriginFirstLaunch(@Nullable final String installer) {
+            super("fdroid: " + installer);
         }
     }
 }

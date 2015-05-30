@@ -26,36 +26,40 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 
-import org.achartengine.ChartFactory;
-import org.achartengine.chart.BarChart;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -70,13 +74,17 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 
 /**
@@ -86,11 +94,15 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
     protected static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
-    protected static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy");
+    protected static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy", Locale.US);
     private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
+    public static final String WAN_MONTHLY_TRAFFIC = "WANMonthlyTraffic";
     protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
 
     protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
+
+    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
@@ -147,7 +159,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             setLoadingViewVisibility(View.VISIBLE);
         }
 
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -158,7 +170,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                    if (isToggleStateActionRunning.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
                         //Skip run
                         Log.d(LOG_TAG, "Skip loader run");
                         throw new DDWRTTileAutoRefreshNotAllowedException();
@@ -171,7 +183,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         //noinspection ConstantConditions
                         nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
-                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "/usr/sbin/nvram show 2>/dev/null | grep traff[-_]"));
+                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                        "/usr/sbin/nvram show 2>/dev/null | grep traff[-_]"));
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -196,6 +209,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                     }
                     boolean updatePreferences = false;
 
+                    final Set<String> traffMonthsSet = new HashSet<>();
+
                     for (final Map.Entry<Object, Object> entry : entries) {
                         final Object key;
                         final Object value;
@@ -213,6 +228,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
                         if (editor != null) {
                             editor.putString(key.toString(), e(monthlyTraffData));
+                            traffMonthsSet.add(e(key.toString()));
                             updatePreferences = true;
                         }
 
@@ -227,7 +243,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                                 continue;
                             }
                             final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
-                            if (dailyInOutTraffDataList == null || dailyInOutTraffDataList.size() < 2) {
+                            if (dailyInOutTraffDataList.size() < 2) {
                                 continue;
                             }
                             final String inTraff = dailyInOutTraffDataList.get(0);
@@ -240,8 +256,14 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
-                    if (updatePreferences && editor != null) {
-                        editor.apply();
+                    if (updatePreferences) {
+                        editor
+                                .remove(WAN_MONTHLY_TRAFFIC)
+                                .apply();
+
+                        editor
+                                .putStringSet(WAN_MONTHLY_TRAFFIC, traffMonthsSet)
+                                .apply();
                         Utils.requestBackup(mParentFragmentActivity);
                     }
 
@@ -256,6 +278,8 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
 
             }
         };
+
+        return mLoader;
     }
 
     @Nullable
@@ -280,6 +304,9 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
 
         setLoadingViewVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wan_monthly_traffic_header_loading_view)
+                .setVisibility(View.GONE);
+        layout.findViewById(R.id.tile_status_wan_monthly_traffic_title).setVisibility(View.VISIBLE);
 
         Exception preliminaryCheckException = null;
         if (data == null) {
@@ -287,11 +314,34 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         } else //noinspection ThrowableResultOfMethodCallIgnored
             if (data.getException() == null) {
                 if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
-                    preliminaryCheckException = new IllegalStateException("Traffic monitoring disabled!");
+                    preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
                 } else if (traffData == null || traffData.isEmpty()) {
                     preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
                 }
             }
+
+        final SwitchCompat enableTraffDataButton =
+                (SwitchCompat) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_status);
+        enableTraffDataButton.setVisibility(View.VISIBLE);
+
+        final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData().containsKey(NVRAMInfo.TTRAFF_ENABLE));
+
+        if (!isToggleStateActionRunning.get()) {
+            if (makeToogleEnabled) {
+                if ("1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+                    //Enabled
+                    enableTraffDataButton.setChecked(true);
+                } else {
+                    //Disabled
+                    enableTraffDataButton.setChecked(false);
+                }
+                enableTraffDataButton.setEnabled(true);
+            } else {
+                enableTraffDataButton.setChecked(false);
+                enableTraffDataButton.setEnabled(false);
+            }
+            enableTraffDataButton.setOnClickListener(new ManageWANTrafficCounterToggle());
+        }
 
         if (preliminaryCheckException != null) {
             data = new NVRAMInfo().setException(preliminaryCheckException);
@@ -423,6 +473,7 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
             setVisibility(ctrlViews, View.GONE);
+
         } else {
             if (traffData == null || traffData.isEmpty()) {
                 errorPlaceHolderView.setText("Error: No Data!");
@@ -445,13 +496,15 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         String monthDisplayed = null;
         String yearDisplayed = null;
         final List<String> monthYearTextViewSplit = Splitter.on("-").omitEmptyStrings().splitToList(monthYearDisplayed);
-        if (monthYearTextViewSplit != null && monthYearTextViewSplit.size() >= 2) {
+        if (monthYearTextViewSplit.size() >= 2) {
             monthDisplayed = monthYearTextViewSplit.get(0);
             yearDisplayed = monthYearTextViewSplit.get(1);
         }
 
-        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ? new SimpleDateFormat("yyyy").format(currentDate) : yearDisplayed);
-        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ? new SimpleDateFormat("MM").format(currentDate) : monthDisplayed);
+        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ?
+                new SimpleDateFormat("yyyy", Locale.US).format(currentDate) : yearDisplayed);
+        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ?
+                new SimpleDateFormat("MM", Locale.US).format(currentDate) : monthDisplayed);
 
         return currentYearAndMonth;
     }
@@ -467,102 +520,206 @@ public class WANMonthlyTrafficTile extends DDWRTTile<NVRAMInfo> {
         return traffData.row(monthFormatted);
     }
 
-    private Intent renderTraffDateForMonth(@NonNull final String monthFormatted) {
+    private class DDWRTTraffDataDisabled extends DDWRTNoDataException {
 
-        Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted);
-
-        if (traffData == null) {
-            return null;
+        public DDWRTTraffDataDisabled(@Nullable String detailMessage) {
+            super(detailMessage);
         }
 
-        final ImmutableMap<Integer, ArrayList<Double>> row = traffData.row(monthFormatted);
-        if (row == null) {
-            return null;
-        }
+    }
 
-        final SortedMap<Integer, ArrayList<Double>> dailyTraffMap = new TreeMap<>(row);
+    private class ManageWANTrafficCounterToggle implements  View.OnClickListener {
 
-        if (dailyTraffMap.isEmpty()) {
-            return null;
-        }
+        private boolean enable;
 
-        Log.d(LOG_TAG, "renderTraffDateForMonth: " + monthFormatted + " / dailyTraffMap=" + dailyTraffMap);
+        @Override
+        public void onClick(View view) {
 
-        final int size = dailyTraffMap.size();
-        final int[] days = new int[size];
-        final double[] inData = new double[size];
-        final double[] outData = new double[size];
+            isToggleStateActionRunning.set(true);
 
-        int i = 0;
-        for (final Map.Entry<Integer, ArrayList<Double>> dailyTraffMapEntry : dailyTraffMap.entrySet()) {
-            final ArrayList<Double> dailyTraffMapEntryValue = dailyTraffMapEntry.getValue();
-            if (dailyTraffMapEntryValue == null || dailyTraffMapEntryValue.size() < 2) {
-                continue;
+            if (!(view instanceof CompoundButton)) {
+                Utils.reportException(new IllegalStateException("ManageWANTrafficCounterToggle#onClick: " +
+                        "view is NOT an instance of CompoundButton!"));
+                isToggleStateActionRunning.set(false);
+                return;
             }
-            final Double in = dailyTraffMapEntryValue.get(0);
-            final Double out = dailyTraffMapEntryValue.get(1);
-            if (in == null || out == null) {
-                continue;
+
+            final CompoundButton compoundButton = (CompoundButton) view;
+
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    compoundButton.setEnabled(false);
+                }
+            });
+
+            this.enable = compoundButton.isChecked();
+
+            final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
+
+            nvramInfoToSet.setProperty(NVRAMInfo.TTRAFF_ENABLE, enable ? "1" : "0");
+
+            //Also set traff data loaded from preferences, if any
+            if (enable && mParentFragmentPreferences != null) {
+                //Also restore traffic data we had in preferences
+                final Set<String> traffMonths = FluentIterable
+                        .from(
+                                Optional
+                                        .fromNullable(
+                                                mParentFragmentPreferences
+                                                        .getStringSet(WAN_MONTHLY_TRAFFIC,
+                                                                new HashSet<String>())
+                                        )
+                                        .or(new HashSet<String>())
+                        )
+                        .transform(new Function<String, String>() {
+                            @Override
+                            public String apply(@Nullable String input) {
+                                return d(input);
+                            }
+                        }).toSet();
+
+                for (final String traffMonth : traffMonths) {
+                    if (traffMonth == null || traffMonth.isEmpty()) {
+                        continue;
+                    }
+                    final String traffMonthDataSaved = d(
+                            mParentFragmentPreferences
+                                    .getString(traffMonth, null));
+                    if (traffMonthDataSaved == null || traffMonthDataSaved.isEmpty()) {
+                        continue;
+                    }
+                    nvramInfoToSet.setProperty(traffMonth, traffMonthDataSaved);
+                }
             }
-            days[i] = dailyTraffMapEntry.getKey();
-            inData[i] = in;
-            outData[i] = out;
-            i++;
+
+            new UndoBarController.UndoBar(mParentFragmentActivity)
+                    .message(String.format("WAN Traffic Counter will be %s on '%s' (%s). ",
+//                                    "Router will be rebooted at the end of the operation.",
+                            enable ? "enabled" : "disabled",
+                            mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()))
+                    .listener(new UndoBarController.AdvancedUndoListener() {
+                                  @Override
+                                  public void onHide(@Nullable Parcelable parcelable) {
+
+                                      Utils.displayMessage(mParentFragmentActivity,
+                                              String.format("%s WAN Traffic Counter...",
+                                                      enable ? "Enabling" : "Disabling"),
+                                              Style.INFO);
+
+                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                              nvramInfoToSet,
+                                              false,
+                                              new RouterActionListener() {
+                                                  @Override
+                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              try {
+
+                                                                  compoundButton.setChecked(enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("WAN Traffic Counter %s successfully on host '%s' (%s)",
+                                                                                  enable ? "enabled" : "disabled",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress()),
+                                                                          Style.CONFIRM);
+                                                              }
+
+                                                              finally
+                                                              {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                                  if (mLoader != null) {
+                                                                      //Reload everything right away
+                                                                      doneWithLoaderInstance(WANMonthlyTrafficTile.this,
+                                                                              mLoader,
+                                                                              1l,
+                                                                              R.id.tile_status_wan_monthly_traffic_togglebutton_title,
+                                                                              R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+                                                                  }
+
+                                                              }
+                                                          }
+                                                      });
+                                                  }
+
+                                                  @Override
+                                                  public void onRouterActionFailure(@NonNull RouterAction
+                                                                                            routerAction, @NonNull final Router
+                                                                                            router, @Nullable final Exception exception) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              try {
+                                                                  compoundButton.setChecked(!enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Error while trying to %s WAN Traffic Counter on '%s' (%s): %s",
+                                                                                  enable ? "enable" : "disable",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress(),
+                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                          Style.ALERT);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                              }
+                                                          }
+                                                      });
+
+
+                                                  }
+                                              }
+
+                                              ,
+                                              mGlobalPreferences).
+
+                                              execute(mRouter);
+
+                                  }
+
+                                  @Override
+                                  public void onClear(@NonNull Parcelable[] parcelables) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+
+                                  @Override
+                                  public void onUndo(@Nullable Parcelable parcelable) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+                              }
+
+                    )
+                    .
+
+                            token(new Bundle()
+
+                            )
+                    .
+
+                            show();
         }
-
-        // Creating an  XYSeries for Inbound
-        final XYSeries inboundSeries = new XYSeries("Inbound");
-        // Creating an  XYSeries for Outbound
-        final XYSeries outboundSeries = new XYSeries("Outbound");
-        // Adding data to In and Out Series
-        for (int j = 0; j < i; j++) {
-            inboundSeries.add(j, inData[j]);
-            outboundSeries.add(j, outData[j]);
-        }
-
-        // Creating a dataset to hold each series
-        final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        // Adding inbound Series to the dataset
-        dataset.addSeries(inboundSeries);
-        // Adding outbound Series to dataset
-        dataset.addSeries(outboundSeries);
-
-        // Creating XYSeriesRenderer to customize inboundSeries
-        final XYSeriesRenderer inboundRenderer = new XYSeriesRenderer();
-        inboundRenderer.setColor(Color.rgb(130, 130, 230));
-        inboundRenderer.setFillPoints(true);
-        inboundRenderer.setLineWidth(2);
-        inboundRenderer.setDisplayChartValues(true);
-
-        // Creating XYSeriesRenderer to customize outboundSeries
-        final XYSeriesRenderer outboundRenderer = new XYSeriesRenderer();
-        outboundRenderer.setColor(Color.rgb(220, 80, 80));
-        outboundRenderer.setFillPoints(true);
-        outboundRenderer.setLineWidth(2);
-        outboundRenderer.setDisplayChartValues(true);
-
-        // Creating a XYMultipleSeriesRenderer to customize the whole chart
-        final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-        multiRenderer.setXLabels(i);
-        multiRenderer.setChartTitle("Traffic Data for '" + monthFormatted + "'");
-        multiRenderer.setXTitle("Days");
-        multiRenderer.setYTitle("Traffic (MB)");
-        multiRenderer.setZoomButtonsVisible(true);
-        for (int k = 0; k < i; k++) {
-            multiRenderer.addXTextLabel(k, String.valueOf(days[k]));
-        }
-//        for(int k = 0; k < days.length; k++) {
-//            multiRenderer.addXTextLabel(k, String.valueOf(k));
-//        }
-
-        // Adding inboundRenderer and outboundRenderer to multipleRenderer
-        // Note: The order of adding dataseries to dataset and renderers to multipleRenderer
-        // should be same
-        multiRenderer.addSeriesRenderer(inboundRenderer);
-        multiRenderer.addSeriesRenderer(outboundRenderer);
-
-        return ChartFactory.getBarChartIntent(this.mParentFragmentActivity, dataset,
-                multiRenderer, BarChart.Type.DEFAULT);
-
     }
 }

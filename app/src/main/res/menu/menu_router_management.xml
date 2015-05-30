@@ -44,14 +44,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/router_list_feedback"
-        android:alphabeticShortcut="f"
-        android:icon="@drawable/ic_action_action_thumbs_up_down"
-        android:orderInCategory="5"
-        android:title="@string/feedback"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/router_list_actions"
         android:alphabeticShortcut="A"
         android:icon="@drawable/ic_action_action_launch"
@@ -90,6 +82,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </menu>
     </item>
 
+
     <item
         android:id="@+id/router_list_settings"
         android:alphabeticShortcut="s"
@@ -100,20 +93,43 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 
     <item
+        android:id="@+id/router_list_feedback"
+        android:alphabeticShortcut="f"
+        android:icon="@drawable/ic_action_action_thumbs_up_down"
+        android:orderInCategory="5"
+        android:title="@string/feedback"
+        app:showAsAction="ifRoom" />
+
+    <!-- Seems redundant with the Feedback menu item -->
+    <item
+        android:id="@+id/router_list_take_bug_report"
+        android:orderInCategory="6"
+        android:title="Take Bug Report"
+        app:showAsAction="never"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/router_list_donate"
         android:alphabeticShortcut="d"
         android:icon="@drawable/ic_action_action_payment"
         android:orderInCategory="8"
         android:title="@string/menuitem_donate"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/help"
+        android:alphabeticShortcut="H"
+        android:icon="@android:drawable/ic_menu_help"
+        android:orderInCategory="9"
+        android:title="@string/help"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
         android:icon="@drawable/ic_action_social_person"
-        android:orderInCategory="9"
+        android:orderInCategory="10"
         android:title="@string/menuitem_about"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 </menu>

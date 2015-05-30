@@ -44,6 +44,7 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -625,6 +626,13 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
+
+        if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+            //Not allowed
+            Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit OpenVPN Client Settings");
+            return null;
+        }
+
         if (mNvramInfo == null) {
             //Loading
             Utils.displayMessage(mParentFragmentActivity, "Loading data from router - please wait a few seconds.", Style.ALERT);

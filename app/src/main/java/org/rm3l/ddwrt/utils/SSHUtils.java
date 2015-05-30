@@ -504,7 +504,8 @@ public final class SSHUtils {
                     }
                     if (routerStreamActionListener != null) {
                         routerStreamActionListener
-                                .notifyRouterActionProgress(routerAction, routerCopy, progress++, new String(tmp, 0, i));
+                                .notifyRouterActionProgress(routerAction, routerCopy, progress++,
+                                        new String(tmp, 0, i));
                     }
                 }
                 if (channelExec.isClosed()) {
@@ -514,7 +515,7 @@ public final class SSHUtils {
                     exitStatus = channelExec.getExitStatus();
                     break;
                 }
-                Thread.sleep(300l);
+                Thread.sleep(100l);
             }
 
         } finally {
@@ -818,7 +819,7 @@ public final class SSHUtils {
     }
 
     public static boolean scpFrom(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
-                                  @NonNull final String fromRemotePath, @NonNull final String toLocalPath)
+                                  @NonNull final String fromRemotePath, @NonNull final String toLocalPath, boolean skipDataSyncPreferene)
             throws Exception {
         Log.d(TAG, "scpFrom: <router=" + router + " / fromRemotePath=" + fromRemotePath +
                 ", toLocalPath=" + toLocalPath + ">");
@@ -826,7 +827,9 @@ public final class SSHUtils {
             throw new IllegalArgumentException("No connection parameters");
         }
 //
-        checkDataSyncAlllowedByUsagePreference(ctx);
+        if (!skipDataSyncPreferene) {
+            checkDataSyncAlllowedByUsagePreference(ctx);
+        }
 
         FileInputStream fis = null;
         FileOutputStream fos = null;

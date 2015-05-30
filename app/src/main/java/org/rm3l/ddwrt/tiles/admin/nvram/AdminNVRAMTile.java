@@ -35,6 +35,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -64,6 +65,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.router.StatusRouterSpaceUsageTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -404,7 +406,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(mParentFragmentActivity, "org.rm3l.fileprovider", file);
+                .getUriForFile(mParentFragmentActivity, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -418,13 +420,19 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         if (mRouter != null) {
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("NVRAM Variables dump from router '%s' (%s)",
-                    mRouter.getName(), mRouter.getRemoteIpAddress()));
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                    String.format("NVRAM Variables from Router '%s' (%s)",
+                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
         }
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                Html.fromHtml(Utils.getShareIntentFooter()));
+
         sendIntent.setData(uriForFile);
-        sendIntent.setType("text/plain");
+//        sendIntent.setType("text/plain");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
 

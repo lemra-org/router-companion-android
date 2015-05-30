@@ -36,6 +36,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -365,7 +367,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -379,6 +381,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
                         mByFilter.getDisplayName(), nullToEmpty(mRouter), mObservationDate));
@@ -386,11 +389,14 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         final String fullConnectionCountMap = Joiner.on("\n").withKeyValueSeparator(": ").useForNull("???").join(mConnectionsCountMap);
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                String.format("Connections Count Breakdown (by %s) on %s\n\n%s",
-                        mByFilter.getDisplayName(), mObservationDate, fullConnectionCountMap));
+                Html.fromHtml(String.format("Connections Count Breakdown (by %s) on %s\n\n%s" +
+                                "%s",
+                        mByFilter.getDisplayName(), mObservationDate,
+                        fullConnectionCountMap, Utils.getShareIntentFooter())
+                        .replaceAll("\n", "<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("image/png");
+//        sendIntent.setType("image/png");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
     }

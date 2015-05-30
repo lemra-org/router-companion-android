@@ -23,7 +23,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 v%VERSION_NAME%<br/><br/>
 Copyright &copy; 2014 Armel S.<br/><br/>
 
-<b><a href="http://apps.rm3l.org/ddwrt" target="_blank">http://apps.rm3l.org/ddwrt</a></b>
-<!--<b><a href="https://github.com/rm3l/ddwrt-companion/tree/master/android" target="_blank">https://github.com/rm3l/ddwrt-companion/tree/master/android</a></b>-->
+<b><a href="%SUPPORT_WEBSITE_HREF%" target="_blank">http://ddwrt-companion.rm3l.org</a></b>
 <br><br>
-<a href="mailto:apps@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>
+<a href="mailto:apps+ddwrt@rm3l.org?subject=DD-WRT%20Companion%20Android%20Application">apps+ddwrt@rm3l.org</a>

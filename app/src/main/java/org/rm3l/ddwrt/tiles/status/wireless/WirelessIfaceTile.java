@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -105,6 +106,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     public WirelessIfaceTile(@NonNull String iface, @Nullable String parentIface, @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
 //        super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, R.id.tile_status_wireless_iface_togglebutton);
         super(parentFragment, arguments, router, R.layout.tile_status_wireless_iface, null);
+
+        if (Looper.myLooper() == null) {
+            //Check for this - otherwise it yields the following error:
+            // "only one looper may be created per thread")
+            //cf. http://stackoverflow.com/questions/23038682/java-lang-runtimeexception-only-one-looper-may-be-created-per-thread
+            Looper.prepare();
+        }
+
         this.iface = iface;
         this.parentIface = parentIface;
         ((TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_title)).setText(this.iface);
@@ -268,12 +277,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
                         if (rxBps != null) {
                             nvramInfo.setProperty(wlIface + "_rx_rate_human_readable",
-                                    rxBps + " B (" + FileUtils.byteCountToDisplaySize(rxBps)
+                                    rxBps + " B\n(" + FileUtils.byteCountToDisplaySize(rxBps)
                                             + ")");
                         }
                         if (txBps != null) {
                             nvramInfo.setProperty(wlIface + "_tx_rate_human_readable",
-                                    txBps + " B (" + FileUtils.byteCountToDisplaySize(txBps) + ")");
+                                    txBps + " B\n(" + FileUtils.byteCountToDisplaySize(txBps) + ")");
                         }
 
                         //Packet Info
@@ -289,12 +298,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                             if (packetsInfo != null) {
                                 final long rxErrors = Long.parseLong(packetsInfo[1]);
                                 nvramInfo.setProperty(wlIface + "_rx_packets",
-                                        String.format("%s (%s)",
+                                        String.format("%s\n(%s)",
                                                 packetsInfo[0], rxErrors <= 0 ? "no error" :
                                                         (rxErrors + String.format("error%s", rxErrors > 1 ? "s" : ""))));
                                 final long txErrors = Long.parseLong(packetsInfo[3]);
                                 nvramInfo.setProperty(wlIface + "_tx_packets",
-                                        String.format("%s (%s)",
+                                        String.format("%s\n(%s)",
                                                 packetsInfo[2], txErrors <= 0 ? "no error" :
                                                         (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                             }
@@ -427,6 +436,19 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         //Set tiles
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
+
+        buildView(data);
+
+//        doneWithLoaderInstance(this, loader,
+//                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
+        doneWithLoaderInstance(this, loader);
+
+        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+    }
+
+    public void buildView(@Nullable NVRAMInfo data) {
+
+        Log.d(LOG_TAG, "buildView: " + iface + " / data=" + data);
 
         layout.findViewById(R.id.tile_status_wireless_iface_loading_view)
                 .setVisibility(View.GONE);
@@ -592,12 +614,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
-
-//        doneWithLoaderInstance(this, loader,
-//                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
-        doneWithLoaderInstance(this, loader);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @Nullable
@@ -649,7 +665,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             case R.id.tile_status_wireless_iface_traffic_shaping:
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity);
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Traffic Shaping");
                     return true;
                 }
 

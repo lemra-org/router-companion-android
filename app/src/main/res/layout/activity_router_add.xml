@@ -306,7 +306,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:hint="Password or key passphrase, if applicable"
+                    android:hint="e.g., 'default' (may be empty)"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
                     android:maxLines="1"/>

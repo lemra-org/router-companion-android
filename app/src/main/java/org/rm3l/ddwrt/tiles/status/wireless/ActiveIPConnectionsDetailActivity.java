@@ -42,6 +42,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -73,6 +74,7 @@ import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedInputStream;
@@ -896,7 +898,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -910,14 +912,19 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Active IP Connections on Router '" +
                 mRouterRemoteIp + "' on " + mObservationDate);
+        String body = "";
         if (!isNullOrEmpty(mConnectedHost)) {
-            sendIntent.putExtra(Intent.EXTRA_TEXT, mTitle + " on " + mObservationDate);
+            body  = (mTitle + " on " + mObservationDate);
         }
+        body += Utils.getShareIntentFooter();
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(body.replaceAll("\n", "<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("text/plain");
+//        sendIntent.setType("text/plain");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
 

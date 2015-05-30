@@ -49,7 +49,7 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
             final int exitStatus = SSHUtils
                     .runCommands(mContext, globalSharedPreferences, router,
                             Joiner.on(" ; ").skipNulls(),
-                            "erase nvram", "reboot");
+                            "erase nvram", "/sbin/reboot");
             if (exitStatus != 0) {
                 throw new IllegalStateException();
             }

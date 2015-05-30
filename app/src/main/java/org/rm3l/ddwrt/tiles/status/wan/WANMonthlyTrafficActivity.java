@@ -38,6 +38,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
+import com.purplebrain.adbuddiz.sdk.AdBuddizError;
+import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -62,6 +66,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -135,6 +140,17 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_adView));
 
+        if (BuildConfig.WITH_ADS) {
+            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
+            if (BuildConfig.DEBUG) {
+                AdBuddiz.setTestModeActive();
+                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
+            } else {
+                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
+            }
+            AdBuddiz.cacheAds(this);
+        }
+
         final Intent intent = getIntent();
         mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -176,18 +192,44 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
     @Override
     public void finish() {
-        if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-                mInterstitialAd.setAdListener(new AdListener() {
-                    @Override
-                    public void onAdClosed() {
+        if (BuildConfig.WITH_ADS) {
+
+            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                @Override
+                public void didFailToShowAd(AdBuddizError adBuddizError) {
+                    super.didFailToShowAd(adBuddizError);
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                WANMonthlyTrafficActivity.super.finish();
+                            }
+                        });
+
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            WANMonthlyTrafficActivity.super.finish();
+                        }
+
+                    } else {
                         WANMonthlyTrafficActivity.super.finish();
                     }
-                });
+                }
+
+                @Override
+                public void didHideAd() {
+                    super.didHideAd();
+                    WANMonthlyTrafficActivity.super.finish();
+                }
+            });
+
+            if (AdBuddiz.isReadyToShowAd(this)) {
+                AdBuddiz.showAd(this);
             } else {
                 super.finish();
             }
+
         } else {
             super.finish();
         }
@@ -473,7 +515,7 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -490,18 +532,22 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("WAN Monthly Traffic on '%s': %s", mRouter, mMonthDisplayed));
+                String.format("WAN Monthly Traffic for Router '%s': %s", mRouter, mMonthDisplayed));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
-                String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s",
+                Html.fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
+                                "%s",
                         totalInBytes, byteCountToDisplaySize(Double.valueOf(totalInBytes).longValue())
                                 .replace("bytes", "B"),
                         totalOutBytes, byteCountToDisplaySize(Double.valueOf(totalOutBytes).longValue())
                                 .replace("bytes", "B"),
-                        Joiner.on("\n").skipNulls().join(breakdownLines)));
+                        Joiner.on("\n").skipNulls().join(breakdownLines),
+                        Utils.getShareIntentFooter())
+                        .replaceAll("\n", "<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("image/png");
+//        sendIntent.setType("image/png");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
     }

@@ -23,44 +23,32 @@
 package org.rm3l.ddwrt.fragments.status;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfacesTile;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.Utils;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 /**
  *
@@ -80,113 +68,112 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new WirelessIfacesTile(this, savedInstanceState, router));
+        return Collections.<DDWRTTile>
+                singletonList(new WirelessIfacesTile(this, savedInstanceState, router));
     }
 
-    @Nullable
-    @Override
-    protected Loader<Collection<WirelessIfaceTile>> getLoader(final int id, @NonNull final Bundle args) {
+//    @Nullable
+//    @Override
+//    protected Loader<Collection<WirelessIfaceTile>> getLoader(final int id, @NonNull final Bundle args) {
+//
+//        mLoader = new AsyncTaskLoader<Collection<WirelessIfaceTile>>(getActivity()) {
+//
+//            @Nullable
+//            @Override
+//            public Collection<WirelessIfaceTile> loadInBackground() {
+//                return getWirelessIfaceTiles(args, getActivity(), StatusWirelessFragment.this, router);
+//            }
+//
+//
+//        };
+//        return mLoader;
+//
+//    }
 
-        mLoader = new AsyncTaskLoader<Collection<WirelessIfaceTile>>(getActivity()) {
+    public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
+                                                                      FragmentActivity activity,
+                                                                      Fragment parentFragment,
+                                                                      Router router) {
+        try {
+            Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
+                    router);
 
-            @Nullable
-            @Override
-            public Collection<WirelessIfaceTile> loadInBackground() {
 
-                try {
-                    Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
-                            router);
+            final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
+                    activity
+                            .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                    Context.MODE_PRIVATE),
+                    NVRAMInfo.LANDEVS,
+                    NVRAMInfo.LAN_IFNAMES);
 
-                    final Fragment parentFragment = StatusWirelessFragment.this;
+            if (nvramInfo == null) {
+                return null;
+            }
 
-                    if (DDWRTCompanionConstants.TEST_MODE) {
-                        return Arrays.asList(new WirelessIfaceTile("eth0.test", parentFragment, args, router),
-                                new WirelessIfaceTile("eth1.test", parentFragment, args, router),
-                                new WirelessIfaceTile("eth2.test", parentFragment, args, router));
-                    }
-
-                    final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(this.getContext(), StatusWirelessFragment.this.router,
-                            getActivity()
-                                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                            Context.MODE_PRIVATE),
-                            NVRAMInfo.LANDEVS,
-                            NVRAMInfo.LAN_IFNAMES);
-
-                    if (nvramInfo == null) {
-                        return null;
-                    }
-
-                    String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
-                    if (Strings.isNullOrEmpty(landevs)) {
-                        //Atheros
-                        landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
-                        if (!Strings.isNullOrEmpty(landevs)) {
-                            //noinspection ConstantConditions
-                            nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
-                        }
-                    }
-
-                    final List<String> splitToList = SPLITTER.splitToList(landevs);
-                    if (splitToList == null || splitToList.isEmpty()) {
-                        return null;
-                    }
-
-                    final List<WirelessIfaceTile> tiles = Lists.newArrayList();
-
-                    for (final String landevRaw : splitToList) {
-                        if (landevRaw == null || landevRaw.isEmpty()) {
-                            continue;
-                        }
-                        final String landev = landevRaw.trim();
-                        if (startsWithIgnoreCase(landev, "vlan")) {
-                            continue;
-                        }
-
-                        tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
-                        //Also get Virtual Interfaces
-                        try {
-                            final String landevVifsKeyword = landev + "_vifs";
-                            final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(getContext(), StatusWirelessFragment.this.router,
-                                    getActivity()
-                                            .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
-                                    landevVifsKeyword);
-                            if (landevVifsNVRAMInfo == null) {
-                                continue;
-                            }
-                            final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
-                            if (landevVifsNVRAMInfoProp == null) {
-                                continue;
-                            }
-                            final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
-                            if (list == null) {
-                                continue;
-                            }
-                            for (final String landevVif : list) {
-                                if (landevVif == null || landevVif.isEmpty()) {
-                                    continue;
-                                }
-                                tiles.add(new WirelessIfaceTile(landevVif, landev, parentFragment, args, router));
-                            }
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                            //No worries
-                        }
-                    }
-
-                    if (tiles.isEmpty()) {
-                        return null;
-                    }
-
-                    return tiles;
-
-                } catch (@NonNull final Exception e) {
-                    e.printStackTrace();
-                    return null;
+            String landevs = nvramInfo.getProperty(NVRAMInfo.LANDEVS);
+            if (Strings.isNullOrEmpty(landevs)) {
+                //Atheros
+                landevs = nvramInfo.getProperty(NVRAMInfo.LAN_IFNAMES, null);
+                if (!Strings.isNullOrEmpty(landevs)) {
+                    //noinspection ConstantConditions
+                    nvramInfo.setProperty(NVRAMInfo.LANDEVS, landevs);
                 }
             }
-        };
-        return mLoader;
 
+            final List<String> splitToList = SPLITTER.splitToList(landevs != null ? landevs : "");
+            if (splitToList.isEmpty()) {
+                return null;
+            }
+
+            final List<WirelessIfaceTile> tiles = Lists.newArrayList();
+
+            for (final String landevRaw : splitToList) {
+                if (landevRaw == null || landevRaw.isEmpty()) {
+                    continue;
+                }
+                final String landev = landevRaw.trim();
+                if (startsWithIgnoreCase(landev, "vlan")) {
+                    continue;
+                }
+
+                tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
+                //Also get Virtual Interfaces
+                try {
+                    final String landevVifsKeyword = landev + "_vifs";
+                    final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
+                            activity
+                                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                            landevVifsKeyword);
+                    if (landevVifsNVRAMInfo == null) {
+                        continue;
+                    }
+                    final String landevVifsNVRAMInfoProp = landevVifsNVRAMInfo.getProperty(landevVifsKeyword, DDWRTCompanionConstants.EMPTY_STRING);
+                    if (landevVifsNVRAMInfoProp == null) {
+                        continue;
+                    }
+                    final List<String> list = SPLITTER.splitToList(landevVifsNVRAMInfoProp);
+                    for (final String landevVif : list) {
+                        if (landevVif == null || landevVif.isEmpty()) {
+                            continue;
+                        }
+                        tiles.add(new WirelessIfaceTile(landevVif, landev, parentFragment, args, router));
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    //No worries
+                }
+            }
+
+            if (tiles.isEmpty()) {
+                return null;
+            }
+
+            return tiles;
+
+        } catch (@NonNull final Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -228,148 +215,148 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
      * @param loader The Loader that has finished.
      * @param tiles  The data generated by the Loader.
      */
-    @Override
-    public void onLoadFinished(final Loader<Collection<WirelessIfaceTile>> loader, @Nullable final Collection<WirelessIfaceTile> tiles) {
-        Log.d(LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
-        this.mIfaceTiles = tiles;
-
-        if (viewGroup == null || tiles == null || tiles.isEmpty()) {
-            return;
-        }
-
-        final FragmentActivity fragmentActivity = getActivity();
-        if (fragmentActivity == null) {
-            //Schedule next run
-            if (ddwrtMainActivity != null) {
-                mHandler.postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    ddwrtMainActivity.getSupportLoaderManager()
-                                            .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
-                                } catch (final Exception e) {
-                                    //No worries
-                                    Log.w(LOG_TAG, e);
-                                }
-
-                            }
-                        },
-                        ddwrtMainActivity.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
-                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
-                );
-            }
-            return;
-        }
-
-//        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
-        final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity);
-
-        final LinearLayout dynamicTilessViewGroup =
-                (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);
-
-        //Remove everything first
-        if (ifacesViews.isEmpty()) {
-            dynamicTilessViewGroup.removeAllViews();
-        }
-
-        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT);
-        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
-
-        final Resources resources = fragmentActivity.getResources();
-
-        for (final WirelessIfaceTile tile : tiles) {
-            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
-            if (tileViewGroupLayout == null) {
-                continue;
-            }
-
-            final String iface = tile.getIface();
-            if (ifacesViews.contains(iface)) {
-                continue;
-            }
-
-            ifacesViews.add(iface);
-
-            //Set header background color
-//            final View hdrView = tileViewGroupLayout.findViewById(tile.getTileHeaderViewId());
-//            if (hdrView != null) {
-//                hdrView.setBackgroundColor(fragmentColor);
+//    @Override
+//    public void onLoadFinished(final Loader<Collection<WirelessIfaceTile>> loader, @Nullable final Collection<WirelessIfaceTile> tiles) {
+//        Log.d(LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
+//        this.mIfaceTiles = tiles;
+//
+//        if (viewGroup == null || tiles == null || tiles.isEmpty()) {
+//            return;
+//        }
+//
+//        final FragmentActivity fragmentActivity = getActivity();
+//        if (fragmentActivity == null) {
+//            //Schedule next run
+//            if (ddwrtMainActivity != null) {
+//                mHandler.postDelayed(
+//                        new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    ddwrtMainActivity.getSupportLoaderManager()
+//                                            .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
+//                                } catch (final Exception e) {
+//                                    //No worries
+//                                    Log.w(LOG_TAG, e);
+//                                }
+//
+//                            }
+//                        },
+//                        ddwrtMainActivity.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
+//                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
+//                );
 //            }
-
-            if (isThemeLight) {
-                final View titleView = tileViewGroupLayout.findViewById(tile.getTileTitleViewId());
-                if (titleView instanceof TextView) {
-                    ((TextView) titleView)
-                            .setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
-                }
-            }
-
-            tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-            //Init loaders for these tiles
-            getActivity().getSupportLoaderManager()
-                    .restartLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
-
-            //Add row for this iface
-            final CardView cardView = new CardView(fragmentActivity);
-//            cardView.setCardBackgroundColor(themeBackgroundColor);
-
-            cardView.setOnClickListener(tile);
-            tileViewGroupLayout.setOnClickListener(tile);
-
-            cardView.setContentPadding(15, 5, 15, 5);
-            cardView.setLayoutParams(cardViewLayoutParams);
-//                cardView.setCardBackgroundColor(themeBackgroundColor);
-            //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-            cardView.setPreventCornerOverlap(true);
-            //Add padding in API v21+ as well to have the same measurements with previous versions.
-            cardView.setUseCompatPadding(true);
-
-            if (isThemeLight) {
-                //Light
-                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
-            } else {
-                //Default is Dark
-                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
-            }
-
-            cardView.addView(tileViewGroupLayout);
-
-            //Remove view prior to adding it again to parent
-            dynamicTilessViewGroup.addView(cardView);
-        }
-
-        //Make it visible now
-        dynamicTilessViewGroup.setVisibility(View.VISIBLE);
-
-        //Schedule next run
-        mHandler.postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (ddwrtMainActivity != null) {
-                                ddwrtMainActivity.getSupportLoaderManager()
-                                        .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
-                            } else {
-                                Log.w(LOG_TAG, "ddwrtMainActivity == null => next loader run will NOT be scheduled!");
-                            }
-                        } catch (final Exception e) {
-                            //No worries
-                            Log.w(LOG_TAG, e);
-                        }
-
-                    }
-                },
-                getActivity().getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
-                        getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
-        );
-    }
+//            return;
+//        }
+//
+////        final int themeBackgroundColor = getThemeBackgroundColor(fragmentActivity, router.getUuid());
+//        final boolean isThemeLight = ColorUtils.isThemeLight(fragmentActivity);
+//
+//        final LinearLayout dynamicTilessViewGroup =
+//                (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_dynamic_items);
+//
+//        //Remove everything first
+//        if (ifacesViews.isEmpty()) {
+//            dynamicTilessViewGroup.removeAllViews();
+//        }
+//
+//        final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+//                FrameLayout.LayoutParams.MATCH_PARENT,
+//                FrameLayout.LayoutParams.WRAP_CONTENT);
+//        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+//        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+//        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+//
+//        final Resources resources = fragmentActivity.getResources();
+//
+//        for (final WirelessIfaceTile tile : tiles) {
+//            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+//            if (tileViewGroupLayout == null) {
+//                continue;
+//            }
+//
+//            final String iface = tile.getIface();
+//            if (ifacesViews.contains(iface)) {
+//                continue;
+//            }
+//
+//            ifacesViews.add(iface);
+//
+//            //Set header background color
+////            final View hdrView = tileViewGroupLayout.findViewById(tile.getTileHeaderViewId());
+////            if (hdrView != null) {
+////                hdrView.setBackgroundColor(fragmentColor);
+////            }
+//
+//            if (isThemeLight) {
+//                final View titleView = tileViewGroupLayout.findViewById(tile.getTileTitleViewId());
+//                if (titleView instanceof TextView) {
+//                    ((TextView) titleView)
+//                            .setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+//                }
+//            }
+//
+//            tileViewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+//
+//            //Init loaders for these tiles
+//            getActivity().getSupportLoaderManager()
+//                    .restartLoader(Long.valueOf(Utils.getNextLoaderId()).intValue(), null, tile);
+//
+//            //Add row for this iface
+//            final CardView cardView = new CardView(fragmentActivity);
+////            cardView.setCardBackgroundColor(themeBackgroundColor);
+//
+//            cardView.setOnClickListener(tile);
+//            tileViewGroupLayout.setOnClickListener(tile);
+//
+//            cardView.setContentPadding(15, 5, 15, 5);
+//            cardView.setLayoutParams(cardViewLayoutParams);
+////                cardView.setCardBackgroundColor(themeBackgroundColor);
+//            //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//            cardView.setPreventCornerOverlap(true);
+//            //Add padding in API v21+ as well to have the same measurements with previous versions.
+//            cardView.setUseCompatPadding(true);
+//
+//            if (isThemeLight) {
+//                //Light
+//                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+//            } else {
+//                //Default is Dark
+//                cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+//            }
+//
+//            cardView.addView(tileViewGroupLayout);
+//
+//            //Remove view prior to adding it again to parent
+//            dynamicTilessViewGroup.addView(cardView);
+//        }
+//
+//        //Make it visible now
+//        dynamicTilessViewGroup.setVisibility(View.VISIBLE);
+//
+//        //Schedule next run
+//        mHandler.postDelayed(
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            if (ddwrtMainActivity != null) {
+//                                ddwrtMainActivity.getSupportLoaderManager()
+//                                        .restartLoader(loader.getId(), null, StatusWirelessFragment.this);
+//                            } else {
+//                                Log.w(LOG_TAG, "ddwrtMainActivity == null => next loader run will NOT be scheduled!");
+//                            }
+//                        } catch (final Exception e) {
+//                            //No worries
+//                            Log.w(LOG_TAG, e);
+//                        }
+//
+//                    }
+//                },
+//                getActivity().getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE).
+//                        getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS)
+//        );
+//    }
 
     /**
      * Called when the view previously created by {@link #onCreateView} has
@@ -380,15 +367,15 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
      * non-null view.  Internally it is called after the view's state has
      * been saved but before it has been removed from its parent.
      */
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mIfaceTiles != null) {
-            int l = 100;
-            final LoaderManager supportLoaderManager = getLoaderManager();
-            for (int i = l; i < l + mIfaceTiles.size(); i++) {
-                supportLoaderManager.destroyLoader(i);
-            }
-        }
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        if (mIfaceTiles != null) {
+//            int l = 100;
+//            final LoaderManager supportLoaderManager = getLoaderManager();
+//            for (int i = l; i < l + mIfaceTiles.size(); i++) {
+//                supportLoaderManager.destroyLoader(i);
+//            }
+//        }
+//    }
 }

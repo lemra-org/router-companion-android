@@ -10,8 +10,11 @@ import android.view.View;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.purplebrain.adbuddiz.sdk.AdBuddizDelegate;
+import com.purplebrain.adbuddiz.sdk.AdBuddizError;
 
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -99,5 +102,63 @@ public final class AdUtils {
         interstitialAd.loadAd(adRequest);
 
         return interstitialAd;
+    }
+
+    public static abstract class AdBuddizListener implements AdBuddizDelegate {
+
+        @Override
+        public void didCacheAd() {
+            Log.d(TAG, "ad cached");
+        }
+
+        @Override
+        public void didShowAd() {
+            Log.d(TAG, "ad displayed");
+        }
+
+        @Override
+        public void didFailToShowAd(AdBuddizError adBuddizError) {
+            Log.d(TAG, "failed to show ad: " + adBuddizError);
+            Utils.reportException(new AdFailedToShowEvent("AdBuddiz: " + adBuddizError));
+        }
+
+        @Override
+        public void didClick() {
+            Log.d(TAG, "ad clicked");
+            Utils.reportException(new AdClickEvent("AdBuddiz"));
+        }
+
+        @Override
+        public void didHideAd() {
+            Log.d(TAG, "ad hidden");
+        }
+    }
+
+    public static class AdEvent extends DDWRTCompanionException {
+
+        public AdEvent(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+    public static class AdClickEvent extends AdEvent {
+
+        public AdClickEvent(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+    public static class AdFailedToShowEvent extends AdEvent {
+
+        public AdFailedToShowEvent(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+    public static class AdHiddenEvent extends AdEvent {
+
+        public AdHiddenEvent(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
     }
 }

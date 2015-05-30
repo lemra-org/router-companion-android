@@ -32,6 +32,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -41,7 +42,9 @@ import com.google.common.base.Joiner;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -66,6 +69,7 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
     private String mCpuInfoMultiLine;
 
     private Toolbar mToolbar;
+    private Router mRouter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +107,16 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
 
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+
+        mRouter = RouterManagementActivity.getDao(this).getRouter(mRouterUuid);
+        if (mRouter == null) {
+            Toast.makeText(this, "Whoops - Router not found. Has it been deleted?",
+                    Toast.LENGTH_SHORT).show();
+            Utils.reportException(new IllegalStateException("Router not found"));
+            finish();
+            return;
+        }
+
         final String[] mCpuInfo = intent.getStringArrayExtra(CPU_INFO_OUTPUT);
 
         if (mCpuInfo == null || mCpuInfo.length == 0) {
@@ -192,7 +206,7 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -206,10 +220,19 @@ public class RouterCpuInfoActivity extends ActionBarActivity {
         final Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "CPU Info");
+
+        //sendIntent.setType("text/plain");
+        sendIntent.setType("text/html");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                String.format("CPU Info for Router '%s' (%s)",
+                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                Html.fromHtml(String.format("%s%s",
+                        mCpuInfoMultiLine, Utils.getShareIntentFooter())
+                        .replaceAll("\n", "<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("text/plain");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
 

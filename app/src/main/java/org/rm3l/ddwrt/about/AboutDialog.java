@@ -27,7 +27,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
@@ -35,12 +35,11 @@ import android.widget.TextView;
 import org.apache.commons.io.IOUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
-
-import static android.text.util.Linkify.EMAIL_ADDRESSES;
-import static android.text.util.Linkify.MAP_ADDRESSES;
-import static android.text.util.Linkify.WEB_URLS;
 
 /**
  * About Dialog: fills in the dialog with text retrieved from a given raw file
@@ -54,10 +53,11 @@ public class AboutDialog extends Dialog {
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
     public static final String DONATIONS_LIB_INFO_TXT = "%DONATIONS_LIB%";
-    private static final int[] BIT_FIELDS_TO_LINKIFY = new int[]{
-            EMAIL_ADDRESSES, MAP_ADDRESSES, WEB_URLS
-    };
+    public static final String SUPPORT_WEBSITE_HREF = "%SUPPORT_WEBSITE_HREF%";
+
     private final Context mContext;
+
+    private boolean isThemeLight;
 
     /**
      * Constructor
@@ -68,6 +68,7 @@ public class AboutDialog extends Dialog {
         super(context);
         mContext = context;
         super.setTitle(mContext.getString(R.string.menuitem_about));
+        isThemeLight = ColorUtils.isThemeLight(mContext);
     }
 
     /**
@@ -76,12 +77,13 @@ public class AboutDialog extends Dialog {
      * @param textView the text view
      * @param text     the text to set as content
      */
-    private void setTextContentAndLinkify(@NonNull final TextView textView, @NonNull final String text) {
-        textView.setText(Html.fromHtml(text));
-        textView.setLinkTextColor(mContext.getResources().getColor(R.color.ddwrt_green));
-        for (final int bitFieldToLinkify : BIT_FIELDS_TO_LINKIFY) {
-            Linkify.addLinks(textView, bitFieldToLinkify);
-        }
+    private void setTextContentAndLinkify(@NonNull final TextView textView,
+                                          @NonNull final String text) {
+        textView.setLinkTextColor(mContext.getResources().getColor(
+                isThemeLight ? R.color.ddwrt_green : R.color.win8_lime));
+        textView.setLinksClickable(true);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setText(Utils.linkifyHtml(text, Linkify.ALL));
     }
 
     /**
@@ -133,7 +135,8 @@ public class AboutDialog extends Dialog {
                     infoText
                             .replaceAll(APP_NAME_INFO_TXT, mContext.getString(mContext.getApplicationInfo().labelRes))
                             .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
-                            .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME));
+                            .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)
+                            .replaceAll(SUPPORT_WEBSITE_HREF, DDWRTCompanionConstants.SUPPORT_WEBSITE));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
 
@@ -145,7 +148,8 @@ public class AboutDialog extends Dialog {
                     contributorsTxt
                             .replaceAll(DONATIONS_LIB_INFO_TXT,
                                     BuildConfig.DONATIONS ?
-                                            "&#8226; <a href=\"https://github.com/dschuermann/android-donations-lib\" target=\"_blank\">android-donations-lib</a>" :
+                                            "&#8226; <a href=\"https://github.com/dschuermann/" +
+                                                    "android-donations-lib\" target=\"_blank\">android-donations-lib</a>" :
                                             ""));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);

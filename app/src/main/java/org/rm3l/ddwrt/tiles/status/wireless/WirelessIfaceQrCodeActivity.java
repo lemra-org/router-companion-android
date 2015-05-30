@@ -38,6 +38,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,12 +52,16 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
+import com.purplebrain.adbuddiz.sdk.AdBuddizError;
+import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedOutputStream;
@@ -177,6 +182,17 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
+
+        if (BuildConfig.WITH_ADS) {
+            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
+            if (BuildConfig.DEBUG) {
+                AdBuddiz.setTestModeActive();
+                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
+            } else {
+                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
+            }
+            AdBuddiz.cacheAds(this);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
         if (mToolbar != null) {
@@ -329,7 +345,7 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         }
 
         final Uri uriForFile = FileProvider
-                .getUriForFile(this, "org.rm3l.fileprovider", file);
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
 
         mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
@@ -344,11 +360,13 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("QR Code for Wireless Network '%s'", mSsid));
-        sendIntent.putExtra(Intent.EXTRA_TEXT,
-                ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText());
+        sendIntent.setType("text/html");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(String.format("%s%s",
+            ((TextView) findViewById(R.id.tile_status_wireless_iface_qrcode_note)).getText(),
+                Utils.getShareIntentFooter()).replaceAll("\n","<br/>")));
 
         sendIntent.setData(uriForFile);
-        sendIntent.setType("image/png");
+//        sendIntent.setType("image/png");
         sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setShareIntent(sendIntent);
 
@@ -370,21 +388,49 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
     @Override
     public void finish() {
-        if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-                mInterstitialAd.setAdListener(new AdListener() {
-                    @Override
-                    public void onAdClosed() {
+
+        if (BuildConfig.WITH_ADS) {
+
+            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
+                @Override
+                public void didFailToShowAd(AdBuddizError adBuddizError) {
+                    super.didFailToShowAd(adBuddizError);
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                WirelessIfaceQrCodeActivity.super.finish();
+                            }
+                        });
+
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            WirelessIfaceQrCodeActivity.super.finish();
+                        }
+
+                    } else {
                         WirelessIfaceQrCodeActivity.super.finish();
                     }
-                });
+                }
+
+                @Override
+                public void didHideAd() {
+                    super.didHideAd();
+                    WirelessIfaceQrCodeActivity.super.finish();
+                }
+            });
+
+            if (AdBuddiz.isReadyToShowAd(this)) {
+                AdBuddiz.showAd(this);
             } else {
                 super.finish();
             }
+
         } else {
             super.finish();
         }
+
     }
 
 }
