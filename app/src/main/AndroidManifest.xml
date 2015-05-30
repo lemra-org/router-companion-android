@@ -68,7 +68,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- FIXME Change this for the free app to 'org.rm3l.ddwrt.free.fileprovider' -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.rm3l.ddwrt.fileprovider"
+            android:authorities="org.rm3l.ddwrt.free.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data
