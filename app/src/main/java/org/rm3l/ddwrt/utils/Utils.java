@@ -39,6 +39,12 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -336,6 +342,23 @@ public final class Utils {
 
     public static int getRandomIntId(final int upperLimit) {
         return RANDOM.nextInt(upperLimit);
+    }
+
+    public static Spannable linkifyHtml(@NonNull final String html, final int linkifyMask) {
+        final Spanned text = Html.fromHtml(html);
+        final URLSpan[] currentSpans = text.getSpans(0, text.length(), URLSpan.class);
+
+        final SpannableString buffer = new SpannableString(text);
+
+        Linkify.addLinks(buffer, linkifyMask);
+
+        for (final URLSpan span : currentSpans) {
+            int end = text.getSpanEnd(span);
+            int start = text.getSpanStart(span);
+            buffer.setSpan(span, start, end, 0);
+        }
+
+        return buffer;
     }
 
     public static void takeBugReport(@NonNull final Activity activity) {
