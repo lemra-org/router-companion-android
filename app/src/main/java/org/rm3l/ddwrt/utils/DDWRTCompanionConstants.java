@@ -50,6 +50,8 @@ public final class DDWRTCompanionConstants {
             "8" +
             "I";
 
+    public static final String REMOTE_HELP_WEBSITE = "http://ddwrt-companion.rm3l.org";
+
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
@@ -70,14 +72,16 @@ public final class DDWRTCompanionConstants {
     public static final String DEFAULT_SHARED_PREFERENCES_KEY = \"fake-key\";
     public static final String MAC_OUI_SEARCH_URL = "http://standards.ieee.org/cgi-bin/ouisearch?";
     public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME = "wrtbwmon_ddwrtcompanion.sh";
-    public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE = "/tmp/." + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
+    public static final String WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE = ("/tmp/." +
+            WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
     public static final String DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN = "DDWRTCompWANAccess";
     public static final String OPENED_AT_LEAST_ONCE_PREF_KEY = \"fake-key\";
     public static final String EMPTY_VALUE_TO_DISPLAY = "-";
     public static final int MAX_ROUTERS_FREE_VERSION = 1;
 
     public static final String WIDGETS_PREFERENCES_KEY = \"fake-key\";
-    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
+//    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
+    public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
 

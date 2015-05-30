@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
+import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -452,6 +453,9 @@ public class RouterManagementActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.help:
+                this.startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case R.id.router_list_take_bug_report:
                 Utils.takeBugReport(this);

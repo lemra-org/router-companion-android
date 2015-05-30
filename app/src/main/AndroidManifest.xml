@@ -65,9 +65,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <!-- FIXME Change this for the free app to 'org.rm3l.ddwrt.free.fileprovider' -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.rm3l.fileprovider"
+            android:authorities="org.rm3l.ddwrt.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data
@@ -109,6 +110,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.rm3l.ddwrt.mgmt.RouterManagementActivity" />
         </activity>
+        <activity
+            android:name=".help.HelpActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/help"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".donate.DonateActivity"
             android:excludeFromRecents="true"

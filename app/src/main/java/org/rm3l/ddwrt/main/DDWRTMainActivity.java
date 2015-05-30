@@ -85,6 +85,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
+import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
@@ -730,6 +731,9 @@ public class DDWRTMainActivity extends ActionBarActivity
 ////                this.mCurrentRefreshAsyncTask.execute();
 //                return true;
 
+            case R.id.help:
+                this.startActivity(new Intent(this, HelpActivity.class));
+                return true;
             case R.id.action_settings:
                 //Open Settings activity for this item
                 final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
