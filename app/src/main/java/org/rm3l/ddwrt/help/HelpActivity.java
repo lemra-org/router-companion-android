@@ -65,6 +65,7 @@ public class HelpActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
 

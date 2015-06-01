@@ -163,6 +163,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         mLoadingView = (ProgressBar) findViewById(R.id.active_ip_connections_detail_pie_chart_loading_view);

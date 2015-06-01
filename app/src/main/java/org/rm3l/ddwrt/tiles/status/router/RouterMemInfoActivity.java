@@ -103,6 +103,7 @@ public class RouterMemInfoActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         final Intent intent = getIntent();
