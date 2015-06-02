@@ -452,7 +452,7 @@ public class RouterManagementActivity
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));

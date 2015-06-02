@@ -65,7 +65,11 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 /**
  * Abstract DDWRT Tile
  */
-public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManager.LoaderCallbacks<T>, CompoundButton.OnCheckedChangeListener {
+public abstract class DDWRTTile<T>
+        implements
+        View.OnClickListener,
+        LoaderManager.LoaderCallbacks<T>,
+        CompoundButton.OnCheckedChangeListener {
 
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NonNull
@@ -335,6 +339,8 @@ public abstract class DDWRTTile<T> implements View.OnClickListener, LoaderManage
         final Intent onClickIntent;
         if (onClickIntentAndListener != null &&
                 (onClickIntent = onClickIntentAndListener.getIntent()) != null) {
+
+            onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             if (BuildConfig.WITH_ADS) {
 
