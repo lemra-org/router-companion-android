@@ -490,6 +490,12 @@ public class RouterManagementActivity
                 return true;
             case R.id.router_list_actions_reboot_routers:
             {
+                if (routersList == null || routersList.isEmpty()) {
+                    Utils.displayMessage(RouterManagementActivity.this,
+                            "Empty Router list - action not submitted.",
+                            Style.INFO);
+                    return true;
+                }
                 final List<String> allRoutersStr = new ArrayList<>();
                 for (Router router : routersList) {
                     if (router == null) {
