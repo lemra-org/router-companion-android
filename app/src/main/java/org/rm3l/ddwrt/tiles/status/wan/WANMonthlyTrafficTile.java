@@ -656,7 +656,36 @@ public class WANMonthlyTrafficTile
                             @Override
                             public void run() {
                                 new EraseWANMonthlyTrafficRouterAction(mParentFragmentActivity,
-                                        WANMonthlyTrafficTile.this, mGlobalPreferences)
+                                        new RouterActionListener() {
+                                            @Override
+                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                try {
+                                                    WANMonthlyTrafficTile.this.onRouterActionSuccess(routerAction, router, returnData);
+                                                }  finally {
+                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            alertDialog.cancel();
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                try {
+                                                    WANMonthlyTrafficTile.this.onRouterActionFailure(routerAction, router, exception);
+                                                }  finally {
+                                                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            alertDialog.cancel();
+                                                        }
+                                                    });
+                                                }
+
+                                            }
+                                        }, mGlobalPreferences)
                                         .execute(mRouter);
                             }
                         }, 1500l);
