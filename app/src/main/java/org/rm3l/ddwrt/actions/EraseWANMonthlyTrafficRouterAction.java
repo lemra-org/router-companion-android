@@ -37,7 +37,7 @@ public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Voi
             final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(mContext,
                     router,
                     globalSharedPreferences,
-                    "traff-");
+                    "traff-.*");
 
             if (nvramInfo == null) {
                 throw new IllegalStateException("Failed to fetch WAN Traffic Data from Router");
