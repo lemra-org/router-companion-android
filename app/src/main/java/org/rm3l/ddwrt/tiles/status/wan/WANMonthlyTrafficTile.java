@@ -32,7 +32,9 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
@@ -114,6 +116,9 @@ public class WANMonthlyTrafficTile
     private static final String LOG_TAG = WANMonthlyTrafficTile.class.getSimpleName();
     public static final String WAN_MONTHLY_TRAFFIC = "WANMonthlyTraffic";
     public static final String WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE = "WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE";
+
+    public static final String RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG = "RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG";
+
     protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
 
     protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
@@ -192,7 +197,16 @@ public class WANMonthlyTrafficTile
                                             "Restore WAN Monthly Traffic Data");
                                     return true;
                                 }
-                                //TODO
+                                final FragmentManager supportFragmentManager = mParentFragmentActivity.getSupportFragmentManager();
+                                final Fragment restoreWANTraffic = supportFragmentManager
+                                        .findFragmentByTag(RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG);
+                                if (restoreWANTraffic instanceof DialogFragment) {
+                                    ((DialogFragment) restoreWANTraffic).dismiss();
+                                }
+                                final DialogFragment restoreFragment = RestoreWANMonthlyTrafficDialogFragment
+                                        .newInstance(mRouter.getUuid());
+                                restoreFragment.show(supportFragmentManager, RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG);
+
                                 return true;
                             case R.id.tile_wan_monthly_traffic_delete:
                                 final Bundle token = new Bundle();
@@ -691,7 +705,6 @@ public class WANMonthlyTrafficTile
                         }, 1500l);
                     }
                         return;
-                    //TODO Restore
                     case BACKUP_WAN_TRAFF:
                         final BackupFileType fileType =
                                 (BackupFileType) token.getSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE);

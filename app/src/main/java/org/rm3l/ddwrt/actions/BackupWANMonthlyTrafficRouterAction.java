@@ -16,7 +16,6 @@ import com.google.common.collect.Table;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -25,7 +24,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,13 +33,12 @@ import java.util.Set;
 
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
 
 /**
  * Created by rm3l on 09/05/15.
  */
 public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<String> {
-
-    public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
 
     public enum BackupFileType {
         RAW,
@@ -203,7 +200,8 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
             switch (mBackupFileType) {
                 case CSV:
-                    Files.write("Year,Month,Day,Inbound,Inbound (Readable),Outbound,Outbound (Readable)\n", mLocalBackupFilePath, CHARSET);
+                    Files.write("Year,Month,Day,Inbound,Inbound (Readable),Outbound,Outbound (Readable)\n", mLocalBackupFilePath,
+                            CHARSET);
                     final ImmutableSet<Table.Cell<Long, Integer, Multimap<Integer, Long>>> cells = traffDataTable.cellSet();
                     for (final Table.Cell<Long, Integer, Multimap<Integer, Long>> cell : cells) {
                         final Long year = cell.getRowKey();
