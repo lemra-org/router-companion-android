@@ -680,6 +680,14 @@ public class WANMonthlyTrafficTile
                                                         }
                                                     });
                                                 }
+                                                if (mLoader != null) {
+                                                    //Reload everything right away
+                                                    doneWithLoaderInstance(WANMonthlyTrafficTile.this,
+                                                            mLoader,
+                                                            1l,
+                                                            R.id.tile_status_wan_monthly_traffic_togglebutton_title,
+                                                            R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+                                                }
                                             }
 
                                             @Override

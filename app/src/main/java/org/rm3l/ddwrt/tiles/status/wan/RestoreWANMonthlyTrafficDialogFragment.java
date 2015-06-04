@@ -354,7 +354,9 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment {
                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                         try {
                                             Utils.displayMessage(activity,
-                                                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                                                    "Data will refresh upon next sync.",
+                                                            routerAction.toString(), router.getRemoteIpAddress()),
                                                     Style.CONFIRM);
                                         } finally {
                                             alertDialog.cancel();
