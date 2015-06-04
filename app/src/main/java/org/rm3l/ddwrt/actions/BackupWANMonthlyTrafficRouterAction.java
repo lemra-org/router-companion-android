@@ -34,6 +34,7 @@ import java.util.Set;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 /**
  * Created by rm3l on 09/05/15.
@@ -166,7 +167,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                     final String outTraff = dailyInOutTraffDataList.get(1);
 
                     dataMap.putAll(dayNum++, Lists.newArrayList(
-                            Long.parseLong(inTraff), Long.parseLong(outTraff)
+                            Long.parseLong(inTraff) * MB, Long.parseLong(outTraff) * MB
                     ));
                 }
 

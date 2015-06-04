@@ -85,6 +85,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
@@ -95,7 +96,6 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     public static final int DEFAULT_BITMAP_WIDTH = 640;
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
     private static final String LOG_TAG = WANMonthlyTrafficActivity.class.getSimpleName();
-    private static int MB = 1024 * 1024;
     private final String[] breakdownLines = new String[31];
     private Toolbar mToolbar;
     private String mRouter;
