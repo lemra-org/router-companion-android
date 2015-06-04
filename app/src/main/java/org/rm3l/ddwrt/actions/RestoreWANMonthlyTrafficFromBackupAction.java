@@ -9,12 +9,15 @@ import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,5 +87,25 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
         }
 
         return new RouterActionResult<>(null, exception);
+    }
+
+    public static class AgreementToRestoreWANTraffDataFromBackup extends DDWRTCompanionException {
+
+        private final Date mClickDate;
+
+        private final String mDeviceId;
+
+        public AgreementToRestoreWANTraffDataFromBackup(@NonNull Context context) {
+            mClickDate = new Date();
+            mDeviceId = AdUtils.getDeviceIdForAdMob(context);
+        }
+
+        public Date getClickDate() {
+            return mClickDate;
+        }
+
+        public String getDeviceId() {
+            return mDeviceId;
+        }
     }
 }

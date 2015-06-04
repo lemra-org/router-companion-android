@@ -42,6 +42,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction.BackupFileType;
 import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction;
+import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction.AgreementToRestoreWANTraffDataFromBackup;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
@@ -372,6 +373,10 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                     if (validForm) {
 
                         final FragmentActivity activity = getActivity();
+
+                        //For reporting
+                        Utils.reportException(new AgreementToRestoreWANTraffDataFromBackup(activity));
+
                         // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(activity, null,

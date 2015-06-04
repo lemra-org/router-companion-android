@@ -35,6 +35,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RestoreRouterFromBackupAction.AgreementToRestoreRouterFromBackup;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -342,12 +343,17 @@ public class RestoreRouterDialogFragment extends DialogFragment {
             d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     //Validate form
                     boolean validForm = validateForm(d);
 
                     if (validForm) {
 
                         final FragmentActivity activity = getActivity();
+
+                        //For reporting
+                        Utils.reportException(new AgreementToRestoreRouterFromBackup(activity));
+
                         // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(activity, null,

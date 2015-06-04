@@ -82,7 +82,6 @@ import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
-import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
@@ -829,7 +828,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                             public void onClick(final DialogInterface dialogInterface, final int i) {
 
                                 //For reporting
-                                Utils.reportException(new AgreementToResetRouter());
+                                Utils.reportException(new
+                                        RestoreRouterDefaultsAction.AgreementToResetRouter(DDWRTMainActivity.this));
 
                                 final Bundle token = new Bundle();
                                 token.putString(ROUTER_ACTION, RouterAction.RESTORE_FACTORY_DEFAULTS.name());
@@ -1301,26 +1301,6 @@ public class DDWRTMainActivity extends ActionBarActivity
             mNavigationDrawerAdapter.setSelectedItem(position);
             mNavigationDrawerAdapter.notifyDataSetChanged();
             mDrawerLayout.invalidate();
-        }
-    }
-
-    private class AgreementToResetRouter extends DDWRTCompanionException {
-
-        private final Date mClickDate;
-
-        private final String mDeviceId;
-
-        public AgreementToResetRouter() {
-            mClickDate = new Date();
-            mDeviceId = AdUtils.getDeviceIdForAdMob(DDWRTMainActivity.this);
-        }
-
-        public Date getClickDate() {
-            return mClickDate;
-        }
-
-        public String getDeviceId() {
-            return mDeviceId;
         }
     }
 

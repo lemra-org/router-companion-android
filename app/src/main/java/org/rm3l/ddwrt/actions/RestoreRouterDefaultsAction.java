@@ -28,8 +28,12 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Joiner;
 
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+
+import java.util.Date;
 
 public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
@@ -59,5 +63,25 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
         }
 
         return new RouterActionResult<>(null, exception);
+    }
+
+    public static class AgreementToResetRouter extends DDWRTCompanionException {
+
+        private final Date mClickDate;
+
+        private final String mDeviceId;
+
+        public AgreementToResetRouter(@NonNull Context context) {
+            mClickDate = new Date();
+            mDeviceId = AdUtils.getDeviceIdForAdMob(context);
+        }
+
+        public Date getClickDate() {
+            return mClickDate;
+        }
+
+        public String getDeviceId() {
+            return mDeviceId;
+        }
     }
 }
