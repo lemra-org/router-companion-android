@@ -80,8 +80,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:contentDescription="@string/menu"
-                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-                        android:visibility="gone" />
+                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
 
                 </LinearLayout>
 

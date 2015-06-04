@@ -243,7 +243,7 @@ public class WANMonthlyTrafficTile
         token.putSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
 
         new UndoBarController.UndoBar(mParentFragmentActivity)
-                .message(String.format("Backup of WAN Traffic Data (as %s) is going to run on %s...",
+                .message(String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
                         backupFileType, displayName))
                 .listener(WANMonthlyTrafficTile.this)
                 .token(token)
@@ -483,10 +483,10 @@ public class WANMonthlyTrafficTile
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
 
+        tileMenu.setVisibility(View.VISIBLE);
+
         if (exception == null) {
             errorPlaceHolderView.setVisibility(View.GONE);
-
-            tileMenu.setVisibility(View.VISIBLE);
 
             final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
 
@@ -600,14 +600,11 @@ public class WANMonthlyTrafficTile
             errorPlaceHolderView.setVisibility(View.VISIBLE);
             setVisibility(ctrlViews, View.GONE);
 
-            tileMenu.setVisibility(View.GONE);
-
         } else {
             if (traffData == null || traffData.isEmpty()) {
                 errorPlaceHolderView.setText("Error: No Data!");
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 setVisibility(ctrlViews, View.GONE);
-                tileMenu.setVisibility(View.GONE);
             }
         }
 
