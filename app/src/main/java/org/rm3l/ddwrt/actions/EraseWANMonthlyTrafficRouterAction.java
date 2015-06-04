@@ -30,7 +30,7 @@ public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Voi
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
 
@@ -82,7 +82,7 @@ public class EraseWANMonthlyTrafficRouterAction extends AbstractRouterAction<Voi
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 
 }

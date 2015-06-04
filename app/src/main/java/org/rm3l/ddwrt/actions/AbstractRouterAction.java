@@ -36,7 +36,8 @@ import org.rm3l.ddwrt.utils.Utils;
  *
  * @param <T> Type of async task result
  */
-public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, AbstractRouterAction.RouterActionResult> {
+public abstract class AbstractRouterAction<T> extends
+        AsyncTask<Router, Void, AbstractRouterAction.RouterActionResult<T>> {
 
     @NonNull
     protected final SharedPreferences globalSharedPreferences;
@@ -53,7 +54,7 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
     }
 
     @Override
-    protected final RouterActionResult doInBackground(Router... params) {
+    protected final RouterActionResult<T> doInBackground(Router... params) {
         try {
             //To get stats over the number of actions executed
             Utils.reportException(new RouterActionTriggered("Action triggered: '" + routerAction + "'"));
@@ -62,11 +63,11 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
         }
 
         final Router router = params[0];
-        RouterActionResult actionResult = null;
+        RouterActionResult<T> actionResult = null;
         try {
             actionResult = this.doActionInBackground(router);
         } catch (final Exception e) {
-            actionResult = new RouterActionResult(null, e);
+            actionResult = new RouterActionResult<>(null, e);
             //Report exception
             Utils.reportException(new RouterActionException("Exception on Action '" + routerAction + "'",
                     e));
@@ -96,9 +97,9 @@ public abstract class AbstractRouterAction<T> extends AsyncTask<Router, Void, Ab
     }
 
     @NonNull
-    protected abstract RouterActionResult doActionInBackground(@NonNull final Router router);
+    protected abstract RouterActionResult<T> doActionInBackground(@NonNull final Router router);
 
-    protected class RouterActionResult {
+    protected static class RouterActionResult<T> {
         private final T result;
         private final Exception exception;
 

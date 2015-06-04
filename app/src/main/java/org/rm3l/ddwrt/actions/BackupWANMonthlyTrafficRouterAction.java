@@ -65,7 +65,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<String> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             mBackupDate = new Date();
@@ -236,6 +236,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                 case RAW:
                 default:
                     Files.write("TRAFF-DATA\n", mLocalBackupFilePath, CHARSET);
+                    //noinspection ConstantConditions
                     Files.append(Joiner
                                     .on("\n")
                                     .withKeyValueSeparator("=")
@@ -251,7 +252,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 
     @Nullable

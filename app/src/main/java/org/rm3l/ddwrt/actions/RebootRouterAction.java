@@ -41,7 +41,7 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull final Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull final Router router) {
 
         Exception exception = null;
         try {
@@ -56,23 +56,6 @@ public class RebootRouterAction extends AbstractRouterAction<Void> {
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
-
-//        Exception exception = null;
-//        try {
-//            final String[] exitStatus = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
-//                    "/sbin/reboot; echo $?");
-//
-//            if (exitStatus == null || exitStatus.length == 0) {
-//                throw new IllegalStateException("Unable to get the Reset Command Status.");
-//            }
-//            if (!"0".equals(exitStatus[0])) {
-//                throw new IllegalStateException("Command execution status: " + exitStatus[0]);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            exception = e;
-//        }
-//        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }

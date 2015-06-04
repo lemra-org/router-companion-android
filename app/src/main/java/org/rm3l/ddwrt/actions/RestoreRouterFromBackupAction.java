@@ -35,7 +35,7 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         File tempFile = null;
         try {
@@ -79,6 +79,6 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
             }
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }

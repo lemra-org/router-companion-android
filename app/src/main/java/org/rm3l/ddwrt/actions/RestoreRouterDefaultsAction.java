@@ -43,7 +43,7 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             final int exitStatus = SSHUtils
@@ -58,6 +58,6 @@ public class RestoreRouterDefaultsAction extends AbstractRouterAction<Void> {
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }

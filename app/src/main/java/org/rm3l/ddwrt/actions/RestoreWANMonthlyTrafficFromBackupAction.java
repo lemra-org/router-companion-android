@@ -2,7 +2,6 @@ package org.rm3l.ddwrt.actions;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -36,7 +35,7 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         File tempFile = null;
         try {
@@ -63,13 +62,15 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
                 linesToNVRAM.setProperty(stringList.get(0), stringList.get(1));
             }
 
-            final AsyncTask<Router, Void, RouterActionResult> execute =
-                    new SetNVRAMVariablesAction(mContext, linesToNVRAM, false, null, globalSharedPreferences)
-                        .execute(router);
+            final RouterActionResult<Void> setNvramActionResult =
+                    SetNVRAMVariablesAction.getRouterActionResult(
+                            mContext, globalSharedPreferences, router, linesToNVRAM, false);
 
-            //Blocking call to SetNVRAMVariablesAction - this will *not* block main thread
-            // because we are already in an AsyncTask
-            return execute.get();
+            if (setNvramActionResult == null) {
+                throw new IllegalStateException("Failed to execute action");
+            }
+
+            exception = setNvramActionResult.getException();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,6 +83,6 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
             }
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }
