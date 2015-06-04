@@ -123,7 +123,7 @@ public class WANMonthlyTrafficTile
 
     protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
-    private static final String WAN_MONTHLY_TRAFFIC_ACTION = "WAN_MONTHLY_TRAFFIC_ACTION";
+    public static final String WAN_MONTHLY_TRAFFIC_ACTION = "WAN_MONTHLY_TRAFFIC_ACTION";
 
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
@@ -179,16 +179,17 @@ public class WANMonthlyTrafficTile
                         //Store current value in preferences
                         switch (itemId) {
                             case R.id.tile_wan_monthly_traffic_backup_raw:
+                                //Allowed for all
+                                displayBackupDialog(displayName, BackupFileType.RAW);
+                                return true;
                             case R.id.tile_wan_monthly_traffic_backup_csv:
                                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                                     //Download the full version to unlock this version
                                     Utils.displayUpgradeMessage(mParentFragmentActivity,
-                                            "Backup WAN Monthly Traffic Data");
+                                            "Backup WAN Traffic Data as CSV");
                                     return true;
                                 }
-                                displayBackupDialog(displayName,
-                                        (itemId == R.id.tile_wan_monthly_traffic_backup_csv) ?
-                                                BackupFileType.CSV : BackupFileType.RAW);
+                                displayBackupDialog(displayName, BackupFileType.CSV);
                                 return true;
                             case R.id.tile_wan_monthly_traffic_restore:
                                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {

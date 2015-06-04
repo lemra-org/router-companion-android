@@ -35,6 +35,7 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -112,8 +113,8 @@ public class RestoreRouterDialogFragment extends DialogFragment {
         builder
                 .setTitle(String.format("Restore '%s' (%s)",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-                .setMessage(String.format("Browse for a configuration file and click the " +
-                                "'Restore' button to overwrite all current configurations of '%s' (%s) " +
+                .setMessage(String.format("Browse for a configuration file " +
+                                "to overwrite all current configurations of '%s' (%s) " +
                                 "with the ones in the backup file.\n\n" +
                                 "[CAUTION]\n" +
                                 "- Make sure to *backup* your settings first!!!\n" +
@@ -137,6 +138,17 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         RestoreRouterDialogFragment.this.getDialog().cancel();
                     }
                 });
+
+        if (activity instanceof DDWRTMainActivity) {
+            builder.setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    ((DDWRTMainActivity) activity)
+                            .displayBackupDialog(String.format("'%s' (%s)",
+                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                }
+            });
+        }
 
         return builder.create();
     }
