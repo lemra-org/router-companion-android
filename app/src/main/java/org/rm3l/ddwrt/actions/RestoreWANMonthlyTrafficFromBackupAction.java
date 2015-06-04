@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.actions;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -62,9 +63,13 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
                 linesToNVRAM.setProperty(stringList.get(0), stringList.get(1));
             }
 
-            //Blocking call to SetNVRAMVariablesAction - this is possible because we are already in an AsyncTask
-            return new SetNVRAMVariablesAction(mContext, linesToNVRAM, false, null, globalSharedPreferences)
-                    .execute(router).get();
+            final AsyncTask<Router, Void, RouterActionResult> execute =
+                    new SetNVRAMVariablesAction(mContext, linesToNVRAM, false, null, globalSharedPreferences)
+                        .execute(router);
+
+            //Blocking call to SetNVRAMVariablesAction - this will *not* block main thread
+            // because we are already in an AsyncTask
+            return execute.get();
 
         } catch (Exception e) {
             e.printStackTrace();
