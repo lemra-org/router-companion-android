@@ -423,7 +423,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="ntp_client">NTP Client</string>
     <string name="time_settings">Time Settings</string>
     <string name="loading_current_date">Loading current date…</string>
-    <string name="feedback">Feedback</string>
+    <string name="send_feedback">Send Feedback</string>
     <string name="feedback_send">Send</string>
     <string name="feedback_cancel">Cancel</string>
     <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello?\nWe would love to hear from you.</string>

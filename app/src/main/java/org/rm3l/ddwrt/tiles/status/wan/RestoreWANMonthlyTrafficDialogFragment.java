@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.actions;
+package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -14,11 +14,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,21 +32,30 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.actions.RestoreRouterFromBackupAction.AgreementToRestoreRouterFromBackup;
-import org.rm3l.ddwrt.main.DDWRTMainActivity;
+import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
+import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction.BackupFileType;
+import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction;
+import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction.AgreementToRestoreWANTraffDataFromBackup;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -51,15 +63,18 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_ACTION;
+import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 /**
  * Created by rm3l on 10/05/15.
  */
-public class RestoreRouterDialogFragment extends DialogFragment {
+public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
+        implements UndoBarController.AdvancedUndoListener {
 
-    private static final String LOG_TAG = RestoreRouterDialogFragment.class.getSimpleName();
-    private static final int READ_REQUEST_CODE = 52;
+    private static final String LOG_TAG = RestoreWANMonthlyTrafficDialogFragment.class.getSimpleName();
+    private static final int READ_REQUEST_CODE = 525;
 
     private Router mRouter;
     private RouterRestoreDialogListener mListener = null;
@@ -68,61 +83,61 @@ public class RestoreRouterDialogFragment extends DialogFragment {
 
     private Cursor mUriCursor = null;
 
-    public static RestoreRouterDialogFragment newInstance(@NonNull final String routerUuid) {
-        final RestoreRouterDialogFragment restoreRouterDialogFragment = new RestoreRouterDialogFragment();
+    private Activity mCtx;
+
+    public static RestoreWANMonthlyTrafficDialogFragment newInstance(@NonNull final String routerUuid) {
+        final RestoreWANMonthlyTrafficDialogFragment restoreWANMonthlyTrafficDialogFragment = new RestoreWANMonthlyTrafficDialogFragment();
 
         final Bundle args = new Bundle();
         args.putString(ROUTER_SELECTED, routerUuid);
 
-        restoreRouterDialogFragment.setArguments(args);
-        return restoreRouterDialogFragment;
+        restoreWANMonthlyTrafficDialogFragment.setArguments(args);
+        return restoreWANMonthlyTrafficDialogFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final FragmentActivity mCtx = getActivity();
         mRouter = RouterManagementActivity
-                .getDao(getActivity())
+                .getDao(mCtx)
                 .getRouter(getArguments().getString(ROUTER_SELECTED));
 
         if (mRouter == null) {
-            Utils.reportException(new IllegalStateException("Router passed to RestoreRouterDialogFragment is NULL"));
-            Toast.makeText(getActivity(),
+            Utils.reportException(new IllegalStateException("Router passed to RestoreWANMonthlyTrafficDialogFragment is NULL"));
+            Toast.makeText(mCtx,
                     "Router is NULL - does it still exist?", Toast.LENGTH_SHORT).show();
             dismiss();
             return;
         }
 
-        mGlobalSharedPreferences = getActivity()
+        mGlobalSharedPreferences = mCtx
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final FragmentActivity activity = getActivity();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mCtx);
 
         // Get the layout inflater
-        final LayoutInflater inflater = activity.getLayoutInflater();
+        final LayoutInflater inflater = mCtx.getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_restore, null);
 
         builder
-                .setTitle(String.format("Restore '%s' (%s)",
+                .setTitle(String.format("Restore WAN Traffic Data on '%s' (%s)",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-                .setMessage(String.format("Browse for a configuration file " +
-                                "to overwrite all current configurations of '%s' (%s) " +
+                .setMessage(String.format("Browse for a raw backup file and" +
+                                " restore the WAN Monthly Traffic Data on '%s' (%s) " +
                                 "with the ones in the backup file.\n\n" +
                                 "[CAUTION]\n" +
                                 "- Make sure to *backup* your settings first!!!\n" +
                                 "- It is your responsibility to ensure the backup file to restore is fully compatible " +
-                                "with the firmware and model of your router.\n" +
-                                "- The Router will be rebooted at the end of the operation, and " +
-                                "you might have to wait some time before connection is re-established.",
+                                "with the firmware and model of your router.",
                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
                 .setView(view)
                         // Add action buttons
@@ -134,24 +149,35 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         //pass a handler the button doesn't get instantiated
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        RestoreRouterDialogFragment.this.getDialog().cancel();
+                .setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        displayBackupDialog(String.format("'%s' (%s)",
+                                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
+                                BackupFileType.RAW);
                     }
-                });
-
-        if (activity instanceof DDWRTMainActivity) {
-            builder.setNeutralButton("*Backup*", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    ((DDWRTMainActivity) activity)
-                            .displayBackupDialog(String.format("'%s' (%s)",
-                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
-                }
-            });
-        }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                RestoreWANMonthlyTrafficDialogFragment.this.getDialog().cancel();
+            }
+        });
 
         return builder.create();
+    }
+
+    public void displayBackupDialog(final String displayName,
+                                    @NonNull final BackupFileType backupFileType) {
+        final Bundle token = new Bundle();
+        token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.BACKUP_WAN_TRAFF.name());
+        token.putSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
+
+        new UndoBarController.UndoBar(getActivity())
+                .message(String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
+                        backupFileType, displayName))
+                .listener(RestoreWANMonthlyTrafficDialogFragment.this)
+                .token(token)
+                .show();
     }
 
     private void displayMessage(final String msg, final Style style) {
@@ -165,9 +191,9 @@ public class RestoreRouterDialogFragment extends DialogFragment {
 
     /**
      * Receive the result from a previous call to
-     * {@link #startActivityForResult(android.content.Intent, int)}.  This follows the
+     * {@link #startActivityForResult(Intent, int)}.  This follows the
      * related Activity API as described there in
-     * {@link android.app.Activity#onActivityResult(int, int, android.content.Intent)}.
+     * {@link Activity#onActivityResult(int, int, Intent)}.
      *
      * @param requestCode The integer request code originally supplied to
      *                    startActivityForResult(), allowing you to identify who this
@@ -283,6 +309,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
+        mCtx = activity;
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
@@ -336,14 +363,13 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                     // search for all documents available via installed storage providers
                     intent.setType("*/*");
 
-                    RestoreRouterDialogFragment.this.startActivityForResult(intent, READ_REQUEST_CODE);
+                    RestoreWANMonthlyTrafficDialogFragment.this.startActivityForResult(intent, READ_REQUEST_CODE);
                 }
             });
 
             d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     //Validate form
                     boolean validForm = validateForm(d);
 
@@ -352,12 +378,12 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         final FragmentActivity activity = getActivity();
 
                         //For reporting
-                        Utils.reportException(new AgreementToRestoreRouterFromBackup(activity));
+                        Utils.reportException(new AgreementToRestoreWANTraffDataFromBackup(activity));
 
                         // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(activity, null,
-                                        String.format("Restoring from '%s' - please hold on...",
+                                        String.format("Restoring WAN Monthly Traffic from '%s' - please hold on...",
                                                 ((TextView) d.findViewById(R.id.router_restore_backup_path)).getText()),
                                         false, false);
                         alertDialog.show();
@@ -365,12 +391,14 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                new RestoreRouterFromBackupAction(activity, new RouterActionListener() {
+                                new RestoreWANMonthlyTrafficFromBackupAction(activity, new RouterActionListener() {
                                     @Override
                                     public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                         try {
                                             Utils.displayMessage(activity,
-                                                    String.format("Action '%s' executed successfully on host '%s'", routerAction.toString(), router.getRemoteIpAddress()),
+                                                    String.format("Action '%s' executed successfully on host '%s'. " +
+                                                                    "Data will refresh upon next sync.",
+                                                            routerAction.toString(), router.getRemoteIpAddress()),
                                                     Style.CONFIRM);
                                         } finally {
                                             alertDialog.cancel();
@@ -432,4 +460,151 @@ public class RestoreRouterDialogFragment extends DialogFragment {
         return true;
     }
 
+    @Override
+    public void onHide(@Nullable Parcelable parcelable) {
+        if (parcelable instanceof Bundle) {
+            final Bundle token = (Bundle) parcelable;
+            final String routerAction = token.getString(WAN_MONTHLY_TRAFFIC_ACTION);
+            Log.d(LOG_TAG, "WAN Monthly Traffic Data Action: [" + routerAction + "]");
+            if (isNullOrEmpty(routerAction)) {
+                return;
+            }
+
+            try {
+                switch (RouterAction.valueOf(routerAction)) {
+                    case BACKUP_WAN_TRAFF:
+                        final BackupFileType fileType =
+                                (BackupFileType) token.getSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE);
+                        final AlertDialog alertDialog = Utils.
+                                buildAlertDialog(mCtx,
+                                        null, "Backing up WAN Traffic Data - please hold on...", false, false);
+                        alertDialog.show();
+                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                new BackupWANMonthlyTrafficRouterAction(fileType, mCtx,
+                                        new RouterActionListener() {
+
+                                            @Override
+                                            public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                try {
+                                                    String msg;
+                                                    if (!((returnData instanceof Object[]) &&
+                                                            ((Object[]) returnData).length >= 2)) {
+                                                        msg = String.format("Action '%s' executed " +
+                                                                        "successfully on host '%s', but an internal error occurred. " +
+                                                                        "The issue will be reported. Please try again later.",
+                                                                routerAction.toString(),
+                                                                router.getRemoteIpAddress());
+                                                        Utils.displayMessage(mCtx,
+                                                                msg,
+                                                                Style.INFO);
+                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        return;
+                                                    }
+
+                                                    final Object[] returnDataObjectArray = ((Object[]) returnData);
+                                                    final Object backupDateObject = returnDataObjectArray[0];
+                                                    final Object localBackupFileObject = returnDataObjectArray[1];
+
+                                                    if (!((backupDateObject instanceof Date) &&
+                                                            (localBackupFileObject instanceof File))) {
+                                                        msg = String.format("Action '%s' executed " +
+                                                                        "successfully on host '%s', but could not determine where " +
+                                                                        "local backup file has been saved. Please try again later.",
+                                                                routerAction.toString(),
+                                                                router.getRemoteIpAddress());
+                                                        Utils.displayMessage(mCtx,
+                                                                msg,
+                                                                Style.INFO);
+                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        return;
+                                                    }
+
+                                                    Utils.displayMessage(mCtx,
+                                                            String.format("Action '%s' executed successfully on host '%s'. " +
+                                                                            "Now loading the file sharing activity chooser...",
+                                                                    routerAction.toString(), router.getRemoteIpAddress()),
+                                                            Style.CONFIRM);
+
+                                                    final File localBackupFile = (File) (((Object[]) returnData)[1]);
+                                                    final Date backupDate = (Date) (((Object[]) returnData)[0]);
+
+                                                    final Uri uriForFile = FileProvider.getUriForFile(mCtx,
+                                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                                            localBackupFile);
+                                                    mCtx.grantUriPermission(
+                                                            mCtx.getPackageName(),
+                                                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                                    final Intent shareIntent = new Intent();
+                                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                                            String.format("Backup of WAN Monthly Traffic on Router '%s' (%s)",
+                                                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                                                    shareIntent.setType("text/html");
+                                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                                            ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +
+                                                                    Utils.getShareIntentFooter()));
+                                                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                                                    mCtx.startActivity(Intent.createChooser(shareIntent,
+                                                            mCtx.getResources().getText(R.string.share_backup)));
+
+                                                } finally {
+                                                    mCtx.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            alertDialog.cancel();
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                try {
+                                                    Utils.displayMessage(mCtx,
+                                                            String.format("Error on action '%s': %s",
+                                                                    routerAction.toString(),
+                                                                    ExceptionUtils.getRootCauseMessage(exception)),
+                                                            Style.ALERT);
+                                                } finally {
+                                                    mCtx.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            alertDialog.cancel();
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        mCtx
+                                            .getSharedPreferences(
+                                                    DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                                    Context.MODE_PRIVATE))
+                                        .execute(mRouter);
+                            }
+                        }, 1500);
+                        return;
+                    default:
+                        break;
+                }
+            } catch (IllegalArgumentException | NullPointerException e) {
+                e.printStackTrace();
+                Utils.reportException(e);
+            }
+
+        }
+    }
+
+    @Override
+    public void onClear(@NonNull Parcelable[] parcelables) {
+
+    }
+
+    @Override
+    public void onUndo(@Nullable Parcelable parcelable) {
+
+    }
 }

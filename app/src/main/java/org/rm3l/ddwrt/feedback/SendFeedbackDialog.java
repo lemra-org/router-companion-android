@@ -57,7 +57,7 @@ public class SendFeedbackDialog {
 //        //DIALOG TEXT
         feedbackSettings.setText(resources.getString(R.string.feedback_dialog_text));
         feedbackSettings.setYourComments(resources.getString(R.string.feedback_dialog_comments_text));
-        feedbackSettings.setTitle(resources.getString(R.string.feedback));
+        feedbackSettings.setTitle(resources.getString(R.string.send_feedback));
 //
 //        //TOAST MESSAGE
         feedbackSettings.setToast(resources.getString(R.string.feedback_toast_msg));

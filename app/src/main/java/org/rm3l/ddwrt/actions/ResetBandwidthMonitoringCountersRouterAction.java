@@ -45,7 +45,7 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             final String[] exitStatus = SSHUtils.getManualProperty(mContext, router, globalSharedPreferences,
@@ -62,6 +62,6 @@ public class ResetBandwidthMonitoringCountersRouterAction extends AbstractRouter
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }

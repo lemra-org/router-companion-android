@@ -54,7 +54,7 @@ public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void
 
     @NonNull
     @Override
-    protected final RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected final RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
@@ -71,7 +71,7 @@ public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 
 }

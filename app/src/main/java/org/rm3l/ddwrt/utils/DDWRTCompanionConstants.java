@@ -25,14 +25,18 @@ package org.rm3l.ddwrt.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import org.apache.commons.lang3.CharEncoding;
 import org.rm3l.ddwrt.BuildConfig;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * App Constants
  */
 public final class DDWRTCompanionConstants {
+
+    public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
 
     //FIXME Consider increasing this value prior to release
     public static final long TILE_REFRESH_MILLIS = 30 * 1000l;
@@ -86,6 +90,8 @@ public final class DDWRTCompanionConstants {
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
     public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
             ((BuildConfig.WITH_ADS ? "_" : "") + "home");
+
+    public static int MB = 1024 * 1024;
 
     private DDWRTCompanionConstants() {
     }

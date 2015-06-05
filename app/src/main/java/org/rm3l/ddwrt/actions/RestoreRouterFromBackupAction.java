@@ -8,12 +8,15 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Joiner;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Created by rm3l on 10/05/15.
@@ -35,7 +38,7 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         File tempFile = null;
         try {
@@ -79,6 +82,26 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
             }
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
+    }
+
+    public static class AgreementToRestoreRouterFromBackup extends DDWRTCompanionException {
+
+        private final Date mClickDate;
+
+        private final String mDeviceId;
+
+        public AgreementToRestoreRouterFromBackup(@NonNull Context context) {
+            mClickDate = new Date();
+            mDeviceId = AdUtils.getDeviceIdForAdMob(context);
+        }
+
+        public Date getClickDate() {
+            return mClickDate;
+        }
+
+        public String getDeviceId() {
+            return mDeviceId;
+        }
     }
 }

@@ -102,6 +102,7 @@ public class EditWOLDaemonSettingsActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         final Intent intent = getIntent();
@@ -253,7 +254,7 @@ public class EditWOLDaemonSettingsActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
         }
 

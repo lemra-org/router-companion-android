@@ -31,7 +31,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -86,6 +85,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
@@ -96,7 +96,6 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     public static final int DEFAULT_BITMAP_WIDTH = 640;
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
     private static final String LOG_TAG = WANMonthlyTrafficActivity.class.getSimpleName();
-    private static int MB = 1024 * 1024;
     private final String[] breakdownLines = new String[31];
     private Toolbar mToolbar;
     private String mRouter;
@@ -163,6 +162,7 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         @SuppressWarnings("unchecked")
@@ -494,7 +494,7 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                onBackPressed();
                 return true;
             default:
                 break;

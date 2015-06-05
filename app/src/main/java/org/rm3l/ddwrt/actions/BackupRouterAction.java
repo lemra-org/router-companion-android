@@ -38,7 +38,7 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<String> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             mBackupDate = new Date();
@@ -82,7 +82,7 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
             }
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 
     @Nullable

@@ -72,7 +72,7 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
             if (mBroadcastAddressCandidates.isEmpty()) {
@@ -99,6 +99,6 @@ public class WakeOnLANRouterAction extends AbstractRouterAction<Void> {
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }

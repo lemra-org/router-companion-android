@@ -63,10 +63,22 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
+        return getRouterActionResult(mContext,
+                globalSharedPreferences,
+                router,
+                nvramInfo,
+                withReboot);
+    }
+
+    public static RouterActionResult<Void> getRouterActionResult(@NonNull final Context mContext,
+                                                           @NonNull SharedPreferences globalSharedPreferences,
+                                                           @NonNull Router router,
+                                                           @NonNull final NVRAMInfo nvramInfo,
+                                                           final boolean withReboot) {
         Exception exception = null;
         File outputFile = null;
-        final String remotePath = "/tmp/." + this.getClass().getSimpleName() + "_" + UUID.randomUUID() + ".sh";
+        final String remotePath = "/tmp/." + SetNVRAMVariablesAction.class.getSimpleName() + "_" + UUID.randomUUID() + ".sh";
 
         try {
             if (nvramInfo.isEmpty()) {
@@ -86,7 +98,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
             //FIXME Seems there is a limit on the number of characters we can pass to the SSH server console
             // => copy all those in a temporary file, upload the file to the router and exec it
-            outputFile = File.createTempFile(this.getClass().getSimpleName(), ".sh", mContext.getCacheDir());
+            outputFile = File.createTempFile(SetNVRAMVariablesAction.class.getSimpleName(), ".sh", mContext.getCacheDir());
             FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmd));
 
             //Now upload this file onto the remote router
@@ -100,11 +112,6 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                 throw new IllegalStateException("Error when running command.");
             }
 
-
-//            final int exitStatus = SSHUtils.runCommands(mContext, globalSharedPreferences, router, cmd);
-//            if (exitStatus != 0) {
-//                throw new IllegalStateException("Error when running command.");
-//            }
         } catch (Exception e) {
             e.printStackTrace();
             exception = e;
@@ -128,7 +135,7 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             }
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 
     @Nullable

@@ -97,7 +97,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:alphabeticShortcut="f"
         android:icon="@drawable/ic_action_action_thumbs_up_down"
         android:orderInCategory="5"
-        android:title="@string/feedback"
+        android:title="@string/send_feedback"
         app:showAsAction="ifRoom" />
 
     <!-- Seems redundant with the Feedback menu item -->

@@ -55,18 +55,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/tile_status_wan_monthly_traffic_status"
+                <LinearLayout
+                    android:id="@+id/tile_status_wan_monthly_traffic_status_and_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:checked="false"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:visibility="gone" />
+                    android:orientation="horizontal"
+                    android:layout_gravity="end">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/tile_status_wan_monthly_traffic_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textOff="OFF"
+                        android:textOn="ON"
+                        android:visibility="gone" />
+
+                    <ImageButton
+                        android:id="@+id/tile_status_wan_monthly_traffic_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/menu"
+                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+
+                </LinearLayout>
 
             </RelativeLayout>
 

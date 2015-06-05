@@ -43,7 +43,7 @@ public class MACOUILookupAction extends AbstractRouterAction<Void> {
 
     @NonNull
     @Override
-    protected RouterActionResult doActionInBackground(@NonNull Router router) {
+    protected RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         final RouterStreamActionListener routerStreamActionListener = (listener instanceof RouterStreamActionListener) ?
                 (RouterStreamActionListener) listener : null;
         Exception exception = null;
@@ -65,6 +65,6 @@ public class MACOUILookupAction extends AbstractRouterAction<Void> {
             exception = e;
         }
 
-        return new RouterActionResult(null, exception);
+        return new RouterActionResult<>(null, exception);
     }
 }
