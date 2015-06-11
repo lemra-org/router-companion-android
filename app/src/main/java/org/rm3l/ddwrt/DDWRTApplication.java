@@ -68,7 +68,7 @@ public class DDWRTApplication extends Application {
             Collections.singletonList("com.amazon.venezia");
 
     private static final List<String> FDROID_INSTALLER_PACKAGE_NAMES =
-            Collections.singletonList("");
+            Collections.singletonList("org.fdroid.fdroid.installer");
 
     @Override
     public void onCreate() {
