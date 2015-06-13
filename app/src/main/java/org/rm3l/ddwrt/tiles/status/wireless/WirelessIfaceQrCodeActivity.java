@@ -424,7 +424,24 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
             if (AdBuddiz.isReadyToShowAd(this)) {
                 AdBuddiz.showAd(this);
             } else {
-                super.finish();
+//                super.finish();
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            WirelessIfaceQrCodeActivity.super.finish();
+                        }
+                    });
+
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                    } else {
+                        WirelessIfaceQrCodeActivity.super.finish();
+                    }
+
+                } else {
+                    WirelessIfaceQrCodeActivity.super.finish();
+                }
             }
 
         } else {

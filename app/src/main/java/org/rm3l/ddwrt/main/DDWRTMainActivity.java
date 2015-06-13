@@ -482,19 +482,61 @@ public class DDWRTMainActivity extends ActionBarActivity
                         if (AdBuddiz.isReadyToShowAd(DDWRTMainActivity.this)) {
                             AdBuddiz.showAd(DDWRTMainActivity.this);
                         } else {
-                            //Reload UI
-                            final AlertDialog alertDialog = Utils.
-                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                            alertDialog.show();
-                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    finish();
-                                    startActivity(intent);
-                                    alertDialog.cancel();
+//                            //Reload UI
+//                            final AlertDialog alertDialog = Utils.
+//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                            alertDialog.show();
+//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    finish();
+//                                    startActivity(intent);
+//                                    alertDialog.cancel();
+//                                }
+//                            }, 2000);
+                            if (mInterstitialAd != null) {
+                                mInterstitialAd.setAdListener(new AdListener() {
+                                    @Override
+                                    public void onAdClosed() {
+                                        finish();
+                                        startActivity(intent);
+                                    }
+                                });
+
+                                if (mInterstitialAd.isLoaded()) {
+                                    mInterstitialAd.show();
+                                } else {
+                                    //Reload UI
+                                    final AlertDialog alertDialog = Utils.
+                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                                    alertDialog.show();
+                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            finish();
+                                            startActivity(intent);
+                                            alertDialog.cancel();
+                                        }
+                                    }, 2000);
                                 }
-                            }, 2000);
+
+                            } else {
+                                //Reload UI
+                                final AlertDialog alertDialog = Utils.
+                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                                alertDialog.show();
+                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                        startActivity(intent);
+                                        alertDialog.cancel();
+                                    }
+                                }, 2000);
+                            }
                         }
 
                     } else {
