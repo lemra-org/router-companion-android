@@ -697,7 +697,24 @@ public class RouterManagementActivity
             if (AdBuddiz.isReadyToShowAd(this)) {
                 AdBuddiz.showAd(this);
             } else {
-                super.onBackPressed();
+//                super.onBackPressed();
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            RouterManagementActivity.super.onBackPressed();
+                        }
+                    });
+
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                    } else {
+                        RouterManagementActivity.super.onBackPressed();
+                    }
+
+                } else {
+                    RouterManagementActivity.super.onBackPressed();
+                }
             }
 
         } else {
@@ -806,19 +823,36 @@ public class RouterManagementActivity
                 if (AdBuddiz.isReadyToShowAd(RouterManagementActivity.this)) {
                     AdBuddiz.showAd(RouterManagementActivity.this);
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        startActivity(view, ddWrtMainIntent);
-                    } else {
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        startActivity(view, ddWrtMainIntent);
+//                    } else {
+//                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                        alertDialog.show();
+//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                startActivity(view, ddWrtMainIntent);
+//                                alertDialog.cancel();
+//                            }
+//                        }, 1000);
+//                    }
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setAdListener(new AdListener() {
                             @Override
-                            public void run() {
+                            public void onAdClosed() {
                                 startActivity(view, ddWrtMainIntent);
-                                alertDialog.cancel();
                             }
-                        }, 1000);
+                        });
+
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            startActivity(view, ddWrtMainIntent);
+                        }
+
+                    } else {
+                        startActivity(view, ddWrtMainIntent);
                     }
                 }
 

@@ -313,17 +313,44 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
-            <!-- Hidden for now - does not seem to work -->
+            <!-- Advanced Options (to display or not) -->
             <CheckBox
-                android:id="@+id/router_add_is_strict_host_key_checking"
+                android:id="@+id/router_add_advanced_options_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/openvpncl_setting_advanced_options" />
+
+            <LinearLayout
+                android:id="@+id/router_add_advanced_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:text="@string/router_add_strict_host_key_checking"
-                android:visibility="gone"/>
+                android:orientation="vertical">
+
+                <!-- Hidden for now - does not seem to work -->
+                <CheckBox
+                    android:id="@+id/router_add_is_strict_host_key_checking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/router_add_strict_host_key_checking"
+                    android:visibility="gone"/>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"/>
+
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -227,7 +227,24 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
             if (AdBuddiz.isReadyToShowAd(this)) {
                 AdBuddiz.showAd(this);
             } else {
-                super.finish();
+//                super.finish();
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            WANMonthlyTrafficActivity.super.finish();
+                        }
+                    });
+
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                    } else {
+                        WANMonthlyTrafficActivity.super.finish();
+                    }
+
+                } else {
+                    WANMonthlyTrafficActivity.super.finish();
+                }
             }
 
         } else {
