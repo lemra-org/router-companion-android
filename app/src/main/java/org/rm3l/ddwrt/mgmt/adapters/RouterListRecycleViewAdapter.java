@@ -25,7 +25,6 @@ package org.rm3l.ddwrt.mgmt.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -121,7 +120,7 @@ public class RouterListRecycleViewAdapter extends
         if (Strings.isNullOrEmpty(routerAtName)) {
             //Italic
             holder.routerName.setText(EMPTY);
-            holder.routerName.setTypeface(null, Typeface.ITALIC);
+//            holder.routerName.setTypeface(null, Typeface.ITALIC);
         } else {
             holder.routerName.setText(routerAtName);
         }
