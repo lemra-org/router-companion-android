@@ -93,6 +93,10 @@ public final class DDWRTCompanionConstants {
 
     public static int MB = 1024 * 1024;
 
+    public static final String COLON = ":";
+    public static final String SPACE = " ";
+    public static final String SHARP = "#";
+
     private DDWRTCompanionConstants() {
     }
 

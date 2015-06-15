@@ -136,57 +136,103 @@ public class WirelessIfacesTile extends IfacesTile {
         container.setVisibility(View.VISIBLE);
 
         //Now add each wireless iface tile
-        if (viewsBuilt.get()) {
 
-            container.removeAllViews();
+        container.removeAllViews();
 
-            final Resources resources = mParentFragmentActivity.getResources();
-            container.setBackgroundColor(resources.getColor(android.R.color.transparent));
+        final Resources resources = mParentFragmentActivity.getResources();
+        container.setBackgroundColor(resources.getColor(android.R.color.transparent));
 
-            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-            for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
-                if (tile == null) {
-                    continue;
+        for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
+            if (tile == null) {
+                continue;
+            }
+            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+            if (tileViewGroupLayout instanceof CardView) {
+
+                final CardView cardView = (CardView) tileViewGroupLayout;
+
+                //Create Options Menu
+                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+
+                if (!isThemeLight) {
+                    //Set menu background to white
+                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
                 }
-                final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
-                if (tileViewGroupLayout instanceof CardView) {
 
-                    final CardView cardView = (CardView) tileViewGroupLayout;
+                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                cardView.setPreventCornerOverlap(true);
+                //Add padding in API v21+ as well to have the same measurements with previous versions.
+                cardView.setUseCompatPadding(true);
 
-                    //Create Options Menu
-                    final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+                //Highlight CardView
+                cardView.setCardElevation(10f);
 
-                    if (!isThemeLight) {
-                        //Set menu background to white
-                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-                    }
-
-                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                    cardView.setPreventCornerOverlap(true);
-                    //Add padding in API v21+ as well to have the same measurements with previous versions.
-                    cardView.setUseCompatPadding(true);
-
-                    //Highlight CardView
-                    cardView.setCardElevation(10f);
-
-                    if (isThemeLight) {
-                        //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
-                    } else {
-                        //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
-                    }
-                }
-                if (tileViewGroupLayout != null) {
-                    container.addView(tileViewGroupLayout);
+                if (isThemeLight) {
+                    //Light
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                } else {
+                    //Default is Dark
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
                 }
             }
-
-        } else {
-            Log.d(TAG, "viewsBuilt=false");
-            //Do Nothing
+            if (tileViewGroupLayout != null) {
+                container.addView(tileViewGroupLayout);
+            }
         }
+
+//        if (viewsBuilt.get()) {
+//
+//            container.removeAllViews();
+//
+//            final Resources resources = mParentFragmentActivity.getResources();
+//            container.setBackgroundColor(resources.getColor(android.R.color.transparent));
+//
+//            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+//
+//            for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
+//                if (tile == null) {
+//                    continue;
+//                }
+//                final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+//                if (tileViewGroupLayout instanceof CardView) {
+//
+//                    final CardView cardView = (CardView) tileViewGroupLayout;
+//
+//                    //Create Options Menu
+//                    final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+//
+//                    if (!isThemeLight) {
+//                        //Set menu background to white
+//                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+//                    }
+//
+//                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//                    cardView.setPreventCornerOverlap(true);
+//                    //Add padding in API v21+ as well to have the same measurements with previous versions.
+//                    cardView.setUseCompatPadding(true);
+//
+//                    //Highlight CardView
+//                    cardView.setCardElevation(10f);
+//
+//                    if (isThemeLight) {
+//                        //Light
+//                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+//                    } else {
+//                        //Default is Dark
+//                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+//                    }
+//                }
+//                if (tileViewGroupLayout != null) {
+//                    container.addView(tileViewGroupLayout);
+//                }
+//            }
+//
+//        } else {
+//            Log.d(TAG, "viewsBuilt=false");
+//            //Do Nothing
+//        }
 
         super.onLoadFinished(loader, data);
     }
