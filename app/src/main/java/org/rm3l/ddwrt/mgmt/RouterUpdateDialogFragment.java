@@ -86,38 +86,40 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
+        if (!mActivityCreatedAndInitialized.get()) {
 
-        if (router == null) {
-            Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
-            d.cancel();
-            return;
-        }
+            final AlertDialog d = (AlertDialog) getDialog();
 
-        //This is an update - fill the form with the items fetched from the Router selected
-        if (isUpdate()) {
-            ((TextView) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
-        }
-        ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName(), EDITABLE);
-        ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress(), EDITABLE);
-        ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()), EDITABLE);
-        final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
-        switch (router.getRouterConnectionProtocol()) {
-            case SSH:
-                protoDropdown.setSelection(0);
-                break;
-            default:
-                break;
-        }
+            if (router == null) {
+                Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
+                d.cancel();
+                return;
+            }
 
-        final Spinner fwDropdown = (Spinner) d.findViewById(R.id.router_add_firmware);
-        final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
-        if (routerFirmware == null) {
-            //Auto-detect
-            fwDropdown.setSelection(0);
-        } else {
-            //FIXME Fix when other firmwares are supported
-            fwDropdown.setSelection(0);
+            //This is an update - fill the form with the items fetched from the Router selected
+            if (isUpdate()) {
+                ((TextView) d.findViewById(R.id.router_add_uuid)).setText(router.getUuid());
+            }
+            ((EditText) d.findViewById(R.id.router_add_name)).setText(router.getName(), EDITABLE);
+            ((EditText) d.findViewById(R.id.router_add_ip)).setText(router.getRemoteIpAddress(), EDITABLE);
+            ((EditText) d.findViewById(R.id.router_add_port)).setText(String.valueOf(router.getRemotePort()), EDITABLE);
+            final Spinner protoDropdown = (Spinner) d.findViewById(R.id.router_add_proto);
+            switch (router.getRouterConnectionProtocol()) {
+                case SSH:
+                    protoDropdown.setSelection(0);
+                    break;
+                default:
+                    break;
+            }
+
+            final Spinner fwDropdown = (Spinner) d.findViewById(R.id.router_add_firmware);
+            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+            if (routerFirmware == null) {
+                //Auto-detect
+                fwDropdown.setSelection(0);
+            } else {
+                //FIXME Fix when other firmwares are supported
+                fwDropdown.setSelection(0);
 //            switch (routerFirmware) {
 //                case DDWRT:
 //                    fwDropdown.setSelection(1);
@@ -128,29 +130,32 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
 //                default:
 //                    break;
 //            }
-        }
+            }
 
-        ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain(), EDITABLE);
-        ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain(), EDITABLE);
-        ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
+            ((EditText) d.findViewById(R.id.router_add_username)).setText(router.getUsernamePlain(), EDITABLE);
+            ((EditText) d.findViewById(R.id.router_add_password)).setText(router.getPasswordPlain(), EDITABLE);
+            ((TextView) d.findViewById(R.id.router_add_privkey_path)).setText(router.getPrivKeyPlain());
 
-        final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
-        switch (sshAuthenticationMethod) {
-            case NONE:
-                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_none))
-                        .setChecked(true);
-                break;
-            case PASSWORD:
-                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_password))
-                        .setChecked(true);
-                break;
-            case PUBLIC_PRIVATE_KEY:
-                ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_privkey))
-                        .setChecked(true);
-                break;
-        }
+            final Router.SSHAuthenticationMethod sshAuthenticationMethod = router.getSshAuthenticationMethod();
+            switch (sshAuthenticationMethod) {
+                case NONE:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_none))
+                            .setChecked(true);
+                    break;
+                case PASSWORD:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_password))
+                            .setChecked(true);
+                    break;
+                case PUBLIC_PRIVATE_KEY:
+                    ((RadioButton) d.findViewById(R.id.router_add_ssh_auth_method_privkey))
+                            .setChecked(true);
+                    break;
+            }
 //            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
 //                    .setChecked(router.isStrictHostKeyChecking());
+
+            mActivityCreatedAndInitialized.set(true);
+        }
 
     }
 

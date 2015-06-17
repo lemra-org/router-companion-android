@@ -979,7 +979,7 @@ public class RouterManagementActivity
                         continue;
                     }
                     selectedRouters.add(selectedRouter);
-                    selectedRoutersStr.add(String.format("'%s' (%s)",
+                    selectedRoutersStr.add(String.format("- '%s' (%s)",
                             selectedRouter.getDisplayName(), selectedRouter.getRemoteIpAddress()));
                 }
 
@@ -988,7 +988,7 @@ public class RouterManagementActivity
                         .setTitle(String.format("Reboot %d Router(s)?", selectedItems.size()))
                         .setMessage(String.format("Are you sure you wish to continue? " +
                                         "The following Routers will be rebooted: \n\n%s",
-                                Joiner.on("\n").skipNulls().join(selectedRoutersStr)))
+                                Joiner.on("\n\n").skipNulls().join(selectedRoutersStr)))
                         .setCancelable(true)
                         .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                             @Override
@@ -1002,53 +1002,55 @@ public class RouterManagementActivity
                                 final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
                                 final int totalNumOfDevices = selectedRouters.size();
 
+                                final RouterActionListener rebootRouterActionListener = new RouterActionListener() {
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                            final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+                                            if (numActionsThatDidNotSucceed > 0) {
+                                                //An error occurred
+                                                if (numActionsThatDidNotSucceed < totalNumOfDevices) {
+                                                    Utils.displayMessage(RouterManagementActivity.this,
+                                                            String.format("Action '%s' executed but %d error(s) occurred",
+                                                                    routerAction.toString(), numActionsThatDidNotSucceed),
+                                                            Style.INFO);
+                                                } else {
+                                                    //No action succeeded
+                                                    Utils.displayMessage(RouterManagementActivity.this,
+                                                            String.format("None of the '%s' actions submitted succeeded - please try again later.",
+                                                                    routerAction.toString()),
+                                                            Style.INFO);
+                                                }
+
+                                            } else {
+                                                //No error
+                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                        String.format("Action '%s' executed successfully on %d Routers",
+                                                                routerAction.toString(), selectedItems.size()),
+                                                        Style.CONFIRM);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        numActionsWithNoSuccess.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                            //An error occurred
+                                            Utils.displayMessage(RouterManagementActivity.this,
+                                                    String.format("Action '%s' executed but %d error(s) occurred: %s",
+                                                            routerAction.toString(), numActionsWithNoSuccess.get(),
+                                                            ExceptionUtils.getRootCauseMessage(exception)),
+                                                    Style.INFO);
+                                        }
+                                    }
+                                };
+
                                 for (final Router selectedRouter : selectedRouters) {
                                     new RebootRouterAction(RouterManagementActivity.this,
-                                            new RouterActionListener() {
-                                                @Override
-                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                    final int incrementAndGet = currentNum.incrementAndGet();
-                                                    if (incrementAndGet >= totalNumOfDevices) {
-                                                        final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
-                                                        if (numActionsThatDidNotSucceed > 0) {
-                                                            //An error occurred
-                                                            if (numActionsThatDidNotSucceed < totalNumOfDevices) {
-                                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                                        String.format("Action '%s' executed but %d error(s) occurred",
-                                                                                routerAction.toString(), numActionsThatDidNotSucceed),
-                                                                        Style.INFO);
-                                                            } else {
-                                                                //No action succeeded
-                                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                                        String.format("None of the '%s' actions submitted succeeded - please try again later.",
-                                                                                routerAction.toString()),
-                                                                        Style.INFO);
-                                                            }
-
-                                                        } else {
-                                                            //No error
-                                                            Utils.displayMessage(RouterManagementActivity.this,
-                                                                    String.format("Action '%s' executed successfully on %d Routers",
-                                                                            routerAction.toString(), selectedItems.size()),
-                                                                    Style.CONFIRM);
-                                                        }
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                    final int incrementAndGet = currentNum.incrementAndGet();
-                                                    numActionsWithNoSuccess.incrementAndGet();
-                                                    if (incrementAndGet >= totalNumOfDevices) {
-                                                        //An error occurred
-                                                        Utils.displayMessage(RouterManagementActivity.this,
-                                                                String.format("Action '%s' executed but %d error(s) occurred: %s",
-                                                                        routerAction.toString(), numActionsWithNoSuccess.get(),
-                                                                        ExceptionUtils.getRootCauseMessage(exception)),
-                                                                Style.INFO);
-                                                    }
-                                                }
-                                            },
+                                            rebootRouterActionListener,
                                             mPreferences).execute(selectedRouter);
                                 }
                             }

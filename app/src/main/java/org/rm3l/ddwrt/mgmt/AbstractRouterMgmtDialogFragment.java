@@ -73,6 +73,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -92,6 +93,8 @@ public abstract class AbstractRouterMgmtDialogFragment
     protected DDWRTCompanionDAO dao;
     protected SharedPreferences mGlobalSharedPreferences;
     private RouterMgmtDialogListener mListener;
+
+    protected final AtomicBoolean mActivityCreatedAndInitialized = new AtomicBoolean(false);
 
     private static Router buildRouter(AlertDialog d) throws IOException {
         final Router router = new Router();
@@ -166,6 +169,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         mGlobalSharedPreferences = getActivity()
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
     }
 
     @NonNull
@@ -414,75 +418,78 @@ public abstract class AbstractRouterMgmtDialogFragment
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
-        if (d != null) {
+        if (!mActivityCreatedAndInitialized.get()) {
 
-            final View ddwrtInstructionsView = d.findViewById(R.id.router_add_ddwrt_instructions);
-            final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
+            final AlertDialog d = (AlertDialog) getDialog();
+            if (d != null) {
 
-            if (BuildConfig.WITH_ADS) {
-                //For Ads to show up, otherwise we get the following error message:
-                //Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
-                d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT);
+                final View ddwrtInstructionsView = d.findViewById(R.id.router_add_ddwrt_instructions);
+                final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
 
-                //Also Display shorte.st link to instructions (monetized)
-                //FIXME Fix when support of other firmwares is in place
-                ddwrtInstructionsView.setVisibility(View.GONE);
-                ddwrtInstructionsWithAds.setVisibility(View.VISIBLE);
-            } else {
-                //FIXME Fix when support of other firmwares is in place
-                ddwrtInstructionsView.setVisibility(View.VISIBLE);
-                ddwrtInstructionsWithAds.setVisibility(View.GONE);
+                if (BuildConfig.WITH_ADS) {
+                    //For Ads to show up, otherwise we get the following error message:
+                    //Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
+                    d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT);
+
+                    //Also Display shorte.st link to instructions (monetized)
+                    //FIXME Fix when support of other firmwares is in place
+                    ddwrtInstructionsView.setVisibility(View.GONE);
+                    ddwrtInstructionsWithAds.setVisibility(View.VISIBLE);
+                } else {
+                    //FIXME Fix when support of other firmwares is in place
+                    ddwrtInstructionsView.setVisibility(View.VISIBLE);
+                    ddwrtInstructionsWithAds.setVisibility(View.GONE);
+                }
+
+                AdUtils.buildAndDisplayAdViewIfNeeded(d.getContext(),
+                        (AdView) d.findViewById(R.id.activity_router_add_adView));
+
+                d.findViewById(R.id.router_add_privkey).setOnClickListener(new View.OnClickListener() {
+                    @TargetApi(Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onClick(View view) {
+                        //Open up file picker
+
+                        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+                        // browser.
+                        final Intent intent = new Intent();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                        } else {
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                        }
+
+                        // Filter to only show results that can be "opened", such as a
+                        // file (as opposed to a list of contacts or timezones)
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                        // search for all documents available via installed storage providers
+                        intent.setType("*/*");
+
+                        AbstractRouterMgmtDialogFragment.this.startActivityForResult(intent, READ_REQUEST_CODE);
+                    }
+                });
+
+                d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Validate form
+                        boolean validForm = validateForm(d);
+
+                        if (validForm) {
+                            // Now check actual connection to router ...
+                            new CheckRouterConnectionAsyncTask(
+                                    ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
+                                    getActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                                            .getBoolean(ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
+                                    .execute(d);
+                        }
+                        ///else dialog stays open. 'Cancel' button can still close it.
+                    }
+                });
             }
-
-            AdUtils.buildAndDisplayAdViewIfNeeded(d.getContext(),
-                    (AdView) d.findViewById(R.id.activity_router_add_adView));
-
-            d.findViewById(R.id.router_add_privkey).setOnClickListener(new View.OnClickListener() {
-                @TargetApi(Build.VERSION_CODES.KITKAT)
-                @Override
-                public void onClick(View view) {
-                    //Open up file picker
-
-                    // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-                    // browser.
-                    final Intent intent = new Intent();
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                    } else {
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                    }
-
-                    // Filter to only show results that can be "opened", such as a
-                    // file (as opposed to a list of contacts or timezones)
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-                    // search for all documents available via installed storage providers
-                    intent.setType("*/*");
-
-                    AbstractRouterMgmtDialogFragment.this.startActivityForResult(intent, READ_REQUEST_CODE);
-                }
-            });
-
-            d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Validate form
-                    boolean validForm = validateForm(d);
-
-                    if (validForm) {
-                        // Now check actual connection to router ...
-                        new CheckRouterConnectionAsyncTask(
-                                ((EditText) d.findViewById(R.id.router_add_ip)).getText().toString(),
-                                getActivity().getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                                        .getBoolean(ALWAYS_CHECK_CONNECTION_PREF_KEY, true))
-                                .execute(d);
-                    }
-                    ///else dialog stays open. 'Cancel' button can still close it.
-                }
-            });
         }
     }
 
