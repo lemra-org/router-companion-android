@@ -75,24 +75,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                 singletonList(new WirelessIfacesTile(this, savedInstanceState, router));
     }
 
-//    @Nullable
-//    @Override
-//    protected Loader<Collection<WirelessIfaceTile>> getLoader(final int id, @NonNull final Bundle args) {
-//
-//        mLoader = new AsyncTaskLoader<Collection<WirelessIfaceTile>>(getActivity()) {
-//
-//            @Nullable
-//            @Override
-//            public Collection<WirelessIfaceTile> loadInBackground() {
-//                return getWirelessIfaceTiles(args, getActivity(), StatusWirelessFragment.this, router);
-//            }
-//
-//
-//        };
-//        return mLoader;
-//
-//    }
-
+    @Nullable
     public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
                                                                       FragmentActivity activity,
                                                                       Fragment parentFragment,

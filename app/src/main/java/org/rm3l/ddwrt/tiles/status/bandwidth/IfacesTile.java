@@ -31,6 +31,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wan.WANConfigTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
@@ -59,8 +61,27 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = IfacesTile.class.getSimpleName();
 
+    protected ProgressBar mProgressBar;
+    protected TextView mProgressBarDesc;
+    protected boolean isThemeLight;
+
     public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
+
+        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+        mProgressBar = (ProgressBar) layout
+                .findViewById(R.id.tile_status_bandwidth_ifaces_loading_view);
+        mProgressBar.setMax(100);
+        mProgressBarDesc = (TextView) layout
+                .findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
+
+        if (isThemeLight) {
+            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.black));
+        } else {
+            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
+        }
+        mProgressBarDesc.setText("Loading...\n\n");
     }
 
     @Override

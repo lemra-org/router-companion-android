@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
@@ -1188,13 +1190,20 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             final int z = 80;
                             int t = 1;
+
+                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBar.setProgress(z);
+                                }
+                            });
+
                             final int usageDbOutLinesLen = usageDbOutLines.length;
                             for (final String usageDbOutLine : usageDbOutLines) {
                                 final int x = t;
                                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mProgressBar.setProgress(z);
                                         mProgressBarDesc.setText("Retrieving bandwidth monitoring data (" +
                                                 x + "/" + usageDbOutLinesLen +
                                                 "...\n\n");
@@ -1342,11 +1351,52 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             //No worries
                         }
                     }
+//
+                    final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
+                            getSystemService(Context.NOTIFICATION_SERVICE);
+                    // Sets an ID for the notification, so it can be updated
+                    int notifyID = mRouter.getId();
+//                    final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+//                            .setContentTitle("New Device")
+//                            .setContentText(String.format("New devices are connected to '%s' (%s).",
+//                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+////                            .setSmallIcon(R.drawable.ic_notify_status);
+//
+//                    int numDevices = 0;
+//
 
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+                            .setSmallIcon(R.drawable.notification_template_icon_bg)
+                            .setContentTitle(String.format("Devices connected on '%s' (%s)",
+                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
+                            .setContentText("Devices list received so far");
+
+                    final NotificationCompat.InboxStyle inboxStyle =
+                            new NotificationCompat.InboxStyle();
+                    String[] events = new String[macToDevice.values().size()];
+// Sets a title for the Inbox in expanded layout
+                    inboxStyle.setBigContentTitle("Devices list details:");
+
+
+                    int i = 0;
                     //Final operation
                     for (final Device device : macToDevice.values()) {
                         devices.addDevice(device);
+                        inboxStyle.addLine(events[i]);
+//                        mNotifyBuilder.setContentText(
+//                                String.format("'%s' (%s) - IP Address: %s",
+//                                        device.getAlias(), device.getMacAddress(), device.getIpAddress()))
+//                                .setNumber(++numDevices);
+//                        // Because the ID remains unchanged, the existing notification is
+//                        // updated.
+//                        mNotificationManager.notify(
+//                                notifyID,
+//                                mNotifyBuilder.build());
                     }
+
+                    // Moves the expanded layout object into the notification object.
+                    mBuilder.setStyle(inboxStyle);
+
 
                     Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " devices!");
 
