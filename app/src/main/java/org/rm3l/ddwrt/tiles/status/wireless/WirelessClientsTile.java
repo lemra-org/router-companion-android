@@ -1355,50 +1355,53 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
                             getSystemService(Context.NOTIFICATION_SERVICE);
                     // Sets an ID for the notification, so it can be updated
-                    int notifyID = mRouter.getId();
-//                    final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-//                            .setContentTitle("New Device")
-//                            .setContentText(String.format("New devices are connected to '%s' (%s).",
-//                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
-////                            .setSmallIcon(R.drawable.ic_notify_status);
-//
-//                    int numDevices = 0;
-//
+                    final int notifyID = mRouter.getId();
 
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-                            .setSmallIcon(R.drawable.notification_template_icon_bg)
-                            .setContentTitle(String.format("Devices connected on '%s' (%s)",
-                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()))
-                            .setContentText("Devices list received so far");
+                    final int size = macToDevice.values().size();
 
-                    final NotificationCompat.InboxStyle inboxStyle =
-                            new NotificationCompat.InboxStyle();
-                    String[] events = new String[macToDevice.values().size()];
-// Sets a title for the Inbox in expanded layout
-                    inboxStyle.setBigContentTitle("Devices list details:");
+                    if (size == 0) {
+                        mNotificationManager.cancel(notifyID);
+                    } else {
 
+                        final String contentTitle = String.format(
+                                "%d device%s connected on '%s' (%s)",
+                                size,
+                                size > 1 ? "s" : "",
+                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
 
-                    int i = 0;
-                    //Final operation
-                    for (final Device device : macToDevice.values()) {
-                        devices.addDevice(device);
-                        inboxStyle.addLine(events[i]);
-//                        mNotifyBuilder.setContentText(
-//                                String.format("'%s' (%s) - IP Address: %s",
-//                                        device.getAlias(), device.getMacAddress(), device.getIpAddress()))
-//                                .setNumber(++numDevices);
-//                        // Because the ID remains unchanged, the existing notification is
-//                        // updated.
-//                        mNotificationManager.notify(
-//                                notifyID,
-//                                mNotifyBuilder.build());
+                        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setAutoCancel(true)
+                                .setContentTitle(contentTitle);
+
+                        final NotificationCompat.InboxStyle inboxStyle =
+                                new NotificationCompat.InboxStyle();
+                        // Sets a title for the Inbox in expanded layout
+                        inboxStyle.setBigContentTitle("Devices list details:");
+//                    mBuilder.setStyle(inboxStyle);
+                        mBuilder.setNumber(size);
+
+                        //Final operation
+                        for (final Device device : macToDevice.values()) {
+                            devices.addDevice(device);
+                            final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                            inboxStyle.addLine(String.format("'%s': %s %s / IP Address: %s",
+                                    device.getAlias(),
+                                    device.getMacAddress(),
+                                    macouiVendorDetails != null ? String.format("(%s)", macouiVendorDetails.getCompany()) : "",
+                                    device.getIpAddress()));
+                        }
+
+                        // Moves the expanded layout object into the notification object.
+                        mBuilder.setStyle(inboxStyle);
+                        // Because the ID remains unchanged, the existing notification is
+                        // updated.
+                        mNotificationManager.notify(
+                                notifyID,
+                                mBuilder.build());
                     }
 
-                    // Moves the expanded layout object into the notification object.
-                    mBuilder.setStyle(inboxStyle);
-
-
-                    Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " devices!");
+                    Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
 
                     return devices;
 
