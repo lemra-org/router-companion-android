@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -1364,7 +1365,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     } else {
 
                         final String contentTitle = String.format(
-                                "%d device%s connected on '%s' (%s)",
+                                "%d new device%s on '%s' (%s)",
                                 size,
                                 size > 1 ? "s" : "",
                                 mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
@@ -1372,33 +1373,43 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
                                 .setSmallIcon(R.drawable.ic_launcher)
                                 .setAutoCancel(true)
-                                .setContentTitle(contentTitle);
+                                .setContentTitle(contentTitle)
+                                .setContentText("Connected Hosts")
+                                .setDefaults(Notification.DEFAULT_ALL);
 
                         final NotificationCompat.InboxStyle inboxStyle =
-                                new NotificationCompat.InboxStyle();
-                        // Sets a title for the Inbox in expanded layout
-                        inboxStyle.setBigContentTitle("Devices list details:");
-//                    mBuilder.setStyle(inboxStyle);
-                        mBuilder.setNumber(size);
+                                new NotificationCompat.InboxStyle()
+                                .setBigContentTitle(contentTitle);
 
                         //Final operation
+                        int i = 0;
                         for (final Device device : macToDevice.values()) {
                             devices.addDevice(device);
                             final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                            inboxStyle.addLine(String.format("'%s': %s %s / IP Address: %s",
+                            inboxStyle.addLine(String.format("'%s': %s %s | %s",
                                     device.getAlias(),
                                     device.getMacAddress(),
                                     macouiVendorDetails != null ? String.format("(%s)", macouiVendorDetails.getCompany()) : "",
                                     device.getIpAddress()));
+                            if (i++ >= 4) {
+                                break;
+                            }
+                        }
+
+                        final int remaining = Math.abs(size - i);
+                        if (remaining > 0) {
+                            inboxStyle.setSummaryText(String.format("+%d more", remaining));
+                        } else {
+                            inboxStyle.setSummaryText("Expand");
                         }
 
                         // Moves the expanded layout object into the notification object.
                         mBuilder.setStyle(inboxStyle);
+                        mBuilder.setNumber(size);
+
                         // Because the ID remains unchanged, the existing notification is
                         // updated.
-                        mNotificationManager.notify(
-                                notifyID,
-                                mBuilder.build());
+                        mNotificationManager.notify(notifyID, mBuilder.build());
                     }
 
                     Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
