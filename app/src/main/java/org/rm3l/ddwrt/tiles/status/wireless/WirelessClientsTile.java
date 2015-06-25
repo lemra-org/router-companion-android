@@ -152,6 +152,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -932,10 +933,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     }
 
-                    final Map<String, Collection<String>> wlAssocListMap = wirelessIfaceAssocList.asMap();
+                    final Map<String, Collection<String>> wlAssocListMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                    wlAssocListMap.putAll(wirelessIfaceAssocList.asMap());
                     final Collection<String> wlAssocListMacAddrs = wirelessIfaceAssocList.values();
 
-                    final Map<String, Device> macToDevice = Maps.newHashMap();
+                    final Map<String, Device> macToDevice = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                     final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
 
                     final Splitter splitter = Splitter.on(" ");
@@ -957,8 +959,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                         final int v = u++;
                         final List<String> as = splitter.splitToList(stdoutLine);
-                        if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
-                            final String macAddress = as.get(1);
+                        if (as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
+                            final String macAddress = Strings.nullToEmpty(as.get(1)).toLowerCase();
                             if (isNullOrEmpty(macAddress) ||
                                     "00:00:00:00:00:00".equals(macAddress) ||
                                     StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
@@ -1093,7 +1095,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     for (final Map.Entry<String, Collection<Device>> deviceEntry : macToDeviceOutput.asMap().entrySet()) {
-                        final String macAddr = deviceEntry.getKey();
+                        final String macAddr = Strings.nullToEmpty(deviceEntry.getKey());
                         final Collection<Device> deviceCollection = deviceEntry.getValue();
                         for (final Device device : deviceCollection) {
                             //Consider the one that has a Name, if any
@@ -1214,7 +1216,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     continue;
                                 }
                                 final List<String> splitToList = Splitter.on(",").omitEmptyStrings().splitToList(usageDbOutLine);
-                                if (splitToList == null || splitToList.size() < 6) {
+                                if (splitToList.size() < 6) {
                                     Log.w(LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
                                     continue;
                                 }
