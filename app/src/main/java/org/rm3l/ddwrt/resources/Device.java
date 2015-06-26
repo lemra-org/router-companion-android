@@ -25,6 +25,9 @@ package org.rm3l.ddwrt.resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -183,6 +186,13 @@ public class Device implements Comparable<Device> {
             return this.systemName;
         }
         return this.macAddress;
+    }
+
+    @NonNull
+    public String getAliasOrSystemName() {
+        return Strings.nullToEmpty(
+                MoreObjects
+                        .firstNonNull(this.alias, this.systemName));
     }
 
     @Nullable

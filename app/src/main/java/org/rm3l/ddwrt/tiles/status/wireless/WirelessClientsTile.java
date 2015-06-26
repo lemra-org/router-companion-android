@@ -23,13 +23,14 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -47,9 +48,11 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
@@ -74,6 +77,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -81,8 +85,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -254,6 +260,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     //Generate a random string, to use as discriminator for determining dhcp clients
     public static final String MAP_KEYWORD = WirelessClientsTile.class.getSimpleName() + UUID.randomUUID().toString();
     private static final BiMap<Integer, Integer> sortIds = HashBiMap.create(6);
+    public static final String CONNECTED_HOSTS = "connectedHosts";
 
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
@@ -1362,56 +1369,118 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final int size = macToDevice.values().size();
 
+                    final ImmutableSet<String> currentConnectedHosts =
+                            FluentIterable.from(macToDevice.values())
+                                    .transform(new Function<Device, String>() {
+                                        @Override
+                                        public String apply(@Nullable Device input) {
+                                            if (input == null) {
+                                                return null;
+                                            }
+                                            return input.getMacAddress().toLowerCase();
+                                        }
+                                    }).toSet();
+
+                    final Set<String> previousConnectedHosts = mParentFragmentPreferences
+                            .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
+                                    new HashSet<String>());
+
+                    final ImmutableSet<String> diff = Sets.difference(previousConnectedHosts, currentConnectedHosts)
+                            .immutableCopy();
+
+                    final boolean updateNotification = !diff.isEmpty();
+
+                    for (final Device device : macToDevice.values()) {
+                        devices.addDevice(device);
+                    }
+
+                    mParentFragmentPreferences.edit()
+                            .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), currentConnectedHosts)
+                            .apply();
+
                     if (size == 0) {
                         mNotificationManager.cancel(notifyID);
                     } else {
 
-                        final String contentTitle = String.format(
-                                "%d new device%s on '%s' (%s)",
-                                size,
-                                size > 1 ? "s" : "",
-                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
+                        final Bitmap largeIcon = BitmapFactory.decodeResource(
+                                mParentFragmentActivity.getResources(),
+                                R.drawable.ic_launcher);
 
-                        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-                                .setSmallIcon(R.drawable.ic_launcher)
-                                .setAutoCancel(true)
-                                .setContentTitle(contentTitle)
-                                .setContentText("Connected Hosts")
-                                .setDefaults(Notification.DEFAULT_ALL);
+                        if (updateNotification) {
+                            final String newDevicesTitle = String.format("%d new device%s",
+                                    size, size > 1 ? "s" : "");
 
-                        final NotificationCompat.InboxStyle inboxStyle =
-                                new NotificationCompat.InboxStyle()
-                                .setBigContentTitle(contentTitle);
+                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+                                    .setSmallIcon(R.drawable.ic_launcher)
+                                    .setLargeIcon(largeIcon)
+                                    .setAutoCancel(true)
+                                    .setContentTitle(newDevicesTitle)
+                                    .setGroup(WirelessClientsTile.class.getSimpleName())
+                                    .setGroupSummary(true);
+//                                .setDefaults(Notification.DEFAULT_ALL);
 
-                        //Final operation
-                        int i = 0;
-                        for (final Device device : macToDevice.values()) {
-                            devices.addDevice(device);
-                            final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                            inboxStyle.addLine(String.format("'%s': %s %s | %s",
-                                    device.getAlias(),
-                                    device.getMacAddress(),
-                                    macouiVendorDetails != null ? String.format("(%s)", macouiVendorDetails.getCompany()) : "",
-                                    device.getIpAddress()));
-                            if (i++ >= 4) {
-                                break;
+                            final String mRouterName = mRouter.getName();
+                            final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
+                            String summaryText = "";
+                            if (!mRouterNameNullOrEmpty) {
+                                summaryText = (mRouterName + " (");
                             }
+                            summaryText += mRouter.getRemoteIpAddress();
+                            if (!mRouterNameNullOrEmpty) {
+                                summaryText += ")";
+                            }
+
+                            final NotificationCompat.InboxStyle inboxStyle =
+                                    new NotificationCompat.InboxStyle()
+                                            .setBigContentTitle(newDevicesTitle)
+                                            .setSummaryText(summaryText);
+
+                            //Final operation
+//                        int i = 0;
+                            Spannable firstLine = null;
+                            for (final Device device : macToDevice.values()) {
+                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                                final String deviceAliasOrSystemName = device.getAliasOrSystemName();
+                                final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
+                                        device.getMacAddress() : deviceAliasOrSystemName;
+                                final String line = String.format("%s   %s%s%s",
+                                        deviceNameToDisplay,
+                                        device.getIpAddress(),
+                                        isNullOrEmpty(deviceAliasOrSystemName) ?
+                                                "" : String.format(" | %s", device.getMacAddress()),
+                                        macouiVendorDetails != null ? String.format(" (%s)",
+                                                macouiVendorDetails.getCompany()) : "");
+                                final Spannable sb = new SpannableString(line);
+                                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                        0, deviceNameToDisplay.length(),
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                inboxStyle.addLine(sb);
+                                if (firstLine == null) {
+                                    firstLine = sb;
+                                }
+//                            if (i++ >= 4) {
+//                                break;
+//                            }
+                            }
+
+                            mBuilder
+                                    .setContentText(firstLine);
+
+//                        final int remaining = Math.abs(size - i);
+//                        if (remaining > 0) {
+//                            inboxStyle.setSummaryText(String.format("+%d more", remaining));
+//                        } else {
+//                            inboxStyle.setSummaryText("Expand");
+//                        }
+
+                            // Moves the expanded layout object into the notification object.
+                            mBuilder.setStyle(inboxStyle);
+                            mBuilder.setNumber(size);
+
+                            // Because the ID remains unchanged, the existing notification is
+                            // updated.
+                            mNotificationManager.notify(notifyID, mBuilder.build());
                         }
-
-                        final int remaining = Math.abs(size - i);
-                        if (remaining > 0) {
-                            inboxStyle.setSummaryText(String.format("+%d more", remaining));
-                        } else {
-                            inboxStyle.setSummaryText("Expand");
-                        }
-
-                        // Moves the expanded layout object into the notification object.
-                        mBuilder.setStyle(inboxStyle);
-                        mBuilder.setNumber(size);
-
-                        // Because the ID remains unchanged, the existing notification is
-                        // updated.
-                        mNotificationManager.notify(notifyID, mBuilder.build());
                     }
 
                     Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
@@ -3016,7 +3085,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         Utils.reportException(new
                                 IllegalStateException("Click on R.id.tile_status_wireless_client_rename - mParentFragmentPreferences == null"));
                     } else {
-                        final String currentAlias = mParentFragmentPreferences.getString(macAddress, null);
+                        final String currentAlias =
+                                mParentFragmentPreferences.getString(macAddress, null);
                         final boolean isNewAlias = isNullOrEmpty(currentAlias);
                         final EditText aliasInputText = new EditText(mParentFragmentActivity);
                         aliasInputText.setText(currentAlias, TextView.BufferType.EDITABLE);

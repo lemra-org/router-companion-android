@@ -71,6 +71,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--<item>-1</item>-->
     </string-array>
 
+    <string-array name="notifiable_items_list_titles">
+        <item>Connected Hosts</item>
+        <item>WAN Connectivity Changes</item>
+        <item>OpenVPN Client Connectivity Changes</item>
+    </string-array>
+    <string-array name="notifiable_items_list_values">
+        <item>ConnectedHosts</item>
+        <item>WANConfigChanges</item>
+    </string-array>
+    <string-array name="notifiable_items_list_default_values">
+        <item>ConnectedHosts</item>
+        <item>WANConfigChanges</item>
+        <item>OpenVPNConfigChanges</item>
+    </string-array>
+
     <string-array name="data_usage_titles">
         <item>Only when on Wi-Fi</item>
         <item>On any network</item>

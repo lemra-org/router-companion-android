@@ -160,6 +160,8 @@ public class DDWRTMainActivity extends ActionBarActivity
     @NonNull
     private SharedPreferences mGlobalPreferences;
     @NonNull
+    private SharedPreferences mPreferences;
+    @NonNull
     private Router mRouter;
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
@@ -209,7 +211,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 //        }
         //FIXME End
 
-        final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
+        mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
         this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
         //Load from Shared Preferences
@@ -299,6 +301,22 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
             editor.apply();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        final int minutes = mPreferences.getInt("interval", -1);
+//        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+////        final Intent i = new Intent(this, NotificationService.class);
+//        final PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+//        am.cancel(pi);
+//        // by my own convention, minutes <= 0 means notifications are disabled
+//        if (minutes > 0) {
+//            am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                    SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+//                    minutes * 60 * 1000, pi);
+//        }
     }
 
     private void initView() {

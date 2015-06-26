@@ -69,4 +69,36 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </PreferenceCategory>
 
+    <!-- Data & Sync -->
+    <PreferenceCategory
+        android:key="@string/pref_header_notifications"
+        android:title="Notifications">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notifications.enable"
+            android:summaryOff="Background Service and notifications disabled. You need to open the app whenever you need it to connect to the Router/"
+            android:summaryOn="Background Service enabled. You may get notifications even if you are not using the app."
+            android:title="Background Service" />
+
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:defaultValue="30000"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:key="notifications.syncIntervalMillis"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_frequency" />
+
+        <MultiSelectListPreference
+            android:dialogTitle="Select Notifications"
+            android:key="notifications.items"
+            android:summary=""
+            android:title="Notifications"
+            android:entries="@array/notifiable_items_list_titles"
+            android:entryValues="@array/notifiable_items_list_values"
+            android:defaultValue="@array/notifiable_items_list_default_values"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
