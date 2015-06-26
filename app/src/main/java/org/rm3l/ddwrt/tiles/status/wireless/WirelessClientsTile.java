@@ -1385,7 +1385,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
                                     new HashSet<String>());
 
-                    final ImmutableSet<String> diff = Sets.difference(previousConnectedHosts, currentConnectedHosts)
+                    final ImmutableSet<String> diff = Sets
+                            .symmetricDifference(currentConnectedHosts, previousConnectedHosts)
                             .immutableCopy();
 
                     final boolean updateNotification = !diff.isEmpty();
