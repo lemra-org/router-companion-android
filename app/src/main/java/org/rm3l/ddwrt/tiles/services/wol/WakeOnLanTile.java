@@ -34,10 +34,10 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.GsonBuilder;
 
@@ -70,6 +70,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -289,7 +290,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     };
                 }
             }
-            final Map<String, Device> macToDevice = Maps.newHashMap();
+            final Map<String, Device> macToDevice = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             final Multimap<String, Device> macToDeviceOutput = HashMultimap.create();
 
             final Splitter splitter = Splitter.on(" ");
@@ -301,8 +302,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     break;
                 }
                 final List<String> as = splitter.splitToList(stdoutLine);
-                if (as != null && as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
-                    final String macAddress = as.get(1);
+                if (as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
+                    final String macAddress = Strings.nullToEmpty(as.get(1)).toLowerCase();
                     if (isNullOrEmpty(macAddress) ||
                             "00:00:00:00:00:00".equals(macAddress) ||
                             StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
