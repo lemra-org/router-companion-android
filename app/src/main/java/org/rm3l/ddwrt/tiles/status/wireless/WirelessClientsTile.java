@@ -159,6 +159,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1302,6 +1303,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     });
 
                     //WAN Access
+                    final Collection<Device> deviceCollection = macToDevice.values();
+
                     try {
                         final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                 "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " --line-numbers -n 2>/dev/null; echo $?");
@@ -1317,7 +1320,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 }
                             }
                             if (exitStatus == 0) {
-                                for (final Device device : macToDevice.values()) {
+                                for (final Device device : deviceCollection) {
                                     final String macAddr = nullToEmpty(device.getMacAddress());
                                     boolean wanAccessDisabled = false;
                                     for (final String wanAccessIptablesChainLine : wanAccessIptablesChainDump) {
@@ -1364,26 +1367,28 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //
                     final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
                             getSystemService(Context.NOTIFICATION_SERVICE);
+
                     // Sets an ID for the notification, so it can be updated
                     final int notifyID = mRouter.getId();
 
-                    final int size = macToDevice.values().size();
+                    final int size = deviceCollection.size();
 
                     final ImmutableSet<String> currentConnectedHosts =
-                            FluentIterable.from(macToDevice.values())
+                            FluentIterable.from(deviceCollection)
                                     .transform(new Function<Device, String>() {
                                         @Override
                                         public String apply(@Nullable Device input) {
                                             if (input == null) {
                                                 return null;
                                             }
-                                            return input.getMacAddress().toLowerCase();
+                                            return input.getMacAddress();
                                         }
                                     }).toSet();
 
-                    final Set<String> previousConnectedHosts = mParentFragmentPreferences
+                    final Set<String> previousConnectedHosts = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+                    previousConnectedHosts.addAll(mParentFragmentPreferences
                             .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
-                                    new HashSet<String>());
+                                    new HashSet<String>()));
 
                     final ImmutableSet<String> diff = Sets
                             .symmetricDifference(currentConnectedHosts, previousConnectedHosts)
@@ -1391,7 +1396,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final boolean updateNotification = !diff.isEmpty();
 
-                    for (final Device device : macToDevice.values()) {
+                    for (final Device device : deviceCollection) {
                         devices.addDevice(device);
                     }
 
@@ -1408,17 +1413,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 R.drawable.ic_launcher);
 
                         if (updateNotification) {
-                            final String newDevicesTitle = String.format("%d new device%s",
-                                    size, size > 1 ? "s" : "");
-
-                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-                                    .setSmallIcon(R.drawable.ic_launcher)
-                                    .setLargeIcon(largeIcon)
-                                    .setAutoCancel(true)
-                                    .setContentTitle(newDevicesTitle)
-                                    .setGroup(WirelessClientsTile.class.getSimpleName())
-                                    .setGroupSummary(true);
-//                                .setDefaults(Notification.DEFAULT_ALL);
 
                             final String mRouterName = mRouter.getName();
                             final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
@@ -1431,52 +1425,96 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 summaryText += ")";
                             }
 
-                            final NotificationCompat.InboxStyle inboxStyle =
-                                    new NotificationCompat.InboxStyle()
-                                            .setBigContentTitle(newDevicesTitle)
-                                            .setSummaryText(summaryText);
+                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+                                    .setSmallIcon(R.drawable.ic_launcher)
+                                    .setLargeIcon(largeIcon)
+                                    .setAutoCancel(true)
+                                    .setGroup(WirelessClientsTile.class.getSimpleName())
+                                    .setGroupSummary(true);
+//                                .setDefaults(Notification.DEFAULT_ALL);
 
-                            //Final operation
-//                        int i = 0;
-                            Spannable firstLine = null;
-                            for (final Device device : macToDevice.values()) {
-                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                            final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
+                                    .setSummaryText(summaryText);
+
+                            if (size == 1) {
+                                //Only one device
+                                final Device device = deviceCollection.iterator().next();
                                 final String deviceAliasOrSystemName = device.getAliasOrSystemName();
                                 final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
                                         device.getMacAddress() : deviceAliasOrSystemName;
-                                final String line = String.format("%s   %s%s%s",
-                                        deviceNameToDisplay,
-                                        device.getIpAddress(),
-                                        isNullOrEmpty(deviceAliasOrSystemName) ?
-                                                "" : String.format(" | %s", device.getMacAddress()),
-                                        macouiVendorDetails != null ? String.format(" (%s)",
-                                                macouiVendorDetails.getCompany()) : "");
-                                final Spannable sb = new SpannableString(line);
-                                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                        0, deviceNameToDisplay.length(),
+
+                                mBuilder.setContentTitle(deviceNameToDisplay);
+
+                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
+                                //IP Address
+                                String ipLine = String.format("IP   %s", device.getIpAddress());
+                                final Spannable ipSpannable = new SpannableString(ipLine);
+                                ipSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                        0, "IP".length(),
                                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                inboxStyle.addLine(sb);
-                                if (firstLine == null) {
-                                    firstLine = sb;
+                                inboxStyle.addLine(ipSpannable);
+
+                                if (!isNullOrEmpty(deviceAliasOrSystemName)) {
+                                    //MAC Address
+                                    final String macLine = String.format("MAC   %s", device.getMacAddress());
+                                    final Spannable macSpannable = new SpannableString(macLine);
+                                    macSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                            0, "MAC".length(),
+                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    inboxStyle.addLine(macSpannable);
                                 }
-//                            if (i++ >= 4) {
-//                                break;
-//                            }
+                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                                if (macouiVendorDetails != null) {
+                                    //NIC Manufacturer
+                                    final String ouiLine = String.format("OUI   %s", device.getIpAddress());
+                                    final Spannable ouiSpannable = new SpannableString(ouiLine);
+                                    ouiSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                            0, "OUI".length(),
+                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    inboxStyle.addLine(ouiSpannable);
+                                }
+
+                                mBuilder.setContentText(ipSpannable);
+
+                            } else {
+
+                                final String newDevicesTitle = String.format("%d new device%s",
+                                        size, size > 1 ? "s" : "");
+
+                                mBuilder.setContentTitle(newDevicesTitle);
+
+                                inboxStyle.setBigContentTitle(newDevicesTitle);
+
+                                Spannable firstLine = null;
+                                for (final Device device : deviceCollection) {
+                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+                                    final String deviceAliasOrSystemName = device.getAliasOrSystemName();
+                                    final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
+                                            device.getMacAddress() : deviceAliasOrSystemName;
+                                    final String line = String.format("%s   %s%s%s",
+                                            deviceNameToDisplay,
+                                            device.getIpAddress(),
+                                            isNullOrEmpty(deviceAliasOrSystemName) ?
+                                                    "" : String.format(" | %s", device.getMacAddress()),
+                                            macouiVendorDetails != null ? String.format(" (%s)",
+                                                    macouiVendorDetails.getCompany()) : "");
+                                    final Spannable sb = new SpannableString(line);
+                                    sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                            0, deviceNameToDisplay.length(),
+                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    inboxStyle.addLine(sb);
+                                    if (firstLine == null) {
+                                        firstLine = sb;
+                                    }
+                                }
+
+                                mBuilder.setContentText(firstLine);
+                                mBuilder.setNumber(size);
+
                             }
-
-                            mBuilder
-                                    .setContentText(firstLine);
-
-//                        final int remaining = Math.abs(size - i);
-//                        if (remaining > 0) {
-//                            inboxStyle.setSummaryText(String.format("+%d more", remaining));
-//                        } else {
-//                            inboxStyle.setSummaryText("Expand");
-//                        }
 
                             // Moves the expanded layout object into the notification object.
                             mBuilder.setStyle(inboxStyle);
-                            mBuilder.setNumber(size);
 
                             // Because the ID remains unchanged, the existing notification is
                             // updated.
