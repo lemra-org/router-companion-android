@@ -79,6 +79,8 @@ public class Device implements Comparable<Device> {
 
     private boolean isEditableForWol = false;
 
+    private String deviceNameForNotification;
+
     /**
      * Constructor
      *
@@ -332,6 +334,14 @@ public class Device implements Comparable<Device> {
 
     public void setDeviceUuidForWol(String deviceUuidForWol) {
         this.deviceUuidForWol = deviceUuidForWol;
+    }
+
+    public String getDeviceNameForNotification() {
+        return deviceNameForNotification;
+    }
+
+    public void setDeviceNameForNotification(String deviceNameForNotification) {
+        this.deviceNameForNotification = deviceNameForNotification;
     }
 
     public enum WANAccessState {

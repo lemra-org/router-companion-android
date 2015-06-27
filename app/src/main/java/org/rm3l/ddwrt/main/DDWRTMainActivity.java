@@ -1009,7 +1009,9 @@ public class DDWRTMainActivity extends ActionBarActivity
                             @Override
                             public void run() {
                                 finish();
-                                startActivity(getIntent());
+                                final Intent intent = getIntent();
+                                intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+                                startActivity(intent);
                                 alertDialog.cancel();
                             }
                         }, 2000);
