@@ -65,6 +65,18 @@ public final class DDWRTCompanionConstants {
     public static final String DATA_USAGE_NETWORK_PREF = "data_usage_network";
     public static final String EMPTY_STRING = "";
     public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
+    public static final String NOTIFICATIONS_ENABLE = "notifications.enable";
+    public static final String NOTIFICATIONS_SOUND = "notifications.sound";
+    public static final String NOTIFICATIONS_DISPLAY_ITEMS = "notifications.displayItems";
+    public static final String NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_CONNECTED_HOSTS_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.connectedHosts.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY = "notifications.connectedHosts.activeOnly";
+    public static final String NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.wanConnectivity.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.openvpnClient.syncIntervalMinutes";
 
     public static final long DEFAULT_THEME = 31l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";

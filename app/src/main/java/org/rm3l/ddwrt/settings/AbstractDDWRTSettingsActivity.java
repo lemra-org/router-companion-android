@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.RingtonePreference;
@@ -47,6 +48,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
@@ -162,6 +164,12 @@ public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
                         index >= 0
                                 ? listPreference.getEntries()[index]
                                 : null);
+
+            } else if (preference instanceof MultiSelectListPreference) {
+
+                final MultiSelectListPreference multiSelectListPreference =
+                        (MultiSelectListPreference) preference;
+                multiSelectListPreference.setValues((Set<String>) value);
 
             } else if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value

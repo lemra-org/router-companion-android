@@ -86,6 +86,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBiMap;
@@ -94,6 +95,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Closeables;
@@ -155,6 +157,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -173,6 +176,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.resources.Encrypted.d;
+import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile.GSON_BUILDER;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
@@ -269,6 +274,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String MAC_ADDRESS = "macAddress";
     public static final String IP_ADDRESS = "ipAddress";
     public static final String DEVICE_NAME_FOR_NOTIFICATION = "deviceNameForNotification";
+    public static final Ordering<String> CASE_INSENSITIVE_STRING_ORDERING = Ordering.from(String.CASE_INSENSITIVE_ORDER);
 
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
@@ -1387,17 +1393,47 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     // Sets an ID for the notification, so it can be updated
                     final int notifyID = mRouter.getId();
 
-                    final int size = deviceCollection.size();
+                    final boolean onlyActiveHosts = mParentFragmentPreferences
+                            .getBoolean("notifications.connectedHosts.activeOnly", true);
+                    final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
+                            .filter(new Predicate<Device>() {
+                                @Override
+                                public boolean apply(@Nullable Device input) {
+                                    return ((!onlyActiveHosts) ||
+                                            (input != null && input.isActive()));
+                                }
+                            }).toSortedSet(new Comparator<Device>() {
+                                @Override
+                                public int compare(Device lhs, Device rhs) {
+                                    if (lhs == rhs) {
+                                        return 0;
+                                    }
+                                    if (lhs == null) {
+                                        return -1;
+                                    }
+                                    if (rhs == null) {
+                                        return 1;
+                                    }
+                                    return ComparisonChain.start()
+                                            .compare(lhs.getAliasOrSystemName(),
+                                                    rhs.getAliasOrSystemName(),
+                                                    CASE_INSENSITIVE_STRING_ORDERING)
+                                            .result();
+                                }
+                            });
+                    final int sizeFiltered = devicesCollFiltered.size();
 
                     final Set<Device> previousConnectedHosts = new HashSet<>();
                     final Set<String> devicesStringSet = new HashSet<>(mParentFragmentPreferences
                             .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
                                     new HashSet<String>()));
-                    for (final String devStr : devicesStringSet) {
+                    for (final String devStrEncrypted : devicesStringSet) {
                         try {
+                            final String devStr = d(devStrEncrypted);
                             if (isNullOrEmpty(devStr)) {
                                 continue;
                             }
+
                             final Map objFromJson = GSON_BUILDER.create()
                                     .fromJson(devStr, Map.class);
 
@@ -1426,17 +1462,17 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             //No worries
                             e.printStackTrace();
                             Utils.reportException(new
-                                    IllegalStateException("Failed to parse JSON: " + devStr, e));
+                                    IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e));
                         }
                     }
 
                     boolean updateNotification = false;
-                    if (size != previousConnectedHosts.size()) {
+                    if (sizeFiltered != previousConnectedHosts.size()) {
                         updateNotification = true;
                     } else {
 
                         //Now compare if anything has changed
-                        for (final Device newDevice : deviceCollection) {
+                        for (final Device newDevice : devicesCollFiltered) {
                             if (newDevice == null) {
                                 continue;
                             }
@@ -1478,12 +1514,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Build the String Set to save in preferences
-                    final ImmutableSet<String> stringImmutableSet = FluentIterable.from(deviceCollection)
+                    final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
                             .transform(new Function<Device, String>() {
                                 @Override
                                 public String apply(@Nullable Device device) {
                                     if (device == null) {
-                                        return DDWRTCompanionConstants.EMPTY_STRING;
+                                        return e(DDWRTCompanionConstants.EMPTY_STRING);
                                     }
                                     final Map<String, String> details = Maps.newHashMap();
                                     details.put(MAC_ADDRESS, device.getMacAddress());
@@ -1491,7 +1527,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     details.put(DEVICE_NAME_FOR_NOTIFICATION,
                                             device.getAliasOrSystemName());
 
-                                    return GSON_BUILDER.create().toJson(details);
+                                    return e(GSON_BUILDER.create().toJson(details));
                                 }
                             }).toSet();
 
@@ -1503,7 +1539,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), stringImmutableSet)
                             .apply();
 
-                    if (size == 0) {
+                    if (sizeFiltered == 0) {
                         mNotificationManager.cancel(notifyID);
                     } else {
 
@@ -1550,9 +1586,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
                                     .setSummaryText(summaryText);
 
-                            if (size == 1) {
+                            if (sizeFiltered == 1) {
                                 //Only one device
-                                final Device device = deviceCollection.iterator().next();
+                                final Device device = devicesCollFiltered.iterator().next();
                                 final String deviceAliasOrSystemName = device.getAliasOrSystemName();
                                 final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
                                         device.getMacAddress() : deviceAliasOrSystemName;
@@ -1594,14 +1630,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             } else {
 
                                 final String newDevicesTitle = String.format("%d new device%s",
-                                        size, size > 1 ? "s" : "");
+                                        sizeFiltered, sizeFiltered > 1 ? "s" : "");
 
                                 mBuilder.setContentTitle(newDevicesTitle);
 
                                 inboxStyle.setBigContentTitle(newDevicesTitle);
 
                                 Spannable firstLine = null;
-                                for (final Device device : deviceCollection) {
+                                for (final Device device : devicesCollFiltered) {
                                     final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
                                     final String deviceAliasOrSystemName = device.getAliasOrSystemName();
                                     final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
@@ -1624,7 +1660,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 }
 
                                 mBuilder.setContentText(firstLine);
-                                mBuilder.setNumber(size);
+                                mBuilder.setNumber(sizeFiltered);
 
                             }
 
