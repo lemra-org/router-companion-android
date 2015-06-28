@@ -303,22 +303,6 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        final int minutes = mPreferences.getInt("interval", -1);
-//        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-////        final Intent i = new Intent(this, NotificationService.class);
-//        final PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-//        am.cancel(pi);
-//        // by my own convention, minutes <= 0 means notifications are disabled
-//        if (minutes > 0) {
-//            am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                    SystemClock.elapsedRealtime() + minutes * 60 * 1000,
-//                    minutes * 60 * 1000, pi);
-//        }
-    }
-
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 

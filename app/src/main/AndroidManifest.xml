@@ -48,6 +48,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- ACRA Error Reporting, if the user accepts to send their device IDs -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!-- For background service notifications -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".DDWRTApplication"
         android:allowBackup="true"
@@ -338,6 +341,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:windowSoftInputMode="adjustResize"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
+
+        <receiver android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

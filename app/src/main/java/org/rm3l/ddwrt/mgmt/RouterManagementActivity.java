@@ -23,7 +23,9 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +35,7 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -89,6 +92,7 @@ import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.ConnectedHostsService;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -440,6 +444,42 @@ public class RouterManagementActivity
         }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        final List<Router> allRouters = dao.getAllRouters();
+        if (allRouters != null) {
+            for (final Router router : allRouters) {
+                if (router == null) {
+                    continue;
+                }
+                final String mRouterUuid = router.getUuid();
+
+                final SharedPreferences routerPreferences = getSharedPreferences(mRouterUuid, Context.MODE_PRIVATE);
+
+                final boolean notificationsEnabled =
+                        routerPreferences.getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
+                final long minutes = routerPreferences.getLong(
+                        DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+
+                final Intent connectedHostsBackgroundServiceIntent = new Intent(this, ConnectedHostsService.class);
+                connectedHostsBackgroundServiceIntent.putExtra(ROUTER_SELECTED, mRouterUuid);
+                final PendingIntent pi = PendingIntent.getService(this, 0, connectedHostsBackgroundServiceIntent, 0);
+                am.cancel(pi);
+                // by my own convention, minutes <= 0 means notifications are disabled
+                if (notificationsEnabled &&
+                        minutes > 0) {
+                    am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+                            minutes * 60 * 1000, pi);
+                }
+            }
+        }
+
     }
 
     @Override

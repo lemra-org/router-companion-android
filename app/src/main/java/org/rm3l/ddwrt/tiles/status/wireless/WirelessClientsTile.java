@@ -35,6 +35,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -1539,7 +1541,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), stringImmutableSet)
                             .apply();
 
-                    if (sizeFiltered == 0) {
+                    if (sizeFiltered == 0 ||
+                            !mParentFragmentPreferences
+                                    .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true)) {
                         mNotificationManager.cancel(notifyID);
                     } else {
 
@@ -1582,6 +1586,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     .setGroupSummary(true)
                                     .setContentIntent(resultPendingIntent);
 //                                .setDefaults(Notification.DEFAULT_ALL);
+
+                            //Notification sound, if required
+                            final String ringtoneUri = mParentFragmentPreferences
+                                    .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+                            if (ringtoneUri != null) {
+                                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+                            }
 
                             final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
                                     .setSummaryText(summaryText);
