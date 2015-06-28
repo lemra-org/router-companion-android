@@ -84,10 +84,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <RingtonePreference
             android:dependency="notifications.enable"
-            android:title="Sound"
+            android:title="Notification Sound"
+            android:ringtoneType="notification"
             android:key="notifications.sound"
             android:showDefault="true"
-            android:showSilent="true"/>
+            android:showSilent="true"
+            android:defaultValue="content://settings/system/notification_sound"/>
 
         <org.rm3l.ddwrt.utils.LongListPreference
             android:defaultValue="30"
