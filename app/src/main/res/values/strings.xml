@@ -625,5 +625,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="send_to">Send to</string>
     <string name="share_backup">Share Backup File via</string>
     <string name="help">Help</string>
-    <string name="what_s_new">What's new</string>
+    <string name="what_s_new">What\'s new</string>
 </resources>

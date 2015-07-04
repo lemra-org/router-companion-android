@@ -72,7 +72,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
 
     <string-array name="pref_notifications_sync_frequency_titles">
-        <item>Never</item>
         <item>5 minutes</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -81,7 +80,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>Daily</item>
     </string-array>
     <string-array name="pref_notifications_sync_frequency_values">
-        <item>0</item>
         <item>5</item>
         <item>15</item>
         <item>30</item>

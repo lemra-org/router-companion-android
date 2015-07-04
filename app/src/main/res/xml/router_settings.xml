@@ -70,7 +70,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </PreferenceCategory>
 
     <!-- Notifications -->
-    <PreferenceScreen
+    <PreferenceCategory
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
@@ -78,44 +78,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.enable"
-            android:summaryOff="Disabled."
-            android:summaryOn="Enabled. You may get notifications even if you are not using the app."
+            android:summaryOff="Disabled for this router."
+            android:summaryOn="Enabled for this router."
             android:title="Receive Notifications" />
 
-        <RingtonePreference
-            android:dependency="notifications.enable"
-            android:title="Notification Sound"
-            android:ringtoneType="notification"
-            android:key="notifications.sound"
-            android:showDefault="true"
-            android:showSilent="true"
-            android:defaultValue="content://settings/system/notification_sound"/>
-
-        <org.rm3l.ddwrt.utils.LongListPreference
-            android:defaultValue="30"
-            android:dependency="notifications.enable"
-            android:entries="@array/pref_notifications_sync_frequency_titles"
-            android:entryValues="@array/pref_notifications_sync_frequency_values"
-            android:key="notifications.syncIntervalMinutes"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Background Service Frequency" />
-
-        <PreferenceCategory
-            android:dependency="notifications.enable"
-            android:key="notifications.connectedHosts"
-            android:title="Connected Hosts Notifications">
-
-            <CheckBoxPreference
+        <CheckBoxPreference
             android:dependency="notifications.enable"
             android:defaultValue="true"
             android:key="notifications.connectedHosts.activeOnly"
-            android:summaryOff="All hosts, including those not connected anymore to the Router but with an active DHCP lease, will be displayed."
-            android:summaryOn="You will be notified of active hosts only, i.e. hosts that are effectively connected to the router."
+            android:summaryOff="Connected Hosts notifications will list all hosts, including those not connected anymore to this router but with an active DHCP lease."
+            android:summaryOn="You will be notified of active hosts only, i.e. hosts that are effectively connected to this router."
             android:title="Display only active hosts"/>
 
-        </PreferenceCategory>
-
+    </PreferenceCategory>
 
             <!--<CheckBoxPreference-->
                 <!--android:disableDependentsState="false"-->
@@ -187,7 +162,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:positiveButtonText="@null"-->
                     <!--android:title="Frequency" />-->
 
-    </PreferenceScreen>
 
     <!--</PreferenceCategory>-->
 
