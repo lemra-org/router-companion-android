@@ -25,12 +25,10 @@ package org.rm3l.ddwrt.resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
-
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
 
 /**
@@ -192,9 +190,10 @@ public class Device implements Comparable<Device> {
 
     @NonNull
     public String getAliasOrSystemName() {
-        return Strings.nullToEmpty(
-                MoreObjects
-                        .firstNonNull(this.alias, this.systemName));
+        if (!isNullOrEmpty(this.alias)) {
+            return this.alias;
+        }
+        return nullToEmpty(this.systemName);
     }
 
     @Nullable

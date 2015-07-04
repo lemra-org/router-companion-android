@@ -55,6 +55,7 @@ import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.RouterData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.ConnectedHostsService;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -365,6 +366,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 macToDevice.put(macAddr, dev);
             }
 
+            ConnectedHostsService.generateConnectedHostsNotification(mParentFragmentActivity,
+                    mParentFragmentPreferences, mRouter, macToDevice.values());
 
             //Load user-defined hosts
             if (mParentFragmentPreferences != null) {

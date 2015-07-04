@@ -23,20 +23,14 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -45,17 +39,14 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
@@ -80,20 +71,15 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -128,12 +114,12 @@ import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
-import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.ConnectedHostsService;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.HideInactiveClientsFilterVisitorImpl;
@@ -159,7 +145,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,10 +162,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
-import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
-import static org.rm3l.ddwrt.resources.Encrypted.d;
-import static org.rm3l.ddwrt.resources.Encrypted.e;
-import static org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile.GSON_BUILDER;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
@@ -1379,7 +1360,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             //No worries
                         }
                     }
-//
+
+                    for (final Device device : deviceCollection) {
+                        devices.addDevice(device);
+                    }
 
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -1389,300 +1373,306 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     });
 
-                    final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
-                            getSystemService(Context.NOTIFICATION_SERVICE);
+                    ConnectedHostsService.generateConnectedHostsNotification(mParentFragmentActivity,
+                            mParentFragmentPreferences, mRouter, deviceCollection);
 
-                    // Sets an ID for the notification, so it can be updated
-                    final int notifyID = mRouter.getId();
+//                    final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
+//                            getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//                    // Sets an ID for the notification, so it can be updated
+//                    final int notifyID = mRouter.getId();
+//
+//                    final boolean onlyActiveHosts = mParentFragmentPreferences
+//                            .getBoolean("notifications.connectedHosts.activeOnly", true);
+//                    final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
+//                            .filter(new Predicate<Device>() {
+//                                @Override
+//                                public boolean apply(@Nullable Device input) {
+//                                    return ((!onlyActiveHosts) ||
+//                                            (input != null && input.isActive()));
+//                                }
+//                            }).toSortedSet(new Comparator<Device>() {
+//                                @Override
+//                                public int compare(Device lhs, Device rhs) {
+//                                    if (lhs == rhs) {
+//                                        return 0;
+//                                    }
+//                                    if (lhs == null) {
+//                                        return -1;
+//                                    }
+//                                    if (rhs == null) {
+//                                        return 1;
+//                                    }
+//                                    return ComparisonChain.start()
+//                                            .compare(lhs.getAliasOrSystemName(),
+//                                                    rhs.getAliasOrSystemName(),
+//                                                    CASE_INSENSITIVE_STRING_ORDERING)
+//                                            .result();
+//                                }
+//                            });
+//                    final int sizeFiltered = devicesCollFiltered.size();
+//
+//                    final Set<Device> previousConnectedHosts = new HashSet<>();
+//                    final Set<String> devicesStringSet = new HashSet<>(mParentFragmentPreferences
+//                            .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
+//                                    new HashSet<String>()));
+//                    for (final String devStrEncrypted : devicesStringSet) {
+//                        try {
+//                            final String devStr = d(devStrEncrypted);
+//                            if (isNullOrEmpty(devStr)) {
+//                                continue;
+//                            }
+//
+//                            final Map objFromJson = GSON_BUILDER.create()
+//                                    .fromJson(devStr, Map.class);
+//
+//                            final Object macAddress = objFromJson.get(MAC_ADDRESS);
+//                            if (macAddress == null || macAddress.toString().isEmpty()) {
+//                                continue;
+//                            }
+//
+//                            //IP Address may change as well
+//                            final Device deviceFromJson = new Device(macAddress.toString());
+//
+//                            final Object ipAddr = objFromJson.get(IP_ADDRESS);
+//                            if (ipAddr != null) {
+//                                deviceFromJson.setIpAddress(ipAddr.toString());
+//                            }
+//
+//                            //Display name may change too
+//                            final Object displayName = objFromJson.get(DEVICE_NAME_FOR_NOTIFICATION);
+//                            if (displayName != null) {
+//                                deviceFromJson.setDeviceNameForNotification(displayName.toString());
+//                            }
+//
+//                            previousConnectedHosts.add(deviceFromJson);
+//
+//                        } catch (final Exception e) {
+//                            //No worries
+//                            e.printStackTrace();
+//                            Utils.reportException(new
+//                                    IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e));
+//                        }
+//                    }
+//
+//                    boolean updateNotification = false;
+//                    if (sizeFiltered != previousConnectedHosts.size()) {
+//                        updateNotification = true;
+//                    } else {
+//
+//                        //Now compare if anything has changed
+//                        for (final Device newDevice : devicesCollFiltered) {
+//                            if (newDevice == null) {
+//                                continue;
+//                            }
+//                            final String deviceMacAddress = newDevice.getMacAddress();
+//                            final String deviceIpAddress = newDevice.getIpAddress();
+//                            final String deviceDisplayName = newDevice.getAliasOrSystemName();
+//
+//                            boolean deviceFound = false;
+//                            boolean deviceHasChanged = false;
+//                            for (final Device previousConnectedHost : previousConnectedHosts) {
+//                                if (previousConnectedHost == null) {
+//                                    continue;
+//                                }
+//                                if (!previousConnectedHost.getMacAddress()
+//                                        .equalsIgnoreCase(deviceMacAddress)) {
+//                                    continue;
+//                                }
+//                                deviceFound = true;
+//                                //Device found - now analyze if something has changed
+//                                if (!(Objects
+//                                        .equal(deviceIpAddress, previousConnectedHost.getIpAddress())
+//                                        && Objects
+//                                        .equal(deviceDisplayName,
+//                                                previousConnectedHost.getDeviceNameForNotification()))) {
+//                                    deviceHasChanged = true;
+//                                    break;
+//                                }
+//                            }
+//                            if (deviceHasChanged || !deviceFound) {
+//                                //This is a new device or an updated one - so update is needed
+//                                updateNotification = true;
+//                                break;
+//                            }
+//                        }
+//                    }
 
-                    final boolean onlyActiveHosts = mParentFragmentPreferences
-                            .getBoolean("notifications.connectedHosts.activeOnly", true);
-                    final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
-                            .filter(new Predicate<Device>() {
-                                @Override
-                                public boolean apply(@Nullable Device input) {
-                                    return ((!onlyActiveHosts) ||
-                                            (input != null && input.isActive()));
-                                }
-                            }).toSortedSet(new Comparator<Device>() {
-                                @Override
-                                public int compare(Device lhs, Device rhs) {
-                                    if (lhs == rhs) {
-                                        return 0;
-                                    }
-                                    if (lhs == null) {
-                                        return -1;
-                                    }
-                                    if (rhs == null) {
-                                        return 1;
-                                    }
-                                    return ComparisonChain.start()
-                                            .compare(lhs.getAliasOrSystemName(),
-                                                    rhs.getAliasOrSystemName(),
-                                                    CASE_INSENSITIVE_STRING_ORDERING)
-                                            .result();
-                                }
-                            });
-                    final int sizeFiltered = devicesCollFiltered.size();
-
-                    final Set<Device> previousConnectedHosts = new HashSet<>();
-                    final Set<String> devicesStringSet = new HashSet<>(mParentFragmentPreferences
-                            .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
-                                    new HashSet<String>()));
-                    for (final String devStrEncrypted : devicesStringSet) {
-                        try {
-                            final String devStr = d(devStrEncrypted);
-                            if (isNullOrEmpty(devStr)) {
-                                continue;
-                            }
-
-                            final Map objFromJson = GSON_BUILDER.create()
-                                    .fromJson(devStr, Map.class);
-
-                            final Object macAddress = objFromJson.get(MAC_ADDRESS);
-                            if (macAddress == null || macAddress.toString().isEmpty()) {
-                                continue;
-                            }
-
-                            //IP Address may change as well
-                            final Device deviceFromJson = new Device(macAddress.toString());
-
-                            final Object ipAddr = objFromJson.get(IP_ADDRESS);
-                            if (ipAddr != null) {
-                                deviceFromJson.setIpAddress(ipAddr.toString());
-                            }
-
-                            //Display name may change too
-                            final Object displayName = objFromJson.get(DEVICE_NAME_FOR_NOTIFICATION);
-                            if (displayName != null) {
-                                deviceFromJson.setDeviceNameForNotification(displayName.toString());
-                            }
-
-                            previousConnectedHosts.add(deviceFromJson);
-
-                        } catch (final Exception e) {
-                            //No worries
-                            e.printStackTrace();
-                            Utils.reportException(new
-                                    IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e));
-                        }
-                    }
-
-                    boolean updateNotification = false;
-                    if (sizeFiltered != previousConnectedHosts.size()) {
-                        updateNotification = true;
-                    } else {
-
-                        //Now compare if anything has changed
-                        for (final Device newDevice : devicesCollFiltered) {
-                            if (newDevice == null) {
-                                continue;
-                            }
-                            final String deviceMacAddress = newDevice.getMacAddress();
-                            final String deviceIpAddress = newDevice.getIpAddress();
-                            final String deviceDisplayName = newDevice.getAliasOrSystemName();
-
-                            boolean deviceFound = false;
-                            boolean deviceHasChanged = false;
-                            for (final Device previousConnectedHost : previousConnectedHosts) {
-                                if (previousConnectedHost == null) {
-                                    continue;
-                                }
-                                if (!previousConnectedHost.getMacAddress()
-                                        .equalsIgnoreCase(deviceMacAddress)) {
-                                    continue;
-                                }
-                                deviceFound = true;
-                                //Device found - now analyze if something has changed
-                                if (!(Objects
-                                        .equal(deviceIpAddress, previousConnectedHost.getIpAddress())
-                                        && Objects
-                                        .equal(deviceDisplayName,
-                                                previousConnectedHost.getDeviceNameForNotification()))) {
-                                    deviceHasChanged = true;
-                                    break;
-                                }
-                            }
-                            if (deviceHasChanged || !deviceFound) {
-                                //This is a new device or an updated one - so update is needed
-                                updateNotification = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    for (final Device device : deviceCollection) {
-                        devices.addDevice(device);
-                    }
-
-                    //Build the String Set to save in preferences
-                    final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
-                            .transform(new Function<Device, String>() {
-                                @Override
-                                public String apply(@Nullable Device device) {
-                                    if (device == null) {
-                                        return e(DDWRTCompanionConstants.EMPTY_STRING);
-                                    }
-                                    final Map<String, String> details = Maps.newHashMap();
-                                    details.put(MAC_ADDRESS, device.getMacAddress());
-                                    details.put(IP_ADDRESS, device.getIpAddress());
-                                    details.put(DEVICE_NAME_FOR_NOTIFICATION,
-                                            device.getAliasOrSystemName());
-
-                                    return e(GSON_BUILDER.create().toJson(details));
-                                }
-                            }).toSet();
-
-                    mParentFragmentPreferences.edit()
-                            .remove(getFormattedPrefKey(CONNECTED_HOSTS))
-                            .apply();
-
-                    mParentFragmentPreferences.edit()
-                            .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), stringImmutableSet)
-                            .apply();
-
-                    if (sizeFiltered == 0 ||
-                            !mParentFragmentPreferences
-                                    .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true)) {
-                        mNotificationManager.cancel(notifyID);
-                    } else {
-
-                        final Bitmap largeIcon = BitmapFactory.decodeResource(
-                                mParentFragmentActivity.getResources(),
-                                R.drawable.ic_launcher);
-
-                        if (updateNotification) {
-
-                            final Intent resultIntent = new Intent(mParentFragmentActivity,
-                                    DDWRTMainActivity.class);
-                            resultIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 3); //Open right on Clients Section
-                            // Because clicking the notification opens a new ("special") activity, there's
-                            // no need to create an artificial back stack.
-                            final PendingIntent resultPendingIntent =
-                                    PendingIntent.getActivity(
-                                            mParentFragmentActivity,
-                                            0,
-                                            resultIntent,
-                                            PendingIntent.FLAG_UPDATE_CURRENT
-                                    );
-
-                            final String mRouterName = mRouter.getName();
-                            final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
-                            String summaryText = "";
-                            if (!mRouterNameNullOrEmpty) {
-                                summaryText = (mRouterName + " (");
-                            }
-                            summaryText += mRouter.getRemoteIpAddress();
-                            if (!mRouterNameNullOrEmpty) {
-                                summaryText += ")";
-                            }
-
-                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-                                    .setSmallIcon(R.drawable.ic_launcher)
-                                    .setLargeIcon(largeIcon)
-                                    .setAutoCancel(true)
-                                    .setGroup(WirelessClientsTile.class.getSimpleName())
-                                    .setGroupSummary(true)
-                                    .setContentIntent(resultPendingIntent);
-//                                .setDefaults(Notification.DEFAULT_ALL);
-
-                            //Notification sound, if required
-                            final String ringtoneUri = mParentFragmentPreferences
-                                    .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
-                            if (ringtoneUri != null) {
-                                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
-                            }
-
-                            final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
-                                    .setSummaryText(summaryText);
-
-                            if (sizeFiltered == 1) {
-                                //Only one device
-                                final Device device = devicesCollFiltered.iterator().next();
-                                final String deviceAliasOrSystemName = device.getAliasOrSystemName();
-                                final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
-                                        device.getMacAddress() : deviceAliasOrSystemName;
-
-                                mBuilder.setContentTitle(deviceNameToDisplay);
-
-                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
-                                //IP Address
-                                String ipLine = String.format("IP   %s", device.getIpAddress());
-                                final Spannable ipSpannable = new SpannableString(ipLine);
-                                ipSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                        0, "IP".length(),
-                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                inboxStyle.addLine(ipSpannable);
-
-                                if (!isNullOrEmpty(deviceAliasOrSystemName)) {
-                                    //MAC Address
-                                    final String macLine = String.format("MAC   %s", device.getMacAddress());
-                                    final Spannable macSpannable = new SpannableString(macLine);
-                                    macSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                            0, "MAC".length(),
-                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    inboxStyle.addLine(macSpannable);
-                                }
-                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                                if (macouiVendorDetails != null) {
-                                    //NIC Manufacturer
-                                    final String ouiLine = String.format("OUI   %s",
-                                            Strings.nullToEmpty(macouiVendorDetails.getCompany()));
-                                    final Spannable ouiSpannable = new SpannableString(ouiLine);
-                                    ouiSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                            0, "OUI".length(),
-                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    inboxStyle.addLine(ouiSpannable);
-                                }
-
-                                mBuilder.setContentText(ipSpannable);
-
-                            } else {
-
-                                final String newDevicesTitle = String.format("%d new device%s",
-                                        sizeFiltered, sizeFiltered > 1 ? "s" : "");
-
-                                mBuilder.setContentTitle(newDevicesTitle);
-
-                                inboxStyle.setBigContentTitle(newDevicesTitle);
-
-                                Spannable firstLine = null;
-                                for (final Device device : devicesCollFiltered) {
-                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-                                    final String deviceAliasOrSystemName = device.getAliasOrSystemName();
-                                    final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
-                                            device.getMacAddress() : deviceAliasOrSystemName;
-                                    final String line = String.format("%s   %s%s%s",
-                                            deviceNameToDisplay,
-                                            device.getIpAddress(),
-                                            isNullOrEmpty(deviceAliasOrSystemName) ?
-                                                    "" : String.format(" | %s", device.getMacAddress()),
-                                            macouiVendorDetails != null ? String.format(" (%s)",
-                                                    macouiVendorDetails.getCompany()) : "");
-                                    final Spannable sb = new SpannableString(line);
-                                    sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                            0, deviceNameToDisplay.length(),
-                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    inboxStyle.addLine(sb);
-                                    if (firstLine == null) {
-                                        firstLine = sb;
-                                    }
-                                }
-
-                                mBuilder.setContentText(firstLine);
-                                mBuilder.setNumber(sizeFiltered);
-
-                            }
-
-                            // Moves the expanded layout object into the notification object.
-                            mBuilder.setStyle(inboxStyle);
-
-                            // Because the ID remains unchanged, the existing notification is
-                            // updated.
-                            mNotificationManager.notify(notifyID, mBuilder.build());
-                        }
-                    }
+//                    //Build the String Set to save in preferences
+//                    final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
+//                            .transform(new Function<Device, String>() {
+//                                @Override
+//                                public String apply(@Nullable Device device) {
+//                                    if (device == null) {
+//                                        return e(DDWRTCompanionConstants.EMPTY_STRING);
+//                                    }
+//                                    final Map<String, String> details = Maps.newHashMap();
+//                                    details.put(MAC_ADDRESS, device.getMacAddress());
+//                                    details.put(IP_ADDRESS, device.getIpAddress());
+//                                    details.put(DEVICE_NAME_FOR_NOTIFICATION,
+//                                            device.getAliasOrSystemName());
+//
+//                                    return e(GSON_BUILDER.create().toJson(details));
+//                                }
+//                            }).toSet();
+//
+//                    mParentFragmentPreferences.edit()
+//                            .remove(getFormattedPrefKey(CONNECTED_HOSTS))
+//                            .apply();
+//
+//                    mParentFragmentPreferences.edit()
+//                            .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), stringImmutableSet)
+//                            .apply();
+//
+//                    if (sizeFiltered == 0 ||
+//                            !mParentFragmentPreferences
+//                                    .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true)) {
+//                        mNotificationManager.cancel(notifyID);
+//                    } else {
+//
+//                        final Bitmap largeIcon = BitmapFactory.decodeResource(
+//                                mParentFragmentActivity.getResources(),
+//                                R.drawable.ic_launcher);
+//
+//                        if (updateNotification) {
+//
+//                            final Intent resultIntent = new Intent(mParentFragmentActivity,
+//                                    DDWRTMainActivity.class);
+//                            resultIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+//                            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 3); //Open right on Clients Section
+//                            // Because clicking the notification opens a new ("special") activity, there's
+//                            // no need to create an artificial back stack.
+//                            final PendingIntent resultPendingIntent =
+//                                    PendingIntent.getActivity(
+//                                            mParentFragmentActivity,
+//                                            0,
+//                                            resultIntent,
+//                                            PendingIntent.FLAG_UPDATE_CURRENT
+//                                    );
+//
+//                            final String mRouterName = mRouter.getName();
+//                            final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
+//                            String summaryText = "";
+//                            if (!mRouterNameNullOrEmpty) {
+//                                summaryText = (mRouterName + " (");
+//                            }
+//                            summaryText += mRouter.getRemoteIpAddress();
+//                            if (!mRouterNameNullOrEmpty) {
+//                                summaryText += ")";
+//                            }
+//
+//                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
+//                                    .setSmallIcon(R.drawable.ic_launcher)
+//                                    .setLargeIcon(largeIcon)
+//                                    .setAutoCancel(true)
+//                                    .setGroup(WirelessClientsTile.class.getSimpleName())
+//                                    .setGroupSummary(true)
+//                                    .setContentIntent(resultPendingIntent);
+////                                .setDefaults(Notification.DEFAULT_ALL);
+//
+//                            //Notification sound, if required
+//                            final String ringtoneUri = mParentFragmentPreferences
+//                                    .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+//                            if (ringtoneUri != null) {
+//                                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+//                            }
+//
+//                            final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
+//                                    .setSummaryText(summaryText);
+//
+//                            final String newDevicesTitle = String.format("%d connected host%s",
+//                                    sizeFiltered, sizeFiltered > 1 ? "s" : "");
+//
+//                            mBuilder.setContentTitle(newDevicesTitle);
+//
+//                            inboxStyle.setBigContentTitle(newDevicesTitle);
+//
+//                            if (sizeFiltered == 1) {
+//                                //Only one device
+//                                final Device device = devicesCollFiltered.iterator().next();
+//                                final String deviceAliasOrSystemName = device.getAliasOrSystemName();
+//
+////                                mBuilder.setContentTitle(deviceNameToDisplay);
+//
+////                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
+//                                //Name
+//                                if (!isNullOrEmpty(deviceAliasOrSystemName)) {
+//                                    String nameLine = String.format("Name   %s", deviceAliasOrSystemName);
+//                                    final Spannable nameSpannable = new SpannableString(nameLine);
+//                                    nameSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+//                                            0, "Name".length(),
+//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                    inboxStyle.addLine(nameSpannable);
+//                                }
+//
+//                                //IP Address
+//                                String ipLine = String.format("IP   %s", device.getIpAddress());
+//                                final Spannable ipSpannable = new SpannableString(ipLine);
+//                                ipSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+//                                        0, "IP".length(),
+//                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                inboxStyle.addLine(ipSpannable);
+//
+//                                //MAC Address
+//                                final String macLine = String.format("MAC   %s", device.getMacAddress());
+//                                final Spannable macSpannable = new SpannableString(macLine);
+//                                macSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+//                                        0, "MAC".length(),
+//                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                inboxStyle.addLine(macSpannable);
+//
+//                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+//                                if (macouiVendorDetails != null) {
+//                                    //NIC Manufacturer
+//                                    final String ouiLine = String.format("OUI   %s",
+//                                            Strings.nullToEmpty(macouiVendorDetails.getCompany()));
+//                                    final Spannable ouiSpannable = new SpannableString(ouiLine);
+//                                    ouiSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+//                                            0, "OUI".length(),
+//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                    inboxStyle.addLine(ouiSpannable);
+//                                }
+//
+//                                mBuilder.setContentText(ipSpannable);
+//
+//                            } else {
+//
+//                                Spannable firstLine = null;
+//                                for (final Device device : devicesCollFiltered) {
+//                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
+//                                    final String deviceAliasOrSystemName = device.getAliasOrSystemName();
+//                                    final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
+//                                            device.getMacAddress() : deviceAliasOrSystemName;
+//                                    final String line = String.format("%s   %s%s%s",
+//                                            deviceNameToDisplay,
+//                                            device.getIpAddress(),
+//                                            isNullOrEmpty(deviceAliasOrSystemName) ?
+//                                                    "" : String.format(" | %s", device.getMacAddress()),
+//                                            macouiVendorDetails != null ? String.format(" (%s)",
+//                                                    macouiVendorDetails.getCompany()) : "");
+//                                    final Spannable sb = new SpannableString(line);
+//                                    sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+//                                            0, deviceNameToDisplay.length(),
+//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                                    inboxStyle.addLine(sb);
+//                                    if (firstLine == null) {
+//                                        firstLine = sb;
+//                                    }
+//                                }
+//
+//                                mBuilder.setContentText(firstLine);
+//                                mBuilder.setNumber(sizeFiltered);
+//
+//                            }
+//
+//                            // Moves the expanded layout object into the notification object.
+//                            mBuilder.setStyle(inboxStyle);
+//
+//                            // Because the ID remains unchanged, the existing notification is
+//                            // updated.
+//                            mNotificationManager.notify(notifyID, mBuilder.build());
+//                        }
+//                    }
 
                     Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
 
