@@ -85,6 +85,7 @@ import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
+import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -777,6 +778,9 @@ public class DDWRTMainActivity extends ActionBarActivity
 
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
+                return true;
+            case R.id.changelog:
+                this.startActivity(new Intent(this, ChangelogActivity.class));
                 return true;
             case R.id.action_settings:
                 //Open Settings activity for this item

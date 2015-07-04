@@ -28,14 +28,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     tools:context="org.rm3l.ddwrt.help.HelpActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/help_toolbar"
+        android:id="@+id/web_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize" />
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/help_adView"
+        android:id="@+id/web_adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -48,7 +48,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <WebView
         android:layout_width="match_parent"
-        android:id="@+id/help_webview"
+        android:id="@+id/web_webview"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

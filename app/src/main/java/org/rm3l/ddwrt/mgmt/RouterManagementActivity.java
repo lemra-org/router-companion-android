@@ -86,6 +86,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
+import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
@@ -496,6 +497,9 @@ public class RouterManagementActivity
                 return true;
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
+                return true;
+            case R.id.changelog:
+                this.startActivity(new Intent(this, ChangelogActivity.class));
                 return true;
             case R.id.router_list_take_bug_report:
                 Utils.takeBugReport(this);

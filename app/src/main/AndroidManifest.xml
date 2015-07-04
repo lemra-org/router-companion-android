@@ -127,6 +127,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".help.ChangelogActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/what_s_new"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".donate.DonateActivity"
             android:excludeFromRecents="true"
             android:label="@string/support_app"

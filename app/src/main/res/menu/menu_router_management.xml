@@ -125,10 +125,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/changelog"
+        android:icon="@drawable/ic_action_action_info_outline"
+        android:orderInCategory="10"
+        android:title="What's new"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/router_list_about"
         android:alphabeticShortcut="a"
         android:icon="@drawable/ic_action_social_person"
-        android:orderInCategory="10"
+        android:orderInCategory="11"
         android:title="@string/menuitem_about"
         app:showAsAction="never" />
 
