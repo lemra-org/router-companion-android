@@ -220,6 +220,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
+                android:maxLines="1"
+                android:inputType="text"
                 android:hint="e.g., root"
                 android:imeOptions="flagNoExtractUi"
                 android:text="root" />
@@ -294,22 +296,33 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/router_add_password_hdr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="Password" />
 
                 <EditText
                     android:id="@+id/router_add_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:hint="e.g., 'default' (may be empty)"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
                     android:maxLines="1"/>
+
+                <CheckBox
+                    android:id="@+id/router_add_password_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:checked="false"
+                    android:text="Show Password"/>
 
             </LinearLayout>
 

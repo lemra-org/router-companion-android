@@ -42,6 +42,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -235,6 +237,30 @@ public abstract class AbstractRouterMgmtDialogFragment
             }
         });
 
+        final EditText pwdView = (EditText) view.findViewById(R.id.router_add_password);
+        final CheckBox pwdShowCheckBox = (CheckBox) view.findViewById(R.id.router_add_password_show_checkbox);
+
+        pwdShowCheckBox
+            .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (!isChecked) {
+//                        pwdView.setTransformationMethod(
+//                                PasswordTransformationMethod.getInstance());
+                        pwdView.setInputType(
+                                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        pwdView.requestFocus();
+                    } else {
+//                        pwdView.setTransformationMethod(
+//                                HideReturnsTransformationMethod.getInstance());
+                        pwdView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        pwdView.requestFocus();
+                    }
+                    pwdView.setSelection(pwdView.length());
+                }
+            });
+
+
         ((RadioGroup) view.findViewById(R.id.router_add_ssh_auth_method))
                 .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -244,7 +270,8 @@ public abstract class AbstractRouterMgmtDialogFragment
                         final Button privkeyView = (Button) view.findViewById(R.id.router_add_privkey);
                         final TextView privkeyPathView = (TextView) view.findViewById(R.id.router_add_privkey_path);
                         final TextView pwdHdrView = (TextView) view.findViewById(R.id.router_add_password_hdr);
-                        final EditText pwdView = (EditText) view.findViewById(R.id.router_add_password);
+//                        final EditText pwdView = (EditText) view.findViewById(R.id.router_add_password);
+//                        final CheckBox pwdShowCheckBox = (CheckBox) view.findViewById(R.id.router_add_password_show_checkbox);
 
                         switch (checkedId) {
                             case R.id.router_add_ssh_auth_method_none:
@@ -254,6 +281,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 pwdHdrView.setVisibility(View.GONE);
                                 pwdView.setText(null);
                                 pwdView.setVisibility(View.GONE);
+                                pwdShowCheckBox.setVisibility(View.GONE);
                                 break;
                             case R.id.router_add_ssh_auth_method_password:
                                 privkeyPathView.setText(null);
@@ -263,6 +291,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 pwdHdrView.setVisibility(View.VISIBLE);
                                 pwdView.setVisibility(View.VISIBLE);
                                 pwdView.setHint("e.g., 'default' (may be empty) ");
+                                pwdShowCheckBox.setVisibility(View.VISIBLE);
                                 break;
                             case R.id.router_add_ssh_auth_method_privkey:
                                 pwdView.setText(null);
@@ -271,6 +300,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 pwdHdrView.setVisibility(View.VISIBLE);
                                 pwdView.setVisibility(View.VISIBLE);
                                 pwdView.setHint("Key passphrase, if applicable");
+                                pwdShowCheckBox.setVisibility(View.VISIBLE);
                                 privkeyHdrView.setVisibility(View.VISIBLE);
                                 privkeyView.setVisibility(View.VISIBLE);
                                 break;
