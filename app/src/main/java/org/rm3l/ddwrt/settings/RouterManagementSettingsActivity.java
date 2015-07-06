@@ -86,7 +86,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
 
             bindPreferenceSummaryToValue(findPreference("acra.enable"));
-            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
+//            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
             bindPreferenceSummaryToValue(findPreference("acra.deviceid.enable"));
         }
     }

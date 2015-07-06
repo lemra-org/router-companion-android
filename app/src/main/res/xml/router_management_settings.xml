@@ -103,12 +103,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="@string/pref_acra_enabled"
             android:title="@string/pref_enable_acra" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="acra.syslog.enable"
-            android:summaryOff="@string/pref_acra_syslog_disabled"
-            android:summaryOn="@string/pref_acra_syslog_enabled"
-            android:title="@string/pref_acra_syslog" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="acra.syslog.enable"-->
+            <!--android:summaryOff="@string/pref_acra_syslog_disabled"-->
+            <!--android:summaryOn="@string/pref_acra_syslog_enabled"-->
+            <!--android:title="@string/pref_acra_syslog" />-->
 
         <CheckBoxPreference
             android:defaultValue="true"
