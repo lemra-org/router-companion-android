@@ -93,7 +93,7 @@ import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.service.ConnectedHostsService;
+import org.rm3l.ddwrt.service.BackgroundService;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -450,37 +450,27 @@ public class RouterManagementActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        final boolean bgServiceEnabled = mPreferences
+                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
+        final long minutes = mPreferences.getLong(
+                DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+
+        Log.d(LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
+
         final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        final Intent backgroundServiceIntent = new Intent(this, BackgroundService.class);
+        final PendingIntent pi = PendingIntent.getService(this, 0, backgroundServiceIntent, 0);
+        am.cancel(pi);
 
-        final List<Router> allRouters = dao.getAllRouters();
-        if (allRouters != null) {
-            for (final Router router : allRouters) {
-                if (router == null) {
-                    continue;
-                }
-                final String mRouterUuid = router.getUuid();
-
-                final SharedPreferences routerPreferences = getSharedPreferences(mRouterUuid, Context.MODE_PRIVATE);
-
-                final boolean notificationsEnabled =
-                        routerPreferences.getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
-                final long minutes = routerPreferences.getLong(
-                        DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
-
-                final Intent connectedHostsBackgroundServiceIntent = new Intent(this, ConnectedHostsService.class);
-                connectedHostsBackgroundServiceIntent.putExtra(ROUTER_SELECTED, mRouterUuid);
-                final PendingIntent pi = PendingIntent.getService(this, 0, connectedHostsBackgroundServiceIntent, 0);
-                am.cancel(pi);
-                // by my own convention, minutes <= 0 means notifications are disabled
-                if (notificationsEnabled &&
-                        minutes > 0) {
-                    am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            SystemClock.elapsedRealtime() + minutes * 60 * 1000,
-                            minutes * 60 * 1000, pi);
-                }
-            }
+        if (!bgServiceEnabled || minutes <= 0l) {
+            //Skip
+            return;
         }
 
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+                minutes * 60 * 1000, pi);
     }
 
     @Override

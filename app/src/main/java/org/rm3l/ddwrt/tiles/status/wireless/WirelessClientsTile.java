@@ -119,7 +119,7 @@ import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.service.ConnectedHostsService;
+import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.HideInactiveClientsFilterVisitorImpl;
@@ -1373,7 +1373,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     });
 
-                    ConnectedHostsService.generateConnectedHostsNotification(mParentFragmentActivity,
+                    ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
                             mParentFragmentPreferences, mRouter, deviceCollection);
 
 //                    final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
