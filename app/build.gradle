@@ -27,10 +27,6 @@ import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
 
-configurations {
-    all*.exclude group: 'com.android.support', module: 'support-v4'
-}
-
 //Prompt for keystore file and password (same for private key and store file)
 // Will take care of prompting via console or via a dialog form (if no console available, which
 // can be the case if building with Android Studio, or with gradle daemon mode)
@@ -288,7 +284,7 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:support-v4:22.2.0'
+//    compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.2'
     compile 'com.android.support:appcompat-v7:22.2.0'
