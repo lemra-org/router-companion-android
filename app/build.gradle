@@ -27,6 +27,10 @@ import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
 
+configurations {
+    all*.exclude group: 'com.android.support', module: 'support-v4'
+}
+
 //Prompt for keystore file and password (same for private key and store file)
 // Will take care of prompting via console or via a dialog form (if no console available, which
 // can be the case if building with Android Studio, or with gradle daemon mode)
