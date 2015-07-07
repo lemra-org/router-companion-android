@@ -97,6 +97,8 @@
     public static ** valueOf(java.lang.String);
 }
 
+-keepattributes InnerClasses,EnclosingMethod
+
 # ACRA needs "annotations" so add this...
 # Note: This may already be defined in the default "proguard-android-optimize.txt"
 # file in the SDK. If it is, then you don't need to duplicate it. See your
@@ -165,5 +167,3 @@
 
 -keep enum com.purplebrain.adbuddiz.sdk.** { *; }
 -keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
-
-#-keepclassmembers class org.rm3l.ddwrt.resources.* { *; }
