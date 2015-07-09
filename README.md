@@ -91,6 +91,10 @@ To help support this project, donations are also welcome, via the app menus, or 
 
 <a href='https://pledgie.com/campaigns/27531'><img alt='Click here to lend your support to: DD-WRT Companion and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/27531.png?skin_name=chrome' border='0' ></a>
 
+Builds
+--------
+[![Build Status](http://jenkins.rm3l.org:8181/buildStatus/icon?job=ddwrt-companion-android)](http://jenkins.rm3l.org:8181/job/ddwrt-companion-android/)
+
 License
 --------
 
