@@ -44,9 +44,9 @@ gradle.taskGraph.whenReady { taskGraph ->
                 dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
                     vbox { // Put everything below each other
                         label(text: "Please select keystore file:")
-                        def fileInput = fileChooser()
+                        def javax.swing.JFileChooser fileInput = fileChooser()
                         label(text: "Please enter passphrase:")
-                        def input = passwordField()
+                        def javax.swing.JPasswordField input = passwordField()
                         button(defaultButton: true, text: 'OK', actionPerformed: {
                             storeFile = fileInput.selectedFile
                             password = new String(input.password)
@@ -234,7 +234,7 @@ android {
     }
     dexOptions {
         incremental true
-        javaMaxHeapSize "2048M"
+//        javaMaxHeapSize "2048M"
     }
     buildTypes {
         release {
@@ -284,7 +284,7 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.google.code.gson:gson:2.3'
-//    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.2'
     compile 'com.android.support:appcompat-v7:22.2.0'
