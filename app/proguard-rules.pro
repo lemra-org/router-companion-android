@@ -165,5 +165,37 @@
     *;
 }
 
+# Keep inner private classes
+-keep public class org.rm3l.ddwrt.DDWRTApplication$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.main.DDWRTMainActivity$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.mgmt.RouterManagementActivity$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.mgmt.AbstractRouterMgmtDialogFragment$* {
+    *;
+}
+-keep public class com.android.common.view.SlidingTabLayout$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.service.BackgroundService$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.tiles.admin.nvram.NVRAMDataRecyclerViewAdapter$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile$* {
+    *;
+}
+
 -keep enum com.purplebrain.adbuddiz.sdk.** { *; }
 -keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
