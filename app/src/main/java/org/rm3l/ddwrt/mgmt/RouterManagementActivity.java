@@ -191,14 +191,15 @@ public class RouterManagementActivity
         setContentView(R.layout.activity_router_management);
 
         final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
-        if (BuildConfig.WITH_ADS) {
-            removeAdsButton.setVisibility(View.VISIBLE);
-            removeAdsButton.setOnClickListener(new View.OnClickListener() {
+        final View.OnClickListener adsOnClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
                 }
-            });
+            };
+        if (BuildConfig.WITH_ADS) {
+            removeAdsButton.setVisibility(View.VISIBLE);
+            removeAdsButton.setOnClickListener(adsOnClickListener);
         } else {
             removeAdsButton.setVisibility(View.GONE);
         }
