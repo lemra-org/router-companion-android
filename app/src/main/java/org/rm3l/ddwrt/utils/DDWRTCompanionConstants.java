@@ -102,7 +102,10 @@ public final class DDWRTCompanionConstants {
 //    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
+    //Disabled - does not seem to be profitable
+    @Deprecated
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
+
     public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
             ((BuildConfig.WITH_ADS ? "_" : "") + "home");
 

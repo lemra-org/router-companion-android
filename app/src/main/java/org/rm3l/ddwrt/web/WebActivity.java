@@ -21,16 +21,12 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 /**
@@ -69,17 +65,6 @@ public abstract class WebActivity extends ActionBarActivity {
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this,
                 (AdView) findViewById(R.id.web_adView));
-
-        if (BuildConfig.WITH_ADS) {
-            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-            if (BuildConfig.DEBUG) {
-                AdBuddiz.setTestModeActive();
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-            } else {
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-            }
-            AdBuddiz.cacheAds(this);
-        }
 
         if (themeLight) {
             final Resources resources = getResources();
@@ -178,60 +163,23 @@ public abstract class WebActivity extends ActionBarActivity {
     public void finish() {
 
         if (BuildConfig.WITH_ADS) {
-
-            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                @Override
-                public void didFailToShowAd(AdBuddizError adBuddizError) {
-                    super.didFailToShowAd(adBuddizError);
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                WebActivity.super.finish();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            WebActivity.super.finish();
-                        }
-
-                    } else {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
                         WebActivity.super.finish();
                     }
-                }
+                });
 
-                @Override
-                public void didHideAd() {
-                    super.didHideAd();
-                    WebActivity.super.finish();
-                }
-            });
-
-            if (AdBuddiz.isReadyToShowAd(this)) {
-                AdBuddiz.showAd(this);
-            } else {
-//                super.finish();
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            WebActivity.super.finish();
-                        }
-                    });
-
-                    if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                    } else {
-                        WebActivity.super.finish();
-                    }
-
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
                     WebActivity.super.finish();
                 }
-            }
 
+            } else {
+                WebActivity.super.finish();
+            }
         } else {
             super.finish();
         }

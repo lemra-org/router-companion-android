@@ -46,9 +46,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Strings;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -127,16 +124,6 @@ public abstract class DDWRTTile<T>
                 mTileClickInterstitialAd = AdUtils.requestNewInterstitial(mParentFragmentActivity,
                         R.string.interstitial_ad_unit_id_tile_click);
 
-                if (BuildConfig.WITH_ADS) {
-                    AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-                    if (BuildConfig.DEBUG) {
-                        AdBuddiz.setTestModeActive();
-                        AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-                    } else {
-                        AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-                    }
-                    AdBuddiz.cacheAds(mParentFragmentActivity);
-                }
             }
         });
     }
@@ -343,130 +330,21 @@ public abstract class DDWRTTile<T>
             onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             if (BuildConfig.WITH_ADS) {
-
-                AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                    @Override
-                    public void didFailToShowAd(AdBuddizError adBuddizError) {
-                        super.didFailToShowAd(adBuddizError);
-                        if (mTileClickInterstitialAd != null) {
-                            mTileClickInterstitialAd.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdClosed() {
-                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                    if (adRequest != null) {
-                                        mTileClickInterstitialAd.loadAd(adRequest);
-                                    }
-                                    ((AbstractBaseFragment) mParentFragment)
-                                            .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                }
-                            });
-
-                            if (mTileClickInterstitialAd.isLoaded()) {
-                                mTileClickInterstitialAd.show();
-                            } else {
-                                final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-                                //noinspection ConstantConditions
-                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                        Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                                alertDialog.show();
-                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                HANDLER.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ((AbstractBaseFragment) mParentFragment)
-                                                .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                        alertDialog.cancel();
-                                    }
-                                }, 2500);
+                if (mTileClickInterstitialAd != null) {
+                    mTileClickInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                            if (adRequest != null) {
+                                mTileClickInterstitialAd.loadAd(adRequest);
                             }
-
-                        } else {
-                            final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-                            //noinspection ConstantConditions
-                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                    Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                            alertDialog.show();
-                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            HANDLER.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((AbstractBaseFragment) mParentFragment)
-                                            .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                    alertDialog.cancel();
-                                }
-                            }, 2500);
+                            ((AbstractBaseFragment) mParentFragment)
+                                    .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
                         }
-                    }
+                    });
 
-                    @Override
-                    public void didHideAd() {
-                        super.didHideAd();
-                        final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-                        //noinspection ConstantConditions
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        HANDLER.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((AbstractBaseFragment) mParentFragment)
-                                        .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                alertDialog.cancel();
-                            }
-                        }, 2500);
-                    }
-                });
-
-                if (AdBuddiz.isReadyToShowAd(mParentFragmentActivity)) {
-                    AdBuddiz.showAd(mParentFragmentActivity);
-                } else {
-//                    final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-//                    //noinspection ConstantConditions
-//                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                            Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-//                    alertDialog.show();
-//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                    HANDLER.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            ((AbstractBaseFragment) mParentFragment)
-//                                    .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-//                            alertDialog.cancel();
-//                        }
-//                    }, 2500);
-                    if (mTileClickInterstitialAd != null) {
-                        mTileClickInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                if (adRequest != null) {
-                                    mTileClickInterstitialAd.loadAd(adRequest);
-                                }
-                                ((AbstractBaseFragment) mParentFragment)
-                                        .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                            }
-                        });
-
-                        if (mTileClickInterstitialAd.isLoaded()) {
-                            mTileClickInterstitialAd.show();
-                        } else {
-                            final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-                            //noinspection ConstantConditions
-                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                    Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                            alertDialog.show();
-                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            HANDLER.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((AbstractBaseFragment) mParentFragment)
-                                            .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                    alertDialog.cancel();
-                                }
-                            }, 2500);
-                        }
-
+                    if (mTileClickInterstitialAd.isLoaded()) {
+                        mTileClickInterstitialAd.show();
                     } else {
                         final String dialogMsg = onClickIntentAndListener.getDialogMessage();
                         //noinspection ConstantConditions
@@ -483,6 +361,22 @@ public abstract class DDWRTTile<T>
                             }
                         }, 2500);
                     }
+
+                } else {
+                    final String dialogMsg = onClickIntentAndListener.getDialogMessage();
+                    //noinspection ConstantConditions
+                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                            Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
+                    alertDialog.show();
+                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                    HANDLER.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((AbstractBaseFragment) mParentFragment)
+                                    .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
+                            alertDialog.cancel();
+                        }
+                    }, 2500);
                 }
 
             } else {

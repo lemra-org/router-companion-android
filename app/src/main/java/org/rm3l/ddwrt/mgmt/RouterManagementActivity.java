@@ -71,9 +71,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
@@ -208,17 +205,6 @@ public class RouterManagementActivity
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);
-
-        if (BuildConfig.WITH_ADS) {
-            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-            if (BuildConfig.DEBUG) {
-                AdBuddiz.setTestModeActive();
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-            } else {
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-            }
-            AdBuddiz.cacheAds(this);
-        }
 
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
@@ -698,60 +684,23 @@ public class RouterManagementActivity
     @Override
     public void onBackPressed() {
         if (BuildConfig.WITH_ADS) {
-
-            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                @Override
-                public void didFailToShowAd(AdBuddizError adBuddizError) {
-                    super.didFailToShowAd(adBuddizError);
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                RouterManagementActivity.super.onBackPressed();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            RouterManagementActivity.super.onBackPressed();
-                        }
-
-                    } else {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
                         RouterManagementActivity.super.onBackPressed();
                     }
-                }
+                });
 
-                @Override
-                public void didHideAd() {
-                    super.didHideAd();
-                    RouterManagementActivity.super.onBackPressed();
-                }
-            });
-
-            if (AdBuddiz.isReadyToShowAd(this)) {
-                AdBuddiz.showAd(this);
-            } else {
-//                super.onBackPressed();
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            RouterManagementActivity.super.onBackPressed();
-                        }
-                    });
-
-                    if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                    } else {
-                        RouterManagementActivity.super.onBackPressed();
-                    }
-
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
                     RouterManagementActivity.super.onBackPressed();
                 }
-            }
 
+            } else {
+                RouterManagementActivity.super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -824,83 +773,17 @@ public class RouterManagementActivity
                         .apply();
             }
 
-            if (BuildConfig.WITH_ADS) {
-                AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                    @Override
-                    public void didFailToShowAd(AdBuddizError adBuddizError) {
-                        super.didFailToShowAd(adBuddizError);
-                        if (mInterstitialAd != null) {
-                            mInterstitialAd.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdClosed() {
-                                    startActivity(view, ddWrtMainIntent);
-                                }
-                            });
-
-                            if (mInterstitialAd.isLoaded()) {
-                                mInterstitialAd.show();
-                            } else {
-                                startActivity(view, ddWrtMainIntent);
-                            }
-
-                        } else {
+            if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
                             startActivity(view, ddWrtMainIntent);
                         }
-                    }
+                    });
 
-                    @Override
-                    public void didHideAd() {
-                        super.didHideAd();
-                        startActivity(view, ddWrtMainIntent);
-                    }
-                });
-
-                if (AdBuddiz.isReadyToShowAd(RouterManagementActivity.this)) {
-                    AdBuddiz.showAd(RouterManagementActivity.this);
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        startActivity(view, ddWrtMainIntent);
-//                    } else {
-//                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                startActivity(view, ddWrtMainIntent);
-//                                alertDialog.cancel();
-//                            }
-//                        }, 1000);
-//                    }
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                startActivity(view, ddWrtMainIntent);
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            startActivity(view, ddWrtMainIntent);
-                        }
-
-                    } else {
-                        startActivity(view, ddWrtMainIntent);
-                    }
-                }
-
-
-            }
-
-            //Animate
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (!BuildConfig.WITH_ADS) {
-                    startActivity(view, ddWrtMainIntent);
-                }
-            } else {
-                if (!BuildConfig.WITH_ADS) {
                     final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
                     alertDialog.show();
                     ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
@@ -912,6 +795,18 @@ public class RouterManagementActivity
                         }
                     }, 1000);
                 }
+
+            } else {
+                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(view, ddWrtMainIntent);
+                        alertDialog.cancel();
+                    }
+                }, 1000);
             }
 
         }
