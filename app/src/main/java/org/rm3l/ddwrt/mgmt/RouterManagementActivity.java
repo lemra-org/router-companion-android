@@ -23,7 +23,9 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +35,7 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -68,9 +71,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
@@ -83,12 +83,14 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
+import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.BackgroundService;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -186,14 +188,15 @@ public class RouterManagementActivity
         setContentView(R.layout.activity_router_management);
 
         final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
-        if (BuildConfig.WITH_ADS) {
-            removeAdsButton.setVisibility(View.VISIBLE);
-            removeAdsButton.setOnClickListener(new View.OnClickListener() {
+        final View.OnClickListener adsOnClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
                 }
-            });
+            };
+        if (BuildConfig.WITH_ADS) {
+            removeAdsButton.setVisibility(View.VISIBLE);
+            removeAdsButton.setOnClickListener(adsOnClickListener);
         } else {
             removeAdsButton.setVisibility(View.GONE);
         }
@@ -202,17 +205,6 @@ public class RouterManagementActivity
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_router_list_to_router_main);
-
-        if (BuildConfig.WITH_ADS) {
-            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-            if (BuildConfig.DEBUG) {
-                AdBuddiz.setTestModeActive();
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-            } else {
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-            }
-            AdBuddiz.cacheAds(this);
-        }
 
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
@@ -443,6 +435,32 @@ public class RouterManagementActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        final boolean bgServiceEnabled = mPreferences
+                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
+        final long minutes = mPreferences.getLong(
+                DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+
+        Log.d(LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
+
+        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        final Intent backgroundServiceIntent = new Intent(this, BackgroundService.class);
+        final PendingIntent pi = PendingIntent.getService(this, 0, backgroundServiceIntent, 0);
+        am.cancel(pi);
+
+        if (!bgServiceEnabled || minutes <= 0l) {
+            //Skip
+            return;
+        }
+
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+                minutes * 60 * 1000, pi);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -456,6 +474,9 @@ public class RouterManagementActivity
                 return true;
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
+                return true;
+            case R.id.changelog:
+                this.startActivity(new Intent(this, ChangelogActivity.class));
                 return true;
             case R.id.router_list_take_bug_report:
                 Utils.takeBugReport(this);
@@ -663,60 +684,23 @@ public class RouterManagementActivity
     @Override
     public void onBackPressed() {
         if (BuildConfig.WITH_ADS) {
-
-            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                @Override
-                public void didFailToShowAd(AdBuddizError adBuddizError) {
-                    super.didFailToShowAd(adBuddizError);
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                RouterManagementActivity.super.onBackPressed();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            RouterManagementActivity.super.onBackPressed();
-                        }
-
-                    } else {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
                         RouterManagementActivity.super.onBackPressed();
                     }
-                }
+                });
 
-                @Override
-                public void didHideAd() {
-                    super.didHideAd();
-                    RouterManagementActivity.super.onBackPressed();
-                }
-            });
-
-            if (AdBuddiz.isReadyToShowAd(this)) {
-                AdBuddiz.showAd(this);
-            } else {
-//                super.onBackPressed();
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            RouterManagementActivity.super.onBackPressed();
-                        }
-                    });
-
-                    if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                    } else {
-                        RouterManagementActivity.super.onBackPressed();
-                    }
-
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
                     RouterManagementActivity.super.onBackPressed();
                 }
-            }
 
+            } else {
+                RouterManagementActivity.super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -789,83 +773,17 @@ public class RouterManagementActivity
                         .apply();
             }
 
-            if (BuildConfig.WITH_ADS) {
-                AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                    @Override
-                    public void didFailToShowAd(AdBuddizError adBuddizError) {
-                        super.didFailToShowAd(adBuddizError);
-                        if (mInterstitialAd != null) {
-                            mInterstitialAd.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdClosed() {
-                                    startActivity(view, ddWrtMainIntent);
-                                }
-                            });
-
-                            if (mInterstitialAd.isLoaded()) {
-                                mInterstitialAd.show();
-                            } else {
-                                startActivity(view, ddWrtMainIntent);
-                            }
-
-                        } else {
+            if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
                             startActivity(view, ddWrtMainIntent);
                         }
-                    }
+                    });
 
-                    @Override
-                    public void didHideAd() {
-                        super.didHideAd();
-                        startActivity(view, ddWrtMainIntent);
-                    }
-                });
-
-                if (AdBuddiz.isReadyToShowAd(RouterManagementActivity.this)) {
-                    AdBuddiz.showAd(RouterManagementActivity.this);
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        startActivity(view, ddWrtMainIntent);
-//                    } else {
-//                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                startActivity(view, ddWrtMainIntent);
-//                                alertDialog.cancel();
-//                            }
-//                        }, 1000);
-//                    }
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                startActivity(view, ddWrtMainIntent);
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            startActivity(view, ddWrtMainIntent);
-                        }
-
-                    } else {
-                        startActivity(view, ddWrtMainIntent);
-                    }
-                }
-
-
-            }
-
-            //Animate
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (!BuildConfig.WITH_ADS) {
-                    startActivity(view, ddWrtMainIntent);
-                }
-            } else {
-                if (!BuildConfig.WITH_ADS) {
                     final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
                     alertDialog.show();
                     ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
@@ -877,6 +795,18 @@ public class RouterManagementActivity
                         }
                     }, 1000);
                 }
+
+            } else {
+                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(view, ddWrtMainIntent);
+                        alertDialog.cancel();
+                    }
+                }, 1000);
             }
 
         }
@@ -979,7 +909,7 @@ public class RouterManagementActivity
                         continue;
                     }
                     selectedRouters.add(selectedRouter);
-                    selectedRoutersStr.add(String.format("'%s' (%s)",
+                    selectedRoutersStr.add(String.format("- '%s' (%s)",
                             selectedRouter.getDisplayName(), selectedRouter.getRemoteIpAddress()));
                 }
 
@@ -988,7 +918,7 @@ public class RouterManagementActivity
                         .setTitle(String.format("Reboot %d Router(s)?", selectedItems.size()))
                         .setMessage(String.format("Are you sure you wish to continue? " +
                                         "The following Routers will be rebooted: \n\n%s",
-                                Joiner.on("\n").skipNulls().join(selectedRoutersStr)))
+                                Joiner.on("\n\n").skipNulls().join(selectedRoutersStr)))
                         .setCancelable(true)
                         .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                             @Override
@@ -1002,53 +932,55 @@ public class RouterManagementActivity
                                 final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
                                 final int totalNumOfDevices = selectedRouters.size();
 
+                                final RouterActionListener rebootRouterActionListener = new RouterActionListener() {
+                                    @Override
+                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                            final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+                                            if (numActionsThatDidNotSucceed > 0) {
+                                                //An error occurred
+                                                if (numActionsThatDidNotSucceed < totalNumOfDevices) {
+                                                    Utils.displayMessage(RouterManagementActivity.this,
+                                                            String.format("Action '%s' executed but %d error(s) occurred",
+                                                                    routerAction.toString(), numActionsThatDidNotSucceed),
+                                                            Style.INFO);
+                                                } else {
+                                                    //No action succeeded
+                                                    Utils.displayMessage(RouterManagementActivity.this,
+                                                            String.format("None of the '%s' actions submitted succeeded - please try again later.",
+                                                                    routerAction.toString()),
+                                                            Style.INFO);
+                                                }
+
+                                            } else {
+                                                //No error
+                                                Utils.displayMessage(RouterManagementActivity.this,
+                                                        String.format("Action '%s' executed successfully on %d Routers",
+                                                                routerAction.toString(), selectedItems.size()),
+                                                        Style.CONFIRM);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                        final int incrementAndGet = currentNum.incrementAndGet();
+                                        numActionsWithNoSuccess.incrementAndGet();
+                                        if (incrementAndGet >= totalNumOfDevices) {
+                                            //An error occurred
+                                            Utils.displayMessage(RouterManagementActivity.this,
+                                                    String.format("Action '%s' executed but %d error(s) occurred: %s",
+                                                            routerAction.toString(), numActionsWithNoSuccess.get(),
+                                                            ExceptionUtils.getRootCauseMessage(exception)),
+                                                    Style.INFO);
+                                        }
+                                    }
+                                };
+
                                 for (final Router selectedRouter : selectedRouters) {
                                     new RebootRouterAction(RouterManagementActivity.this,
-                                            new RouterActionListener() {
-                                                @Override
-                                                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                    final int incrementAndGet = currentNum.incrementAndGet();
-                                                    if (incrementAndGet >= totalNumOfDevices) {
-                                                        final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
-                                                        if (numActionsThatDidNotSucceed > 0) {
-                                                            //An error occurred
-                                                            if (numActionsThatDidNotSucceed < totalNumOfDevices) {
-                                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                                        String.format("Action '%s' executed but %d error(s) occurred",
-                                                                                routerAction.toString(), numActionsThatDidNotSucceed),
-                                                                        Style.INFO);
-                                                            } else {
-                                                                //No action succeeded
-                                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                                        String.format("None of the '%s' actions submitted succeeded - please try again later.",
-                                                                                routerAction.toString()),
-                                                                        Style.INFO);
-                                                            }
-
-                                                        } else {
-                                                            //No error
-                                                            Utils.displayMessage(RouterManagementActivity.this,
-                                                                    String.format("Action '%s' executed successfully on %d Routers",
-                                                                            routerAction.toString(), selectedItems.size()),
-                                                                    Style.CONFIRM);
-                                                        }
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                    final int incrementAndGet = currentNum.incrementAndGet();
-                                                    numActionsWithNoSuccess.incrementAndGet();
-                                                    if (incrementAndGet >= totalNumOfDevices) {
-                                                        //An error occurred
-                                                        Utils.displayMessage(RouterManagementActivity.this,
-                                                                String.format("Action '%s' executed but %d error(s) occurred: %s",
-                                                                        routerAction.toString(), numActionsWithNoSuccess.get(),
-                                                                        ExceptionUtils.getRootCauseMessage(exception)),
-                                                                Style.INFO);
-                                                    }
-                                                }
-                                            },
+                                            rebootRouterActionListener,
                                             mPreferences).execute(selectedRouter);
                                 }
                             }

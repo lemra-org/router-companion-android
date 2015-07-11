@@ -32,6 +32,9 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
@@ -78,8 +81,12 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
             bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
 
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_BG_SERVICE_ENABLE));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
+
             bindPreferenceSummaryToValue(findPreference("acra.enable"));
-            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
+//            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
             bindPreferenceSummaryToValue(findPreference("acra.deviceid.enable"));
         }
     }

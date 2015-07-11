@@ -81,36 +81,80 @@ public class WirelessIfacesTile extends IfacesTile {
                 //Also set details
                 mWirelessIfaceTiles.clear();
 
-                final Collection<WirelessIfaceTile> wirelessIfaceTiles = StatusWirelessFragment.getWirelessIfaceTiles(args,
-                        mParentFragmentActivity, mParentFragment, mRouter);
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mProgressBarDesc.setVisibility(View.VISIBLE);
+                        mProgressBar.setProgress(25);
+                        mProgressBarDesc.setText("Retrieving list of wireless ifaces...\n\n");
+                    }
+                });
+
+                final Collection<WirelessIfaceTile> wirelessIfaceTiles = StatusWirelessFragment
+                        .getWirelessIfaceTiles(args, mParentFragmentActivity, mParentFragment, mRouter);
+
                 if (wirelessIfaceTiles != null) {
                     mWirelessIfaceTiles = new CopyOnWriteArrayList<>(wirelessIfaceTiles);
-                }
 
-                boolean allViewsBuilt = true;
-                for (final WirelessIfaceTile mWirelessIfaceTile : mWirelessIfaceTiles) {
-                    if (mWirelessIfaceTile == null) {
-                        continue;
-                    }
-                    final AsyncTaskLoader<NVRAMInfo> mWirelessIfaceTileLoader = (AsyncTaskLoader<NVRAMInfo>)
-                            mWirelessIfaceTile.getLoader(id, args);
-                    if (mWirelessIfaceTileLoader == null) {
-                        continue;
-                    }
-                    Log.d(TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
-                    try {
-                        mWirelessIfaceTile.buildView(
-                                mWirelessIfaceTileLoader.loadInBackground());
-                        allViewsBuilt &= true;
-                    } catch (final Exception e) {
-                        Utils.reportException(e);
-                        e.printStackTrace();
-                        allViewsBuilt = false;
-                        //No worries
-                    }
-                }
+                    final int size = wirelessIfaceTiles.size();
 
-                viewsBuilt.set(allViewsBuilt);
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(57);
+                            mProgressBarDesc.setText(
+                                    String.format("Retrieved %d wireless ifaces. Now loading their details...\n\n",
+                                            size));
+                        }
+                    });
+                    int i = 0;
+                    boolean allViewsBuilt = true;
+                    for (final WirelessIfaceTile mWirelessIfaceTile : mWirelessIfaceTiles) {
+                        if (mWirelessIfaceTile == null) {
+                            continue;
+                        }
+                        final AsyncTaskLoader<NVRAMInfo> mWirelessIfaceTileLoader = (AsyncTaskLoader<NVRAMInfo>)
+                                mWirelessIfaceTile.getLoader(id, args);
+                        if (mWirelessIfaceTileLoader == null) {
+                            continue;
+                        }
+
+                        final int j = (++i);
+
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBarDesc.setText(
+                                        String.format("Retrieving details about iface %s (%d/%d)...\n\n",
+                                                mWirelessIfaceTile.getIface(),
+                                                j, size));
+                            }
+                        });
+
+                        Log.d(TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
+                        try {
+                            mWirelessIfaceTile.buildView(
+                                    mWirelessIfaceTileLoader.loadInBackground());
+                            allViewsBuilt &= true;
+                        } catch (final Exception e) {
+                            Utils.reportException(e);
+                            e.printStackTrace();
+                            allViewsBuilt = false;
+                            //No worries
+                        }
+                    }
+
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(95);
+                            mProgressBarDesc.setText("Now building final view...\n\n");
+                        }
+                    });
+
+                    viewsBuilt.set(allViewsBuilt);
+                }
 
                 return nvramInfo;
             }
@@ -131,61 +175,63 @@ public class WirelessIfacesTile extends IfacesTile {
         for (final int viewToHide : viewsToHide) {
             this.layout.findViewById(viewToHide).setVisibility(View.GONE);
         }
+
+        mProgressBar.setProgress(97);
+        mProgressBarDesc.setText("Generating views...\n\n");
+
+        mProgressBar.setVisibility(View.GONE);
+        mProgressBarDesc.setVisibility(View.GONE);
+
         final GridLayout container = (GridLayout) this.layout
                 .findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
         container.setVisibility(View.VISIBLE);
 
         //Now add each wireless iface tile
-        if (viewsBuilt.get()) {
 
-            container.removeAllViews();
+        container.removeAllViews();
 
-            final Resources resources = mParentFragmentActivity.getResources();
-            container.setBackgroundColor(resources.getColor(android.R.color.transparent));
+        final Resources resources = mParentFragmentActivity.getResources();
+        container.setBackgroundColor(resources.getColor(android.R.color.transparent));
 
-            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-            for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
-                if (tile == null) {
-                    continue;
+
+        for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
+            if (tile == null) {
+                continue;
+            }
+            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+            if (tileViewGroupLayout instanceof CardView) {
+
+                final CardView cardView = (CardView) tileViewGroupLayout;
+
+                //Create Options Menu
+                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+
+                if (!isThemeLight) {
+                    //Set menu background to white
+                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
                 }
-                final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
-                if (tileViewGroupLayout instanceof CardView) {
 
-                    final CardView cardView = (CardView) tileViewGroupLayout;
+                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                cardView.setPreventCornerOverlap(true);
+                //Add padding in API v21+ as well to have the same measurements with previous versions.
+                cardView.setUseCompatPadding(true);
 
-                    //Create Options Menu
-                    final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+                //Highlight CardView
+                cardView.setCardElevation(10f);
 
-                    if (!isThemeLight) {
-                        //Set menu background to white
-                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-                    }
-
-                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                    cardView.setPreventCornerOverlap(true);
-                    //Add padding in API v21+ as well to have the same measurements with previous versions.
-                    cardView.setUseCompatPadding(true);
-
-                    //Highlight CardView
-                    cardView.setCardElevation(10f);
-
-                    if (isThemeLight) {
-                        //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
-                    } else {
-                        //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
-                    }
-                }
-                if (tileViewGroupLayout != null) {
-                    container.addView(tileViewGroupLayout);
+                if (isThemeLight) {
+                    //Light
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                } else {
+                    //Default is Dark
+                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
                 }
             }
-
-        } else {
-            Log.d(TAG, "viewsBuilt=false");
-            //Do Nothing
+            if (tileViewGroupLayout != null) {
+                container.addView(tileViewGroupLayout);
+            }
         }
 
         super.onLoadFinished(loader, data);

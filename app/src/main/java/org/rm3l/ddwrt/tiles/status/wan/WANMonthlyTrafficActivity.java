@@ -49,9 +49,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -139,17 +136,6 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_adView));
 
-        if (BuildConfig.WITH_ADS) {
-            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-            if (BuildConfig.DEBUG) {
-                AdBuddiz.setTestModeActive();
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-            } else {
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-            }
-            AdBuddiz.cacheAds(this);
-        }
-
         final Intent intent = getIntent();
         mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -194,57 +180,22 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     public void finish() {
         if (BuildConfig.WITH_ADS) {
 
-            AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                @Override
-                public void didFailToShowAd(AdBuddizError adBuddizError) {
-                    super.didFailToShowAd(adBuddizError);
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                WANMonthlyTrafficActivity.super.finish();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            WANMonthlyTrafficActivity.super.finish();
-                        }
-
-                    } else {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
                         WANMonthlyTrafficActivity.super.finish();
                     }
-                }
+                });
 
-                @Override
-                public void didHideAd() {
-                    super.didHideAd();
-                    WANMonthlyTrafficActivity.super.finish();
-                }
-            });
-
-            if (AdBuddiz.isReadyToShowAd(this)) {
-                AdBuddiz.showAd(this);
-            } else {
-//                super.finish();
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            WANMonthlyTrafficActivity.super.finish();
-                        }
-                    });
-
-                    if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
-                    } else {
-                        WANMonthlyTrafficActivity.super.finish();
-                    }
-
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
                 } else {
                     WANMonthlyTrafficActivity.super.finish();
                 }
+
+            } else {
+                WANMonthlyTrafficActivity.super.finish();
             }
 
         } else {

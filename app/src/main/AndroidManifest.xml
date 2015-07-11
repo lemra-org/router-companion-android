@@ -48,15 +48,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- ACRA Error Reporting, if the user accepts to send their device IDs -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!-- For background service notifications -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".DDWRTApplication"
         android:allowBackup="true"
         android:backupAgent=".backup.DDWRTCompanionBackupAgent"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_launcher_ddwrt_companion"
         android:label="@string/app_name"
         android:theme="@style/AppThemeDark"
-        tools:replace="android:theme" >
+        tools:replace="android:theme,android:icon" >
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIex8fLj0PcvM6dwNd7Je9mgYuzCTRw4IZq5_jBQ" />
@@ -75,6 +79,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver android:name=".mgmt.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".mgmt.RouterManagementActivity"
@@ -114,6 +124,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".help.HelpActivity"
             android:excludeFromRecents="true"
             android:label="@string/help"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".help.ChangelogActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/what_s_new"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize" />
         <activity

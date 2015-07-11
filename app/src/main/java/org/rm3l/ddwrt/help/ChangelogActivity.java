@@ -7,10 +7,9 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.web.WebActivity;
 
 /**
- * Created by rm3l on 30/05/15.
+ * Created by rm3l on 04/07/15.
  */
-public class HelpActivity extends WebActivity {
-
+public class ChangelogActivity extends WebActivity {
     @Override
     protected CharSequence getTitleStr() {
         return null;
@@ -18,14 +17,12 @@ public class HelpActivity extends WebActivity {
 
     @Override
     protected int getTitleResId() {
-        return R.string.help;
+        return R.string.what_s_new;
     }
 
     @NonNull
     @Override
     protected String getUrl() {
-        return DDWRTCompanionConstants.REMOTE_HELP_WEBSITE;
+        return DDWRTCompanionConstants.REMOTE_HELP_WEBSITE_CHANGELOG;
     }
-
-
 }

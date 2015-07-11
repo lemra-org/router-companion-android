@@ -54,6 +54,9 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.resources.ProcNetDevNetworkData;
+import org.rm3l.ddwrt.resources.ProcNetDevReceive;
+import org.rm3l.ddwrt.resources.ProcNetDevTransmit;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -62,7 +65,10 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -73,6 +79,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.CELSIUS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.COLON;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SPACE;
 
 /**
  *
@@ -270,9 +279,21 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                                     celsius + DEGREE_SYMBOL + CELSIUS + " (" + fahrenheit + DEGREE_SYMBOL + FAHRENHEIT + ")");
                         }
 
+                        //Packet Info
+                        final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
+
+                        final int hasSysClassFolder = SSHUtils.runCommands(mParentFragmentActivity, mGlobalPreferences, mRouter,
+                                " [ -f " + sysClassNetStatsFolder + " ]");
+                        ProcNetDevNetworkData procNetDevNetworkData = null;
+                        if (hasSysClassFolder != 0) {
+                            //sysfs not mounted - fetch info from /proc/net/dev instead
+                            procNetDevNetworkData = gatherNetworkUsageFromProcNetDev(phyIface);
+                        }
+
                         //RX and TX Bytes
                         //noinspection ConstantConditions
-                        final Map<IfaceStatsType, Long> ifaceRxAndTxRates = getIfaceRxAndTxRates(phyIface);
+                        final Map<IfaceStatsType, Long> ifaceRxAndTxRates =
+                                getIfaceRxAndTxRates(phyIface, procNetDevNetworkData);
                         final Long rxBps = ifaceRxAndTxRates.get(IfaceStatsType.RX_BYTES);
                         final Long txBps = ifaceRxAndTxRates.get(IfaceStatsType.TX_BYTES);
                         if (rxBps != null) {
@@ -286,30 +307,48 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         }
 
                         //Packet Info
-                        final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
-                        try {
-                            final String[] packetsInfo = SSHUtils
-                                    .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                            String.format("%s/rx_packets", sysClassNetStatsFolder),
-                                            String.format("%s/rx_errors", sysClassNetStatsFolder),
-                                            String.format("%s/tx_packets", sysClassNetStatsFolder),
-                                            String.format("%s/tx_errors", sysClassNetStatsFolder));
+                        if (procNetDevNetworkData == null) {
+                            try {
+                                final String[] packetsInfo = SSHUtils
+                                        .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                                String.format("%s/rx_packets", sysClassNetStatsFolder),
+                                                String.format("%s/rx_errors", sysClassNetStatsFolder),
+                                                String.format("%s/tx_packets", sysClassNetStatsFolder),
+                                                String.format("%s/tx_errors", sysClassNetStatsFolder));
 
-                            if (packetsInfo != null) {
-                                final long rxErrors = Long.parseLong(packetsInfo[1]);
+                                if (packetsInfo != null) {
+                                    final long rxErrors = Long.parseLong(packetsInfo[1]);
+                                    nvramInfo.setProperty(wlIface + "_rx_packets",
+                                            String.format("%s\n(%s)",
+                                                    packetsInfo[0], rxErrors <= 0 ? "no error" :
+                                                            (rxErrors + String.format(" error%s", rxErrors > 1 ? "s" : ""))));
+                                    final long txErrors = Long.parseLong(packetsInfo[3]);
+                                    nvramInfo.setProperty(wlIface + "_tx_packets",
+                                            String.format("%s\n(%s)",
+                                                    packetsInfo[2], txErrors <= 0 ? "no error" :
+                                                            (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
+                                }
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                //No worries
+                            }
+                        } else {
+                            final ProcNetDevReceive receive = procNetDevNetworkData.getReceive();
+                            if (receive != null) {
+                                final int rxErrors = receive.getRxErrors();
                                 nvramInfo.setProperty(wlIface + "_rx_packets",
                                         String.format("%s\n(%s)",
-                                                packetsInfo[0], rxErrors <= 0 ? "no error" :
-                                                        (rxErrors + String.format("error%s", rxErrors > 1 ? "s" : ""))));
-                                final long txErrors = Long.parseLong(packetsInfo[3]);
+                                                receive.getRxPackets(), rxErrors <= 0 ? "no error" :
+                                                        (rxErrors + String.format(" error%s", rxErrors > 1 ? "s" : ""))));
+                            }
+                            final ProcNetDevTransmit transmit = procNetDevNetworkData.getTransmit();
+                            if (transmit != null) {
+                                final int txErrors = transmit.getTxErrors();
                                 nvramInfo.setProperty(wlIface + "_tx_packets",
                                         String.format("%s\n(%s)",
-                                                packetsInfo[2], txErrors <= 0 ? "no error" :
+                                                transmit.getTxPackets(), txErrors <= 0 ? "no error" :
                                                         (txErrors + String.format(" error%s", txErrors > 1 ? "s" : ""))));
                             }
-                        } catch (final Exception e) {
-                            e.printStackTrace();
-                            //No worries
                         }
                     }
                 }
@@ -322,8 +361,10 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 final Map<TemperatureUnit, String> result = Maps.newHashMapWithExpectedSize(2);
                 final String phyIfaceVarNameInRouter = WirelessIfaceTile.class.getSimpleName() + "TemperatureCelsius";
                 try {
-                    final String[] temperatures = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                            String.format("%s=$(echo $((`wl -i %s phy_tempsense | awk {' print $1 '}`/2+20))); echo \"C:$%s\"; echo \"F:$(($%s*9/5+32))\"",
+                    final String[] temperatures = SSHUtils.getManualProperty(mParentFragmentActivity,
+                            mRouter, mGlobalPreferences,
+                            String.format("%s=$(echo $((`wl -i %s phy_tempsense | awk {' print $1 '}`/2+20))); " +
+                                            "echo \"C:$%s\"; echo \"F:$(($%s*9/5+32))\"",
                                     phyIfaceVarNameInRouter, phyIface, phyIfaceVarNameInRouter, phyIfaceVarNameInRouter));
                     if (temperatures != null && temperatures.length >= 2) {
                         for (final String temperature : temperatures) {
@@ -344,30 +385,44 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             }
 
             @NonNull
-            private Map<IfaceStatsType, Long> getIfaceRxAndTxRates(@NonNull final String phyIface) {
+            private Map<IfaceStatsType, Long> getIfaceRxAndTxRates(@NonNull final String phyIface,
+                                                                   @Nullable final ProcNetDevNetworkData procNetDevNetworkData) {
                 final Map<IfaceStatsType, Long> result = Maps.newHashMapWithExpectedSize(2);
-                final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
-                final String rxBytesCmd = String
-                        .format("%s/rx_bytes", sysClassNetStatsFolder);
-                final String txBytesCmd = String
-                        .format("%s/tx_bytes", sysClassNetStatsFolder);
 
-                try {
-                    final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                    rxBytesCmd,
-                                    txBytesCmd,
-                                    "sleep 1",
-                                    rxBytesCmd,
-                                    txBytesCmd)
-                    );
-                    if (bytesBeforeAndAfter.length >= 4) {
-                        result.put(IfaceStatsType.RX_BYTES, Math.abs(bytesBeforeAndAfter[1] - bytesBeforeAndAfter[0]));
-                        result.put(IfaceStatsType.TX_BYTES, Math.abs(bytesBeforeAndAfter[3] - bytesBeforeAndAfter[2]));
+                if (procNetDevNetworkData == null) {
+
+                    final String sysClassNetStatsFolder = String.format(CAT_SYS_CLASS_NET_S_STATISTICS, phyIface);
+                    final String rxBytesCmd = String
+                            .format("%s/rx_bytes", sysClassNetStatsFolder);
+                    final String txBytesCmd = String
+                            .format("%s/tx_bytes", sysClassNetStatsFolder);
+                    try {
+                        final long[] bytesBeforeAndAfter = parseFloatDataFromOutput(SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                        rxBytesCmd,
+                                        txBytesCmd,
+                                        "sleep 1",
+                                        rxBytesCmd,
+                                        txBytesCmd)
+                        );
+                        if (bytesBeforeAndAfter.length >= 4) {
+                            result.put(IfaceStatsType.RX_BYTES, Math.abs(bytesBeforeAndAfter[1] - bytesBeforeAndAfter[0]));
+                            result.put(IfaceStatsType.TX_BYTES, Math.abs(bytesBeforeAndAfter[3] - bytesBeforeAndAfter[2]));
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } else {
+                    final ProcNetDevReceive receive = procNetDevNetworkData.getReceive();
+                    final ProcNetDevTransmit transmit = procNetDevNetworkData.getTransmit();
+                    if (receive != null) {
+                        result.put(IfaceStatsType.RX_BYTES, receive.getRxBytes());
+                    }
+                    if (transmit != null) {
+                        result.put(IfaceStatsType.TX_BYTES, transmit.getTxBytes());
+                    }
                 }
+
                 return result;
             }
 
@@ -382,6 +437,73 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                 }
                 return result;
+            }
+
+            @Nullable
+            private ProcNetDevNetworkData gatherNetworkUsageFromProcNetDev(@NonNull final String phyIface) {
+
+                final Map<String, ProcNetDevNetworkData> procNetDevNetworkDataMap = new HashMap<>();
+
+                try {
+                    final String[] procNetDevLines = SSHUtils.getManualProperty(
+                            mParentFragmentActivity, mRouter, mGlobalPreferences,
+                            "cat /proc/net/dev | grep \"" + phyIface + "\"");
+
+                    if (procNetDevLines == null || procNetDevLines.length < 1) {
+                        return null;
+                    }
+
+                    final ArrayList<String> gatheredData = new ArrayList<>();
+
+                    String[] tempData;
+//                    //Skip the first two lines (headers)
+//                    for (int i = 2; i < procNetDevLines.length; i++) {
+//                        //Parse /proc/net/dev to obtain network statistics.
+//                        //Line e.g.:
+//                        //lo: 4852 43 0 0 0 0 0 0 4852 43 0 0 0 0 0 0
+//                        tempData = procNetDevLines[i]
+//                                .replace(COLON, SPACE).split(SPACE);
+//                        gatheredData.addAll(Arrays.asList(tempData));
+//                        gatheredData.removeAll(Collections.singleton(EMPTY_STRING));
+//                    }
+
+                    //Parse /proc/net/dev to obtain network statistics.
+                    //Line e.g.:
+                    //lo: 4852 43 0 0 0 0 0 0 4852 43 0 0 0 0 0 0
+                    tempData = procNetDevLines[0]
+                            .replace(COLON, SPACE).split(SPACE);
+                    gatheredData.addAll(Arrays.asList(tempData));
+                    gatheredData.removeAll(Collections.singleton(EMPTY_STRING));
+
+                    int offset = 17;
+                    for (int base = 0; base < gatheredData.size(); base += offset) {
+                        // std::string, long int, int, int, int, int, int, int, int, long int, int, int, int, int, int, int, int)
+                        final String ifaceName = gatheredData.get(base);
+                        procNetDevNetworkDataMap.put(ifaceName, new ProcNetDevNetworkData(ifaceName,
+                                Long.parseLong(gatheredData.get(base + 1)),
+                                Integer.parseInt(gatheredData.get(base + 2)),
+                                Integer.parseInt(gatheredData.get(base + 3)),
+                                Integer.parseInt(gatheredData.get(base + 4)),
+                                Integer.parseInt(gatheredData.get(base + 5)),
+                                Integer.parseInt(gatheredData.get(base + 6)),
+                                Integer.parseInt(gatheredData.get(base + 7)),
+                                Integer.parseInt(gatheredData.get(base + 8)),
+                                Long.parseLong(gatheredData.get(base + 9)),
+                                Integer.parseInt(gatheredData.get(base + 10)),
+                                Integer.parseInt(gatheredData.get(base + 11)),
+                                Integer.parseInt(gatheredData.get(base + 12)),
+                                Integer.parseInt(gatheredData.get(base + 13)),
+                                Integer.parseInt(gatheredData.get(base + 14)),
+                                Integer.parseInt(gatheredData.get(base + 15)),
+                                Integer.parseInt(gatheredData.get(base + 16))));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(e);
+                }
+
+                return procNetDevNetworkDataMap.get(phyIface);
             }
 
         };
@@ -472,13 +594,13 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //SSID
             final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
-            this.wifiSsid = data.getProperty(this.iface + "_ssid", DDWRTCompanionConstants.EMPTY_STRING);
+            this.wifiSsid = data.getProperty(this.iface + "_ssid", EMPTY_STRING);
             ssidView.setText(this.wifiSsid);
 
             ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_details_ssid))
                     .setText(this.wifiSsid);
 
-            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", DDWRTCompanionConstants.EMPTY_STRING);
+            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
 
             //Ifname
             final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);

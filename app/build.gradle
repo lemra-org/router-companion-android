@@ -39,22 +39,34 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease')) {
         def password = ''
         def storeFile = null
-        if (System.console() == null) {
-            new SwingBuilder().edt {
-                dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
-                    vbox { // Put everything below each other
-                        label(text: "Please select keystore file:")
-                        def fileInput = fileChooser()
-                        label(text: "Please enter passphrase:")
-                        def input = passwordField()
-                        button(defaultButton: true, text: 'OK', actionPerformed: {
-                            storeFile = fileInput.selectedFile
-                            password = new String(input.password)
-                            dispose()
-                        })
+
+        //Attempt to read keystore.properties file, if any first
+        def propsFile = rootProject.file('keystore.properties')
+        def configName = 'release'
+        if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
+            def props = new Properties()
+            props.load(new FileInputStream(propsFile))
+            storeFile = file(props['storeFile'])
+//            password = props['storePassword']
+//            android.signingConfigs[configName].keyAlias = props['keyAlias']
+            password = props['keyPassword']
+
+        } else if (System.console() == null) {
+                new SwingBuilder().edt {
+                    dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                        vbox { // Put everything below each other
+                            label(text: "Please select keystore file:")
+                            def javax.swing.JFileChooser fileInput = fileChooser()
+                            label(text: "Please enter passphrase:")
+                            def javax.swing.JPasswordField input = passwordField()
+                            button(defaultButton: true, text: 'OK', actionPerformed: {
+                                storeFile = fileInput.selectedFile
+                                password = new String(input.password)
+                                dispose()
+                            })
+                        }
                     }
                 }
-            }
         } else {
             storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
             storeFile = new File(storeFile)
@@ -82,7 +94,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 }
 
 def getVersionName(String flavorName) {
-    // Fetch the version according to git latest tag and "how far are we from last tag"
+    // Fetch the version according to git latest tag and "how far we are from last tag"
     def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
     def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
     def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
@@ -234,7 +246,7 @@ android {
     }
     dexOptions {
         incremental true
-        javaMaxHeapSize "2048M"
+//        javaMaxHeapSize "2048M"
     }
     buildTypes {
         release {
@@ -275,7 +287,7 @@ dependencies {
         // exclusion is not necessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-    compile project(':libraries:Donations')
+    compile 'org.sufficientlysecure:donations:2.3'
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'
     compile 'commons-net:commons-net:3.3'
@@ -284,14 +296,14 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.2'
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.cocosw:undobar:1.8.1@aar'
     compile 'com.google.zxing:core:3.1.0'
     compile 'com.github.curioustechizen.android-ago:library:1.2.0'
-    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
 //    compile 'com.android.support:multidex:1.0.0'
 
 //    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'

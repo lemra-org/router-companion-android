@@ -60,6 +60,40 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </PreferenceCategory>
 
+    <!-- Notifications -->
+    <PreferenceCategory
+        android:key="@string/pref_header_notifications"
+        android:title="Notifications">
+
+        <!-- Should be general settings -->
+        <RingtonePreference
+            android:title="Notification Sound"
+            android:ringtoneType="notification"
+            android:key="notifications.sound"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:defaultValue="content://settings/system/notification_sound"/>
+
+        <CheckBoxPreference
+            android:disableDependentsState="false"
+            android:defaultValue="true"
+            android:key="notifications.background.service.enable"
+            android:summaryOff="Disabled. You will need to open the app to get notifications."
+            android:summaryOn="Enabled. You may get notifications even if you are not using the app."
+            android:title="Background Service" />
+
+        <org.rm3l.ddwrt.utils.LongListPreference
+            android:defaultValue="30"
+            android:dependency="notifications.background.service.enable"
+            android:entries="@array/pref_notifications_sync_frequency_titles"
+            android:entryValues="@array/pref_notifications_sync_frequency_values"
+            android:key="notifications.syncIntervalMinutes"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Background Service Frequency" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Error Reporting">
 
         <CheckBoxPreference
@@ -69,12 +103,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="@string/pref_acra_enabled"
             android:title="@string/pref_enable_acra" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="acra.syslog.enable"
-            android:summaryOff="@string/pref_acra_syslog_disabled"
-            android:summaryOn="@string/pref_acra_syslog_enabled"
-            android:title="@string/pref_acra_syslog" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="acra.syslog.enable"-->
+            <!--android:summaryOff="@string/pref_acra_syslog_disabled"-->
+            <!--android:summaryOn="@string/pref_acra_syslog_enabled"-->
+            <!--android:title="@string/pref_acra_syslog" />-->
 
         <CheckBoxPreference
             android:defaultValue="true"

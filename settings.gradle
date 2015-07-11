@@ -20,4 +20,4 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-include ':app', ':libraries:Donations'
+include ':app'

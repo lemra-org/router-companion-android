@@ -28,6 +28,7 @@ import android.support.annotation.Nullable;
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.resources.Device.WANAccessState.WAN_ACCESS_UNKNOWN;
 
 /**
@@ -75,6 +76,8 @@ public class Device implements Comparable<Device> {
     private WirelessConnectionInfo wirelessConnectionInfo;
 
     private boolean isEditableForWol = false;
+
+    private String deviceNameForNotification;
 
     /**
      * Constructor
@@ -183,6 +186,14 @@ public class Device implements Comparable<Device> {
             return this.systemName;
         }
         return this.macAddress;
+    }
+
+    @NonNull
+    public String getAliasOrSystemName() {
+        if (!isNullOrEmpty(this.alias)) {
+            return this.alias;
+        }
+        return nullToEmpty(this.systemName);
     }
 
     @Nullable
@@ -322,6 +333,14 @@ public class Device implements Comparable<Device> {
 
     public void setDeviceUuidForWol(String deviceUuidForWol) {
         this.deviceUuidForWol = deviceUuidForWol;
+    }
+
+    public String getDeviceNameForNotification() {
+        return deviceNameForNotification;
+    }
+
+    public void setDeviceNameForNotification(String deviceNameForNotification) {
+        this.deviceNameForNotification = deviceNameForNotification;
     }
 
     public enum WANAccessState {

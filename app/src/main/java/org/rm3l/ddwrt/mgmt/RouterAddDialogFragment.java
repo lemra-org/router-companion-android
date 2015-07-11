@@ -85,23 +85,27 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
     public void onStart() {
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
-        final AlertDialog d = (AlertDialog) getDialog();
-        //Fill the router IP Address with the current gateway address, if any
-        try {
-            final EditText routerIpOrDnsEditText = (EditText) d.findViewById(R.id.router_add_ip);
-            if (routerIpOrDnsEditText.getText() == null || isNullOrEmpty(routerIpOrDnsEditText.getText().toString())) {
-                //Do this only if nothing has been filled in the EditText by the user
-                final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-                if (wifiManager != null) {
-                    final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                    if (dhcpInfo != null) {
-                        routerIpOrDnsEditText.setText(Utils.intToIp(dhcpInfo.gateway));
+        if (!mActivityCreatedAndInitialized.get()) {
+            final AlertDialog d = (AlertDialog) getDialog();
+            //Fill the router IP Address with the current gateway address, if any
+            try {
+                final EditText routerIpOrDnsEditText = (EditText) d.findViewById(R.id.router_add_ip);
+                if (routerIpOrDnsEditText.getText() == null || isNullOrEmpty(routerIpOrDnsEditText.getText().toString())) {
+                    //Do this only if nothing has been filled in the EditText by the user
+                    final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                    if (wifiManager != null) {
+                        final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                        if (dhcpInfo != null) {
+                            routerIpOrDnsEditText.setText(Utils.intToIp(dhcpInfo.gateway));
+                        }
                     }
                 }
+            } catch (@NonNull final Exception e) {
+                e.printStackTrace();
+                //No worries
             }
-        } catch (@NonNull final Exception e) {
-            e.printStackTrace();
-            //No worries
+
+            mActivityCreatedAndInitialized.set(true);
         }
     }
 

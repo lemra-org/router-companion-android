@@ -127,7 +127,9 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                         //date
                                         "date",
                                         //date since last reboot
-                                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))",
+                                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                                                " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                                                " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
                                         //elapsed from current date
                                         "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
                                         "uname -a",

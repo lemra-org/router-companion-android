@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.fragments.status;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,11 +43,13 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessIfacesTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 
@@ -72,24 +75,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                 singletonList(new WirelessIfacesTile(this, savedInstanceState, router));
     }
 
-//    @Nullable
-//    @Override
-//    protected Loader<Collection<WirelessIfaceTile>> getLoader(final int id, @NonNull final Bundle args) {
-//
-//        mLoader = new AsyncTaskLoader<Collection<WirelessIfaceTile>>(getActivity()) {
-//
-//            @Nullable
-//            @Override
-//            public Collection<WirelessIfaceTile> loadInBackground() {
-//                return getWirelessIfaceTiles(args, getActivity(), StatusWirelessFragment.this, router);
-//            }
-//
-//
-//        };
-//        return mLoader;
-//
-//    }
-
+    @Nullable
     public static Collection<WirelessIfaceTile> getWirelessIfaceTiles(@NonNull final Bundle args,
                                                                       FragmentActivity activity,
                                                                       Fragment parentFragment,
@@ -98,11 +84,11 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
             Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
                     router);
 
-
+            SharedPreferences sharedPreferences = activity
+                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                            Context.MODE_PRIVATE);
             final NVRAMInfo nvramInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
-                    activity
-                            .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                    Context.MODE_PRIVATE),
+                    sharedPreferences,
                     NVRAMInfo.LANDEVS,
                     NVRAMInfo.LAN_IFNAMES);
 
@@ -120,7 +106,43 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                 }
             }
 
-            final List<String> splitToList = SPLITTER.splitToList(landevs != null ? landevs : "");
+            final String[] wirelessSsids = SSHUtils.getManualProperty(activity, router,
+                    sharedPreferences, "nvram show | grep 'ssid='");
+            if (wirelessSsids == null || wirelessSsids.length == 0) {
+                return null;
+            }
+
+            final List<String> splitToList = new CopyOnWriteArrayList<>();
+
+            for (final String wirelessSsid : wirelessSsids) {
+                if (wirelessSsid == null ||
+                        wirelessSsid.startsWith("af_")) {
+                    //skip AnchorFree SSID
+                    continue;
+                }
+                final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
+                final int size = strings.size();
+                if (size == 1) {
+                    continue;
+                }
+
+                if (size >= 2) {
+//                    if (Strings.isNullOrEmpty(strings.get(1))) {
+//                        //skip iterms with no name
+//                        continue;
+//                    }
+                    final String wlIface = strings.get(0).replace("_ssid", "");
+                    if (wlIface.contains(".")) {
+                        //Skip vifs as well, as they will be considered later on
+                        continue;
+                    }
+
+                    splitToList.add(wlIface);
+                }
+            }
+
+
+//            final List<String> splitToList = SPLITTER.splitToList(landevs != null ? landevs : "");
             if (splitToList.isEmpty()) {
                 return null;
             }
@@ -136,13 +158,23 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                     continue;
                 }
 
+                final String hwAddrNVRAMProperty = landev + "_hwaddr";
+                final NVRAMInfo hwAddrNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
+                        sharedPreferences,
+                        hwAddrNVRAMProperty);
+
+                if (hwAddrNVRAMInfo == null ||
+                        Strings.isNullOrEmpty(hwAddrNVRAMInfo.getProperty(hwAddrNVRAMProperty))) {
+                    //ignore
+                    continue;
+                }
+
                 tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
                 //Also get Virtual Interfaces
                 try {
                     final String landevVifsKeyword = landev + "_vifs";
                     final NVRAMInfo landevVifsNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(activity, router,
-                            activity
-                                    .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE),
+                            sharedPreferences,
                             landevVifsKeyword);
                     if (landevVifsNVRAMInfo == null) {
                         continue;

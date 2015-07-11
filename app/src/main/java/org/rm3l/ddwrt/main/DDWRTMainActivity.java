@@ -65,9 +65,6 @@ import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.collect.Lists;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.purplebrain.adbuddiz.sdk.AdBuddizError;
-import com.purplebrain.adbuddiz.sdk.AdBuddizLogLevel;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +82,7 @@ import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
+import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -160,6 +158,8 @@ public class DDWRTMainActivity extends ActionBarActivity
     @NonNull
     private SharedPreferences mGlobalPreferences;
     @NonNull
+    private SharedPreferences mPreferences;
+    @NonNull
     private Router mRouter;
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
@@ -209,7 +209,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 //        }
         //FIXME End
 
-        final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
+        mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
         this.mGlobalPreferences = this.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 
         //Load from Shared Preferences
@@ -233,17 +233,6 @@ public class DDWRTMainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
-
-        if (BuildConfig.WITH_ADS) {
-            AdBuddiz.setPublisherKey(DDWRTCompanionConstants.ADBUDDIZ_PUBLISHER_KEY);
-            if (BuildConfig.DEBUG) {
-                AdBuddiz.setTestModeActive();
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Info);
-            } else {
-                AdBuddiz.setLogLevel(AdBuddizLogLevel.Error);
-            }
-            AdBuddiz.cacheAds(this);
-        }
 
         final String routerName = router.getName();
         setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
@@ -423,105 +412,17 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                     if (BuildConfig.WITH_ADS) {
 
-                        AdBuddiz.setDelegate(new AdUtils.AdBuddizListener() {
-                            @Override
-                            public void didFailToShowAd(AdBuddizError adBuddizError) {
-                                super.didFailToShowAd(adBuddizError);
-                                if (mInterstitialAd != null) {
-                                    mInterstitialAd.setAdListener(new AdListener() {
-                                        @Override
-                                        public void onAdClosed() {
-                                            finish();
-                                            startActivity(intent);
-                                        }
-                                    });
-
-                                    if (mInterstitialAd.isLoaded()) {
-                                        mInterstitialAd.show();
-                                    } else {
-                                        //Reload UI
-                                        final AlertDialog alertDialog = Utils.
-                                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                        alertDialog.show();
-                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                finish();
-                                                startActivity(intent);
-                                                alertDialog.cancel();
-                                            }
-                                        }, 2000);
-                                    }
-
-                                } else {
-                                    //Reload UI
-                                    final AlertDialog alertDialog = Utils.
-                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                    alertDialog.show();
-                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finish();
-                                            startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 2000);
+                        if (mInterstitialAd != null) {
+                            mInterstitialAd.setAdListener(new AdListener() {
+                                @Override
+                                public void onAdClosed() {
+                                    finish();
+                                    startActivity(intent);
                                 }
-                            }
+                            });
 
-                            @Override
-                            public void didHideAd() {
-                                super.didHideAd();
-                                finish();
-                                startActivity(intent);
-                            }
-                        });
-
-                        if (AdBuddiz.isReadyToShowAd(DDWRTMainActivity.this)) {
-                            AdBuddiz.showAd(DDWRTMainActivity.this);
-                        } else {
-//                            //Reload UI
-//                            final AlertDialog alertDialog = Utils.
-//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    finish();
-//                                    startActivity(intent);
-//                                    alertDialog.cancel();
-//                                }
-//                            }, 2000);
-                            if (mInterstitialAd != null) {
-                                mInterstitialAd.setAdListener(new AdListener() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        finish();
-                                        startActivity(intent);
-                                    }
-                                });
-
-                                if (mInterstitialAd.isLoaded()) {
-                                    mInterstitialAd.show();
-                                } else {
-                                    //Reload UI
-                                    final AlertDialog alertDialog = Utils.
-                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                    alertDialog.show();
-                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finish();
-                                            startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 2000);
-                                }
-
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
                             } else {
                                 //Reload UI
                                 final AlertDialog alertDialog = Utils.
@@ -537,6 +438,21 @@ public class DDWRTMainActivity extends ActionBarActivity
                                     }
                                 }, 2000);
                             }
+
+                        } else {
+                            //Reload UI
+                            final AlertDialog alertDialog = Utils.
+                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+                            alertDialog.show();
+                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                    startActivity(intent);
+                                    alertDialog.cancel();
+                                }
+                            }, 2000);
                         }
 
                     } else {
@@ -776,6 +692,9 @@ public class DDWRTMainActivity extends ActionBarActivity
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
                 return true;
+            case R.id.changelog:
+                this.startActivity(new Intent(this, ChangelogActivity.class));
+                return true;
             case R.id.action_settings:
                 //Open Settings activity for this item
                 final Intent ddWrtMainIntent = new Intent(this, RouterSettingsActivity.class);
@@ -991,7 +910,9 @@ public class DDWRTMainActivity extends ActionBarActivity
                             @Override
                             public void run() {
                                 finish();
-                                startActivity(getIntent());
+                                final Intent intent = getIntent();
+                                intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+                                startActivity(intent);
                                 alertDialog.cancel();
                             }
                         }, 2000);

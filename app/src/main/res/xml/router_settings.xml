@@ -69,4 +69,101 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </PreferenceCategory>
 
+    <!-- Notifications -->
+    <PreferenceCategory
+        android:key="@string/pref_header_notifications"
+        android:title="Notifications">
+
+        <CheckBoxPreference
+            android:disableDependentsState="false"
+            android:defaultValue="true"
+            android:key="notifications.enable"
+            android:summaryOff="Disabled for this router."
+            android:summaryOn="Enabled for this router."
+            android:title="Receive Notifications" />
+
+        <CheckBoxPreference
+            android:dependency="notifications.enable"
+            android:defaultValue="true"
+            android:key="notifications.connectedHosts.activeOnly"
+            android:summaryOff="Connected Hosts notifications will list all hosts, including those not connected anymore to this router but with an active DHCP lease."
+            android:summaryOn="You will be notified of active hosts only, i.e. hosts that are effectively connected to this router."
+            android:title="Display only active hosts"/>
+
+    </PreferenceCategory>
+
+            <!--<CheckBoxPreference-->
+                <!--android:disableDependentsState="false"-->
+                <!--android:defaultValue="true"-->
+                <!--android:key="notifications.enable"-->
+                <!--android:summaryOff="Background Service and notifications disabled. You need to open the app whenever you need it to connect to the Router/"-->
+                <!--android:summaryOn="Enabled. You may get notifications even if you are not using the app."-->
+                <!--android:title="Receive Notifications" />-->
+
+            <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+                <!--android:defaultValue="360"-->
+                <!--android:dependency="notifications.enable"-->
+                <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
+                <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
+                <!--android:key="notifications.syncIntervalMinutes"-->
+                <!--android:negativeButtonText="@null"-->
+                <!--android:positiveButtonText="@null"-->
+                <!--android:title="How frequently to check" />-->
+
+            <!--<org.rm3l.ddwrt.utils.MyMultiSelectListPreference-->
+                <!--android:dependency="notifications.enable"-->
+                <!--android:positiveButtonText="@null"-->
+                <!--android:negativeButtonText="@null"-->
+                <!--android:key="notifications.displayItems"-->
+                <!--android:title="Notifications to show"-->
+                <!--android:entries="@array/notifiable_items_list_titles"-->
+                <!--android:entryValues="@array/notifiable_items_list_values"-->
+                <!--android:defaultValue="@array/notifiable_items_list_default_values"-->
+                <!--android:persistent="true"/>-->
+
+
+            <!--<PreferenceCategory-->
+                <!--android:dependency="notifications.enable"-->
+                <!--android:key="notifications.wanConnectivity"-->
+                <!--android:title="WAN Connectivity Changes Notifications">-->
+
+                <!--<CheckBoxPreference-->
+                    <!--android:dependency="notifications.enable"-->
+                    <!--android:defaultValue="true"-->
+                    <!--android:key="notifications.wanConnectivity.enable"/>-->
+
+                <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+                    <!--android:defaultValue="360"-->
+                    <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
+                    <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
+                    <!--android:key="notifications.wanConnectivity.syncIntervalMinutes"-->
+                    <!--android:negativeButtonText="@null"-->
+                    <!--android:positiveButtonText="@null"-->
+                    <!--android:title="Frequency" />-->
+
+            <!--</PreferenceCategory>-->
+
+            <!--<PreferenceCategory-->
+                <!--android:dependency="notifications.enable"-->
+                <!--android:key="notifications.openvpnClient"-->
+                <!--android:title="OpenVPN Client Connectivity Notifications">-->
+
+                <!--<CheckBoxPreference-->
+                    <!--android:dependency="notifications.enable"-->
+                    <!--android:defaultValue="true"-->
+                    <!--android:key="notifications.openvpnClient.enable"/>-->
+
+                <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+                    <!--android:defaultValue="360"-->
+                    <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
+                    <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
+                    <!--android:key="notifications.openvpnClient.syncIntervalMinutes"-->
+                    <!--android:negativeButtonText="@null"-->
+                    <!--android:positiveButtonText="@null"-->
+                    <!--android:title="Frequency" />-->
+
+
+    <!--</PreferenceCategory>-->
+
+
 </PreferenceScreen>

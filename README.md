@@ -23,6 +23,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 DD-WRT Companion for android
 -------
 
+[![Build Status](http://jenkins.rm3l.org:8181/buildStatus/icon?job=ddwrt-companion-android)](http://jenkins.rm3l.org:8181/job/ddwrt-companion-android/)
+
 Had you ever tried to use the DD-WRT web interface on an Android device, you should have noticed how impractical it is to navigate with.
 
 This app aims at making DD-WRT devices management and monitoring a breeze, right from you Android-powered device.
@@ -90,6 +92,7 @@ You can also report any issues you noticed, either via the app or via the [issue
 To help support this project, donations are also welcome, via the app menus, or by clicking on the link below:
 
 <a href='https://pledgie.com/campaigns/27531'><img alt='Click here to lend your support to: DD-WRT Companion and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/27531.png?skin_name=chrome' border='0' ></a>
+
 
 License
 --------

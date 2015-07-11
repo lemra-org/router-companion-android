@@ -56,6 +56,8 @@ public final class DDWRTCompanionConstants {
 
     public static final String REMOTE_HELP_WEBSITE = "http://ddwrt-companion.rm3l.org";
 
+    public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://ddwrt-companion.rm3l.org/dev/changelog.html";
+
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
@@ -65,6 +67,19 @@ public final class DDWRTCompanionConstants {
     public static final String DATA_USAGE_NETWORK_PREF = "data_usage_network";
     public static final String EMPTY_STRING = "";
     public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
+    public static final String NOTIFICATIONS_ENABLE = "notifications.enable";
+    public static final String NOTIFICATIONS_BG_SERVICE_ENABLE = "notifications.background.service.enable";
+    public static final String NOTIFICATIONS_SOUND = "notifications.sound";
+    public static final String NOTIFICATIONS_DISPLAY_ITEMS = "notifications.displayItems";
+    public static final String NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_CONNECTED_HOSTS_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.connectedHosts.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY = "notifications.connectedHosts.activeOnly";
+    public static final String NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.wanConnectivity.syncIntervalMinutes";
+    public static final String NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF =
+            "notifications.openvpnClient.syncIntervalMinutes";
 
     public static final long DEFAULT_THEME = 31l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
@@ -87,11 +102,18 @@ public final class DDWRTCompanionConstants {
 //    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
+    //Disabled - does not seem to be profitable
+    @Deprecated
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
+
     public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
             ((BuildConfig.WITH_ADS ? "_" : "") + "home");
 
     public static int MB = 1024 * 1024;
+
+    public static final String COLON = ":";
+    public static final String SPACE = " ";
+    public static final String SHARP = "#";
 
     private DDWRTCompanionConstants() {
     }
