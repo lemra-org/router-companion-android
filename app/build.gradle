@@ -39,22 +39,34 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease')) {
         def password = ''
         def storeFile = null
-        if (System.console() == null) {
-            new SwingBuilder().edt {
-                dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
-                    vbox { // Put everything below each other
-                        label(text: "Please select keystore file:")
-                        def javax.swing.JFileChooser fileInput = fileChooser()
-                        label(text: "Please enter passphrase:")
-                        def javax.swing.JPasswordField input = passwordField()
-                        button(defaultButton: true, text: 'OK', actionPerformed: {
-                            storeFile = fileInput.selectedFile
-                            password = new String(input.password)
-                            dispose()
-                        })
+
+        //Attempt to read keystore.properties file, if any first
+        def propsFile = rootProject.file('keystore.properties')
+        def configName = 'release'
+        if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
+            def props = new Properties()
+            props.load(new FileInputStream(propsFile))
+            storeFile = file(props['storeFile'])
+//            password = props['storePassword']
+//            android.signingConfigs[configName].keyAlias = props['keyAlias']
+            password = props['keyPassword']
+
+        } else if (System.console() == null) {
+                new SwingBuilder().edt {
+                    dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                        vbox { // Put everything below each other
+                            label(text: "Please select keystore file:")
+                            def javax.swing.JFileChooser fileInput = fileChooser()
+                            label(text: "Please enter passphrase:")
+                            def javax.swing.JPasswordField input = passwordField()
+                            button(defaultButton: true, text: 'OK', actionPerformed: {
+                                storeFile = fileInput.selectedFile
+                                password = new String(input.password)
+                                dispose()
+                            })
+                        }
                     }
                 }
-            }
         } else {
             storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
             storeFile = new File(storeFile)
@@ -82,7 +94,7 @@ gradle.taskGraph.whenReady { taskGraph ->
 }
 
 def getVersionName(String flavorName) {
-    // Fetch the version according to git latest tag and "how far are we from last tag"
+    // Fetch the version according to git latest tag and "how far we are from last tag"
     def longVersionName = "git -C ${rootDir} describe --tags --long".execute().text.trim()
     def (fullVersionTag, versionBuild, gitSha) = longVersionName.tokenize('-')
     def (versionMajor, versionMinor, versionPatch) = fullVersionTag.tokenize('.')
