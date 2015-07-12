@@ -62,7 +62,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +70,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
+import com.madx.updatechecker.lib.UpdateRunnable;
 import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
@@ -126,7 +126,7 @@ public class RouterManagementActivity
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
     int itemCount;
-    ImageButton addNewButton;
+    View addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
@@ -274,12 +274,11 @@ public class RouterManagementActivity
         mRecyclerView.addOnItemTouchListener(this);
         gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
 
-        final View addNewButtonView = findViewById(R.id.router_list_add);
-        addNewButton = (ImageButton) addNewButtonView;
+        addNewButton = findViewById(R.id.router_list_add);
         addNewButton.setOnClickListener(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addNewButtonView.setOutlineProvider(new ViewOutlineProvider() {
+            addNewButton.setOutlineProvider(new ViewOutlineProvider() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -287,13 +286,16 @@ public class RouterManagementActivity
                     outline.setOval(0, 0, diameter, diameter);
                 }
             });
-            addNewButtonView.setClipToOutline(true);
+            addNewButton.setClipToOutline(true);
         }
 
         mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
         mFeedbackDialog.setDebug(BuildConfig.DEBUG);
 
         initOpenAddRouterFormIfNecessary();
+
+        /* Use this when you want to run a background update check */
+        new UpdateRunnable(this, new Handler()).start();
     }
 
     private void initOpenAddRouterFormIfNecessary() {

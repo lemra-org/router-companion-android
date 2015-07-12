@@ -197,5 +197,9 @@
     *;
 }
 
--keep enum com.purplebrain.adbuddiz.sdk.** { *; }
--keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
+-keep public class org.jsoup.** {
+    public *;
+}
+
+#-keep enum com.purplebrain.adbuddiz.sdk.** { *; }
+#-keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
