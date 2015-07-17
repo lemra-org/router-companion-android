@@ -7,9 +7,12 @@ import android.view.View;
 
 import com.madx.updatechecker.lib.UpdateRunnable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.web.WebActivity;
+
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 
 /**
  * Created by rm3l on 04/07/15.
@@ -18,9 +21,12 @@ public class ChangelogActivity extends WebActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         final View checkForUpdatesButton = findViewById(R.id.button_check_updates);
-        if (checkForUpdatesButton != null) {
+        if (checkForUpdatesButton != null &&
+                StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+            //This library currently supports Google Play only
             checkForUpdatesButton.setVisibility(View.VISIBLE);
             checkForUpdatesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -31,6 +37,11 @@ public class ChangelogActivity extends WebActivity {
                             .start();
                 }
             });
+
+        } else {
+            if (checkForUpdatesButton != null) {
+                checkForUpdatesButton.setVisibility(View.GONE);
+            }
         }
     }
 

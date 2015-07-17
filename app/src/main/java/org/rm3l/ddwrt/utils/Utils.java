@@ -410,6 +410,26 @@ public final class Utils {
         }
     }
 
+//    public static void doCreateUpdateChecker(@NonNull final Activity activity,
+//                                                   @Nullable UpdateCheckerResult updateCheckerResult,
+//                                                   @Nullable final Notice notice) {
+//        final UpdateChecker updateChecker = (updateCheckerResult != null ?
+//                new UpdateChecker(activity, updateCheckerResult) : new UpdateChecker(activity));
+//        Store store = null;
+//        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+//            store = Store.GOOGLE_PLAY;
+//        } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
+//            store = Store.AMAZON;
+//        }
+//        if (store != null) {
+//            UpdateChecker.setStore(store);
+//        }
+//        if (updateCheckerResult == null && notice != null) {
+//            UpdateChecker.setNotice(notice);
+//        }
+//        UpdateChecker.start();
+//    }
+
     protected static final class BugReportException extends DDWRTCompanionException {
 
         public BugReportException() {

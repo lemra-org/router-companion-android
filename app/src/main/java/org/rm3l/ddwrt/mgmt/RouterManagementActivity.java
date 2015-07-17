@@ -104,6 +104,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
@@ -295,7 +296,12 @@ public class RouterManagementActivity
         initOpenAddRouterFormIfNecessary();
 
         /* Use this when you want to run a background update check */
-        new UpdateRunnable(this, new Handler()).start();
+        final UpdateRunnable updateRunnable =
+                new UpdateRunnable(this, new Handler());
+        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+            //This library currently supports Google Play only
+            updateRunnable.start();
+        }
     }
 
     private void initOpenAddRouterFormIfNecessary() {
