@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@drawable/router_picker_background"
+    android:orientation="vertical" >
+
+    <TextView
+        style="?android:textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/routers"
+        android:textColor="@color/primary_material_light" />
+
+    <Spinner
+        android:id="@+id/left_drawer_routers_dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start" />
+
+</LinearLayout>

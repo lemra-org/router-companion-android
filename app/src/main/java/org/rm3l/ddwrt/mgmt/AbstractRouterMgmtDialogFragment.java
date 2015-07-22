@@ -32,7 +32,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.DhcpInfo;
 import android.net.Uri;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,6 +54,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -60,8 +65,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.FluentIterable;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,11 +82,13 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
@@ -309,6 +318,117 @@ public abstract class AbstractRouterMgmtDialogFragment
                         }
                     }
                 });
+
+        //Advanced options
+        final TextView advancedOptionsButton = (TextView) view.findViewById(R.id.router_add_advanced_options_button);
+        final View advancedOptionsView = view.findViewById(R.id.router_add_advanced_options);
+        advancedOptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                advancedOptionsView.requestFocus();
+                if (advancedOptionsView.getVisibility() == View.VISIBLE) {
+                    advancedOptionsView.setVisibility(View.GONE);
+                    advancedOptionsButton
+                            .setCompoundDrawablesWithIntrinsicBounds(
+                                    R.drawable.ic_action_hardware_keyboard_arrow_right, 0, 0, 0);
+                } else {
+                    advancedOptionsView.setVisibility(View.VISIBLE);
+                    advancedOptionsButton
+                            .setCompoundDrawablesWithIntrinsicBounds(
+                                    R.drawable.ic_action_hardware_keyboard_arrow_down, 0, 0, 0);
+                }
+            }
+        });
+
+        //Local SSID Lookup Checkbox
+        final CheckBox useLocalSsidLookupCheckbox = (CheckBox) view.findViewById(R.id.router_add_local_ssid_lookup);
+        final Button addLocalSsidLookupButton = (Button) view.findViewById(R.id.router_add_local_ssid_button);
+        useLocalSsidLookupCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                useLocalSsidLookupCheckbox.requestFocus();
+                addLocalSsidLookupButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if (isChecked) {
+                    addLocalSsidLookupButton.requestFocus();
+                }
+            }
+        });
+
+        //Clicking on addLocalSsidLookupButton should show up an additional form dialog
+        addLocalSsidLookupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder addLocalSsidLookupDialogBuilder = new AlertDialog.Builder(activity);
+                final View addLocalSsidLookupDialogView = inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
+
+                final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+
+                try {
+                    final AutoCompleteTextView ssidAutoCompleteView = (AutoCompleteTextView)
+                            addLocalSsidLookupDialogView.findViewById(R.id.router_add_local_ssid_lookup_ssid);
+                    if (wifiManager != null) {
+                        final List<ScanResult> results = wifiManager.getScanResults();
+                        ssidAutoCompleteView
+                                .setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1,
+                                        FluentIterable.from(results)
+                                                .transform(new Function<ScanResult, String>() {
+                                                    @Override
+                                                    public String apply(@Nullable ScanResult input) {
+                                                        if (input == null) {
+                                                            return null;
+                                                        }
+                                                        return input.SSID;
+                                                    }
+                                                }).toArray(String.class)));
+                    }
+                    //Fill with current network SSID
+                    ssidAutoCompleteView.setText(Utils.getWifiName(activity),
+                            EDITABLE);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    //No worries
+                }
+
+                final EditText ipEditText = (EditText) addLocalSsidLookupDialogView.findViewById(R.id.router_add_local_ssid_lookup_ip);
+                //Fill with network gateway IP
+                try {
+                    if (wifiManager != null) {
+                        final DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                        if (dhcpInfo != null) {
+                            ipEditText.setText(Utils.intToIp(dhcpInfo.gateway), EDITABLE);
+                        }
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    //No worries
+                }
+
+                //TODO Set Custom view here
+                addLocalSsidLookupDialogBuilder
+                        .setTitle("Add Local SSID Lookup")
+                        .setMessage("This allows you to define an alternate IP or DNS name to use for this router, " +
+                                "when connected to a network with the specified name.\n" +
+                                "For example, you may want to set a local IP address when connected to your home network, " +
+                                "and by default use an external DNS name. " +
+                                "This would speed up router data retrieval from the app when at home.")
+                        .setView(addLocalSsidLookupDialogView)
+                        .setCancelable(true)
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //TODO
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Cancelled - nothing more to do!
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
 
         builder
                 .setMessage(this.getDialogMessage())
