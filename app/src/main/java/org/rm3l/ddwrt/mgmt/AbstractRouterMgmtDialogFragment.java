@@ -403,7 +403,6 @@ public abstract class AbstractRouterMgmtDialogFragment
                     //No worries
                 }
 
-                //TODO Set Custom view here
                 addLocalSsidLookupDialogBuilder
                         .setTitle("Add Local SSID Lookup")
                         .setMessage("This allows you to define an alternate IP or DNS name to use for this router, " +
