@@ -201,5 +201,13 @@
     public *;
 }
 
+-keep enum io.doorbell.android.** {
+    *;
+}
+
+-keep public class io.doorbell.android.** {
+    public *;
+}
+
 #-keep enum com.purplebrain.adbuddiz.sdk.** { *; }
 #-keep public class com.purplebrain.adbuddiz.sdk.* { public *; }

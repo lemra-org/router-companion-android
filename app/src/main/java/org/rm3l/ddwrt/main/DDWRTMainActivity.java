@@ -68,7 +68,6 @@ import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.collect.Lists;
-import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -82,8 +81,6 @@ import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
-import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
-import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
@@ -155,7 +152,6 @@ public class DDWRTMainActivity extends ActionBarActivity
     private String[] mDDWRTNavigationMenuSections;
     //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
-    private FeedbackDialog mFeedbackDialog;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
     @NonNull
@@ -280,9 +276,6 @@ public class DDWRTMainActivity extends ActionBarActivity
                 mDrawerList.getChildAt(position),
                 position,
                 mDrawerList.getAdapter().getItemId(position));
-
-        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
 
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
@@ -618,7 +611,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
             return;
         }
@@ -635,9 +628,6 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     protected void onPause() {
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
         //Close SSH Session as well
         destroySSHSession();
         super.onPause();
@@ -646,9 +636,6 @@ public class DDWRTMainActivity extends ActionBarActivity
     @Override
     protected void onDestroy() {
         mCurrentActivityResultListener = null;
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
         //Close SSH Session as well
         destroySSHSession();
         super.onDestroy();
@@ -751,13 +738,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                 new AboutDialog(this).show();
                 return true;
             case R.id.action_feedback:
-                if (mFeedbackDialog == null) {
-                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-                }
-                mFeedbackDialog.show();
-                //Generate a custom error-report (for ACRA)
-                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
+                Utils.buildFeedbackDialog(this, true);
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);

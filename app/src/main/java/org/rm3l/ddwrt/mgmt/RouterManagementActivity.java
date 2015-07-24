@@ -71,7 +71,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.madx.updatechecker.lib.UpdateRunnable;
-import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -81,8 +80,6 @@ import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
-import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
-import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -134,7 +131,6 @@ public class RouterManagementActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
-    private FeedbackDialog mFeedbackDialog;
 
     private Toolbar mToolbar;
     private SharedPreferences mPreferences;
@@ -290,9 +286,6 @@ public class RouterManagementActivity
             addNewButton.setClipToOutline(true);
         }
 
-        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-
         initOpenAddRouterFormIfNecessary();
 
         /* Use this when you want to run a background update check */
@@ -311,20 +304,8 @@ public class RouterManagementActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
 
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
@@ -503,13 +484,7 @@ public class RouterManagementActivity
                         new Intent(this, RouterManagementSettingsActivity.class), ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.router_list_feedback:
-                if (mFeedbackDialog == null) {
-                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-                }
-                mFeedbackDialog.show();
-                //Generate a custom error-report (for ACRA)
-                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
+                Utils.buildFeedbackDialog(this, true);
                 return true;
             case R.id.router_list_actions_restore_factory_defaults:
                 //TODO Hidden for now

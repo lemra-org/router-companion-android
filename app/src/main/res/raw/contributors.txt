@@ -29,5 +29,4 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <a href="https://github.com/keyboardsurfer/Crouton" target="_blank">Crouton</a>
 &#8226; <a href="https://code.google.com/p/achartengine/" target="_blank">achartengine</a>
 %DONATIONS_LIB%
-&#8226; <a href="http://www.android-feedback.com/" target="_blank">android-feedback</a>
-&#8226; <a href="https://github.com/rm3l/ddwrt-companion-android/blob/master/app/build.gradle#L126" target="_blank">many others</a>
+&#8226; <a href="https://github.com/rm3l/ddwrt-companion-android/blob/master/app/build.gradle" target="_blank">many others</a>

@@ -306,6 +306,8 @@ dependencies {
     compile 'com.github.curioustechizen.android-ago:library:1.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
+    compile 'io.doorbell:android-sdk:0.2.3@aar'
+
 //    compile 'com.android.support:multidex:1.0.0'
 
 //    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'

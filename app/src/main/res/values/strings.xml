@@ -432,7 +432,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="feedback_send">Send</string>
     <string name="feedback_cancel">Cancel</string>
     <string name="feedback_dialog_text">Hey! Love or hate this app? Would you like to suggest a new feature, file a bug or simply say hello?\nWe would love to hear from you.</string>
-    <string name="feedback_dialog_comments_text">If you are reporting a bug, please specify your Router model and DD-WRT Build Number.\n\nPlease also provide an email address for us to get back to you…</string>
+    <string name="feedback_dialog_comments_text">If you are reporting a bug, please specify your Router model and DD-WRT Build Number.</string>
     <string name="feedback_toast_msg">Thank you - we\'ll get back to you as soon as possible!</string>
     <string name="feedback_bug">Bug</string>
     <string name="feedback_idea">Idea</string>
