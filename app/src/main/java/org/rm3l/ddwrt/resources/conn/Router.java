@@ -22,12 +22,22 @@
 
 package org.rm3l.ddwrt.resources.conn;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+
+import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
@@ -42,6 +52,9 @@ import static org.rm3l.ddwrt.resources.Encrypted.e;
  */
 public class Router implements Serializable {
 
+    public static final String USE_LOCAL_SSID_LOOKUP = "useLocalSSIDLookup";
+    public static final String LOCAL_SSID_LOOKUPS = "localSSIDLookups";
+    public static final String FALLBACK_TO_PRIMARY_ADDR = "fallbackToPrimaryAddr";
     /**
      * the router UUID
      */
@@ -449,6 +462,166 @@ public class Router implements Serializable {
             setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
         } catch (final Exception e) {
             Utils.reportException(e);
+        }
+    }
+
+    @Nullable
+    public static String getEffectiveRemoteAddr(@Nullable final Router router,
+                                                @Nullable final Context ctx) {
+        if (router == null || ctx == null) {
+            return null;
+        }
+        final String primaryRemoteIpAddress = router.getRemoteIpAddress();
+        if (!isUseLocalSSIDLookup(router, ctx)) {
+            return primaryRemoteIpAddress;
+        }
+        //else get alternate depending on current network
+        final LocalSSIDLookup effectiveLocalSSIDLookup = getEffectiveLocalSSIDLookup(router, ctx);
+        if (effectiveLocalSSIDLookup == null) {
+            return primaryRemoteIpAddress;
+        }
+        return effectiveLocalSSIDLookup.getReachableAddr();
+    }
+
+    @Nullable
+    public static Integer getEffectivePort(@Nullable final Router router,
+                                                @Nullable final Context ctx) {
+        if (router == null || ctx == null) {
+            return null;
+        }
+        final int primaryRemotePort = router.getRemotePort();
+        if (!isUseLocalSSIDLookup(router, ctx)) {
+            return primaryRemotePort;
+        }
+        //else get alternate depending on current network
+        final LocalSSIDLookup effectiveLocalSSIDLookup = getEffectiveLocalSSIDLookup(router, ctx);
+        if (effectiveLocalSSIDLookup == null) {
+            return primaryRemotePort;
+        }
+        return effectiveLocalSSIDLookup.getPort();
+    }
+
+    @Nullable
+    public static LocalSSIDLookup getEffectiveLocalSSIDLookup(@Nullable final Router router,
+                                                     @Nullable final Context ctx) {
+        if (router == null || ctx == null) {
+            return null;
+        }
+        final String currentNetworkSSID = Utils.getWifiName(ctx);
+        //Detect network and use the corresponding IP Address if required
+        final Collection<Router.LocalSSIDLookup> localSSIDLookupData = router.getLocalSSIDLookupData(ctx);
+        if (!localSSIDLookupData.isEmpty()) {
+            for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                if (localSSIDLookup == null) {
+                    continue;
+                }
+                final String networkSsid = localSSIDLookup.getNetworkSsid();
+                if (networkSsid == null || networkSsid.isEmpty()) {
+                    continue;
+                }
+                if (networkSsid.equals(currentNetworkSSID)) {
+                    return localSSIDLookup;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isUseLocalSSIDLookup(@Nullable final Router router,
+                                               @Nullable final Context ctx) {
+        if (router == null || ctx == null) {
+            return false;
+        }
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(USE_LOCAL_SSID_LOOKUP, false);
+    }
+
+    public boolean isUseLocalSSIDLookup(@Nullable final Context ctx) {
+        return isUseLocalSSIDLookup(this, ctx);
+    }
+
+    public void setUseLocalSSIDLookup(@NonNull final Context ctx, final boolean value) {
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean(USE_LOCAL_SSID_LOOKUP, value).apply();
+        Utils.requestBackup(ctx);
+    }
+
+    public boolean isFallbackToPrimaryAddr(@Nullable final Context ctx) {
+        if (ctx == null) {
+            return false;
+        }
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(FALLBACK_TO_PRIMARY_ADDR, false);
+    }
+
+    public void setFallbackToPrimaryAddr(@NonNull final Context ctx, final boolean value) {
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean(FALLBACK_TO_PRIMARY_ADDR, value).apply();
+                Utils.requestBackup(ctx);
+    }
+
+    @NonNull
+    public Collection<LocalSSIDLookup> getLocalSSIDLookupData(@NonNull final Context ctx) {
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
+        final Set<String> localSSIDLookupStringSet = sharedPreferences.getStringSet(LOCAL_SSID_LOOKUPS, new HashSet<String>());
+        final List<LocalSSIDLookup> localSSIDLookups = new ArrayList<>(localSSIDLookupStringSet.size());
+        final Gson gson = WakeOnLanTile.GSON_BUILDER.create();
+        for (final String localSSIDLookupString : localSSIDLookupStringSet) {
+            if (localSSIDLookupString == null || localSSIDLookupString.isEmpty()) {
+                continue;
+            }
+            try {
+                localSSIDLookups.add(gson.fromJson(localSSIDLookupString, LocalSSIDLookup.class));
+            } catch (final Exception e) {
+                e.printStackTrace();
+                //No worries
+            }
+        }
+        return localSSIDLookups;
+    }
+
+    public void setLocalSSIDLookupData(@NonNull final Context ctx, Collection<LocalSSIDLookup> localSSIDLookups) {
+        final SharedPreferences sharedPreferences = ctx.getSharedPreferences(this.getUuid(), Context.MODE_PRIVATE);
+        sharedPreferences.edit().remove(LOCAL_SSID_LOOKUPS).apply();
+        final Set<String> localSSIDLookupStringSet = new HashSet<>();
+        if (localSSIDLookups != null) {
+            final Gson gson = WakeOnLanTile.GSON_BUILDER.create();
+            for (final LocalSSIDLookup localSSIDLookup : localSSIDLookups) {
+                localSSIDLookupStringSet.add(gson.toJson(localSSIDLookup));
+            }
+        }
+        sharedPreferences.edit().putStringSet(LOCAL_SSID_LOOKUPS, localSSIDLookupStringSet).apply();
+        Utils.requestBackup(ctx);
+    }
+
+    public static class LocalSSIDLookup {
+
+        private String networkSsid;
+        private String reachableAddr;
+        private int port = 22;
+
+        public String getNetworkSsid() {
+            return networkSsid;
+        }
+
+        public void setNetworkSsid(String networkSsid) {
+            this.networkSsid = networkSsid;
+        }
+
+        public String getReachableAddr() {
+            return reachableAddr;
+        }
+
+        public void setReachableAddr(String reachableAddr) {
+            this.reachableAddr = reachableAddr;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
         }
     }
 

@@ -57,6 +57,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -191,9 +192,11 @@ public final class SSHUtils {
     }
 
     @Nullable
-    private static Session getSSHSession(@NonNull final SharedPreferences globalSharedPreferences,
+    private static Session getSSHSession(Context ctx,
+                                         @NonNull final SharedPreferences globalSharedPreferences,
                                          @Nullable final Router router,
-                                         @Nullable final Integer connectTimeout) throws Exception {
+                                         @Nullable final Integer connectTimeout,
+                                         boolean usePrimaryAddrSolely) throws Exception {
 
         final String uuid;
         if (router == null || (uuid = router.getUuid()) == null) {
@@ -203,13 +206,40 @@ public final class SSHUtils {
         final ReentrantLock lock = SSH_SESSIONS_CACHE_LOCKS.get(uuid);
         lock.lock();
         try {
-            final Session sessionCached = SSH_SESSIONS_LRU_CACHE.get(uuid);
+            final String currentNetworkSSID = Utils.getWifiName(ctx);
+
+            final Session sessionCached = usePrimaryAddrSolely ?
+                    SSH_SESSIONS_LRU_CACHE.get(uuid) : SSH_SESSIONS_LRU_CACHE.get(uuid + "." + currentNetworkSSID);
 
             if (sessionCached != null) {
                 if (!sessionCached.isConnected()) {
                     sessionCached.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
                 }
                 return sessionCached;
+            }
+
+            String remoteIpAddress = router.getRemoteIpAddress();
+            int remotePort = router.getRemotePort();
+
+            if (ctx != null && !usePrimaryAddrSolely) {
+                //Detect network and use the corresponding IP Address if required
+                final Collection<Router.LocalSSIDLookup> localSSIDLookupData = router.getLocalSSIDLookupData(ctx);
+                if (!localSSIDLookupData.isEmpty()) {
+                    for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                        if (localSSIDLookup == null) {
+                            continue;
+                        }
+                        final String networkSsid = localSSIDLookup.getNetworkSsid();
+                        if (networkSsid == null || networkSsid.isEmpty()) {
+                            continue;
+                        }
+                        if (networkSsid.equals(currentNetworkSSID)) {
+                            remoteIpAddress = localSSIDLookup.getReachableAddr();
+                            remotePort = localSSIDLookup.getPort();
+                            break;
+                        }
+                    }
+                }
             }
 
             final String privKey = \"fake-key\";
@@ -226,14 +256,14 @@ public final class SSHUtils {
                             !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
                             null,
                             !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    jschSession = jsch.getSession(router.getUsernamePlain(), remoteIpAddress, remotePort);
                     break;
                 case PASSWORD:
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    jschSession = jsch.getSession(router.getUsernamePlain(), remoteIpAddress, remotePort);
                     jschSession.setPassword(passwordPlain);
                     break;
                 default:
-                    jschSession = jsch.getSession(router.getUsernamePlain(), router.getRemoteIpAddress(), router.getRemotePort());
+                    jschSession = jsch.getSession(router.getUsernamePlain(), remoteIpAddress, remotePort);
                     break;
             }
 
@@ -247,7 +277,8 @@ public final class SSHUtils {
 
             jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
-            SSH_SESSIONS_LRU_CACHE.put(uuid, jschSession);
+            SSH_SESSIONS_LRU_CACHE.put(usePrimaryAddrSolely ? uuid : (uuid + "." + currentNetworkSSID),
+                    jschSession);
             return SSH_SESSIONS_LRU_CACHE.get(uuid);
         } catch (final JSchException jsche) {
             //Disconnect session, so a new one can be reconstructed next time
@@ -292,7 +323,7 @@ public final class SSHUtils {
         try {
             routerCopy.setUuid(tempUuid);
 
-            Session jschSession = getSSHSession(globalSharedPreferences, routerCopy, connectTimeoutMillis);
+            Session jschSession = getSSHSession(null, globalSharedPreferences, routerCopy, connectTimeoutMillis, true);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -361,7 +392,8 @@ public final class SSHUtils {
     }
 
     public static int runCommands(Context context, @NonNull SharedPreferences globalSharedPreferences,
-                                  @NonNull final Router router, @NonNull final Joiner commandsJoiner, @NonNull final String... cmdToExecute)
+                                  @NonNull final Router router, @NonNull final Joiner commandsJoiner,
+                                  @NonNull final String... cmdToExecute)
             throws Exception {
         Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
@@ -373,7 +405,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(context, globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -477,7 +509,7 @@ public final class SSHUtils {
         reentrantLock.lock();
         Integer exitStatus = null;
         try {
-            Session jschSession = getSSHSession(globalPreferences, routerCopy, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(ctx, globalPreferences, routerCopy, CONNECT_TIMEOUT_MILLIS, false);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -548,7 +580,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -718,7 +750,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -844,7 +876,7 @@ public final class SSHUtils {
         final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(globalPreferences, router, CONNECT_TIMEOUT_MILLIS);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }

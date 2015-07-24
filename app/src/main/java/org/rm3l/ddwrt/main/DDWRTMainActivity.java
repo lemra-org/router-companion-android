@@ -23,13 +23,16 @@
 package org.rm3l.ddwrt.main;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -174,6 +177,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    private NetworkChangeReceiver mNetworkChangeReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -235,7 +239,17 @@ public class DDWRTMainActivity extends ActionBarActivity
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         final String routerName = router.getName();
-        setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
+        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, this);
+        final Integer effectivePort = Router.getEffectivePort(router, this);
+
+        String title = "";
+//        if (!isNullOrEmpty(routerName)) {
+//            title = (routerName + "\n");
+//        }
+//        title += String.format("%s:%d", effectiveRemoteAddr, effectivePort);
+
+        title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
+        setTitle(title);
 
         mTitle = mDrawerTitle = getTitle();
         initView();
@@ -289,6 +303,28 @@ public class DDWRTMainActivity extends ActionBarActivity
             editor.apply();
         }
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        //Register Intent for handling network changes
+//        final IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+//        mNetworkChangeReceiver = new NetworkChangeReceiver();
+//        registerReceiver(mNetworkChangeReceiver, intentFilter);
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        try {
+//            if (mNetworkChangeReceiver != null) {
+//                unregisterReceiver(mNetworkChangeReceiver);
+//            }
+//        } finally {
+//            super.onStop();
+//        }
+//    }
 
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -544,7 +580,11 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
 
         final DialogFragment addFragment = new RouterAddDialogFragment();
-        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+//        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
+
+        getSupportFragmentManager().beginTransaction()
+                .add(android.R.id.content, addFragment)
+                .addToBackStack(null).commit();
     }
 
     private void initDrawer() {
@@ -1264,6 +1304,34 @@ public class DDWRTMainActivity extends ActionBarActivity
             mNavigationDrawerAdapter.setSelectedItem(position);
             mNavigationDrawerAdapter.notifyDataSetChanged();
             mDrawerLayout.invalidate();
+        }
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+
+            final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if(info != null && info.isConnected()) {
+                final String routerName = mRouter.getName();
+                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, DDWRTMainActivity.this);
+                final Integer effectivePort = Router.getEffectivePort(mRouter, DDWRTMainActivity.this);
+
+                String title = "";
+                if (!isNullOrEmpty(routerName)) {
+                    title = (routerName + "\n");
+                }
+                title += String.format("%s:%d", effectiveRemoteAddr, effectivePort);
+                DDWRTMainActivity.this.setTitle(title);
+
+                mTitle = mDrawerTitle = getTitle();
+                initView();
+                if (mToolbar != null) {
+                    mToolbar.setTitle(mTitle);
+//                        setSupportActionBar(mToolbar);
+                }
+            }
         }
     }
 

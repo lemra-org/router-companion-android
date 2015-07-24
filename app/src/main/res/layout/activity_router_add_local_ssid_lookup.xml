@@ -85,6 +85,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:inputType="text"
                 android:maxLines="1"/>
 
+            <!-- SSH Port -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Alternate SSH Port" />
+
+            <EditText
+                android:id="@+id/router_add_local_ssid_lookup_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:ems="10"
+                android:hint="@string/router_add_port"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="numberSigned"
+                android:maxLines="1"
+                android:text="@string/router_add_default_ssh_port"/>
+
         </LinearLayout>
 
     </ScrollView>

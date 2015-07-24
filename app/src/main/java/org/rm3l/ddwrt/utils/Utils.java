@@ -369,6 +369,9 @@ public final class Utils {
 
     @Nullable
     public static String getWifiName(Context context) {
+        if (context == null) {
+            return null;
+        }
         final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifiManager == null) {
             return null;

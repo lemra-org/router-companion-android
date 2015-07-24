@@ -42,6 +42,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -49,8 +50,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -60,12 +63,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
@@ -82,7 +88,9 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -107,11 +115,13 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     protected final AtomicBoolean mActivityCreatedAndInitialized = new AtomicBoolean(false);
 
-    private static Router buildRouter(AlertDialog d) throws IOException {
+    private Router buildRouter(AlertDialog d) throws IOException {
         final Router router = new Router();
         final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
+        } else {
+            router.setUuid(UUID.randomUUID().toString());
         }
         router.setName(((EditText) d.findViewById(R.id.router_add_name)).getText().toString());
         router.setRemoteIpAddress(((EditText) d.findViewById(R.id.router_add_ip)).getText().toString());
@@ -160,6 +170,42 @@ public abstract class AbstractRouterMgmtDialogFragment
 
             router.setPrivKey(privkey, true);
         }
+
+        final FragmentActivity activity = getActivity();
+        router.setUseLocalSSIDLookup(activity,
+                ((CheckBox) d.findViewById(R.id.router_add_local_ssid_lookup)).isChecked());
+        router.setFallbackToPrimaryAddr(activity,
+                ((CheckBox) d.findViewById(R.id.router_add_fallback_to_primary)).isChecked());
+
+        final Splitter splitter = Splitter.on("\n").omitEmptyStrings();
+
+        //Now build SSID data
+        final LinearLayout container = (LinearLayout) d.findViewById(R.id.router_add_local_ssid_container);
+        final int childCount = container.getChildCount();
+        final List<Router.LocalSSIDLookup> lookups = new ArrayList<>();
+        for (int i = 0; i < childCount; i++){
+            final View view = container.getChildAt(i);
+            if (!(view instanceof TextView)) {
+                continue;
+            }
+            final String textViewString = ((TextView) view).getText().toString();
+            final List<String> strings = splitter.splitToList(textViewString);
+            if (strings.size() < 3) {
+                continue;
+            }
+            final Router.LocalSSIDLookup localSSIDLookup = new Router.LocalSSIDLookup();
+            localSSIDLookup.setNetworkSsid(strings.get(0));
+            localSSIDLookup.setReachableAddr(strings.get(1));
+            try {
+                localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
+            } catch (final Exception e) {
+                Utils.reportException(e);
+                localSSIDLookup.setPort(22); //default SSH port
+            }
+            lookups.add(localSSIDLookup);
+        }
+        router.setLocalSSIDLookupData(activity, lookups);
+
         return router;
     }
 
@@ -195,6 +241,9 @@ public abstract class AbstractRouterMgmtDialogFragment
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View view = inflater.inflate(R.layout.activity_router_add, null);
+
+        final ScrollView contentScrollView = (ScrollView) view.findViewById(R.id.router_add_scrollview);
+
         ((Spinner) view.findViewById(R.id.router_add_proto)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -250,24 +299,26 @@ public abstract class AbstractRouterMgmtDialogFragment
         final CheckBox pwdShowCheckBox = (CheckBox) view.findViewById(R.id.router_add_password_show_checkbox);
 
         pwdShowCheckBox
-            .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked) {
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (!isChecked) {
 //                        pwdView.setTransformationMethod(
 //                                PasswordTransformationMethod.getInstance());
-                        pwdView.setInputType(
-                                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        pwdView.requestFocus();
-                    } else {
+                            pwdView.setInputType(
+                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            contentScrollView.scrollTo(0, pwdView.getScrollY());
+                            pwdView.requestFocus();
+                        } else {
 //                        pwdView.setTransformationMethod(
 //                                HideReturnsTransformationMethod.getInstance());
-                        pwdView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        pwdView.requestFocus();
+                            pwdView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            contentScrollView.scrollTo(0, pwdView.getScrollY());
+                            pwdView.requestFocus();
+                        }
+                        pwdView.setSelection(pwdView.length());
                     }
-                    pwdView.setSelection(pwdView.length());
-                }
-            });
+                });
 
 
         ((RadioGroup) view.findViewById(R.id.router_add_ssh_auth_method))
@@ -325,6 +376,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         advancedOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                contentScrollView.scrollTo(0, advancedOptionsView.getScrollY());
                 advancedOptionsView.requestFocus();
                 if (advancedOptionsView.getVisibility() == View.VISIBLE) {
                     advancedOptionsView.setVisibility(View.GONE);
@@ -342,17 +394,26 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         //Local SSID Lookup Checkbox
         final CheckBox useLocalSsidLookupCheckbox = (CheckBox) view.findViewById(R.id.router_add_local_ssid_lookup);
-        final Button addLocalSsidLookupButton = (Button) view.findViewById(R.id.router_add_local_ssid_button);
+        final FloatingActionButton addLocalSsidLookupButton = (FloatingActionButton) view.findViewById(R.id.router_add_local_ssid_button);
+        final CheckBox fallbackCheckbox = (CheckBox) view.findViewById(R.id.router_add_fallback_to_primary);
         useLocalSsidLookupCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                contentScrollView.scrollTo(0, useLocalSsidLookupCheckbox.getScrollY());
                 useLocalSsidLookupCheckbox.requestFocus();
-                addLocalSsidLookupButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                final int depsVisibility = isChecked ? View.VISIBLE : View.GONE;
+                addLocalSsidLookupButton.setVisibility(depsVisibility);
+//                fallbackCheckbox.setVisibility(depsVisibility);
                 if (isChecked) {
+                    contentScrollView.scrollTo(0, addLocalSsidLookupButton.getScrollY());
                     addLocalSsidLookupButton.requestFocus();
+                } else {
+                    fallbackCheckbox.setChecked(false);
                 }
             }
         });
+
+        final LinearLayout localSsidsContainer = (LinearLayout) view.findViewById(R.id.router_add_local_ssid_container);
 
         //Clicking on addLocalSsidLookupButton should show up an additional form dialog
         addLocalSsidLookupButton.setOnClickListener(new View.OnClickListener() {
@@ -362,10 +423,10 @@ public abstract class AbstractRouterMgmtDialogFragment
                 final View addLocalSsidLookupDialogView = inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
 
                 final WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+                final AutoCompleteTextView ssidAutoCompleteView = (AutoCompleteTextView)
+                        addLocalSsidLookupDialogView.findViewById(R.id.router_add_local_ssid_lookup_ssid);
 
                 try {
-                    final AutoCompleteTextView ssidAutoCompleteView = (AutoCompleteTextView)
-                            addLocalSsidLookupDialogView.findViewById(R.id.router_add_local_ssid_lookup_ssid);
                     if (wifiManager != null) {
                         final List<ScanResult> results = wifiManager.getScanResults();
                         ssidAutoCompleteView
@@ -403,7 +464,13 @@ public abstract class AbstractRouterMgmtDialogFragment
                     //No worries
                 }
 
-                addLocalSsidLookupDialogBuilder
+                final EditText portEditText = (EditText) addLocalSsidLookupDialogView.findViewById(R.id.router_add_local_ssid_lookup_port);
+                final EditText primaryPort = (EditText) view.findViewById(R.id.router_add_port);
+                if (primaryPort != null) {
+                    portEditText.setText(primaryPort.getText(), EDITABLE);
+                }
+
+                final AlertDialog addLocalSsidLookupDialog = addLocalSsidLookupDialogBuilder
                         .setTitle("Add Local SSID Lookup")
                         .setMessage("This allows you to define an alternate IP or DNS name to use for this router, " +
                                 "when connected to a network with the specified name.\n" +
@@ -415,7 +482,9 @@ public abstract class AbstractRouterMgmtDialogFragment
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //TODO
+                                //Do nothing here because we override this button later to change the close behaviour.
+                                //However, we still need this because on older versions of Android unless we
+                                //pass a handler the button doesn't get instantiated
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -424,8 +493,88 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 //Cancelled - nothing more to do!
                             }
                         })
-                        .create()
-                        .show();
+                        .create();
+
+                addLocalSsidLookupDialog.show();
+
+                addLocalSsidLookupDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String ssidText = ssidAutoCompleteView.getText().toString();
+                        //Validate fields
+                        if (isNullOrEmpty(ssidText)) {
+                            //displayMessage and prevent exiting
+                            Crouton.makeText(activity,
+                                    "Invalid Network Name",
+                                    Style.ALERT,
+                                    (ViewGroup) view.findViewById(R.id.router_add_local_ssid_lookup_notification_viewgroup))
+                                    .show();
+                            ssidAutoCompleteView.requestFocus();
+                            openKeyboard(ssidAutoCompleteView);
+                            return;
+                        }
+                        final String ipEditTextText = ipEditText.getText().toString();
+                        if (!(Patterns.IP_ADDRESS.matcher(ipEditTextText).matches()
+                                || Patterns.DOMAIN_NAME.matcher(ipEditTextText).matches())) {
+                            //displayMessage and prevent exiting
+                            Crouton.makeText(activity,
+                                    "Invalid IP or DNS Name",
+                                    Style.ALERT,
+                                    (ViewGroup) view.findViewById(R.id.router_add_local_ssid_lookup_notification_viewgroup))
+                                    .show();
+                            ipEditText.requestFocus();
+                            openKeyboard(ipEditText);
+                            return;
+                        }
+                        boolean validPort;
+                        final String portStr = portEditText.getText().toString();
+                        try {
+                            validPort = (!isNullOrEmpty(portStr) && (Integer.parseInt(portStr) > 0));
+                        } catch (@NonNull final Exception e) {
+                            e.printStackTrace();
+                            validPort = false;
+                        }
+                        if (!validPort) {
+                            portEditText.requestFocus();
+                            openKeyboard(portEditText);
+                        }
+
+                        final TextView localSsidView = new TextView(activity);
+                        localSsidView.setText(ssidText + "\n" +
+                                ipEditTextText + "\n" + portStr
+                        );
+                        localSsidView.setLayoutParams(new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        localSsidView
+                                .setCompoundDrawablesWithIntrinsicBounds(
+                                        0, 0, android.R.drawable.ic_menu_close_clear_cancel, 0);
+
+                        localSsidView.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                final int DRAWABLE_RIGHT = 2;
+
+                                if (event.getAction() == MotionEvent.ACTION_UP) {
+                                    if (event.getRawX() >= (localSsidView.getRight() -
+                                            localSsidView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                                        //Remove view from container layout
+                                        final ViewParent parent = localSsidView.getParent();
+                                        if (parent instanceof LinearLayout) {
+                                            ((LinearLayout)parent).removeView(localSsidView);
+                                        }
+                                    }
+                                }
+                                return true;
+                            }
+                        });
+
+                        localSsidsContainer.addView(localSsidView);
+
+                        addLocalSsidLookupDialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -657,10 +806,13 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         final Editable ipAddrViewText = ipAddrView.getText();
 
+        final ScrollView contentScrollView = (ScrollView) d.findViewById(R.id.router_add_scrollview);
+
         if (!(Patterns.IP_ADDRESS.matcher(ipAddrViewText).matches()
                 || Patterns.DOMAIN_NAME.matcher(ipAddrViewText).matches())) {
             displayMessage(getString(R.string.router_add_dns_or_ip_invalid) + ":" + ipAddrViewText,
                     ALERT);
+            contentScrollView.scrollTo(0, ipAddrView.getScrollY());
             ipAddrView.requestFocus();
             openKeyboard(ipAddrView);
             return false;
@@ -677,6 +829,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
         if (!validPort) {
             displayMessage(getString(R.string.router_add_port_invalid) + ":" + portView.getText(), ALERT);
+            contentScrollView.scrollTo(0, portView.getScrollY());
             portView.requestFocus();
             openKeyboard(portView);
             return false;
@@ -685,6 +838,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
             displayMessage(getString(R.string.router_add_username_invalid), ALERT);
+
+            contentScrollView.scrollTo(0, sshUsernameView.getScrollY());
             sshUsernameView.requestFocus();
             openKeyboard(sshUsernameView);
             return false;
@@ -696,6 +851,8 @@ public abstract class AbstractRouterMgmtDialogFragment
             final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
             if (isNullOrEmpty(sshPasswordView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_password_invalid), ALERT);
+
+                contentScrollView.scrollTo(0, sshPasswordView.getScrollY());
                 sshPasswordView.requestFocus();
                 openKeyboard(sshPasswordView);
                 return false;
@@ -705,6 +862,8 @@ public abstract class AbstractRouterMgmtDialogFragment
             final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
             if (isNullOrEmpty(sshPrivKeyView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_privkey_invalid), ALERT);
+
+                contentScrollView.scrollTo(0, sshPrivKeyView.getScrollY());
                 sshPrivKeyView.requestFocus();
                 return false;
             }

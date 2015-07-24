@@ -22,6 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -85,6 +86,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:visibility="gone" />
 
     <ScrollView
+        android:id="@+id/router_add_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical">
@@ -161,7 +163,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:entries="@array/router_firmwares_array"
                 android:entryValues="@array/router_firmwares_array_values"
                 android:imeOptions="flagNoExtractUi"
-                android:prompt="@string/router_firmware_select" />
+                android:prompt="@string/router_firmware_select"/>
 
             <!-- Connection Protocol -->
             <TextView
@@ -179,7 +181,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="center_horizontal"
                 android:entries="@array/router_connection_protocols_array"
                 android:imeOptions="flagNoExtractUi"
-                android:prompt="@string/router_connection_proto_select" />
+                android:prompt="@string/router_connection_proto_select"/>
 
             <!-- SSH Port -->
             <TextView
@@ -202,7 +204,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberSigned"
                 android:maxLines="1"
-                android:text="@string/router_add_default_ssh_port" />
+                android:text="@string/router_add_default_ssh_port"/>
 
             <!-- Login -->
             <TextView
@@ -225,7 +227,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:inputType="text"
                 android:hint="e.g., root"
                 android:imeOptions="flagNoExtractUi"
-                android:text="root" />
+                android:text="root"/>
 
             <!-- SSH Authentication Method selection -->
             <TextView
@@ -258,7 +260,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="Password" />
+                        android:text="Password"/>
 
                     <RadioButton
                         android:id="@+id/router_add_ssh_auth_method_privkey"
@@ -332,15 +334,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/router_add_advanced_options_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="7dip"
+                android:padding="2dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="Advanced Options"
                 android:drawableLeft="@drawable/ic_action_hardware_keyboard_arrow_right"
-                android:background="@color/accent_material_light"
-                android:gravity="center_horizontal"/>
-
+                android:background="@color/accent_material_light"/>
 
             <LinearLayout
                 android:id="@+id/router_add_advanced_options"
@@ -353,40 +355,60 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="center"
                 android:visibility="gone">
 
-                <!-- Hidden for now - does not seem to work -->
                 <CheckBox
                     android:id="@+id/router_add_local_ssid_lookup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="Use local SSID Lookup"/>
+
+                <RelativeLayout
                     android:layout_marginBottom="16dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:layout_marginTop="4dp"
-                    android:text="Use local SSID Lookup"/>
-
-                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/router_add_local_ssid_container"
-                        android:layout_width="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="vertical" />
+                        android:orientation="vertical"/>
 
-                    <Button
+                    <android.support.design.widget.FloatingActionButton
                         android:id="@+id/router_add_local_ssid_button"
-                        android:layout_width="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="Add local SSID"
+                        android:src="@android:drawable/ic_input_add"
+                        android:tint="@android:color/white"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_gravity="right"
-                        android:hint="Add local SSID"
+                        android:clickable="true"
+                        android:layout_margin="@dimen/fab_compat_margin"
+                        app:elevation="6dp"
+                        app:pressedTranslationZ="12dp"
+                        app:layout_anchorGravity="bottom|right|end"
                         android:visibility="gone"/>
 
-                </LinearLayout>
+                </RelativeLayout>
+
+                <!-- Hidden - not really relevant -->
+                <CheckBox
+                    android:id="@+id/router_add_fallback_to_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fallback to primary IP/DNS if needed"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:visibility="gone"/>
 
                 <!-- Hidden for now - does not seem to work -->
                 <CheckBox

@@ -26,7 +26,14 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,6 +41,8 @@ import android.widget.Toast;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.Router;
+
+import java.util.Collection;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -90,8 +99,9 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
 
             final AlertDialog d = (AlertDialog) getDialog();
 
+            final FragmentActivity activity = getActivity();
             if (router == null) {
-                Toast.makeText(getActivity(), "Router not found - closing form...", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Router not found - closing form...", Toast.LENGTH_LONG).show();
                 d.cancel();
                 return;
             }
@@ -153,6 +163,53 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
             }
 //            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
 //                    .setChecked(router.isStrictHostKeyChecking());
+
+            ((CheckBox) d.findViewById(R.id.router_add_local_ssid_lookup))
+                    .setChecked(router.isUseLocalSSIDLookup(activity));
+
+            ((CheckBox) d.findViewById(R.id.router_add_fallback_to_primary))
+                    .setChecked(router.isFallbackToPrimaryAddr(activity));
+
+            final LinearLayout container = (LinearLayout) d.findViewById(R.id.router_add_local_ssid_container);
+            final Collection<Router.LocalSSIDLookup> localSSIDLookupData =
+                    router.getLocalSSIDLookupData(activity);
+            for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                if (localSSIDLookup == null) {
+                    continue;
+                }
+                final TextView localSsidView = new TextView(activity);
+                localSsidView.setText(localSSIDLookup.getNetworkSsid() + "\n" +
+                        localSSIDLookup.getReachableAddr() + "\n" +
+                        localSSIDLookup.getPort());
+                localSsidView.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                localSsidView
+                        .setCompoundDrawablesWithIntrinsicBounds(
+                                0, 0, android.R.drawable.ic_menu_close_clear_cancel, 0);
+
+                localSsidView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        final int DRAWABLE_RIGHT = 2;
+
+                        if (event.getAction() == MotionEvent.ACTION_UP) {
+                            if (event.getRawX() >= (localSsidView.getRight() -
+                                    localSsidView.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                                //Remove view from container layout
+                                final ViewParent parent = localSsidView.getParent();
+                                if (parent instanceof LinearLayout) {
+                                    ((LinearLayout)parent).removeView(localSsidView);
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                });
+
+                container.addView(localSsidView);
+            }
 
             mActivityCreatedAndInitialized.set(true);
         }
