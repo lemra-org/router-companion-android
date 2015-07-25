@@ -420,6 +420,12 @@ public abstract class AbstractRouterMgmtDialogFragment
             @Override
             public void onClick(View v) {
 
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(activity, "Add alternate Addresses");
+                    return;
+                }
+
                 final AlertDialog.Builder addLocalSsidLookupDialogBuilder = new AlertDialog.Builder(activity);
                 final View addLocalSsidLookupDialogView = inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
 
