@@ -312,6 +312,7 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
                 if (selectedRouter.isUseLocalSSIDLookup(WOLWidgetConfigureActivity.this) &&
                         !localSSIDLookupData.isEmpty()) {
                     altAddrContainer.setVisibility(View.VISIBLE);
+                    altAddrLayoutContainer.removeAllViews();
                     for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
                         if (localSSIDLookup == null) {
                             continue;

@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -418,7 +419,10 @@ public final class Utils {
         if (ctx == null) {
             return null;
         }
-        final DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
+
+        final Resources resources = ctx.getResources();
+
+        final DisplayMetrics displayMetrics = resources.getDisplayMetrics();
 
         final float height = TypedValue.applyDimension(COMPLEX_UNIT_DIP, 1.0f,
                 displayMetrics);
@@ -428,7 +432,7 @@ public final class Utils {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 (int) height
         ));
-        lineView.setBackgroundColor(R.color.line_view_color);
+        lineView.setBackgroundColor(resources.getColor(R.color.line_view_color));
         return lineView;
     }
 
