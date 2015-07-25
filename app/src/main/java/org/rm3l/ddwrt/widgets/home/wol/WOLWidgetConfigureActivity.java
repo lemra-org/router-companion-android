@@ -208,6 +208,12 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
         }
 
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
+        findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
