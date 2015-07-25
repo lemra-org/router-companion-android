@@ -450,8 +450,11 @@ public abstract class AbstractRouterMgmtDialogFragment
                                                 }).toArray(String.class)));
                     }
                     //Fill with current network SSID
-                    ssidAutoCompleteView.setText(Utils.getWifiName(activity),
-                            EDITABLE);
+                    String wifiName = Utils.getWifiName(activity);
+                    if (wifiName != null && wifiName.startsWith("\"") && wifiName.endsWith("\"")) {
+                        wifiName = wifiName.substring(1, wifiName.length() - 1);
+                    }
+                    ssidAutoCompleteView.setText(wifiName, EDITABLE);
                 } catch (final Exception e) {
                     e.printStackTrace();
                     //No worries
