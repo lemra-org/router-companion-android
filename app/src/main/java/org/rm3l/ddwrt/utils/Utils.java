@@ -46,8 +46,11 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
@@ -77,6 +80,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -379,6 +383,16 @@ public final class Utils {
         if (context == null) {
             return null;
         }
+        final ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return null;
+        }
+        final NetworkInfo myNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (myNetworkInfo == null || !myNetworkInfo.isConnected()) {
+            return null;
+        }
+
         final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifiManager == null) {
             return null;
@@ -387,11 +401,35 @@ public final class Utils {
         if (wifiInfo == null) {
             return null;
         }
-        if (WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState()) ==
-                NetworkInfo.DetailedState.CONNECTED) {
-            return wifiInfo.getSSID();
+        return wifiInfo.getSSID();
+    }
+
+    @Nullable
+    public static View getLineView(@Nullable Context ctx) {
+
+        /*
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+         */
+        if (ctx == null) {
+            return null;
         }
-        return null;
+        final DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
+
+        final float height = TypedValue.applyDimension(COMPLEX_UNIT_DIP, 1.0f,
+                displayMetrics);
+
+        final View lineView = new View(ctx);
+        lineView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) height
+        ));
+        lineView.setBackgroundColor(R.color.line_view_color);
+        return lineView;
     }
 
     public static void takeBugReport(@NonNull final Activity activity) {

@@ -519,7 +519,8 @@ public class Router implements Serializable {
                 if (networkSsid == null || networkSsid.isEmpty()) {
                     continue;
                 }
-                if (networkSsid.equals(currentNetworkSSID)) {
+                if (networkSsid.equals(currentNetworkSSID) ||
+                        ("\"" + networkSsid + "\"").equals(currentNetworkSSID)) {
                     return localSSIDLookup;
                 }
             }

@@ -13,8 +13,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ import org.rm3l.ddwrt.widgets.home.wol.WOLWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -217,7 +220,7 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
             }
             final String routerName = router.getName();
             routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
-                    router.getRemoteIpAddress() + ")");
+                    Router.getEffectiveRemoteAddr(router, this) + ")");
         }
 
         mRoutersListAdapter = new ArrayAdapter<>(this,
@@ -235,6 +238,9 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
                 mRoutersDropdown.setSelection(0);
             }
         }
+
+        final View altAddrContainer = findViewById(R.id.selected_router_alternate_addresses_container);
+        final LinearLayout altAddrLayoutContainer = (LinearLayout) findViewById(R.id.selected_router_use_local_ssid_container);
 
         mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -259,6 +265,31 @@ public class RouterActionsWidgetConfigureActivity extends ActionBarActivity impl
                     return;
                 }
                 mSelectedRouterUuid.setText(selectedRouter.getUuid());
+                final Collection<Router.LocalSSIDLookup> localSSIDLookupData =
+                        selectedRouter.getLocalSSIDLookupData(RouterActionsWidgetConfigureActivity.this);
+                if (selectedRouter.isUseLocalSSIDLookup(RouterActionsWidgetConfigureActivity.this) &&
+                        !localSSIDLookupData.isEmpty()) {
+                    altAddrContainer.setVisibility(View.VISIBLE);
+                    for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                        if (localSSIDLookup == null) {
+                            continue;
+                        }
+                        final TextView localSsidView = new TextView(RouterActionsWidgetConfigureActivity.this);
+                        localSsidView.setText(localSSIDLookup.getNetworkSsid() + "\n" +
+                                localSSIDLookup.getReachableAddr() + "\n" +
+                                localSSIDLookup.getPort());
+                        localSsidView.setLayoutParams(new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        altAddrLayoutContainer.addView(localSsidView);
+                        final View lineView = Utils.getLineView(RouterActionsWidgetConfigureActivity.this);
+                        if (lineView != null) {
+                            altAddrLayoutContainer.addView(lineView);
+                        }
+                    }
+                } else {
+                    altAddrContainer.setVisibility(View.GONE);
+                }
             }
 
             @Override

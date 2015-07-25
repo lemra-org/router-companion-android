@@ -163,18 +163,25 @@ public final class SSHUtils {
     private SSHUtils() {
     }
 
-    public static void destroySession(@Nullable final Router router) {
+    public static void destroySession(@Nullable Context ctx, @Nullable final Router router) {
         if (router != null) {
-            destroySession(router.getUuid());
+            final boolean usePrimaryAddrSolely = (ctx == null || (!ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                    .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false)));
+            final String cacheKey = \"fake-key\";
+                    usePrimaryAddrSolely);
+            destroySession(cacheKey);
         }
     }
 
-    public static void destroySession(@Nullable final String uuid) {
-        if (uuid != null) {
-            final Lock lock = SSH_SESSIONS_CACHE_LOCKS.get(uuid);
+    public static void destroySession(@Nullable final String cacheKey) {
+        if (cacheKey != null) {
+            final Lock lock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
+            if (lock == null) {
+                return;
+            }
             lock.lock();
             try {
-                SSH_SESSIONS_LRU_CACHE.remove(uuid);
+                SSH_SESSIONS_LRU_CACHE.remove(cacheKey);
             } catch (final Exception e) {
                 //No worries
                 e.printStackTrace();
@@ -184,11 +191,21 @@ public final class SSHUtils {
                 } catch (final Exception e) {
                     Log.w(TAG, e);
                 } finally {
-                    SSH_SESSIONS_CACHE_LOCKS.remove(uuid);
+                    SSH_SESSIONS_CACHE_LOCKS.remove(cacheKey);
                 }
 
             }
         }
+    }
+
+    @NonNull
+    private static String getCacheKey(Context ctx,
+                                      String uuid,
+                                      boolean usePrimaryAddrSolely) {
+        final String cacheKey = \"fake-key\";
+        Log.d(TAG, "<usePrimaryAddrSolely,cacheKey> = <" + usePrimaryAddrSolely + ",'" +
+            cacheKey + "'>");
+        return cacheKey;
     }
 
     @Nullable
@@ -203,13 +220,13 @@ public final class SSHUtils {
             return null;
         }
 
-        final ReentrantLock lock = SSH_SESSIONS_CACHE_LOCKS.get(uuid);
+        final String cacheKey = \"fake-key\";
+
+        final ReentrantLock lock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         lock.lock();
         try {
-            final String currentNetworkSSID = Utils.getWifiName(ctx);
 
-            final Session sessionCached = usePrimaryAddrSolely ?
-                    SSH_SESSIONS_LRU_CACHE.get(uuid) : SSH_SESSIONS_LRU_CACHE.get(uuid + "." + currentNetworkSSID);
+            final Session sessionCached = SSH_SESSIONS_LRU_CACHE.get(cacheKey);
 
             if (sessionCached != null) {
                 if (!sessionCached.isConnected()) {
@@ -222,6 +239,7 @@ public final class SSHUtils {
             int remotePort = router.getRemotePort();
 
             if (ctx != null && !usePrimaryAddrSolely) {
+                final String currentNetworkSSID = Utils.getWifiName(ctx);
                 //Detect network and use the corresponding IP Address if required
                 final Collection<Router.LocalSSIDLookup> localSSIDLookupData = router.getLocalSSIDLookupData(ctx);
                 if (!localSSIDLookupData.isEmpty()) {
@@ -233,7 +251,8 @@ public final class SSHUtils {
                         if (networkSsid == null || networkSsid.isEmpty()) {
                             continue;
                         }
-                        if (networkSsid.equals(currentNetworkSSID)) {
+                        if (networkSsid.equals(currentNetworkSSID) ||
+                                ("\"" + networkSsid + "\"").equals(currentNetworkSSID)) {
                             remoteIpAddress = localSSIDLookup.getReachableAddr();
                             remotePort = localSSIDLookup.getPort();
                             break;
@@ -252,7 +271,7 @@ public final class SSHUtils {
             switch (sshAuthenticationMethod) {
                 case PUBLIC_PRIVATE_KEY:
                     //noinspection ConstantConditions
-                    jsch.addIdentity(uuid,
+                    jsch.addIdentity(cacheKey,
                             !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
                             null,
                             !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
@@ -277,19 +296,19 @@ public final class SSHUtils {
 
             jschSession.connect(connectTimeout != null ? connectTimeout : CONNECT_TIMEOUT_MILLIS);
 
-            SSH_SESSIONS_LRU_CACHE.put(usePrimaryAddrSolely ? uuid : (uuid + "." + currentNetworkSSID),
-                    jschSession);
-            return SSH_SESSIONS_LRU_CACHE.get(uuid);
+            SSH_SESSIONS_LRU_CACHE.put(cacheKey, jschSession);
+
+            return SSH_SESSIONS_LRU_CACHE.get(cacheKey);
         } catch (final JSchException jsche) {
             //Disconnect session, so a new one can be reconstructed next time
-            destroySession(uuid);
+            destroySession(cacheKey);
             throw jsche;
         } finally {
             try {
                 lock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(uuid);
+                destroySession(cacheKey);
             }
 
             //Display stats every 1h
@@ -312,18 +331,26 @@ public final class SSHUtils {
         }
     }
 
-    public static void checkConnection(@NonNull SharedPreferences globalSharedPreferences,
+    public static void checkConnection(@NonNull final Context ctx,
+                                       @NonNull SharedPreferences globalSharedPreferences,
                                        @NonNull final Router router, final int connectTimeoutMillis) throws Exception {
         // This is used that for a temporary connection check
         // at this point, we can just make a copy of the existing router and assign it a random UUID
         final Router routerCopy = new Router(router);
         final String tempUuid = UUID.randomUUID().toString();
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(tempUuid);
+
+        final boolean usePrimaryAddrSolely = !ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         try {
             routerCopy.setUuid(tempUuid);
 
-            Session jschSession = getSSHSession(null, globalSharedPreferences, routerCopy, connectTimeoutMillis, true);
+            Session jschSession = getSSHSession(ctx, globalSharedPreferences, routerCopy, connectTimeoutMillis, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -386,7 +413,7 @@ public final class SSHUtils {
             } catch (final Exception e) {
                 Log.w(TAG, e);
             } finally {
-                destroySession(tempUuid);
+                destroySession(cacheKey);
             }
         }
     }
@@ -402,10 +429,17 @@ public final class SSHUtils {
         ChannelExec channelExec = null;
         InputStream in = null;
         InputStream err = null;
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        final String uuid = router.getUuid();
+
+        final boolean usePrimaryAddrSolely = !context.getSharedPreferences(uuid, Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(context, globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
+            Session jschSession = getSSHSession(context, globalSharedPreferences, router, CONNECT_TIMEOUT_MILLIS, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -443,7 +477,7 @@ public final class SSHUtils {
                 reentrantLock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(router);
+                destroySession(context, router);
             } finally {
                 Closeables.closeQuietly(in);
                 Closeables.closeQuietly(err);
@@ -505,11 +539,16 @@ public final class SSHUtils {
         InputStream in = null;
         InputStream err = null;
 
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(tempUuid);
+        final boolean usePrimaryAddrSolely = !ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         Integer exitStatus = null;
         try {
-            Session jschSession = getSSHSession(ctx, globalPreferences, routerCopy, CONNECT_TIMEOUT_MILLIS, false);
+            Session jschSession = getSSHSession(ctx, globalPreferences, routerCopy, CONNECT_TIMEOUT_MILLIS, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -555,7 +594,7 @@ public final class SSHUtils {
                 reentrantLock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(routerCopy);
+                destroySession(ctx, routerCopy);
             } finally {
                 Closeables.closeQuietly(in);
                 Closeables.closeQuietly(err);
@@ -577,10 +616,18 @@ public final class SSHUtils {
         ChannelExec channelExec = null;
         InputStream in = null;
         InputStream err = null;
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+
+        final String uuid = router.getUuid();
+
+        final boolean usePrimaryAddrSolely = !ctx.getSharedPreferences(uuid, Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -603,7 +650,7 @@ public final class SSHUtils {
                 reentrantLock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(router);
+                destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
                 Closeables.closeQuietly(err);
@@ -747,10 +794,17 @@ public final class SSHUtils {
                 "scp -q -o StrictHostKeyChecking=no -t " + toRemotePath;
         Log.d(TAG, "scpTo: command=[" + command + "]");
 
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        final String uuid = router.getUuid();
+
+        final boolean usePrimaryAddrSolely = !ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -836,7 +890,7 @@ public final class SSHUtils {
                 reentrantLock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(router);
+                destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
                 //            Closeables.closeQuietly(err);
@@ -847,7 +901,6 @@ public final class SSHUtils {
         }
 
         return true;
-
     }
 
     public static boolean scpFrom(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
@@ -873,10 +926,17 @@ public final class SSHUtils {
                 "scp -q -o StrictHostKeyChecking=no -f " + fromRemotePath;
         Log.d(TAG, "scpTo: command=[" + command + "]");
 
-        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(router.getUuid());
+        final String uuid = router.getUuid();
+
+        final boolean usePrimaryAddrSolely = !ctx.getSharedPreferences(uuid, Context.MODE_PRIVATE)
+                .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false);
+        final String cacheKey = \"fake-key\";
+                usePrimaryAddrSolely);
+
+        final ReentrantLock reentrantLock = SSH_SESSIONS_CACHE_LOCKS.get(cacheKey);
         reentrantLock.lock();
         try {
-            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, false);
+            Session jschSession = getSSHSession(ctx, globalPreferences, router, CONNECT_TIMEOUT_MILLIS, usePrimaryAddrSolely);
             if (jschSession == null) {
                 throw new IllegalStateException("Unable to retrieve session - please retry again later!");
             }
@@ -995,7 +1055,7 @@ public final class SSHUtils {
                 reentrantLock.unlock();
             } catch (final Exception e) {
                 Log.w(TAG, e);
-                destroySession(router);
+                destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
 //            Closeables.closeQuietly(err);

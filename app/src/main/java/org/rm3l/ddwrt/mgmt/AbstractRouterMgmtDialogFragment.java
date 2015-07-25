@@ -419,6 +419,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         addLocalSsidLookupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final AlertDialog.Builder addLocalSsidLookupDialogBuilder = new AlertDialog.Builder(activity);
                 final View addLocalSsidLookupDialogView = inflater.inflate(R.layout.activity_router_add_local_ssid_lookup, null);
 
@@ -571,6 +572,10 @@ public abstract class AbstractRouterMgmtDialogFragment
                         });
 
                         localSsidsContainer.addView(localSsidView);
+                        final View lineView = Utils.getLineView(activity);
+                        if (lineView != null) {
+                            localSsidsContainer.addView(lineView);
+                        }
 
                         addLocalSsidLookupDialog.dismiss();
                     }
@@ -796,7 +801,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         final Router router = buildRouter(d);
 
         //This will throw an exception if connection could not be established!
-        SSHUtils.checkConnection(mGlobalSharedPreferences, router, 10000);
+        SSHUtils.checkConnection(getActivity(), mGlobalSharedPreferences, router, 10000);
 
         return router;
     }

@@ -163,7 +163,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
         public void run() {
-            SSHUtils.destroySession(mRouter);
+            SSHUtils.destroySession(DDWRTMainActivity.this, mRouter);
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;

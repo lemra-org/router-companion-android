@@ -13,8 +13,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -278,6 +281,9 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
             }
         }
 
+        final View altAddrContainer = findViewById(R.id.selected_router_alternate_addresses_container);
+        final LinearLayout altAddrLayoutContainer = (LinearLayout) findViewById(R.id.selected_router_use_local_ssid_container);
+
         mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -301,11 +307,35 @@ public class WOLWidgetConfigureActivity extends ActionBarActivity implements Rou
                     return;
                 }
                 mSelectedRouterUuid.setText(selectedRouter.getUuid());
+                final Collection<Router.LocalSSIDLookup> localSSIDLookupData =
+                        selectedRouter.getLocalSSIDLookupData(WOLWidgetConfigureActivity.this);
+                if (selectedRouter.isUseLocalSSIDLookup(WOLWidgetConfigureActivity.this) &&
+                        !localSSIDLookupData.isEmpty()) {
+                    altAddrContainer.setVisibility(View.VISIBLE);
+                    for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                        if (localSSIDLookup == null) {
+                            continue;
+                        }
+                        final TextView localSsidView = new TextView(WOLWidgetConfigureActivity.this);
+                        localSsidView.setText(localSSIDLookup.getNetworkSsid() + "\n" +
+                                localSSIDLookup.getReachableAddr() + "\n" +
+                                localSSIDLookup.getPort());
+                        localSsidView.setLayoutParams(new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        altAddrLayoutContainer.addView(localSsidView);
+                        final View lineView = Utils.getLineView(WOLWidgetConfigureActivity.this);
+                        if (lineView != null) {
+                            altAddrLayoutContainer.addView(lineView);
+                        }
+                    }
+                } else {
+                    altAddrContainer.setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }
