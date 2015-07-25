@@ -206,6 +206,10 @@ public class RouterManagementActivity
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("Routers");
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -213,6 +217,8 @@ public class RouterManagementActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setIcon(R.drawable.ic_launcher_ddwrt_companion);
         }
 
         this.dao = getDao(this);

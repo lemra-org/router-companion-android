@@ -248,6 +248,10 @@ public class DDWRTMainActivity extends ActionBarActivity
             mToolbar.setTitle(mTitle);
             mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
                     (effectiveRemoteAddr + ":" + effectivePort));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -392,7 +396,6 @@ public class DDWRTMainActivity extends ActionBarActivity
                 routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
                         router.getRemoteIpAddress() + ")");
             }
-
 
             mRoutersListAdapter = new ArrayAdapter<>(this,
                     R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
@@ -569,11 +572,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
 
         final DialogFragment addFragment = new RouterAddDialogFragment();
-//        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
-
-        getSupportFragmentManager().beginTransaction()
-                .add(android.R.id.content, addFragment)
-                .addToBackStack(null).commit();
+        addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
     private void initDrawer() {
