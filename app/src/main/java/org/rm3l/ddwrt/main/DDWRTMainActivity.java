@@ -27,9 +27,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -238,19 +240,14 @@ public class DDWRTMainActivity extends ActionBarActivity
         final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, this);
         final Integer effectivePort = Router.getEffectivePort(router, this);
 
-        String title = "";
-//        if (!isNullOrEmpty(routerName)) {
-//            title = (routerName + "\n");
-//        }
-//        title += String.format("%s:%d", effectiveRemoteAddr, effectivePort);
-
-        title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-        setTitle(title);
+        setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
 
         mTitle = mDrawerTitle = getTitle();
         initView();
         if (mToolbar != null) {
             mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                    (effectiveRemoteAddr + ":" + effectivePort));
             setSupportActionBar(mToolbar);
         }
 
@@ -259,6 +256,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         }
 
         initDrawer();
@@ -297,27 +295,25 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        //Register Intent for handling network changes
-//        final IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-//        mNetworkChangeReceiver = new NetworkChangeReceiver();
-//        registerReceiver(mNetworkChangeReceiver, intentFilter);
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        try {
-//            if (mNetworkChangeReceiver != null) {
-//                unregisterReceiver(mNetworkChangeReceiver);
-//            }
-//        } finally {
-//            super.onStop();
-//        }
-//    }
+    private BroadcastReceiver mMessageReceiver = new NetworkChangeReceiver();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(
+                mMessageReceiver,
+                new IntentFilter(
+                        ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } finally {
+            super.onStop();
+        }
+    }
 
     private void initView() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -638,6 +634,11 @@ public class DDWRTMainActivity extends ActionBarActivity
         mCurrentActivityResultListener = null;
         //Close SSH Session as well
         destroySSHSession();
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -1299,21 +1300,17 @@ public class DDWRTMainActivity extends ActionBarActivity
                 final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, DDWRTMainActivity.this);
                 final Integer effectivePort = Router.getEffectivePort(mRouter, DDWRTMainActivity.this);
 
-                String title = "";
-                if (!isNullOrEmpty(routerName)) {
-                    title = (routerName + "\n");
-                }
-                title += String.format("%s:%d", effectiveRemoteAddr, effectivePort);
-                DDWRTMainActivity.this.setTitle(title);
+                setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
 
                 mTitle = mDrawerTitle = getTitle();
-                initView();
                 if (mToolbar != null) {
                     mToolbar.setTitle(mTitle);
-//                        setSupportActionBar(mToolbar);
+                    mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                            (effectiveRemoteAddr + ":" + effectivePort));
                 }
             }
         }
     }
+
 
 }
