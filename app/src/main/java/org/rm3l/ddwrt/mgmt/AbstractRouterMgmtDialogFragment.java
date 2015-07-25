@@ -738,7 +738,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                 final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
 
                 d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT);
+                        WindowManager.LayoutParams.MATCH_PARENT);
 
                 if (BuildConfig.WITH_ADS) {
                     //For Ads to show up, otherwise we get the following error message:
