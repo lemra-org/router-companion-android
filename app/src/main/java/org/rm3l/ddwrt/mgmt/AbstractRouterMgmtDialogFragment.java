@@ -731,18 +731,18 @@ public abstract class AbstractRouterMgmtDialogFragment
         super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
 
         if (!mActivityCreatedAndInitialized.get()) {
-
             final AlertDialog d = (AlertDialog) getDialog();
             if (d != null) {
 
                 final View ddwrtInstructionsView = d.findViewById(R.id.router_add_ddwrt_instructions);
                 final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
 
+                d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+
                 if (BuildConfig.WITH_ADS) {
                     //For Ads to show up, otherwise we get the following error message:
                     //Not enough space to show ad. Needs 320x50 dp, but only has 288x597 dp.
-                    d.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                            WindowManager.LayoutParams.WRAP_CONTENT);
 
                     //Also Display shorte.st link to instructions (monetized)
                     //FIXME Fix when support of other firmwares is in place
