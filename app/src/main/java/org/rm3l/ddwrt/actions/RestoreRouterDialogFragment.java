@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -402,7 +403,9 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                                                     fileSelectorButton.setHint("Select Backup File to restore");
                                                     mSelectedBackupInputStream = null;
                                                     ((TextView) d.findViewById(R.id.router_restore_backup_path)).setText(null);
-
+                                                    Utils.scrollToView(
+                                                            (ScrollView) d.findViewById(R.id.router_restore_scrollview),
+                                                            fileSelectorButton);
                                                     fileSelectorButton.requestFocus();
                                                 }
                                             });
@@ -426,7 +429,10 @@ public class RestoreRouterDialogFragment extends DialogFragment {
     private boolean validateForm(@NonNull AlertDialog d) {
         if (mSelectedBackupInputStream == null) {
             displayMessage("Please select a file to restore", ALERT);
-            d.findViewById(R.id.router_restore_backup_select_button).requestFocus();
+
+            final View viewById = d.findViewById(R.id.router_restore_backup_select_button);
+            Utils.scrollToView((ScrollView) d.findViewById(R.id.router_restore_scrollview), viewById);
+            viewById.requestFocus();
             return false;
         }
         return true;

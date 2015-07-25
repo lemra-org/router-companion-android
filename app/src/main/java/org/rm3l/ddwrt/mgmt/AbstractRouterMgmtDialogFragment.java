@@ -307,13 +307,13 @@ public abstract class AbstractRouterMgmtDialogFragment
 //                                PasswordTransformationMethod.getInstance());
                             pwdView.setInputType(
                                     InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                            contentScrollView.scrollTo(0, pwdView.getScrollY());
+                            Utils.scrollToView(contentScrollView, pwdView);
                             pwdView.requestFocus();
                         } else {
 //                        pwdView.setTransformationMethod(
 //                                HideReturnsTransformationMethod.getInstance());
                             pwdView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                            contentScrollView.scrollTo(0, pwdView.getScrollY());
+                            Utils.scrollToView(contentScrollView, pwdView);
                             pwdView.requestFocus();
                         }
                         pwdView.setSelection(pwdView.length());
@@ -376,18 +376,20 @@ public abstract class AbstractRouterMgmtDialogFragment
         advancedOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                contentScrollView.scrollTo(0, advancedOptionsView.getScrollY());
-                advancedOptionsView.requestFocus();
                 if (advancedOptionsView.getVisibility() == View.VISIBLE) {
                     advancedOptionsView.setVisibility(View.GONE);
                     advancedOptionsButton
                             .setCompoundDrawablesWithIntrinsicBounds(
                                     R.drawable.ic_action_hardware_keyboard_arrow_right, 0, 0, 0);
+                    Utils.scrollToView(contentScrollView, advancedOptionsView);
+                    advancedOptionsView.requestFocus();
                 } else {
                     advancedOptionsView.setVisibility(View.VISIBLE);
                     advancedOptionsButton
                             .setCompoundDrawablesWithIntrinsicBounds(
                                     R.drawable.ic_action_hardware_keyboard_arrow_down, 0, 0, 0);
+                    Utils.scrollToView(contentScrollView, advancedOptionsButton);
+                    advancedOptionsButton.requestFocus();
                 }
             }
         });
@@ -399,16 +401,14 @@ public abstract class AbstractRouterMgmtDialogFragment
         useLocalSsidLookupCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                contentScrollView.scrollTo(0, useLocalSsidLookupCheckbox.getScrollY());
-                useLocalSsidLookupCheckbox.requestFocus();
                 final int depsVisibility = isChecked ? View.VISIBLE : View.GONE;
                 addLocalSsidLookupButton.setVisibility(depsVisibility);
 //                fallbackCheckbox.setVisibility(depsVisibility);
                 if (isChecked) {
-                    contentScrollView.scrollTo(0, addLocalSsidLookupButton.getScrollY());
-                    addLocalSsidLookupButton.requestFocus();
+                    Utils.scrollToView(contentScrollView, addLocalSsidLookupButton);
                 } else {
                     fallbackCheckbox.setChecked(false);
+                    Utils.scrollToView(contentScrollView, useLocalSsidLookupCheckbox);
                 }
             }
         });
@@ -826,7 +826,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                 || Patterns.DOMAIN_NAME.matcher(ipAddrViewText).matches())) {
             displayMessage(getString(R.string.router_add_dns_or_ip_invalid) + ":" + ipAddrViewText,
                     ALERT);
-            contentScrollView.scrollTo(0, ipAddrView.getScrollY());
+            Utils.scrollToView(contentScrollView, ipAddrView);
             ipAddrView.requestFocus();
             openKeyboard(ipAddrView);
             return false;
@@ -843,7 +843,8 @@ public abstract class AbstractRouterMgmtDialogFragment
         }
         if (!validPort) {
             displayMessage(getString(R.string.router_add_port_invalid) + ":" + portView.getText(), ALERT);
-            contentScrollView.scrollTo(0, portView.getScrollY());
+            Utils.scrollToView(contentScrollView, portView);
+
             portView.requestFocus();
             openKeyboard(portView);
             return false;
@@ -852,8 +853,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
             displayMessage(getString(R.string.router_add_username_invalid), ALERT);
-
-            contentScrollView.scrollTo(0, sshUsernameView.getScrollY());
+            Utils.scrollToView(contentScrollView, sshUsernameView);
             sshUsernameView.requestFocus();
             openKeyboard(sshUsernameView);
             return false;
@@ -865,8 +865,8 @@ public abstract class AbstractRouterMgmtDialogFragment
             final EditText sshPasswordView = (EditText) d.findViewById(R.id.router_add_password);
             if (isNullOrEmpty(sshPasswordView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_password_invalid), ALERT);
+                Utils.scrollToView(contentScrollView, sshPasswordView);
 
-                contentScrollView.scrollTo(0, sshPasswordView.getScrollY());
                 sshPasswordView.requestFocus();
                 openKeyboard(sshPasswordView);
                 return false;
@@ -876,8 +876,8 @@ public abstract class AbstractRouterMgmtDialogFragment
             final TextView sshPrivKeyView = (TextView) d.findViewById(R.id.router_add_privkey_path);
             if (isNullOrEmpty(sshPrivKeyView.getText().toString())) {
                 displayMessage(getString(R.string.router_add_privkey_invalid), ALERT);
+                Utils.scrollToView(contentScrollView, sshPrivKeyView);
 
-                contentScrollView.scrollTo(0, sshPrivKeyView.getScrollY());
                 sshPrivKeyView.requestFocus();
                 return false;
             }

@@ -39,6 +39,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -52,6 +53,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
@@ -434,6 +436,24 @@ public final class Utils {
         ));
         lineView.setBackgroundColor(resources.getColor(R.color.line_view_color));
         return lineView;
+    }
+
+    public static void scrollToView(@Nullable final ScrollView scrollView,
+                                   @Nullable final View view) {
+
+        if (scrollView == null || view == null) {
+            return;
+        }
+
+        // View needs a focus
+        view.requestFocus();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.smoothScrollTo(0, view.getBottom());
+            }
+        });
     }
 
     public static void takeBugReport(@NonNull final Activity activity) {
