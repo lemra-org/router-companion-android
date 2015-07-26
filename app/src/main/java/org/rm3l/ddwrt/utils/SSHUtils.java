@@ -261,6 +261,9 @@ public final class SSHUtils {
                 }
             }
 
+            Log.d(TAG, String.format("<remoteIpAddress,remotePort> = <'%s', %d>, ",
+                    remoteIpAddress, remotePort));
+
             final String privKey = \"fake-key\";
             final JSch jsch = new JSch();
 
@@ -314,7 +317,7 @@ public final class SSHUtils {
             //Display stats every 1h
             final Long lastUpdate = cacheStatsElapsedTimeForDebugging.get();
             final long currentTimeMillis = System.currentTimeMillis();
-            if (lastUpdate == null || (currentTimeMillis - lastUpdate) >= (1 * 60 * 60 * 1000l)) {
+            if (lastUpdate == null || (currentTimeMillis - lastUpdate) >= (60 * 60 * 1000l)) {
                 Log.d(TAG, "=== SSH_SESSIONS_LRU_CACHE stats ===\n" +
                         "create_count=" + SSH_SESSIONS_LRU_CACHE.createCount() + ", " +
                         "eviction_count=" + SSH_SESSIONS_LRU_CACHE.evictionCount() + ", " +
