@@ -422,7 +422,7 @@ public abstract class AbstractRouterMgmtDialogFragment
 
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(activity, "Add alternate Addresses");
+                    Utils.displayUpgradeMessage(activity, "Add Alternate Addresses");
                     return;
                 }
 
