@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Collection;
 
@@ -164,8 +165,10 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
 //            ((CheckBox) d.findViewById(R.id.router_add_is_strict_host_key_checking))
 //                    .setChecked(router.isStrictHostKeyChecking());
 
+            final boolean useLocalSSIDLookup = router.isUseLocalSSIDLookup(activity);
+
             ((CheckBox) d.findViewById(R.id.router_add_local_ssid_lookup))
-                    .setChecked(router.isUseLocalSSIDLookup(activity));
+                    .setChecked(useLocalSSIDLookup);
 
             ((CheckBox) d.findViewById(R.id.router_add_fallback_to_primary))
                     .setChecked(router.isFallbackToPrimaryAddr(activity));
@@ -209,6 +212,16 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
                 });
 
                 container.addView(localSsidView);
+                final View lineView = Utils.getLineView(activity);
+                if (lineView != null) {
+                    container.addView(lineView);
+                }
+            }
+
+            if (useLocalSSIDLookup) {
+                //Perform click programmatically
+                d.findViewById(R.id.router_add_advanced_options_button)
+                        .performClick();
             }
 
             mActivityCreatedAndInitialized.set(true);
