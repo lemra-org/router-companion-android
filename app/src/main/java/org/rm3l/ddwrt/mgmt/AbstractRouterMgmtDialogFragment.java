@@ -445,7 +445,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                                         if (input == null) {
                                                             return null;
                                                         }
-                                                        return (input.SSID + "\n" + input.BSSID);
+                                                        return input.SSID;
                                                     }
                                                 }).toArray(String.class)));
                     }
