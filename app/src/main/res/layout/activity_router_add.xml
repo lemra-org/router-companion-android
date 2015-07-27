@@ -369,27 +369,25 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:text="Use local SSID Lookup"/>
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_marginBottom="16dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:layout_marginTop="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/router_add_local_ssid_container"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="9"
                         android:orientation="vertical"/>
 
                     <android.support.design.widget.FloatingActionButton
                         android:id="@+id/router_add_local_ssid_button"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
+                        android:layout_weight="1"
                         android:contentDescription="Add local SSID"
                         android:src="@android:drawable/ic_input_add"
                         android:tint="@android:color/white"
@@ -402,7 +400,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         app:layout_anchorGravity="bottom|right|end"
                         android:visibility="gone"/>
 
-                </RelativeLayout>
+                </LinearLayout>
 
                 <!-- Hidden - not really relevant -->
                 <CheckBox
