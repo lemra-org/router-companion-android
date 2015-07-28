@@ -23,7 +23,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 DD-WRT Companion for android
 -------
 
-[![Build Status](http://jenkins.rm3l.org:8181/buildStatus/icon?job=ddwrt-companion-android)](http://jenkins.rm3l.org:8181/job/ddwrt-companion-android/)
+[![Build Status](https://jenkins.rm3l.org/buildStatus/icon?job=DD-WRT_Companion__Android)](https://jenkins.rm3l.org/job/DD-WRT_Companion__Android)
 
 Had you ever tried to use the DD-WRT web interface on an Android device, you should have noticed how impractical it is to navigate with.
 
@@ -116,4 +116,3 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
-
