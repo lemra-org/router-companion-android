@@ -275,12 +275,18 @@ public class RouterListRecycleViewAdapter extends
                             .filter(new Predicate<Router>() {
                                 @Override
                                 public boolean apply(Router input) {
-                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method)
+                                    if (input == null) {
+                                        return false;
+                                    }
+                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method, router model)
                                     final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
                                     final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
+                                    final String inputModel = context.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
+                                            .getString(NVRAMInfo.MODEL, "");
                                     //noinspection ConstantConditions
                                     return containsIgnoreCase(input.getName(), constraint)
                                             || containsIgnoreCase(input.getRemoteIpAddress(), constraint)
+                                            || containsIgnoreCase(inputModel, constraint)
                                             || (routerFirmware != null && containsIgnoreCase(routerFirmware.toString(), constraint))
                                             || containsIgnoreCase(input.getUsernamePlain(), constraint)
                                             || (routerConnectionProtocol != null && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
