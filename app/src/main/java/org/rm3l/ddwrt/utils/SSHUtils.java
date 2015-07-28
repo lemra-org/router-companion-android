@@ -204,7 +204,7 @@ public final class SSHUtils {
                                       boolean usePrimaryAddrSolely) {
         final String cacheKey = \"fake-key\";
         Log.d(TAG, "<usePrimaryAddrSolely,cacheKey> = <" + usePrimaryAddrSolely + ",'" +
-            cacheKey + "'>");
+                cacheKey + "'>");
         return cacheKey;
     }
 
@@ -396,6 +396,48 @@ public final class SSHUtils {
                     //No worries
                     e.printStackTrace();
                     router.setRouterFirmware(RouterFirmware.UNKNOWN);
+                } finally {
+                    if (in != null) {
+                        Closeables.closeQuietly(in);
+                    }
+                    if (err != null) {
+                        Closeables.closeQuietly(err);
+                    }
+                    if (channelExec != null) {
+                        channelExec.disconnect();
+                    }
+                }
+            }
+
+            if (ctx != null) {
+                //Grab Router Model and save it in router preferences
+                ChannelExec channelExec = null;
+                InputStream in = null;
+                InputStream err = null;
+                try {
+                    channelExec = (ChannelExec) jschSession.openChannel("exec");
+                    channelExec.setCommand(String.format("/usr/sbin/nvram show 2>/dev/null " +
+                            "| grep %s | awk -F'=' '{print $2}'", NVRAMInfo.MODEL));
+                    channelExec.setInputStream(null);
+                    in = channelExec.getInputStream();
+                    err = channelExec.getErrStream();
+                    channelExec.connect();
+
+                    final String[] output = Utils.getLines(new BufferedReader(new InputStreamReader(in)));
+                    if (output != null && output.length > 0) {
+                        final String routerModel = output[0];
+                        if (!isNullOrEmpty(routerModel)) {
+                            ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE)
+                                    .edit()
+                                    .putString(NVRAMInfo.MODEL, routerModel)
+                                    .apply();
+                            Utils.requestBackup(ctx);
+                        }
+                    }
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    //No worries
                 } finally {
                     if (in != null) {
                         Closeables.closeQuietly(in);
