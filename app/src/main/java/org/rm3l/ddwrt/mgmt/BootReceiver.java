@@ -36,7 +36,7 @@ public class BootReceiver extends BroadcastReceiver {
         final PendingIntent pi = PendingIntent.getService(context, 0, backgroundServiceIntent, 0);
         am.cancel(pi);
 
-        if (!bgServiceEnabled || minutes <= 0l) {
+        if ((!bgServiceEnabled) || minutes <= 0l) {
             //Skip
             return;
         }
