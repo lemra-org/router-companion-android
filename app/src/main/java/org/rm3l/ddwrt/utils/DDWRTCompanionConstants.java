@@ -105,7 +105,7 @@ public final class DDWRTCompanionConstants {
 //    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
-    //Disabled - does not seem to be profitable
+    //Disabled - no longer needed as it does not seem to be that profitable
     @Deprecated
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
 
@@ -117,6 +117,8 @@ public final class DDWRTCompanionConstants {
     public static final String COLON = ":";
     public static final String SPACE = " ";
     public static final String SHARP = "#";
+    
+    public static final String TO_REMOVE = "TO_REMOVE";
 
     private DDWRTCompanionConstants() {
     }
