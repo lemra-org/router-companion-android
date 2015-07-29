@@ -23,9 +23,7 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,7 +33,6 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -87,7 +84,6 @@ import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.service.BackgroundService;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -104,6 +100,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
@@ -137,6 +135,9 @@ public class RouterManagementActivity
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+
+    private boolean mBackgroundServiceEnabled;
+    private long mBackgroundServiceFrequency;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -181,6 +182,9 @@ public class RouterManagementActivity
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
+
+        mBackgroundServiceEnabled = mPreferences.getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false);
+        mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
 
         setContentView(R.layout.activity_router_management);
 
@@ -293,6 +297,8 @@ public class RouterManagementActivity
         }
 
         initOpenAddRouterFormIfNecessary();
+
+        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
         /* Use this when you want to run a background update check */
         final UpdateRunnable updateRunnable =
@@ -427,32 +433,6 @@ public class RouterManagementActivity
         }
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        final boolean bgServiceEnabled = mPreferences
-                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
-        final long minutes = mPreferences.getLong(
-                DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
-
-        Log.d(LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
-
-        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        final Intent backgroundServiceIntent = new Intent(this, BackgroundService.class);
-        final PendingIntent pi = PendingIntent.getService(this, 0, backgroundServiceIntent, 0);
-        am.cancel(pi);
-
-        if (!bgServiceEnabled || minutes <= 0l) {
-            //Skip
-            return;
-        }
-
-        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + minutes * 60 * 1000,
-                minutes * 60 * 1000, pi);
     }
 
     @Override
@@ -606,9 +586,13 @@ public class RouterManagementActivity
             case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
-                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)) {
+                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
+                            this.mBackgroundServiceEnabled != this.mPreferences
+                                    .getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false) ||
+                            this.mBackgroundServiceFrequency != this.mPreferences
+                                    .getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l)) {
                         //Reload UI
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                         new Handler().postDelayed(new Runnable() {

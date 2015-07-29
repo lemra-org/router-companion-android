@@ -86,6 +86,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".service.BackgroundService"
+            android:exported="false"/>
+
         <activity
             android:name=".mgmt.RouterManagementActivity"
             android:label="@string/app_name"
