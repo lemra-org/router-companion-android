@@ -48,11 +48,14 @@ public class BootReceiver extends WakefulBroadcastReceiver {
 
         if ((!bgServiceEnabled) || minutes <= 0l) {
             //Skip
+            Log.d(LOG_TAG, "(!bgServiceEnabled) || minutes <= 0l");
             return;
         }
 
+        Log.d(LOG_TAG, "(bgServiceEnabled && minutes > 0l) => scheduling repeating alarm");
+
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+                SystemClock.elapsedRealtime(),
                 minutes * 60 * 1000, pi);
     }
 

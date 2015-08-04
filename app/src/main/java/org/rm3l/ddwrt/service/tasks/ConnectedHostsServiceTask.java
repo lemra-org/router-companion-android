@@ -63,7 +63,6 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.DEVICE_NA
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.IP_ADDRESS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAC_ADDRESS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 /**
  * Created by rm3l on 05/07/15.
@@ -77,10 +76,8 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
     }
 
     @Override
-    public void buildNotification(@NonNull final Router router) throws Exception {
+    public void runBackgroundServiceTask(@NonNull final Router router) throws Exception {
 
-        final SharedPreferences globalPreferences = mCtx.getSharedPreferences(
-                DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         final SharedPreferences routerPreferences = mCtx.getSharedPreferences(
                 router.getUuid(), Context.MODE_PRIVATE);
 
@@ -114,6 +111,13 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
         String ipAddress;
         final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
+
+        //Active clients
+        final String[] activeClients = SSHUtils.getManualProperty(mCtx, router, globalPreferences,
+                "arp -a 2>/dev/null");
+
+        Log.d(TAG, "activeClients: " + Arrays.toString(activeClients));
+
         for (final String stdoutLine : output) {
             if ("done".equals(stdoutLine)) {
                 break;
@@ -152,6 +156,15 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                     }
                 }
 
+                if (activeClients != null) {
+                    for (final String activeClient : activeClients) {
+                        if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
+                            device.setActive(true);
+                            break;
+                        }
+                    }
+                }
+
                 device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
 
                 macToDeviceOutput.put(macAddress, device);
@@ -186,7 +199,10 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                                                           @Nullable Router router,
                                                           @NonNull Collection<Device> deviceCollection) {
 
+        Log.d(TAG, "generateConnectedHostsNotification(" + router + ")");
+
         if (router == null) {
+            Log.w(TAG, "router == null");
             return;
         }
 
@@ -195,9 +211,14 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
         // Sets an ID for the notification, so it can be updated
         final int notifyID = router.getId();
 
+        Log.d(TAG,"notifyID=" + notifyID);
 
         final boolean onlyActiveHosts = mRouterPreferences
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY, true);
+
+        Log.d(TAG,"onlyActiveHosts=" + onlyActiveHosts);
+        Log.d(TAG,"deviceCollection=" + deviceCollection);
+
         final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
                 .filter(new Predicate<Device>() {
                     @Override
@@ -270,10 +291,16 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             }
         }
 
+        Log.d(TAG, "<sizeFiltered,previousConnectedHosts.size()>=<" +
+                sizeFiltered + "," + previousConnectedHosts.size() + ">");
+
         boolean updateNotification = false;
         if (sizeFiltered != previousConnectedHosts.size()) {
             updateNotification = true;
         } else {
+
+            Log.d(TAG, "devicesCollFiltered: " + devicesCollFiltered);
+            Log.d(TAG, "previousConnectedHosts: " + previousConnectedHosts);
 
             //Now compare if anything has changed
             for (final Device newDevice : devicesCollFiltered) {
@@ -313,6 +340,8 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             }
         }
 
+        Log.d(TAG,"updateNotification=" + updateNotification);
+
         //Build the String Set to save in preferences
         final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
                 .transform(new Function<Device, String>() {
@@ -339,6 +368,9 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                 .putStringSet(DDWRTTile.getFormattedPrefKey(WirelessClientsTile.class, CONNECTED_HOSTS),
                         stringImmutableSet)
                 .apply();
+
+        Log.d(TAG, "NOTIFICATIONS_ENABLE=" + mRouterPreferences
+                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true));
 
         if (sizeFiltered == 0 ||
                 !mRouterPreferences
