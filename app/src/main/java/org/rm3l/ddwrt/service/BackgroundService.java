@@ -12,6 +12,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.AbstractBackgroundServiceTask;
 import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
+import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
@@ -130,6 +131,7 @@ public class BackgroundService extends IntentService {
 
         public BackgroundServiceTasksExecutor() {
             //Add any other tasks over here
+            tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
             tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
         }
 
@@ -152,8 +154,9 @@ public class BackgroundService extends IntentService {
                     if (backgroundServiceTask == null) {
                         continue;
                     }
+                    Log.d(TAG, ">>> Running task: " + backgroundServiceTask.getClass() + " on router " + router);
                     try {
-                        backgroundServiceTask.buildNotification(router);
+                        backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Utils.reportException(e);

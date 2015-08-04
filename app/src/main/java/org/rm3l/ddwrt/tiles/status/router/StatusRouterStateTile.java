@@ -275,7 +275,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                 final String routerModelFromPrefs =
                         mParentFragmentPreferences.getString(NVRAMInfo.MODEL, "-");
                 //noinspection ConstantConditions
-                if (!routerModelFromPrefs.equals(routerModel)) {
+                if (!("-".equals(routerModel) ||
+                        routerModelFromPrefs.equals(routerModel))) {
                     mParentFragmentPreferences
                             .edit()
                             .putString(NVRAMInfo.MODEL, routerModel)
