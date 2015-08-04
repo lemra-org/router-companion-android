@@ -58,6 +58,9 @@ public final class DDWRTCompanionConstants {
 
     public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://ddwrt-companion.rm3l.org/dev/changelog.html";
 
+    public static final int DOORBELL_APPID = 0;
+    public static final String DOORBELL_APIKEY = \"fake-api-key\";
+
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
@@ -102,7 +105,7 @@ public final class DDWRTCompanionConstants {
 //    public static final String FILEPROVIDER_AUTHORITY = "org.rm3l.fileprovider";
     public static final String FILEPROVIDER_AUTHORITY = (BuildConfig.APPLICATION_ID + ".fileprovider");
 
-    //Disabled - does not seem to be profitable
+    //Disabled - no longer needed as it does not seem to be that profitable
     @Deprecated
     public static final String ADBUDDIZ_PUBLISHER_KEY = \"fake-key\";
 
@@ -114,6 +117,8 @@ public final class DDWRTCompanionConstants {
     public static final String COLON = ":";
     public static final String SPACE = " ";
     public static final String SHARP = "#";
+    
+    public static final String TO_REMOVE = "TO_REMOVE";
 
     private DDWRTCompanionConstants() {
     }

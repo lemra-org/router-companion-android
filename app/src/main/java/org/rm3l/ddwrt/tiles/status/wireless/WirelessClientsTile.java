@@ -115,6 +115,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -128,6 +129,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.TopTalkersClientsSortingVi
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
@@ -649,6 +651,56 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     Log.d(LOG_TAG, "broadcastAddresses: " + broadcastAddresses);
 
+                    final Multimap<String, String> phyToWlIfaces = ArrayListMultimap.create();
+                    try {
+                        final String[] wirelessSsids = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                mRouterCopy,
+                                mGlobalPreferences,
+                                "nvram show | grep 'ssid='");
+                        if (wirelessSsids == null || wirelessSsids.length == 0) {
+                            return null;
+                        }
+
+                        for (final String wirelessSsid : wirelessSsids) {
+                            if (wirelessSsid == null ||
+                                    wirelessSsid.startsWith("af_")) {
+                                //skip AnchorFree SSID
+                                continue;
+                            }
+                            final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
+                            final int size = strings.size();
+                            if (size == 1) {
+                                continue;
+                            }
+
+                            if (size >= 2) {
+                                final String wlIface = strings.get(0).replace("_ssid", "");
+//                                if (wlIface.contains(".")) {
+//                                    //Skip vifs as well, as they will be considered later on
+//                                    continue;
+//                                }
+                                final String nvramKey = \"fake-key\";
+                                final NVRAMInfo phyFromNVRAM = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                        mRouterCopy, mGlobalPreferences,
+                                        nvramKey);
+                                if (phyFromNVRAM == null || phyFromNVRAM.getProperty(nvramKey) == null) {
+                                    continue;
+                                }
+
+                                final String phy = phyFromNVRAM.getProperty(nvramKey);
+                                if (phy.isEmpty()) {
+                                    continue;
+                                }
+
+                                phyToWlIfaces.put(phy, wlIface);
+                            }
+                        }
+                        Log.d(LOG_TAG, "phyToWlIfaces: " + phyToWlIfaces);
+                    } catch (final Exception e) {
+                        //No worries
+                        e.printStackTrace();
+                    }
+
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -696,7 +748,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveIPConnections(activeIPConnections.length);
                     }
 
-                    Log.d(LOG_TAG, "activeIPConnections: " + Arrays.toString(activeIPConnections));
+                    Log.d(LOG_TAG, "#activeIPConnections: " + (activeIPConnections != null ?
+                            activeIPConnections.length : "NULL"));
 
                     //Get WAN Gateway Address (we skip it!)
 //                    String gatewayAddress = EMPTY_STRING;
@@ -803,7 +856,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     if (StringUtils.startsWithIgnoreCase(assocForIface, "iface ")) {
                                         continue;
                                     }
-                                    wirelessIfaceAssocList.put(iface, assocForIface);
+                                    wirelessIfaceAssocList.put(iface, assocForIface.toLowerCase());
                                 }
 
                             }
@@ -916,9 +969,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     }
                                 }
                                 if (!isNullOrEmpty(iface)) {
+                                    String realWlIface = null;
+                                    final Collection<String> stringCollection = phyToWlIfaces.get(iface);
+                                    if (!stringCollection.isEmpty()) {
+                                        realWlIface = stringCollection.iterator().next();
+                                    }
+
                                     //Fetch SSID, SNR and RSSI
                                     try {
-                                        final String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
+                                        String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
                                                 mGlobalPreferences,
                                                 String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", iface),
                                                 String.format("wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
@@ -928,6 +987,22 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                                 "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
                                                                 "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
                                                         iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
+                                        Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                        if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
+                                            //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
+                                            if (!isNullOrEmpty(realWlIface)) {
+                                                ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
+                                                        mGlobalPreferences,
+                                                        String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", realWlIface),
+                                                        String.format("wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
+                                                                realWlIface, macAddress.toUpperCase(), realWlIface, macAddress.toUpperCase()),
+                                                        String.format("wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", realWlIface, realWlIface),
+                                                        String.format("( wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
+                                                                        "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
+                                                                        "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
+                                                                realWlIface, macAddress.toUpperCase(), realWlIface, macAddress, realWlIface, realWlIface));
+                                            }
+                                        }
                                         Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput != null) {
                                             if (ssidAndrssiAndSNROutput.length >= 1) {
@@ -1086,14 +1161,25 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         Log.d(LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
 
                         final String[] usageDbOutLines = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
-                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup",
-                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read",
+//                                "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
+                                String.format("chmod 700 %s", WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE),
+//                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup 2>/dev/null",
+                                String.format("%s setup 2>/dev/null", WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE),
+//                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " read 2>/dev/null",
+                                String.format("%s read 2>/dev/null", WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE),
                                 "sleep 1",
-                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " update " + USAGE_DB,
-                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " publish-raw " + USAGE_DB + " " + USAGE_DB_OUT,
-                                "cat " + USAGE_DB_OUT,
-                                "rm -f " + USAGE_DB_OUT);
+//                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " update " + USAGE_DB + " 2>/dev/null",
+                                String.format("%s update %s %d 2>/dev/null",
+                                        WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE, USAGE_DB, System.currentTimeMillis()),
+//                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " publish-raw " + USAGE_DB + " " + USAGE_DB_OUT + " 2>/dev/null",
+                                String.format("%s publish-raw %s %s 2>/dev/null",
+                                        WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE, USAGE_DB, USAGE_DB_OUT),
+//                                "cat " + USAGE_DB_OUT,
+                                String.format("cat %s", USAGE_DB_OUT),
+//                                "rm -f " + USAGE_DB_OUT,
+                                String.format("rm -f %s", USAGE_DB_OUT));
+
+                        Log.d(LOG_TAG, "usageDbOutLines: " + Arrays.toString(usageDbOutLines));
 
                         if (usageDbOutLines != null) {
 
@@ -1126,7 +1212,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     Log.w(LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
                                     continue;
                                 }
-                                final String macAddress = splitToList.get(0);
+                                final String macAddress = nullToEmpty(splitToList.get(0)).toLowerCase();
                                 if (isNullOrEmpty(macAddress)) {
                                     continue;
                                 }
@@ -1150,7 +1236,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                                 long lastSeen = -1l;
                                 try {
-                                    lastSeen = Long.parseLong(splitToList.get(1)) * 1000l;
+                                    lastSeen = Long.parseLong(splitToList.get(1));
                                     device.setLastSeen(lastSeen);
                                 } catch (final NumberFormatException nfe) {
                                     nfe.printStackTrace();
@@ -1219,7 +1305,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             }
                             if (exitStatus == 0) {
                                 for (final Device device : deviceCollection) {
-                                    final String macAddr = nullToEmpty(device.getMacAddress());
+                                    final String macAddr = nullToEmpty(device.getMacAddress()).toLowerCase();
                                     boolean wanAccessDisabled = false;
                                     for (final String wanAccessIptablesChainLine : wanAccessIptablesChainDump) {
                                         if (StringUtils.containsIgnoreCase(wanAccessIptablesChainLine, macAddr)
@@ -1278,305 +1364,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
                             mParentFragmentPreferences, mRouter, deviceCollection);
 
-//                    final NotificationManager mNotificationManager = (NotificationManager) mParentFragmentActivity.
-//                            getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//                    // Sets an ID for the notification, so it can be updated
-//                    final int notifyID = mRouter.getId();
-//
-//                    final boolean onlyActiveHosts = mParentFragmentPreferences
-//                            .getBoolean("notifications.connectedHosts.activeOnly", true);
-//                    final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
-//                            .filter(new Predicate<Device>() {
-//                                @Override
-//                                public boolean apply(@Nullable Device input) {
-//                                    return ((!onlyActiveHosts) ||
-//                                            (input != null && input.isActive()));
-//                                }
-//                            }).toSortedSet(new Comparator<Device>() {
-//                                @Override
-//                                public int compare(Device lhs, Device rhs) {
-//                                    if (lhs == rhs) {
-//                                        return 0;
-//                                    }
-//                                    if (lhs == null) {
-//                                        return -1;
-//                                    }
-//                                    if (rhs == null) {
-//                                        return 1;
-//                                    }
-//                                    return ComparisonChain.start()
-//                                            .compare(lhs.getAliasOrSystemName(),
-//                                                    rhs.getAliasOrSystemName(),
-//                                                    CASE_INSENSITIVE_STRING_ORDERING)
-//                                            .result();
-//                                }
-//                            });
-//                    final int sizeFiltered = devicesCollFiltered.size();
-//
-//                    final Set<Device> previousConnectedHosts = new HashSet<>();
-//                    final Set<String> devicesStringSet = new HashSet<>(mParentFragmentPreferences
-//                            .getStringSet(getFormattedPrefKey(CONNECTED_HOSTS),
-//                                    new HashSet<String>()));
-//                    for (final String devStrEncrypted : devicesStringSet) {
-//                        try {
-//                            final String devStr = d(devStrEncrypted);
-//                            if (isNullOrEmpty(devStr)) {
-//                                continue;
-//                            }
-//
-//                            final Map objFromJson = GSON_BUILDER.create()
-//                                    .fromJson(devStr, Map.class);
-//
-//                            final Object macAddress = objFromJson.get(MAC_ADDRESS);
-//                            if (macAddress == null || macAddress.toString().isEmpty()) {
-//                                continue;
-//                            }
-//
-//                            //IP Address may change as well
-//                            final Device deviceFromJson = new Device(macAddress.toString());
-//
-//                            final Object ipAddr = objFromJson.get(IP_ADDRESS);
-//                            if (ipAddr != null) {
-//                                deviceFromJson.setIpAddress(ipAddr.toString());
-//                            }
-//
-//                            //Display name may change too
-//                            final Object displayName = objFromJson.get(DEVICE_NAME_FOR_NOTIFICATION);
-//                            if (displayName != null) {
-//                                deviceFromJson.setDeviceNameForNotification(displayName.toString());
-//                            }
-//
-//                            previousConnectedHosts.add(deviceFromJson);
-//
-//                        } catch (final Exception e) {
-//                            //No worries
-//                            e.printStackTrace();
-//                            Utils.reportException(new
-//                                    IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e));
-//                        }
-//                    }
-//
-//                    boolean updateNotification = false;
-//                    if (sizeFiltered != previousConnectedHosts.size()) {
-//                        updateNotification = true;
-//                    } else {
-//
-//                        //Now compare if anything has changed
-//                        for (final Device newDevice : devicesCollFiltered) {
-//                            if (newDevice == null) {
-//                                continue;
-//                            }
-//                            final String deviceMacAddress = newDevice.getMacAddress();
-//                            final String deviceIpAddress = newDevice.getIpAddress();
-//                            final String deviceDisplayName = newDevice.getAliasOrSystemName();
-//
-//                            boolean deviceFound = false;
-//                            boolean deviceHasChanged = false;
-//                            for (final Device previousConnectedHost : previousConnectedHosts) {
-//                                if (previousConnectedHost == null) {
-//                                    continue;
-//                                }
-//                                if (!previousConnectedHost.getMacAddress()
-//                                        .equalsIgnoreCase(deviceMacAddress)) {
-//                                    continue;
-//                                }
-//                                deviceFound = true;
-//                                //Device found - now analyze if something has changed
-//                                if (!(Objects
-//                                        .equal(deviceIpAddress, previousConnectedHost.getIpAddress())
-//                                        && Objects
-//                                        .equal(deviceDisplayName,
-//                                                previousConnectedHost.getDeviceNameForNotification()))) {
-//                                    deviceHasChanged = true;
-//                                    break;
-//                                }
-//                            }
-//                            if (deviceHasChanged || !deviceFound) {
-//                                //This is a new device or an updated one - so update is needed
-//                                updateNotification = true;
-//                                break;
-//                            }
-//                        }
-//                    }
-
-//                    //Build the String Set to save in preferences
-//                    final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
-//                            .transform(new Function<Device, String>() {
-//                                @Override
-//                                public String apply(@Nullable Device device) {
-//                                    if (device == null) {
-//                                        return e(DDWRTCompanionConstants.EMPTY_STRING);
-//                                    }
-//                                    final Map<String, String> details = Maps.newHashMap();
-//                                    details.put(MAC_ADDRESS, device.getMacAddress());
-//                                    details.put(IP_ADDRESS, device.getIpAddress());
-//                                    details.put(DEVICE_NAME_FOR_NOTIFICATION,
-//                                            device.getAliasOrSystemName());
-//
-//                                    return e(GSON_BUILDER.create().toJson(details));
-//                                }
-//                            }).toSet();
-//
-//                    mParentFragmentPreferences.edit()
-//                            .remove(getFormattedPrefKey(CONNECTED_HOSTS))
-//                            .apply();
-//
-//                    mParentFragmentPreferences.edit()
-//                            .putStringSet(getFormattedPrefKey(CONNECTED_HOSTS), stringImmutableSet)
-//                            .apply();
-//
-//                    if (sizeFiltered == 0 ||
-//                            !mParentFragmentPreferences
-//                                    .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true)) {
-//                        mNotificationManager.cancel(notifyID);
-//                    } else {
-//
-//                        final Bitmap largeIcon = BitmapFactory.decodeResource(
-//                                mParentFragmentActivity.getResources(),
-//                                R.drawable.ic_launcher);
-//
-//                        if (updateNotification) {
-//
-//                            final Intent resultIntent = new Intent(mParentFragmentActivity,
-//                                    DDWRTMainActivity.class);
-//                            resultIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-//                            resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 3); //Open right on Clients Section
-//                            // Because clicking the notification opens a new ("special") activity, there's
-//                            // no need to create an artificial back stack.
-//                            final PendingIntent resultPendingIntent =
-//                                    PendingIntent.getActivity(
-//                                            mParentFragmentActivity,
-//                                            0,
-//                                            resultIntent,
-//                                            PendingIntent.FLAG_UPDATE_CURRENT
-//                                    );
-//
-//                            final String mRouterName = mRouter.getName();
-//                            final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
-//                            String summaryText = "";
-//                            if (!mRouterNameNullOrEmpty) {
-//                                summaryText = (mRouterName + " (");
-//                            }
-//                            summaryText += mRouter.getRemoteIpAddress();
-//                            if (!mRouterNameNullOrEmpty) {
-//                                summaryText += ")";
-//                            }
-//
-//                            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mParentFragmentActivity)
-//                                    .setSmallIcon(R.drawable.ic_launcher)
-//                                    .setLargeIcon(largeIcon)
-//                                    .setAutoCancel(true)
-//                                    .setGroup(WirelessClientsTile.class.getSimpleName())
-//                                    .setGroupSummary(true)
-//                                    .setContentIntent(resultPendingIntent);
-////                                .setDefaults(Notification.DEFAULT_ALL);
-//
-//                            //Notification sound, if required
-//                            final String ringtoneUri = mParentFragmentPreferences
-//                                    .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
-//                            if (ringtoneUri != null) {
-//                                mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
-//                            }
-//
-//                            final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
-//                                    .setSummaryText(summaryText);
-//
-//                            final String newDevicesTitle = String.format("%d connected host%s",
-//                                    sizeFiltered, sizeFiltered > 1 ? "s" : "");
-//
-//                            mBuilder.setContentTitle(newDevicesTitle);
-//
-//                            inboxStyle.setBigContentTitle(newDevicesTitle);
-//
-//                            if (sizeFiltered == 1) {
-//                                //Only one device
-//                                final Device device = devicesCollFiltered.iterator().next();
-//                                final String deviceAliasOrSystemName = device.getAliasOrSystemName();
-//
-////                                mBuilder.setContentTitle(deviceNameToDisplay);
-//
-////                                inboxStyle.setBigContentTitle(deviceNameToDisplay);
-//                                //Name
-//                                if (!isNullOrEmpty(deviceAliasOrSystemName)) {
-//                                    String nameLine = String.format("Name   %s", deviceAliasOrSystemName);
-//                                    final Spannable nameSpannable = new SpannableString(nameLine);
-//                                    nameSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-//                                            0, "Name".length(),
-//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                    inboxStyle.addLine(nameSpannable);
-//                                }
-//
-//                                //IP Address
-//                                String ipLine = String.format("IP   %s", device.getIpAddress());
-//                                final Spannable ipSpannable = new SpannableString(ipLine);
-//                                ipSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-//                                        0, "IP".length(),
-//                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                inboxStyle.addLine(ipSpannable);
-//
-//                                //MAC Address
-//                                final String macLine = String.format("MAC   %s", device.getMacAddress());
-//                                final Spannable macSpannable = new SpannableString(macLine);
-//                                macSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-//                                        0, "MAC".length(),
-//                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                inboxStyle.addLine(macSpannable);
-//
-//                                final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-//                                if (macouiVendorDetails != null) {
-//                                    //NIC Manufacturer
-//                                    final String ouiLine = String.format("OUI   %s",
-//                                            Strings.nullToEmpty(macouiVendorDetails.getCompany()));
-//                                    final Spannable ouiSpannable = new SpannableString(ouiLine);
-//                                    ouiSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-//                                            0, "OUI".length(),
-//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                    inboxStyle.addLine(ouiSpannable);
-//                                }
-//
-//                                mBuilder.setContentText(ipSpannable);
-//
-//                            } else {
-//
-//                                Spannable firstLine = null;
-//                                for (final Device device : devicesCollFiltered) {
-//                                    final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
-//                                    final String deviceAliasOrSystemName = device.getAliasOrSystemName();
-//                                    final String deviceNameToDisplay = isNullOrEmpty(deviceAliasOrSystemName) ?
-//                                            device.getMacAddress() : deviceAliasOrSystemName;
-//                                    final String line = String.format("%s   %s%s%s",
-//                                            deviceNameToDisplay,
-//                                            device.getIpAddress(),
-//                                            isNullOrEmpty(deviceAliasOrSystemName) ?
-//                                                    "" : String.format(" | %s", device.getMacAddress()),
-//                                            macouiVendorDetails != null ? String.format(" (%s)",
-//                                                    macouiVendorDetails.getCompany()) : "");
-//                                    final Spannable sb = new SpannableString(line);
-//                                    sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-//                                            0, deviceNameToDisplay.length(),
-//                                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                                    inboxStyle.addLine(sb);
-//                                    if (firstLine == null) {
-//                                        firstLine = sb;
-//                                    }
-//                                }
-//
-//                                mBuilder.setContentText(firstLine);
-//                                mBuilder.setNumber(sizeFiltered);
-//
-//                            }
-//
-//                            // Moves the expanded layout object into the notification object.
-//                            mBuilder.setStyle(inboxStyle);
-//
-//                            // Because the ID remains unchanged, the existing notification is
-//                            // updated.
-//                            mNotificationManager.notify(notifyID, mBuilder.build());
-//                        }
-//                    }
-
                     Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
+                    //FIXME Remove
+                    Log.d(LOG_TAG, "[REMOVEME] devices: " + devices);
 
                     return devices;
 
@@ -1932,7 +1722,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                     R.drawable.ic_action_device_signal_wifi_4_bar_white, 0, 0, 0);
                         }
 
-                        //Postulate: we consider that a value of 45dB SNR corresponds to 100% in our progress bar
+                        //Postulate: we consider that a value of 55dB SNR corresponds to 100% in our progress bar
                         signalStrengthView.setProgress(Math.min(snr * 100 / 55, 100));
 
                         signalStrengthTitleView.setVisibility(View.VISIBLE);
@@ -2240,7 +2030,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                 final long lastSeen = device.getLastSeen();
-                Log.d(LOG_TAG, "XXX lastSeen=[" + lastSeen +"]");
+                Log.d(LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen +"]");
                 if (lastSeen <= 0l) {
                     lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                     lastSeenRowView.setReferenceTime(-1l);

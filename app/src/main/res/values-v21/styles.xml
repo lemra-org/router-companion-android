@@ -47,8 +47,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
-        <item name="android:windowNoTitle">true</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="textColor">#0F0F0F</item>
+        <item name="actionModeBackground">@color/holo_green_dark</item>
+        <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
+        <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/primaryColor</item>
         <item name="android:textColor">#0F0F0F</item>
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
@@ -63,8 +67,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
-        <item name="android:windowNoTitle">true</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="textColor">#F0F0F0</item>
+        <item name="actionModeBackground">@color/holo_green_dark</item>
+        <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
+        <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/primaryColorDark</item>
         <item name="android:textColor">#F0F0F0</item>
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
@@ -84,6 +92,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <style name="MySpinnerDropDownItem" parent="android:style/Widget.DropDownItem.Spinner">
         <item name="android:background">@drawable/ad_selectable_background</item>
         <item name="android:checkMark">@null</item>
+    </style>
+
+    <style name="ToolbarTitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="ToolbarSubtitle" parent="Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     </style>
 
 </resources>

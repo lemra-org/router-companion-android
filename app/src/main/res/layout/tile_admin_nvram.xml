@@ -98,7 +98,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="3"
                 android:layout_gravity="start"
-                android:drawableBottom="@color/primary_dark"
+                android:drawableBottom="@color/accent_material_light"
                 android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
                 android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
                 android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
@@ -106,7 +106,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:hint="@string/syslog_filter_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:textColor="@color/primary_dark" />
+                android:textColor="@color/accent_material_light" />
 
             <!-- Auto-refresh -->
             <TextView

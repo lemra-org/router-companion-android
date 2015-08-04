@@ -45,6 +45,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical" />
 
     <ScrollView
+        android:id="@+id/router_restore_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical">

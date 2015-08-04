@@ -30,18 +30,18 @@ import java.util.List;
 
 public interface DDWRTCompanionDAO {
 
-    public void destroy();
+    void destroy();
 
     @Nullable
-    public Router insertRouter(Router router);
+    Router insertRouter(Router router);
 
     @Nullable
-    public Router updateRouter(Router router);
+    Router updateRouter(Router router);
 
-    public void deleteRouter(String uuid);
+    void deleteRouter(String uuid);
 
-    public List<Router> getAllRouters();
+    List<Router> getAllRouters();
 
     @Nullable
-    public Router getRouter(String uuid);
+    Router getRouter(String uuid);
 }

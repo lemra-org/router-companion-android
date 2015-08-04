@@ -269,7 +269,21 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
 
             final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
-            routerModelView.setText(data.getProperty(NVRAMInfo.MODEL, "-"));
+            final String routerModel = data.getProperty(NVRAMInfo.MODEL, "-");
+            routerModelView.setText(routerModel);
+            if (mParentFragmentPreferences != null) {
+                final String routerModelFromPrefs =
+                        mParentFragmentPreferences.getString(NVRAMInfo.MODEL, "-");
+                //noinspection ConstantConditions
+                if (!("-".equals(routerModel) ||
+                        routerModelFromPrefs.equals(routerModel))) {
+                    mParentFragmentPreferences
+                            .edit()
+                            .putString(NVRAMInfo.MODEL, routerModel)
+                            .apply();
+                    Utils.requestBackup(mParentFragmentActivity);
+                }
+            }
 
             final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
             lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));

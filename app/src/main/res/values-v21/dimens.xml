@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <dimen name="add_button_margin">16dp</dimen>
     <dimen name="round_button_diameter">56dp</dimen>
 
-    <dimen name="fab_compat_margin">0dp</dimen>
+    <dimen name="fab_compat_margin">16dp</dimen>
 
     <!--
 Refer to App Widget Documentation for margin information

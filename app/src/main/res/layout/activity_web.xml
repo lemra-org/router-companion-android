@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -45,10 +47,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_help" />
 
-
-    <WebView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/web_webview"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
+
+        <WebView
+            android:layout_width="match_parent"
+            android:id="@+id/web_webview"
+            android:layout_height="match_parent"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_check_updates"
+            android:contentDescription="@string/check_updates"
+            android:src="@drawable/ic_action_action_system_update_tv"
+            android:tint="@android:color/white"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="@dimen/add_button_margin"
+            android:layout_marginEnd="@dimen/add_button_margin"
+            android:layout_marginRight="@dimen/add_button_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_compat_margin"
+            android:clickable="true"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="bottom|right|end"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

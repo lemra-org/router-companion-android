@@ -45,6 +45,7 @@ import com.google.common.collect.FluentIterable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -124,11 +125,20 @@ public class RouterListRecycleViewAdapter extends
         } else {
             holder.routerName.setText(routerAtName);
         }
-        holder.routerIp.setText(routerAt.getRemoteIpAddress());
+        holder.routerIp.setText(routerAt.getRemoteIpAddress() + ":" + routerAt.getRemotePort());
         holder.routerConnProto.setText(routerAt.getRouterConnectionProtocol().toString());
         holder.routerUsername.setText(routerAt.getUsernamePlain());
         final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
         holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware.getDisplayName() : "-"));
+
+        final String routerModelStr = context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
+                .getString(NVRAMInfo.MODEL, "-");
+        if (Strings.isNullOrEmpty(routerModelStr) || "-".equals(routerModelStr)) {
+            holder.routerModel.setVisibility(View.GONE);
+        } else {
+            holder.routerModel.setText("Model: " + routerModelStr);
+            holder.routerModel.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -231,7 +241,7 @@ public class RouterListRecycleViewAdapter extends
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SSHUtils.destroySession(router);
+                SSHUtils.destroySession(context, router);
             }
         }).start();
     }
@@ -265,12 +275,18 @@ public class RouterListRecycleViewAdapter extends
                             .filter(new Predicate<Router>() {
                                 @Override
                                 public boolean apply(Router input) {
-                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method)
+                                    if (input == null) {
+                                        return false;
+                                    }
+                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method, router model)
                                     final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
                                     final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
+                                    final String inputModel = context.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
+                                            .getString(NVRAMInfo.MODEL, "");
                                     //noinspection ConstantConditions
                                     return containsIgnoreCase(input.getName(), constraint)
                                             || containsIgnoreCase(input.getRemoteIpAddress(), constraint)
+                                            || containsIgnoreCase(inputModel, constraint)
                                             || (routerFirmware != null && containsIgnoreCase(routerFirmware.toString(), constraint))
                                             || containsIgnoreCase(input.getUsernamePlain(), constraint)
                                             || (routerConnectionProtocol != null && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
@@ -310,6 +326,8 @@ public class RouterListRecycleViewAdapter extends
         final TextView routerUsername;
         @NonNull
         final TextView routerFirmware;
+        @NonNull
+        final TextView routerModel;
 
         private final Context context;
         private final View itemView;
@@ -325,6 +343,7 @@ public class RouterListRecycleViewAdapter extends
             this.routerUuid = (TextView) this.itemView.findViewById(R.id.router_uuid);
             this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
             this.routerFirmware = (TextView) this.itemView.findViewById(R.id.router_firmware);
+            this.routerModel = (TextView) this.itemView.findViewById(R.id.router_model);
         }
 
     }

@@ -89,6 +89,7 @@ case ${1} in
 "update" )
 
 	[ -z "${2}" ] && echo "ERROR : Missing argument 2" && exit 1
+	[ -z "${3}" ] && echo "ERROR : Missing argument 3" && exit 1
 
 	# Uncomment this line if you want to abort if database not found
 	# [ -f "${2}" ] || exit 1
@@ -133,7 +134,8 @@ case ${1} in
 			grep -v "${MAC}" ${2} > /tmp/.DDWRTCompanion_db_$$.tmp
 			mv /tmp/.DDWRTCompanion_db_$$.tmp ${2}
 #			echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date "+%Y-%m-%d %H:%M") >> ${2}
-            echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date +"%s") >> ${2}
+#            echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date +"%s") >> ${2}
+            echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},${3} >> ${2}
 		fi
 	done
 
@@ -164,7 +166,8 @@ case ${1} in
 			grep -v "${MAC}" ${2} > /tmp/.DDWRTCompanion_db_$$.tmp
 			mv /tmp/.DDWRTCompanion_db_$$.tmp ${2}
 #			echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date "+%Y-%m-%d %H:%M") >> ${2}
-			echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date +"%s") >> ${2}
+#			echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},$(date +"%s") >> ${2}
+            echo ${MAC},${PEAKUSAGE_IN},${PEAKUSAGE_OUT},${OFFPEAKUSAGE_IN},${OFFPEAKUSAGE_OUT},${3} >> ${2}
 		fi
 	done
 	;;

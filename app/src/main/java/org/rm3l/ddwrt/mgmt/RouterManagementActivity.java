@@ -23,9 +23,7 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,7 +33,6 @@ import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,7 +59,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +67,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.suredigit.inappfeedback.FeedbackDialog;
+import com.madx.updatechecker.lib.UpdateRunnable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -81,8 +77,6 @@ import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
-import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
-import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -90,7 +84,6 @@ import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.service.BackgroundService;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -104,8 +97,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
@@ -126,20 +122,22 @@ public class RouterManagementActivity
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
     int itemCount;
-    ImageButton addNewButton;
+    View addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
-    private FeedbackDialog mFeedbackDialog;
 
     private Toolbar mToolbar;
     private SharedPreferences mPreferences;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+
+    private boolean mBackgroundServiceEnabled;
+    private long mBackgroundServiceFrequency;
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
@@ -185,6 +183,9 @@ public class RouterManagementActivity
             setTheme(R.style.AppThemeDark);
         }
 
+        mBackgroundServiceEnabled = mPreferences.getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false);
+        mBackgroundServiceFrequency = mPreferences.getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+
         setContentView(R.layout.activity_router_management);
 
         final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
@@ -209,6 +210,10 @@ public class RouterManagementActivity
         mToolbar = (Toolbar) findViewById(R.id.routerManagementActivityToolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("Routers");
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -216,6 +221,8 @@ public class RouterManagementActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setIcon(R.drawable.ic_launcher_ddwrt_companion);
         }
 
         this.dao = getDao(this);
@@ -274,12 +281,11 @@ public class RouterManagementActivity
         mRecyclerView.addOnItemTouchListener(this);
         gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
 
-        final View addNewButtonView = findViewById(R.id.router_list_add);
-        addNewButton = (ImageButton) addNewButtonView;
+        addNewButton = findViewById(R.id.router_list_add);
         addNewButton.setOnClickListener(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addNewButtonView.setOutlineProvider(new ViewOutlineProvider() {
+            addNewButton.setOutlineProvider(new ViewOutlineProvider() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -287,13 +293,20 @@ public class RouterManagementActivity
                     outline.setOval(0, 0, diameter, diameter);
                 }
             });
-            addNewButtonView.setClipToOutline(true);
+            addNewButton.setClipToOutline(true);
         }
 
-        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-
         initOpenAddRouterFormIfNecessary();
+
+        BootReceiver.doStartBackgroundServiceIfNeeded(this);
+
+        /* Use this when you want to run a background update check */
+        final UpdateRunnable updateRunnable =
+                new UpdateRunnable(this, new Handler());
+        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+            //This library currently supports Google Play only
+            updateRunnable.start();
+        }
     }
 
     private void initOpenAddRouterFormIfNecessary() {
@@ -303,20 +316,8 @@ public class RouterManagementActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
 
         //Dismiss existing dialog fragments, if any
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
@@ -435,32 +436,6 @@ public class RouterManagementActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        final boolean bgServiceEnabled = mPreferences
-                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
-        final long minutes = mPreferences.getLong(
-                DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
-
-        Log.d(LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
-
-        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        final Intent backgroundServiceIntent = new Intent(this, BackgroundService.class);
-        final PendingIntent pi = PendingIntent.getService(this, 0, backgroundServiceIntent, 0);
-        am.cancel(pi);
-
-        if (!bgServiceEnabled || minutes <= 0l) {
-            //Skip
-            return;
-        }
-
-        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + minutes * 60 * 1000,
-                minutes * 60 * 1000, pi);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -495,13 +470,7 @@ public class RouterManagementActivity
                         new Intent(this, RouterManagementSettingsActivity.class), ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE);
                 return true;
             case R.id.router_list_feedback:
-                if (mFeedbackDialog == null) {
-                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-                }
-                mFeedbackDialog.show();
-                //Generate a custom error-report (for ACRA)
-                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
+                Utils.buildFeedbackDialog(this, true);
                 return true;
             case R.id.router_list_actions_restore_factory_defaults:
                 //TODO Hidden for now
@@ -617,9 +586,13 @@ public class RouterManagementActivity
             case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
-                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l)) {
+                    if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
+                            this.mBackgroundServiceEnabled != this.mPreferences
+                                    .getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false) ||
+                            this.mBackgroundServiceFrequency != this.mPreferences
+                                    .getLong(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l)) {
                         //Reload UI
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading UI...", false, false);
+                        final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Reloading...", false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                         new Handler().postDelayed(new Runnable() {

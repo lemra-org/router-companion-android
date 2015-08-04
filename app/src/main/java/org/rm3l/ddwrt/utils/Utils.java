@@ -30,13 +30,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -45,7 +48,12 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
@@ -54,9 +62,11 @@ import com.google.common.collect.Lists;
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.BuildConfig;
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
+import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
@@ -66,14 +76,19 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.FIRST_APP_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
@@ -366,6 +381,81 @@ public final class Utils {
                 DDWRTCompanionConstants.SUPPORT_WEBSITE);
     }
 
+    @Nullable
+    public static String getWifiName(Context context) {
+        if (context == null) {
+            return null;
+        }
+        final ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return null;
+        }
+        final NetworkInfo myNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (myNetworkInfo == null || !myNetworkInfo.isConnected()) {
+            return null;
+        }
+
+        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager == null) {
+            return null;
+        }
+        final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo == null) {
+            return null;
+        }
+        return wifiInfo.getSSID();
+    }
+
+    @Nullable
+    public static View getLineView(@Nullable Context ctx) {
+
+        /*
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_marginBottom="8.0dip"
+            android:layout_marginTop="8.0dip"
+            android:background="#ffcccccc" />
+         */
+        if (ctx == null) {
+            return null;
+        }
+
+        final Resources resources = ctx.getResources();
+
+        final DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+
+        final float height = TypedValue.applyDimension(COMPLEX_UNIT_DIP, 1.0f,
+                displayMetrics);
+
+        final View lineView = new View(ctx);
+        lineView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) height
+        ));
+        lineView.setBackgroundColor(resources.getColor(R.color.line_view_color));
+        return lineView;
+    }
+
+    public static void scrollToView(@Nullable final ScrollView scrollView,
+                                   @Nullable final View view) {
+
+        if (scrollView == null || view == null) {
+            return;
+        }
+
+        // View needs a focus
+        view.requestFocus();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.smoothScrollTo(0, view.getBottom());
+            }
+        });
+    }
+
     public static void takeBugReport(@NonNull final Activity activity) {
 
         BugReportException bugReportException = new BugReportException();
@@ -409,6 +499,65 @@ public final class Utils {
             Utils.reportException(bugReportException);
         }
     }
+
+    public static AlertDialog.Builder buildFeedbackDialog(final Activity activity,
+                                                          final boolean showDialog) {
+        final Doorbell doorbellDialog = new Doorbell(activity,
+                DOORBELL_APPID, DOORBELL_APIKEY); // Create the Doorbell object
+        doorbellDialog.setPoweredByVisibility(View.GONE); // Hide the "Powered by Doorbell.io" text
+        doorbellDialog.setTitle(R.string.send_feedback);
+        doorbellDialog.setMessage(R.string.feedback_dialog_text);
+        doorbellDialog.setEmailHint("Your email address");
+        doorbellDialog.setMessageHint(R.string.feedback_dialog_comments_text);
+        doorbellDialog.setPositiveButtonText(R.string.feedback_send);
+        doorbellDialog.setNegativeButtonText(R.string.feedback_cancel);
+
+        // Optionally add some properties
+        final UUID randomUUID = UUID.randomUUID();
+        doorbellDialog.addProperty("DIALOG_ID", randomUUID);
+        doorbellDialog.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
+        doorbellDialog.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
+        doorbellDialog.addProperty("BUILD_VERSION_CODE", BuildConfig.VERSION_CODE);
+        doorbellDialog.addProperty("BUILD_FLAVOR", BuildConfig.FLAVOR);
+        doorbellDialog.addProperty("BUILD_TYPE", BuildConfig.BUILD_TYPE);
+        doorbellDialog.addProperty("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
+
+        // Callback for when the dialog is shown
+        doorbellDialog.setOnShowCallback(new io.doorbell.android.callbacks.OnShowCallback() {
+            @Override
+            public void handle() {
+                //Generate a custom error-report (for ACRA)
+                Utils.reportException(new
+                        UserGeneratedReportException("Feedback " + randomUUID));
+            }
+        });
+
+        if (showDialog) {
+            doorbellDialog.show();
+        }
+
+        return doorbellDialog;
+    }
+
+//    public static void doCreateUpdateChecker(@NonNull final Activity activity,
+//                                                   @Nullable UpdateCheckerResult updateCheckerResult,
+//                                                   @Nullable final Notice notice) {
+//        final UpdateChecker updateChecker = (updateCheckerResult != null ?
+//                new UpdateChecker(activity, updateCheckerResult) : new UpdateChecker(activity));
+//        Store store = null;
+//        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+//            store = Store.GOOGLE_PLAY;
+//        } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
+//            store = Store.AMAZON;
+//        }
+//        if (store != null) {
+//            UpdateChecker.setStore(store);
+//        }
+//        if (updateCheckerResult == null && notice != null) {
+//            UpdateChecker.setNotice(notice);
+//        }
+//        UpdateChecker.start();
+//    }
 
     protected static final class BugReportException extends DDWRTCompanionException {
 

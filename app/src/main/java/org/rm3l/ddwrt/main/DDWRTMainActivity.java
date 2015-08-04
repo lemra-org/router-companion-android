@@ -23,13 +23,18 @@
 package org.rm3l.ddwrt.main;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,7 +70,6 @@ import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.collect.Lists;
-import com.suredigit.inappfeedback.FeedbackDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -79,8 +83,6 @@ import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
-import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
-import org.rm3l.ddwrt.feedback.SendFeedbackDialog;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
@@ -152,7 +154,6 @@ public class DDWRTMainActivity extends ActionBarActivity
     private String[] mDDWRTNavigationMenuSections;
     //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
-    private FeedbackDialog mFeedbackDialog;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
     @NonNull
@@ -164,7 +165,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
         public void run() {
-            SSHUtils.destroySession(mRouter);
+            SSHUtils.destroySession(DDWRTMainActivity.this, mRouter);
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
@@ -174,6 +175,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    private NetworkChangeReceiver mNetworkChangeReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -235,12 +237,21 @@ public class DDWRTMainActivity extends ActionBarActivity
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         final String routerName = router.getName();
-        setTitle(isNullOrEmpty(routerName) ? router.getRemoteIpAddress() : routerName);
+        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, this);
+        final Integer effectivePort = Router.getEffectivePort(router, this);
+
+        setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
 
         mTitle = mDrawerTitle = getTitle();
         initView();
         if (mToolbar != null) {
             mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                    (effectiveRemoteAddr + ":" + effectivePort));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -249,6 +260,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         }
 
         initDrawer();
@@ -267,9 +279,6 @@ public class DDWRTMainActivity extends ActionBarActivity
                 position,
                 mDrawerList.getAdapter().getItemId(position));
 
-        mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-        mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
         final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval <= 0l);
@@ -287,6 +296,26 @@ public class DDWRTMainActivity extends ActionBarActivity
                 editor.putLong(THEMING_PREF, DEFAULT_THEME);
             }
             editor.apply();
+        }
+    }
+
+    private BroadcastReceiver mMessageReceiver = new NetworkChangeReceiver();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(
+                mMessageReceiver,
+                new IntentFilter(
+                        ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } finally {
+            super.onStop();
         }
     }
 
@@ -367,7 +396,6 @@ public class DDWRTMainActivity extends ActionBarActivity
                 routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
                         router.getRemoteIpAddress() + ")");
             }
-
 
             mRoutersListAdapter = new ArrayAdapter<>(this,
                     R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
@@ -578,7 +606,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
             return;
         }
@@ -595,9 +623,6 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     protected void onPause() {
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
         //Close SSH Session as well
         destroySSHSession();
         super.onPause();
@@ -606,11 +631,13 @@ public class DDWRTMainActivity extends ActionBarActivity
     @Override
     protected void onDestroy() {
         mCurrentActivityResultListener = null;
-        if (mFeedbackDialog != null) {
-            mFeedbackDialog.dismiss();
-        }
         //Close SSH Session as well
         destroySSHSession();
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -711,13 +738,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                 new AboutDialog(this).show();
                 return true;
             case R.id.action_feedback:
-                if (mFeedbackDialog == null) {
-                    mFeedbackDialog = new SendFeedbackDialog(this).getFeedbackDialog();
-                    mFeedbackDialog.setDebug(BuildConfig.DEBUG);
-                }
-                mFeedbackDialog.show();
-                //Generate a custom error-report (for ACRA)
-                Utils.reportException(new UserGeneratedReportException("Feedback displayed"));
+                Utils.buildFeedbackDialog(this, true);
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);
@@ -1266,5 +1287,29 @@ public class DDWRTMainActivity extends ActionBarActivity
             mDrawerLayout.invalidate();
         }
     }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+
+            final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if(info != null && info.isConnected()) {
+                final String routerName = mRouter.getName();
+                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, DDWRTMainActivity.this);
+                final Integer effectivePort = Router.getEffectivePort(mRouter, DDWRTMainActivity.this);
+
+                setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
+
+                mTitle = mDrawerTitle = getTitle();
+                if (mToolbar != null) {
+                    mToolbar.setTitle(mTitle);
+                    mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                            (effectiveRemoteAddr + ":" + effectivePort));
+                }
+            }
+        }
+    }
+
 
 }
