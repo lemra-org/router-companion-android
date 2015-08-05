@@ -26,6 +26,7 @@
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
+apply plugin: 'tracepot'
 
 //Prompt for keystore file and password (same for private key and store file)
 // Will take care of prompting via console or via a dialog form (if no console available, which
@@ -105,6 +106,11 @@ def getVersionName(String flavorName) {
 }
 
 android {
+
+    tracepotConfig {
+        apiGroupKey "26ccfd6824334b879a2ed6a1f87b7891"
+        enabledFor "release", "google", "fdroid", "amazon", "googleFreeWithAds", "amazonFreeWithAds"
+    }
 
     signingConfigs {
         release {
