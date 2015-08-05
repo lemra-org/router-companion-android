@@ -209,5 +209,11 @@
     public *;
 }
 
+-dontwarn **CanvasView
+-keep public class * extends com.samsung.** { *; }
+-keep public class com.samsung.** {
+    public *;
+}
+
 #-keep enum com.purplebrain.adbuddiz.sdk.** { *; }
 #-keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
