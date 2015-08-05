@@ -36,8 +36,10 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleFdroidRelease') ||
             taskGraph.hasTask(':app:assembleGoogleRelease') ||
             taskGraph.hasTask(':app:assembleAmazonRelease') ||
+            taskGraph.hasTask(':app:assembleSamsungRelease') ||
             taskGraph.hasTask(':app:assembleAmazonFreeWithAdsRelease') ||
-            taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease')) {
+            taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease') ||
+            taskGraph.hasTask(':app:assembleSamsungFreeWithAdsRelease')) {
         def password = ''
         def storeFile = null
 
@@ -148,7 +150,7 @@ android {
         // conflict with src/ being used by the main source set.
         // Adding new build types or product flavors should be accompanied
         // by a similar customization.
-        debug.setRoot('build-types/debug')Add
+        debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
     defaultConfig {
