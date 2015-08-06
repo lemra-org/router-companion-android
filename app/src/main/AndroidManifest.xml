@@ -52,6 +52,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- For Samsung SDK -->
+    <uses-permission
+        android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
+    <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
+
     <application
         android:name=".DDWRTApplication"
         android:allowBackup="true"
