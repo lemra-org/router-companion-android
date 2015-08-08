@@ -487,7 +487,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_acra_syslog_enabled">Enabled. System Logs are great for helping fix bugs, but this may lead to privacy issues as some other apps might log private data like user account names, opened URLs, calendar events…</string>
     <string name="pref_acra_syslog_disabled">Disabled</string>
     <string name="pref_acra_syslog">Include System Logs</string>
-    <string name="pref_acra_deviceid">Include your Device ID in crash reports</string>
+    <string name="pref_acra_deviceid">Include Device ID in crash reports</string>
     <string name="pref_acra_deviceid_enabled">Enabled</string>
     <string name="pref_acra_deviceid_disabled">Disabled</string>
     <string name="services_openvpn">OpenVPN</string>
@@ -628,4 +628,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="what_s_new">What\'s new</string>
     <string name="check_updates">Check for updates</string>
     <string name="save">Save</string>
+    <string name="pref_acra_user_email_summary">Email to include in reports, so we can contact you if needed</string>
+    <string name="pref_acra_user_email">Email to include in reports</string>
 </resources>

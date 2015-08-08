@@ -111,6 +111,9 @@ public final class DDWRTCompanionConstants {
 
     public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
             ((BuildConfig.WITH_ADS ? "_" : "") + "home");
+    public static final String ACRA_USER_EMAIL = "acra.user.email";
+    public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
+    public static final String ACRA_ENABLE = "acra.enable";
 
     public static int MB = 1024 * 1024;
 
