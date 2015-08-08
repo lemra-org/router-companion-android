@@ -31,7 +31,6 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_DEVICEID_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF;
@@ -90,7 +89,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 
             bindPreferenceSummaryToValue(findPreference(ACRA_ENABLE));
 //            bindPreferenceSummaryToValue(findPreference("acra.syslog.enable"));
-            bindPreferenceSummaryToValue(findPreference(ACRA_DEVICEID_ENABLE));
+//            bindPreferenceSummaryToValue(findPreference(ACRA_DEVICEID_ENABLE));
             bindPreferenceSummaryToValue(findPreference(ACRA_USER_EMAIL));
         }
     }
