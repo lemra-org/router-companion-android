@@ -84,7 +84,6 @@ public abstract class DDWRTTile<T>
     protected final Router mRouter;
     @NonNull
     private final DDWRTCompanionDAO mDao;
-    public static final Handler HANDLER;
     static {
         if (Looper.myLooper() == null) {
             //Check for this - otherwise it yields the following error:
@@ -92,7 +91,6 @@ public abstract class DDWRTTile<T>
             //cf. http://stackoverflow.com/questions/23038682/java-lang-runtimeexception-only-one-looper-may-be-created-per-thread
             Looper.prepare();
         }
-        HANDLER = new Handler();
     }
     protected long nbRunsLoader = 0;
     protected boolean mAutoRefreshToggle = true;
@@ -278,10 +276,10 @@ public abstract class DDWRTTile<T>
         final boolean schedNextRun = !(this.mLoaderStopped || nextRunMillis <= 0 ||
                 mRouter == null || mDao.getRouter(mRouter.getUuid()) == null);
         if (schedNextRun) {
-            HANDLER.postDelayed(new Runnable() {
+            new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
+                    mSupportLoaderManager.initLoader(loader.getId(), mFragmentArguments, tile);
                 }
             }, nextRunMillis);
         }
@@ -352,7 +350,7 @@ public abstract class DDWRTTile<T>
                                 Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
                         alertDialog.show();
                         ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        HANDLER.postDelayed(new Runnable() {
+                        new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 ((AbstractBaseFragment) mParentFragment)
@@ -369,7 +367,7 @@ public abstract class DDWRTTile<T>
                             Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
                     alertDialog.show();
                     ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                    HANDLER.postDelayed(new Runnable() {
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             ((AbstractBaseFragment) mParentFragment)
@@ -386,7 +384,7 @@ public abstract class DDWRTTile<T>
                         Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
                 alertDialog.show();
                 ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                HANDLER.postDelayed(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         ((AbstractBaseFragment) mParentFragment)
