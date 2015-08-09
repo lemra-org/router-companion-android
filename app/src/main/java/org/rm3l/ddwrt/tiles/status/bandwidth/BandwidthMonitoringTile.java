@@ -74,6 +74,7 @@ import java.util.Set;
  */
 public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
+    //TODO Could be a user preference, actually
     public static final int MAX_DATA_POINTS = 25;
     //END TESTS ONLY
     //TODO TESTS ONLY
