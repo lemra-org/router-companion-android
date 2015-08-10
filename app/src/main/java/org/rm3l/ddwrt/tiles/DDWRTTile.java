@@ -279,7 +279,7 @@ public abstract class DDWRTTile<T>
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mSupportLoaderManager.initLoader(loader.getId(), mFragmentArguments, tile);
+                    mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
                 }
             }, nextRunMillis);
         }
