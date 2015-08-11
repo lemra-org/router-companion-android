@@ -2352,7 +2352,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
             //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
-            doneWithLoaderInstance(this, loader, 9000l,
+            doneWithLoaderInstance(this, loader, 1500l,
                     R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
         } else {
             //Use classical sync
