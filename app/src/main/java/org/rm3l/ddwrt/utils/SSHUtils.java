@@ -100,7 +100,7 @@ public final class SSHUtils {
     public static final String NO = "no";
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
     public static final int CONNECT_TIMEOUT_MILLIS = 10000;
-    public static final int MAX_SSH_SESSIONS_IN_CACHE = 30;
+    public static final int MAX_SSH_SESSIONS_IN_CACHE = 7;
     private static final LruCache<String, ReentrantLock> SSH_SESSIONS_CACHE_LOCKS = new LruCache<String, ReentrantLock>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, ReentrantLock oldValue, ReentrantLock newValue) {

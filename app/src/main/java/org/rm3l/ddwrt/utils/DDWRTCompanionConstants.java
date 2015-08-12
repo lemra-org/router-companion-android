@@ -56,7 +56,7 @@ public final class DDWRTCompanionConstants {
 
     public static final String REMOTE_HELP_WEBSITE = "http://ddwrt-companion.rm3l.org";
 
-    public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://ddwrt-companion.rm3l.org/dev/changelog.html";
+    public static final String REMOTE_HELP_WEBSITE_CHANGELOG = "http://ddwrt-companion.rm3l.org/doc/release-notes.html";
 
     public static final int DOORBELL_APPID = 0;
     public static final String DOORBELL_APIKEY = \"fake-api-key\";
@@ -84,7 +84,7 @@ public final class DDWRTCompanionConstants {
     public static final String NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF =
             "notifications.openvpnClient.syncIntervalMinutes";
 
-    public static final long DEFAULT_THEME = 31l;
+    public static final long DEFAULT_THEME = 30l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
     public static final String IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
     public static final String FIRST_APP_LAUNCH_PREF_KEY = \"fake-key\";
@@ -111,6 +111,9 @@ public final class DDWRTCompanionConstants {
 
     public static final String SUPPORT_WEBSITE = "http://rm3l.org/apps/ddwrt-companion/ddwrt/" +
             ((BuildConfig.WITH_ADS ? "_" : "") + "home");
+    public static final String ACRA_USER_EMAIL = "acra.user.email";
+    public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
+    public static final String ACRA_ENABLE = "acra.enable";
 
     public static int MB = 1024 * 1024;
 

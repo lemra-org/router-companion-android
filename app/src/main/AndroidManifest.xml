@@ -46,7 +46,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:maxSdkVersion="18" />
 
     <!-- ACRA Error Reporting, if the user accepts to send their device IDs -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
 
     <!-- For background service notifications -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -56,6 +56,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <uses-permission
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
     <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
+
+    <!-- This is a situation where we want a dependency but
+    not the permissions that the dependency wants.
+     Some of those permissions come from Google Play Services dependency. They
+     are not necessary for the app itself, but are added by the Manifest Merger. So remove them. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" tools:node="remove" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" tools:node="remove" />
 
     <application
         android:name=".DDWRTApplication"

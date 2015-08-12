@@ -45,8 +45,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public final class ColorUtils {
 
-    public static final long LIGHT_THEME = 30l;
-    public static final long DARK_THEME = DEFAULT_THEME;
+    public static final long LIGHT_THEME = DEFAULT_THEME;
+    public static final long DARK_THEME = 31l;
     @Deprecated
     private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
 

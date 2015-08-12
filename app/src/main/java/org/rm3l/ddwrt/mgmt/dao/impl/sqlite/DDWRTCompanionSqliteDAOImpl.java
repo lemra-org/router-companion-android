@@ -61,6 +61,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     final Map<String, Integer> routersToIds = Maps.newConcurrentMap();
     @NonNull
     private final DDWRTCompanionSqliteOpenHelper dbHelper;
+    private final Context mContext;
     // Database fields
 //    private SQLiteDatabase database;
     @NonNull
@@ -78,6 +79,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_FIRMWARE};
 
     public DDWRTCompanionSqliteDAOImpl(Context context) {
+        this.mContext = context;
         dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
     }
 

@@ -27,7 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Theming">
 
         <org.rm3l.ddwrt.utils.LongListPreference
-            android:defaultValue="31"
+            android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
             android:key="theming"
@@ -110,12 +110,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:summaryOn="@string/pref_acra_syslog_enabled"-->
             <!--android:title="@string/pref_acra_syslog" />-->
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="acra.deviceid.enable"
-            android:summaryOff="@string/pref_acra_deviceid_disabled"
-            android:summaryOn="@string/pref_acra_deviceid_enabled"
-            android:title="@string/pref_acra_deviceid" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="acra.deviceid.enable"-->
+            <!--android:summaryOff="@string/pref_acra_deviceid_disabled"-->
+            <!--android:summaryOn="@string/pref_acra_deviceid_enabled"-->
+            <!--android:title="@string/pref_acra_deviceid" />-->
+
+        <EditTextPreference
+            android:key="acra.user.email"
+            android:title="@string/pref_acra_user_email"
+            android:summary="@string/pref_acra_user_email_summary"/>
 
     </PreferenceCategory>
 

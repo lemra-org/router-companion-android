@@ -56,7 +56,6 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import org.acra.ACRA;
@@ -84,6 +83,7 @@ import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -129,7 +129,7 @@ public final class Utils {
     public static AlertDialog buildAlertDialog(@NonNull final Context context, @Nullable final String title, @NonNull final String msg,
                                                final boolean cancelable, final boolean cancelableOnTouchOutside) {
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        if (!Strings.isNullOrEmpty(title)) {
+        if (!isNullOrEmpty(title)) {
             alertDialog.setTitle(title);
         }
         alertDialog.setMessage(msg);
@@ -317,7 +317,7 @@ public final class Utils {
             return;
         }
 
-        final long dataUsageCtrl = ctx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        final long dataUsageCtrl = ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
         if (dataUsageCtrl == 333) {
             //Only On Wi-Fi
@@ -508,6 +508,13 @@ public final class Utils {
         doorbellDialog.setTitle(R.string.send_feedback);
         doorbellDialog.setMessage(R.string.feedback_dialog_text);
         doorbellDialog.setEmailHint("Your email address");
+        //Set user-defined email if any
+        final String acraEmailAddr = activity
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+        doorbellDialog.setEmail(acraEmailAddr);
+        doorbellDialog.setEmailFieldVisibility(
+                isNullOrEmpty(acraEmailAddr) ? View.VISIBLE : View.GONE);
         doorbellDialog.setMessageHint(R.string.feedback_dialog_comments_text);
         doorbellDialog.setPositiveButtonText(R.string.feedback_send);
         doorbellDialog.setNegativeButtonText(R.string.feedback_cancel);
