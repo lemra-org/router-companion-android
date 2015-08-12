@@ -33,10 +33,12 @@ apply plugin: 'tracepot'
 // can be the case if building with Android Studio, or with gradle daemon mode)
 gradle.taskGraph.whenReady { taskGraph ->
     if (taskGraph.hasTask(':app:assembleRelease') ||
+            taskGraph.hasTask(':app:assembleGenericRelease') ||
             taskGraph.hasTask(':app:assembleFdroidRelease') ||
             taskGraph.hasTask(':app:assembleGoogleRelease') ||
             taskGraph.hasTask(':app:assembleAmazonRelease') ||
             taskGraph.hasTask(':app:assembleSamsungRelease') ||
+            taskGraph.hasTask(':app:assembleGenericFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleAmazonFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleSamsungFreeWithAdsRelease')) {
@@ -196,6 +198,13 @@ android {
      * they contain link to billing platforms other than Google
      */
     productFlavors {
+        generic {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "false"
+        }
         google {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
@@ -231,6 +240,14 @@ android {
          * -BEGIN- Free product flavors (but backed by Ads)
          * =========================================================================================
          */
+        genericFreeWithAds {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+
+            buildConfigField "boolean", "WITH_ADS", "true"
+        }
         googleFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
