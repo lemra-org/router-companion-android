@@ -27,7 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Theming">
 
         <org.rm3l.ddwrt.utils.LongListPreference
-            android:defaultValue="31"
+            android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
             android:key="theming"

@@ -84,7 +84,7 @@ public final class DDWRTCompanionConstants {
     public static final String NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF =
             "notifications.openvpnClient.syncIntervalMinutes";
 
-    public static final long DEFAULT_THEME = 31l;
+    public static final long DEFAULT_THEME = 30l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
     public static final String IS_FIRST_LAUNCH_PREF_KEY = \"fake-key\";
     public static final String FIRST_APP_LAUNCH_PREF_KEY = \"fake-key\";
