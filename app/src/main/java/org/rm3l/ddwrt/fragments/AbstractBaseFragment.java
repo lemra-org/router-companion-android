@@ -32,7 +32,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
@@ -49,7 +48,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdView;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -105,8 +103,8 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.BannerAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -754,60 +752,23 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
-            //Inject tile wth a specific AdView
-            this.fragmentTiles = new ArrayList<>();
-            this.fragmentTiles.add(new DDWRTTile<Void>(this, savedInstanceState, this.router, R.layout.tile_adview, null) {
-                @Override
-                public int getTileHeaderViewId() {
-                    return -1;
-                }
-
-                @Override
-                public int getTileTitleViewId() {
-                    return -1;
-                }
-
-                @Override
-                @Nullable
-                public Integer getTileBackgroundColor() {
-                    return activity.getResources().getColor(android.R.color.transparent);
-                }
-
-                @Nullable
-                @Override
-                protected Loader<Void> getLoader(int id, Bundle args) {
-                    return new AsyncTaskLoader<Void>(activity) {
-                        @Override
-                        public Void loadInBackground() {
-                            //Nothing to do
-                            return null;
-                        }
-                    };
-                }
-
-                @Nullable
-                @Override
-                protected String getLogTag() {
-                    return null;
-                }
-
-                @Nullable
-                @Override
-                protected OnClickIntent getOnclickIntent() {
-                    return null;
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Void> loader, Void data) {
-                    AdUtils.buildAndDisplayAdViewIfNeeded(activity,
-                            (AdView) layout.findViewById(R.id.router_main_activity_tile_adView));
-                }
-            });
 
             if (tiles != null) {
-                this.fragmentTiles.addAll(tiles);
+                final int size = tiles.size();
+                if (size >= 2) {
+                    //Add tiles then insert banner ads in between
+                    this.fragmentTiles.addAll(tiles);
+                    for (int i = size - 1; i <= 1; i-=2) {
+                        this.fragmentTiles.add(i, new BannerAdTile(this, savedInstanceState, this.router));
+                    }
+                } else {
+                    //Add banner add first, then all other tiles
+                    this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                    this.fragmentTiles.addAll(tiles);
+                }
+            } else {
+                this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
             }
-
         } else {
             this.fragmentTiles = tiles;
         }
