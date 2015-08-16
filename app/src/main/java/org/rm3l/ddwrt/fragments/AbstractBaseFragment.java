@@ -100,6 +100,7 @@ import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragmentAbstract;
 import org.rm3l.ddwrt.fragments.wireless.WirelessSecurityFragmentAbstract;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -456,22 +457,37 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         String parentSectionTitle;
 
         final AbstractBaseFragment[] tabsToSort;
+
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(parentFragment.getActivity());
+        final Router routerFromDB;
+        final boolean isDemoRouter = (dao != null &&
+                (routerFromDB = dao.getRouter(router)) != null &&
+                Utils.isDemoRouter(routerFromDB));
+
         switch (parentSectionNumber) {
             //Status: {Status, Wireless, Clients, Monitoring}
             //In DD-WRT: Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
             case 1:
                 parentSectionTitle = resources.getString(R.string.status);
-                tabsToSort = new AbstractBaseFragment[5];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_router), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_time), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wan), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_lan), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, StatusSyslogFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_syslog), router);
+                if (isDemoRouter) {
+                    tabsToSort = new AbstractBaseFragment[2];
+                    tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_router), router);
+                    tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_time), router);
+                } else {
+                    tabsToSort = new AbstractBaseFragment[5];
+                    tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_router), router);
+                    tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_time), router);
+                    tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_wan), router);
+                    tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_lan), router);
+                    tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, StatusSyslogFragment.class, parentSectionTitle,
+                            resources.getString(R.string.status_syslog), router);
+                }
                 break;
             case 2:
                 //Status > Wireless

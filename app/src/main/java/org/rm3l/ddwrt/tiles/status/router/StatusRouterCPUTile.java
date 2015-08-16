@@ -55,6 +55,7 @@ import java.util.List;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  *
@@ -122,8 +123,13 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
+                        if (isDemoRouter(mRouter)) {
+                            nvramInfoTmp = new NVRAMInfo()
+                                    .setProperty(NVRAMInfo.CPU_CLOCK_FREQ, "100 MHz");
+                        } else {
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
+                        }
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -138,11 +144,19 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
                         }
 
-                        final String[] otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences,
-                                "uptime | awk -F'average:' '{ print $2}'",
-                                GREP_MODEL_PROC_CPUINFO + "| uniq",
-                                GREP_MODEL_PROC_CPUINFO + "| wc -l");
+                        final String[] otherCmds;
+                        if (isDemoRouter(mRouter)) {
+                            otherCmds = new String[3];
+                            otherCmds[0] = " 0.14, 0.24, 0.28";
+                            otherCmds[1] = "BCM3302 V0.8";
+                            otherCmds[2] = "1";
+                        } else {
+                            otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences,
+                                    "uptime | awk -F'average:' '{ print $2}'",
+                                    GREP_MODEL_PROC_CPUINFO + "| uniq",
+                                    GREP_MODEL_PROC_CPUINFO + "| wc -l");
+                        }
 
                         if (otherCmds != null) {
 
@@ -166,8 +180,15 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Now cache whole /proc/cpuinfo, for detailed activity
-                        cpuInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, "cat /proc/cpuinfo");
+                        if (isDemoRouter(mRouter)) {
+                            cpuInfoContents = new String[3];
+                            cpuInfoContents[0] = "system type:\tBroadcom BCM5352 chip rev 0\n";
+                            cpuInfoContents[1] = "Lorem Ipsum\n";
+                            cpuInfoContents[2] = "Dolor sit amet...\n";
+                        } else {
+                            cpuInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, "cat /proc/cpuinfo");
+                        }
                     }
 
                     if (nvramInfo.isEmpty()) {

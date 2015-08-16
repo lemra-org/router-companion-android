@@ -546,6 +546,14 @@ public final class Utils {
         return doorbellDialog;
     }
 
+    public static boolean isDemoRouter(@Nullable final Router router) {
+        return (router != null && isDemoRouter(router.getRemoteIpAddress()));
+    }
+
+    public static boolean isDemoRouter(@Nullable final String routerReachableAddr) {
+        return DDWRTCompanionConstants.DEMO_ROUTER_DNS.equals(routerReachableAddr);
+    }
+
 //    public static void doCreateUpdateChecker(@NonNull final Activity activity,
 //                                                   @Nullable UpdateCheckerResult updateCheckerResult,
 //                                                   @Nullable final Notice notice) {

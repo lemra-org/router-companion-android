@@ -49,6 +49,10 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Date;
+
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
+
 /**
  *
  */
@@ -107,34 +111,52 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                        mGlobalPreferences, NVRAMInfo.ROUTER_NAME,
-                                        NVRAMInfo.WAN_IPADDR,
-                                        NVRAMInfo.MODEL,
-                                        NVRAMInfo.DIST_TYPE,
-                                        NVRAMInfo.LAN_IPADDR);
+                        if (isDemoRouter(mRouter)) {
+                            nvramInfoTmp = new NVRAMInfo()
+                                    .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router")
+                                    .setProperty(NVRAMInfo.WAN_IPADDR, "0.0.0.0")
+                                    .setProperty(NVRAMInfo.MODEL, "Router Model Family")
+                                    .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
+                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255");
+                        } else {
+                            nvramInfoTmp =
+                                    SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                            mGlobalPreferences, NVRAMInfo.ROUTER_NAME,
+                                            NVRAMInfo.WAN_IPADDR,
+                                            NVRAMInfo.MODEL,
+                                            NVRAMInfo.DIST_TYPE,
+                                            NVRAMInfo.LAN_IPADDR);
+                        }
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
                         //date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))
                         //date -d @$(sed -n '/^btime /s///p' /proc/stat)
-
-                        //Add FW, Kernel and Uptime
-                        final String[] otherCmds = SSHUtils
-                                .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                        //date
-                                        "date",
-                                        //date since last reboot
-                                        "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
-                                                " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
-                                                " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
-                                        //elapsed from current date
-                                        "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
-                                        "uname -a",
-                                        "echo \"`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
-                                                "`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
+                        final String[] otherCmds;
+                        if (isDemoRouter(mRouter)) {
+                            otherCmds = new String[5];
+                            otherCmds[0] = new Date().toString();
+                            otherCmds[1] = new Date().toString();
+                            otherCmds[2] = " 2 days, 11:00,  2 users, ";
+                            otherCmds[3] = "Linux 2.4.37 #7583 Sat Oct 10 mips";
+                            otherCmds[4] = "DD-WRT v24-sp2 (10/10/09) - rev 7583";
+                        } else {
+                            //Add FW, Kernel and Uptime
+                            otherCmds = SSHUtils
+                                    .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                            //date
+                                            "date",
+                                            //date since last reboot
+                                            "date -d @$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) )) || " +
+                                                    " awk -vuptimediff=\"$(( $(date +%s) - $(cut -f1 -d. /proc/uptime) ))\" " +
+                                                    " 'BEGIN { print strftime(\"%Y-%m-%d %H:%M:%S\", uptimediff); }' ",
+                                            //elapsed from current date
+                                            "uptime | awk -F'up' '{print $2}' | awk -F'load' '{print $1}'",
+                                            "uname -a",
+                                            "echo \"`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
+                                                    "`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
+                        }
 
                         if (otherCmds != null) {
                             if (otherCmds.length >= 1) {

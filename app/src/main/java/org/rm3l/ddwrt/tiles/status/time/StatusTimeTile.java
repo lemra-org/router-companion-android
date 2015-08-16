@@ -45,7 +45,10 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.util.Date;
 import java.util.Map;
+
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
@@ -101,19 +104,35 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp =
-                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                        mGlobalPreferences, NVRAMInfo.NTP_ENABLE,
-                                        NVRAMInfo.NTP_MODE,
-                                        NVRAMInfo.NTP_SERVER,
-                                        NVRAMInfo.TIME_ZONE,
-                                        NVRAMInfo.DAYLIGHT_TIME);
+                        if (isDemoRouter(mRouter)) {
+                            nvramInfoTmp = new NVRAMInfo()
+                                    .setProperty(NVRAMInfo.NTP_ENABLE, "1")
+                                    .setProperty(NVRAMInfo.NTP_MODE, "")
+                                    .setProperty(NVRAMInfo.NTP_SERVER, "time.serv.er")
+                                    .setProperty(NVRAMInfo.TIME_ZONE, "UTC+02:00")
+                                    .setProperty(NVRAMInfo.DAYLIGHT_TIME, "3");
+                        } else {
+                            nvramInfoTmp =
+                                    SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                            mGlobalPreferences, NVRAMInfo.NTP_ENABLE,
+                                            NVRAMInfo.NTP_MODE,
+                                            NVRAMInfo.NTP_SERVER,
+                                            NVRAMInfo.TIME_ZONE,
+                                            NVRAMInfo.DAYLIGHT_TIME);
+                        }
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
 
-                        final String[] currentDate = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "date");
+                        final String[] currentDate;
+                        if (isDemoRouter(mRouter)) {
+                            currentDate = new String[1];
+                            currentDate[0] = new Date().toString();
+                        } else {
+                            currentDate = SSHUtils
+                                    .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "date");
+                        }
                         if (currentDate != null && currentDate.length > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, currentDate[0]);
                         }
