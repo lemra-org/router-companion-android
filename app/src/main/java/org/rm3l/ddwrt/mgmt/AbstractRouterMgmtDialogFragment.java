@@ -84,6 +84,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -102,6 +103,7 @@ import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ALWAYS_CHECK_CONNECTION_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_PRIVKEY_SIZE_BYTES;
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 import static org.rm3l.ddwrt.utils.Utils.toHumanReadableByteCount;
 
 public abstract class AbstractRouterMgmtDialogFragment
@@ -809,6 +811,11 @@ public abstract class AbstractRouterMgmtDialogFragment
     private Router doCheckConnectionToRouter(@NonNull AlertDialog d) throws Exception {
         final Router router = buildRouter(d);
 
+        if (isDemoRouter(router)) {
+            router.setName(DDWRTCompanionConstants.DEMO);
+            return router;
+        }
+
         //This will throw an exception if connection could not be established!
         SSHUtils.checkConnection(getActivity(), mGlobalSharedPreferences, router, 10000);
 
@@ -821,6 +828,11 @@ public abstract class AbstractRouterMgmtDialogFragment
         final Editable ipAddrViewText = ipAddrView.getText();
 
         final ScrollView contentScrollView = (ScrollView) d.findViewById(R.id.router_add_scrollview);
+
+        if (isDemoRouter(ipAddrViewText.toString())) {
+            //Skip validation
+            return true;
+        }
 
         if (!(Patterns.IP_ADDRESS.matcher(ipAddrViewText).matches()
                 || Patterns.DOMAIN_NAME.matcher(ipAddrViewText).matches())) {

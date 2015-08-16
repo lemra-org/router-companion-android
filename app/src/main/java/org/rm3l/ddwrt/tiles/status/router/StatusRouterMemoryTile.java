@@ -53,6 +53,7 @@ import java.util.List;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
  *
@@ -118,14 +119,20 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
-                    final String[] otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                    final String[] otherCmds;
+                    if (isDemoRouter(mRouter)) {
+                        otherCmds = new String[2];
+                        otherCmds[0] = "13004 kB";
+                        otherCmds[1] = "844 kB";
+                    } else {
+                        otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                    }
                     if (otherCmds != null && otherCmds.length >= 2) {
                         //Total
                         String memTotal = null;
                         List<String> strings = Splitter.on("MemTotal:").omitEmptyStrings()
                                 .trimResults().splitToList(otherCmds[0].trim());
-                        Log.d(LOG_TAG, "strings for MemTotal: " + strings);
                         if (strings != null && strings.size() >= 1) {
                             memTotal = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
@@ -136,7 +143,6 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         String memFree = null;
                         strings = Splitter.on("MemFree:").omitEmptyStrings().trimResults()
                                 .splitToList(otherCmds[1].trim());
-                        Log.d(LOG_TAG, "strings for MemFree: " + strings);
                         if (strings != null && strings.size() >= 1) {
                             memFree = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
@@ -156,8 +162,14 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Now cache whole /proc/cpuinfo, for detailed activity
-                        memInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, "cat /proc/meminfo");
+                        if (isDemoRouter(mRouter)) {
+                            memInfoContents = new String[2];
+                            memInfoContents[0] = "Lorem Ipsum\n";
+                            memInfoContents[1] = "Dolor sit amet...\n";
+                        } else {
+                            memInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, "cat /proc/meminfo");
+                        }
 
                     }
 

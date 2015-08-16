@@ -114,6 +114,7 @@ public final class DDWRTCompanionConstants {
     public static final String ACRA_USER_EMAIL = "acra.user.email";
     public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
     public static final String ACRA_ENABLE = "acra.enable";
+    public static final String DEMO = "--- DEMO ---";
 
     public static int MB = 1024 * 1024;
 
@@ -122,6 +123,8 @@ public final class DDWRTCompanionConstants {
     public static final String SHARP = "#";
     
     public static final String TO_REMOVE = "TO_REMOVE";
+
+    public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
 
     private DDWRTCompanionConstants() {
     }
