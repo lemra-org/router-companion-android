@@ -158,7 +158,7 @@ android {
     defaultConfig {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt.free"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 22
         // Enabling multidex support.
 //        multiDexEnabled true
@@ -349,6 +349,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
     compile 'io.doorbell:android-sdk:0.2.3@aar'
+    compile 'com.adsdk.sdk:MobFox-Android-SDK:7.0.3'
 
 //    compile 'com.android.support:multidex:1.0.0'
 

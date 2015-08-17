@@ -57,11 +57,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
     <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
 
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
     <!-- This is a situation where we want a dependency but
     not the permissions that the dependency wants.
      Some of those permissions come from Google Play Services dependency. They
      are not necessary for the app itself, but are added by the Manifest Merger. So remove them. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" tools:node="remove" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" tools:node="remove" />
 
@@ -338,6 +341,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!--<activity android:name="com.purplebrain.adbuddiz.sdk.AdBuddizActivity"-->
             <!--android:theme="@android:style/Theme.Translucent" />-->
+
+        <activity android:name="com.adsdk.sdk.banner.InAppWebView"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
+        <activity android:name="com.adsdk.sdk.video.RichMediaActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:hardwareAccelerated="false" />
+
+        <activity android:name="com.adsdk.sdk.mraid.MraidBrowser"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <activity
             android:name=".tiles.services.wol.EditWOLDaemonSettingsActivity"

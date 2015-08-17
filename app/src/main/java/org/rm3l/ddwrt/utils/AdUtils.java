@@ -1,12 +1,16 @@
 package org.rm3l.ddwrt.utils;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import com.adsdk.sdk.nativeads.NativeAdListener;
+import com.adsdk.sdk.nativeads.NativeAdManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -100,6 +104,22 @@ public final class AdUtils {
         interstitialAd.loadAd(adRequest);
 
         return interstitialAd;
+    }
+
+    public static void requestMobFoxNativeAdManager(@Nullable final Context ctx,
+                                                    @Nullable final NativeAdListener nativeAdListener) {
+        if (ctx == null) {
+            return;
+        }
+        //FIXME
+        new NativeAdManager(ctx,
+                DDWRTCompanionConstants.MOBFOX_REQUEST_URL,
+                (ctx.checkCallingOrSelfPermission(
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ctx.checkCallingOrSelfPermission(
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED),
+                DDWRTCompanionConstants.MOBFOX_INVENTORY_HASH,nativeAdListener, null)
+            .requestAd();
     }
 
     public static class AdEvent extends DDWRTCompanionException {
