@@ -44,7 +44,9 @@ public final class DDWRTCompanionConstants {
     public static final String AD_FREE_APP_APPLICATION_ID = BuildConfig.APPLICATION_ID
             .replaceAll(".free", "");
 
-    public static final String MOBFOX_INVENTORY_HASH = "xxx";
+    //FIXME JUST FOR TESTS
+    public static final String MOBFOX_INVENTORY_HASH = "";
+//    public static final String MOBFOX_INVENTORY_HASH = "xxx";
     public static final String MOBFOX_INVENTORY_ID = "xxx";
     public static final String MOBFOX_REQUEST_URL = "http://my.mobfox.com/request.php";
 

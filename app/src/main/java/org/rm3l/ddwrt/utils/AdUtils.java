@@ -1,16 +1,12 @@
 package org.rm3l.ddwrt.utils;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import com.adsdk.sdk.nativeads.NativeAdListener;
-import com.adsdk.sdk.nativeads.NativeAdManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -20,6 +16,10 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+
+//import com.adsdk.sdk.nativeads.NativeAdListener;
+//import com.adsdk.sdk.nativeads.NativeAdManager;
+//import com.adsdk.sdk.nativeads.NativeViewBinder;
 
 public final class AdUtils {
 
@@ -106,21 +106,36 @@ public final class AdUtils {
         return interstitialAd;
     }
 
-    public static void requestMobFoxNativeAdManager(@Nullable final Context ctx,
-                                                    @Nullable final NativeAdListener nativeAdListener) {
-        if (ctx == null) {
-            return;
-        }
-        //FIXME
-        new NativeAdManager(ctx,
-                DDWRTCompanionConstants.MOBFOX_REQUEST_URL,
-                (ctx.checkCallingOrSelfPermission(
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                ctx.checkCallingOrSelfPermission(
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED),
-                DDWRTCompanionConstants.MOBFOX_INVENTORY_HASH,nativeAdListener, null)
-            .requestAd();
-    }
+//    public static NativeViewBinder getMobFoxNativeViewBinder() {
+//        // create binding for native ad
+//        final NativeViewBinder bigNativeAdBinder = new NativeViewBinder(R.layout.native_ad_layout);
+//        bigNativeAdBinder.bindTextAsset("headline", R.id.headlineView);
+//        bigNativeAdBinder.bindTextAsset("description", R.id.descriptionView);
+//        bigNativeAdBinder.bindImageAsset("icon", R.id.iconView);
+//        bigNativeAdBinder.bindImageAsset("main", R.id.mainImageView);
+//        bigNativeAdBinder.bindTextAsset("rating", R.id.ratingBar); // NOTE: "rating" asset is special, RatingBar should be used instead of TextView.
+//
+//        return bigNativeAdBinder;
+//    }
+//
+//    public static NativeAdManager requestMobFoxNativeAdManager(@Nullable final Context ctx,
+//                                                    @Nullable final NativeAdListener nativeAdListener) {
+//        if (ctx == null) {
+//            return null;
+//        }
+//
+//        final NativeAdManager nativeAdManager = new NativeAdManager(ctx,
+//                DDWRTCompanionConstants.MOBFOX_REQUEST_URL,
+//                (ctx.checkCallingOrSelfPermission(
+//                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+//                        ctx.checkCallingOrSelfPermission(
+//                                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED),
+//                DDWRTCompanionConstants.MOBFOX_INVENTORY_HASH, nativeAdListener, null);
+//
+//        nativeAdManager.requestAd();
+//
+//        return nativeAdManager;
+//    }
 
     public static class AdEvent extends DDWRTCompanionException {
 

@@ -769,6 +769,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
 
+            this.fragmentTiles = new ArrayList<>();
             if (tiles != null) {
                 final int size = tiles.size();
                 if (size >= 2) {
@@ -776,14 +777,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     this.fragmentTiles.addAll(tiles);
                     for (int i = size - 1; i <= 1; i-=2) {
                         this.fragmentTiles.add(i, new BannerAdTile(this, savedInstanceState, this.router));
+//                        this.fragmentTiles.add(i, new MobFoxNativeAdTile(this, savedInstanceState, this.router));
                     }
                 } else {
                     //Add banner add first, then all other tiles
                     this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+//                    this.fragmentTiles.add(new MobFoxNativeAdTile(this, savedInstanceState, this.router));
                     this.fragmentTiles.addAll(tiles);
                 }
             } else {
                 this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+//                this.fragmentTiles.add(new MobFoxNativeAdTile(this, savedInstanceState, this.router));
             }
         } else {
             this.fragmentTiles = tiles;

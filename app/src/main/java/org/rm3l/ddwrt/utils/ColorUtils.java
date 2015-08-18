@@ -28,10 +28,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.LruCache;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
-import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 
 import java.util.Collection;
@@ -47,13 +43,6 @@ public final class ColorUtils {
 
     public static final long LIGHT_THEME = DEFAULT_THEME;
     public static final long DARK_THEME = 31l;
-    @Deprecated
-    private static final BiMap<Integer, Integer> colorToTheme = HashBiMap.create();
-
-    static {
-        colorToTheme.put(R.color.cardview_light_background, 30); //Light
-        colorToTheme.put(R.color.cardview_shadow_end_color, Long.valueOf(DEFAULT_THEME).intValue()); //Dark
-    }
 
     private static final int MAX_ITERATIONS = 10;
 
