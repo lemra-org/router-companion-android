@@ -112,6 +112,7 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static android.widget.FrameLayout.LayoutParams;
 
@@ -775,10 +776,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 if (size >= 2) {
                     //Add tiles then insert banner ads in between
                     this.fragmentTiles.addAll(tiles);
-                    for (int i = size - 1; i <= 1; i-=2) {
-                        this.fragmentTiles.add(i, new BannerAdTile(this, savedInstanceState, this.router));
-//                        this.fragmentTiles.add(i, new MobFoxNativeAdTile(this, savedInstanceState, this.router));
-                    }
+
+                    //insert banner ad randomly
+                    this.fragmentTiles.add(
+                            Math.max(1, new Random().nextInt(size)),
+                            new BannerAdTile(this, savedInstanceState, this.router));
+//
+//
+//                    for (int i = 1; i < size; i+=3) {
+//                        this.fragmentTiles.add(i, new BannerAdTile(this, savedInstanceState, this.router));
+////                        this.fragmentTiles.add(i, new MobFoxNativeAdTile(this, savedInstanceState, this.router));
+//                    }
                 } else {
                     //Add banner add first, then all other tiles
                     this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
