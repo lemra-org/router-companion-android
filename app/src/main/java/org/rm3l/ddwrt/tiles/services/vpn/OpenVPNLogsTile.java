@@ -52,11 +52,6 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
     }
 
     @Override
-    public boolean isEmbeddedWithinScrollView() {
-        return true;
-    }
-
-    @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 

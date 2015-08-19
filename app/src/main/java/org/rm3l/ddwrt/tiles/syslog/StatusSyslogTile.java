@@ -50,6 +50,7 @@ import android.widget.Toast;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -100,7 +101,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public boolean isEmbeddedWithinScrollView() {
-        return false;
+//        return false;
+        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
     }
 
     @Override

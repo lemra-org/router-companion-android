@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.ExecStreamableCommandRouterAction;
@@ -269,7 +270,8 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
 
     @Override
     public boolean isEmbeddedWithinScrollView() {
-        return false;
+//        return false;
+        return BuildConfig.WITH_ADS && super.isEmbeddedWithinScrollView();
     }
 
     @Override
