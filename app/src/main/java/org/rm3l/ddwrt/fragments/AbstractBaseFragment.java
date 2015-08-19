@@ -774,19 +774,18 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             if (tiles != null) {
                 final int size = tiles.size();
                 if (size >= 2) {
-                    //Add tiles then insert banner ads in between
+                    final int randomMin;
+                    if (size >= 3) {
+                        this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                        randomMin = 2;
+                    } else {
+                        randomMin = 1;
+                    }
                     this.fragmentTiles.addAll(tiles);
-
                     //insert banner ad randomly
                     this.fragmentTiles.add(
-                            Math.max(1, new Random().nextInt(size)),
+                            Math.max(randomMin, new Random().nextInt(size)),
                             new BannerAdTile(this, savedInstanceState, this.router));
-//
-//
-//                    for (int i = 1; i < size; i+=3) {
-//                        this.fragmentTiles.add(i, new BannerAdTile(this, savedInstanceState, this.router));
-////                        this.fragmentTiles.add(i, new MobFoxNativeAdTile(this, savedInstanceState, this.router));
-//                    }
                 } else {
                     //Add banner add first, then all other tiles
                     this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
