@@ -143,7 +143,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             cal.setTime(date);
                             cal.add(Calendar.DATE, -77);
                             otherCmds[1] = cal.getTime().toString(); //date since last reboot
-                            otherCmds[2] = " 47 days, 11:00,  2 users, ";
+                            otherCmds[2] = " 77 days, 11:00,  2 users, ";
                             otherCmds[3] = "Linux 2.4.37 #7583 Sat Oct 10 mips";
                             otherCmds[4] = "DD-WRT v24-sp2 (10/10/09) - rev 7583";
                         } else {
