@@ -631,4 +631,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_acra_user_email_summary">E-mail to include in reports, so we can contact you if needed</string>
     <string name="pref_acra_user_email">Email to include in reports</string>
     <string name="ad_image_view">Ad Image View</string>
+    <string name="native_ad">native ad</string>
+    <string name="sponsored">Sponsored</string>
+    <string name="learn_more">Learn More</string>
 </resources>

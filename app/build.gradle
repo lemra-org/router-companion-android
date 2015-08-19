@@ -349,6 +349,8 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.github.danielemaddaluno.androidupdatechecker:library:1.0.2'
     compile 'io.doorbell:android-sdk:0.2.3@aar'
+    compile 'com.google.android.gms:play-services-ads:7.5.0'
+
 //    compile 'com.adsdk.sdk:MobFox-Android-SDK:7.0.3'
 
 //    compile 'com.android.support:multidex:1.0.0'

@@ -104,7 +104,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.tiles.BannerAdTile;
+import org.rm3l.ddwrt.tiles.AvocarrotNativeAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -776,7 +776,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 if (size >= 2) {
                     final int randomMin;
                     if (size >= 3) {
-                        this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                        this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
                         randomMin = 2;
                     } else {
                         randomMin = 1;
@@ -785,15 +785,15 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     //insert banner ad randomly
                     this.fragmentTiles.add(
                             Math.max(randomMin, new Random().nextInt(size)),
-                            new BannerAdTile(this, savedInstanceState, this.router));
+                            new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
                 } else {
                     //Add banner add first, then all other tiles
-                    this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                    this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
 //                    this.fragmentTiles.add(new MobFoxNativeAdTile(this, savedInstanceState, this.router));
                     this.fragmentTiles.addAll(tiles);
                 }
             } else {
-                this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
 //                this.fragmentTiles.add(new MobFoxNativeAdTile(this, savedInstanceState, this.router));
             }
         } else {

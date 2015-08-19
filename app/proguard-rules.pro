@@ -215,20 +215,6 @@
     public *;
 }
 
-#-keep enum com.purplebrain.adbuddiz.sdk.** { *; }
-#-keep public class com.purplebrain.adbuddiz.sdk.* { public *; }
--keep class com.chartboost.sdk.** { *; }
--keep class com.adsdk.** { *; }
--keep class com.adsdk.sdk.** { *;}
--keep class com.adsdk.sdk.video.** { *; }
--keep class com.adsdk.sdk.customevents.** { *; }
-
--keep class com.mobfox.** { *; }
--keep class com.mobfox.adapter.** {*;}
--keep class com.mobfox.sdk.** {*;}
--keep class com.mobfox.sdk.data.** {*;}
--keep class com.mobfox.video.** {*;}
-
--keep class org.simpleframework.** { *; }
--keep class javax.xml.stream.** { *; }
--keep class javax.xml.stream.events.** { *; }
+-dontwarn com.avocarrot.**
+-keep class com.avocarrot.** { *; }
+-keepclassmembers class com.avocarrot.** { *; }

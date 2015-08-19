@@ -50,6 +50,9 @@ public final class DDWRTCompanionConstants {
     public static final String MOBFOX_INVENTORY_ID = "xxx";
     public static final String MOBFOX_REQUEST_URL = "http://my.mobfox.com/request.php";
 
+    public static final String AVOCARROT_APIKEY = \"fake-api-key\";
+    public static final String AVOCARROT_PLACEMENT_KEY = \"fake-key\";
+
     //This is only used to check feedback submitted by end-users
     public static final String PUBKEY = \"fake-key\";
             "AY5ab5Nbu" +
