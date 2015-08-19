@@ -22,7 +22,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 <resources>
 
-    <string name="app_name">DD-WRT Companion Lite</string>
+    <string name="app_name">DD-WRT Companion</string>
     <string name="default_router_name">DD-WRT Router</string>
 
     <!-- Placeholder for Ads unit IDs -->
