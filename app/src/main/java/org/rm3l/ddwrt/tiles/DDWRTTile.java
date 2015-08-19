@@ -268,13 +268,18 @@ public abstract class DDWRTTile<T>
 
         mSupportLoaderManager.destroyLoader(loader.getId());
 
+        final boolean schedNextRun =
+                ((!Utils.isDemoRouter(mRouter)) &&
+                        !(this.mLoaderStopped ||
+                                nextRunMillis <= 0 ||
+                                mRouter == null ||
+                                mDao.getRouter(mRouter.getUuid()) == null));
         /*
          * Check if router still exists - if not, entry may have been deleted.
          * In this case, do NOT schedule next run.
          * Also re-schedule it if loader has not been stopped!
          */
-        final boolean schedNextRun = !(this.mLoaderStopped || nextRunMillis <= 0 ||
-                mRouter == null || mDao.getRouter(mRouter.getUuid()) == null);
+
         if (schedNextRun) {
             new Handler().postDelayed(new Runnable() {
                 @Override

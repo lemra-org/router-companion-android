@@ -109,7 +109,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                                     .setProperty(NVRAMInfo.NTP_ENABLE, "1")
                                     .setProperty(NVRAMInfo.NTP_MODE, "")
                                     .setProperty(NVRAMInfo.NTP_SERVER, "time.serv.er")
-                                    .setProperty(NVRAMInfo.TIME_ZONE, "UTC+02:00")
+                                    .setProperty(NVRAMInfo.TIME_ZONE, "+02:00")
                                     .setProperty(NVRAMInfo.DAYLIGHT_TIME, "3");
                         } else {
                             nvramInfoTmp =

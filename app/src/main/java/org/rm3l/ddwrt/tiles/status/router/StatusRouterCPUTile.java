@@ -125,7 +125,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
-                                    .setProperty(NVRAMInfo.CPU_CLOCK_FREQ, "100 MHz");
+                                    .setProperty(NVRAMInfo.CPU_CLOCK_FREQ, "100");
                         } else {
                             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);

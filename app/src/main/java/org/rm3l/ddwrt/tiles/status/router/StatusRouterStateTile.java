@@ -49,6 +49,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -113,8 +114,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     try {
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
-                                    .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router")
-                                    .setProperty(NVRAMInfo.WAN_IPADDR, "0.0.0.0")
+                                    .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
+                                    .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
                                     .setProperty(NVRAMInfo.MODEL, "Router Model Family")
                                     .setProperty(NVRAMInfo.DIST_TYPE, "Linux 2.4.37 #7583 Sat Oct 10 mips")
                                     .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255");
@@ -136,9 +137,13 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                         final String[] otherCmds;
                         if (isDemoRouter(mRouter)) {
                             otherCmds = new String[5];
-                            otherCmds[0] = new Date().toString();
-                            otherCmds[1] = new Date().toString();
-                            otherCmds[2] = " 2 days, 11:00,  2 users, ";
+                            final Date date = new Date();
+                            otherCmds[0] = date.toString(); //current date
+                            final Calendar cal = Calendar.getInstance();
+                            cal.setTime(date);
+                            cal.add(Calendar.DATE, -77);
+                            otherCmds[1] = cal.getTime().toString(); //date since last reboot
+                            otherCmds[2] = " 47 days, 11:00,  2 users, ";
                             otherCmds[3] = "Linux 2.4.37 #7583 Sat Oct 10 mips";
                             otherCmds[4] = "DD-WRT v24-sp2 (10/10/09) - rev 7583";
                         } else {

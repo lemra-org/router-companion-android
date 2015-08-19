@@ -45,6 +45,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,8 +106,20 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     final Map<String, ProcMountPoint> mountPointMap = new HashMap<String, ProcMountPoint>();
                     final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
 
-                    final String[] catProcMounts = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
+                    final String[] catProcMounts;
+                    if (Utils.isDemoRouter(mRouter)) {
+                        catProcMounts = new String[6];
+                        catProcMounts[0] = "size: 23855 bytes (7 left)";
+                        catProcMounts[1] = "rootfs / rootfs rw 0 0";
+                        catProcMounts[2] = "/dev/root / squashfs ro 0 0";
+                        catProcMounts[3] = "none /dev devfs rw 0 0";
+                        catProcMounts[4] = "proc /proc proc rw 0 0";
+                        catProcMounts[5] = "ramfs /tmp ramfs rw 0 0";
+                    } else {
+                        catProcMounts = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
+                    }
+
                     Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
@@ -172,8 +185,16 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     for (final String itemToDf : itemsToDf) {
-                        final String[] itemToDfResult = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
+                        final String[] itemToDfResult;
+                        if (Utils.isDemoRouter(mRouter)) {
+                            itemToDfResult = new String[1];
+                            itemToDfResult[0] =
+                                    String.format("%s                 2.8M      2.8M         0 100% /",
+                                            itemToDf);
+                        } else {
+                            itemToDfResult = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
+                        }
                         Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem = Splitter.on(" ").omitEmptyStrings().trimResults()
