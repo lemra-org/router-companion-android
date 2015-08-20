@@ -15,6 +15,7 @@ import com.avocarrot.androidsdk.AdError;
 import com.avocarrot.androidsdk.CustomModel;
 import com.google.android.gms.ads.AdView;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -82,7 +83,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                         DDWRTCompanionConstants.AVOCARROT_APIKEY,
                         DDWRTCompanionConstants.AVOCARROT_PLACEMENT_KEY
                 );
-        avocarrotCustom.setSandbox(true);
+        avocarrotCustom.setSandbox(BuildConfig.DEBUG);
         avocarrotCustom.setLogger(true, "ALL");
 
         // Setup a CustomAd Listener (required)
