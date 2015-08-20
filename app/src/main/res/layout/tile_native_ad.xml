@@ -71,8 +71,8 @@
             android:gravity="left"
             android:padding="5dp"
             android:singleLine="true"
-            android:text="@string/sponsored"
-            android:textColor="#bbbbbb"
+            android:text="@string/ad"
+            android:textColor="@color/Orange"
             android:textSize="12dp"
             android:textStyle="italic" />
 
