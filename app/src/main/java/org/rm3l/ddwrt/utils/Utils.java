@@ -31,12 +31,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -53,6 +56,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -70,6 +74,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetAddress;
@@ -79,6 +84,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
+import fr.nicolaspomepuy.discreetapprate.AppRate;
+import fr.nicolaspomepuy.discreetapprate.AppRateTheme;
+import fr.nicolaspomepuy.discreetapprate.RetryPolicy;
 import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -539,6 +547,17 @@ public final class Utils {
             }
         });
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            doorbellDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    Utils.displayRatingBarIfNeeded(activity);
+                }
+            });
+        } else {
+            Utils.displayRatingBarIfNeeded(activity);
+        }
+
         if (showDialog) {
             doorbellDialog.show();
         }
@@ -554,25 +573,35 @@ public final class Utils {
         return DDWRTCompanionConstants.DEMO_ROUTER_DNS.equals(routerReachableAddr);
     }
 
-//    public static void doCreateUpdateChecker(@NonNull final Activity activity,
-//                                                   @Nullable UpdateCheckerResult updateCheckerResult,
-//                                                   @Nullable final Notice notice) {
-//        final UpdateChecker updateChecker = (updateCheckerResult != null ?
-//                new UpdateChecker(activity, updateCheckerResult) : new UpdateChecker(activity));
-//        Store store = null;
-//        if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
-//            store = Store.GOOGLE_PLAY;
-//        } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
-//            store = Store.AMAZON;
-//        }
-//        if (store != null) {
-//            UpdateChecker.setStore(store);
-//        }
-//        if (updateCheckerResult == null && notice != null) {
-//            UpdateChecker.setNotice(notice);
-//        }
-//        UpdateChecker.start();
-//    }
+    public static void displayRatingBarIfNeeded(@Nullable final Activity activity) {
+        if (activity == null) {
+            return;
+        }
+
+        AppRate
+                .with(activity)
+                .initialLaunchCount(DDWRTCompanionConstants.RATING_INITIAL_LAUNCH_COUNT)
+                .retryPolicy(RetryPolicy.INCREMENTAL)
+                .listener(new AppRate.OnShowListener() {
+                    @Override
+                    public void onRateAppShowing(AppRate appRate, View view) {
+                        Log.d(TAG, "onRateAppShowing");
+                    }
+
+                    @Override
+                    public void onRateAppDismissed() {
+                        reportException(new RateAppDismissedException());
+                    }
+
+                    @Override
+                    public void onRateAppClicked() {
+                        reportException(new RateAppClickedException());
+                    }
+                })
+                .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.LIGHT : AppRateTheme.DARK)
+                .text(R.string.app_rate)
+                .checkAndShow();
+    }
 
     protected static final class BugReportException extends DDWRTCompanionException {
 
@@ -581,6 +610,38 @@ public final class Utils {
 
         public BugReportException(@Nullable String detailMessage, @Nullable Throwable throwable) {
             super(detailMessage, throwable);
+        }
+    }
+
+    protected static final class RateAppClickedException extends DDWRTCompanionException {
+    }
+
+    protected static final class RateAppDismissedException extends DDWRTCompanionException {
+    }
+
+    public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                Utils.reportException(e);
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 

@@ -307,6 +307,8 @@ public class RouterManagementActivity
             //This library currently supports Google Play only
             updateRunnable.start();
         }
+
+        Utils.displayRatingBarIfNeeded(this);
     }
 
     private void initOpenAddRouterFormIfNecessary() {

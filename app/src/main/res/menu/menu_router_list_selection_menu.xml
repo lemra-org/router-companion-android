@@ -41,7 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <item
         android:id="@+id/menu_router_list_delete"
-        android:icon="@drawable/ic_action_remove"
+        android:icon="@drawable/ic_action_remove_ddwrt_companion"
         android:orderInCategory="3"
         android:alphabeticShortcut="r"
         android:title="@string/action_remove"

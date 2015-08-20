@@ -29,27 +29,39 @@ import java.util.List;
  */
 public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
 
+    private static final String LOG_TAG = AvocarrotNativeAdTile.class.getSimpleName();
+
+//    private final com.avocarrot.androidsdk.AvocarrotInterstitial mAvocarrotInterstitial;
+
     public AvocarrotNativeAdTile(@NonNull Fragment parentFragment,
                                  @NonNull Bundle arguments,
                                  @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_native_ad, null);
+//        this.mAvocarrotInterstitial =
+//                new com.avocarrot.androidsdk.AvocarrotInterstitial(
+//                        mParentFragmentActivity,                     /* reference to your Activity */
+//                        DDWRTCompanionConstants.AVOCARROT_APIKEY, /* this is your Avocarrot API Key */
+//                        DDWRTCompanionConstants.AVOCARROT_INTERSTITIAL_PLACEMENT_KEY /* this is your Avocarrot Placement Key */
+//                );
+//        this.mAvocarrotInterstitial.setSandbox(BuildConfig.DEBUG);
+//        this.mAvocarrotInterstitial.setLogger(true, "ALL");
     }
 
     @Override
     public int getTileHeaderViewId() {
-        return -1;
+        return R.id.tile_native_ad_hdr;
     }
 
     @Override
     public int getTileTitleViewId() {
-        return -1;
+        return R.id.tile_native_ad_headline;
     }
 
-    @Override
-    @Nullable
-    public Integer getTileBackgroundColor() {
-        return mParentFragmentActivity.getResources().getColor(android.R.color.transparent);
-    }
+//    @Override
+//    @Nullable
+//    public Integer getTileBackgroundColor() {
+//        return mParentFragmentActivity.getResources().getColor(android.R.color.transparent);
+//    }
 
     @Nullable
     @Override
@@ -57,6 +69,10 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
         return new AsyncTaskLoader<Void>(mParentFragmentActivity) {
             @Override
             public Void loadInBackground() {
+
+//                 Preload ad
+//                mAvocarrotInterstitial.loadAd();
+
                 //Nothing to do
                 return null;
             }
@@ -66,12 +82,13 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
     @Nullable
     @Override
     protected String getLogTag() {
-        return null;
+        return LOG_TAG;
     }
 
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
+//        mAvocarrotInterstitial.showAd();
         return null;
     }
 
@@ -81,7 +98,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                 new com.avocarrot.androidsdk.AvocarrotCustom(
                         mParentFragmentActivity,
                         DDWRTCompanionConstants.AVOCARROT_APIKEY,
-                        DDWRTCompanionConstants.AVOCARROT_PLACEMENT_KEY
+                        DDWRTCompanionConstants.AVOCARROT_LIST_PLACEMENT_KEY
                 );
         avocarrotCustom.setSandbox(BuildConfig.DEBUG);
         avocarrotCustom.setLogger(true, "ALL");
@@ -92,6 +109,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
 
                     @Override
                     public void onAdError(AdError error) {
+                        super.onAdError(error);
                         Utils.reportException(
                                 new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
                         //Fallback to AdMob Banner Tile
@@ -102,13 +120,13 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                             AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity,
                                     adView);
                         }
-                        super.onAdError(error);
                     }
 
                     @Override
                     public void onAdLoaded(List<CustomModel> ads) {
                         super.onAdLoaded(ads);
                         if ((ads == null) || (ads.size() < 1)) {
+                            this.onAdError(AdError.GENERIC);
                             return;
                         }
                         final CustomModel ad = ads.get(0);
@@ -117,16 +135,18 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
 
                         final TextView title = (TextView) layout.findViewById(R.id.tile_native_ad_headline);
                         final TextView description = (TextView) layout.findViewById(R.id.tile_native_ad_description);
-                        final ImageView imageView = (ImageView) layout.findViewById(R.id.tile_native_ad_image_view);
+                        final ImageView imageIconView = (ImageView) layout.findViewById(R.id.tile_native_ad_image_view);
+                        final ImageView ratingImageView = (ImageView) layout.findViewById(R.id.tile_native_ad_rating_image_view);
                         final Button button = (Button) layout.findViewById(R.id.tile_native_ad_button);
 
                         // Fill in details in your view
                         title.setText(ad.getTitle());
                         button.setText(ad.getCTAText());
                         description.setText(ad.getDescription());
+                        new Utils.DownloadImageTask(ratingImageView).execute(ad.getRatingImageUrl());
 
                         // Load the advertisement's creative into your ImageView
-                        avocarrotCustom.loadImage(ad, imageView);
+                        avocarrotCustom.loadIcon(ad, imageIconView);
 
                         // Bind view
                         avocarrotCustom.bindView(ad, layout);

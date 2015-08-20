@@ -55,7 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <item
         android:id="@+id/tile_wan_monthly_traffic_delete"
-        android:icon="@drawable/ic_action_remove"
+        android:icon="@drawable/ic_action_remove_ddwrt_companion"
         android:orderInCategory="3"
         android:title="Delete"
         app:showAsAction="ifRoom" />

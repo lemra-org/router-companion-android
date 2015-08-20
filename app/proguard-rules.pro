@@ -218,3 +218,12 @@
 -dontwarn com.avocarrot.**
 -keep class com.avocarrot.** { *; }
 -keepclassmembers class com.avocarrot.** { *; }
+-keep class com.avocarrot.androidsdk.** { *; }
+-keepclassmembers class com.avocarrot.androidsdk.** { *; }
+-keep public class * extends android.view.View {
+public void *(android.content.Context);
+public void *(android.content.Context, android.util.AttributeSet);
+public void *(android.content.Context, android.util.AttributeSet, int);
+public void set*(...);
+}
+

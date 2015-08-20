@@ -51,7 +51,9 @@ public final class DDWRTCompanionConstants {
     public static final String MOBFOX_REQUEST_URL = "http://my.mobfox.com/request.php";
 
     public static final String AVOCARROT_APIKEY = \"fake-api-key\";
-    public static final String AVOCARROT_PLACEMENT_KEY = \"fake-key\";
+    public static final String AVOCARROT_FEED_PLACEMENT_KEY = \"fake-key\";
+    public static final String AVOCARROT_LIST_PLACEMENT_KEY = \"fake-key\";
+    public static final String AVOCARROT_INTERSTITIAL_PLACEMENT_KEY = \"fake-key\";
 
     //This is only used to check feedback submitted by end-users
     public static final String PUBKEY = \"fake-key\";
@@ -124,6 +126,7 @@ public final class DDWRTCompanionConstants {
     public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
     public static final String ACRA_ENABLE = "acra.enable";
     public static final String DEMO = "--- DEMO ---";
+    public static final int RATING_INITIAL_LAUNCH_COUNT = 3;
 
     public static int MB = 1024 * 1024;
 
