@@ -580,6 +580,7 @@ public final class Utils {
 
         AppRate
                 .with(activity)
+                .fromTop(true)
                 .initialLaunchCount(DDWRTCompanionConstants.RATING_INITIAL_LAUNCH_COUNT)
                 .retryPolicy(RetryPolicy.INCREMENTAL)
                 .listener(new AppRate.OnShowListener() {
@@ -598,7 +599,7 @@ public final class Utils {
                         reportException(new RateAppClickedException());
                     }
                 })
-                .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.LIGHT : AppRateTheme.DARK)
+                .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
                 .text(R.string.app_rate)
                 .checkAndShow();
     }
