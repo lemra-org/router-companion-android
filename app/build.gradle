@@ -46,12 +46,12 @@ gradle.taskGraph.whenReady { taskGraph ->
         def storeFile = null
 
         //Attempt to read keystore.properties file, if any first
-        def propsFile = rootProject.file('keystore.properties')
+        File propsFile = rootProject.file('keystore.properties')
         def configName = 'release'
         if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
-            def props = new Properties()
+            Properties props = new Properties()
             props.load(new FileInputStream(propsFile))
-            storeFile = file(props['storeFile'])
+            storeFile = rootProject.file(props['keystore'])
 //            password = props['storePassword']
 //            android.signingConfigs[configName].keyAlias = props['keyAlias']
             password = props['keyPassword']

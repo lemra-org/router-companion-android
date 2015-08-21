@@ -778,7 +778,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     final int randomMin;
                     if (size >= 3) {
                         this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
-                        randomMin = 2;
+                        randomMin = 3;
                     } else {
                         randomMin = 1;
                     }
