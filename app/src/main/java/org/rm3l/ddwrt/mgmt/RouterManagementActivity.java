@@ -199,7 +199,7 @@ public class RouterManagementActivity
             removeAdsButton.setVisibility(View.VISIBLE);
             removeAdsButton.setOnClickListener(adsOnClickListener);
         } else {
-            removeAdsButton.setVisibility(View.GONE);
+            removeAdsButton.setVisibility(View.INVISIBLE);
         }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));

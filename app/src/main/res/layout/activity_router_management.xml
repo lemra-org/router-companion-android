@@ -81,22 +81,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginEnd="10dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:visibility="gone"/>
+                android:visibility="invisible"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/router_list_add"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
                 android:contentDescription="@string/router_add_new"
                 android:src="@android:drawable/ic_input_add"
                 android:tint="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/fab_compat_margin"
                 android:clickable="true"
                 app:elevation="6dp"
                 app:pressedTranslationZ="12dp"
-                app:layout_anchorGravity="bottom|right|end"/>
+                app:layout_anchorGravity="bottom|right|end"
+                android:layout_alignBottom="@+id/router_list_remove_ads"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true" />
 
             <!--<ImageButton-->
                 <!--android:id="@+id/router_list_add"-->
