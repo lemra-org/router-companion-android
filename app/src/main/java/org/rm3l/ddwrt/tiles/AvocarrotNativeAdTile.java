@@ -129,6 +129,11 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                             this.onAdError(AdError.GENERIC);
                             return;
                         }
+
+                        final View avocarrotContainerLayout = layout.findViewById(R.id.tile_native_ad_container);
+                        avocarrotContainerLayout.setVisibility(View.VISIBLE);
+                        layout.findViewById(R.id.admob_banner).setVisibility(View.GONE);
+
                         final CustomModel ad = ads.get(0);
 
                         /* Get References to the UI Components that will draw the Native Ad */
@@ -152,12 +157,14 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                         avocarrotCustom.bindView(ad, layout);
 
                         // Set click listener
-                        button.setOnClickListener(new View.OnClickListener() {
+                        final View.OnClickListener clickListener = new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 avocarrotCustom.handleClick(ad);
                             }
-                        });
+                        };
+                        button.setOnClickListener(clickListener);
+                        avocarrotContainerLayout.setOnClickListener(clickListener);
                     }
                 });
         // Load the ads(s)
