@@ -79,6 +79,7 @@ public final class DDWRTCompanionConstants {
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String THEMING_PREF = "theming";
     public static final String DATA_USAGE_NETWORK_PREF = "data_usage_network";
+    public static final String DATA_SYNC_BACKUP_PREF = "data.sync.backup";
     public static final String EMPTY_STRING = "";
     public static final String ALWAYS_CHECK_CONNECTION_PREF_KEY = \"fake-key\";
     public static final String NOTIFICATIONS_ENABLE = "notifications.enable";

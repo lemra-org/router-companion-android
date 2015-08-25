@@ -51,6 +51,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="@string/data_usage_theme" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="data.sync.backup"
+            android:summaryOff="Disabled."
+            android:summaryOn="Enabled. Your data (router records and settings)
+            will be securely and seamlessly saved/restored to/from Android's Backup Service.
+            Note that this relies upon the the Data Backup feature preference (available in the global
+            Android system's privacy settings). Refer to Google's Privacy Policy for more information."
+            android:title="Backup my data" />
+
         <!--<CheckBoxPreference-->
         <!--android:defaultValue="true"-->
         <!--android:enabled="true"-->

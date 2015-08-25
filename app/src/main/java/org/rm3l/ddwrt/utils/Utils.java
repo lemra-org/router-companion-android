@@ -94,6 +94,7 @@ import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_SYNC_BACKUP_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
@@ -325,7 +326,7 @@ public final class Utils {
             return;
         }
 
-        final long dataUsageCtrl = ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        final long dataUsageCtrl = ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                 .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
         if (dataUsageCtrl == 333) {
             //Only On Wi-Fi
@@ -360,7 +361,12 @@ public final class Utils {
         if (ctx == null) {
             return;
         }
-        new BackupManager(ctx).dataChanged();
+        if (ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+                .getBoolean(DATA_SYNC_BACKUP_PREF, true)) {
+            new BackupManager(ctx).dataChanged();
+        } else {
+            Log.d(TAG, "Backup disabled by user!");
+        }
     }
 
     public static int getRandomIntId(final int upperLimit) {
@@ -518,7 +524,7 @@ public final class Utils {
         doorbellDialog.setEmailHint("Your email address");
         //Set user-defined email if any
         final String acraEmailAddr = activity
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                 .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
         doorbellDialog.setEmail(acraEmailAddr);
         doorbellDialog.setEmailFieldVisibility(
