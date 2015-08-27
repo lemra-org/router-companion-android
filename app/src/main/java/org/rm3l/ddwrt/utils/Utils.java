@@ -587,8 +587,9 @@ public final class Utils {
         AppRate
                 .with(activity)
                 .fromTop(true)
+                .debug(BuildConfig.DEBUG)
                 .initialLaunchCount(DDWRTCompanionConstants.RATING_INITIAL_LAUNCH_COUNT)
-                .retryPolicy(RetryPolicy.INCREMENTAL)
+                .retryPolicy(RetryPolicy.EXPONENTIAL)
                 .listener(new AppRate.OnShowListener() {
                     @Override
                     public void onRateAppShowing(AppRate appRate, View view) {

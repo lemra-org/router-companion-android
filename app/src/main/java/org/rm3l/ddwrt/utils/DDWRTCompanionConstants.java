@@ -127,7 +127,7 @@ public final class DDWRTCompanionConstants {
     public static final String ACRA_DEVICEID_ENABLE = "acra.deviceid.enable";
     public static final String ACRA_ENABLE = "acra.enable";
     public static final String DEMO = "--- DEMO ---";
-    public static final int RATING_INITIAL_LAUNCH_COUNT = 3;
+    public static final int RATING_INITIAL_LAUNCH_COUNT = 7;
 
     public static int MB = 1024 * 1024;
 
