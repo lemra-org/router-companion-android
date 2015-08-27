@@ -93,7 +93,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
     }
 
     @Override
-    public void onLoadFinished(Loader<Void> loader, Void data) {
+    public void onLoadFinished(final Loader<Void> loader, Void data) {
         final com.avocarrot.androidsdk.AvocarrotCustom avocarrotCustom =
                 new com.avocarrot.androidsdk.AvocarrotCustom(
                         mParentFragmentActivity,
@@ -109,16 +109,20 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
 
                     @Override
                     public void onAdError(AdError error) {
-                        super.onAdError(error);
-                        Utils.reportException(
-                                new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
-                        //Fallback to AdMob Banner Tile
-                        final AdView adView = (AdView) layout.findViewById(R.id.admob_banner);
-                        if (adView != null) {
-                            adView.setVisibility(View.VISIBLE);
-                            layout.findViewById(R.id.tile_native_ad_container).setVisibility(View.GONE);
-                            AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity,
-                                    adView);
+                        try {
+                            super.onAdError(error);
+                            Utils.reportException(
+                                    new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
+                            //Fallback to AdMob Banner Tile
+                            final AdView adView = (AdView) layout.findViewById(R.id.admob_banner);
+                            if (adView != null) {
+                                adView.setVisibility(View.VISIBLE);
+                                layout.findViewById(R.id.tile_native_ad_container).setVisibility(View.GONE);
+                                AdUtils.buildAndDisplayAdViewIfNeeded(mParentFragmentActivity,
+                                        adView);
+                            }
+                        } finally {
+                            doneWithLoaderInstance(AvocarrotNativeAdTile.this, loader);
                         }
                     }
 
@@ -130,41 +134,46 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                             return;
                         }
 
-                        final View avocarrotContainerLayout = layout.findViewById(R.id.tile_native_ad_container);
-                        avocarrotContainerLayout.setVisibility(View.VISIBLE);
-                        layout.findViewById(R.id.admob_banner).setVisibility(View.GONE);
+                        try {
+                            final View avocarrotContainerLayout = layout.findViewById(R.id.tile_native_ad_container);
+                            avocarrotContainerLayout.setVisibility(View.VISIBLE);
+                            layout.findViewById(R.id.admob_banner).setVisibility(View.GONE);
 
-                        final CustomModel ad = ads.get(0);
+                            final CustomModel ad = ads.get(0);
 
                         /* Get References to the UI Components that will draw the Native Ad */
 
-                        final TextView title = (TextView) layout.findViewById(R.id.tile_native_ad_headline);
-                        final TextView description = (TextView) layout.findViewById(R.id.tile_native_ad_description);
-                        final ImageView imageIconView = (ImageView) layout.findViewById(R.id.tile_native_ad_image_view);
-                        final ImageView ratingImageView = (ImageView) layout.findViewById(R.id.tile_native_ad_rating_image_view);
-                        final Button button = (Button) layout.findViewById(R.id.tile_native_ad_button);
+                            final TextView title = (TextView) layout.findViewById(R.id.tile_native_ad_headline);
+                            final TextView description = (TextView) layout.findViewById(R.id.tile_native_ad_description);
+                            final ImageView imageIconView = (ImageView) layout.findViewById(R.id.tile_native_ad_image_view);
+                            final ImageView ratingImageView = (ImageView) layout.findViewById(R.id.tile_native_ad_rating_image_view);
+                            final Button button = (Button) layout.findViewById(R.id.tile_native_ad_button);
 
-                        // Fill in details in your view
-                        title.setText(ad.getTitle());
-                        button.setText(ad.getCTAText());
-                        description.setText(ad.getDescription());
-                        new Utils.DownloadImageTask(ratingImageView).execute(ad.getRatingImageUrl());
+                            // Fill in details in your view
+                            title.setText(ad.getTitle());
+                            button.setText(ad.getCTAText());
+                            description.setText(ad.getDescription());
+                            new Utils.DownloadImageTask(ratingImageView).execute(ad.getRatingImageUrl());
 
-                        // Load the advertisement's creative into your ImageView
-                        avocarrotCustom.loadIcon(ad, imageIconView);
+                            // Load the advertisement's creative into your ImageView
+                            avocarrotCustom.loadIcon(ad, imageIconView);
 
-                        // Bind view
-                        avocarrotCustom.bindView(ad, layout);
+                            // Bind view
+                            avocarrotCustom.bindView(ad, layout);
 
-                        // Set click listener
-                        final View.OnClickListener clickListener = new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                avocarrotCustom.handleClick(ad);
-                            }
-                        };
-                        button.setOnClickListener(clickListener);
-                        avocarrotContainerLayout.setOnClickListener(clickListener);
+                            // Set click listener
+                            final View.OnClickListener clickListener = new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    avocarrotCustom.handleClick(ad);
+                                }
+                            };
+                            button.setOnClickListener(clickListener);
+                            avocarrotContainerLayout.setOnClickListener(clickListener);
+
+                        } finally {
+                            doneWithLoaderInstance(AvocarrotNativeAdTile.this, loader);
+                        }
                     }
                 });
         // Load the ads(s)
