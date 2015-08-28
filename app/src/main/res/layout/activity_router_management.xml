@@ -94,10 +94,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 app:elevation="6dp"
                 app:pressedTranslationZ="12dp"
                 app:layout_anchorGravity="bottom|right|end"
-                android:layout_alignBottom="@+id/router_list_remove_ads"
+                android:layout_alignRight="@+id/router_list_remove_ads"
+                android:layout_alignEnd="@+id/router_list_remove_ads"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true" />
+                android:layout_alignParentEnd="true"/>
 
             <!--<ImageButton-->
                 <!--android:id="@+id/router_list_add"-->
