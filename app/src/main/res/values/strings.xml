@@ -328,9 +328,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="update_router">Update</string>
     <string name="router_add_msg">Add a new router</string>
     <string name="router_add_dialog_msg">See http://rm3l.org/apps/ddwrt-companion/ddwrt/ssh for instructions on how to setup SSH on your DD-WRT router.</string>
-    <string name="router_add_dialog_msg_ads">See http://rm3l.org/apps/ddwrt-companion/ddwrt/_ssh for instructions on how to setup SSH on your DD-WRT router.</string>
+    <string name="router_add_dialog_msg_ads">See http://rm3l.org/apps/ddwrt-companion/ddwrt/ssh for instructions on how to setup SSH on your DD-WRT router.</string>
     <string name="router_add_dialog_msg_openwrt">See http://rm3l.org/apps/ddwrt-companion/openwrt/ssh for instructions on how to setup SSH on your OpenWrt router.</string>
-    <string name="router_add_dialog_msg_openwrt_ads">See http://rm3l.org/apps/ddwrt-companion/openwrt/_ssh for instructions on how to setup SSH on your OpenWrt router.</string>
+    <string name="router_add_dialog_msg_openwrt_ads">See http://rm3l.org/apps/ddwrt-companion/openwrt/ssh for instructions on how to setup SSH on your OpenWrt router.</string>
     <string name="router_update_msg">Update router</string>
     <string name="router_add_connection_unsuccessful">Could not connect to router</string>
     <string name="router_add_dns_or_ip_invalid">Invalid DNS name or IP Address</string>
