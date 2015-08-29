@@ -114,6 +114,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -443,7 +444,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             if (BuildConfig.WITH_ADS) {
 
-                                if (mInterstitialAdForActiveIPConnections != null) {
+                                if (mInterstitialAdForActiveIPConnections != null
+                                        && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
                                     mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
                                         @Override
                                         public void onAdClosed() {
@@ -452,6 +454,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                             }
                                             mParentFragmentActivity.startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void onAdOpened() {
+                                            //Save preference
+                                            mGlobalPreferences.edit()
+                                                    .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                            Encrypted.e(Long.toString(System.currentTimeMillis())))
+                                                    .apply();
                                         }
                                     });
 

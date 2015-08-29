@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -659,11 +660,22 @@ public class RouterManagementActivity
     @Override
     public void onBackPressed() {
         if (BuildConfig.WITH_ADS) {
-            if (mInterstitialAd != null) {
+            if (mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
                 mInterstitialAd.setAdListener(new AdListener() {
                     @Override
                     public void onAdClosed() {
                         RouterManagementActivity.super.onBackPressed();
+                    }
+
+                    @Override
+                    public void onAdOpened() {
+                        //Save preference
+                        getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                Context.MODE_PRIVATE)
+                                .edit()
+                                .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                        Encrypted.e(Long.toString(System.currentTimeMillis())))
+                                .apply();
                     }
                 });
 

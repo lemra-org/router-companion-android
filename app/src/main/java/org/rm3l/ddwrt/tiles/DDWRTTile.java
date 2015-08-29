@@ -52,6 +52,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -333,7 +334,7 @@ public abstract class DDWRTTile<T>
             onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             if (BuildConfig.WITH_ADS) {
-                if (mTileClickInterstitialAd != null) {
+                if (mTileClickInterstitialAd != null && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
                     mTileClickInterstitialAd.setAdListener(new AdListener() {
                         @Override
                         public void onAdClosed() {
@@ -343,6 +344,15 @@ public abstract class DDWRTTile<T>
                             }
                             ((AbstractBaseFragment) mParentFragment)
                                     .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
+                        }
+
+                        @Override
+                        public void onAdOpened() {
+                            //Save preference
+                            mGlobalPreferences.edit()
+                                    .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                            Encrypted.e(Long.toString(System.currentTimeMillis())))
+                                    .apply();
                         }
                     });
 

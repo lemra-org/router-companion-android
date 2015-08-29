@@ -96,6 +96,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -564,12 +565,21 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                     if (BuildConfig.WITH_ADS) {
 
-                        if (mInterstitialAd != null) {
+                        if (mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
                             mInterstitialAd.setAdListener(new AdListener() {
                                 @Override
                                 public void onAdClosed() {
                                     finish();
                                     startActivity(intent);
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    //Save preference
+                                    mGlobalPreferences.edit()
+                                            .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                    Encrypted.e(Long.toString(System.currentTimeMillis())))
+                                            .apply();
                                 }
                             });
 

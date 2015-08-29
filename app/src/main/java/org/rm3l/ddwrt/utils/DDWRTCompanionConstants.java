@@ -128,6 +128,7 @@ public final class DDWRTCompanionConstants {
     public static final String ACRA_ENABLE = "acra.enable";
     public static final String DEMO = "--- DEMO ---";
     public static final int RATING_INITIAL_LAUNCH_COUNT = 7;
+    public static final String AD_LAST_INTERSTITIAL_PREF = "ad.lastInterstitial";
 
     public static int MB = 1024 * 1024;
 
@@ -138,6 +139,8 @@ public final class DDWRTCompanionConstants {
     public static final String TO_REMOVE = "TO_REMOVE";
 
     public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
+
+    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 15l;
 
     private DDWRTCompanionConstants() {
     }

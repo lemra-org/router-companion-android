@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -55,6 +56,7 @@ import com.google.zxing.common.BitMatrix;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -377,11 +379,22 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
         if (BuildConfig.WITH_ADS) {
 
-            if (mInterstitialAd != null) {
+            if (mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
                 mInterstitialAd.setAdListener(new AdListener() {
                     @Override
                     public void onAdClosed() {
                         WirelessIfaceQrCodeActivity.super.finish();
+                    }
+
+                    @Override
+                    public void onAdOpened() {
+                        //Save preference
+                        getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                Context.MODE_PRIVATE)
+                                .edit()
+                                .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                        Encrypted.e(Long.toString(System.currentTimeMillis())))
+                                .apply();
                     }
                 });
 
