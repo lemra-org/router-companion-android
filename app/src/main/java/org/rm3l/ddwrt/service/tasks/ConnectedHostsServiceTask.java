@@ -387,7 +387,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                 final Intent resultIntent = new Intent(mCtx,
                         DDWRTMainActivity.class);
                 resultIntent.putExtra(ROUTER_SELECTED, router.getUuid());
-                resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 3); //Open right on Clients Section
+                resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 4); //Open right on Clients Section
                 // Because clicking the notification opens a new ("special") activity, there's
                 // no need to create an artificial back stack.
                 final PendingIntent resultPendingIntent =

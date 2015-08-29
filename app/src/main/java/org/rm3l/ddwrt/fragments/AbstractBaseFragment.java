@@ -63,6 +63,7 @@ import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortTriggeringFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSQoSFragment;
 import org.rm3l.ddwrt.fragments.nat_qos.NATQoSUPnPFragment;
+import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
 import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragment;
 import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
@@ -467,9 +468,16 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 Utils.isDemoRouter(routerFromDB));
 
         switch (parentSectionNumber) {
+            case 1:
+                parentSectionTitle = resources.getString(R.string.overview);
+                tabsToSort = new AbstractBaseFragment[1];
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, OverviewNetworkTopologyMapFragment.class, parentSectionTitle,
+                        resources.getString(R.string.overview_ntm), router);
+                break;
+
             //Status: {Status, Wireless, Clients, Monitoring}
             //In DD-WRT: Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-            case 1:
+            case 2:
                 parentSectionTitle = resources.getString(R.string.status);
                 if (isDemoRouter) {
                     tabsToSort = new AbstractBaseFragment[2];
@@ -491,21 +499,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                             resources.getString(R.string.status_syslog), router);
                 }
                 break;
-            case 2:
+            case 3:
                 //Status > Wireless
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[1];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_wireless), router);
                 break;
-            case 3:
+            case 4:
                 //Status > Clients
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[1];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
                         resources.getString(R.string.status_clients), router);
                 break;
-            case 4:
+            case 5:
                 //Status > Monitoring
                 parentSectionTitle = resources.getString(R.string.status);
                 tabsToSort = new AbstractBaseFragment[2];

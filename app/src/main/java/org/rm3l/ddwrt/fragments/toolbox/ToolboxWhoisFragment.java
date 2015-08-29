@@ -28,7 +28,7 @@ import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.toolbox.ToolboxWhoisTile;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ToolboxWhoisFragment extends AbstractBaseFragment {
@@ -36,6 +36,7 @@ public class ToolboxWhoisFragment extends AbstractBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new ToolboxWhoisTile(this, savedInstanceState, this.router));
+        return Collections.<DDWRTTile>
+                singletonList(new ToolboxWhoisTile(this, savedInstanceState, this.router));
     }
 }
