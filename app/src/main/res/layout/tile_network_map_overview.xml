@@ -25,15 +25,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tile_network_map_title"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/tile_network_map_hdr"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="@string/ntm"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold" />
+        android:paddingTop="4.0dip">
+
+        <TextView
+            android:id="@+id/tile_network_map_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/ntm"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/tile_network_map_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"
@@ -100,11 +119,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textOn="ON"
                 android:visibility="gone"/>
 
-            <!-- Wireless Devices -->
+            <!-- Active Clients -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wired Devices"
+                android:text="# Active Clients"
                 android:textStyle="bold" />
 
             <TextView
@@ -116,7 +135,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space" />
 
             <TextView
-                android:id="@+id/tile_network_map_wired_nb"
+                android:id="@+id/tile_network_map_active_clients"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -125,11 +144,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="false"
                 android:text="@string/loading" />
 
-            <!-- Wired Devices -->
+            <!-- Active DHCP Leases -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wireless Devices"
+                android:text="#Active DHCP Leases"
                 android:textStyle="bold" />
 
             <TextView
@@ -141,7 +160,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space" />
 
             <TextView
-                android:id="@+id/tile_network_map_wireless_nb"
+                android:id="@+id/tile_network_map_active_dhcp_leases"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -193,7 +212,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:layout_gravity="end"
-                        android:textAppearance="?android:textAppearanceMedium"
                         android:text="WAN IP: 216.58.211.78"/>
 
                     <LinearLayout
@@ -208,7 +226,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:layout_gravity="end"
-                            android:textAppearance="?android:textAppearanceMedium"
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="-"/>
@@ -228,7 +245,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:layout_gravity="end"
-                        android:textAppearance="?android:textAppearanceMedium"
                         android:text="LAN IP: 172.17.17.254"/>
 
                 </LinearLayout>
@@ -249,7 +265,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:background="@drawable/simple_circle_gradient"
                         android:gravity="center"
                         android:textAppearance="?android:textAppearanceLarge"
-                        android:textStyle="bold"
                         android:text="100"
                         android:textColor="#FFFFFF"
                         android:textSize="28sp"/>
@@ -259,9 +274,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="device(s)"
-                        android:textSize="20sp"/>
+                        android:text="device(s)"/>
 
                 </LinearLayout>
 
