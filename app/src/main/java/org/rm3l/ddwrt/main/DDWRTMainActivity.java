@@ -1107,7 +1107,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public void selectItem(int position) {
+    private void selectItem(int position) {
 
         Log.d(TAG, "selectItem @" + position);
         if (position < 0) {
@@ -1415,11 +1415,19 @@ public class DDWRTMainActivity extends ActionBarActivity
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
-            selectItem(position);
-            mNavigationDrawerAdapter.setSelectedItem(position);
-            mNavigationDrawerAdapter.notifyDataSetChanged();
-            mDrawerLayout.invalidate();
+            selectItemInDrawer(position);
+//            selectItem(position);
+//            mNavigationDrawerAdapter.setSelectedItem(position);
+//            mNavigationDrawerAdapter.notifyDataSetChanged();
+//            mDrawerLayout.invalidate();
         }
+    }
+
+    public void selectItemInDrawer(int position) {
+        selectItem(position);
+        mNavigationDrawerAdapter.setSelectedItem(position);
+        mNavigationDrawerAdapter.notifyDataSetChanged();
+        mDrawerLayout.invalidate();
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {

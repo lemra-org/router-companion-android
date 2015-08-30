@@ -85,7 +85,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 //Open Router State tab
                 if (mParentFragmentActivity instanceof DDWRTMainActivity) {
                     ((DDWRTMainActivity) mParentFragmentActivity)
-                            .selectItem(2);
+                            .selectItemInDrawer(2);
                 } else {
                     //TODO Set proper flags ???
                     final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
@@ -102,7 +102,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 //Open tab with wireless devices
                 if (mParentFragmentActivity instanceof DDWRTMainActivity) {
                     ((DDWRTMainActivity) mParentFragmentActivity)
-                            .selectItem(4);
+                            .selectItemInDrawer(4);
                 } else {
                     //TODO Set proper flags ???
                     final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
