@@ -170,6 +170,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/loading" />
 
             <LinearLayout
+                android:id="@+id/tile_network_map_container"
                 android:layout_columnSpan="3"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
@@ -188,7 +189,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:src="@drawable/internet"
-                        android:contentDescription="Router" />
+                        android:contentDescription="Internet" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -213,7 +214,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:layout_gravity="end"
-                        android:text="WAN IP: 216.58.211.78"/>
+                        android:text="Loading WAN IP..."/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -229,9 +230,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_gravity="end"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:text="-"/>
+                            android:text="..."/>
 
                         <ImageView
+                            android:id="@+id/tile_network_map_router_imageView"
                             android:layout_width="120dp"
                             android:layout_height="71dp"
                             android:src="@drawable/router"
@@ -246,7 +248,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:layout_gravity="end"
-                        android:text="LAN IP: 172.17.17.254"/>
+                        android:text="Loading LAN IP..."/>
 
                 </LinearLayout>
 
@@ -266,7 +268,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:background="@drawable/simple_circle_gradient"
                         android:gravity="center"
                         android:textAppearance="?android:textAppearanceLarge"
-                        android:text="100"
+                        android:text="..."
                         android:textColor="#FFFFFF"
                         android:textSize="28sp"/>
 
@@ -275,7 +277,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:text="device(s)"/>
+                        android:text="Device(s)"/>
 
                 </LinearLayout>
 

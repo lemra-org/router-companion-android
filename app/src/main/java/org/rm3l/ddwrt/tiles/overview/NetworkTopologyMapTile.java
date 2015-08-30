@@ -11,6 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.widgets.DrawView;
 
 import java.util.Random;
 import java.util.UUID;
@@ -249,6 +251,32 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
+                final View internetImageView = layout.findViewById(R.id.tile_network_map_wan_imageView);
+                final View routerImageView = layout.findViewById(R.id.tile_network_map_router_imageView);
+                final TextView devicesCountTextView
+                        = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
+
+                //Get Views coords
+                final int[] internetImageViewCoords = new int[2];
+                internetImageView.getLocationOnScreen(internetImageViewCoords);
+                final int[] routerImageViewCoords = new int[2];
+                routerImageView.getLocationOnScreen(routerImageViewCoords);
+                final int[] devicesCountTextViewCoords = new int[2];
+                devicesCountTextView.getLocationOnScreen(devicesCountTextViewCoords);
+
+                //Display NTM paths
+                final DrawView routerToInternetPath = new DrawView(
+                        mParentFragmentActivity,
+                        routerImageViewCoords[0], routerImageViewCoords[0],
+                        internetImageViewCoords[1], internetImageViewCoords[1]);
+                final DrawView routerToLocalNetworkPath = new DrawView(
+                        mParentFragmentActivity,
+                        routerImageViewCoords[1], routerImageViewCoords[1],
+                        devicesCountTextViewCoords[0], devicesCountTextViewCoords[0]);
+                final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+                mapContainerView.addView(routerToInternetPath);
+                mapContainerView.addView(routerToLocalNetworkPath);
+
                 //Router Name
                 final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);
                 final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
@@ -278,14 +306,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final int nbActiveDhcpLeasesInt = nbDhcpLeases.intValue();
                 activeDhcpLeasesView.setText(nbActiveDhcpLeasesInt < 0 ? "-" : Integer.toString(nbActiveDhcpLeasesInt));
 
-                final TextView devicesCountTextView
-                        = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
                 devicesCountTextView.setText(nbActiveClientsInt < 0 ? "-" : Integer.toString(nbActiveClientsInt));
 
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
-                        .setText("device" + (nbActiveClientsInt > 1 ? "s" : ""));
+                        .setText("Device" + (nbActiveClientsInt > 1 ? "s" : ""));
 
-                layout.findViewById(R.id.tile_network_map_wan_imageView)
+                internetImageView
                         .setOnClickListener(routerStateClickListener);
 
                 layout.findViewById(R.id.tile_network_map_router)
