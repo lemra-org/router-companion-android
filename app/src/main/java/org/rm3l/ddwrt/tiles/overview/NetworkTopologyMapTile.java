@@ -116,7 +116,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public int getTileHeaderViewId() {
-        return R.id.tile_network_map_hdr;
+//        return R.id.tile_network_map_hdr;
+        return -1;
     }
 
     @Override
@@ -311,13 +312,13 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            final View tileMenu = layout.findViewById(R.id.tile_network_map_menu);
-            if ("-".equals(((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView))
-                    .getText().toString())) {
-                tileMenu.setVisibility(View.GONE);
-            } else {
-                tileMenu.setVisibility(View.VISIBLE);
-            }
+//            final View tileMenu = layout.findViewById(R.id.tile_network_map_menu);
+//            if ("-".equals(((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView))
+//                    .getText().toString())) {
+//                tileMenu.setVisibility(View.GONE);
+//            } else {
+//                tileMenu.setVisibility(View.VISIBLE);
+//            }
         } finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
