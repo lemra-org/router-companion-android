@@ -359,10 +359,13 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 inflater.inflate(R.menu.tile_status_wireless_clients_options, menu);
 
                 //Disable menu item from preference
-                if (mParentFragmentPreferences != null &&
-                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
-                    //Mark as checked
-                    menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
+                if (mParentFragmentPreferences != null) {
+                    if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
+                        menu.findItem(R.id.tile_status_wireless_clients_hide_inactive_hosts).setChecked(true);
+                    }
+                    if (mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false)) {
+                        menu.findItem(R.id.tile_status_wireless_clients_wireless_devices_only).setChecked(true);
+                    }
                 }
 
                 final MenuItem rtMenuItem = menu.findItem(R.id.tile_status_wireless_clients_realtime_graphs);
@@ -1600,8 +1603,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 //Compute number of wireless clients
                 int nbWirelessClients = 0;
-                //Compute number of wired clients
-                int nbWiredClients = 0;
 
                 //final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
 
@@ -1793,7 +1794,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
 
                     } else {
-                        nbWiredClients++;
                         for (View wirelessRelatedView : wirelessRelatedViews) {
                             wirelessRelatedView.setVisibility(View.GONE);
                         }
@@ -2285,9 +2285,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_wireless_clients_num))
                         .setText(nbWirelessClients >= 0 ? String.valueOf(nbWirelessClients) : EMPTY_VALUE_TO_DISPLAY);
-
-                ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_wired_clients_num))
-                        .setText(nbWiredClients >= 0 ? String.valueOf(nbWiredClients) : EMPTY_VALUE_TO_DISPLAY);
 
                 //Filters
                 Set<Device> newDevices =
