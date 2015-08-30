@@ -1107,7 +1107,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void selectItem(int position) {
+    public void selectItem(int position) {
 
         Log.d(TAG, "selectItem @" + position);
         if (position < 0) {
