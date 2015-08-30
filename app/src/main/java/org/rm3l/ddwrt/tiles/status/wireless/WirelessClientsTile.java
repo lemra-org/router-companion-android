@@ -123,6 +123,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.HideInactiveClientsFilterVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl;
+import org.rm3l.ddwrt.tiles.status.wireless.filter.impl.ShowWirelessDevicesOnlyClientsFilterVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.ClientsSortingVisitor;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.ClientsAlphabeticalSortingVisitorImpl;
 import org.rm3l.ddwrt.tiles.status.wireless.sort.impl.LastSeenClientsSortingVisitorImpl;
@@ -175,6 +176,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFi
 public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements PopupMenu.OnMenuItemClickListener {
 
     public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
+    public static final String WIRELESS_DEVICES_ONLY = "wirelessDevicesOnly";
     public static final String SORT_LAST_SEEN = "sort_last_seen";
     public static final String SORT = "sort";
     public static final String SORT_TOP_TALKERS = SORT + "_top_talkers";
@@ -1596,7 +1598,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 final Set<Device> devices = data.getDevices(MAX_CLIENTS_TO_SHOW_IN_TILE);
 
-//            final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
+                //Compute number of wireless clients
+                int nbWirelessClients = 0;
+                //Compute number of wired clients
+                int nbWiredClients = 0;
+
+                //final int themeBackgroundColor = getThemeBackgroundColor(mParentFragmentActivity, mRouter.getUuid());
 
                 final String expandedClientsPrefKey = \"fake-key\";
 
@@ -1689,6 +1696,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //Now if is wireless client or not
                     final Device.WirelessConnectionInfo wirelessConnectionInfo = device.getWirelessConnectionInfo();
                     if (wirelessConnectionInfo != null) {
+                        nbWirelessClients++;
                         for (View wirelessRelatedView : wirelessRelatedViews) {
                             wirelessRelatedView.setVisibility(View.VISIBLE);
                         }
@@ -1785,6 +1793,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
 
                     } else {
+                        nbWiredClients++;
                         for (View wirelessRelatedView : wirelessRelatedViews) {
                             wirelessRelatedView.setVisibility(View.GONE);
                         }
@@ -2274,11 +2283,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     currentDevicesViewsMap.put(device, cardView);
                 }
 
+                ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_wireless_clients_num))
+                        .setText(nbWirelessClients >= 0 ? String.valueOf(nbWirelessClients) : EMPTY_VALUE_TO_DISPLAY);
+
+                ((TextView) layout.findViewById(R.id.tile_status_wireless_clients_wired_clients_num))
+                        .setText(nbWiredClients >= 0 ? String.valueOf(nbWiredClients) : EMPTY_VALUE_TO_DISPLAY);
+
                 //Filters
                 Set<Device> newDevices =
                         new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
                                 .visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false))
+                                .visit(newDevices);
+
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
@@ -2456,6 +2477,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
                                 .visit(newDevices);
 
+                newDevices =
+                        new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false))
+                                .visit(newDevices);
+
                 newDevices = applyCurrentSortingStrategy(newDevices);
 
                 clientsContainer.removeAllViews();
@@ -2484,6 +2510,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false))
+                                .visit(newDevices);
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
                                 .visit(newDevices);
 
@@ -2505,6 +2536,42 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
                 return true;
             }
+            case R.id.tile_status_wireless_clients_wireless_devices_only: {
+                final boolean showWirelessOnly = !item.isChecked();
+
+                //Filter
+                Set<Device> newDevices =
+                        new ShowWirelessDevicesOnlyClientsFilterVisitorImpl(showWirelessOnly)
+                                .visit(currentDevicesViewsMap.keySet());
+
+                newDevices =
+                        new HideInactiveClientsFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false))
+                                .visit(newDevices);
+
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))
+                                .visit(newDevices);
+
+                newDevices = applyCurrentSortingStrategy(newDevices);
+
+                clientsContainer.removeAllViews();
+                for (final Device device : newDevices) {
+                    final View view;
+                    if ((view = currentDevicesViewsMap.get(device)) != null) {
+                        clientsContainer.addView(view);
+                    }
+                }
+
+                //Save preference
+                if (mParentFragmentPreferences != null) {
+                    mParentFragmentPreferences.edit()
+                            .putBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), showWirelessOnly)
+                            .apply();
+                }
+                return true;
+            }
             case R.id.tile_status_wireless_clients_sort_a_z:
             case R.id.tile_status_wireless_clients_sort_z_a:
             case R.id.tile_status_wireless_clients_sort_top_senders:
@@ -2519,6 +2586,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 //Filters
                 Set<Device> newDevices =
                         new HideInactiveClientsFilterVisitorImpl(hideInactive).visit(currentDevicesViewsMap.keySet());
+                newDevices =
+                        new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
+                                mParentFragmentPreferences.getBoolean(getFormattedPrefKey(WIRELESS_DEVICES_ONLY), false))
+                                .visit(newDevices);
                 newDevices =
                         new ShowOnlyHostsWithWANAccessDisabledFilterVisitorImpl(mParentFragmentPreferences != null &&
                                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(SHOW_ONLY_WAN_ACCESS_DISABLED_HOSTS), false))

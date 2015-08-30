@@ -29,13 +29,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <menu>
 
+            <item
+                android:id="@+id/tile_status_wireless_clients_wireless_devices_only"
+                android:checkable="true"
+                android:checked="false"
+                android:icon="@drawable/ic_action_device_signal_wifi_4_bar_white"
+                android:orderInCategory="1"
+                android:title="@string/show_wireless_hosts_only"
+                app:showAsAction="never" />
+
             <!-- Display/Hide Inactive hosts -->
             <item
                 android:id="@+id/tile_status_wireless_clients_hide_inactive_hosts"
                 android:checkable="true"
                 android:checked="false"
                 android:icon="@drawable/ic_action_av_snooze"
-                android:orderInCategory="1"
+                android:orderInCategory="2"
                 android:title="@string/hide_inactive_hosts"
                 app:showAsAction="never" />
 
@@ -45,7 +54,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:checkable="true"
                 android:checked="false"
                 android:icon="@drawable/ic_action_notification_do_not_disturb"
-                android:orderInCategory="2"
+                android:orderInCategory="3"
                 android:title="@string/show_only_hosts_with_wan_access_disabled"
                 app:showAsAction="never" />
 
