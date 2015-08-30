@@ -525,7 +525,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
             //Services: {OpenVPN}
             //In DD-WRT: Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
-            case 6:
+            case 7:
                 //Services > OpenVPN
                 parentSectionTitle = resources.getString(R.string.services);
                 tabsToSort = new AbstractBaseFragment[2];
@@ -557,7 +557,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.services_webserver), router);
                 break;
-            case 7:
+            case 8:
                 //Services > Wake On LAN
                 //TODO
                 parentSectionTitle = resources.getString(R.string.services);
@@ -569,14 +569,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 break;
             //Admin: {Commands, NVRAM}
             //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-            case 9:
+            case 10:
                 //Admin > Commands
                 parentSectionTitle = resources.getString(R.string.commands);
                 tabsToSort = new AbstractBaseFragment[1];
                 tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
                         resources.getString(R.string.command_shell), router);
                 break;
-            case 10:
+            case 11:
                 //Admin > NVRAM
                 parentSectionTitle = resources.getString(R.string.admin_area);
                 tabsToSort = new AbstractBaseFragment[1];
@@ -603,7 +603,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             //Toolbox
             //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
             //In DD-WRT: N/A
-            case 12:
+            case 13:
                 //Toolbox > Network
                 //FIXME Add "netstat" also (auto-refreshable)
                 parentSectionTitle = resources.getString(R.string.toolbox);
