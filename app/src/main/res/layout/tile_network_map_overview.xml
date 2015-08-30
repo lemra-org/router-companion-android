@@ -25,11 +25,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/tile_network_map_hdr"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4.0dip">
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/tile_network_map_hdr"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingTop="4.0dip">-->
 
         <TextView
             android:id="@+id/tile_network_map_title"
@@ -41,18 +41,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/tile_network_map_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/menu"
-            android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"
-            android:visibility="gone" />
+        <!--<ImageButton-->
+            <!--android:id="@+id/tile_network_map_menu"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:contentDescription="@string/menu"-->
+            <!--android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"-->
+            <!--android:visibility="gone" />-->
 
-    </RelativeLayout>
+    <!--</RelativeLayout>-->
 
     <View
         android:layout_width="fill_parent"
@@ -184,6 +184,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/tile_network_map_wan_imageView"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:src="@drawable/internet"

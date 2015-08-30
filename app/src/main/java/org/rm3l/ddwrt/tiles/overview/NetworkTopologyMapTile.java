@@ -10,12 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +33,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
-public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
+public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
+//        implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = NetworkTopologyMapTile.class.getSimpleName();
+    private final View.OnClickListener routerStateClickListener;
+    private final View.OnClickListener clientsOnClickListener;
 
-    public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
+    //    public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
     private boolean isThemeLight;
     private final AtomicInteger nbActiveClients = new AtomicInteger(-1);
     private final AtomicInteger nbDhcpLeases = new AtomicInteger(-1);
@@ -55,31 +53,65 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> implements Popu
                 R.id.tile_network_map_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-        // Create Options Menu
-        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_network_map_menu);
-        if (!isThemeLight) {
-            //Set menu background to white
-            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-        }
-        tileMenu.setOnClickListener(new View.OnClickListener() {
+//        // Create Options Menu
+//        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_network_map_menu);
+//        if (!isThemeLight) {
+//            //Set menu background to white
+//            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+//        }
+//        tileMenu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+//                popup.setOnMenuItemClickListener(NetworkTopologyMapTile.this);
+//                final MenuInflater inflater = popup.getMenuInflater();
+//                final Menu menu = popup.getMenu();
+//                inflater.inflate(R.menu.tile_overview_network_map_options, menu);
+//
+//                //Disable menu item from preference
+//                if (mParentFragmentPreferences != null &&
+//                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
+//                    //Mark as checked
+//                    menu.findItem(R.id.tile_overview_network_map_hide_inactive_hosts).setChecked(true);
+//                }
+//
+//                popup.show();
+//            }
+//        });
+
+        routerStateClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                popup.setOnMenuItemClickListener(NetworkTopologyMapTile.this);
-                final MenuInflater inflater = popup.getMenuInflater();
-                final Menu menu = popup.getMenu();
-                inflater.inflate(R.menu.tile_overview_network_map_options, menu);
-
-                //Disable menu item from preference
-                if (mParentFragmentPreferences != null &&
-                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
-                    //Mark as checked
-                    menu.findItem(R.id.tile_overview_network_map_hide_inactive_hosts).setChecked(true);
+                //Open Router State tab
+                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+                    ((DDWRTMainActivity) mParentFragmentActivity)
+                            .selectItem(2);
+                } else {
+                    //TODO Set proper flags ???
+                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
+                    mParentFragmentActivity.startActivity(intent);
                 }
-
-                popup.show();
             }
-        });
+        };
+
+        clientsOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open tab with wireless devices
+                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+                    ((DDWRTMainActivity) mParentFragmentActivity)
+                            .selectItem(4);
+                } else {
+                    //TODO Set proper flags ???
+                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 4);
+                    mParentFragmentActivity.startActivity(intent);
+                }
+            }
+        };
     }
 
     @Override
@@ -245,51 +277,20 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> implements Popu
                 final int nbActiveDhcpLeasesInt = nbDhcpLeases.intValue();
                 activeDhcpLeasesView.setText(nbActiveDhcpLeasesInt < 0 ? "-" : Integer.toString(nbActiveDhcpLeasesInt));
 
-                int totalDevicesCount = -1;
-                if (nbActiveClientsInt >= 0 && nbActiveDhcpLeasesInt >= 0) {
-                    totalDevicesCount = (nbActiveClientsInt + nbActiveDhcpLeasesInt);
-                }
                 final TextView devicesCountTextView
                         = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-                devicesCountTextView.setText(totalDevicesCount < 0 ? "-" : Integer.toString(totalDevicesCount));
+                devicesCountTextView.setText(nbActiveClientsInt < 0 ? "-" : Integer.toString(nbActiveClientsInt));
 
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
-                        .setText("device" + (totalDevicesCount > 1 ? "s" : ""));
+                        .setText("device" + (nbActiveClientsInt > 1 ? "s" : ""));
+
+                layout.findViewById(R.id.tile_network_map_wan_imageView)
+                        .setOnClickListener(routerStateClickListener);
 
                 layout.findViewById(R.id.tile_network_map_router)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //Open Router State tab
-                                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-                                    ((DDWRTMainActivity) mParentFragmentActivity)
-                                            .selectItem(2);
-                                } else {
-                                    //TODO Set proper flags ???
-                                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
-                                    mParentFragmentActivity.startActivity(intent);
-                                }
-                            }
-                        });
+                        .setOnClickListener(routerStateClickListener);
 
-                devicesCountTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Open tab with wireless devices
-                        if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-                            ((DDWRTMainActivity) mParentFragmentActivity)
-                                    .selectItem(4);
-                        } else {
-                            //TODO Set proper flags ???
-                            final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                            intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                            intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 4);
-                            mParentFragmentActivity.startActivity(intent);
-                        }
-                    }
-                });
+                devicesCountTextView.setOnClickListener(clientsOnClickListener);
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -330,43 +331,41 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> implements Popu
                         R.id.tile_network_map_togglebutton_title,
                         R.id.tile_network_map_togglebutton_separator);
             }
-
         }
-
     }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        final int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.tile_overview_network_map_hide_inactive_hosts: {
-                final boolean hideInactive = !item.isChecked();
-
-                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Update with count of active clients
-                        int nbActiveClientsInt = nbActiveClients.intValue();
-                        final TextView devicesCountTextView
-                                = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-                        devicesCountTextView.setText(nbActiveClientsInt < 0 ? "-" : Integer.toString(nbActiveClientsInt));
-
-                        ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
-                                .setText("device" + (nbActiveClientsInt > 1 ? "s" : ""));
-                    }
-                });
-
-                //Save preference
-                if (mParentFragmentPreferences != null) {
-                    mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
-                            .apply();
-                }
-                return true;
-            }
-            default:
-                break;
-        }
-        return false;
-    }
+//
+//    @Override
+//    public boolean onMenuItemClick(MenuItem item) {
+//        final int itemId = item.getItemId();
+//        switch (itemId) {
+//            case R.id.tile_overview_network_map_hide_inactive_hosts: {
+//                final boolean hideInactive = !item.isChecked();
+//
+//                mParentFragmentActivity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //Update with count of active clients
+//                        int nbActiveClientsInt = nbActiveClients.intValue();
+//                        final TextView devicesCountTextView
+//                                = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
+//                        devicesCountTextView.setText(nbActiveClientsInt < 0 ? "-" : Integer.toString(nbActiveClientsInt));
+//
+//                        ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
+//                                .setText("device" + (nbActiveClientsInt > 1 ? "s" : ""));
+//                    }
+//                });
+//
+//                //Save preference
+//                if (mParentFragmentPreferences != null) {
+//                    mParentFragmentPreferences.edit()
+//                            .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
+//                            .apply();
+//                }
+//                return true;
+//            }
+//            default:
+//                break;
+//        }
+//        return false;
+//    }
 }
