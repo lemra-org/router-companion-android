@@ -13,7 +13,6 @@ import com.google.android.gms.ads.InterstitialAd;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
-import org.rm3l.ddwrt.resources.Encrypted;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -114,21 +113,15 @@ public final class AdUtils {
         if ((!BuildConfig.WITH_ADS) || ctx == null) {
             return false;
         }
-        String lastInterstitialAdStr = ctx.getSharedPreferences(
+        long lastInterstitialAd = ctx.getSharedPreferences(
                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .getString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF, null);
-        if (lastInterstitialAdStr == null) {
-            return true;
-        }
-        lastInterstitialAdStr = Encrypted.d(lastInterstitialAdStr);
-        try {
-            final Long lastInterstitialAd = Long.valueOf(lastInterstitialAdStr);
-            return (TimeUnit.MINUTES.convert(System.currentTimeMillis() - lastInterstitialAd, TimeUnit.MILLISECONDS)
-                    >= DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES);
-        } catch (final Exception e) {
-            Utils.reportException(e);
-            return false;
-        }
+                .getLong(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF, -1l);
+        return lastInterstitialAd < 0l ||
+                (TimeUnit.MINUTES
+                        .convert(
+                                System.currentTimeMillis() - lastInterstitialAd,
+                                TimeUnit.MILLISECONDS)
+                        >= DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES);
     }
 
 //    public static NativeViewBinder getMobFoxNativeViewBinder() {
