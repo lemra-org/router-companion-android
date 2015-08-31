@@ -182,8 +182,6 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Nullable
     private InterstitialAd mInterstitialAd;
-    private NetworkChangeReceiver mNetworkChangeReceiver;
-
     private GoogleApiClient mGoogleApiClient;
 
     @Override
