@@ -73,6 +73,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -94,7 +95,7 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
     public static final int DEFAULT_BITMAP_WIDTH = 640;
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
     private static final String LOG_TAG = WANMonthlyTrafficActivity.class.getSimpleName();
-    private final String[] breakdownLines = new String[31];
+    private final List<String> breakdownLines = new ArrayList<>(31);
     private Toolbar mToolbar;
     private String mRouter;
     private String mMonthDisplayed;
@@ -264,10 +265,10 @@ public class WANMonthlyTrafficActivity extends ActionBarActivity {
                 final long inBytes = in.longValue() * MB;
                 final long outBytes = out.longValue() * MB;
 
-                breakdownLines[i] = String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
+                breakdownLines.add(String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
                         i + 1,
                         inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
-                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
+                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B")));
 
                 i++;
             }
