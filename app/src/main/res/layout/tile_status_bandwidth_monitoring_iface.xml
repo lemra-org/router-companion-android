@@ -24,10 +24,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/tile_status_bandwidth_monitoring"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.74"
         android:orientation="vertical"
@@ -74,8 +74,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:columnCount="3">
 
             <!-- Auto-refresh -->
@@ -110,27 +110,26 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textOn="ON"
                 android:visibility="gone" />
 
-        </GridLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="12.06">
-
-            <LinearLayout
-                android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:minHeight="250dp"/>
+                android:layout_height="fill_parent"
+                android:layout_columnSpan="3">
 
-            <ProgressBar
-                android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
+                <LinearLayout
+                    android:id="@+id/tile_status_bandwidth_monitoring_graph_placeholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:orientation="vertical"/>
 
-        </RelativeLayout>
+                <ProgressBar
+                    android:id="@+id/tile_status_bandwidth_monitoring_graph_loading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
+
+        </GridLayout>
 
     </LinearLayout>
 </LinearLayout>
