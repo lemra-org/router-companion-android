@@ -111,7 +111,7 @@ public final class AdUtils {
     }
 
     public static boolean canDisplayInterstialAd(@Nullable final Context ctx) {
-        if (ctx == null) {
+        if ((!BuildConfig.WITH_ADS) || ctx == null) {
             return false;
         }
         String lastInterstitialAdStr = ctx.getSharedPreferences(

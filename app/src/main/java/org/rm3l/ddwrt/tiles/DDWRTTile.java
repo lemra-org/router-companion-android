@@ -52,7 +52,6 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
-import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -333,48 +332,34 @@ public abstract class DDWRTTile<T>
 
             onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            if (BuildConfig.WITH_ADS) {
-                if (mTileClickInterstitialAd != null && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-                    mTileClickInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                            if (adRequest != null) {
-                                mTileClickInterstitialAd.loadAd(adRequest);
-                            }
-                            ((AbstractBaseFragment) mParentFragment)
-                                    .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                        }
+            if (BuildConfig.WITH_ADS &&
+                    mTileClickInterstitialAd != null &&
+                    AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                        @Override
-                        public void onAdOpened() {
-                            //Save preference
-                            mGlobalPreferences.edit()
-                                    .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                            Encrypted.e(Long.toString(System.currentTimeMillis())))
-                                    .apply();
+                mTileClickInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdClosed() {
+                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                        if (adRequest != null) {
+                            mTileClickInterstitialAd.loadAd(adRequest);
                         }
-                    });
-
-                    if (mTileClickInterstitialAd.isLoaded()) {
-                        mTileClickInterstitialAd.show();
-                    } else {
-                        final String dialogMsg = onClickIntentAndListener.getDialogMessage();
-                        //noinspection ConstantConditions
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((AbstractBaseFragment) mParentFragment)
-                                        .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
-                                alertDialog.cancel();
-                            }
-                        }, 2500);
+                        ((AbstractBaseFragment) mParentFragment)
+                                .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
                     }
 
+                    @Override
+                    public void onAdOpened() {
+                        //Save preference
+                        mGlobalPreferences.edit()
+                                .putLong(
+                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                        System.currentTimeMillis())
+                                .apply();
+                    }
+                });
+
+                if (mTileClickInterstitialAd.isLoaded()) {
+                    mTileClickInterstitialAd.show();
                 } else {
                     final String dialogMsg = onClickIntentAndListener.getDialogMessage();
                     //noinspection ConstantConditions

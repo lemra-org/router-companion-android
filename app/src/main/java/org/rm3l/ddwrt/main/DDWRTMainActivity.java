@@ -96,7 +96,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
-import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSettingsActivity;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -563,44 +562,29 @@ public class DDWRTMainActivity extends ActionBarActivity
                     intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
                     intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
 
-                    if (BuildConfig.WITH_ADS) {
+                    if (BuildConfig.WITH_ADS &&
+                            mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
 
-                        if (mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-                            mInterstitialAd.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdClosed() {
-                                    finish();
-                                    startActivity(intent);
-                                }
-
-                                @Override
-                                public void onAdOpened() {
-                                    //Save preference
-                                    mGlobalPreferences.edit()
-                                            .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                    Encrypted.e(Long.toString(System.currentTimeMillis())))
-                                            .apply();
-                                }
-                            });
-
-                            if (mInterstitialAd.isLoaded()) {
-                                mInterstitialAd.show();
-                            } else {
-                                //Reload UI
-                                final AlertDialog alertDialog = Utils.
-                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                alertDialog.show();
-                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                        startActivity(intent);
-                                        alertDialog.cancel();
-                                    }
-                                }, 2000);
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                finish();
+                                startActivity(intent);
                             }
 
+                            @Override
+                            public void onAdOpened() {
+                                //Save preference
+                                mGlobalPreferences.edit()
+                                        .putLong(
+                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                System.currentTimeMillis())
+                                        .apply();
+                            }
+                        });
+
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
                         } else {
                             //Reload UI
                             final AlertDialog alertDialog = Utils.

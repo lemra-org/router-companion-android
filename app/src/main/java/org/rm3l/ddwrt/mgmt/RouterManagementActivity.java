@@ -83,7 +83,6 @@ import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
-import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterManagementSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
@@ -659,32 +658,29 @@ public class RouterManagementActivity
 
     @Override
     public void onBackPressed() {
-        if (BuildConfig.WITH_ADS) {
-            if (mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
-                mInterstitialAd.setAdListener(new AdListener() {
-                    @Override
-                    public void onAdClosed() {
-                        RouterManagementActivity.super.onBackPressed();
-                    }
+        if (BuildConfig.WITH_ADS &&
+                mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
 
-                    @Override
-                    public void onAdOpened() {
-                        //Save preference
-                        getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                Context.MODE_PRIVATE)
-                                .edit()
-                                .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                        Encrypted.e(Long.toString(System.currentTimeMillis())))
-                                .apply();
-                    }
-                });
-
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                } else {
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
                     RouterManagementActivity.super.onBackPressed();
                 }
 
+                @Override
+                public void onAdOpened() {
+                    //Save preference
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                            Context.MODE_PRIVATE).edit()
+                            .putLong(
+                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    System.currentTimeMillis())
+                            .apply();
+                }
+            });
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
             } else {
                 RouterManagementActivity.super.onBackPressed();
             }
@@ -760,13 +756,24 @@ public class RouterManagementActivity
                         .apply();
             }
 
-            if (BuildConfig.WITH_ADS && mInterstitialAd != null) {
+            if (BuildConfig.WITH_ADS &&
+                    mInterstitialAd != null &&
+                    AdUtils.canDisplayInterstialAd(this)) {
                 mInterstitialAd.setAdListener(new AdListener() {
                         @Override
                         public void onAdClosed() {
                             startActivity(view, ddWrtMainIntent);
                         }
-                    });
+
+                        @Override
+                        public void onAdOpened() {
+                            mPreferences.edit()
+                                    .putLong(
+                                            DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                            System.currentTimeMillis())
+                                    .apply();
+                        }
+                });
 
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();

@@ -114,7 +114,6 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ClientDevices;
 import org.rm3l.ddwrt.resources.Device;
-import org.rm3l.ddwrt.resources.Encrypted;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -447,47 +446,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
 
-                            if (BuildConfig.WITH_ADS) {
+                            if (BuildConfig.WITH_ADS &&
+                                    mInterstitialAdForActiveIPConnections != null
+                                    && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                                if (mInterstitialAdForActiveIPConnections != null
-                                        && AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
-                                    mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                        @Override
-                                        public void onAdClosed() {
-                                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                            if (adRequest != null) {
-                                                mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                            }
-                                            mParentFragmentActivity.startActivity(intent);
+                                mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                    @Override
+                                    public void onAdClosed() {
+                                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                        if (adRequest != null) {
+                                            mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                         }
-
-                                        @Override
-                                        public void onAdOpened() {
-                                            //Save preference
-                                            mGlobalPreferences.edit()
-                                                    .putString(DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                            Encrypted.e(Long.toString(System.currentTimeMillis())))
-                                                    .apply();
-                                        }
-                                    });
-
-                                    if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                        mInterstitialAdForActiveIPConnections.show();
-                                    } else {
-                                        //noinspection ConstantConditions
-                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                "Loading...", false, false);
-                                        alertDialog.show();
-                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mParentFragmentActivity.startActivity(intent);
-                                                alertDialog.cancel();
-                                            }
-                                        }, 1000);
+                                        mParentFragmentActivity.startActivity(intent);
                                     }
 
+                                    @Override
+                                    public void onAdOpened() {
+                                        //Save preference
+                                        mGlobalPreferences.edit()
+                                                .putLong(
+                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                        System.currentTimeMillis())
+                                                .apply();
+                                    }
+                                });
+
+                                if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                    mInterstitialAdForActiveIPConnections.show();
                                 } else {
                                     //noinspection ConstantConditions
                                     final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -502,6 +487,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         }
                                     }, 1000);
                                 }
+
                             } else {
                                 //noinspection ConstantConditions
                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1535,37 +1521,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             }
                             intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, currentIpToHostNameResolverMap);
 
-                            if (BuildConfig.WITH_ADS) {
+                            if (BuildConfig.WITH_ADS &&
+                                    mInterstitialAdForActiveIPConnections != null &&
+                                    AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                                if (mInterstitialAdForActiveIPConnections != null) {
-                                    mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                        @Override
-                                        public void onAdClosed() {
-                                            final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                            if (adRequest != null) {
-                                                mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                            }
-                                            mParentFragmentActivity.startActivity(intent);
+                                mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                    @Override
+                                    public void onAdClosed() {
+                                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                        if (adRequest != null) {
+                                            mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                         }
-                                    });
-
-                                    if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                        mInterstitialAdForActiveIPConnections.show();
-                                    } else {
-                                        //noinspection ConstantConditions
-                                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                "Loading...", false, false);
-                                        alertDialog.show();
-                                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mParentFragmentActivity.startActivity(intent);
-                                                alertDialog.cancel();
-                                            }
-                                        }, 1000);
+                                        mParentFragmentActivity.startActivity(intent);
                                     }
 
+                                    @Override
+                                    public void onAdOpened() {
+                                        //Save preference
+                                        mGlobalPreferences.edit()
+                                                .putLong(
+                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                        System.currentTimeMillis())
+                                                .apply();
+                                    }
+                                });
+
+                                if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                    mInterstitialAdForActiveIPConnections.show();
                                 } else {
                                     //noinspection ConstantConditions
                                     final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1580,6 +1562,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         }
                                     }, 1000);
                                 }
+
                             } else {
                                 //noinspection ConstantConditions
                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -1824,37 +1807,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
                                     intent.putExtra(ActiveIPConnectionsDetailActivity.CONNECTED_HOST_IP, device.getIpAddress());
 
-                                    if (BuildConfig.WITH_ADS) {
+                                    if (BuildConfig.WITH_ADS &&
+                                            mInterstitialAdForActiveIPConnections != null &&
+                                            AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                                        if (mInterstitialAdForActiveIPConnections != null) {
-                                            mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                                @Override
-                                                public void onAdClosed() {
-                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                    if (adRequest != null) {
-                                                        mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                                    }
-                                                    mParentFragmentActivity.startActivity(intent);
+                                        mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                            @Override
+                                            public void onAdClosed() {
+                                                final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                if (adRequest != null) {
+                                                    mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                                 }
-                                            });
-
-                                            if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                                mInterstitialAdForActiveIPConnections.show();
-                                            } else {
-                                                //noinspection ConstantConditions
-                                                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                        "Loading...", false, false);
-                                                alertDialog.show();
-                                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        mParentFragmentActivity.startActivity(intent);
-                                                        alertDialog.cancel();
-                                                    }
-                                                }, 1000);
+                                                mParentFragmentActivity.startActivity(intent);
                                             }
 
+                                            @Override
+                                            public void onAdOpened() {
+                                                //Save preference
+                                                mGlobalPreferences.edit()
+                                                        .putLong(
+                                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                                System.currentTimeMillis())
+                                                        .apply();
+                                            }
+                                        });
+
+                                        if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                            mInterstitialAdForActiveIPConnections.show();
                                         } else {
                                             //noinspection ConstantConditions
                                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -2211,37 +2190,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                         intent.putExtra(ActiveIPConnectionsDetailActivity.IP_TO_HOSTNAME_RESOLVER, device.getName());
                                         intent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, new Date().toString());
 
-                                        if (BuildConfig.WITH_ADS) {
+                                        if (BuildConfig.WITH_ADS &&
+                                                mInterstitialAdForActiveIPConnections != null &&
+                                                AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
 
-                                            if (mInterstitialAdForActiveIPConnections != null) {
-                                                mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
-                                                    @Override
-                                                    public void onAdClosed() {
-                                                        final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
-                                                        if (adRequest != null) {
-                                                            mInterstitialAdForActiveIPConnections.loadAd(adRequest);
-                                                        }
-                                                        mParentFragmentActivity.startActivity(intent);
+                                            mInterstitialAdForActiveIPConnections.setAdListener(new AdListener() {
+                                                @Override
+                                                public void onAdClosed() {
+                                                    final AdRequest adRequest = AdUtils.buildAdRequest(mParentFragmentActivity);
+                                                    if (adRequest != null) {
+                                                        mInterstitialAdForActiveIPConnections.loadAd(adRequest);
                                                     }
-                                                });
-
-                                                if (mInterstitialAdForActiveIPConnections.isLoaded()) {
-                                                    mInterstitialAdForActiveIPConnections.show();
-                                                } else {
-                                                    //noinspection ConstantConditions
-                                                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                                            "Loading...", false, false);
-                                                    alertDialog.show();
-                                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                                    new Handler().postDelayed(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            mParentFragmentActivity.startActivity(intent);
-                                                            alertDialog.cancel();
-                                                        }
-                                                    }, 1000);
+                                                    mParentFragmentActivity.startActivity(intent);
                                                 }
 
+                                                @Override
+                                                public void onAdOpened() {
+                                                    //Save preference
+                                                    mGlobalPreferences.edit()
+                                                            .putLong(
+                                                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                                    System.currentTimeMillis())
+                                                            .apply();
+                                                }
+                                            });
+
+                                            if (mInterstitialAdForActiveIPConnections.isLoaded()) {
+                                                mInterstitialAdForActiveIPConnections.show();
                                             } else {
                                                 //noinspection ConstantConditions
                                                 final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -2256,6 +2231,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                     }
                                                 }, 1000);
                                             }
+
                                         } else {
                                             //noinspection ConstantConditions
                                             final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
