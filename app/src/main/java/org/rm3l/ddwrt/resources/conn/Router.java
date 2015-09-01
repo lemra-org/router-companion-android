@@ -707,6 +707,7 @@ public class Router implements Serializable {
     public enum RouterFirmware {
         DDWRT("DD-WRT"),
         OPENWRT("OpenWrt (Beta)"),
+        DEMO("Demo"),
         UNKNOWN("???");
 
         @NonNull

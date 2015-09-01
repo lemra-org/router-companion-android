@@ -48,36 +48,19 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.fragments.access.AccessWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
-import org.rm3l.ddwrt.fragments.admin.openwrt.AdminNVRAMFragmentOpenWrt;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSDMZFragment;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortForwardingFragment;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortRangeForwardingFragment;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSPortTriggeringFragment;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSQoSFragment;
-import org.rm3l.ddwrt.fragments.nat_qos.NATQoSUPnPFragment;
 import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
-import org.rm3l.ddwrt.fragments.security.SecurityFirewallFragment;
-import org.rm3l.ddwrt.fragments.security.SecurityVPNPassthroughFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanDaemonFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupBasicFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupDDNSFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupEoIPFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupIPv6Fragment;
-import org.rm3l.ddwrt.fragments.setup.SetupMacCloningFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupNetworkingFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupRoutingFragment;
-import org.rm3l.ddwrt.fragments.setup.SetupVLANFragment;
 import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
 import org.rm3l.ddwrt.fragments.status.StatusClientsFragment;
 import org.rm3l.ddwrt.fragments.status.StatusLANFragment;
@@ -95,16 +78,12 @@ import org.rm3l.ddwrt.fragments.toolbox.ToolboxNsLookupFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxPingFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxTracerouteFragment;
 import org.rm3l.ddwrt.fragments.toolbox.ToolboxWhoisFragment;
-import org.rm3l.ddwrt.fragments.wireless.WirelessBasicFragmentAbstract;
-import org.rm3l.ddwrt.fragments.wireless.WirelessMACFilteringFragmentAbstract;
-import org.rm3l.ddwrt.fragments.wireless.WirelessRadiusFragmentAbstract;
-import org.rm3l.ddwrt.fragments.wireless.WirelessSecurityFragmentAbstract;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
-import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.prefs.sort.DDWRTSortingStrategy;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import org.rm3l.ddwrt.tiles.AvocarrotNativeAdTile;
 import org.rm3l.ddwrt.tiles.BannerAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -112,6 +91,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -149,6 +129,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     private Class<? extends AbstractBaseFragment> mClazz;
     @NonNull
     private PageSlidingTabStripFragment parentFragment;
+
+    private static final Map<RouterFirmware,
+            ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>>
+            allTabs = new HashMap<>();
+    static {
+        //DD-WRT
+        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = getTabsForDDWRT();
+        allTabs.put(RouterFirmware.DDWRT, tabsForDDWRT);
+
+        //Demo (same as DD-WRT, actually)
+        allTabs.put(RouterFirmware.DEMO, tabsForDDWRT);
+
+        //OpenWRT - TODO
+        allTabs.put(RouterFirmware.OPENWRT, getTabsForOpenWRT());
+    }
 
     @Nullable
     public static AbstractBaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NonNull final Class<? extends AbstractBaseFragment> clazz,
@@ -211,506 +206,474 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         final AbstractBaseFragment[] tabsToSort;
 
-        Router.RouterFirmware routerFirmwareForFragments;
+        RouterFirmware routerFirmwareForFragments;
         final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
         if (parentFragmentOnPageChangeListener instanceof Context) {
             final Router routerFromDao = RouterManagementActivity
                     .getDao((Context) parentFragmentOnPageChangeListener).getRouter(router);
             if (routerFromDao == null) {
-                routerFirmwareForFragments = Router.RouterFirmware.UNKNOWN;
+                routerFirmwareForFragments = RouterFirmware.UNKNOWN;
             } else {
-                final Router.RouterFirmware routerFirmware = routerFromDao.getRouterFirmware();
+                final RouterFirmware routerFirmware = routerFromDao.getRouterFirmware();
                 if (routerFirmware == null) {
-                    routerFirmwareForFragments = Router.RouterFirmware.UNKNOWN;
+                    routerFirmwareForFragments = RouterFirmware.UNKNOWN;
                 } else {
                     routerFirmwareForFragments = routerFirmware;
                 }
             }
         } else {
-            routerFirmwareForFragments = Router.RouterFirmware.UNKNOWN;
+            routerFirmwareForFragments = RouterFirmware.UNKNOWN;
             Utils.reportException(
                     new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
         }
 
         //FIXME Once full support of other firmwares is implemented
         if (routerFirmwareForFragments == null ||
-                Router.RouterFirmware.UNKNOWN.equals(routerFirmwareForFragments)) {
-            routerFirmwareForFragments = Router.RouterFirmware.DDWRT;
+                RouterFirmware.UNKNOWN.equals(routerFirmwareForFragments)) {
+            routerFirmwareForFragments = RouterFirmware.DDWRT;
         }
         //FIXME End
 
-        switch (routerFirmwareForFragments) {
-            case OPENWRT:
-                //Generate specific OpenWRT Fragments
-                tabsToSort = getBaseFragmentsOpenWrt(parentFragment, resources, parentSectionNumber, router);
-                break;
-            case DDWRT:
-                tabsToSort = getBaseFragmentsDDWRT(parentFragment, resources, parentSectionNumber, router);
-                break;
-            default:
-                //Unknown
-                if (parentFragmentOnPageChangeListener instanceof Context) {
-                    Toast.makeText((Context) parentFragmentOnPageChangeListener, "Router Firmware unknown or not supported!", Toast.LENGTH_SHORT)
-                            .show();
-                }
+        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabDescriptionMultimap =
+                allTabs.get(routerFirmwareForFragments);
+        if (tabDescriptionMultimap == null) {
+            //Unknown
+            if (parentFragmentOnPageChangeListener instanceof Context) {
+                Toast.makeText((Context) parentFragmentOnPageChangeListener, "Router Firmware unknown or not supported!", Toast.LENGTH_SHORT)
+                        .show();
+            }
+            Utils.reportException(
+                    new IllegalArgumentException("Router Firmware unknown or not supported"));
+            tabsToSort = new AbstractBaseFragment[0];
+        } else {
+            final List<FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabDescriptions =
+                    tabDescriptionMultimap.get(parentSectionNumber);
+            if (fragmentTabDescriptions == null || fragmentTabDescriptions.isEmpty()) {
                 Utils.reportException(
-                        new IllegalArgumentException("Router Firmware unknown or not supported"));
-                tabsToSort = new AbstractBaseFragment[0];
-                break;
+                        new IllegalArgumentException("Not implemented yet: " + parentSectionNumber));
+                //This should NOT happen => Error
+                tabsToSort = new AbstractBaseFragment[1];
+                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment,
+                        NoDataFragment.class,
+                        (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")"),
+                        resources.getString(R.string.unknown), router);
+
+            } else {
+                tabsToSort = new AbstractBaseFragment[fragmentTabDescriptions.size()];
+                int i = 0;
+                for (final FragmentTabDescription<? extends AbstractBaseFragment> fragmentTabDescription : fragmentTabDescriptions) {
+                    tabsToSort[i++] =  AbstractBaseFragment.newInstance(parentFragment,
+                            fragmentTabDescription.getClazz(), "???",
+                            resources.getString(fragmentTabDescription.getTitleRes()), router);
+                }
+            }
         }
 
         return tabsToSort.length > 0 ? sortingStrategyInstance.sort(tabsToSort) : tabsToSort;
     }
 
     @NonNull
-    private static AbstractBaseFragment[] getBaseFragmentsOpenWrt(PageSlidingTabStripFragment parentFragment, Resources resources, int parentSectionNumber, String router) {
-        //TODO For OpenWRT
-        String parentSectionTitle;
+    private static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForDDWRT() {
+        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = ArrayListMultimap.create();
+        //1- Overview
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> overviewTabs = new ArrayList<>();
+        overviewTabs.add(new FragmentTabDescription<OverviewNetworkTopologyMapFragment>
+                (OverviewNetworkTopologyMapFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.overview_ntm;
+            }
+        });
+        tabsForDDWRT.putAll(1, overviewTabs);
 
-        final AbstractBaseFragment[] tabsToSort;
+        //2- Status: {Status, Wireless, Clients, Monitoring}
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> statusTabs = new ArrayList<>();
+        statusTabs.add(new FragmentTabDescription<StatusRouterFragment>
+                (StatusRouterFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_router;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusTimeFragment>
+                (StatusTimeFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_time;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusWANFragment>
+                (StatusWANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wan;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusLANFragment>
+                (StatusLANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_lan;
+            }
+        });
+        statusTabs.add(new FragmentTabDescription<StatusSyslogFragment>
+                (StatusSyslogFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_syslog;
+            }
+        });
+        tabsForDDWRT.putAll(2, statusTabs);
 
-        switch (parentSectionNumber) {
-            //Status: {Status, Wireless, Clients, Monitoring}
-            //In DD-WRT: Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-            case 1:
-                parentSectionTitle = resources.getString(R.string.status);
-                //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
-                        resources.getString(R.string.status_router), router);
-                //TODO Add Time
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
-                        resources.getString(R.string.status_wan), router);
-                break;
-            case 2:
-                //Status > Wireless
-                parentSectionTitle = resources.getString(R.string.status);
-                //TODO
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wireless), router);
-                break;
-            case 3:
-                //Status > Clients
-                parentSectionTitle = resources.getString(R.string.status);
-                //TODO
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_clients), router);
-                break;
-            case 4:
-                //Status > Monitoring
-                parentSectionTitle = resources.getString(R.string.status);
-                tabsToSort = new AbstractBaseFragment[2];
-                //TODO
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wan), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_bandwidth), router);
-                break;
+        //3- Status > Wireless
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> wirelessTabs = new ArrayList<>();
+        wirelessTabs.add(new FragmentTabDescription<StatusWirelessFragment>
+                (StatusWirelessFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wireless;
+            }
+        });
+        tabsForDDWRT.putAll(3, wirelessTabs);
 
-            //Services: {OpenVPN}
-            //In DD-WRT: Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
-            case 6:
-                //Services > OpenVPN
-                //TODO
-                parentSectionTitle = resources.getString(R.string.services);
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_openvpn_client), router);
-                //TODO Add OpenVPN Server between Client and Logs
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_openvpn_logs), router);
+        //4- Status > Clients
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> clientsTabs = new ArrayList<>();
+        clientsTabs.add(new FragmentTabDescription<StatusClientsFragment>
+                (StatusClientsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_clients;
+            }
+        });
+        tabsForDDWRT.putAll(4, clientsTabs);
 
-//                tabsToSort = new DDWRTBaseFragment[10];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_services), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_freeradius), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_ppoe), router);
-//                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_vpn), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_usb), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_nas), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_hostspot), router);
-//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_sip), router);
-//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_adblocking), router);
-//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_webserver), router);
-                break;
-            case 7:
-                //Services > Wake On LAN
-                //TODO
-                parentSectionTitle = resources.getString(R.string.services);
-                tabsToSort = new AbstractBaseFragment[0];
-                break;
-            //Admin: {Commands, NVRAM}
-            //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-            case 9:
-                //Admin > Commands
-                parentSectionTitle = resources.getString(R.string.commands);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.command_shell), router);
-                break;
-            case 10:
-                //Admin > NVRAM
-                parentSectionTitle = resources.getString(R.string.admin_area);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
-                        resources.getString(R.string.admin_area_nvram), router);
-                //TODO Also Add UCI Config if possible
-                break;
-            //Toolbox
-            //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
-            //In DD-WRT: N/A
-            case 12:
-                //Toolbox > Network
-                //FIXME Add "netstat" also (auto-refreshable)
-                parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new AbstractBaseFragment[6];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_ping), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_traceroute), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_arping), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_whois), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, ToolboxMACOUILookupFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_oui_lookup), router);
+        //5- Status > Monitoring
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> monitoringTabs = new ArrayList<>();
+        monitoringTabs.add(new FragmentTabDescription<StatusMonitoringWANFragment>
+                (StatusMonitoringWANFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wan;
+            }
+        });
+        monitoringTabs.add(new FragmentTabDescription<StatusBandwidthFragment>
+                (StatusBandwidthFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_bandwidth;
+            }
+        });
+        tabsForDDWRT.putAll(5, monitoringTabs);
+
+        //7- Services > OpenVPN
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesOpenVpnTabs = new ArrayList<>();
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNClientFragment>
+                (ServicesOpenVPNClientFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_client;
+            }
+        });
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNLogsFragment>
+                (ServicesOpenVPNLogsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_logs;
+            }
+        });
+        tabsForDDWRT.putAll(7, servicesOpenVpnTabs);
+
+        //8- Services > OpenVPN
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesWolTabs = new ArrayList<>();
+        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanFragment>
+                (ServicesWakeOnLanFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_wol;
+            }
+        });
+        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanDaemonFragment>
+                (ServicesWakeOnLanDaemonFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_wol_daemon;
+            }
+        });
+        tabsForDDWRT.putAll(8, servicesWolTabs);
+
+        //10- Admin > Commands
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminCmdTabs = new ArrayList<>();
+        adminCmdTabs.add(new FragmentTabDescription<AdminCommandsFragment>
+                (AdminCommandsFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.command_shell;
+            }
+        });
+        tabsForDDWRT.putAll(10, adminCmdTabs);
+
+        //11- Admin > NVRAM
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminNvramTabs = new ArrayList<>();
+        adminNvramTabs.add(new FragmentTabDescription<AdminNVRAMFragment>
+                (AdminNVRAMFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.admin_area_nvram;
+            }
+        });
+        tabsForDDWRT.putAll(11, adminNvramTabs);
+
+        //13- Toolbox > Network
+        //FIXME Add "netstat" also (auto-refreshable)
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
-                break;
-
-            default:
-                //This should NOT happen => Error
-                parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
-                        resources.getString(R.string.unknown), router);
-                break;
-
-        }
-        return tabsToSort;
-
-
-//        switch (parentSectionNumber) {
-//            case 0:
-//                parentSectionTitle = resources.getString(R.string.status);
-//                //1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-//                tabsToSort = new AbstractBaseFragment[2];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragmentOpenWrt.class, parentSectionTitle,
-//                        resources.getString(R.string.status_router), router);
-//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragmentOpenWrt.class, parentSectionTitle,
-//                        resources.getString(R.string.status_wan), router);
-//                break;
-//            case 4:
-//                parentSectionTitle = resources.getString(R.string.commands);
-//                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.command_shell), router);
-//                break;
-//            case 5:
-//                parentSectionTitle = resources.getString(R.string.admin_area);
-//                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragmentOpenWrt.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_nvram), router);
-//                //TODO Also Add UCI Config if possible
-//                break;
-//            case 7:
-//                parentSectionTitle = resources.getString(R.string.toolbox);
-//                tabsToSort = new AbstractBaseFragment[5];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.toolbox_ping), router);
-//                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.toolbox_traceroute), router);
-//                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.toolbox_nslookup), router);
-//                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.toolbox_arping), router);
-//                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.toolbox_whois), router);
-////                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
-////                        resources.getString(R.string.toolbox_subnet_calculator), router);
-//
-//                break;
-//            default:
-//                //This should NOT happen => Error
-//                parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
-//                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.unknown), router);
-//                break;
-//
-//        }
-//        return tabsToSort;
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> toolboxNetworkTabs = new ArrayList<>();
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxPingFragment>
+                (ToolboxPingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_ping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxTracerouteFragment>
+                (ToolboxTracerouteFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_traceroute;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxNsLookupFragment>
+                (ToolboxNsLookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_nslookup;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxArpingFragment>
+                (ToolboxArpingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_arping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxWhoisFragment>
+                (ToolboxWhoisFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_whois;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxMACOUILookupFragment>
+                (ToolboxMACOUILookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_oui_lookup;
+            }
+        });
+        tabsForDDWRT.putAll(13, toolboxNetworkTabs);
+        return tabsForDDWRT;
     }
 
     @NonNull
-    private static AbstractBaseFragment[] getBaseFragmentsDDWRT(PageSlidingTabStripFragment parentFragment, Resources resources, int parentSectionNumber, String router) {
-        String parentSectionTitle;
+    private static ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> getTabsForOpenWRT() {
+        final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForOpenWRT = ArrayListMultimap.create();
+        //1- Overview //TODO Add something specific to OpenWrt
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> overviewTabs = new ArrayList<>();
+        overviewTabs.add(new FragmentTabDescription<OverviewNetworkTopologyMapFragment>
+                (OverviewNetworkTopologyMapFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.overview_ntm;
+            }
+        });
+        tabsForOpenWRT.putAll(1, overviewTabs);
 
-        final AbstractBaseFragment[] tabsToSort;
+        //2- Status: {Status, Wireless, Clients, Monitoring}
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> statusTabs = new ArrayList<>();
+        statusTabs.add(new FragmentTabDescription<StatusRouterFragmentOpenWrt>
+                (StatusRouterFragmentOpenWrt.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_router;
+            }
+        });
+//        statusTabs.add(new FragmentTabDescription<StatusTimeFragment>
+//                (StatusTimeFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_time;
+//            }
+//        });
+        statusTabs.add(new FragmentTabDescription<StatusWANFragmentOpenWrt>
+                (StatusWANFragmentOpenWrt.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.status_wan;
+            }
+        });
+//        statusTabs.add(new FragmentTabDescription<StatusLANFragment>
+//                (StatusLANFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_lan;
+//            }
+//        });
+//        statusTabs.add(new FragmentTabDescription<StatusSyslogFragment>
+//                (StatusSyslogFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_syslog;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(2, statusTabs);
 
-        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(parentFragment.getActivity());
-        final Router routerFromDB;
-        final boolean isDemoRouter = (dao != null &&
-                (routerFromDB = dao.getRouter(router)) != null &&
-                Utils.isDemoRouter(routerFromDB));
+        //3- Status > Wireless //TODO
+//        final ArrayList<FragmentTabDescription> wirelessTabs = new ArrayList<>();
+//        wirelessTabs.add(new FragmentTabDescription<StatusWirelessFragment>
+//                (StatusWirelessFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_wireless;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(3, wirelessTabs);
 
-        switch (parentSectionNumber) {
-            case 1:
-                parentSectionTitle = resources.getString(R.string.overview);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, OverviewNetworkTopologyMapFragment.class, parentSectionTitle,
-                        resources.getString(R.string.overview_ntm), router);
-                break;
+        //4- Status > Clients //TODO
+//        final ArrayList<FragmentTabDescription> clientsTabs = new ArrayList<>();
+//        clientsTabs.add(new FragmentTabDescription<StatusClientsFragment>
+//                (StatusClientsFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_clients;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(4, clientsTabs);
 
-            //Status: {Status, Wireless, Clients, Monitoring}
-            //In DD-WRT: Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo}
-            case 2:
-                parentSectionTitle = resources.getString(R.string.status);
-                if (isDemoRouter) {
-                    tabsToSort = new AbstractBaseFragment[2];
-                    tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_router), router);
-                    tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_time), router);
-                } else {
-                    tabsToSort = new AbstractBaseFragment[5];
-                    tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusRouterFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_router), router);
-                    tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusTimeFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_time), router);
-                    tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, StatusWANFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_wan), router);
-                    tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, StatusLANFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_lan), router);
-                    tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, StatusSyslogFragment.class, parentSectionTitle,
-                            resources.getString(R.string.status_syslog), router);
-                }
-                break;
-            case 3:
-                //Status > Wireless
-                parentSectionTitle = resources.getString(R.string.status);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusWirelessFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wireless), router);
-                break;
-            case 4:
-                //Status > Clients
-                parentSectionTitle = resources.getString(R.string.status);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusClientsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_clients), router);
-                break;
-            case 5:
-                //Status > Monitoring
-                parentSectionTitle = resources.getString(R.string.status);
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, StatusMonitoringWANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_wan), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, StatusBandwidthFragment.class, parentSectionTitle,
-                        resources.getString(R.string.status_bandwidth), router);
-                break;
+        //5- Status > Monitoring TODO
+//        final ArrayList<FragmentTabDescription> monitoringTabs = new ArrayList<>();
+//        monitoringTabs.add(new FragmentTabDescription<StatusMonitoringWANFragment>
+//                (StatusMonitoringWANFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_wan;
+//            }
+//        });
+//        monitoringTabs.add(new FragmentTabDescription<StatusBandwidthFragment>
+//                (StatusBandwidthFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.status_bandwidth;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(5, monitoringTabs);
 
-            //Services: {OpenVPN}
-            //In DD-WRT: Services => {Services, FreeRadius, PPoE, VPN, USB, NAS, HotSpot, SIP Proxy, Adblocking, Webserver}
-            case 7:
-                //Services > OpenVPN
-                parentSectionTitle = resources.getString(R.string.services);
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNClientFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_openvpn_client), router);
-                //TODO Add OpenVPN Server between Client and Logs
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesOpenVPNLogsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_openvpn_logs), router);
+        //7- Services > OpenVPN TODO
+//        final ArrayList<FragmentTabDescription> servicesOpenVpnTabs = new ArrayList<>();
+//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNClientFragment>
+//                (ServicesOpenVPNClientFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_openvpn_client;
+//            }
+//        });
+//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNLogsFragment>
+//                (ServicesOpenVPNLogsFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_openvpn_logs;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(7, servicesOpenVpnTabs);
 
-//                tabsToSort = new DDWRTBaseFragment[10];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(ServicesServicesFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_services), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(ServicesFreeRadiusFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_freeradius), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(ServicesPPoEFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_ppoe), router);
-//                tabsToSort[3] = DDWRTBaseFragment.newInstance(ServicesOpenVPNFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_vpn), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(ServicesUSBFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_usb), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(ServicesNASFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_nas), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(ServicesHotSpotFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_hostspot), router);
-//                tabsToSort[7] = DDWRTBaseFragment.newInstance(ServicesSIPFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_sip), router);
-//                tabsToSort[8] = DDWRTBaseFragment.newInstance(ServicesAdBlockingFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_adblocking), router);
-//                tabsToSort[9] = DDWRTBaseFragment.newInstance(ServicesWebServerFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.services_webserver), router);
-                break;
-            case 8:
-                //Services > Wake On LAN
-                //TODO
-                parentSectionTitle = resources.getString(R.string.services);
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ServicesWakeOnLanFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_wol), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ServicesWakeOnLanDaemonFragment.class, parentSectionTitle,
-                        resources.getString(R.string.services_wol_daemon), router);
-                break;
-            //Admin: {Commands, NVRAM}
-            //In DD-WRT: Admin => {Management, Keep Alive, Commands, WOL, Factory, Upgrade, Backup}
-            case 10:
-                //Admin > Commands
-                parentSectionTitle = resources.getString(R.string.commands);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminCommandsFragment.class, parentSectionTitle,
-                        resources.getString(R.string.command_shell), router);
-                break;
-            case 11:
-                //Admin > NVRAM
-                parentSectionTitle = resources.getString(R.string.admin_area);
-                tabsToSort = new AbstractBaseFragment[1];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_cmds), router);
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AdminNVRAMFragment.class, parentSectionTitle,
-                        resources.getString(R.string.admin_area_nvram), router);
-//                tabsToSort = new DDWRTBaseFragment[7];
-//                tabsToSort[0] = DDWRTBaseFragment.newInstance(AdminManagementFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_mgmt), router);
-//                tabsToSort[1] = DDWRTBaseFragment.newInstance(AdminKeepAliveFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_keep_alive), router);
-//                tabsToSort[2] = DDWRTBaseFragment.newInstance(AdminCommandsFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_cmds), router);
-//                tabsToSort[3] = DDWRTBaseFragment.newInstance(AdminWOLFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_wol), router);
-//                tabsToSort[4] = DDWRTBaseFragment.newInstance(AdminFactoryDefaultsFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_factory), router);
-//                tabsToSort[5] = DDWRTBaseFragment.newInstance(AdminUpgradeFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_upgrade), router);
-//                tabsToSort[6] = DDWRTBaseFragment.newInstance(AdminBackupFragment.class, parentSectionTitle,
-//                        resources.getString(R.string.admin_area_backup), router);
-                break;
-            //Toolbox
-            //FIXME Add "df", "ps", "dmesg", "mount", ... in "Toolbox > System"  (auto-refreshable)
-            //In DD-WRT: N/A
-            case 13:
-                //Toolbox > Network
-                //FIXME Add "netstat" also (auto-refreshable)
-                parentSectionTitle = resources.getString(R.string.toolbox);
-                tabsToSort = new AbstractBaseFragment[6];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, ToolboxPingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_ping), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, ToolboxTracerouteFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_traceroute), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, ToolboxNsLookupFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_nslookup), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxArpingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_arping), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, ToolboxWhoisFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_whois), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, ToolboxMACOUILookupFragment.class, parentSectionTitle,
-                        resources.getString(R.string.toolbox_oui_lookup), router);
+        //8- Services > OpenVPN TODO
+//        final ArrayList<FragmentTabDescription> servicesWolTabs = new ArrayList<>();
+//        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanFragment>
+//                (ServicesWakeOnLanFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_wol;
+//            }
+//        });
+//        servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanDaemonFragment>
+//                (ServicesWakeOnLanDaemonFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_wol_daemon;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(8, servicesWolTabs);
+
+        //10- Admin > Commands TODO
+//        final ArrayList<FragmentTabDescription> adminCmdTabs = new ArrayList<>();
+//        adminCmdTabs.add(new FragmentTabDescription<AdminCommandsFragment>
+//                (AdminCommandsFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.command_shell;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(10, adminCmdTabs);
+
+        //11- Admin > NVRAM TODO
+//        final ArrayList<FragmentTabDescription> adminNvramTabs = new ArrayList<>();
+//        adminNvramTabs.add(new FragmentTabDescription<AdminNVRAMFragment>
+//                (AdminNVRAMFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.admin_area_nvram;
+//            }
+//        });
+//        tabsForOpenWRT.putAll(11, adminNvramTabs);
+
+        //13- Toolbox > Network
+        //FIXME Add "netstat" also (auto-refreshable)
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
-
-                break;
-
-
-//            case 1: TODO Remove me
-            case 1001:
-                parentSectionTitle = resources.getString(R.string.setup);
-                //2 = Setup => {Basic, IPv6, DDNS, MAC Cloning, Routing, VLANs, Networking, EoIP}
-                tabsToSort = new AbstractBaseFragment[8];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SetupBasicFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_basic), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SetupIPv6Fragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_ipv6), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, SetupDDNSFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_ddns), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, SetupMacCloningFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_mac_cloning), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, SetupRoutingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_routing), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, SetupVLANFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_vlans), router);
-                tabsToSort[6] = AbstractBaseFragment.newInstance(parentFragment, SetupNetworkingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_networking), router);
-                tabsToSort[7] = AbstractBaseFragment.newInstance(parentFragment, SetupEoIPFragment.class, parentSectionTitle,
-                        resources.getString(R.string.setup_eoip), router);
-                break;
-            case 111:
-//            case 1:
-                parentSectionTitle = resources.getString(R.string.wireless);
-                //3 = Wireless => {Basic, Radius, Security, MAC Filter, WL0, WL1, ...}
-                tabsToSort = new AbstractBaseFragment[4];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, WirelessBasicFragmentAbstract.class, parentSectionTitle,
-                        resources.getString(R.string.wireless_basic_settings), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, WirelessRadiusFragmentAbstract.class, parentSectionTitle,
-                        resources.getString(R.string.wireless_radius), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, WirelessSecurityFragmentAbstract.class, parentSectionTitle,
-                        resources.getString(R.string.wireless_security), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, WirelessMACFilteringFragmentAbstract.class, parentSectionTitle,
-                        resources.getString(R.string.wireless_mac_filter), router);
-                break;
-
-            case 333:
-//            case 3:
-                //5 = Security => {Firewall, VPN Passthrough}
-                parentSectionTitle = resources.getString(R.string.security);
-                tabsToSort = new AbstractBaseFragment[2];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, SecurityFirewallFragment.class, parentSectionTitle,
-                        resources.getString(R.string.security_firewall), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, SecurityVPNPassthroughFragment.class, parentSectionTitle,
-                        resources.getString(R.string.security_vpn_passthrough), router);
-                break;
-            case 444:
-                //6 = Access => {WAN}
-                parentSectionTitle = resources.getString(R.string.access_restrictions);
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, AccessWANAccessFragment.class, parentSectionTitle,
-                        resources.getString(R.string.access_restrictions_wan), router);
-                break;
-            case 555:
-                parentSectionTitle = resources.getString(R.string.nat_qos);
-                //7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS}
-                tabsToSort = new AbstractBaseFragment[6];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortForwardingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_port_forwarding), router);
-                tabsToSort[1] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortRangeForwardingFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_port_range_forwarding), router);
-                tabsToSort[2] = AbstractBaseFragment.newInstance(parentFragment, NATQoSPortTriggeringFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_port_trigger), router);
-                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, NATQoSUPnPFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_upnp), router);
-                tabsToSort[4] = AbstractBaseFragment.newInstance(parentFragment, NATQoSDMZFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_dmz), router);
-                tabsToSort[5] = AbstractBaseFragment.newInstance(parentFragment, NATQoSQoSFragment.class, parentSectionTitle,
-                        resources.getString(R.string.nat_qos_qos), router);
-                break;
-
-//            case 6:
-
-
-            default:
-                //This should NOT happen => Error
-                parentSectionTitle = (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")");
-                tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment, NoDataFragment.class, parentSectionTitle,
-                        resources.getString(R.string.unknown), router);
-                break;
-
-        }
-        return tabsToSort;
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> toolboxNetworkTabs = new ArrayList<>();
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxPingFragment>
+                (ToolboxPingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_ping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxTracerouteFragment>
+                (ToolboxTracerouteFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_traceroute;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxNsLookupFragment>
+                (ToolboxNsLookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_nslookup;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxArpingFragment>
+                (ToolboxArpingFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_arping;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxWhoisFragment>
+                (ToolboxWhoisFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_whois;
+            }
+        });
+        toolboxNetworkTabs.add(new FragmentTabDescription<ToolboxMACOUILookupFragment>
+                (ToolboxMACOUILookupFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.toolbox_oui_lookup;
+            }
+        });
+        tabsForOpenWRT.putAll(13, toolboxNetworkTabs);
+        return tabsForOpenWRT;
     }
 
     public void setLoaderStopped(boolean mLoaderStopped) {
