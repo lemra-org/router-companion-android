@@ -112,6 +112,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     public static final String STATE_LOADER_IDS = "loaderIds";
     private static final String LOG_TAG = AbstractBaseFragment.class.getSimpleName();
+    private static AbstractBaseFragment mNoDataFragment;
     protected final Handler mHandler = new Handler();
     private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
     protected LinearLayout mLayout;
@@ -234,6 +235,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         }
         //FIXME End
 
+        if (mNoDataFragment == null) {
+            mNoDataFragment = AbstractBaseFragment.newInstance(parentFragment,
+                    NoDataFragment.class,
+                    (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")"),
+                    resources.getString(R.string.unknown), router);
+        }
+
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabDescriptionMultimap =
                 allTabs.get(routerFirmwareForFragments);
         if (tabDescriptionMultimap == null) {
@@ -253,10 +261,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         new IllegalArgumentException("Not implemented yet: " + parentSectionNumber));
                 //This should NOT happen => Error
                 tabsToSort = new AbstractBaseFragment[1];
-                tabsToSort[0] = AbstractBaseFragment.newInstance(parentFragment,
-                        NoDataFragment.class,
-                        (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")"),
-                        resources.getString(R.string.unknown), router);
+                tabsToSort[0] = mNoDataFragment;
 
             } else {
                 tabsToSort = new AbstractBaseFragment[fragmentTabDescriptions.size()];
@@ -269,7 +274,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             }
         }
 
-        return tabsToSort.length > 0 ? sortingStrategyInstance.sort(tabsToSort) : tabsToSort;
+        return (tabsToSort.length > 0 ? sortingStrategyInstance.sort(tabsToSort) : tabsToSort);
     }
 
     @NonNull
