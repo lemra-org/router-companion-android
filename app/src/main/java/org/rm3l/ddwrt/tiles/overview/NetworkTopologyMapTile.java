@@ -11,6 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -243,6 +244,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
+            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
@@ -282,7 +284,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 //                        mParentFragmentActivity,
 //                        routerImageViewCoords[1], routerImageViewCoords[1],
 //                        devicesCountTextViewCoords[0], devicesCountTextViewCoords[0]);
-//                final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+//
 //                mapContainerView.addView(routerToInternetPath);
 //                mapContainerView.addView(routerToLocalNetworkPath);
 
@@ -345,6 +347,10 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                //Hide NTM
+                mapContainerView.setVisibility(View.GONE);
+            } else {
+                mapContainerView.setVisibility(View.VISIBLE);
             }
 
 //            final View tileMenu = layout.findViewById(R.id.tile_network_map_menu);
