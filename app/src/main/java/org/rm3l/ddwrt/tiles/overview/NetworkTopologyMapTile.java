@@ -11,7 +11,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +25,6 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.widgets.DrawView;
 
 import java.util.Random;
 import java.util.UUID;
@@ -264,18 +262,29 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final int[] devicesCountTextViewCoords = new int[2];
                 devicesCountTextView.getLocationOnScreen(devicesCountTextViewCoords);
 
+                //FIXME
                 //Display NTM paths
-                final DrawView routerToInternetPath = new DrawView(
-                        mParentFragmentActivity,
-                        routerImageViewCoords[0], routerImageViewCoords[0],
-                        internetImageViewCoords[1], internetImageViewCoords[1]);
-                final DrawView routerToLocalNetworkPath = new DrawView(
-                        mParentFragmentActivity,
-                        routerImageViewCoords[1], routerImageViewCoords[1],
-                        devicesCountTextViewCoords[0], devicesCountTextViewCoords[0]);
-                final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
-                mapContainerView.addView(routerToInternetPath);
-                mapContainerView.addView(routerToLocalNetworkPath);
+//                final LineView routerToInternetPath = (LineView)
+//                        layout.findViewById(R.id.tile_network_map_router_router_wan_path);
+//                routerToInternetPath.setStartX(internetImageViewCoords[1]);
+//                routerToInternetPath.setStartY(internetImageViewCoords[1]);
+//                routerToInternetPath.setStopX(routerImageViewCoords[0]);
+//                routerToInternetPath.setStopY(routerImageViewCoords[0]);
+//
+//                final LineView routerToLocalNetworkPath = (LineView)
+//                        layout.findViewById(R.id.tile_network_map_router_router_lan_path);
+//                routerToLocalNetworkPath.setStartX(devicesCountTextViewCoords[1]);
+//                routerToLocalNetworkPath.setStartY(devicesCountTextViewCoords[1]);
+//                routerToLocalNetworkPath.setStopX(routerImageViewCoords[1]);
+//                routerToLocalNetworkPath.setStopY(routerImageViewCoords[1]);
+//
+//                final DrawView routerToLocalNetworkPath = new DrawView(
+//                        mParentFragmentActivity,
+//                        routerImageViewCoords[1], routerImageViewCoords[1],
+//                        devicesCountTextViewCoords[0], devicesCountTextViewCoords[0]);
+//                final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+//                mapContainerView.addView(routerToInternetPath);
+//                mapContainerView.addView(routerToLocalNetworkPath);
 
                 //Router Name
                 final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);

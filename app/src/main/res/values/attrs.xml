@@ -25,4 +25,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <attr name="textColor" format="color" />
         <attr name="textSize" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="LineView">
+        <attr name="from" format="reference" />
+        <attr name="to" format="reference" />
+    </declare-styleable>
 </resources>
