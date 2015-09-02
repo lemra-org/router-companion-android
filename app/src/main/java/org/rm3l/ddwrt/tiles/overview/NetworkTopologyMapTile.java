@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.tiles.overview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,22 +27,23 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.ViewGroupUtils;
+import org.rm3l.ddwrt.widgets.LineView;
 
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
-//        implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = NetworkTopologyMapTile.class.getSimpleName();
     private final View.OnClickListener routerStateClickListener;
     private final View.OnClickListener clientsOnClickListener;
 
-    //    public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
     private boolean isThemeLight;
     private final AtomicInteger nbActiveClients = new AtomicInteger(-1);
     private final AtomicInteger nbDhcpLeases = new AtomicInteger(-1);
@@ -53,32 +55,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
         super(parentFragment, arguments, router, R.layout.tile_network_map_overview,
                 R.id.tile_network_map_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
-//        // Create Options Menu
-//        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_network_map_menu);
-//        if (!isThemeLight) {
-//            //Set menu background to white
-//            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-//        }
-//        tileMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-//                popup.setOnMenuItemClickListener(NetworkTopologyMapTile.this);
-//                final MenuInflater inflater = popup.getMenuInflater();
-//                final Menu menu = popup.getMenu();
-//                inflater.inflate(R.menu.tile_overview_network_map_options, menu);
-//
-//                //Disable menu item from preference
-//                if (mParentFragmentPreferences != null &&
-//                        mParentFragmentPreferences.getBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), false)) {
-//                    //Mark as checked
-//                    menu.findItem(R.id.tile_overview_network_map_hide_inactive_hosts).setChecked(true);
-//                }
-//
-//                popup.show();
-//            }
-//        });
 
         routerStateClickListener = new View.OnClickListener() {
             @Override
@@ -257,36 +233,29 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
 
                 //Get Views coords
-                final int[] internetImageViewCoords = new int[2];
-                internetImageView.getLocationOnScreen(internetImageViewCoords);
-                final int[] routerImageViewCoords = new int[2];
-                routerImageView.getLocationOnScreen(routerImageViewCoords);
-                final int[] devicesCountTextViewCoords = new int[2];
-                devicesCountTextView.getLocationOnScreen(devicesCountTextViewCoords);
+//                final Rect internetImageViewCoords = ViewGroupUtils.getLocationOnScreen(internetImageView);
+//                final Rect routerImageViewCoords = ViewGroupUtils.getLocationOnScreen(routerImageView);
+//                final Rect devicesCountTextViewCoords = ViewGroupUtils.getLocationOnScreen(devicesCountTextView);
 
-                //FIXME
-                //Display NTM paths
-//                final LineView routerToInternetPath = (LineView)
-//                        layout.findViewById(R.id.tile_network_map_router_router_wan_path);
-//                routerToInternetPath.setStartX(internetImageViewCoords[1]);
-//                routerToInternetPath.setStartY(internetImageViewCoords[1]);
-//                routerToInternetPath.setStopX(routerImageViewCoords[0]);
-//                routerToInternetPath.setStopY(routerImageViewCoords[0]);
-//
-//                final LineView routerToLocalNetworkPath = (LineView)
-//                        layout.findViewById(R.id.tile_network_map_router_router_lan_path);
-//                routerToLocalNetworkPath.setStartX(devicesCountTextViewCoords[1]);
-//                routerToLocalNetworkPath.setStartY(devicesCountTextViewCoords[1]);
-//                routerToLocalNetworkPath.setStopX(routerImageViewCoords[1]);
-//                routerToLocalNetworkPath.setStopY(routerImageViewCoords[1]);
-//
-//                final DrawView routerToLocalNetworkPath = new DrawView(
-//                        mParentFragmentActivity,
-//                        routerImageViewCoords[1], routerImageViewCoords[1],
-//                        devicesCountTextViewCoords[0], devicesCountTextViewCoords[0]);
-//
-//                mapContainerView.addView(routerToInternetPath);
-//                mapContainerView.addView(routerToLocalNetworkPath);
+                final LineView routerToInternetPath  = (LineView)
+                        layout.findViewById(R.id.tile_network_map_router_router_wan_path);
+                final PointF routerToInternetPathRouterSide = ViewGroupUtils.getTopLeftCorner(routerImageView);
+                final PointF routerToInternetPathWanSide = ViewGroupUtils.getBottomRightCorner(internetImageView);
+                routerToInternetPath
+                        .setStartX(routerToInternetPathRouterSide.x + 100)
+                        .setStartY(routerToInternetPathRouterSide.y + 20)
+                        .setStopX(routerToInternetPathWanSide.x + routerImageView.getWidth())
+                        .setStopY(routerToInternetPathWanSide.y);
+
+                final LineView routerToLanPath  = (LineView)
+                        layout.findViewById(R.id.tile_network_map_router_router_lan_path);
+                final PointF routerToLanPathRouterSide = ViewGroupUtils.getBottomLeftCorner(routerImageView);
+                final PointF routerToLanPathLanSide = ViewGroupUtils.getTopRightCorner(devicesCountTextView);
+                routerToLanPath
+                        .setStartX(routerToLanPathRouterSide.x + 100)
+                        .setStartY(routerToLanPathRouterSide.y + 20)
+                        .setStopX(routerToLanPathLanSide.x + devicesCountTextView.getWidth())
+                        .setStopY(routerToLanPathLanSide.y + devicesCountTextView.getPaddingTop());
 
                 //Router Name
                 final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);
@@ -294,10 +263,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final boolean routerNameNull = (routerName == null);
                 String routerNameToSet = routerName;
                 if (routerNameNull) {
-                    routerNameToSet = "(empty)";
+                    routerNameToSet = "-";
                 }
-                routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
-                routerNameView.setText(routerNameToSet);
+                routerNameView.setTypeface(null,
+                        isNullOrEmpty(routerNameToSet) ? Typeface.ITALIC : Typeface.NORMAL);
+                routerNameView.setText(isNullOrEmpty(routerNameToSet) ? "(empty)" : routerNameToSet);
 
                 //WAN IP
                 final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_wan_ip);
@@ -353,13 +323,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 mapContainerView.setVisibility(View.VISIBLE);
             }
 
-//            final View tileMenu = layout.findViewById(R.id.tile_network_map_menu);
-//            if ("-".equals(((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView))
-//                    .getText().toString())) {
-//                tileMenu.setVisibility(View.GONE);
-//            } else {
-//                tileMenu.setVisibility(View.VISIBLE);
-//            }
         } finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
@@ -375,39 +338,5 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             }
         }
     }
-//
-//    @Override
-//    public boolean onMenuItemClick(MenuItem item) {
-//        final int itemId = item.getItemId();
-//        switch (itemId) {
-//            case R.id.tile_overview_network_map_hide_inactive_hosts: {
-//                final boolean hideInactive = !item.isChecked();
-//
-//                mParentFragmentActivity.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Update with count of active clients
-//                        int nbActiveClientsInt = nbActiveClients.intValue();
-//                        final TextView devicesCountTextView
-//                                = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-//                        devicesCountTextView.setText(nbActiveClientsInt < 0 ? "-" : Integer.toString(nbActiveClientsInt));
-//
-//                        ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
-//                                .setText("device" + (nbActiveClientsInt > 1 ? "s" : ""));
-//                    }
-//                });
-//
-//                //Save preference
-//                if (mParentFragmentPreferences != null) {
-//                    mParentFragmentPreferences.edit()
-//                            .putBoolean(getFormattedPrefKey(HIDE_INACTIVE_HOSTS), hideInactive)
-//                            .apply();
-//                }
-//                return true;
-//            }
-//            default:
-//                break;
-//        }
-//        return false;
-//    }
+
 }

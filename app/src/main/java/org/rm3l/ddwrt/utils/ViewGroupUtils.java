@@ -22,6 +22,8 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -65,6 +67,53 @@ public final class ViewGroupUtils {
 //            }
             __v = (View) __v.getParent();
         }
+    }
+
+    @NonNull
+    public static Rect getLocationOnScreen(@NonNull final View mView) {
+        final Rect mRect = new Rect();
+        final int[] location = new int[2];
+
+        mView.getLocationOnScreen(location);
+
+        mRect.left = location[0];
+        mRect.top = location[1];
+        mRect.right = location[0] + mView.getWidth();
+        mRect.bottom = location[1] + mView.getHeight();
+
+        return mRect;
+    }
+
+    @NonNull
+    public static PointF getTopLeftCorner(@NonNull final View view) {
+        final float src[] = new float[8];
+        final float[] dst = new float[]{0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()};
+        view.getMatrix().mapPoints(src, dst);
+        return new PointF(view.getX() + src[0], view.getY() + src[1]);
+    }
+
+    @NonNull
+    public static PointF getTopRightCorner(@NonNull final View view) {
+        final float src[] = new float[8];
+        final float[] dst = new float[]{0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()};
+        view.getMatrix().mapPoints(src, dst);
+        return new PointF(view.getX() + src[2], view.getY() + src[3]);
+    }
+
+    @NonNull
+    public static PointF getBottomLeftCorner(@NonNull final View view) {
+        final float src[] = new float[8];
+        final float[] dst = new float[]{0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()};
+        view.getMatrix().mapPoints(src, dst);
+        return new PointF(view.getX() + src[4], view.getY() + src[5]);
+    }
+
+    @NonNull
+    public static PointF getBottomRightCorner(@NonNull final View view) {
+        final float src[] = new float[8];
+        final float[] dst = new float[]{0, 0, view.getWidth(), 0, 0, view.getHeight(), view.getWidth(), view.getHeight()};
+        view.getMatrix().mapPoints(src, dst);
+        return new PointF(view.getX() + src[6], view.getY() + src[7]);
     }
 
 }

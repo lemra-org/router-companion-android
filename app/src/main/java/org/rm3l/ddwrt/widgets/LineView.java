@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -15,6 +16,8 @@ import org.rm3l.ddwrt.utils.ColorUtils;
  * Created by rm3l on 30/08/15.
  */
 public class LineView extends View {
+
+    private static final String LOG_TAG = LineView.class.getSimpleName();
 
     private Paint mPaint;
     private float startX;
@@ -37,7 +40,8 @@ public class LineView extends View {
         }
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
-        mPaint.setStrokeWidth(5);
+        mPaint.setStrokeWidth(10);
+        mPaint.setShadowLayer(4, 2, 2, 0x80000000);
     }
 
     public LineView(Context context, AttributeSet attrs) {
@@ -56,28 +60,12 @@ public class LineView extends View {
         initPaint(context);
     }
 
-//    public LineView(Context context, float startX, float startY, float stopX, float stopY) {
-//        this(context);
-//        this.startX = startX;
-//        this.startY = startY;
-//        this.stopX = stopX;
-//        this.stopY = stopY;
-//        initPaint(context);
-//    }
-//
-//    public LineView(Context context, float startX, float startY, float stopX, float stopY, Paint paint) {
-//        this(context, startX, startY, stopX, stopY);
-//        this.mPaint = paint;
-//    }
-
     public Paint getPaint() {
         return mPaint;
     }
 
     public LineView setPaint(Paint mPaint) {
         this.mPaint = mPaint;
-        invalidate();
-        requestLayout();
         return this;
     }
 
@@ -87,8 +75,6 @@ public class LineView extends View {
 
     public LineView setStartX(float startX) {
         this.startX = startX;
-        invalidate();
-        requestLayout();
         return this;
     }
 
@@ -98,8 +84,6 @@ public class LineView extends View {
 
     public LineView setStartY(float startY) {
         this.startY = startY;
-        invalidate();
-        requestLayout();
         return this;
     }
 
@@ -109,8 +93,6 @@ public class LineView extends View {
 
     public LineView setStopX(float stopX) {
         this.stopX = stopX;
-        invalidate();
-        requestLayout();
         return this;
     }
 
@@ -120,14 +102,14 @@ public class LineView extends View {
 
     public LineView setStopY(float stopY) {
         this.stopY = stopY;
-        invalidate();
-        requestLayout();
         return this;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
+        Log.d(LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = (" +
+                startX + ", " + startY + ", " + stopX + ", " + stopY + ")");
         canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+        mPaint.setShadowLayer(0, 0, 0, 0);
     }
 }

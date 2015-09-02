@@ -25,34 +25,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:layout_height="match_parent">
 
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/tile_network_map_hdr"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:paddingTop="4.0dip">-->
-
-        <TextView
-            android:id="@+id/tile_network_map_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/ntm"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
-
-        <!--<ImageButton-->
-            <!--android:id="@+id/tile_network_map_menu"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:background="@android:color/transparent"-->
-            <!--android:contentDescription="@string/menu"-->
-            <!--android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"-->
-            <!--android:visibility="gone" />-->
-
-    <!--</RelativeLayout>-->
+    <TextView
+        android:id="@+id/tile_network_map_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="@string/ntm"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="fill_parent"
@@ -77,12 +58,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <GridLayout
             android:id="@+id/tile_network_map_gridLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fillViewport="true"
             android:columnCount="3"
             android:layout_marginBottom="20dp">
@@ -169,135 +150,151 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:singleLine="false"
                 android:text="@string/loading" />
 
-            <LinearLayout
-                android:id="@+id/tile_network_map_container"
+            <RelativeLayout
                 android:layout_columnSpan="3"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="40dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp">
+
+                <!--<com.jayway.viewtutorial.part2.LineChartView-->
+                    <!--android:id="@+id/linechart"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:background="#444"-->
+                    <!--android:padding ="16dp"/>-->
+
+                <org.rm3l.ddwrt.widgets.LineView
+                    android:id="@+id/tile_network_map_router_router_wan_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="105dp"
+                    android:layout_marginTop="60dp"/>
+
+                <org.rm3l.ddwrt.widgets.LineView
+                    android:id="@+id/tile_network_map_router_router_lan_path"
+                    android:layout_width="match_parent"
+                    android:layout_height="105dp"
+                    android:layout_marginTop="215dp" />
 
                 <LinearLayout
-                    android:id="@+id/tile_network_map_wan"
+                    android:id="@+id/tile_network_map_container"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/tile_network_map_wan_imageView"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:src="@drawable/internet"
-                        android:contentDescription="Internet" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:text="WAN (Internet)"
-                        android:layout_marginTop="25dp"/>
-
-                </LinearLayout>
-
-                <!--<org.rm3l.ddwrt.widgets.LineView-->
-                    <!--android:id="@+id/tile_network_map_router_router_wan_path"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_weight="0.7"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--line_view:from="@+id/tile_network_map_router_imageView"-->
-                    <!--line_view:to="@+id/tile_network_map_wan_imageView"/>-->
-
-                <LinearLayout
-                    android:id="@+id/tile_network_map_router"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="1">
-
-                    <TextView
-                        android:id="@+id/tile_network_map_router_wan_ip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:layout_gravity="end"
-                        android:text="Loading WAN IP..."/>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/tile_network_map_wan"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:layout_gravity="end">
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp">
+
+                        <ImageView
+                            android:id="@+id/tile_network_map_wan_imageView"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:src="@drawable/internet"
+                            android:contentDescription="Internet" />
 
                         <TextView
-                            android:id="@+id/tile_network_map_router_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text="WAN (Internet)"
+                            android:layout_marginTop="25dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tile_network_map_router"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:weightSum="1"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp">
+
+                        <TextView
+                            android:id="@+id/tile_network_map_router_wan_ip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:layout_gravity="end"
-                            android:ellipsize="end"
-                            android:singleLine="true"
-                            android:text="..."/>
+                            android:text="Loading WAN IP..."/>
 
-                        <ImageView
-                            android:id="@+id/tile_network_map_router_imageView"
-                            android:layout_width="120dp"
-                            android:layout_height="71dp"
-                            android:src="@drawable/router"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="end">
+
+                            <TextView
+                                android:id="@+id/tile_network_map_router_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp"
+                                android:layout_gravity="end"
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:text="..."/>
+
+                            <ImageView
+                                android:id="@+id/tile_network_map_router_imageView"
+                                android:layout_width="120dp"
+                                android:layout_height="71dp"
+                                android:src="@drawable/router"
+                                android:layout_gravity="end"
+                                android:contentDescription="Router" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tile_network_map_router_lan_ip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
                             android:layout_gravity="end"
-                            android:contentDescription="Router" />
+                            android:text="Loading LAN IP..."/>
 
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tile_network_map_router_lan_ip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:layout_gravity="end"
-                        android:text="Loading LAN IP..."/>
+                    <LinearLayout
+                        android:id="@+id/tile_network_map_wan_lan"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.65"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp">
+
+                        <TextView
+                            android:id="@+id/tile_network_map_wan_lan_textView"
+                            android:layout_width="74dp"
+                            android:layout_height="74dp"
+                            android:background="@drawable/simple_circle_gradient"
+                            android:gravity="center"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:text="..."
+                            android:textColor="#FFFFFF"
+                            android:textSize="28sp"/>
+
+                        <TextView
+                            android:id="@+id/tile_network_map_wan_lan_textView_devices"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text="Device(s)"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <!--<org.rm3l.ddwrt.widgets.LineView-->
-                    <!--android:id="@+id/tile_network_map_router_router_lan_path"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_weight="0.7"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--line_view:from="@+id/tile_network_map_wan_imageView"-->
-                    <!--line_view:to="@+id/tile_network_map_wan_lan_textView"/>-->
-
-                <LinearLayout
-                    android:id="@+id/tile_network_map_wan_lan"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.65"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp">
-
-                    <TextView
-                        android:id="@+id/tile_network_map_wan_lan_textView"
-                        android:layout_width="74dp"
-                        android:layout_height="74dp"
-                        android:background="@drawable/simple_circle_gradient"
-                        android:gravity="center"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="..."
-                        android:textColor="#FFFFFF"
-                        android:textSize="28sp"/>
-
-                    <TextView
-                        android:id="@+id/tile_network_map_wan_lan_textView_devices"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:text="Device(s)"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
+            </RelativeLayout>
 
         </GridLayout>
 
