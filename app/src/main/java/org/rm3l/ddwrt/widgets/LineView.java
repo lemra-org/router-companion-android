@@ -6,16 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
+import android.widget.ImageView;
 
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 /**
  * Created by rm3l on 30/08/15.
  */
-public class LineView extends View {
+public class LineView extends ImageView {
 
     private static final String LOG_TAG = LineView.class.getSimpleName();
 
@@ -106,7 +107,7 @@ public class LineView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         Log.d(LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = (" +
                 startX + ", " + startY + ", " + stopX + ", " + stopY + ")");
         canvas.drawLine(startX, startY, stopX, stopY, mPaint);

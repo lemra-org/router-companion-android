@@ -2,7 +2,6 @@ package org.rm3l.ddwrt.tiles.overview;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +26,6 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.ViewGroupUtils;
-import org.rm3l.ddwrt.widgets.LineView;
 
 import java.util.Random;
 import java.util.UUID;
@@ -220,42 +217,46 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+            final RelativeLayout mapContainerView = (RelativeLayout) layout.findViewById(R.id.tile_network_map_container);
+
+
+//            final View internetImageView = layout.findViewById(R.id.tile_network_map_wan_imageView);
+//            final View routerImageView = layout.findViewById(R.id.tile_network_map_router_imageView);
+            final TextView devicesCountTextView
+                    = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
+
+            //Get Views coords
+//                final Rect internetImageViewCoords = ViewGroupUtils.getLocationOnScreen(internetImageView);
+//                final Rect routerImageViewCoords = ViewGroupUtils.getLocationOnScreen(routerImageView);
+//                final Rect devicesCountTextViewCoords = ViewGroupUtils.getLocationOnScreen(devicesCountTextView);
+//
+//            final LineView routerToInternetPath  = (LineView)
+//                    layout.findViewById(R.id.tile_network_map_router_router_wan_path);
+////                final PointF routerToInternetPathRouterSide = ViewGroupUtils.getTopLeftCorner(routerImageView);
+////                final PointF routerToInternetPathWanSide = ViewGroupUtils.getBottomRightCorner(internetImageView);
+//            routerToInternetPath
+//                    .setStartX(layout.getWidth())
+//                    .setStartY(65 + internetImageView.getHeight() + 125)
+//                    .setStopX(internetImageView.getHeight() + 20)
+//                    .setStopY(65 + internetImageView.getHeight());
+//
+//            final LineView routerToLanPath  = (LineView)
+//                    layout.findViewById(R.id.tile_network_map_router_router_lan_path);
+////                final PointF routerToLanPathRouterSide = ViewGroupUtils.getBottomLeftCorner(routerImageView);
+////                final PointF routerToLanPathLanSide = ViewGroupUtils.getTopRightCorner(devicesCountTextView);
+//            routerToLanPath
+//                    .setStartX(layout.getWidth())
+//                    .setStartY(65 + internetImageView.getHeight() + 125)
+//                    .setStopX(devicesCountTextView.getHeight() + 20)
+//                    .setStopY(65 + internetImageView.getHeight() + 105 +
+//                            routerImageView.getHeight() + 105 + devicesCountTextView.getHeight());
+
+
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
-
-                final View internetImageView = layout.findViewById(R.id.tile_network_map_wan_imageView);
-                final View routerImageView = layout.findViewById(R.id.tile_network_map_router_imageView);
-                final TextView devicesCountTextView
-                        = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-
-                //Get Views coords
-//                final Rect internetImageViewCoords = ViewGroupUtils.getLocationOnScreen(internetImageView);
-//                final Rect routerImageViewCoords = ViewGroupUtils.getLocationOnScreen(routerImageView);
-//                final Rect devicesCountTextViewCoords = ViewGroupUtils.getLocationOnScreen(devicesCountTextView);
-
-                final LineView routerToInternetPath  = (LineView)
-                        layout.findViewById(R.id.tile_network_map_router_router_wan_path);
-                final PointF routerToInternetPathRouterSide = ViewGroupUtils.getTopLeftCorner(routerImageView);
-                final PointF routerToInternetPathWanSide = ViewGroupUtils.getBottomRightCorner(internetImageView);
-                routerToInternetPath
-                        .setStartX(routerToInternetPathRouterSide.x + 100)
-                        .setStartY(routerToInternetPathRouterSide.y + 20)
-                        .setStopX(routerToInternetPathWanSide.x + routerImageView.getWidth())
-                        .setStopY(routerToInternetPathWanSide.y);
-
-                final LineView routerToLanPath  = (LineView)
-                        layout.findViewById(R.id.tile_network_map_router_router_lan_path);
-                final PointF routerToLanPathRouterSide = ViewGroupUtils.getBottomLeftCorner(routerImageView);
-                final PointF routerToLanPathLanSide = ViewGroupUtils.getTopRightCorner(devicesCountTextView);
-                routerToLanPath
-                        .setStartX(routerToLanPathRouterSide.x + 100)
-                        .setStartY(routerToLanPathRouterSide.y + 20)
-                        .setStopX(routerToLanPathLanSide.x + devicesCountTextView.getWidth())
-                        .setStopY(routerToLanPathLanSide.y + devicesCountTextView.getPaddingTop());
 
                 //Router Name
                 final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_name);
@@ -292,11 +293,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
                         .setText("Device" + (nbActiveClientsInt > 1 ? "s" : ""));
 
-                internetImageView
-                        .setOnClickListener(routerStateClickListener);
+//                internetImageView
+//                        .setOnClickListener(routerStateClickListener);
 
-                layout.findViewById(R.id.tile_network_map_router)
-                        .setOnClickListener(routerStateClickListener);
+//                layout.findViewById(R.id.tile_network_map_router)
+//                        .setOnClickListener(routerStateClickListener);
 
                 devicesCountTextView.setOnClickListener(clientsOnClickListener);
             }
