@@ -129,20 +129,10 @@ public class Encrypted {
 
             return ArrayUtils.addAll(ciphertext, iv);
 
-        } catch (final IllegalBlockSizeException ibse) {
+        } catch (final IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException
+                | UnsupportedEncodingException | InvalidKeyException
+                | InvalidAlgorithmParameterException | BadPaddingException ibse) {
             e = ibse;
-        } catch (final NoSuchPaddingException nspe) {
-            e = nspe;
-        } catch (final NoSuchAlgorithmException nsae) {
-            e = nsae;
-        } catch (final UnsupportedEncodingException uee) {
-            e = uee;
-        } catch (final InvalidKeyException ike) {
-            e = ike;
-        } catch (final InvalidAlgorithmParameterException iape) {
-            e = iape;
-        } catch (final BadPaddingException bpe) {
-            e = bpe;
         }
 
         Log.e(LOG_TAG, "Failed to encrypt: " + e);
