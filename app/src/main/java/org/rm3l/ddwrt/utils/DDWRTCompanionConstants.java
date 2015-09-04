@@ -140,7 +140,7 @@ public final class DDWRTCompanionConstants {
 
     public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
 
-    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 15l;
+    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 20l;
 
     private DDWRTCompanionConstants() {
     }
