@@ -189,8 +189,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginLeft="55dp"
-                        android:layout_marginStart="55dp">
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp">
+
+                        <ImageView
+                            android:id="@+id/tile_network_map_wan_vpn"
+                            android:layout_width="40dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/vpn"
+                            tools:ignore="ContentDescription"
+                            android:visibility="invisible" />
 
                         <View
                             android:id="@+id/tile_network_map_wan_path_vertical"

@@ -151,14 +151,21 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
                                     .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255");
+                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
+                                    .setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
+                                            Integer.toString(new Random().nextInt(2)))
+                                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
+                                    .setProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT, "1234");
                         } else {
                             nvramInfoTmp =
                                     SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                             mGlobalPreferences,
                                             NVRAMInfo.ROUTER_NAME,
                                             NVRAMInfo.WAN_IPADDR,
-                                            NVRAMInfo.LAN_IPADDR);
+                                            NVRAMInfo.LAN_IPADDR,
+                                            NVRAMInfo.OPENVPNCL_ENABLE,
+                                            NVRAMInfo.OPENVPNCL_REMOTEIP,
+                                            NVRAMInfo.OPENVPNCL_REMOTEPORT);
                         }
                     } finally {
                         if (nvramInfoTmp != null) {
@@ -290,6 +297,30 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
                         .setText("Device" + (nbActiveClientsInt > 1 ? "s" : ""));
+
+                final boolean openvpnClEnabled = "1".equals(data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE));
+                final String vpnClRemoteServerIp = data.getProperty(NVRAMInfo.OPENVPNCL_REMOTEIP);
+                final String vpnClRemoteServerPort = data.getProperty(NVRAMInfo.OPENVPNCL_REMOTEPORT);
+                final View vpnClImageView = layout.findViewById(R.id.tile_network_map_wan_vpn);
+                if (openvpnClEnabled) {
+                    vpnClImageView.setVisibility(View.VISIBLE);
+                            vpnClImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(mParentFragmentActivity,
+                                            isNullOrEmpty(vpnClRemoteServerIp) ?
+                                                    "OpenVPN Client connected." :
+                                                    String.format("Secure VPN Connection established with %s%s",
+                                                            vpnClRemoteServerIp,
+                                                            isNullOrEmpty(vpnClRemoteServerPort) ?
+                                                                    "" : (", on port " + vpnClRemoteServerPort)),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                } else {
+                    vpnClImageView.setVisibility(View.INVISIBLE);
+                    vpnClImageView.setOnClickListener(null);
+                }
 //
 //                layout.findViewById(R.id.tile_network_map_wan)
 //                        .setOnClickListener(routerStateClickListener);
