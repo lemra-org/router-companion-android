@@ -11,7 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -217,39 +217,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-            final RelativeLayout mapContainerView = (RelativeLayout) layout.findViewById(R.id.tile_network_map_container);
+            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
 
 
-//            final View internetImageView = layout.findViewById(R.id.tile_network_map_wan_imageView);
-//            final View routerImageView = layout.findViewById(R.id.tile_network_map_router_imageView);
             final TextView devicesCountTextView
                     = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-
-            //Get Views coords
-//                final Rect internetImageViewCoords = ViewGroupUtils.getLocationOnScreen(internetImageView);
-//                final Rect routerImageViewCoords = ViewGroupUtils.getLocationOnScreen(routerImageView);
-//                final Rect devicesCountTextViewCoords = ViewGroupUtils.getLocationOnScreen(devicesCountTextView);
-//
-//            final LineView routerToInternetPath  = (LineView)
-//                    layout.findViewById(R.id.tile_network_map_router_router_wan_path);
-////                final PointF routerToInternetPathRouterSide = ViewGroupUtils.getTopLeftCorner(routerImageView);
-////                final PointF routerToInternetPathWanSide = ViewGroupUtils.getBottomRightCorner(internetImageView);
-//            routerToInternetPath
-//                    .setStartX(layout.getWidth())
-//                    .setStartY(65 + internetImageView.getHeight() + 125)
-//                    .setStopX(internetImageView.getHeight() + 20)
-//                    .setStopY(65 + internetImageView.getHeight());
-//
-//            final LineView routerToLanPath  = (LineView)
-//                    layout.findViewById(R.id.tile_network_map_router_router_lan_path);
-////                final PointF routerToLanPathRouterSide = ViewGroupUtils.getBottomLeftCorner(routerImageView);
-////                final PointF routerToLanPathLanSide = ViewGroupUtils.getTopRightCorner(devicesCountTextView);
-//            routerToLanPath
-//                    .setStartX(layout.getWidth())
-//                    .setStartY(65 + internetImageView.getHeight() + 125)
-//                    .setStopX(devicesCountTextView.getHeight() + 20)
-//                    .setStopY(65 + internetImageView.getHeight() + 105 +
-//                            routerImageView.getHeight() + 105 + devicesCountTextView.getHeight());
 
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -293,11 +265,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
                         .setText("Device" + (nbActiveClientsInt > 1 ? "s" : ""));
 
-//                internetImageView
-//                        .setOnClickListener(routerStateClickListener);
+                layout.findViewById(R.id.tile_network_map_wan)
+                        .setOnClickListener(routerStateClickListener);
 
-//                layout.findViewById(R.id.tile_network_map_router)
-//                        .setOnClickListener(routerStateClickListener);
+                layout.findViewById(R.id.tile_network_map_router)
+                        .setOnClickListener(routerStateClickListener);
 
                 devicesCountTextView.setOnClickListener(clientsOnClickListener);
             }
