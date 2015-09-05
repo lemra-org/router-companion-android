@@ -136,7 +136,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
             //Launch Intent
             final Intent launchIntent = new Intent(context, DDWRTMainActivity.class);
             launchIntent.putExtra(ROUTER_SELECTED, routerUuid);
-            launchIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 7); //Open right on WOL Menu Item
+            launchIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 8); //Open right on WOL Menu Item
             launchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             launchIntent.setAction(routerUuid + "-launch-" +
                     System.currentTimeMillis());

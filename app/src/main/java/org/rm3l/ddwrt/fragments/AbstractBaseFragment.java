@@ -388,7 +388,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         });
         tabsForDDWRT.putAll(7, servicesOpenVpnTabs);
 
-        //8- Services > OpenVPN
+        //8- Services > WOL
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesWolTabs = new ArrayList<>();
         servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanFragment>
                 (ServicesWakeOnLanFragment.class) {
