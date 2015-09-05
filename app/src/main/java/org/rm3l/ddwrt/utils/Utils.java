@@ -527,8 +527,7 @@ public final class Utils {
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                 .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
         doorbellDialog.setEmail(acraEmailAddr);
-        doorbellDialog.setEmailFieldVisibility(
-                isNullOrEmpty(acraEmailAddr) ? View.VISIBLE : View.GONE);
+        doorbellDialog.setEmailFieldVisibility(View.VISIBLE);
         doorbellDialog.setMessageHint(R.string.feedback_dialog_comments_text);
         doorbellDialog.setPositiveButtonText(R.string.feedback_send);
         doorbellDialog.setNegativeButtonText(R.string.feedback_cancel);
