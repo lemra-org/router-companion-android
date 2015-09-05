@@ -95,6 +95,8 @@ public final class DDWRTCompanionConstants {
             "notifications.wanConnectivity.syncIntervalMinutes";
     public static final String NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF =
             "notifications.openvpnClient.syncIntervalMinutes";
+    public static final String OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF =
+            "ntm.check.internet.connectivity";
 
     public static final long DEFAULT_THEME = 30l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";
@@ -129,6 +131,9 @@ public final class DDWRTCompanionConstants {
     public static final String DEMO = "--- DEMO ---";
     public static final int RATING_INITIAL_LAUNCH_COUNT = 7;
     public static final String AD_LAST_INTERSTITIAL_PREF = "ad.lastInterstitial";
+    public static final String UNKNOWN = "UNKNOWN";
+    public static final String OK = "OK";
+    public static final String NOK = "NOK";
 
     public static int MB = 1024 * 1024;
 
@@ -141,6 +146,8 @@ public final class DDWRTCompanionConstants {
     public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
 
     public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 20l;
+
+    public static final String IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY = "8.8.8.8";
 
     private DDWRTCompanionConstants() {
     }

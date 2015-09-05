@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.tiles.overview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.Random;
@@ -33,11 +35,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OK;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = NetworkTopologyMapTile.class.getSimpleName();
+    public static final String INTERNET_CONNECTIVITY_STATE = "INTERNET_CONNECTIVITY_STATE";
     private final View.OnClickListener routerStateClickListener;
     private final View.OnClickListener clientsOnClickListener;
 
@@ -47,6 +53,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
     private Router mRouterCopy;
     private String mTempRouterUuid;
+
+    private boolean checkActualInternetConnectivity = true;
 
     public NetworkTopologyMapTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_network_map_overview,
@@ -112,6 +120,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                     isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
+                    if (mParentFragmentPreferences != null) {
+                        checkActualInternetConnectivity = mParentFragmentPreferences
+                                .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
+                    }
+
                     Log.d(LOG_TAG, "Init background loader for " + NetworkTopologyMapTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -173,6 +186,19 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             }
                         }
 
+                        if (checkActualInternetConnectivity) {
+                            try {
+                                //Check actual connections to the outside from the router
+                                final int wanPingCmdStatus = SSHUtils.runCommands(mParentFragmentActivity, mGlobalPreferences, mRouterCopy,
+                                        String.format("/bin/ping -c 1 %s >/dev/null 2>&1",
+                                                DDWRTCompanionConstants.IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY));
+                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_STATE,
+                                        wanPingCmdStatus == 0 ? OK : NOK);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_STATE, UNKNOWN);
+                            }
+                        }
                     }
 
                     return nvramInfo;
@@ -264,14 +290,105 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                 ((TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView_devices))
                         .setText("Device" + (nbActiveClientsInt > 1 ? "s" : ""));
-
-                layout.findViewById(R.id.tile_network_map_wan)
-                        .setOnClickListener(routerStateClickListener);
+//
+//                layout.findViewById(R.id.tile_network_map_wan)
+//                        .setOnClickListener(routerStateClickListener);
 
                 layout.findViewById(R.id.tile_network_map_router)
                         .setOnClickListener(routerStateClickListener);
 
                 devicesCountTextView.setOnClickListener(clientsOnClickListener);
+
+                final View statusOkView = layout.findViewById(R.id.tile_network_map_wan_status_ok);
+                final View statusWarningView = layout.findViewById(R.id.tile_network_map_wan_status_warning);
+                final View statusUnknownView = layout.findViewById(R.id.tile_network_map_wan_status_unknown);
+                final View wanPathHorizontalView = layout.findViewById(R.id.tile_network_map_wan_path_horizontal);
+
+                int wanPathColor;
+                if (checkActualInternetConnectivity) {
+                    final String internetConnectivityState = data.getProperty(INTERNET_CONNECTIVITY_STATE, null);
+                    final String statusToastMsg;
+                    if (internetConnectivityState == null) {
+                        wanPathColor = R.color.line_view_color;
+                        statusOkView
+                                .setVisibility(View.GONE);
+                        statusWarningView
+                                .setVisibility(View.GONE);
+                        statusUnknownView
+                                .setVisibility(View.VISIBLE);
+                        statusToastMsg = "Couldn't test connectivity to the Internet!";
+                    } else {
+                        switch (internetConnectivityState) {
+                            case OK:
+                                wanPathColor = R.color.android_green;
+                                statusOkView
+                                        .setVisibility(View.VISIBLE);
+                                statusWarningView
+                                        .setVisibility(View.GONE);
+                                statusUnknownView
+                                        .setVisibility(View.GONE);
+                                statusToastMsg = "Your router seems to be able to reach the Internet";
+                                break;
+                            case NOK:
+                                wanPathColor = R.color.win8_orange;
+                                statusOkView
+                                        .setVisibility(View.GONE);
+                                statusWarningView
+                                        .setVisibility(View.VISIBLE);
+                                statusUnknownView
+                                        .setVisibility(View.GONE);
+                                statusToastMsg = "Your router seems not to be able to reach the Internet";
+                                break;
+                            case UNKNOWN:
+                            default:
+                                wanPathColor = R.color.line_view_color;
+                                statusOkView
+                                        .setVisibility(View.GONE);
+                                statusWarningView
+                                        .setVisibility(View.GONE);
+                                statusUnknownView
+                                        .setVisibility(View.VISIBLE);
+                                statusToastMsg = "Couldn't test connectivity to the Internet!";
+                                break;
+                        }
+                    }
+                    final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(mParentFragmentActivity, statusToastMsg, Toast.LENGTH_LONG).show();
+                        }
+                    };
+                    statusOkView.setOnClickListener(statusViewOnClickListener);
+                    statusWarningView.setOnClickListener(statusViewOnClickListener);
+                    statusUnknownView.setOnClickListener(statusViewOnClickListener);
+                    wanPathHorizontalView.setOnClickListener(statusViewOnClickListener);
+
+                } else {
+                    statusOkView
+                            .setVisibility(View.GONE);
+                    statusWarningView
+                            .setVisibility(View.GONE);
+                    statusUnknownView
+                            .setVisibility(View.GONE);
+                    wanPathColor = R.color.line_view_color;
+
+                    wanPathHorizontalView.setOnClickListener(null);
+                }
+
+                final Resources resources = mParentFragmentActivity.getResources();
+                final int[] wanPathElements = new int[]{
+                        R.id.tile_network_map_wan_path_vertical,
+                        R.id.tile_network_map_wan_path_horizontal,
+                        R.id.tile_network_map_router_wan_path_vertical
+                };
+                for (final int wanPathElement : wanPathElements) {
+                    final View wanPathElementView = layout.findViewById(wanPathElement);
+                    if (wanPathElementView == null) {
+                        continue;
+                    }
+                    wanPathElementView.setBackgroundColor(resources.getColor(wanPathColor));
+                }
+
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

@@ -185,13 +185,44 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     </LinearLayout>
 
-                    <View
-                        android:id="@+id/tile_network_map_wan_path_vertical"
-                        android:layout_width="2dp"
-                        android:layout_height="20dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:layout_marginLeft="55dp"
-                        android:layout_marginStart="55dp"
-                        android:background="#ffcccccc" />
+                        android:layout_marginStart="55dp">
+
+                        <View
+                            android:id="@+id/tile_network_map_wan_path_vertical"
+                            android:layout_width="2dp"
+                            android:layout_height="35dp"
+                            android:background="#ffcccccc" />
+
+                        <ImageView
+                            android:id="@+id/tile_network_map_wan_status_warning"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/ic_action_alert_wan_warning"
+                            android:visibility="gone"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:id="@+id/tile_network_map_wan_status_ok"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/ic_action_action_done"
+                            android:visibility="gone"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:id="@+id/tile_network_map_wan_status_unknown"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/ic_action_communication_unknown"
+                            android:visibility="gone"
+                            tools:ignore="ContentDescription"/>
+
+                    </LinearLayout>
 
                     <View
                         android:id="@+id/tile_network_map_wan_path_horizontal"

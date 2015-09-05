@@ -126,6 +126,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_header_ntm">Network Map</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
 
