@@ -33,7 +33,6 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_SYNC_BACKUP_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
@@ -83,7 +82,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 //            bindPreferenceSummaryToValue(findPreference(ALWAYS_CHECK_CONNECTION_PREF_KEY));
             bindPreferenceSummaryToValue(findPreference(THEMING_PREF));
             bindPreferenceSummaryToValue(findPreference(DATA_USAGE_NETWORK_PREF));
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
+//            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
 
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_BG_SERVICE_ENABLE));
