@@ -28,10 +28,13 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -307,14 +310,14 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             vpnClImageView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Toast.makeText(mParentFragmentActivity,
+                                    Utils.displayMessage(mParentFragmentActivity,
                                             isNullOrEmpty(vpnClRemoteServerIp) ?
                                                     "OpenVPN Client connected." :
                                                     String.format("Secure VPN Connection established with %s%s",
                                                             vpnClRemoteServerIp,
                                                             isNullOrEmpty(vpnClRemoteServerPort) ?
                                                                     "" : (", on port " + vpnClRemoteServerPort)),
-                                            Toast.LENGTH_LONG).show();
+                                            Style.INFO);
                                 }
                             });
                 } else {
@@ -335,7 +338,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final View statusUnknownView = layout.findViewById(R.id.tile_network_map_wan_status_unknown);
                 final View wanPathHorizontalView = layout.findViewById(R.id.tile_network_map_wan_path_horizontal);
 
-                int wanPathColor;
+                final int wanPathColor;
                 if (checkActualInternetConnectivity) {
                     final String internetConnectivityState = data.getProperty(INTERNET_CONNECTIVITY_STATE, null);
                     final String statusToastMsg;
@@ -386,7 +389,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(mParentFragmentActivity, statusToastMsg, Toast.LENGTH_LONG).show();
+                            Utils.displayMessage(mParentFragmentActivity,
+                                    statusToastMsg,
+                                    new Style.Builder()
+                                            .setBackgroundColorValue(wanPathColor)
+                                            .build());
                         }
                     };
                     statusOkView.setOnClickListener(statusViewOnClickListener);
