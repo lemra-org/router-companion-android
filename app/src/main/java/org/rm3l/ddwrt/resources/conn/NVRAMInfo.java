@@ -151,6 +151,10 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String PPTPD_RADPORT = "pptpd_radport";
     public static final String PPTPD_ACCTPORT = "pptpd_acctport";
     public static final String PPTPD_RADPASS = "pptpd_radpass";
+    public static final String OPENVPN_ENABLE = "openvpn_enable";
+    public static final String OPENVPN_ONWAN = "openvpn_onwan";
+    public static final String OPENVPN_DH = "openvpn_dh";
+    public static final String OPENVPN_CONFIG = "openvpn_config";
 
     /**
      * Default constructor: initialized an empty Properties set

@@ -59,6 +59,7 @@ import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNServerFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesPPTPClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesPPTPServerFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanDaemonFragment;
@@ -374,14 +375,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         //7- Services > OpenVPN
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesOpenVpnTabs = new ArrayList<>();
-        //TODO Disabled for now
-//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
-//                (ServicesOpenVPNServerFragment.class) {
-//            @Override
-//            public int getTitleRes() {
-//                return R.string.services_openvpn_server;
-//            }
-//        });
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
+                (ServicesOpenVPNServerFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_openvpn_server;
+            }
+        });
         servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNClientFragment>
                 (ServicesOpenVPNClientFragment.class) {
             @Override
