@@ -140,6 +140,17 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String PPTPD_CLIENT_NAT = "pptpd_client_nat";
     public static final String PPTPD_CLIENT_SRVUSER = "pptpd_client_srvuser";
     public static final String PPTPD_CLIENT_SRVPASS = "pptpd_client_srvpass";
+    public static final String PPTPD_ENABLE = "pptpd_enable";
+    public static final String PPTPD_BCRELAY = "pptpd_bcrelay";
+    public static final String PPTPD_FORCEMPPE = "pptpd_forcemppe";
+    public static final String PPTPD_LIP = "pptpd_lip";
+    public static final String PPTPD_RIP = "pptpd_rip";
+    public static final String PPTPD_AUTH = "pptpd_auth";
+    public static final String PPTPD_RADIUS = "pptpd_radius";
+    public static final String PPTPD_RADSERVER = "pptpd_radserver";
+    public static final String PPTPD_RADPORT = "pptpd_radport";
+    public static final String PPTPD_ACCTPORT = "pptpd_acctport";
+    public static final String PPTPD_RADPASS = "pptpd_radpass";
 
     /**
      * Default constructor: initialized an empty Properties set

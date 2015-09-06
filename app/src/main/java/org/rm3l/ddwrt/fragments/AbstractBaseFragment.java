@@ -60,6 +60,7 @@ import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesPPTPClientFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesPPTPServerFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanDaemonFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
 import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
@@ -399,14 +400,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         //8- Services > PPTP
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesPPTPTabs = new ArrayList<>();
-        //TODO Disabled for now
-//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
-//                (ServicesOpenVPNServerFragment.class) {
-//            @Override
-//            public int getTitleRes() {
-//                return R.string.services_openvpn_server;
-//            }
-//        });
+        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesPPTPServerFragment>
+                (ServicesPPTPServerFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_pptp_server;
+            }
+        });
         servicesPPTPTabs.add(new FragmentTabDescription<ServicesPPTPClientFragment>
                 (ServicesPPTPClientFragment.class) {
             @Override
