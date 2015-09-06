@@ -56,7 +56,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
-import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
+import org.rm3l.ddwrt.fragments.overview.OverviewFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNServerFragment;
@@ -285,8 +285,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForDDWRT = ArrayListMultimap.create();
         //1- Overview
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> overviewTabs = new ArrayList<>();
-        overviewTabs.add(new FragmentTabDescription<OverviewNetworkTopologyMapFragment>
-                (OverviewNetworkTopologyMapFragment.class) {
+        overviewTabs.add(new FragmentTabDescription<OverviewFragment>
+                (OverviewFragment.class) {
             @Override
             public int getTitleRes() {
                 return R.string.overview;
@@ -512,8 +512,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>> tabsForOpenWRT = ArrayListMultimap.create();
         //1- Overview //TODO Add something specific to OpenWrt
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> overviewTabs = new ArrayList<>();
-        overviewTabs.add(new FragmentTabDescription<OverviewNetworkTopologyMapFragment>
-                (OverviewNetworkTopologyMapFragment.class) {
+        overviewTabs.add(new FragmentTabDescription<OverviewFragment>
+                (OverviewFragment.class) {
             @Override
             public int getTitleRes() {
                 return R.string.overview_ntm;

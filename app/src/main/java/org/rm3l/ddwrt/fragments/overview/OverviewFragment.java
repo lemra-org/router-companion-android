@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by rm3l on 29/08/15.
  */
-public class OverviewNetworkTopologyMapFragment extends AbstractBaseFragment {
+public class OverviewFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override
