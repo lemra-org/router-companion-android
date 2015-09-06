@@ -48,7 +48,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -841,8 +840,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE, enable ? "1" : "0");
 
             new UndoBarController.UndoBar(mParentFragmentActivity)
-                    .message(String.format("OpenVPN Client will be %s on '%s' (%s). " +
-                                    "Router will be rebooted at the end of the operation.",
+                    .message(String.format("OpenVPN Client will be %s on '%s' (%s). ",
                             enable ? "enabled" : "disabled",
                             mRouter.getDisplayName(),
                             mRouter.getRemoteIpAddress()))
@@ -865,42 +863,28 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                           @Override
                                                           public void run() {
 
-                                                              compoundButton.setChecked(enable);
-                                                              Utils.displayMessage(mParentFragmentActivity,
-                                                                      String.format("OpenVPN Client %s successfully on host '%s' (%s). " +
-                                                                                      "Now attempting to reboot router...",
-                                                                              enable ? "enabled" : "disabled",
-                                                                              router.getDisplayName(),
-                                                                              router.getRemoteIpAddress()),
-                                                                      Style.CONFIRM);
-
-                                                              new RebootRouterAction(mParentFragmentActivity, new RouterActionListener() {
-                                                                  @Override
-                                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                                                        sanitizeButtons();
+                                                              try {
+                                                                  compoundButton.setChecked(enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("OpenVPN Client %s successfully on host '%s' (%s). ",
+                                                                                  enable ? "enabled" : "disabled",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress()),
+                                                                          Style.CONFIRM);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                                  if (mLoader != null) {
+                                                                      //Reload everything right away
+                                                                      doneWithLoaderInstance(OpenVPNClientTile.this,
+                                                                              mLoader,
+                                                                              1l,
+                                                                              R.id.tile_services_openvpn_client_togglebutton_title,
+                                                                              R.id.tile_services_openvpn_client_togglebutton_separator);
                                                                   }
-
-                                                                  @Override
-                                                                  public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                                                        sanitizeButtons();
-                                                                  }
-
-                                                                  private void sanitizeButtons() {
-                                                                      compoundButton.setEnabled(true);
-                                                                      isToggleStateActionRunning.set(false);
-                                                                      if (mLoader != null) {
-                                                                          //Reload everything right away
-                                                                          doneWithLoaderInstance(OpenVPNClientTile.this,
-                                                                                  mLoader,
-                                                                                  1l,
-                                                                                  R.id.tile_services_openvpn_client_togglebutton_title,
-                                                                                  R.id.tile_services_openvpn_client_togglebutton_separator);
-                                                                      }
-                                                                  }
-
-                                                              }, mGlobalPreferences);
-
+                                                              }
                                                           }
+
                                                       });
                                                   }
 
