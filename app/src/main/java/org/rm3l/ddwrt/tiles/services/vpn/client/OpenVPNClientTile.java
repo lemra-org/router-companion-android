@@ -855,7 +855,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                                       new SetNVRAMVariablesAction(mParentFragmentActivity,
                                               nvramInfoToSet,
-                                              false,
+                                              true,
                                               new RouterActionListener() {
                                                   @Override
                                                   public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
