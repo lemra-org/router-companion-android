@@ -59,6 +59,7 @@ import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.overview.OverviewNetworkTopologyMapFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesOpenVPNLogsFragment;
+import org.rm3l.ddwrt.fragments.services.ServicesPPTPClientFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanDaemonFragment;
 import org.rm3l.ddwrt.fragments.services.ServicesWakeOnLanFragment;
 import org.rm3l.ddwrt.fragments.status.StatusBandwidthFragment;
@@ -396,7 +397,26 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         });
         tabsForDDWRT.putAll(7, servicesOpenVpnTabs);
 
-        //8- Services > WOL
+        //8- Services > PPTP
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesPPTPTabs = new ArrayList<>();
+        //TODO Disabled for now
+//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
+//                (ServicesOpenVPNServerFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_openvpn_server;
+//            }
+//        });
+        servicesPPTPTabs.add(new FragmentTabDescription<ServicesPPTPClientFragment>
+                (ServicesPPTPClientFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.services_pptp_client;
+            }
+        });
+        tabsForDDWRT.putAll(8, servicesPPTPTabs);
+
+        //9- Services > WOL
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesWolTabs = new ArrayList<>();
         servicesWolTabs.add(new FragmentTabDescription<ServicesWakeOnLanFragment>
                 (ServicesWakeOnLanFragment.class) {
@@ -412,9 +432,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.services_wol_daemon;
             }
         });
-        tabsForDDWRT.putAll(8, servicesWolTabs);
+        tabsForDDWRT.putAll(9, servicesWolTabs);
 
-        //10- Admin > Commands
+        //11- Admin > Commands
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminCmdTabs = new ArrayList<>();
         adminCmdTabs.add(new FragmentTabDescription<AdminCommandsFragment>
                 (AdminCommandsFragment.class) {
@@ -423,9 +443,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.command_shell;
             }
         });
-        tabsForDDWRT.putAll(10, adminCmdTabs);
+        tabsForDDWRT.putAll(11, adminCmdTabs);
 
-        //11- Admin > NVRAM
+        //12- Admin > NVRAM
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminNvramTabs = new ArrayList<>();
         adminNvramTabs.add(new FragmentTabDescription<AdminNVRAMFragment>
                 (AdminNVRAMFragment.class) {
@@ -434,9 +454,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.admin_area_nvram;
             }
         });
-        tabsForDDWRT.putAll(11, adminNvramTabs);
+        tabsForDDWRT.putAll(12, adminNvramTabs);
 
-        //13- Toolbox > Network
+        //14- Toolbox > Network
         //FIXME Add "netstat" also (auto-refreshable)
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
@@ -483,7 +503,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.toolbox_oui_lookup;
             }
         });
-        tabsForDDWRT.putAll(13, toolboxNetworkTabs);
+        tabsForDDWRT.putAll(14, toolboxNetworkTabs);
         return tabsForDDWRT;
     }
 

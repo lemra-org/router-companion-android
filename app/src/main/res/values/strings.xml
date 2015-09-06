@@ -92,6 +92,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="navigation_drawer_items_array_item2_header">Services</string>
     <string-array name="navigation_drawer_items_array_item2_items">
         <item>OpenVPN</item>
+        <item>PPTP VPN</item>
         <item>Wake On LAN</item>
     </string-array>
 
@@ -643,4 +644,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="show_wireless_hosts_only">Wireless Devices Only</string>
     <string name="num_wireless_clients"># Wireless Clients</string>
     <string name="num_wired_clients"># Wired Clients</string>
+    <string name="services_pptp_client">PPTP Client</string>
 </resources>

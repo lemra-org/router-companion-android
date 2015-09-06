@@ -130,6 +130,16 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String WOL_HOSTNAME = "wol_hostname";
     public static final String WOL_PASSWD = "wol_passwd";
     public static final String WOL_MACS = "wol_macs";
+    public static final String PPTPD_CLIENT_ENABLE = "pptpd_client_enable";
+    public static final String PPTPD_CLIENT_SRVIP = "pptpd_client_srvip";
+    public static final String PPTPD_CLIENT_SRVSUB = "pptpd_client_srvsub";
+    public static final String PPTPD_CLIENT_SRVSUBMSK = "pptpd_client_srvsubmsk";
+    public static final String PPTPD_CLIENT_SRVSEC = "pptpd_client_srvsec";
+    public static final String PPTPD_CLIENT_SRVMTU = "pptpd_client_srvmtu";
+    public static final String PPTPD_CLIENT_SRVMRU = "pptpd_client_srvmru";
+    public static final String PPTPD_CLIENT_NAT = "pptpd_client_nat";
+    public static final String PPTPD_CLIENT_SRVUSER = "pptpd_client_srvuser";
+    public static final String PPTPD_CLIENT_SRVPASS = "pptpd_client_srvpass";
 
     /**
      * Default constructor: initialized an empty Properties set

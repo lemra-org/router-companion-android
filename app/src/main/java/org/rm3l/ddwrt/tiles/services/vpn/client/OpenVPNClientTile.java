@@ -444,9 +444,6 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 .setVisibility(View.GONE);
         layout.findViewById(R.id.tile_services_openvpn_client_loading_view)
                 .setVisibility(View.GONE);
-//        final View openvpnclStatus = layout.findViewById(R.id.tile_services_openvpn_client_status);
-//        openvpnclStatus
-//                .setVisibility(View.VISIBLE);
         layout.findViewById(R.id.tile_services_openvpn_client_grid_layout)
                 .setVisibility(View.VISIBLE);
         layout.findViewById(R.id.tile_services_openvpn_client_note)
