@@ -639,7 +639,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="ad">Ad</string>
     <string name="app_rate">Like DD-WRT Companion? Would you mind rating it?</string>
     <string name="ntm">Network Topology Map</string>
-    <string name="overview">overview</string>
+    <string name="overview">Overview</string>
     <string name="overview_ntm">Network Map</string>
     <string name="show_wireless_hosts_only">Wireless Devices Only</string>
     <string name="num_wireless_clients"># Wireless Clients</string>

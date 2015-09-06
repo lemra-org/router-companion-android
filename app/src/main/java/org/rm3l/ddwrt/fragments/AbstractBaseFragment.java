@@ -289,7 +289,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 (OverviewNetworkTopologyMapFragment.class) {
             @Override
             public int getTitleRes() {
-                return R.string.overview_ntm;
+                return R.string.overview;
             }
         });
         tabsForDDWRT.putAll(1, overviewTabs);
