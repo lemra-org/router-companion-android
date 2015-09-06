@@ -27,9 +27,9 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile;
+import org.rm3l.ddwrt.tiles.services.vpn.client.OpenVPNClientTile;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +40,7 @@ public class ServicesOpenVPNClientFragment extends AbstractBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
+        return Collections.<DDWRTTile> singletonList(
                 new OpenVPNClientTile(this, savedInstanceState, this.router));
     }
 }

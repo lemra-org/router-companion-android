@@ -19,7 +19,7 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.tiles.services.vpn;
+package org.rm3l.ddwrt.tiles.services.vpn.client;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,8 +32,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
@@ -61,9 +64,11 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -95,16 +100,15 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF;
-import static org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF;
+import static org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity.EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.CAT_SYS_CLASS_NET_S_STATISTICS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.RX_BYTES;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.IfaceStatsType.TX_BYTES;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         implements DDWRTTile.ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
@@ -117,13 +121,12 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     public static final String N_A = "-";
     public static final String OPENVPNCL_NVRAMINFO = "OPENVPNCL_NVRAMINFO";
     private static final String LOG_TAG = OpenVPNClientTile.class.getSimpleName();
-    private final SharedPreferences mSharedPreferences;
     private NVRAMInfo mNvramInfo;
+    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
 
     public OpenVPNClientTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_client, R.id.tile_services_openvpn_client_togglebutton);
-        mSharedPreferences = mParentFragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                Context.MODE_PRIVATE);
     }
 
     @Override
@@ -139,7 +142,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -237,74 +240,74 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
                         boolean applyNewPrefs = false;
                         String property = nvramInfo.getProperty(OPENVPNCL_REMOTEIP);
-                        final SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        final SharedPreferences.Editor editor = mGlobalPreferences.edit();
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_TARGET_SERVERS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
 
                         property = nvramInfo.getProperty(OPENVPNCL_REMOTEPORT);
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_SERVER_PORTS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
 
                         property = nvramInfo.getProperty(OPENVPNCL_IP);
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_IPS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
 
                         property = nvramInfo.getProperty(OPENVPNCL_MASK);
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_LOCAL_SUBNETS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
 
                         property = nvramInfo.getProperty(OPENVPNCL_MTU);
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_MTU_SETTINGS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
 
                         property = nvramInfo.getProperty(OPENVPNCL_FRAGMENT);
                         if (!Strings.isNullOrEmpty(property)) {
-                            final Set<String> mSharedPreferencesStringSet = new HashSet<>(mSharedPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF,
+                            final Set<String> mGlobalPreferencesStringSet = new HashSet<>(mGlobalPreferences.getStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF,
                                     new HashSet<String>()));
-                            if (!mSharedPreferencesStringSet.contains(property)) {
-                                mSharedPreferencesStringSet.add(property);
+                            if (!mGlobalPreferencesStringSet.contains(property)) {
+                                mGlobalPreferencesStringSet.add(property);
                                 editor
-                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF, mSharedPreferencesStringSet);
+                                        .putStringSet(EDIT_OPEN_VPN_CLIENT_SETTINGS_UDP_FRAGMENTS_AUTOCOMPLETE_PREF, mGlobalPreferencesStringSet);
                                 applyNewPrefs = true;
                             }
                         }
@@ -424,6 +427,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 return result;
             }
         };
+
+        return mLoader;
     }
 
     @Nullable
@@ -440,16 +445,55 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                 .setVisibility(View.GONE);
         layout.findViewById(R.id.tile_services_openvpn_client_loading_view)
                 .setVisibility(View.GONE);
-        final View openvpnclStatus = layout.findViewById(R.id.tile_services_openvpn_client_status);
-        openvpnclStatus
-                .setVisibility(View.VISIBLE);
+//        final View openvpnclStatus = layout.findViewById(R.id.tile_services_openvpn_client_status);
+//        openvpnclStatus
+//                .setVisibility(View.VISIBLE);
         layout.findViewById(R.id.tile_services_openvpn_client_grid_layout)
                 .setVisibility(View.VISIBLE);
         layout.findViewById(R.id.tile_services_openvpn_client_note)
                 .setVisibility(View.VISIBLE);
 
+        Exception preliminaryCheckException = null;
         if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+            //noinspection ThrowableInstanceNeverThrown
+            preliminaryCheckException = new DDWRTNoDataException("No Data!");
+        } else //noinspection ThrowableResultOfMethodCallIgnored
+            if (data.getException() == null) {
+                final String openvpnClEnabled = data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE);
+                if (openvpnClEnabled == null || !Arrays.asList("0","1").contains(openvpnClEnabled)) {
+                    //noinspection ThrowableInstanceNeverThrown
+                    preliminaryCheckException = new DDWRTOpenvpnClStateUnknown("Unknown state");
+                }
+            }
+
+        final SwitchCompat enableTraffDataButton =
+                (SwitchCompat) this.layout.findViewById(R.id.tile_services_openvpn_client_status);
+        enableTraffDataButton.setVisibility(View.VISIBLE);
+
+        final boolean makeToogleEnabled = (data != null &&
+                data.getData() != null &&
+                data.getData().containsKey(NVRAMInfo.OPENVPNCL_ENABLE));
+
+        if (!isToggleStateActionRunning.get()) {
+            if (makeToogleEnabled) {
+                if ("1".equals(data.getProperty(NVRAMInfo.OPENVPNCL_ENABLE))) {
+                    //Enabled
+                    enableTraffDataButton.setChecked(true);
+                } else {
+                    //Disabled
+                    enableTraffDataButton.setChecked(false);
+                }
+                enableTraffDataButton.setEnabled(true);
+            } else {
+                enableTraffDataButton.setChecked(false);
+                enableTraffDataButton.setEnabled(false);
+            }
+
+            enableTraffDataButton.setOnClickListener(new ManageOpenVpnClientToggle());
+        }
+
+        if (preliminaryCheckException != null) {
+            data = new NVRAMInfo().setException(preliminaryCheckException);
         }
 
         final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_openvpn_client_error);
@@ -510,7 +554,6 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     statusValue = N_A;
                     break;
             }
-            ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_status)).setText(statusValue);
 
             ((TextView) layout.findViewById(R.id.tile_services_openvpn_client_state)).setText(statusValue);
         }
@@ -744,5 +787,197 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Override
     public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
         //Nothing to do
+    }
+
+    private class DDWRTOpenvpnClStateUnknown extends DDWRTNoDataException {
+
+        public DDWRTOpenvpnClStateUnknown(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+    private class ManageOpenVpnClientToggle implements  View.OnClickListener {
+
+        private boolean enable;
+
+        @Override
+        public void onClick(View view) {
+
+            isToggleStateActionRunning.set(true);
+
+            if (!(view instanceof CompoundButton)) {
+                Utils.reportException(new IllegalStateException("ManageOpenVpnClientToggle#onClick: " +
+                        "view is NOT an instance of CompoundButton!"));
+                isToggleStateActionRunning.set(false);
+                return;
+            }
+
+            final CompoundButton compoundButton = (CompoundButton) view;
+
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    compoundButton.setEnabled(false);
+                }
+            });
+
+            this.enable = compoundButton.isChecked();
+
+            if (BuildConfig.WITH_ADS) {
+                Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle OpenVPN Client");
+                isToggleStateActionRunning.set(false);
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compoundButton.setChecked(!enable);
+                        compoundButton.setEnabled(true);
+                    }
+                });
+                return;
+            }
+
+            final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
+
+            nvramInfoToSet.setProperty(NVRAMInfo.OPENVPNCL_ENABLE, enable ? "1" : "0");
+
+            new UndoBarController.UndoBar(mParentFragmentActivity)
+                    .message(String.format("OpenVPN Client will be %s on '%s' (%s). " +
+                                    "Router will be rebooted at the end of the operation.",
+                            enable ? "enabled" : "disabled",
+                            mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()))
+                    .listener(new UndoBarController.AdvancedUndoListener() {
+                                  @Override
+                                  public void onHide(@Nullable Parcelable parcelable) {
+
+                                      Utils.displayMessage(mParentFragmentActivity,
+                                              String.format("%s OpenVPN Client...",
+                                                      enable ? "Enabling" : "Disabling"),
+                                              Style.INFO);
+
+                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                              nvramInfoToSet,
+                                              false,
+                                              new RouterActionListener() {
+                                                  @Override
+                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+
+                                                              compoundButton.setChecked(enable);
+                                                              Utils.displayMessage(mParentFragmentActivity,
+                                                                      String.format("OpenVPN Client %s successfully on host '%s' (%s). " +
+                                                                                      "Now attempting to reboot router...",
+                                                                              enable ? "enabled" : "disabled",
+                                                                              router.getDisplayName(),
+                                                                              router.getRemoteIpAddress()),
+                                                                      Style.CONFIRM);
+
+                                                              new RebootRouterAction(mParentFragmentActivity, new RouterActionListener() {
+                                                                  @Override
+                                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                                        sanitizeButtons();
+                                                                  }
+
+                                                                  @Override
+                                                                  public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                                        sanitizeButtons();
+                                                                  }
+
+                                                                  private void sanitizeButtons() {
+                                                                      compoundButton.setEnabled(true);
+                                                                      isToggleStateActionRunning.set(false);
+                                                                      if (mLoader != null) {
+                                                                          //Reload everything right away
+                                                                          doneWithLoaderInstance(OpenVPNClientTile.this,
+                                                                                  mLoader,
+                                                                                  1l,
+                                                                                  R.id.tile_services_openvpn_client_togglebutton_title,
+                                                                                  R.id.tile_services_openvpn_client_togglebutton_separator);
+                                                                      }
+                                                                  }
+
+                                                              }, mGlobalPreferences);
+
+                                                          }
+                                                      });
+                                                  }
+
+                                                  @Override
+                                                  public void onRouterActionFailure(@NonNull RouterAction
+                                                                                            routerAction, @NonNull final Router
+                                                                                            router, @Nullable final Exception exception) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              try {
+                                                                  compoundButton.setChecked(!enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Error while trying to %s OpenVPN Client on '%s' (%s): %s",
+                                                                                  enable ? "enable" : "disable",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress(),
+                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                          Style.ALERT);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                              }
+                                                          }
+                                                      });
+
+
+                                                  }
+                                              }
+
+                                              ,
+                                              mGlobalPreferences).
+
+                                              execute(mRouter);
+
+                                  }
+
+                                  @Override
+                                  public void onClear(@NonNull Parcelable[] parcelables) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+
+                                  @Override
+                                  public void onUndo(@Nullable Parcelable parcelable) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+                              }
+
+                    )
+                    .
+
+                            token(new Bundle()
+
+                            )
+                    .
+
+                            show();
+        }
     }
 }

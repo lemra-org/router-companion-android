@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.rm3l.ddwrt.tiles.services.vpn.EditOpenVPNClientSettingsActivity">
+    tools:context="org.rm3l.ddwrt.tiles.services.vpn.client.EditOpenVPNClientSettingsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/openvpn_client_settings_toolbar"

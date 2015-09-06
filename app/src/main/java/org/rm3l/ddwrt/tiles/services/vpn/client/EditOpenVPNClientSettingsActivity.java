@@ -19,7 +19,7 @@
  *
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
-package org.rm3l.ddwrt.tiles.services.vpn;
+package org.rm3l.ddwrt.tiles.services.vpn.client;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -82,7 +82,6 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_STATIC;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSAUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TLSCIP;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_TUNTAP;
-import static org.rm3l.ddwrt.tiles.services.vpn.OpenVPNClientTile.OPENVPNCL_NVRAMINFO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
@@ -177,7 +176,7 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
         }
 
         final Intent intent = getIntent();
-        mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(OPENVPNCL_NVRAMINFO);
+        mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(OpenVPNClientTile.OPENVPNCL_NVRAMINFO);
 
         if (mNvramInfo == null) {
             Toast.makeText(this, "Could not load OpenVPN Client settings", Toast.LENGTH_SHORT).show();
@@ -595,7 +594,7 @@ public class EditOpenVPNClientSettingsActivity extends ActionBarActivity {
         Log.d(TAG, "vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
-        data.putExtra(OPENVPNCL_NVRAMINFO, nvramVarsToUpdate);
+        data.putExtra(OpenVPNClientTile.OPENVPNCL_NVRAMINFO, nvramVarsToUpdate);
 
         if (!nvramVarsToUpdate.isEmpty()) {
             //Something changed - prompt confirmation dialog

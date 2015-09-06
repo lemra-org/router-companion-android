@@ -372,6 +372,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         //7- Services > OpenVPN
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesOpenVpnTabs = new ArrayList<>();
+        //TODO Disabled for now
+//        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNServerFragment>
+//                (ServicesOpenVPNServerFragment.class) {
+//            @Override
+//            public int getTitleRes() {
+//                return R.string.services_openvpn_server;
+//            }
+//        });
         servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesOpenVPNClientFragment>
                 (ServicesOpenVPNClientFragment.class) {
             @Override
