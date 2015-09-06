@@ -400,7 +400,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         //8- Services > PPTP
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> servicesPPTPTabs = new ArrayList<>();
-        servicesOpenVpnTabs.add(new FragmentTabDescription<ServicesPPTPServerFragment>
+        servicesPPTPTabs.add(new FragmentTabDescription<ServicesPPTPServerFragment>
                 (ServicesPPTPServerFragment.class) {
             @Override
             public int getTitleRes() {
