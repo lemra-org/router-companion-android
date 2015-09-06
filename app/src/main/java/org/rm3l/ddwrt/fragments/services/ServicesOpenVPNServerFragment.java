@@ -27,7 +27,9 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.services.vpn.server.OpenVPNServerTile;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ServicesOpenVPNServerFragment extends AbstractBaseFragment {
@@ -35,7 +37,8 @@ public class ServicesOpenVPNServerFragment extends AbstractBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
+        return Collections.<DDWRTTile> singletonList(
+                new OpenVPNServerTile(this, savedInstanceState, this.router));
     }
 
 }
