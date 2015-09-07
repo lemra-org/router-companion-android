@@ -27,7 +27,6 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
 import java.util.Random;
@@ -237,7 +236,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
             final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_overview_uptime_error);
 
-            Exception exception = data.getException();
+            final Exception exception = data.getException();
 
             final RelativeLayout mapContainerView =
                     (RelativeLayout) layout.findViewById(R.id.tile_overview_uptime_container);
@@ -259,40 +258,34 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 try {
                     property = String.valueOf(Integer.parseInt(property));
                 } catch (final NumberFormatException e) {
-                    exception = e;
-                    Utils.reportException(e);
+                    e.printStackTrace();
                     property = N_A;
                 }
                 ((TextView) layout.findViewById(R.id.tile_overview_uptime_days))
                         .setText(property);
 
-                if (exception == null) {
-                    //Hours
-                    property = data.getProperty(UPTIME_HOURS);
-                    try {
-                        property = String.valueOf(Integer.parseInt(property));
-                    } catch (final NumberFormatException e) {
-                        Utils.reportException(e);
-                        property = N_A;
-                        exception = e;
-                    }
-                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours))
-                            .setText(property);
+                //Hours
+                property = data.getProperty(UPTIME_HOURS);
+                try {
+                    property = String.valueOf(Integer.parseInt(property));
+                } catch (final NumberFormatException e) {
+                    e.printStackTrace();
+                    property = N_A;
                 }
+                ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours))
+                        .setText(property);
 
-                if (exception == null) {
-                    //Minutes
-                    property = data.getProperty(UPTIME_MINUTES);
-                    try {
-                        property = String.valueOf(Integer.parseInt(property));
-                    } catch (final NumberFormatException e) {
-                        Utils.reportException(e);
-                        property = N_A;
-                        exception = e;
-                    }
-                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes))
-                            .setText(property);
+                //Minutes
+                property = data.getProperty(UPTIME_MINUTES);
+                try {
+                    property = String.valueOf(Integer.parseInt(property));
+                } catch (final NumberFormatException e) {
+                    e.printStackTrace();
+                    property = N_A;
                 }
+                ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes))
+                        .setText(property);
+
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
