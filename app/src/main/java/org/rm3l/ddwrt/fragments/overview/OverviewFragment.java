@@ -6,8 +6,9 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile;
+import org.rm3l.ddwrt.tiles.overview.UptimeTile;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,7 +19,8 @@ public class OverviewFragment extends AbstractBaseFragment {
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Collections.<DDWRTTile>
-                singletonList(new NetworkTopologyMapTile(this, savedInstanceState, this.router));
+        return Arrays.<DDWRTTile>asList(
+                new UptimeTile(this, savedInstanceState, this.router),
+                new NetworkTopologyMapTile(this, savedInstanceState, this.router));
     }
 }
