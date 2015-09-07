@@ -10,7 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +26,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
+import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -30,6 +35,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,14 +45,13 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OK;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = NetworkTopologyMapTile.class.getSimpleName();
-    public static final String INTERNET_CONNECTIVITY_STATE = "INTERNET_CONNECTIVITY_STATE";
+    public static final String INTERNET_CONNECTIVITY_PUBLIC_IP = "INTERNET_CONNECTIVITY_PUBLIC_IP";
     private final View.OnClickListener routerStateClickListener;
     private final View.OnClickListener clientsOnClickListener;
 
@@ -199,14 +204,25 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         if (checkActualInternetConnectivity) {
                             try {
                                 //Check actual connections to the outside from the router
-                                final int wanPingCmdStatus = SSHUtils.runCommands(mParentFragmentActivity, mGlobalPreferences, mRouterCopy,
-                                        String.format("/bin/ping -c 1 %s >/dev/null 2>&1",
-                                                DDWRTCompanionConstants.IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY));
-                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_STATE,
-                                        wanPingCmdStatus == 0 ? OK : NOK);
+                                final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                        mRouterCopy, mGlobalPreferences,
+                                        String.format("/usr/bin/wget -O - \"%s\" 2>&1 ; echo",
+                                                PublicIPInfo.IPIFY_API_RAW));
+                                Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                } else {
+                                    final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length-1]
+                                            .trim();
+                                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+                                    } else {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    }
+                                }
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_STATE, UNKNOWN);
+                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             }
                         }
                     }
@@ -255,10 +271,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
 
-
             final TextView devicesCountTextView
                     = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
-
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -333,59 +347,103 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                 devicesCountTextView.setOnClickListener(clientsOnClickListener);
 
-                final View statusOkView = layout.findViewById(R.id.tile_network_map_wan_status_ok);
+                final TextView publicIpView = (TextView) layout.findViewById(R.id.tile_network_map_wan_public_ip);
                 final View statusWarningView = layout.findViewById(R.id.tile_network_map_wan_status_warning);
                 final View statusUnknownView = layout.findViewById(R.id.tile_network_map_wan_status_unknown);
                 final View wanPathHorizontalView = layout.findViewById(R.id.tile_network_map_wan_path_horizontal);
+                final Resources resources = mParentFragmentActivity.getResources();
 
                 final int wanPathColor;
                 if (checkActualInternetConnectivity) {
-                    final String internetConnectivityState = data.getProperty(INTERNET_CONNECTIVITY_STATE, null);
+                    final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
                     final String statusToastMsg;
-                    if (internetConnectivityState == null) {
+
+                    if (publicIp == null || UNKNOWN.equals(publicIp)) {
                         wanPathColor = R.color.line_view_color;
-                        statusOkView
+                        publicIpView
                                 .setVisibility(View.GONE);
                         statusWarningView
                                 .setVisibility(View.GONE);
                         statusUnknownView
                                 .setVisibility(View.VISIBLE);
                         statusToastMsg = "Couldn't test connectivity to the Internet!";
+
+                    } else if (NOK.equals(publicIp)) {
+                        wanPathColor = R.color.win8_orange;
+                        publicIpView
+                                .setVisibility(View.GONE);
+                        statusWarningView
+                                .setVisibility(View.VISIBLE);
+                        statusUnknownView
+                                .setVisibility(View.GONE);
+                        statusToastMsg = ("Your router seems not to be able to reach the Internet. " +
+                                "No public IP Address was found on the Internet.");
+
                     } else {
-                        switch (internetConnectivityState) {
-                            case OK:
-                                wanPathColor = R.color.android_green;
-                                statusOkView
-                                        .setVisibility(View.VISIBLE);
-                                statusWarningView
-                                        .setVisibility(View.GONE);
-                                statusUnknownView
-                                        .setVisibility(View.GONE);
-                                statusToastMsg = "Your router seems to be able to reach the Internet";
-                                break;
-                            case NOK:
-                                wanPathColor = R.color.win8_orange;
-                                statusOkView
-                                        .setVisibility(View.GONE);
-                                statusWarningView
-                                        .setVisibility(View.VISIBLE);
-                                statusUnknownView
-                                        .setVisibility(View.GONE);
-                                statusToastMsg = "Your router seems not to be able to reach the Internet";
-                                break;
-                            case UNKNOWN:
-                            default:
-                                wanPathColor = R.color.line_view_color;
-                                statusOkView
-                                        .setVisibility(View.GONE);
-                                statusWarningView
-                                        .setVisibility(View.GONE);
-                                statusUnknownView
-                                        .setVisibility(View.VISIBLE);
-                                statusToastMsg = "Couldn't test connectivity to the Internet!";
-                                break;
-                        }
+                        //Valid IP Address
+                        wanPathColor = R.color.android_green;
+                        final String publicIpViewText = ("Public IP:\n" + publicIp);
+                        final Spannable publicIpViewTextSpannable = new SpannableString(publicIpViewText);
+                        publicIpViewTextSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                "Public IP:\n".length(), publicIpViewText.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        publicIpView.setText(publicIpViewTextSpannable);
+                        publicIpView
+                                .setVisibility(View.VISIBLE);
+                        statusWarningView
+                                .setVisibility(View.GONE);
+                        statusUnknownView
+                                .setVisibility(View.GONE);
+                        statusToastMsg = ("Your router seems to be able to reach the Internet. " +
+                                "Public IP Address on the Internet is: " + publicIp);
                     }
+
+//                    if (publicIp == null) {
+//                        wanPathColor = R.color.line_view_color;
+//                        publicIpView
+//                                .setVisibility(View.GONE);
+//                        statusWarningView
+//                                .setVisibility(View.GONE);
+//                        statusUnknownView
+//                                .setVisibility(View.VISIBLE);
+//                        statusToastMsg = "Couldn't test connectivity to the Internet!";
+//                    } else {
+//                        switch (publicIp) {
+//                            case OK:
+//                                wanPathColor = R.color.android_green;
+//                                publicIpView
+//                                        .setVisibility(View.VISIBLE);
+//                                statusWarningView
+//                                        .setVisibility(View.GONE);
+//                                statusUnknownView
+//                                        .setVisibility(View.GONE);
+//                                statusToastMsg = "Your router seems to be able to reach the Internet. " +
+//                                        "Public IP Address on the Internet is: " + ;
+//                                break;
+//                            case NOK:
+//                                wanPathColor = R.color.win8_orange;
+//                                publicIpView
+//                                        .setVisibility(View.GONE);
+//                                statusWarningView
+//                                        .setVisibility(View.VISIBLE);
+//                                statusUnknownView
+//                                        .setVisibility(View.GONE);
+//                                statusToastMsg = "Your router seems not to be able to reach the Internet. " +
+//                                        "No public IP Address was found on the Internet.";
+//                                break;
+//                            case UNKNOWN:
+//                            default:
+//                                wanPathColor = R.color.line_view_color;
+//                                publicIpView
+//                                        .setVisibility(View.GONE);
+//                                statusWarningView
+//                                        .setVisibility(View.GONE);
+//                                statusUnknownView
+//                                        .setVisibility(View.VISIBLE);
+//                                statusToastMsg = "Couldn't test connectivity to the Internet!";
+//                                break;
+//                        }
+//                    }
                     final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -396,13 +454,13 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                             .build());
                         }
                     };
-                    statusOkView.setOnClickListener(statusViewOnClickListener);
+                    publicIpView.setOnClickListener(statusViewOnClickListener);
                     statusWarningView.setOnClickListener(statusViewOnClickListener);
                     statusUnknownView.setOnClickListener(statusViewOnClickListener);
                     wanPathHorizontalView.setOnClickListener(statusViewOnClickListener);
 
                 } else {
-                    statusOkView
+                    publicIpView
                             .setVisibility(View.GONE);
                     statusWarningView
                             .setVisibility(View.GONE);
@@ -413,7 +471,9 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     wanPathHorizontalView.setOnClickListener(null);
                 }
 
-                final Resources resources = mParentFragmentActivity.getResources();
+                publicIpView
+                        .setTextColor(resources.getColor(wanPathColor));
+
                 final int[] wanPathElements = new int[]{
                         R.id.tile_network_map_wan_path_vertical,
                         R.id.tile_network_map_wan_path_horizontal,

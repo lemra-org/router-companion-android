@@ -206,19 +206,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="35dp"
                             android:background="#ffcccccc" />
 
+                        <TextView
+                            android:id="@+id/tile_network_map_wan_public_ip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_action_action_done"
+                            android:text="Public IP: \n-"
+                            android:visibility="gone"/>
+
                         <ImageView
                             android:id="@+id/tile_network_map_wan_status_warning"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/ic_action_alert_wan_warning"
-                            android:visibility="gone"
-                            tools:ignore="ContentDescription" />
-
-                        <ImageView
-                            android:id="@+id/tile_network_map_wan_status_ok"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:src="@drawable/ic_action_action_done"
                             android:visibility="gone"
                             tools:ignore="ContentDescription" />
 
