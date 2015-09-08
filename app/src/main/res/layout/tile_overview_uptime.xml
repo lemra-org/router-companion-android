@@ -92,45 +92,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginBottom="5dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
                 android:textOn="ON"
                 android:visibility="gone"/>
 
-            <!--&lt;!&ndash; Uptime &ndash;&gt;-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Uptime"-->
-                <!--android:textStyle="bold" />-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text="@string/one_space" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tile_overview_uptime_text"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:ellipsize="end"-->
-                <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
-                <!--android:text="@string/loading" />-->
-
             <RelativeLayout
                 android:id="@+id/tile_overview_uptime_container"
                 android:layout_columnSpan="3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:gravity="center">
@@ -151,9 +124,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceLarge"
-                        android:text="0"
-                        android:textSize="40dp"
-                        android:textStyle="bold"/>
+                        android:text="-"
+                        android:textSize="40dp"/>
 
                     <TextView
                         android:id="@+id/tile_overview_uptime_days_title"
@@ -182,8 +154,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:textSize="40dp"
-                        android:text="0"
-                        android:textStyle="bold"/>
+                        android:text="-"/>
 
                     <TextView
                         android:id="@+id/tile_overview_uptime_hours_title"
@@ -213,8 +184,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:textSize="40dp"
-                        android:text="0"
-                        android:textStyle="bold"/>
+                        android:text="-"/>
 
                     <TextView
                         android:id="@+id/tile_overview_uptime_minutes_title"
