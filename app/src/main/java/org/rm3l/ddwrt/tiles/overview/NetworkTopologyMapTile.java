@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.common.base.Throwables;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -204,10 +205,20 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         if (checkActualInternetConnectivity) {
                             try {
                                 //Check actual connections to the outside from the router
+                                final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
                                 final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
                                         mRouterCopy, mGlobalPreferences,
-                                        String.format("/usr/bin/wget -O - \"%s\" 2>&1 ; echo",
-                                                PublicIPInfo.IPIFY_API_RAW));
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                                        String.format("echo -e \"" +
+                                                        "GET / HTTP/1.1\\r\\n" +
+                                                        "Host:%s\\r\\n" +
+                                                        "User-Agent:%s/%s\\r\\n\" " +
+                                                        "| /usr/bin/nc %s %d",
+                                                PublicIPInfo.ICANHAZIP_HOST,
+                                                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                BuildConfig.VERSION_NAME,
+                                                PublicIPInfo.ICANHAZIP_HOST,
+                                                PublicIPInfo.ICANHAZIP_PORT));
                                 Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                 if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
                                     nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

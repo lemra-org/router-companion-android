@@ -10,6 +10,9 @@ public class PublicIPInfo {
     public static final String IPIFY_API_RAW = "https://api.ipify.org";
     public static final String IPIFY_API_JSON = "https://api.ipify.org?format=json";
 
+    public static final String ICANHAZIP_HOST = "icanhazip.com";
+    public static final int ICANHAZIP_PORT = 80;
+
     @Nullable
     private String ip;
 

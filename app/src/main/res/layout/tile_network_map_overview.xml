@@ -93,8 +93,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginBottom="5dp"
                 android:checked="true"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textOff="OFF"
@@ -264,6 +263,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
                                 android:paddingTop="5dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginEnd="5dp"
                                 android:text="Loading WAN IP..."/>
 
                             <View
@@ -287,11 +288,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:id="@+id/tile_network_map_router_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:padding="20dp"
                                 android:layout_gravity="end"
+                                android:paddingTop="30dp"
                                 android:ellipsize="end"
                                 android:singleLine="true"
-                                android:text="..."/>
+                                android:text="Loading Router Name..."/>
 
                             <ImageView
                                 android:id="@+id/tile_network_map_router_imageView"
@@ -315,6 +316,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
                                 android:paddingTop="5dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginEnd="5dp"
                                 android:text="Loading LAN IP..."/>
 
                             <View

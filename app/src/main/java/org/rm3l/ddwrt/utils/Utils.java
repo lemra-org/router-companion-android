@@ -114,6 +114,14 @@ public final class Utils {
     private Utils() {
     }
 
+    @Nullable
+    public static CharSequence getApplicationName(@Nullable Context context) {
+        if (context == null) {
+            return null;
+        }
+        return context.getApplicationInfo().loadLabel(context.getPackageManager());
+    }
+
     public static long getNextLoaderId() {
         return nextLoaderId.getAndIncrement();
     }
