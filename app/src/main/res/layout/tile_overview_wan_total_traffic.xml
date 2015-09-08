@@ -26,12 +26,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tile_overview_uptime_title"
+        android:id="@+id/tile_overview_wan_total_traffic_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="@string/uptime"
+        android:text="@string/wan_total_traffic"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
@@ -44,7 +44,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- Error message placeholder -->
     <TextView
-        android:id="@+id/tile_overview_uptime_error"
+        android:id="@+id/tile_overview_wan_total_traffic_error"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -61,7 +61,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_height="wrap_content">
 
         <GridLayout
-            android:id="@+id/tile_overview_uptime_gridLayout"
+            android:id="@+id/tile_overview_wan_total_traffic_gridLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"
@@ -70,7 +70,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <!-- Auto-refresh -->
             <TextView
-                android:id="@+id/tile_overview_uptime_togglebutton_title"
+                android:id="@+id/tile_overview_wan_total_traffic_togglebutton_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/auto_refresh"
@@ -78,7 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone"/>
 
             <TextView
-                android:id="@+id/tile_overview_uptime_togglebutton_separator"
+                android:id="@+id/tile_overview_wan_total_traffic_togglebutton_separator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -88,7 +88,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone"/>
 
             <android.support.v7.widget.SwitchCompat
-                android:id="@+id/tile_overview_uptime_togglebutton"
+                android:id="@+id/tile_overview_wan_total_traffic_togglebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -100,7 +100,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone"/>
 
             <RelativeLayout
-                android:id="@+id/tile_overview_uptime_container"
+                android:id="@+id/tile_overview_wan_total_traffic_container"
                 android:layout_columnSpan="3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,91 +109,68 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:gravity="center">
 
                 <LinearLayout
-                    android:id="@+id/tile_overview_uptime_days_container"
+                    android:id="@+id/tile_overview_wan_total_traffic_dl_container"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:weightSum="1">
 
                     <TextView
-                        android:id="@+id/tile_overview_uptime_days"
+                        android:id="@+id/tile_overview_wan_total_traffic_dl"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:text="-"
-                        android:textSize="35dp"/>
+                        android:textSize="25dp"
+                        android:drawableStart="@drawable/ic_dl_white"
+                        android:drawableLeft="@drawable/ic_dl_white"/>
 
                     <TextView
-                        android:id="@+id/tile_overview_uptime_days_title"
+                        android:id="@+id/tile_overview_wan_total_traffic_dl_title"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:text="day(s)"/>
+                        android:text="Download"/>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tile_overview_uptime_hours_container"
-                    android:layout_centerInParent="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tile_overview_uptime_hours"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:textSize="35dp"
-                        android:text="-"/>
-
-                    <TextView
-                        android:id="@+id/tile_overview_uptime_hours_title"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:text="hour(s)"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tile_overview_uptime_minutes_container"
+                    android:id="@+id/tile_overview_wan_total_traffic_ul_container"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1">
 
                     <TextView
-                        android:id="@+id/tile_overview_uptime_minutes"
+                        android:id="@+id/tile_overview_wan_total_traffic_ul"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceLarge"
-                        android:textSize="35dp"
-                        android:text="-"/>
+                        android:text="-"
+                        android:textSize="25dp"
+                        android:drawableStart="@drawable/ic_ul_light"
+                        android:drawableLeft="@drawable/ic_ul_light"/>
 
                     <TextView
-                        android:id="@+id/tile_overview_uptime_minutes_title"
+                        android:id="@+id/tile_overview_wan_total_traffic_ul_title"
                         android:gravity="center"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:text="minute(s)"/>
+                        android:text="Upload"/>
 
                 </LinearLayout>
 
@@ -202,7 +179,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </GridLayout>
 
         <ProgressBar
-            android:id="@+id/tile_overview_uptime_loading_view"
+            android:id="@+id/tile_overview_wan_total_traffic_loading_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

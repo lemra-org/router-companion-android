@@ -135,9 +135,10 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                         if (StringUtils.contains(first, "day")) {
                                             //day
                                             nvramInfoTmp.setProperty(UPTIME_DAYS,
-                                                    first.trim()
+                                                    first
                                                             .replaceAll("day", "")
-                                                            .replaceAll("days",""));
+                                                            .replaceAll("days","")
+                                                    .trim());
 
                                             if (uptimeListSize >= 2) {
                                                 final String other = uptimeList.get(1);
@@ -156,8 +157,17 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                                                         otherList.get(1).trim());
                                                             }
                                                         }
+                                                    } else if (StringUtils.contains(other, "hour")) {
+                                                        nvramInfoTmp.setProperty(UPTIME_HOURS,
+                                                                other
+                                                                        .replaceAll("hour", "")
+                                                                        .replaceAll("hours", "").trim());
+                                                    } else if (StringUtils.contains(other, "min")) {
+                                                        nvramInfoTmp.setProperty(UPTIME_MINUTES,
+                                                                other
+                                                                        .replaceAll("min", "")
+                                                                        .replaceAll("mins", "").trim());
                                                     }
-                                                    //TODO else?
                                                 }
                                             }
                                         } else if (StringUtils.contains(first, ":")) {
@@ -174,12 +184,17 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                                             otherList.get(1).trim());
                                                 }
                                             }
+                                        } else if (StringUtils.contains(first, "hour")) {
+                                            nvramInfoTmp.setProperty(UPTIME_HOURS,
+                                                    first
+                                                            .replaceAll("hour", "")
+                                                            .replaceAll("hours", "").trim());
                                         } else if (StringUtils.contains(first, "min")) {
                                             nvramInfoTmp.setProperty(UPTIME_MINUTES,
                                                     first
                                                             .trim()
                                                             .replaceAll("min", "")
-                                                            .replaceAll("mins", ""));
+                                                            .replaceAll("mins", "").trim());
                                         }
                                     }
                                 }
@@ -244,19 +259,18 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-
-//                //Uptime
-//                String property = data.getProperty(UPTIME, N_A);
-//                ((TextView) layout.findViewById(R.id.tile_overview_uptime_text))
-//                        .setText(property);
-
                 //Days
                 String property = data.getProperty(UPTIME_DAYS);
                 try {
-                    property = String.valueOf(Integer.parseInt(property));
+                    final int value = Integer.parseInt(property);
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_days_title))
+                            .setText("day" + (value >= 2 ? "s" : ""));
+                    property = String.valueOf(value);
                 } catch (final NumberFormatException e) {
                     e.printStackTrace();
                     property = N_A;
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_days_title))
+                            .setText("day(s)");
                 }
                 ((TextView) layout.findViewById(R.id.tile_overview_uptime_days))
                         .setText(property);
@@ -264,10 +278,15 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 //Hours
                 property = data.getProperty(UPTIME_HOURS);
                 try {
-                    property = String.valueOf(Integer.parseInt(property));
+                    final int value = Integer.parseInt(property);
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours_title))
+                            .setText("hour" + (value >= 2 ? "s" : ""));
+                    property = String.valueOf(value);
                 } catch (final NumberFormatException e) {
                     e.printStackTrace();
                     property = N_A;
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours_title))
+                            .setText("hour(s)");
                 }
                 ((TextView) layout.findViewById(R.id.tile_overview_uptime_hours))
                         .setText(property);
@@ -275,10 +294,15 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 //Minutes
                 property = data.getProperty(UPTIME_MINUTES);
                 try {
-                    property = String.valueOf(Integer.parseInt(property));
+                    final int value = Integer.parseInt(property);
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes_title))
+                            .setText("minute" + (value >= 2 ? "s" : ""));
+                    property = String.valueOf(value);
                 } catch (final NumberFormatException e) {
                     e.printStackTrace();
                     property = N_A;
+                    ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes_title))
+                            .setText("minute(s)");
                 }
                 ((TextView) layout.findViewById(R.id.tile_overview_uptime_minutes))
                         .setText(property);

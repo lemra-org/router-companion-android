@@ -647,4 +647,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="services_pptp_client">PPTP Client</string>
     <string name="services_pptp_server">PPTP Server</string>
     <string name="uptime">Uptime</string>
+    <string name="wan_total_traffic">WAN Total Traffic</string>
 </resources>

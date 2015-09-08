@@ -23,10 +23,12 @@
 package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -90,56 +92,8 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+                    return getWANTotalTrafficNvramInfo(mParentFragmentActivity, mRouter, mGlobalPreferences);
 
-                    //Start by getting information about the WAN iface name
-                    final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
-                    if (nvRamInfoFromRouter == null) {
-                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
-                    }
-
-                    final String wanIface = nvRamInfoFromRouter
-                            .getProperty(NVRAMInfo.WAN_IFACE);
-
-                    if (Strings.isNullOrEmpty(wanIface)) {
-                        throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
-                    }
-
-                    final String[] netDevWanIfaces = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
-                    if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
-                        return null;
-                    }
-
-                    String netDevWanIface = netDevWanIfaces[0];
-                    if (netDevWanIface == null) {
-                        return null;
-                    }
-
-                    netDevWanIface = netDevWanIface.replaceAll(wanIface + ":", "");
-
-                    final List<String> netDevWanIfaceList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(netDevWanIface);
-                    if (netDevWanIfaceList == null || netDevWanIfaceList.size() <= 15) {
-                        return null;
-                    }
-
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_bytes", netDevWanIfaceList.get(0));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_packets", netDevWanIfaceList.get(1));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_errs", netDevWanIfaceList.get(2));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_drop", netDevWanIfaceList.get(3));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_fifo", netDevWanIfaceList.get(4));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_frame", netDevWanIfaceList.get(5));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_compressed", netDevWanIfaceList.get(6));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_rcv_multicast", netDevWanIfaceList.get(7));
-
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_bytes", netDevWanIfaceList.get(8));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_packets", netDevWanIfaceList.get(9));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_errs", netDevWanIfaceList.get(10));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_drop", netDevWanIfaceList.get(11));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_fifo", netDevWanIfaceList.get(12));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls", netDevWanIfaceList.get(13));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
-                    nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
-
-                    return nvRamInfoFromRouter;
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
@@ -147,6 +101,60 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
         };
+    }
+
+    public static NVRAMInfo getWANTotalTrafficNvramInfo(FragmentActivity mParentFragmentActivity, Router mRouter, SharedPreferences mGlobalPreferences)
+            throws Exception {
+
+        //Start by getting information about the WAN iface name
+        final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+        if (nvRamInfoFromRouter == null) {
+            throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+        }
+
+        final String wanIface = nvRamInfoFromRouter
+                .getProperty(NVRAMInfo.WAN_IFACE);
+
+        if (Strings.isNullOrEmpty(wanIface)) {
+            throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
+        }
+
+        final String[] netDevWanIfaces = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+        if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
+            return null;
+        }
+
+        String netDevWanIface = netDevWanIfaces[0];
+        if (netDevWanIface == null) {
+            return null;
+        }
+
+        netDevWanIface = netDevWanIface.replaceAll(wanIface + ":", "");
+
+        final List<String> netDevWanIfaceList = Splitter.on(" ").omitEmptyStrings().trimResults().splitToList(netDevWanIface);
+        if (netDevWanIfaceList == null || netDevWanIfaceList.size() <= 15) {
+            return null;
+        }
+
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_bytes", netDevWanIfaceList.get(0));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_packets", netDevWanIfaceList.get(1));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_errs", netDevWanIfaceList.get(2));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_drop", netDevWanIfaceList.get(3));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_fifo", netDevWanIfaceList.get(4));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_frame", netDevWanIfaceList.get(5));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_compressed", netDevWanIfaceList.get(6));
+        nvRamInfoFromRouter.setProperty(wanIface + "_rcv_multicast", netDevWanIfaceList.get(7));
+
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_bytes", netDevWanIfaceList.get(8));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_packets", netDevWanIfaceList.get(9));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_errs", netDevWanIfaceList.get(10));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_drop", netDevWanIfaceList.get(11));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_fifo", netDevWanIfaceList.get(12));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls", netDevWanIfaceList.get(13));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
+        nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
+
+        return nvRamInfoFromRouter;
     }
 
     @Nullable

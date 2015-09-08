@@ -7,6 +7,7 @@ import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile;
 import org.rm3l.ddwrt.tiles.overview.UptimeTile;
+import org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ public class OverviewFragment extends AbstractBaseFragment {
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(
                 new UptimeTile(this, savedInstanceState, this.router),
+                new WANTotalTrafficOverviewTile(this, savedInstanceState, this.router),
                 new NetworkTopologyMapTile(this, savedInstanceState, this.router));
     }
 }
