@@ -1,7 +1,6 @@
 package org.rm3l.ddwrt.tiles.overview;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
-import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -31,7 +29,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import java.util.List;
 import java.util.Random;
 
-import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 public class UptimeTile extends DDWRTTile<NVRAMInfo> {
@@ -44,29 +41,29 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter COMMA_SPLITTER = Splitter.on(",").omitEmptyStrings();
     public static final String UPTIME = "UPTIME";
     private boolean isThemeLight;
-    private final View.OnClickListener routerStateClickListener;
+//    private final View.OnClickListener routerStateClickListener;
 
     public UptimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_uptime,
                 R.id.tile_overview_uptime_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-        routerStateClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Open Router State tab
-                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-                    ((DDWRTMainActivity) mParentFragmentActivity)
-                            .selectItemInDrawer(2);
-                } else {
-                    //TODO Set proper flags ???
-                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
-                    mParentFragmentActivity.startActivity(intent);
-                }
-            }
-        };
+//        routerStateClickListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //Open Router State tab
+//                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+//                    ((DDWRTMainActivity) mParentFragmentActivity)
+//                            .selectItemInDrawer(2);
+//                } else {
+//                    //TODO Set proper flags ???
+//                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+//                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+//                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
+//                    mParentFragmentActivity.startActivity(intent);
+//                }
+//            }
+//        };
     }
 
     @Override
@@ -310,7 +307,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 mapContainerView.setVisibility(View.VISIBLE);
             }
 
-            mapContainerView.setOnClickListener(routerStateClickListener);
+//            mapContainerView.setOnClickListener(routerStateClickListener);
 
         }  finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
