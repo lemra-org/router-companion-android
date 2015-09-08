@@ -362,12 +362,14 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
         mRouterPreferences.edit()
                 .remove(DDWRTTile.getFormattedPrefKey(WirelessClientsTile.class, CONNECTED_HOSTS))
-                .apply();
+                .commit();
 
         mRouterPreferences.edit()
                 .putStringSet(DDWRTTile.getFormattedPrefKey(WirelessClientsTile.class, CONNECTED_HOSTS),
                         stringImmutableSet)
                 .apply();
+
+        Utils.requestBackup(mCtx);
 
         Log.d(TAG, "NOTIFICATIONS_ENABLE=" + mRouterPreferences
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true));

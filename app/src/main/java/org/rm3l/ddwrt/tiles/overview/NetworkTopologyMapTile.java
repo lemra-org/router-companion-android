@@ -30,6 +30,7 @@ import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -227,6 +228,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                             .trim();
                                     if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                                        PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                mRouterCopy, mParentFragmentPreferences,
+                                                wanPublicIpCmdStatus,
+                                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+
                                     } else {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     }

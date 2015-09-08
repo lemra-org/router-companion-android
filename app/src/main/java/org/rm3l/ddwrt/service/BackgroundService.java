@@ -12,6 +12,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.AbstractBackgroundServiceTask;
 import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
+import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -133,6 +134,7 @@ public class BackgroundService extends IntentService {
             //Add any other tasks over here
             tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
             tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
+            tasks.add(new PublicIPChangesServiceTask(BackgroundService.this));
         }
 
         @Override
