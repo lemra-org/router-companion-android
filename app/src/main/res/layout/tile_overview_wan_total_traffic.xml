@@ -31,7 +31,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="@string/wan_total_traffic"
+        android:text="WAN Total Traffic"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 

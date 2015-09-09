@@ -857,7 +857,7 @@ public class WANMonthlyTrafficTile
                 Style.ALERT);
     }
 
-    private class DDWRTTraffDataDisabled extends DDWRTNoDataException {
+    public static class DDWRTTraffDataDisabled extends DDWRTNoDataException {
 
         public DDWRTTraffDataDisabled(@Nullable String detailMessage) {
             super(detailMessage);
