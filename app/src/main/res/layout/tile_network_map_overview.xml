@@ -129,7 +129,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="#Active DHCP Leases"
+                android:text="# Active DHCP Leases"
                 android:textStyle="bold" />
 
             <TextView
