@@ -54,7 +54,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/routersListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/router_list_add"
+            android:contentDescription="@string/router_add_new"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            android:layout_gravity="bottom|end"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="end|bottom"/>
 
         <Button
             android:id="@+id/router_list_remove_ads"
@@ -67,28 +81,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textColor="@color/white"
             android:gravity="center"
             android:padding="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="start|bottom"
-            android:layout_marginBottom="@dimen/add_button_margin"
-            android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"/>
+            android:layout_gravity="start|bottom"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/router_list_add"
-            android:contentDescription="@string/router_add_new"
-            android:src="@android:drawable/ic_input_add"
-            android:tint="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_compat_margin"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="end|bottom"
-            android:layout_marginBottom="@dimen/add_button_margin"
-            android:layout_marginEnd="@dimen/add_button_margin"
-            android:layout_marginRight="@dimen/add_button_margin"/>
 
     </FrameLayout>
 
