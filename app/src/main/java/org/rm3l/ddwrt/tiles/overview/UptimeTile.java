@@ -9,7 +9,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -250,8 +249,8 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-            final RelativeLayout mapContainerView =
-                    (RelativeLayout) layout.findViewById(R.id.tile_overview_uptime_container);
+//            final RelativeLayout mapContainerView =
+//                    (RelativeLayout) layout.findViewById(R.id.tile_overview_uptime_container);
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -326,10 +325,11 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 //Hide NTM
-                mapContainerView.setVisibility(View.GONE);
-            } else {
-                mapContainerView.setVisibility(View.VISIBLE);
+//                mapContainerView.setVisibility(View.GONE);
             }
+//            else {
+//                mapContainerView.setVisibility(View.VISIBLE);
+//            }
 
 //            mapContainerView.setOnClickListener(routerStateClickListener);
 

@@ -16,7 +16,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -287,7 +286,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+//            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
 
             final TextView devicesCountTextView
                     = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
@@ -524,10 +523,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 //Hide NTM
-                mapContainerView.setVisibility(View.GONE);
-            } else {
-                mapContainerView.setVisibility(View.VISIBLE);
+//                mapContainerView.setVisibility(View.GONE);
             }
+//            else {
+//                mapContainerView.setVisibility(View.VISIBLE);
+//            }
 
         } finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
