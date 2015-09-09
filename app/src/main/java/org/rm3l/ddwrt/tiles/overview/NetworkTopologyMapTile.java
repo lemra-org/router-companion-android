@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -64,6 +65,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
     private String mTempRouterUuid;
 
     private boolean checkActualInternetConnectivity = true;
+
+    private long mLastSync;
 
     public NetworkTopologyMapTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_network_map_overview,
@@ -143,6 +146,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     nbActiveClients.set(-1);
                     nbDhcpLeases.set(-1);
@@ -503,6 +508,11 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     }
                     wanPathElementView.setBackgroundColor(resources.getColor(wanPathColor));
                 }
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
 
             }
 
