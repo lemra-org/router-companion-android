@@ -136,8 +136,8 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                             //day
                                             nvramInfoTmp.setProperty(UPTIME_DAYS,
                                                     first
+                                                            .replaceAll("days", "")
                                                             .replaceAll("day", "")
-                                                            .replaceAll("days","")
                                                     .trim());
 
                                             if (uptimeListSize >= 2) {
@@ -160,13 +160,13 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                                     } else if (StringUtils.contains(other, "hour")) {
                                                         nvramInfoTmp.setProperty(UPTIME_HOURS,
                                                                 other
-                                                                        .replaceAll("hour", "")
-                                                                        .replaceAll("hours", "").trim());
+                                                                        .replaceAll("hours", "")
+                                                                        .replaceAll("hour", "").trim());
                                                     } else if (StringUtils.contains(other, "min")) {
                                                         nvramInfoTmp.setProperty(UPTIME_MINUTES,
                                                                 other
-                                                                        .replaceAll("min", "")
-                                                                        .replaceAll("mins", "").trim());
+                                                                        .replaceAll("mins", "")
+                                                                        .replaceAll("min", "").trim());
                                                     }
                                                 }
                                             }
@@ -187,14 +187,14 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                                         } else if (StringUtils.contains(first, "hour")) {
                                             nvramInfoTmp.setProperty(UPTIME_HOURS,
                                                     first
-                                                            .replaceAll("hour", "")
-                                                            .replaceAll("hours", "").trim());
+                                                            .replaceAll("hours", "")
+                                                            .replaceAll("hour", "").trim());
                                         } else if (StringUtils.contains(first, "min")) {
                                             nvramInfoTmp.setProperty(UPTIME_MINUTES,
                                                     first
                                                             .trim()
-                                                            .replaceAll("min", "")
-                                                            .replaceAll("mins", "").trim());
+                                                            .replaceAll("mins", "")
+                                                            .replaceAll("min", "").trim());
                                         }
                                     }
                                 }
