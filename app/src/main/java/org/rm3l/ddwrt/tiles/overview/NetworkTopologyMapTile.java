@@ -209,37 +209,56 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                         if (checkActualInternetConnectivity) {
                             try {
-                                //Check actual connections to the outside from the router
-                                final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
-                                final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                        mRouterCopy, mGlobalPreferences,
-//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-                                        String.format("echo -e \"" +
-                                                        "GET / HTTP/1.1\\r\\n" +
-                                                        "Host:%s\\r\\n" +
-                                                        "User-Agent:%s/%s\\r\\n\" " +
-                                                        "| /usr/bin/nc %s %d",
-                                                PublicIPInfo.ICANHAZIP_HOST,
-                                                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-                                                BuildConfig.VERSION_NAME,
-                                                PublicIPInfo.ICANHAZIP_HOST,
-                                                PublicIPInfo.ICANHAZIP_PORT));
-                                Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
-                                if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                } else {
-                                    final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length-1]
-                                            .trim();
-                                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                        PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                mRouterCopy, mParentFragmentPreferences,
-                                                wanPublicIpCmdStatus,
-                                                nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
-
-                                    } else {
+                                if (isDemoRouter(mRouter)) {
+                                    final long nbRunsLoaderModulo = (nbRunsLoader % 5);
+                                    if (nbRunsLoaderModulo == 0) {
+                                        //nbRunsLoader = 5k
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
+                                                "52.64." +
+                                                        (1 + new Random().nextInt(252))
+                                                        + "." +
+                                                        (1 + new Random().nextInt(252)));
+                                    } else if (nbRunsLoaderModulo == 1) {
+                                        //nbRunsLoader = 5k + 1
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else if (nbRunsLoaderModulo == 2) {
+                                        //nbRunsLoader = 5k + 2
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                                    }
+                                } else {
+                                    //Check actual connections to the outside from the router
+                                    final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
+                                    final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                            mRouterCopy, mGlobalPreferences,
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                                            String.format("echo -e \"" +
+                                                            "GET / HTTP/1.1\\r\\n" +
+                                                            "Host:%s\\r\\n" +
+                                                            "User-Agent:%s/%s\\r\\n\" " +
+                                                            "| /usr/bin/nc %s %d",
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                    BuildConfig.VERSION_NAME,
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    PublicIPInfo.ICANHAZIP_PORT));
+                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else {
+                                        final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
+                                                .trim();
+                                        if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouterCopy, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+
+                                        } else {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                        }
                                     }
                                 }
                             } catch (final Exception e) {
