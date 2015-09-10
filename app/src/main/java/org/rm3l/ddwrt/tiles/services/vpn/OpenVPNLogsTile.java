@@ -69,6 +69,8 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                     }
                     nbRunsLoader++;
 
+                    mLastSync = System.currentTimeMillis();
+
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
                     NVRAMInfo nvramInfoTmp = null;
                     String[] logs = null;

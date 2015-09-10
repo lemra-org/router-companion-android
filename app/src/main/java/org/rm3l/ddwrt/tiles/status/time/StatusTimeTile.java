@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -55,6 +56,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = StatusTimeTile.class.getSimpleName();
 
     private final Map<String, String> daylightMap = Maps.newHashMapWithExpectedSize(10);
+    private long mLastSync;
 
     public StatusTimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_time, R.id.tile_status_time_togglebutton);
@@ -99,6 +101,8 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -229,6 +233,10 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
             ((TextView) this.layout.findViewById(R.id.tile_status_time_summertime)).setText(
                     daylightPeriodString != null ? daylightPeriodString : "-");
 
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

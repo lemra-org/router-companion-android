@@ -299,6 +299,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
     @Nullable
     private InterstitialAd mInterstitialAdForActiveIPConnections;
+    private long mLastSync;
 
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
@@ -622,6 +623,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
                 }
                 nbRunsLoader++;
+
+                mLastSync = System.currentTimeMillis();
 
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -2297,6 +2300,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 } else {
                     showMore.setVisibility(View.GONE);
                 }
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
             }
 
             layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container)

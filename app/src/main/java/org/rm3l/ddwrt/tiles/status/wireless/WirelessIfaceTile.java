@@ -107,6 +107,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Nullable
     private WirelessEncryptionTypeForQrCode wifiEncryptionType;
+//    private long mLastSync;
 
     public WirelessIfaceTile(@NonNull String iface, @NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         this(iface, null, parentFragment, arguments, router);
@@ -193,6 +194,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+//                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = getIfaceNvramInfo(iface);
                     if (parentIface != null && !parentIface.isEmpty()) {
@@ -716,6 +719,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             }
 
             encryptionView.setText(encryption);
+
+//            //Update last sync
+//            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+//            lastSyncView.setReferenceTime(mLastSync);
+//            lastSyncView.setPrefix("Last sync: ");
 
         }
 

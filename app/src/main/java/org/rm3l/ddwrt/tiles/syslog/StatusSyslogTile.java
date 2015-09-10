@@ -47,6 +47,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
@@ -74,6 +75,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
  */
 public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
+
     protected static final String LOG_TAG = StatusSyslogTile.class.getSimpleName();
     protected static final Joiner LOGS_JOINER = Joiner.on("\n").useForNull(EMPTY_STRING);
     protected static final int MAX_LOG_LINES = 15;
@@ -83,6 +85,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     @Nullable
     private final String mGrep;
     private final boolean mDisplayStatus;
+    protected long mLastSync;
+
 
     public StatusSyslogTile(@NonNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
                             @NonNull Bundle arguments, @Nullable final String tileTitle,
@@ -132,6 +136,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
                     if (DDWRTCompanionConstants.TEST_MODE) {
@@ -328,6 +334,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 });
 
             }
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

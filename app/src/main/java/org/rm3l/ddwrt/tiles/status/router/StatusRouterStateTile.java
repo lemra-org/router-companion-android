@@ -35,6 +35,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -61,6 +62,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
     public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
+    private long mLastSync;
 
     public StatusRouterStateTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
@@ -107,6 +109,8 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -326,6 +330,11 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
             final TextView currentDateView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
             currentDateView.setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

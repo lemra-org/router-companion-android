@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -97,6 +98,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     private static final String LOG_TAG = WakeOnLanTile.class.getSimpleName();
     public static final Splitter SPLITTER = Splitter.on(" ").omitEmptyStrings();
     private static final String wolHostsPrefKey = \"fake-key\";
+    private static long mLastSync;
     private final ArrayList<String> broadcastAddresses = new ArrayList<>();
     private boolean isThemeLight;
     private String mCurrentIpAddress;
@@ -238,6 +240,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
         if (wakeOnLanTile != null) {
             wakeOnLanTile.setNbRunsLoader(nbRunsLoader+1);
         }
+
+        mLastSync = System.currentTimeMillis();
 
         final ArrayList<Device> mDevices = new ArrayList<>();
 
@@ -909,6 +913,11 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 clientsContainer.addView(cardView);
 
             }
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         layout.findViewById(R.id.tile_services_wol_clients_loading_view)

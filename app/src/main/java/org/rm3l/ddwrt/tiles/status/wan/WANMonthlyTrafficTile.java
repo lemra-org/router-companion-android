@@ -55,6 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -127,6 +128,7 @@ public class WANMonthlyTrafficTile
 
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private long mLastSync;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
@@ -293,6 +295,8 @@ public class WANMonthlyTrafficTile
                         throw new DDWRTTileAutoRefreshNotAllowedException();
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -581,6 +585,11 @@ public class WANMonthlyTrafficTile
             });
 
             setVisibility(ctrlViews, View.VISIBLE);
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

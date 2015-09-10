@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
@@ -66,6 +67,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
     private NVRAMInfo mNvramInfo;
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private long mLastSync;
 
     public PPTPServerTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_pptp_server,
@@ -102,6 +104,8 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
 
@@ -313,6 +317,11 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
             }
 
             updateTileDisplayData(data, true);
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

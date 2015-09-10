@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.R;
@@ -50,6 +51,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = LANStateTile.class.getSimpleName();
+    private long mLastSync;
 
     public LANStateTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_lan_status, R.id.tile_status_lan_status_togglebutton);
@@ -84,6 +86,8 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     return SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                             mGlobalPreferences, NVRAMInfo.LAN_IPADDR,
@@ -186,6 +190,10 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
             final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
             gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "-"));
 
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

@@ -52,6 +52,7 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
@@ -134,6 +135,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private final BiMap<Integer, Integer> sortIds = HashBiMap.create();
     private Map<Object, Object> mNvramInfoToDisplay = new HashMap<>();
     private ShareActionProvider mShareActionProvider;
+    private long mLastSync;
 
     public AdminNVRAMTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
@@ -604,6 +606,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     }
                     nbRunsLoader++;
 
+                    mLastSync = System.currentTimeMillis();
+
                     mNvramInfoToDisplay.clear();
                     mNvramInfoDefaultSorting.clear();
 
@@ -769,6 +773,11 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
                 mAdapter.notifyDataSetChanged();
             }
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
 
         }
 

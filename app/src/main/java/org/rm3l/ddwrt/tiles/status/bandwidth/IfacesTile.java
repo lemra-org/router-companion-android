@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
@@ -64,6 +65,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
     protected ProgressBar mProgressBar;
     protected TextView mProgressBarDesc;
     protected boolean isThemeLight;
+    private long mLastSync;
 
     public IfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_ifaces, R.id.tile_status_bandwidth_ifaces_togglebutton);
@@ -118,6 +120,8 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                 return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
             }
             nbRunsLoader++;
+
+            mLastSync = System.currentTimeMillis();
 
             final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -240,6 +244,11 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             //Wireless
             final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
             wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

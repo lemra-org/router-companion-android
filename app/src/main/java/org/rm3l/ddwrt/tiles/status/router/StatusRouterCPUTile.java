@@ -35,6 +35,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -66,6 +67,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
     private static final String LOG_TAG = StatusRouterCPUTile.class.getSimpleName();
 
     private String[] cpuInfoContents;
+    private long mLastSync;
 
 //    Drawable icon;
 
@@ -115,6 +117,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     cpuInfoContents = null;
 
@@ -290,6 +294,10 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
             loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
 
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

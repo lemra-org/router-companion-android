@@ -282,5 +282,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/show_more"
             android:visibility="gone" />
 
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:textStyle="italic"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="false"
+            android:text="Last sync: "/>
+
     </LinearLayout>
 </LinearLayout>

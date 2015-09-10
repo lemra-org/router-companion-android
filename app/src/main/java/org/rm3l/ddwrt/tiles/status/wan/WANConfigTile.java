@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -53,6 +54,7 @@ import java.util.List;
 public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
+    private long mLastSync;
 
     public WANConfigTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
@@ -99,6 +101,8 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
@@ -287,6 +291,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
             final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
             final String property = data.getProperty(NVRAMInfo.WAN_DNS, "-");
             wanDNSView.setText(property != null ? property.replaceAll(" ", "\n") : "-");
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

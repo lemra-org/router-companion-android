@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -60,6 +61,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
     private NVRAMInfo mNvramInfo;
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private long mLastSync;
 
     public OpenVPNServerTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_services_openvpn_server,
@@ -96,6 +98,8 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
 
@@ -231,6 +235,11 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
             }
 
             updateTileDisplayData(data, true);
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

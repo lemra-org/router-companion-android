@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -78,6 +79,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
             new BandwidthMonitoringTile.BandwidthMonitoringIfaceData();
 
     private String wanIface;
+    private long mLastSync;
 
     public BandwidthWANMonitoringTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_bandwidth_monitoring_iface, R.id.tile_status_bandwidth_monitoring_togglebutton);
@@ -112,6 +114,8 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     //Start by getting information about the WAN iface name
                     final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
@@ -348,6 +352,11 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
             chartView.repaint();
 
             graphPlaceHolder.addView(chartView, 0);
+
+            //Update last sync
+            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+            lastSyncView.setReferenceTime(mLastSync);
+            lastSyncView.setPrefix("Last sync: ");
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
