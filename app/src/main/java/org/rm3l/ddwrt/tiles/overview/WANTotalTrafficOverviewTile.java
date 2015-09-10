@@ -36,15 +36,16 @@ import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
-/**
- * Created by rm3l on 08/09/15.
- */
+
 public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = WANTotalTrafficOverviewTile.class.getSimpleName();
     public static final String CURRENT_MONTH = "CURRENT_MONTH";
     public static final String TOTAL_DL_CURRENT_MONTH = "TOTAL_DL_CURRENT_MONTH";
     public static final String TOTAL_UL_CURRENT_MONTH = "TOTAL_UL_CURRENT_MONTH";
+    public static final String TOTAL_DL_CURRENT_MONTH_MB = "TOTAL_DL_CURRENT_MONTH_MB";
+    public static final String TOTAL_UL_CURRENT_MONTH_MB = "TOTAL_UL_CURRENT_MONTH_MB";
+
     private boolean isThemeLight;
 
     private String mCurrentMonth;
@@ -118,8 +119,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                         final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER
                                 .splitToList(trafficForCurrentMonth);
                         if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
-                            long totalDownloadBytes = 0l;
-                            long totalUploadBytes = 0l;
+                            long totalDownloadMBytes = 0l;
+                            long totalUploadMBytes = 0l;
                             for (final String dailyInOutTraffData : dailyTraffDataList) {
                                 if (Strings.isNullOrEmpty(dailyInOutTraffData)) {
                                     continue;
@@ -135,13 +136,17 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                 final String inTraff = dailyInOutTraffDataList.get(0);
                                 final String outTraff = dailyInOutTraffDataList.get(1);
 
-                                totalDownloadBytes += Long.parseLong(inTraff);
-                                totalUploadBytes += Long.parseLong(outTraff);
+                                totalDownloadMBytes += Long.parseLong(inTraff);
+                                totalUploadMBytes += Long.parseLong(outTraff);
                             }
                             nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                                    FileUtils.byteCountToDisplaySize(totalDownloadBytes * MB));
+                                    FileUtils.byteCountToDisplaySize(totalDownloadMBytes * MB));
                             nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                                    FileUtils.byteCountToDisplaySize(totalUploadBytes * MB));
+                                    FileUtils.byteCountToDisplaySize(totalUploadMBytes * MB));
+                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                                    String.valueOf(totalDownloadMBytes));
+                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                    String.valueOf(totalUploadMBytes));
                         }
                     }
 
@@ -201,9 +206,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-//            final RelativeLayout mapContainerView =
-//                    (RelativeLayout) layout.findViewById(R.id.tile_overview_wan_total_traffic_container);
-
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
@@ -228,6 +230,13 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 wanULView.setCompoundDrawablesWithIntrinsicBounds(ulDrawable, 0, 0, 0);
                 wanULView.setText(data.getProperty(TOTAL_UL_CURRENT_MONTH, "-"));
 
+                final String dlBytes = data.getProperty(TOTAL_DL_CURRENT_MONTH_MB);
+                ((TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl_mb))
+                        .setText(dlBytes != null ? ("(" + dlBytes + " MB)") : "-");
+
+                final String ulBytes = data.getProperty(TOTAL_UL_CURRENT_MONTH_MB);
+                ((TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul_mb))
+                        .setText(ulBytes != null ? ("(" + ulBytes + " MB)") : "-");
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -246,12 +255,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
-//                //Hide NTM
-//                mapContainerView.setVisibility(View.GONE);
             }
-//            else {
-//                mapContainerView.setVisibility(View.VISIBLE);
-//            }
 
         }  finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
