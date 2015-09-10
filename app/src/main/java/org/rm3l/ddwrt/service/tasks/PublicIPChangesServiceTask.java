@@ -124,109 +124,112 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         .putString(LAST_PUBLIC_IP, e(wanPublicIp))
                         .putString(LAST_WAN_IP, e(wanIp));
 
-                //Also retrieve notification ID or set one
-                // Sets an ID for the notification, so it can be updated
-                int notifyID = routerPreferences.getInt("lastPublicIp_" + router.getId(), -1);
-                if (notifyID == -1) {
-                    try {
-                        notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
-                        editor.putInt("lastPublicIp_" + router.getId(), notifyID);
-                    } catch (final Exception e) {
-                        Utils.reportException(e);
-                        return;
-                    }
-                }
+                if (!isNullOrEmpty(wanPublicIp) && !isNullOrEmpty(wanIp)) {
 
-                Log.d(LOG_TAG, "notifyID=" + notifyID);
-
-                //Now display notification
-                final boolean notificationsEnabled = routerPreferences
-                        .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
-
-                Log.d(LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
-
-                final NotificationManager mNotificationManager = (NotificationManager)
-                        mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
-
-                if (!notificationsEnabled) {
-                    mNotificationManager.cancel(notifyID);
-                } else {
-                    final Bitmap largeIcon = BitmapFactory.decodeResource(
-                            mCtx.getResources(),
-                            R.drawable.ic_launcher_ddwrt_companion);
-
-                    final Intent resultIntent = new Intent(mCtx,
-                            DDWRTMainActivity.class);
-                    resultIntent.putExtra(ROUTER_SELECTED, router.getUuid());
-                    resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 1); //Open right on the Public IP status
-                    // Because clicking the notification opens a new ("special") activity, there's
-                    // no need to create an artificial back stack.
-                    final PendingIntent resultPendingIntent =
-                            PendingIntent.getActivity(
-                                    mCtx,
-                                    0,
-                                    resultIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT
-                            );
-
-                    final String mRouterName = router.getName();
-                    final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
-                    String summaryText = "";
-                    if (!mRouterNameNullOrEmpty) {
-                        summaryText = (mRouterName + " (");
-                    }
-                    summaryText += router.getRemoteIpAddress();
-                    if (!mRouterNameNullOrEmpty) {
-                        summaryText += ")";
+                    //Also retrieve notification ID or set one
+                    // Sets an ID for the notification, so it can be updated
+                    int notifyID = routerPreferences.getInt("lastPublicIp_" + router.getId(), -1);
+                    if (notifyID == -1) {
+                        try {
+                            notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
+                            editor.putInt("lastPublicIp_" + router.getId(), notifyID);
+                        } catch (final Exception e) {
+                            Utils.reportException(e);
+                            return;
+                        }
                     }
 
-                    final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                            mCtx)
-                            .setSmallIcon(R.drawable.ic_launcher_ddwrt_companion)
-                            .setLargeIcon(largeIcon)
-                            .setAutoCancel(true)
-                            .setGroup(PublicIPChangesServiceTask.class.getSimpleName())
-                            .setGroupSummary(true)
-                            .setContentIntent(resultPendingIntent)
-                            .setContentTitle("New Public IP Address");
+                    Log.d(LOG_TAG, "notifyID=" + notifyID);
 
-                    //Notification sound, if required
-                    final String ringtoneUri = mCtx.getSharedPreferences(
-                            DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                            Context.MODE_PRIVATE)
-                            .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
-                    if (ringtoneUri != null) {
-                        mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+                    //Now display notification
+                    final boolean notificationsEnabled = routerPreferences
+                            .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
+
+                    Log.d(LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
+
+                    final NotificationManager mNotificationManager = (NotificationManager)
+                            mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    if (!notificationsEnabled) {
+                        mNotificationManager.cancel(notifyID);
+                    } else {
+                        final Bitmap largeIcon = BitmapFactory.decodeResource(
+                                mCtx.getResources(),
+                                R.drawable.ic_launcher_ddwrt_companion);
+
+                        final Intent resultIntent = new Intent(mCtx,
+                                DDWRTMainActivity.class);
+                        resultIntent.putExtra(ROUTER_SELECTED, router.getUuid());
+                        resultIntent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 1); //Open right on the Public IP status
+                        // Because clicking the notification opens a new ("special") activity, there's
+                        // no need to create an artificial back stack.
+                        final PendingIntent resultPendingIntent =
+                                PendingIntent.getActivity(
+                                        mCtx,
+                                        0,
+                                        resultIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+
+                        final String mRouterName = router.getName();
+                        final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
+                        String summaryText = "";
+                        if (!mRouterNameNullOrEmpty) {
+                            summaryText = (mRouterName + " (");
+                        }
+                        summaryText += router.getRemoteIpAddress();
+                        if (!mRouterNameNullOrEmpty) {
+                            summaryText += ")";
+                        }
+
+                        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                                mCtx)
+                                .setSmallIcon(R.drawable.ic_launcher_ddwrt_companion)
+                                .setLargeIcon(largeIcon)
+                                .setAutoCancel(true)
+                                .setGroup(PublicIPChangesServiceTask.class.getSimpleName())
+                                .setGroupSummary(true)
+                                .setContentIntent(resultPendingIntent)
+                                .setContentTitle("New Public IP Address");
+
+                        //Notification sound, if required
+                        final String ringtoneUri = mCtx.getSharedPreferences(
+                                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                                Context.MODE_PRIVATE)
+                                .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
+                        if (ringtoneUri != null) {
+                            mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+                        }
+
+                        final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
+                                .setSummaryText(summaryText)
+                                .setBigContentTitle("Public IP Address change");
+
+                        //Public IP Address
+                        String publicIpLine = String.format("Public IP   %s", wanPublicIp);
+                        final Spannable publicIpSpannable = new SpannableString(publicIpLine);
+                        publicIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                0, "Public IP".length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        inboxStyle.addLine(publicIpSpannable);
+
+                        //WAN IP Address
+                        String wanIpLine = String.format("WAN IP   %s", wanIp);
+                        final Spannable wanIpSpannable = new SpannableString(wanIpLine);
+                        wanIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                0, "WAN IP".length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        inboxStyle.addLine(wanIpSpannable);
+
+                        mBuilder.setContentText(publicIpSpannable);
+
+                        // Moves the expanded layout object into the notification object.
+                        mBuilder.setStyle(inboxStyle);
+
+                        // Because the ID remains unchanged, the existing notification is
+                        // updated.
+                        mNotificationManager.notify(notifyID, mBuilder.build());
                     }
-
-                    final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
-                            .setSummaryText(summaryText)
-                            .setBigContentTitle("Public IP Address change");
-
-                    //Public IP Address
-                    String publicIpLine = String.format("Public IP   %s", wanPublicIp);
-                    final Spannable publicIpSpannable = new SpannableString(publicIpLine);
-                    publicIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                            0, "Public IP".length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    inboxStyle.addLine(publicIpSpannable);
-
-                    //WAN IP Address
-                    String wanIpLine = String.format("WAN IP   %s", wanIp);
-                    final Spannable wanIpSpannable = new SpannableString(wanIpLine);
-                    wanIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                            0, "WAN IP".length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    inboxStyle.addLine(wanIpSpannable);
-
-                    mBuilder.setContentText(publicIpSpannable);
-
-                    // Moves the expanded layout object into the notification object.
-                    mBuilder.setStyle(inboxStyle);
-
-                    // Because the ID remains unchanged, the existing notification is
-                    // updated.
-                    mNotificationManager.notify(notifyID, mBuilder.build());
                 }
 
             } finally {
