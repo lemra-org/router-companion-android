@@ -45,6 +45,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
     public static final String TOTAL_UL_CURRENT_MONTH = "TOTAL_UL_CURRENT_MONTH";
     public static final String TOTAL_DL_CURRENT_MONTH_MB = "TOTAL_DL_CURRENT_MONTH_MB";
     public static final String TOTAL_UL_CURRENT_MONTH_MB = "TOTAL_UL_CURRENT_MONTH_MB";
+    public static final String HIDDEN_ = "_HIDDEN_";
 
     private boolean isThemeLight;
 
@@ -139,14 +140,29 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                 totalDownloadMBytes += Long.parseLong(inTraff);
                                 totalUploadMBytes += Long.parseLong(outTraff);
                             }
+                            final String inHumanReadable = FileUtils
+                                    .byteCountToDisplaySize(totalDownloadMBytes * MB);
                             nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                                    FileUtils.byteCountToDisplaySize(totalDownloadMBytes * MB));
+                                    inHumanReadable);
+                            if (inHumanReadable.equals(totalDownloadMBytes + " MB")) {
+                                nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                                        HIDDEN_);
+                            } else {
+                                nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                                        String.valueOf(totalDownloadMBytes));
+                            }
+
+                            final String outHumanReadable = FileUtils
+                                    .byteCountToDisplaySize(totalUploadMBytes * MB);
                             nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                                    FileUtils.byteCountToDisplaySize(totalUploadMBytes * MB));
-                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-                                    String.valueOf(totalDownloadMBytes));
-                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-                                    String.valueOf(totalUploadMBytes));
+                                    outHumanReadable);
+                            if (outHumanReadable.equals(totalUploadMBytes + " MB")) {
+                                nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                        HIDDEN_);
+                            } else {
+                                nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                        String.valueOf(totalUploadMBytes));
+                            }
                         }
                     }
 
@@ -230,13 +246,25 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 wanULView.setCompoundDrawablesWithIntrinsicBounds(ulDrawable, 0, 0, 0);
                 wanULView.setText(data.getProperty(TOTAL_UL_CURRENT_MONTH, "-"));
 
-                final String dlBytes = data.getProperty(TOTAL_DL_CURRENT_MONTH_MB);
-                ((TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl_mb))
-                        .setText(dlBytes != null ? ("(" + dlBytes + " MB)") : "-");
+                final TextView dlMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl_mb);
+                final String dlMBytesFromNvram = data.getProperty(TOTAL_DL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(dlMBytesFromNvram)) {
+                    dlMB.setVisibility(View.INVISIBLE);
+                } else {
+                    dlMB.setVisibility(View.VISIBLE);
+                }
+                dlMB.setText(dlMBytesFromNvram != null ?
+                        ("(" + dlMBytesFromNvram + " MB)") : "-");
 
-                final String ulBytes = data.getProperty(TOTAL_UL_CURRENT_MONTH_MB);
-                ((TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul_mb))
-                        .setText(ulBytes != null ? ("(" + ulBytes + " MB)") : "-");
+                final TextView ulMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul_mb);
+                final String ulMBytesFromNvram = data.getProperty(TOTAL_UL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(ulMBytesFromNvram)) {
+                    ulMB.setVisibility(View.INVISIBLE);
+                } else {
+                    ulMB.setVisibility(View.VISIBLE);
+                }
+                ulMB.setText(ulMBytesFromNvram != null ?
+                        ("(" + ulMBytesFromNvram + " MB)") : "-");
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
