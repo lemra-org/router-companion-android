@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
@@ -48,7 +49,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
     public static final String HIDDEN_ = "_HIDDEN_";
 
     private boolean isThemeLight;
-
+    private long mLastSync;
     private String mCurrentMonth;
 
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
@@ -89,6 +90,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mLastSync = System.currentTimeMillis();
 
                     mCurrentMonth = new SimpleDateFormat("MM-yyyy", Locale.US).format(new Date());
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
@@ -265,6 +268,11 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 }
                 ulMB.setText(ulMBytesFromNvram != null ?
                         ("(" + ulMBytesFromNvram + " MB)") : "-");
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {

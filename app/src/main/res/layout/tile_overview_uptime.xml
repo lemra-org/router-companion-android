@@ -208,6 +208,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_centerInParent="true"
             android:indeterminate="false" />
 
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textStyle="italic"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_alignParentBottom="true"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="false"
+            android:text="Last sync: "/>
+
     </RelativeLayout>
 
 </LinearLayout>
