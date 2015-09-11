@@ -58,8 +58,8 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -140,7 +140,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
-                    if (DDWRTCompanionConstants.TEST_MODE) {
+//                    if (DDWRTCompanionConstants.TEST_MODE) {
+                    if (Utils.isDemoRouter(mRouter)) {
                         final String syslogData = "Space suits go with future at the carnivorous alpha quadrant!\n" +
                                 "Cur guttus mori? Ferox, clemens hippotoxotas acceleratrix " +
                                 "anhelare de germanus, camerarius bubo. Always purely feel the magical lord.\n" +

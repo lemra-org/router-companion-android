@@ -51,7 +51,6 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -62,6 +61,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -140,7 +140,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
         //TODO TESTS: Real ifaces for DD-WRT Routers
         //noinspection PointlessBooleanExpression,ConstantConditions
-        if (DDWRTCompanionConstants.TEST_MODE && (this.mRouter == null || !StringUtils.containsIgnoreCase(this.mRouter.getName(), "ddwrt"))) {
+//        if (DDWRTCompanionConstants.TEST_MODE && (this.mRouter == null || !StringUtils.containsIgnoreCase(this.mRouter.getName(), "ddwrt"))) {
+        if (Utils.isDemoRouter(mRouter)) {
             //FIXME TEST MODE
             return Sets.newTreeSet(Arrays.asList("wlan0", "lan1", "eth2"));
         }
@@ -192,7 +193,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
 
     public void fillIfaceDataPoint(@NonNull final String iface) {
 
-        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST) {
+        if (DDWRTCompanionConstants.TEST_MODE || BW_MONIT_TEST || Utils.isDemoRouter(mRouter)) {
             //FIXME TEST MODE
             final double random = new Random().nextDouble() * 1024;
 

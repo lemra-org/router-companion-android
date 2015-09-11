@@ -61,7 +61,6 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -217,7 +216,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             @NonNull
             private NVRAMInfo getIfaceNvramInfo(@NonNull String wlIface) throws Exception {
 
-                if (DDWRTCompanionConstants.TEST_MODE) {
+//                if (DDWRTCompanionConstants.TEST_MODE) {
+                if (Utils.isDemoRouter(mRouter)) {
                     return new NVRAMInfo()
                             .setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""), wlIface)
                             .setProperty(wlIface + "_radio", String.valueOf(new Random().nextInt()))
