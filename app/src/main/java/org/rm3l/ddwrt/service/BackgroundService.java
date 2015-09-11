@@ -14,6 +14,7 @@ import org.rm3l.ddwrt.service.tasks.AbstractBackgroundServiceTask;
 import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
+import org.rm3l.ddwrt.service.tasks.RouterWebInterfaceParametersUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
@@ -133,6 +134,7 @@ public class BackgroundService extends IntentService {
         public BackgroundServiceTasksExecutor() {
             //Add any other tasks over here
             tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
+            tasks.add(new RouterWebInterfaceParametersUpdaterServiceTask(BackgroundService.this));
             tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
             tasks.add(new PublicIPChangesServiceTask(BackgroundService.this));
         }

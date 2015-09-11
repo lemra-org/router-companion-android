@@ -134,6 +134,7 @@ public final class DDWRTCompanionConstants {
     public static final String UNKNOWN = "UNKNOWN";
     public static final String OK = "OK";
     public static final String NOK = "NOK";
+    public static final String DEFAULT_HTTP_PORT = "80";
 
     public static int MB = 1024 * 1024;
 

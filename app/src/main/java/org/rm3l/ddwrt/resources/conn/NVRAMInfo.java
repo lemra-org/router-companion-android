@@ -155,6 +155,11 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String OPENVPN_ONWAN = "openvpn_onwan";
     public static final String OPENVPN_DH = "openvpn_dh";
     public static final String OPENVPN_CONFIG = "openvpn_config";
+    public static final String HTTP_ENABLE = "http_enable";
+    public static final String HTTP_LANPORT = "http_lanport";
+    public static final String HTTP_WANPORT = "http_wanport";
+    public static final String HTTPS_ENABLE = "https_enable";
+    public static final String REMOTE_MGT_HTTPS = "remote_mgt_https";
 
     /**
      * Default constructor: initialized an empty Properties set

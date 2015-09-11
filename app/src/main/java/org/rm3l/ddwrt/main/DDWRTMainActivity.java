@@ -765,6 +765,9 @@ public class DDWRTMainActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.optionsMenu = menu;
+
+        //TODO If pref is not available, hide "Open Web Interface" menu
+
         getMenuInflater().inflate(R.menu.main_menu, menu);
         if (!BuildConfig.DONATIONS) {
             final MenuItem item = menu.findItem(R.id.action_donate);
@@ -858,6 +861,9 @@ public class DDWRTMainActivity extends ActionBarActivity
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);
+                return true;
+            case R.id.action_ddwrt_actions_open_webinterface:
+                //TODO Open Dialog allowing user to set port (defaulting to what we loaded from the Router)
                 return true;
             case R.id.action_ddwrt_actions_reboot_router:
 
