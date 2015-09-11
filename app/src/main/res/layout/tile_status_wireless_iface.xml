@@ -144,12 +144,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:singleLine="false"
                         android:text="@string/loading" />
 
-                    <!-- Radio -->
+                    <!-- Radio : disabled for now-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/wireless_iface_radio"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -157,7 +158,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="center"
                         android:layout_marginLeft="8.0dip"
                         android:layout_marginRight="8.0dip"
-                        android:text="@string/one_space" />
+                        android:text="@string/one_space"
+                        android:visibility="gone"/>
 
                     <CheckBox
                         android:id="@+id/tile_status_wireless_iface_radio"
@@ -168,7 +170,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:ellipsize="end"
                         android:enabled="false"
                         android:gravity="start"
-                        android:singleLine="false" />
+                        android:singleLine="false"
+                        android:visibility="gone"/>
 
                     <!-- Ifname -->
                     <TextView

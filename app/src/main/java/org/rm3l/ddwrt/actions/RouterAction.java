@@ -42,7 +42,8 @@ public enum RouterAction {
     MAC_OUI_LOOKUP("MAC OUI Lookup"),
     BACKUP_WAN_TRAFF("Backup WAN Monthly Traffic"),
     RESTORE_WAN_TRAFF("Restore WAN Monthly Traffic"),
-    DELETE_WAN_TRAFF("Delete WAN Monthly Traffic");
+    DELETE_WAN_TRAFF("Delete WAN Monthly Traffic"),
+    TOGGLE_WL_RADIO("Toggle Wireless Radio");
 
     private final String displayName;
 

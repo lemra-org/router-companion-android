@@ -24,39 +24,58 @@ package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 
+import com.cocosw.undobar.UndoBarController;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.ToggleWirelessRadioRouterAction;
+import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.fragments.status.StatusWirelessFragment;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.bandwidth.IfacesTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 public class WirelessIfacesTile extends IfacesTile {
 
     private static final String TAG = WirelessIfacesTile.class.getSimpleName();
+    public static final String WL_RADIO = "WL_RADIO";
 
     @NonNull
     private List<WirelessIfaceTile> mWirelessIfaceTiles = new CopyOnWriteArrayList<>();
 
     private final AtomicBoolean viewsBuilt = new AtomicBoolean(true);
+
+    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
 
     public WirelessIfacesTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router);
@@ -70,13 +89,28 @@ public class WirelessIfacesTile extends IfacesTile {
     @Override
     protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
 
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
             public NVRAMInfo loadInBackground() {
 
                 final NVRAMInfo nvramInfo = WirelessIfacesTile.super.doLoadInBackground();
+
+                try {
+                    if (nvramInfo != null) {
+                        final String[] wlRadioOutput = SSHUtils
+                                .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                                        //On = 0x0000 and off = 0x0001
+                                        "/usr/sbin/wl radio 2>&1");
+                        if (wlRadioOutput != null && wlRadioOutput.length > 0) {
+                            nvramInfo.setProperty(WL_RADIO, "0x0000".equals(wlRadioOutput[0]) ? "1" : "0");
+                        }
+                    }
+                } catch (Exception e) {
+                    Utils.reportException(e);
+                    e.printStackTrace();
+                }
 
                 //Also set details
                 mWirelessIfaceTiles.clear();
@@ -159,6 +193,7 @@ public class WirelessIfacesTile extends IfacesTile {
                 return nvramInfo;
             }
         };
+        return mLoader;
     }
 
     @Override
@@ -174,6 +209,16 @@ public class WirelessIfacesTile extends IfacesTile {
         };
         for (final int viewToHide : viewsToHide) {
             this.layout.findViewById(viewToHide).setVisibility(View.GONE);
+        }
+
+        //Show Radio
+        final int[] viewsToShow = new int[] {
+                R.id.tile_status_bandwidth_ifaces_wireless_radio_title,
+                R.id.tile_status_bandwidth_ifaces_wireless_radio_sep,
+                R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton
+        };
+        for (final int viewToShow : viewsToShow) {
+            this.layout.findViewById(viewToShow).setVisibility(View.VISIBLE);
         }
 
         mProgressBar.setProgress(97);
@@ -194,6 +239,49 @@ public class WirelessIfacesTile extends IfacesTile {
         container.setBackgroundColor(resources.getColor(android.R.color.transparent));
 
         final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+        Exception preliminaryCheckException = null;
+        if (data == null) {
+            //noinspection ThrowableInstanceNeverThrown
+            preliminaryCheckException = new DDWRTNoDataException("No Data!");
+        } else //noinspection ThrowableResultOfMethodCallIgnored
+            if (data.getException() == null) {
+                final String pptpdServerEnabled = data.getProperty(WL_RADIO);
+                if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
+                    //noinspection ThrowableInstanceNeverThrown
+                    preliminaryCheckException = new DDWRTNoDataException("Unknown state");
+                }
+            }
+
+        final SwitchCompat enableRadioButton =
+                (SwitchCompat) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
+        enableRadioButton.setVisibility(View.VISIBLE);
+
+        final boolean makeToogleEnabled = (data != null &&
+                data.getData() != null &&
+                data.getData().containsKey(WL_RADIO));
+
+        if (!isToggleStateActionRunning.get()) {
+            if (makeToogleEnabled) {
+                if ("1".equals(data.getProperty(WL_RADIO))) {
+                    //Enabled
+                    enableRadioButton.setChecked(true);
+                } else {
+                    //Disabled
+                    enableRadioButton.setChecked(false);
+                }
+                enableRadioButton.setEnabled(true);
+            } else {
+                enableRadioButton.setChecked(false);
+                enableRadioButton.setEnabled(false);
+            }
+
+            enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
+        }
+
+        if (preliminaryCheckException != null) {
+            data = new NVRAMInfo().setException(preliminaryCheckException);
+        }
 
 
         for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
@@ -241,5 +329,167 @@ public class WirelessIfacesTile extends IfacesTile {
     @Override
     protected OnClickIntent getOnclickIntent() {
         return super.getOnclickIntent();
+    }
+
+    private class ManageWirelessRadioToggle implements View.OnClickListener {
+
+        private boolean enable;
+
+        @Override
+        public void onClick(View view) {
+
+            isToggleStateActionRunning.set(true);
+
+            if (!(view instanceof CompoundButton)) {
+                Utils.reportException(new IllegalStateException("ManageWirelessRadioToggle#onClick: " +
+                        "view is NOT an instance of CompoundButton!"));
+                isToggleStateActionRunning.set(false);
+                return;
+            }
+
+            final CompoundButton compoundButton = (CompoundButton) view;
+
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    compoundButton.setEnabled(false);
+                }
+            });
+
+            this.enable = compoundButton.isChecked();
+
+            if (BuildConfig.WITH_ADS) {
+                Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Wireless Radio");
+                isToggleStateActionRunning.set(false);
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compoundButton.setChecked(!enable);
+                        compoundButton.setEnabled(true);
+                    }
+                });
+                return;
+            }
+
+            new UndoBarController.UndoBar(mParentFragmentActivity)
+                    .message(String.format("Wireless Radio will be %s on '%s' (%s).",
+                            enable ? "enabled" : "disabled",
+                            mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()))
+                    .listener(new UndoBarController.AdvancedUndoListener() {
+                                  @Override
+                                  public void onHide(@Nullable Parcelable parcelable) {
+
+                                      Utils.displayMessage(mParentFragmentActivity,
+                                              String.format("%s Wireless Radio...",
+                                                      enable ? "Enabling" : "Disabling"),
+                                              Style.INFO);
+
+                                      new ToggleWirelessRadioRouterAction(mParentFragmentActivity,
+                                              new RouterActionListener() {
+                                                  @Override
+                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+
+                                                              try {
+                                                                  compoundButton.setChecked(enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Wireless Radio %s successfully on host '%s' (%s). ",
+                                                                                  enable ? "enabled" : "disabled",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress()),
+                                                                          Style.CONFIRM);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                                  if (mLoader != null) {
+                                                                      //Reload everything right away
+                                                                      doneWithLoaderInstance(WirelessIfacesTile.this,
+                                                                              mLoader,
+                                                                              1l,
+                                                                              R.id.tile_status_bandwidth_ifaces_togglebutton_title,
+                                                                              R.id.tile_status_bandwidth_ifaces_togglebutton_separator);
+                                                                  }
+                                                              }
+                                                          }
+
+                                                      });
+                                                  }
+
+                                                  @Override
+                                                  public void onRouterActionFailure(@NonNull RouterAction
+                                                                                            routerAction, @NonNull final Router
+                                                                                            router, @Nullable final Exception exception) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              try {
+                                                                  compoundButton.setChecked(!enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Error while trying to %s Wireless Radio on '%s' (%s): %s",
+                                                                                  enable ? "enable" : "disable",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress(),
+                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                          Style.ALERT);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                              }
+                                                          }
+                                                      });
+
+
+                                                  }
+                                              },
+                                              mGlobalPreferences,
+                                              enable).
+                                              execute(mRouter);
+
+                                  }
+
+                                  @Override
+                                  public void onClear(@NonNull Parcelable[] parcelables) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+
+                                  @Override
+                                  public void onUndo(@Nullable Parcelable parcelable) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+                              }
+
+                    )
+                    .
+
+                            token(new Bundle()
+
+                            )
+                    .
+
+                            show();
+        }
     }
 }

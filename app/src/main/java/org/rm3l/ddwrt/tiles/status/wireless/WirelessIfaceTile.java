@@ -617,6 +617,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
             radioView.setEnabled(false);
             radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio", data.getProperty(this.parentIface + "_radio"))));
+            //Disabled for now, as the same value seems to be returned, regardless of the actual Radio state
+            radioView.setVisibility(View.GONE);
 
             //Mode
             final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
