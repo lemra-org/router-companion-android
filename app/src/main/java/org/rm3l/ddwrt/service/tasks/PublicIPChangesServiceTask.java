@@ -42,9 +42,11 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_IPADDR;
  */
 public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
+    public static final String LAST_PUBLIC_IP_PREF_PREFIX = "lastPublicIp_";
     private static final String LOG_TAG = PublicIPChangesServiceTask.class.getSimpleName();
     public static final String LAST_PUBLIC_IP = "lastPublicIp";
     public static final String LAST_WAN_IP = "lastWanIp";
+    public static final String IS_FIRST_TIME_PREF_PREFIX = "isFirstTime_";
 
     public PublicIPChangesServiceTask(@NonNull Context ctx) {
         super(ctx);
@@ -124,35 +126,38 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         .putString(LAST_PUBLIC_IP, e(wanPublicIp))
                         .putString(LAST_WAN_IP, e(wanIp));
 
-                if (!isNullOrEmpty(wanPublicIp) && !isNullOrEmpty(wanIp)) {
-
-                    //Also retrieve notification ID or set one
-                    // Sets an ID for the notification, so it can be updated
-                    int notifyID = routerPreferences.getInt("lastPublicIp_" + router.getId(), -1);
-                    if (notifyID == -1) {
-                        try {
-                            notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
-                            editor.putInt("lastPublicIp_" + router.getId(), notifyID);
-                        } catch (final Exception e) {
-                            Utils.reportException(e);
-                            return;
-                        }
+                //Also retrieve notification ID or set one
+                // Sets an ID for the notification, so it can be updated
+                int notifyID = routerPreferences.getInt(LAST_PUBLIC_IP_PREF_PREFIX + router.getId(), -1);
+                if (notifyID == -1) {
+                    try {
+                        notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
+                        editor.putInt(LAST_PUBLIC_IP_PREF_PREFIX + router.getId(), notifyID);
+                    } catch (final Exception e) {
+                        Utils.reportException(e);
+                        return;
                     }
+                }
 
-                    Log.d(LOG_TAG, "notifyID=" + notifyID);
+                Log.d(LOG_TAG, "notifyID=" + notifyID);
 
-                    //Now display notification
-                    final boolean notificationsEnabled = routerPreferences
-                            .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
+                //Now display notification
+                final boolean notificationsEnabled = routerPreferences
+                        .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
 
-                    Log.d(LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
+                Log.d(LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
 
-                    final NotificationManager mNotificationManager = (NotificationManager)
-                            mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+                final NotificationManager mNotificationManager = (NotificationManager)
+                        mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-                    if (!notificationsEnabled) {
-                        mNotificationManager.cancel(notifyID);
-                    } else {
+                if (!notificationsEnabled) {
+                    mNotificationManager.cancel(notifyID);
+                } else {
+
+                    final boolean wanPublicIpNullOrEmpty = isNullOrEmpty(wanPublicIp);
+                    final boolean wanIpNullOrEmpty = isNullOrEmpty(wanIp);
+                    if (!(wanPublicIpNullOrEmpty && wanIpNullOrEmpty)) {
+
                         final Bitmap largeIcon = BitmapFactory.decodeResource(
                                 mCtx.getResources(),
                                 R.drawable.ic_launcher_ddwrt_companion);
@@ -190,7 +195,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                                 .setGroup(PublicIPChangesServiceTask.class.getSimpleName())
                                 .setGroupSummary(true)
                                 .setContentIntent(resultPendingIntent)
-                                .setContentTitle("New Public IP Address");
+                                .setContentTitle("New IP Address");
 
                         //Notification sound, if required
                         final String ringtoneUri = mCtx.getSharedPreferences(
@@ -201,12 +206,19 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                             mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
                         }
 
+                        final boolean isFirstTimeForNotification = routerPreferences
+                                .getBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, true);
+
+                        final String bigContentTitle = (isFirstTimeForNotification ?
+                                "New IP Address" : "IP Address change");
+
                         final NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
                                 .setSummaryText(summaryText)
-                                .setBigContentTitle("Public IP Address change");
+                                .setBigContentTitle(bigContentTitle);
 
                         //Public IP Address
-                        String publicIpLine = String.format("Public IP   %s", wanPublicIp);
+                        final String publicIpLine = String.format("Public IP   %s",
+                                wanPublicIpNullOrEmpty ? "-" : wanPublicIp);
                         final Spannable publicIpSpannable = new SpannableString(publicIpLine);
                         publicIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
                                 0, "Public IP".length(),
@@ -214,7 +226,8 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         inboxStyle.addLine(publicIpSpannable);
 
                         //WAN IP Address
-                        String wanIpLine = String.format("WAN IP   %s", wanIp);
+                        final String wanIpLine = String.format("WAN IP   %s",
+                                wanIpNullOrEmpty ? "-" : wanIp);
                         final Spannable wanIpSpannable = new SpannableString(wanIpLine);
                         wanIpSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
                                 0, "WAN IP".length(),
@@ -229,6 +242,8 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         // Because the ID remains unchanged, the existing notification is
                         // updated.
                         mNotificationManager.notify(notifyID, mBuilder.build());
+
+                        editor.putBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, false);
                     }
                 }
 
