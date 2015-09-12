@@ -1,13 +1,17 @@
 package org.rm3l.ddwrt.tiles.overview;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,24 +19,35 @@ import android.widget.Toast;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficActivity;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
@@ -53,6 +68,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
     private boolean isThemeLight;
     private long mLastSync;
     private String mCurrentMonth;
+
+    private final Map<Integer, ArrayList<Double>> mCurrentTraffMonthlyData = new ConcurrentHashMap<>();
 
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic,
@@ -93,6 +110,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    mCurrentTraffMonthlyData.clear();
+
                     mLastSync = System.currentTimeMillis();
 
                     mCurrentMonth = new SimpleDateFormat("MM-yyyy", Locale.US).format(new Date());
@@ -129,12 +148,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     if (isDemoRouter(mRouter)) {
                         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
                                 FileUtils
-                                        .byteCountToDisplaySize(new Random().nextLong() * MB));
+                                        .byteCountToDisplaySize(new Random().nextLong()));
                         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
                                 HIDDEN_);
                         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
                                 FileUtils
-                                        .byteCountToDisplaySize(new Random().nextLong() * MB));
+                                        .byteCountToDisplaySize(new Random().nextLong()));
                         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
                                 HIDDEN_);
 
@@ -147,6 +166,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                             if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
                                 long totalDownloadMBytes = 0l;
                                 long totalUploadMBytes = 0l;
+                                int dayNum = 1;
                                 for (final String dailyInOutTraffData : dailyTraffDataList) {
                                     if (Strings.isNullOrEmpty(dailyInOutTraffData)) {
                                         continue;
@@ -164,6 +184,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
 
                                     totalDownloadMBytes += Long.parseLong(inTraff);
                                     totalUploadMBytes += Long.parseLong(outTraff);
+
+                                    mCurrentTraffMonthlyData.put(dayNum++, Lists.newArrayList(
+                                            Double.parseDouble(inTraff), Double.parseDouble(outTraff)));
                                 }
                                 final String inHumanReadable = FileUtils
                                         .byteCountToDisplaySize(totalDownloadMBytes * MB);
@@ -222,7 +245,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
 
             layout.findViewById(R.id.tile_overview_wan_total_traffic_loading_view)
                     .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_overview_wan_total_traffic_gridLayout)
+            final View gridLayoutContainer = layout.findViewById(R.id.tile_overview_wan_total_traffic_gridLayout);
+            gridLayoutContainer
                     .setVisibility(View.VISIBLE);
 
             ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
@@ -296,6 +320,44 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
+
+                final NVRAMInfo dataCopy = data;
+                gridLayoutContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String currentMonth = dataCopy.getProperty(CURRENT_MONTH);
+                        if (currentMonth == null) {
+                            Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
+                            Utils.reportException(new IllegalStateException("currentMonth == null"));
+                            return;
+                        }
+                        if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {
+                            Toast.makeText(WANTotalTrafficOverviewTile.this.mParentFragmentActivity,
+                                    String.format("No traffic data for '%s'", currentMonth),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
+                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
+                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, currentMonth);
+                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED,
+                                    ImmutableMap.copyOf(mCurrentTraffMonthlyData));
+
+                            //noinspection ConstantConditions
+                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
+                            alertDialog.show();
+                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mParentFragmentActivity.startActivity(intent);
+                                    alertDialog.cancel();
+                                }
+                            }, 1000);
+                        }
+                    }
+                });
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -314,6 +376,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                gridLayoutContainer.setOnClickListener(null);
             }
 
         }  finally {
