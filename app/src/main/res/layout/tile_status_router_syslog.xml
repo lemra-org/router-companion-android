@@ -27,13 +27,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:orientation="horizontal">
 
-    <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginRight="8.0dip"-->
-    <!--android:id="@+id/ic_tile_status_router_syslog"-->
-    <!--android:background="@android:color/transparent"/>-->
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,18 +56,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tile_status_router_syslog_state"
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/tile_status_router_syslog_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="true"
+                    android:checked="false"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/ddwrt_green"
+                    android:textOff="OFF"
+                    android:textOn="ON"
                     android:visibility="gone" />
 
             </RelativeLayout>
@@ -107,30 +98,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textColor="@color/ddwrt_purple"
             android:textStyle="bold"
             android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="1.0dip"
-            android:weightSum="1">
-
-            <!-- Filter -->
-            <EditText
-                android:id="@+id/tile_status_router_syslog_filter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                android:hint="@string/syslog_filter_hint"
-                android:imeOptions="actionSearch"
-                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:textColor="@android:color/holo_blue_dark" />
-
-        </LinearLayout>
 
         <GridLayout
             android:layout_width="fill_parent"
@@ -168,7 +135,56 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textOn="ON"
                 android:visibility="gone" />
 
+            <!-- Status -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8.0dip"
+                android:layout_marginRight="8.0dip"
+                android:text="@string/one_space" />
+
+            <TextView
+                android:id="@+id/tile_status_router_syslog_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="true"
+                android:text="@string/loading" />
+
         </GridLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="1.0dip"
+            android:weightSum="1">
+
+            <!-- Filter -->
+            <EditText
+                android:id="@+id/tile_status_router_syslog_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.02"
+                android:drawableBottom="@android:color/holo_blue_dark"
+                android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+                android:hint="@string/syslog_filter_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+                android:textColor="@android:color/holo_blue_dark" />
+
+        </LinearLayout>
 
         <org.rm3l.ddwrt.widgets.ScrollViewWithLimitedHeight
             android:id="@+id/tile_status_router_syslog_content_scrollview"

@@ -27,11 +27,13 @@ package org.rm3l.ddwrt.tiles.syslog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -43,16 +45,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -61,9 +69,13 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.SYSLOG;
@@ -86,7 +98,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     private final String mGrep;
     private final boolean mDisplayStatus;
     protected long mLastSync;
-
+    private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
 
     public StatusSyslogTile(@NonNull Fragment parentFragment, @Nullable final ViewGroup parentViewGroup,
                             @NonNull Bundle arguments, @Nullable final String tileTitle,
@@ -121,7 +134,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -181,6 +194,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
         };
+        return mLoader;
     }
 
     @Override
@@ -202,8 +216,47 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         layout.findViewById(R.id.tile_status_router_syslog_content)
                 .setVisibility(View.VISIBLE);
 
+        Exception preliminaryCheckException = null;
         if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+            //noinspection ThrowableInstanceNeverThrown
+            preliminaryCheckException = new DDWRTNoDataException("No Data!");
+        } else //noinspection ThrowableResultOfMethodCallIgnored
+            if (data.getException() == null) {
+                final String syslogdEnabled = data.getProperty(SYSLOGD_ENABLE);
+                if (syslogdEnabled == null || !Arrays.asList("0", "1").contains(syslogdEnabled)) {
+                    //noinspection ThrowableInstanceNeverThrown
+                    preliminaryCheckException = new DDWRTSyslogdStateUnknown("Unknown state");
+                }
+            }
+
+        final SwitchCompat enableTraffDataButton =
+                (SwitchCompat) this.layout.findViewById(R.id.tile_status_router_syslog_status);
+        enableTraffDataButton.setVisibility(View.VISIBLE);
+
+        final boolean makeToogleEnabled = (data != null &&
+                data.getData() != null &&
+                data.getData().containsKey(SYSLOGD_ENABLE));
+
+        if (!isToggleStateActionRunning.get()) {
+            if (makeToogleEnabled) {
+                if ("1".equals(data.getProperty(SYSLOGD_ENABLE))) {
+                    //Enabled
+                    enableTraffDataButton.setChecked(true);
+                } else {
+                    //Disabled
+                    enableTraffDataButton.setChecked(false);
+                }
+                enableTraffDataButton.setEnabled(true);
+            } else {
+                enableTraffDataButton.setChecked(false);
+                enableTraffDataButton.setEnabled(false);
+            }
+
+            enableTraffDataButton.setOnClickListener(new ManageSyslogdToggle());
+        }
+
+        if (preliminaryCheckException != null) {
+            data = new NVRAMInfo().setException(preliminaryCheckException);
         }
 
         final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_error);
@@ -379,5 +432,182 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    private class DDWRTSyslogdStateUnknown extends DDWRTNoDataException {
+
+        public DDWRTSyslogdStateUnknown(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+    }
+
+    private class ManageSyslogdToggle implements View.OnClickListener {
+
+        private boolean enable;
+
+        @Override
+        public void onClick(View view) {
+
+            isToggleStateActionRunning.set(true);
+
+            if (!(view instanceof CompoundButton)) {
+                Utils.reportException(new IllegalStateException("ManageSyslogdToggle#onClick: " +
+                        "view is NOT an instance of CompoundButton!"));
+                isToggleStateActionRunning.set(false);
+                return;
+            }
+
+            final CompoundButton compoundButton = (CompoundButton) view;
+
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    compoundButton.setEnabled(false);
+                }
+            });
+
+            this.enable = compoundButton.isChecked();
+
+//            if (BuildConfig.WITH_ADS) {
+//                Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Syslog");
+//                isToggleStateActionRunning.set(false);
+//                mParentFragmentActivity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        compoundButton.setChecked(!enable);
+//                        compoundButton.setEnabled(true);
+//                    }
+//                });
+//                return;
+//            }
+
+            final NVRAMInfo nvramInfoToSet = new NVRAMInfo();
+
+            nvramInfoToSet.setProperty(SYSLOGD_ENABLE, enable ? "1" : "0");
+
+            new UndoBarController.UndoBar(mParentFragmentActivity)
+                    .message(String.format("Syslog will be %s on '%s' (%s). ",
+                            enable ? "enabled" : "disabled",
+                            mRouter.getDisplayName(),
+                            mRouter.getRemoteIpAddress()))
+                    .listener(new UndoBarController.AdvancedUndoListener() {
+                                  @Override
+                                  public void onHide(@Nullable Parcelable parcelable) {
+
+                                      Utils.displayMessage(mParentFragmentActivity,
+                                              String.format("%s Syslog...",
+                                                      enable ? "Enabling" : "Disabling"),
+                                              Style.INFO);
+
+                                      new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                              nvramInfoToSet,
+                                              false,
+                                              new RouterActionListener() {
+                                                  @Override
+                                                  public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+
+                                                              try {
+                                                                  compoundButton.setChecked(enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Syslog %s successfully on host '%s' (%s). ",
+                                                                                  enable ? "enabled" : "disabled",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress()),
+                                                                          Style.CONFIRM);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                                  if (mLoader != null) {
+                                                                      //Reload everything right away
+                                                                      doneWithLoaderInstance(StatusSyslogTile.this,
+                                                                              mLoader,
+                                                                              1l,
+                                                                              R.id.tile_status_router_syslog_togglebutton_title,
+                                                                              R.id.tile_status_router_syslog_togglebutton_separator);
+                                                                  }
+                                                              }
+                                                          }
+
+                                                      });
+                                                  }
+
+                                                  @Override
+                                                  public void onRouterActionFailure(@NonNull RouterAction
+                                                                                            routerAction, @NonNull final Router
+                                                                                            router, @Nullable final Exception exception) {
+                                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              try {
+                                                                  compoundButton.setChecked(!enable);
+                                                                  Utils.displayMessage(mParentFragmentActivity,
+                                                                          String.format("Error while trying to %s Syslog on '%s' (%s): %s",
+                                                                                  enable ? "enable" : "disable",
+                                                                                  router.getDisplayName(),
+                                                                                  router.getRemoteIpAddress(),
+                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                          Style.ALERT);
+                                                              } finally {
+                                                                  compoundButton.setEnabled(true);
+                                                                  isToggleStateActionRunning.set(false);
+                                                              }
+                                                          }
+                                                      });
+
+
+                                                  }
+                                              }
+
+                                              ,
+                                              mGlobalPreferences).
+
+                                              execute(mRouter);
+
+                                  }
+
+                                  @Override
+                                  public void onClear(@NonNull Parcelable[] parcelables) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+
+                                  @Override
+                                  public void onUndo(@Nullable Parcelable parcelable) {
+                                      mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              try {
+                                                  compoundButton.setChecked(!enable);
+                                                  compoundButton.setEnabled(true);
+                                              } finally {
+                                                  isToggleStateActionRunning.set(false);
+                                              }
+                                          }
+                                      });
+                                  }
+                              }
+
+                    )
+                    .
+
+                            token(new Bundle()
+
+                            )
+                    .
+
+                            show();
+        }
     }
 }
