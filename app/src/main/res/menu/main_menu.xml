@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_launch"
         android:orderInCategory="1"
         android:title="@string/menuitem_actions"
-        app:showAsAction="always">
+        app:showAsAction="collapseActionView|ifRoom">
 
         <menu>
 
@@ -105,7 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="2"
         android:title="@string/menuitem_settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_donate"
@@ -113,7 +113,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_payment"
         android:orderInCategory="3"
         android:title="@string/menuitem_donate"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_feedback"
@@ -121,7 +121,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_thumbs_up_down"
         android:orderInCategory="4"
         android:title="@string/send_feedback"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <!-- Seems redundant with the send_feedback menu item-->
     <item
@@ -136,7 +136,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:alphabeticShortcut="P"
         android:orderInCategory="6"
         android:title="@string/remove_ads"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/help"
