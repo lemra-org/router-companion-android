@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -337,7 +338,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_wan_ip);
                 wanIpView.setText("WAN IP: " + data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
 
-                //WAN IP
+                //LAN IP
                 final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_network_map_router_lan_ip);
                 lanIpView.setText("LAN IP: " + data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
 
@@ -437,54 +438,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                 .setVisibility(View.GONE);
                         statusToastMsg = ("Your router seems to be able to reach the Internet. " +
                                 "Public IP Address on the Internet is: " + publicIp);
+
+                        if (Objects.equal(publicIp, data.getProperty(NVRAMInfo.WAN_IPADDR))) {
+                            wanIpView.setVisibility(View.INVISIBLE);
+                        }
                     }
 
-//                    if (publicIp == null) {
-//                        wanPathColor = R.color.line_view_color;
-//                        publicIpView
-//                                .setVisibility(View.GONE);
-//                        statusWarningView
-//                                .setVisibility(View.GONE);
-//                        statusUnknownView
-//                                .setVisibility(View.VISIBLE);
-//                        statusToastMsg = "Couldn't test connectivity to the Internet!";
-//                    } else {
-//                        switch (publicIp) {
-//                            case OK:
-//                                wanPathColor = R.color.android_green;
-//                                publicIpView
-//                                        .setVisibility(View.VISIBLE);
-//                                statusWarningView
-//                                        .setVisibility(View.GONE);
-//                                statusUnknownView
-//                                        .setVisibility(View.GONE);
-//                                statusToastMsg = "Your router seems to be able to reach the Internet. " +
-//                                        "Public IP Address on the Internet is: " + ;
-//                                break;
-//                            case NOK:
-//                                wanPathColor = R.color.win8_orange;
-//                                publicIpView
-//                                        .setVisibility(View.GONE);
-//                                statusWarningView
-//                                        .setVisibility(View.VISIBLE);
-//                                statusUnknownView
-//                                        .setVisibility(View.GONE);
-//                                statusToastMsg = "Your router seems not to be able to reach the Internet. " +
-//                                        "No public IP Address was found on the Internet.";
-//                                break;
-//                            case UNKNOWN:
-//                            default:
-//                                wanPathColor = R.color.line_view_color;
-//                                publicIpView
-//                                        .setVisibility(View.GONE);
-//                                statusWarningView
-//                                        .setVisibility(View.GONE);
-//                                statusUnknownView
-//                                        .setVisibility(View.VISIBLE);
-//                                statusToastMsg = "Couldn't test connectivity to the Internet!";
-//                                break;
-//                        }
-//                    }
                     final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
