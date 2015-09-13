@@ -43,7 +43,9 @@ public enum RouterAction {
     BACKUP_WAN_TRAFF("Backup WAN Monthly Traffic"),
     RESTORE_WAN_TRAFF("Restore WAN Monthly Traffic"),
     DELETE_WAN_TRAFF("Delete WAN Monthly Traffic"),
-    TOGGLE_WL_RADIO("Toggle Wireless Radio");
+    TOGGLE_WL_RADIO("Toggle Wireless Radio"),
+    DHCP_RELEASE("DHCP Release"),
+    DHCP_RENEW("DHCP Renew");
 
     private final String displayName;
 
