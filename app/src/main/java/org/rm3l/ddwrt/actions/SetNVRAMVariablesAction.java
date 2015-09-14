@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEBUG_MODE;
+
 public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
 
     public static final String LOG_TAG = SetNVRAMVariablesAction.class.getSimpleName();
@@ -94,7 +96,9 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             cmd[cmd.length - 2] = "/usr/sbin/nvram commit";
             cmd[cmd.length - 1] = (withReboot ? "/sbin/reboot" : "echo");
 
-            Log.d(LOG_TAG, "cmd: " + Arrays.toString(cmd));
+            if (globalSharedPreferences.getBoolean(DEBUG_MODE, false)) {
+                Log.d(LOG_TAG, "cmd: " + Arrays.toString(cmd));
+            }
 
             //FIXME Seems there is a limit on the number of characters we can pass to the SSH server console
             // => copy all those in a temporary file, upload the file to the router and exec it

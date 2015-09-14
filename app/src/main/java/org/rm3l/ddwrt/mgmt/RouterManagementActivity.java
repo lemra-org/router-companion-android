@@ -98,6 +98,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEBUG_MODE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
@@ -582,7 +583,9 @@ public class RouterManagementActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(LOG_TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        if (mPreferences.getBoolean(DEBUG_MODE, false)) {
+            Log.d(LOG_TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        }
         // Check which request we're responding to
         switch (requestCode) {
             case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:

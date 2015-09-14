@@ -319,7 +319,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         } else {
             mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
         }
-        mProgressBarDesc.setText("Loading...\n\n");
+        mProgressBarDesc.setText("Loading...");
 
         if (!this.mAutoRefreshToggle) {
             if (mParentFragmentPreferences != null) {
@@ -649,7 +649,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(10);
-                            mProgressBarDesc.setText("Fetching Broadcast address (for Wake on LAN (WOL))...\n\n");
+                            mProgressBarDesc.setText("Fetching Broadcast address (for Wake on LAN (WOL))...");
                         }
                     });
 
@@ -727,7 +727,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(20);
-                            mProgressBarDesc.setText("Loading active clients...\n\n");
+                            mProgressBarDesc.setText("Loading active clients...");
                         }
                     });
 
@@ -744,7 +744,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(30);
-                            mProgressBarDesc.setText("Loading DHCP Leases...\n\n");
+                            mProgressBarDesc.setText("Loading DHCP Leases...");
                         }
                     });
                     //Active DHCP Leases
@@ -760,7 +760,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(40);
-                            mProgressBarDesc.setText("Loading Active IP Connections...\n\n");
+                            mProgressBarDesc.setText("Loading Active IP Connections...");
                         }
                     });
                     //Active IP Connections
@@ -791,7 +791,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(50);
-                            mProgressBarDesc.setText("Loading wireless clients...\n\n");
+                            mProgressBarDesc.setText("Loading wireless clients...");
                         }
                     });
 
@@ -928,7 +928,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(60);
-                            mProgressBarDesc.setText("Processing a total of " + outputLen + " connected hosts...\n\n");
+                            mProgressBarDesc.setText("Processing a total of " + outputLen + " connected hosts...");
                         }
                     });
                     String ipAddress;
@@ -1088,7 +1088,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 public void run() {
                                     mProgressBarDesc.setText("Resolving MAC Addresses (" +
                                             v + "/" + outputLen +
-                                            ")...\n\n");
+                                            ")...");
                                 }
                             });
                             device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
@@ -1126,7 +1126,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             @Override
                             public void run() {
                                 mProgressBar.setProgress(70);
-                                mProgressBarDesc.setText("Retrieving bandwidth monitoring data...\n\n");
+                                mProgressBarDesc.setText("Retrieving bandwidth monitoring data...");
                             }
                         });
 
@@ -1223,7 +1223,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     public void run() {
                                         mProgressBarDesc.setText("Retrieving bandwidth monitoring data (" +
                                                 x + "/" + usageDbOutLinesLen +
-                                                "...\n\n");
+                                                "...");
                                     }
                                 });
                                 if (isNullOrEmpty(usageDbOutLine)) {
@@ -1304,7 +1304,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(90);
-                            mProgressBarDesc.setText("Getting WAN Access Status for each client...\n\n");
+                            mProgressBarDesc.setText("Getting WAN Access Status for each client...");
                         }
                     });
 
@@ -1379,7 +1379,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         @Override
                         public void run() {
                             mProgressBar.setProgress(95);
-                            mProgressBarDesc.setText("Building notification if needed...\n\n");
+                            mProgressBarDesc.setText("Building notification if needed...");
                         }
                     });
 
@@ -1470,7 +1470,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 mProgressBar.setProgress(97);
-                mProgressBarDesc.setText("Generating views...\n\n");
+                mProgressBarDesc.setText("Generating views...");
 
                 if (exception == null) {
                     errorPlaceHolderView.setVisibility(View.GONE);
