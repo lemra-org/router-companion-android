@@ -105,7 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="2"
         android:title="@string/menuitem_settings"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/action_donate"
