@@ -24,40 +24,76 @@ package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.DHCPClientRouterAction;
+import org.rm3l.ddwrt.actions.DHCPClientRouterAction.DHCPClientAction;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * TODO
- */
-public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
     private long mLastSync;
+    private AsyncTaskLoader<NVRAMInfo> mLoader;
+    private final AtomicBoolean mDhcpActionRunning = new AtomicBoolean(false);
 
     public WANConfigTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
+        //Create Options Menu
+        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wan_config_menu);
+
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            //Set menu background to white
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        tileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(WANConfigTile.this);
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.tile_wan_config_options, menu);
+                popup.show();
+            }
+        });
+
     }
 
     @Override
@@ -85,7 +121,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
      */
     @Override
     protected Loader<NVRAMInfo> getLoader(final int id, final Bundle args) {
-        return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
+        mLoader = new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
             @Nullable
             @Override
@@ -116,6 +152,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                                 NVRAMInfo.WAN_IPADDR,
                                 NVRAMInfo.WAN_NETMASK,
                                 NVRAMInfo.WAN_GATEWAY,
+                                NVRAMInfo.WAN_GET_DNS,
                                 NVRAMInfo.WAN_DNS);
                     } finally {
                         if (nvramInfoTmp != null) {
@@ -123,7 +160,10 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         //Connection Uptime is stored in /tmp/.wanuptime and sys uptime from /proc/uptime
-                        final String[] uptimes = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /tmp/.wanuptime; echo; cat /proc/uptime");
+                        final String[] uptimes = SSHUtils
+                                .getManualProperty(mParentFragmentActivity,
+                                        mRouter, mGlobalPreferences,
+                                        "cat /tmp/.wanuptime; echo; cat /proc/uptime");
                         if (uptimes != null && uptimes.length > 1) {
                             final String wanUptimeStr = uptimes[0];
 
@@ -172,6 +212,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
         };
+        return mLoader;
     }
 
     /**
@@ -224,8 +265,15 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         layout.findViewById(R.id.tile_status_wan_config_gridLayout)
                 .setVisibility(View.VISIBLE);
 
+        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wan_config_menu);
+
         if (data == null) {
             data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
+        }
+
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            //Set menu background to white
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
 
         final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_error);
@@ -289,8 +337,29 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
 
             //DNS
             final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);
-            final String property = data.getProperty(NVRAMInfo.WAN_DNS, "-");
-            wanDNSView.setText(property != null ? property.replaceAll(" ", "\n") : "-");
+            final String wanDns = data.getProperty(NVRAMInfo.WAN_DNS);
+            final String wanGetDns = data.getProperty(NVRAMInfo.WAN_GET_DNS);
+            final String property = (wanDns != null ? wanDns : (wanGetDns != null ? wanGetDns :  "-"));
+            wanDNSView.setText(property.replaceAll(" ", "\n"));
+
+            if ("dhcp".equalsIgnoreCase(wanProto)) {
+                tileMenu.setVisibility(View.VISIBLE);
+
+                tileMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                        popup.setOnMenuItemClickListener(WANConfigTile.this);
+                        final MenuInflater inflater = popup.getMenuInflater();
+                        final Menu menu = popup.getMenu();
+                        inflater.inflate(R.menu.tile_wan_config_options, menu);
+                        popup.show();
+                    }
+                });
+            } else {
+                //Only DHCP Actions are supported for now - so hide if WANProto != DHCP
+                tileMenu.setVisibility(View.GONE);
+            }
 
             //Update last sync
             final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
@@ -299,6 +368,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
         }
 
         if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+            tileMenu.setVisibility(View.GONE);
             //noinspection ThrowableResultOfMethodCallIgnored
             final Throwable rootCause = Throwables.getRootCause(exception);
             errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
@@ -327,5 +397,137 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> {
     protected OnClickIntent getOnclickIntent() {
         //TODO
         return null;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        final int itemId = menuItem.getItemId();
+        switch (itemId) {
+            case R.id.tile_wan_config_dhcp_release:
+            case R.id.tile_wan_config_dhcp_renew:
+                if (mDhcpActionRunning.get()) {
+                    Utils.displayMessage(mParentFragmentActivity,
+                            "Action already in progress. Please wait a few seconds...",
+                            Style.INFO);
+                    return true;
+                }
+
+                final boolean renew = (itemId == R.id.tile_wan_config_dhcp_renew);
+                final DHCPClientAction dhcpClientRouterAction =
+                        (renew ? DHCPClientAction.RENEW :
+                                DHCPClientAction.RELEASE);
+
+                mDhcpActionRunning.set(true);
+                layout.findViewById(R.id.tile_status_wan_config_menu)
+                        .setEnabled(false);
+
+                new UndoBarController.UndoBar(mParentFragmentActivity)
+                        .message(String.format("WAN DHCP Lease will be %s on '%s' (%s). ",
+                                renew ? "renewed" : "released",
+                                mRouter.getDisplayName(),
+                                mRouter.getRemoteIpAddress()))
+                        .listener(new UndoBarController.AdvancedUndoListener() {
+                                      @Override
+                                      public void onHide(@Nullable Parcelable parcelable) {
+                                          Utils.displayMessage(mParentFragmentActivity,
+                                                  String.format("%s WAN DHCP Lease...",
+                                                          renew ? "Renewing" : "Releasing"),
+                                                  Style.INFO);
+                                          new DHCPClientRouterAction(mParentFragmentActivity,
+                                                  new RouterActionListener() {
+                                                      @Override
+                                                      public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {
+                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+
+                                                                  try {
+                                                                      Utils.displayMessage(mParentFragmentActivity,
+                                                                              String.format("WAN DHCP Lease %s successfully on host '%s' (%s). ",
+                                                                                      renew ? "renewed" : "released",
+                                                                                      router.getDisplayName(),
+                                                                                      router.getRemoteIpAddress()),
+                                                                              Style.CONFIRM);
+                                                                  } finally {
+                                                                      mDhcpActionRunning.set(false);
+                                                                      if (mLoader != null) {
+                                                                          //Reload everything right away
+                                                                          doneWithLoaderInstance(WANConfigTile.this,
+                                                                                  mLoader,
+                                                                                  1l,
+                                                                                  R.id.tile_status_wan_config_togglebutton_title,
+                                                                                  R.id.tile_status_wan_config_togglebutton_separator);
+                                                                      }
+                                                                      layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                                              .setEnabled(true);
+                                                                  }
+                                                              }
+
+                                                          });
+                                                      }
+
+                                                      @Override
+                                                      public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull final Router router, @Nullable final Exception exception) {
+                                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+                                                                  try {
+                                                                      Utils.displayMessage(mParentFragmentActivity,
+                                                                              String.format("Error while trying to %s WAN DHCP Lease on '%s' (%s): %s",
+                                                                                      renew ? "renew" : "release",
+                                                                                      router.getDisplayName(),
+                                                                                      router.getRemoteIpAddress(),
+                                                                                      ExceptionUtils.getRootCauseMessage(exception)),
+                                                                              Style.ALERT);
+                                                                  } finally {
+                                                                      mDhcpActionRunning.set(false);
+                                                                      layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                                              .setEnabled(true);
+                                                                  }
+                                                              }
+                                                          });
+                                                      }
+                                                  },
+                                                  mGlobalPreferences,
+                                                  dhcpClientRouterAction);
+                                      }
+
+                                      @Override
+                                      public void onClear(@NonNull Parcelable[] parcelables) {
+                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  try {
+                                                      layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                              .setEnabled(true);
+                                                  } finally {
+                                                      mDhcpActionRunning.set(false);
+                                                  }
+                                              }
+                                          });
+                                      }
+
+                                      @Override
+                                      public void onUndo(@Nullable Parcelable parcelable) {
+                                          mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  try {
+                                                      layout.findViewById(R.id.tile_status_wan_config_menu)
+                                                              .setEnabled(true);
+                                                  } finally {
+                                                      mDhcpActionRunning.set(false);
+                                                  }
+                                              }
+                                          });
+                                      }
+                                  })
+                        .token(new Bundle())
+                        .show();
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 }

@@ -486,7 +486,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             nvramInfoToSet.setProperty(SYSLOGD_ENABLE, enable ? "1" : "0");
 
             new UndoBarController.UndoBar(mParentFragmentActivity)
-                    .message(String.format("Syslog will be %s on '%s' (%s). ",
+                    .message(String.format("Syslog will be %s on '%s' (%s). Router will be rebooted. ",
                             enable ? "enabled" : "disabled",
                             mRouter.getDisplayName(),
                             mRouter.getRemoteIpAddress()))
@@ -501,7 +501,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
                                       new SetNVRAMVariablesAction(mParentFragmentActivity,
                                               nvramInfoToSet,
-                                              false,
+                                              true,
                                               new RouterActionListener() {
                                                   @Override
                                                   public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull final Router router, Object returnData) {

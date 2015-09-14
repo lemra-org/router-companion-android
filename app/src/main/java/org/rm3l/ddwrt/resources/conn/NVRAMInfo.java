@@ -58,7 +58,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String WAN_LEASE = "wan_lease";
     public static final String WAN_NETMASK = "wan_netmask";
     public static final String WAN_GATEWAY = "wan_gateway";
-    public static final String WAN_DNS = "wan_get_dns";
+    public static final String WAN_GET_DNS = "wan_get_dns";
     public static final String WAN_3_G_SIGNAL = "wan_3g_signal";
     public static final String WAN_DEFAULT = "wan_default";
     public static final String LAN_DOMAIN = "lan_domain";
@@ -160,6 +160,7 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String HTTP_WANPORT = "http_wanport";
     public static final String HTTPS_ENABLE = "https_enable";
     public static final String REMOTE_MGT_HTTPS = "remote_mgt_https";
+    public static final String WAN_DNS = "wan_dns";
 
     /**
      * Default constructor: initialized an empty Properties set

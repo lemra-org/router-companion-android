@@ -73,7 +73,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
                                 NVRAMInfo.WAN_IPADDR,
                                 NVRAMInfo.WAN_NETMASK,
                                 NVRAMInfo.WAN_GATEWAY,
-                                NVRAMInfo.WAN_DNS);
+                                NVRAMInfo.WAN_GET_DNS);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -88,7 +88,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
                             nvramInfo.setProperty(NVRAMInfo.WAN_IPADDR, uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_IPADDR, "-"));
                             nvramInfo.setProperty(NVRAMInfo.WAN_NETMASK, uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_NETMASK, "-"));
                             nvramInfo.setProperty(NVRAMInfo.WAN_GATEWAY, uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_GATEWAY, "-"));
-                            nvramInfo.setProperty(NVRAMInfo.WAN_DNS, uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_DNS, "-"));
+                            nvramInfo.setProperty(NVRAMInfo.WAN_GET_DNS, uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_DNS, "-"));
                             wanUptimeStr = uciNetworkInfo.getProperty(UCIInfo.NETWORK_WAN_CONNECT_TIME);
                         }
 
