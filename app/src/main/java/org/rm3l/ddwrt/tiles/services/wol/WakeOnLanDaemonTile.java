@@ -477,7 +477,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
 
             this.enable = compoundButton.isChecked();
 
-            if (BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle Wake on LAN Daemon");
                 isToggleStateActionRunning.set(false);
                 mParentFragmentActivity.runOnUiThread(new Runnable() {

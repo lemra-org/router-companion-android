@@ -829,7 +829,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
 
             this.enable = compoundButton.isChecked();
 
-            if (BuildConfig.WITH_ADS) {
+            if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                 Utils.displayUpgradeMessage(mParentFragmentActivity, "Toggle OpenVPN Client");
                 isToggleStateActionRunning.set(false);
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
