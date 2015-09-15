@@ -117,9 +117,29 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                 //Skip run
                 Log.d(LOG_TAG, "Skip loader run");
+                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBarDesc.setVisibility(View.GONE);
+                    }
+                });
                 return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
             }
             nbRunsLoader++;
+
+            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (nbRunsLoader <= 1) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mProgressBarDesc.setVisibility(View.VISIBLE);
+                    } else {
+                        mProgressBar.setVisibility(View.GONE);
+                        mProgressBarDesc.setVisibility(View.GONE);
+                    }
+                }
+            });
 
             mLastSync = System.currentTimeMillis();
 

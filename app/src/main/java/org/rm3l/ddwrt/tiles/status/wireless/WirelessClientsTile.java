@@ -629,10 +629,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        mProgressBarDesc.setVisibility(View.VISIBLE);
+                        if (nbRunsLoader <= 1) {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            mProgressBarDesc.setVisibility(View.VISIBLE);
+                        } else {
+                            mProgressBar.setVisibility(View.GONE);
+                            mProgressBarDesc.setVisibility(View.GONE);
+                        }
                     }
                 });
+
 
                 //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
                 //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
