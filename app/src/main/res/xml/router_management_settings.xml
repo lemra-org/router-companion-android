@@ -108,12 +108,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <PreferenceCategory android:title="Error Reporting">
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="debug.mode"
-            android:summaryOff="Off"
-            android:summaryOn="On"
-            android:title="Debug Mode" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="debug.mode"-->
+            <!--android:summaryOff="Off"-->
+            <!--android:summaryOn="On"-->
+            <!--android:title="Debug Mode" />-->
 
         <CheckBoxPreference
             android:defaultValue="true"
