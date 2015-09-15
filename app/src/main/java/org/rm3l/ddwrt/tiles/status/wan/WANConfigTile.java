@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,9 +44,11 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DHCPClientRouterAction;
 import org.rm3l.ddwrt.actions.DHCPClientRouterAction.DHCPClientAction;
@@ -53,24 +56,37 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
+
 public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = WANConfigTile.class.getSimpleName();
+    public static final String REVERSE_DNS_PTR = "REVERSE_DNS_PTR";
     private long mLastSync;
     private AsyncTaskLoader<NVRAMInfo> mLoader;
     private final AtomicBoolean mDhcpActionRunning = new AtomicBoolean(false);
+
+    private boolean checkActualInternetConnectivity = true;
 
     public WANConfigTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_config, R.id.tile_status_wan_config_togglebutton);
@@ -128,6 +144,11 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
             public NVRAMInfo loadInBackground() {
 
                 try {
+                    if (mParentFragmentPreferences != null) {
+                        checkActualInternetConnectivity = mParentFragmentPreferences
+                                .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
+                    }
+
                     Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -196,6 +217,96 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                     nfe.printStackTrace();
                                     //No Worries - WAN Uptime will be marked as "-"
                                 }
+                            }
+                        }
+
+                        if (checkActualInternetConnectivity) {
+                            final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
+                            try {
+
+                                if (isDemoRouter(mRouter)) {
+                                    final long nbRunsLoaderModulo = (nbRunsLoader % 5);
+                                    if (nbRunsLoaderModulo == 0) {
+                                        //nbRunsLoader = 5k
+                                        final int p1 = 1 + new Random().nextInt(252);
+                                        final int p2 = 1 + new Random().nextInt(252);
+                                        final String randomPublicIp = "52.64." + p1 + "." + p2;
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
+                                                randomPublicIp);
+                                        nvramInfo.setProperty(REVERSE_DNS_PTR,
+                                                p2 + "." + p1 + ".64.52.in-addr.arpa");
+
+                                    } else if (nbRunsLoaderModulo == 1) {
+                                        //nbRunsLoader = 5k + 1
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else if (nbRunsLoaderModulo == 2) {
+                                        //nbRunsLoader = 5k + 2
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                                    }
+                                } else {
+                                    //Check actual connections to the outside from the router
+                                    final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                            mRouter, mGlobalPreferences,
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                                            String.format("echo -e \"" +
+                                                            "GET / HTTP/1.1\\r\\n" +
+                                                            "Host:%s\\r\\n" +
+                                                            "User-Agent:%s/%s\\r\\n\" " +
+                                                            "| /usr/bin/nc %s %d",
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                    BuildConfig.VERSION_NAME,
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    PublicIPInfo.ICANHAZIP_PORT));
+                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else {
+                                        final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
+                                                .trim();
+                                        if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouter, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+
+                                        } else {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                        }
+                                    }
+                                }
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                            } finally {
+
+                                //Get Reverse DNS Record (PTR) as well
+                                try {
+                                    final String[] revDnsCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                            mRouter, mGlobalPreferences,
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazptr.com 80"
+                                            String.format("echo -e \"" +
+                                                            "GET / HTTP/1.1\\r\\n" +
+                                                            "Host:%s\\r\\n" +
+                                                            "User-Agent:%s/%s\\r\\n\" " +
+                                                            "| /usr/bin/nc %s %d",
+                                                    PublicIPInfo.ICANHAZPTR_HOST,
+                                                    applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                    BuildConfig.VERSION_NAME,
+                                                    PublicIPInfo.ICANHAZPTR_HOST,
+                                                    PublicIPInfo.ICANHAZPTR_PORT));
+
+                                    Log.d(LOG_TAG, "revDnsCmdStatus: " + Arrays.toString(revDnsCmdStatus));
+
+                                    if (revDnsCmdStatus != null && revDnsCmdStatus.length > 0) {
+                                        nvramInfo.setProperty(REVERSE_DNS_PTR, revDnsCmdStatus[revDnsCmdStatus.length - 1]);
+                                    }
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                }
+
                             }
                         }
                     }
@@ -319,13 +430,14 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
             final TextView wanUptimeView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_connection_uptime);
             wanUptimeView.setText(data.getProperty(NVRAMInfo.WAN_CONNECTION_UPTIME, "-"));
 
-            //MAC
+            //WAN MAC
             final TextView wanMacView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_mac);
             wanMacView.setText(data.getProperty(NVRAMInfo.WAN_HWADDR, "-"));
 
-            //IP
+            //WAN IP
+            final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
             final TextView wanIPView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_wan_ip);
-            wanIPView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
+            wanIPView.setText(wanIpText);
 
             //Subnet
             final TextView wanSubnetView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_mask);
@@ -334,6 +446,44 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
             //Gateway
             final TextView wanGatewayView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_subnet_gateway);
             wanGatewayView.setText(data.getProperty(NVRAMInfo.WAN_GATEWAY, "-"));
+
+            //Public IP and Reverse DNS
+            final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_title);
+            final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip_sep);
+            final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_internet_ip);
+            final TextView rDnsTitle = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns_title);
+            final TextView rDnsSep = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns_sep);
+            final TextView rDnsTextView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_rdns);
+            if (!checkActualInternetConnectivity) {
+                internetIpTitle.setVisibility(View.GONE);
+                internetIpSep.setVisibility(View.GONE);
+                internetIpTextView.setVisibility(View.GONE);
+                rDnsTitle.setVisibility(View.GONE);
+                rDnsSep.setVisibility(View.GONE);
+                rDnsTextView.setVisibility(View.GONE);
+            } else {
+                final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
+                if (publicIp != null &&
+                        !(UNKNOWN.equals(publicIp) || NOK.equals(publicIp))) {
+                    internetIpTextView.setText(publicIp);
+                } else {
+                    internetIpTextView.setText("-");
+                }
+                if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
+                    //Hide public IP in this case
+                    internetIpTitle.setVisibility(View.GONE);
+                    internetIpSep.setVisibility(View.GONE);
+                    internetIpTextView.setVisibility(View.GONE);
+                }
+                final String revDnsPtr = data.getProperty(REVERSE_DNS_PTR);
+                if (Strings.isNullOrEmpty(revDnsPtr)) {
+                    rDnsTitle.setVisibility(View.GONE);
+                    rDnsSep.setVisibility(View.GONE);
+                    rDnsTextView.setVisibility(View.GONE);
+                } else {
+                    rDnsTextView.setText(revDnsPtr);
+                }
+            }
 
             //DNS
             final TextView wanDNSView = (TextView) this.layout.findViewById(R.id.tile_status_wan_config_dns);

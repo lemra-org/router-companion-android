@@ -13,6 +13,9 @@ public class PublicIPInfo {
     public static final String ICANHAZIP_HOST = "icanhazip.com";
     public static final int ICANHAZIP_PORT = 80;
 
+    public static final String ICANHAZPTR_HOST = "icanhazptr.com";
+    public static final int ICANHAZPTR_PORT = 80;
+
     @Nullable
     private String ip;
 

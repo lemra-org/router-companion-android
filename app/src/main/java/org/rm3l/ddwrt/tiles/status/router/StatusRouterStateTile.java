@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,18 +42,27 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
+import static org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
@@ -63,6 +73,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     public static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
     private static final String LOG_TAG = StatusRouterStateTile.class.getSimpleName();
     private long mLastSync;
+    private boolean checkActualInternetConnectivity = true;
 
     public StatusRouterStateTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_state, R.id.tile_status_router_router_state_togglebutton);
@@ -100,6 +111,12 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
+
+                    if (mParentFragmentPreferences != null) {
+                        checkActualInternetConnectivity = mParentFragmentPreferences
+                                .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
+                    }
+
                     Log.d(LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
@@ -195,6 +212,66 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             if (otherCmds.length >= 5) {
                                 //Firmware
                                 nvramInfo.setProperty(NVRAMInfo.FIRMWARE, otherCmds[4]);
+                            }
+                        }
+
+                        if (checkActualInternetConnectivity) {
+                            try {
+
+                                if (isDemoRouter(mRouter)) {
+                                    final long nbRunsLoaderModulo = (nbRunsLoader % 5);
+                                    if (nbRunsLoaderModulo == 0) {
+                                        //nbRunsLoader = 5k
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
+                                                "52.64." +
+                                                        (1 + new Random().nextInt(252))
+                                                        + "." +
+                                                        (1 + new Random().nextInt(252)));
+                                    } else if (nbRunsLoaderModulo == 1) {
+                                        //nbRunsLoader = 5k + 1
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else if (nbRunsLoaderModulo == 2) {
+                                        //nbRunsLoader = 5k + 2
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                                    }
+                                } else {
+                                    //Check actual connections to the outside from the router
+                                    final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
+                                    final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                            mRouter, mGlobalPreferences,
+//                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
+                                            String.format("echo -e \"" +
+                                                            "GET / HTTP/1.1\\r\\n" +
+                                                            "Host:%s\\r\\n" +
+                                                            "User-Agent:%s/%s\\r\\n\" " +
+                                                            "| /usr/bin/nc %s %d",
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                    BuildConfig.VERSION_NAME,
+                                                    PublicIPInfo.ICANHAZIP_HOST,
+                                                    PublicIPInfo.ICANHAZIP_PORT));
+                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                    } else {
+                                        final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
+                                                .trim();
+                                        if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouter, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+
+                                        } else {
+                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                        }
+                                    }
+                                }
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             }
                         }
                     }
@@ -297,7 +374,35 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
 
             //WAN IP
             final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
-            wanIpView.setText(data.getProperty(NVRAMInfo.WAN_IPADDR, "-"));
+            final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
+            wanIpView.setText(wanIpText);
+
+            final TextView wanIpViewDetail = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
+            wanIpViewDetail.setText(wanIpText);
+
+            final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
+            final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_sep);
+            final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
+            if (!checkActualInternetConnectivity) {
+                internetIpTitle.setVisibility(View.GONE);
+                internetIpSep.setVisibility(View.GONE);
+                internetIpTextView.setVisibility(View.GONE);
+            } else {
+                final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
+                if (publicIp != null &&
+                        !(UNKNOWN.equals(publicIp) || NOK.equals(publicIp))) {
+                    internetIpTextView.setText(publicIp);
+                } else {
+                    internetIpTextView.setText("-");
+                }
+                if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
+                    //Hide public IP in this case
+                    internetIpTitle.setVisibility(View.GONE);
+                    internetIpSep.setVisibility(View.GONE);
+                    internetIpTextView.setVisibility(View.GONE);
+                }
+
+            }
 
             final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
             final String routerModel = data.getProperty(NVRAMInfo.MODEL, "-");

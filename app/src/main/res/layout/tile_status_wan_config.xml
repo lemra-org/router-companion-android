@@ -278,6 +278,60 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="false"
                     android:text="@string/loading" />
 
+                <!-- Public IP -->
+                <TextView
+                    android:id="@+id/tile_status_wan_config_internet_ip_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public IP"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tile_status_wan_config_internet_ip_sep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wan_config_internet_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading" />
+
+                <!-- Reverse DNS Record (PTR) -->
+                <TextView
+                    android:id="@+id/tile_status_wan_config_rdns_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reverse DNS (PTR)"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tile_status_wan_config_rdns_sep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8.0dip"
+                    android:layout_marginRight="8.0dip"
+                    android:text="@string/one_space" />
+
+                <TextView
+                    android:id="@+id/tile_status_wan_config_rdns"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:text="@string/loading" />
+
                 <!-- Comma-separated list of DNSs -->
                 <TextView
                     android:layout_width="wrap_content"
