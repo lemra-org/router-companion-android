@@ -486,11 +486,10 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                         inboxStyle.addLine(ouiSpannable);
                     }
 
-                    mBuilder.setContentText(ipSpannable);
+                    mBuilder.setContentText(summaryText);
 
                 } else {
 
-                    Spannable firstLine = null;
                     for (final Device device : devicesCollFiltered) {
                         final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
                         final String deviceAliasOrSystemName = device.getAliasOrSystemName();
@@ -508,12 +507,9 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                                 0, deviceNameToDisplay.length(),
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         inboxStyle.addLine(sb);
-                        if (firstLine == null) {
-                            firstLine = sb;
-                        }
                     }
 
-                    mBuilder.setContentText(firstLine);
+                    mBuilder.setContentText(summaryText);
                     mBuilder.setNumber(sizeFiltered);
 
                 }

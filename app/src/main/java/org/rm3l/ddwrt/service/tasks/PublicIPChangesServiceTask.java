@@ -234,7 +234,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         inboxStyle.addLine(wanIpSpannable);
 
-                        mBuilder.setContentText(publicIpSpannable);
+                        mBuilder.setContentText(summaryText);
 
                         // Moves the expanded layout object into the notification object.
                         mBuilder.setStyle(inboxStyle);
