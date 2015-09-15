@@ -477,11 +477,11 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                     final MACOUIVendor macouiVendorDetails = device.getMacouiVendorDetails();
                     if (macouiVendorDetails != null) {
                         //NIC Manufacturer
-                        final String ouiLine = String.format("OUI   %s",
+                        final String ouiLine = String.format("NIC Man.   %s",
                                 Strings.nullToEmpty(macouiVendorDetails.getCompany()));
                         final Spannable ouiSpannable = new SpannableString(ouiLine);
                         ouiSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                0, "OUI".length(),
+                                0, "NIC Man.".length(),
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         inboxStyle.addLine(ouiSpannable);
                     }
@@ -500,8 +500,11 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                                 device.getIpAddress(),
                                 isNullOrEmpty(deviceAliasOrSystemName) ?
                                         "" : String.format(" | %s", device.getMacAddress()),
-                                macouiVendorDetails != null ? String.format(" (%s)",
-                                        macouiVendorDetails.getCompany()) : "");
+                                (macouiVendorDetails != null &&
+                                        !Strings.isNullOrEmpty(macouiVendorDetails.getCompany()))?
+                                        String.format(" (%s)",
+                                                macouiVendorDetails.getCompany()) :
+                                        "");
                         final Spannable sb = new SpannableString(line);
                         sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
                                 0, deviceNameToDisplay.length(),
