@@ -61,10 +61,12 @@ import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -103,6 +105,12 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
+import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.HIDDEN_;
+import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_DL_CURRENT_MONTH;
+import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_DL_CURRENT_MONTH_MB;
+import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_UL_CURRENT_MONTH;
+import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_UL_CURRENT_MONTH_MB;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 /**
  *
@@ -129,9 +137,14 @@ public class WANMonthlyTrafficTile
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
     private long mLastSync;
+    
+    private boolean mIsThemeLight;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
+
+        mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        
         final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
         monthYearTextViewToDisplay.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,6 +168,53 @@ public class WANMonthlyTrafficTile
                         .setEnabled(!isCurrentMonthYear);
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
                         .setVisibility(isNullOrEmpty(toDisplay) ? View.GONE : View.VISIBLE);
+                
+                //Display traffic data for this month
+                final NVRAMInfo data = getTrafficDataForMonth(toDisplay);
+                if (data == null || data.isEmpty()) {
+                    Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
+                            String.format("No traffic data for '%s'", toDisplay), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                final int dlDrawable;
+                final int ulDrawable;
+                if (mIsThemeLight) {
+                    dlDrawable = R.drawable.ic_dl_dark;
+                    ulDrawable = R.drawable.ic_ul_dark;
+                } else {
+                    dlDrawable = R.drawable.ic_dl_white;
+                    ulDrawable = R.drawable.ic_ul_light;
+                }
+
+                final TextView wanDLView = (TextView) layout.findViewById(R.id.tile_status_wan_monthly_traffic_dl);
+                wanDLView.setCompoundDrawablesWithIntrinsicBounds(dlDrawable, 0, 0, 0);
+                wanDLView.setText(data.getProperty(TOTAL_DL_CURRENT_MONTH, "-"));
+
+                final TextView wanULView = (TextView) layout.findViewById(R.id.tile_status_wan_monthly_traffic_ul);
+                wanULView.setCompoundDrawablesWithIntrinsicBounds(ulDrawable, 0, 0, 0);
+                wanULView.setText(data.getProperty(TOTAL_UL_CURRENT_MONTH, "-"));
+
+                final TextView dlMB = (TextView) layout.findViewById(R.id.tile_status_wan_monthly_traffic_dl_mb);
+                final String dlMBytesFromNvram = data.getProperty(TOTAL_DL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(dlMBytesFromNvram)) {
+                    dlMB.setVisibility(View.INVISIBLE);
+                } else {
+                    dlMB.setVisibility(View.VISIBLE);
+                }
+                dlMB.setText(dlMBytesFromNvram != null ?
+                        ("(" + dlMBytesFromNvram + " MB)") : "-");
+
+                final TextView ulMB = (TextView) layout.findViewById(R.id.tile_status_wan_monthly_traffic_ul_mb);
+                final String ulMBytesFromNvram = data.getProperty(TOTAL_UL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(ulMBytesFromNvram)) {
+                    ulMB.setVisibility(View.INVISIBLE);
+                } else {
+                    ulMB.setVisibility(View.VISIBLE);
+                }
+                ulMB.setText(ulMBytesFromNvram != null ?
+                        ("(" + ulMBytesFromNvram + " MB)") : "-");
+
 
             }
         });
@@ -162,7 +222,7 @@ public class WANMonthlyTrafficTile
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wan_monthly_traffic_menu);
 
-        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+        if (!mIsThemeLight) {
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
@@ -239,6 +299,53 @@ public class WANMonthlyTrafficTile
         });
     }
 
+    @Nullable
+    private NVRAMInfo getTrafficDataForMonth(@Nullable final String monthToDisplay) {
+        if (monthToDisplay == null) {
+            return null;
+        }
+        final ImmutableMap<Integer, ArrayList<Double>> row = traffData.row(monthToDisplay);
+        if (row == null) {
+            return  null;
+        }
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
+        final ImmutableCollection<ArrayList<Double>> values = row.values();
+        long totalDownloadMBytes = 0l;
+        long totalUploadMBytes = 0l;
+        for (ArrayList<Double> val : values) {
+            if (val == null || val.size() < 2) {
+                continue;
+            }
+            totalDownloadMBytes += val.get(0);
+            totalUploadMBytes += val.get(1);
+        }
+        final String inHumanReadable = FileUtils
+                .byteCountToDisplaySize(totalDownloadMBytes * MB);
+        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
+                inHumanReadable);
+        if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
+                inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
+            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                    HIDDEN_);
+        } else {
+            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                    String.valueOf(totalDownloadMBytes));
+        }
+        final String outHumanReadable = FileUtils
+                .byteCountToDisplaySize(totalUploadMBytes * MB);
+        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
+                outHumanReadable);
+        if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
+                outHumanReadable.equals(totalUploadMBytes + " bytes")) {
+            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                    HIDDEN_);
+        } else {
+            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                    String.valueOf(totalUploadMBytes));
+        }
+        return nvramInfo;
+    }
+
     public void displayBackupDialog(final String displayName,
                                     @NonNull final BackupFileType backupFileType) {
         final Bundle token = new Bundle();
@@ -285,6 +392,8 @@ public class WANMonthlyTrafficTile
             public NVRAMInfo loadInBackground() {
 
                 try {
+
+                    mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
                     Log.d(LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);

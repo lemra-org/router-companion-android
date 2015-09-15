@@ -192,7 +192,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                         .byteCountToDisplaySize(totalDownloadMBytes * MB);
                                 nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
                                         inHumanReadable);
-                                if (inHumanReadable.equals(totalDownloadMBytes + " MB")) {
+                                if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
+                                        inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
                                     nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
                                             HIDDEN_);
                                 } else {
@@ -204,7 +205,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                         .byteCountToDisplaySize(totalUploadMBytes * MB);
                                 nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
                                         outHumanReadable);
-                                if (outHumanReadable.equals(totalUploadMBytes + " MB")) {
+                                if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
+                                        outHumanReadable.equals(totalUploadMBytes + " bytes")) {
                                     nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
                                             HIDDEN_);
                                 } else {

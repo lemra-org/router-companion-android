@@ -142,6 +142,78 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/tile_status_wan_monthly_traffic_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/tile_status_wan_monthly_traffic_dl_container"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tile_status_wan_monthly_traffic_dl"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="-"
+                    android:drawableStart="@drawable/ic_dl_white"
+                    android:drawableLeft="@drawable/ic_dl_white"/>
+
+                <TextView
+                    android:id="@+id/tile_status_wan_monthly_traffic_dl_mb"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tile_status_wan_monthly_traffic_ul_container"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tile_status_wan_monthly_traffic_ul"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="-"
+                    android:drawableStart="@drawable/ic_ul_light"
+                    android:drawableLeft="@drawable/ic_ul_light"/>
+
+                <TextView
+                    android:id="@+id/tile_status_wan_monthly_traffic_ul_mb"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -168,7 +240,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_display_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/display"
+                android:text="@string/breakdown"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:visibility="gone" />
 
