@@ -116,7 +116,8 @@ android {
         apiGroupKey "26ccfd6824334b879a2ed6a1f87b7891"
         enabledFor "release", "google", "fdroid", "amazon",
                 "googleFreeWithAds", "amazonFreeWithAds",
-                "samsung", "samsungFreeWithAds"
+                "samsung", "samsungFreeWithAds",
+                "amazonUnderground"
     }
 
     signingConfigs {
