@@ -149,7 +149,7 @@ public final class DDWRTCompanionConstants {
 
     public static final String DEMO_ROUTER_DNS = BuildConfig.APPLICATION_ID;
 
-    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 20l;
+    public static final long DELAY_BETWEEN_TWO_CONSECUTIVE_INTERSTITIAL_ADS_MINUTES = 10l;
 
     public static final String IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY = "8.8.8.8";
 
