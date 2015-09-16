@@ -85,6 +85,7 @@ public final class DDWRTCompanionConstants {
     public static final String NOTIFICATIONS_ENABLE = "notifications.enable";
     public static final String NOTIFICATIONS_BG_SERVICE_ENABLE = "notifications.background.service.enable";
     public static final String NOTIFICATIONS_SOUND = "notifications.sound";
+    public static final String NOTIFICATIONS_VIBRATE = "notifications.vibrate";
     public static final String NOTIFICATIONS_DISPLAY_ITEMS = "notifications.displayItems";
     public static final String NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF =
             "notifications.syncIntervalMinutes";
@@ -136,6 +137,7 @@ public final class DDWRTCompanionConstants {
     public static final String OK = "OK";
     public static final String NOK = "NOK";
     public static final String DEFAULT_HTTP_PORT = "80";
+    public static final long[] NO_VIBRATION_PATTERN = new long[]{0l};
 
     public static int MB = 1024 * 1024;
 

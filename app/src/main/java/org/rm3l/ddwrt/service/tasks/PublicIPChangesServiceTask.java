@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.service.tasks;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -198,12 +199,19 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                                 .setContentTitle("New IP Address");
 
                         //Notification sound, if required
-                        final String ringtoneUri = mCtx.getSharedPreferences(
+                        final SharedPreferences sharedPreferences = mCtx.getSharedPreferences(
                                 DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
-                                Context.MODE_PRIVATE)
+                                Context.MODE_PRIVATE);
+                        final String ringtoneUri = sharedPreferences
                                 .getString(DDWRTCompanionConstants.NOTIFICATIONS_SOUND, null);
                         if (ringtoneUri != null) {
                             mBuilder.setSound(Uri.parse(ringtoneUri), AudioManager.STREAM_NOTIFICATION);
+                        }
+                        if (!sharedPreferences
+                                .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
+                            mBuilder
+                                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                                    .setVibrate(DDWRTCompanionConstants.NO_VIBRATION_PATTERN);
                         }
 
                         final boolean isFirstTimeForNotification = routerPreferences

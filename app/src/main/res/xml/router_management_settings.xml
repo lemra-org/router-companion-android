@@ -76,16 +76,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <!-- Should be general settings -->
-        <RingtonePreference
-            android:dependency="notifications.background.service.enable"
-            android:title="Notification Sound"
-            android:ringtoneType="notification"
-            android:key="notifications.sound"
-            android:showDefault="true"
-            android:showSilent="true"
-            android:defaultValue="content://settings/system/notification_sound"/>
-
         <CheckBoxPreference
             android:disableDependentsState="false"
             android:defaultValue="true"
@@ -103,6 +93,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="Background Service Frequency" />
+
+        <!-- Should be general settings -->
+        <RingtonePreference
+            android:dependency="notifications.background.service.enable"
+            android:title="Notification Sound"
+            android:ringtoneType="notification"
+            android:key="notifications.sound"
+            android:showDefault="true"
+            android:showSilent="true"
+            android:defaultValue="content://settings/system/notification_sound"/>
+
+        <CheckBoxPreference
+            android:dependency="notifications.background.service.enable"
+            android:defaultValue="true"
+            android:key="notifications.vibrate"
+            android:summaryOff="Disabled."
+            android:summaryOn="Enabled."
+            android:title="Vibrate" />
 
     </PreferenceCategory>
 

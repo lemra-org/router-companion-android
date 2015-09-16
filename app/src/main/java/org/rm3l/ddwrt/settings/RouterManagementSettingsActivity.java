@@ -37,6 +37,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DATA_USAGE_NETWORK_PR
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SOUND;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
@@ -85,6 +86,7 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
 //            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_BACKUP_PREF));
 
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
+            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_VIBRATE));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_BG_SERVICE_ENABLE));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
 
