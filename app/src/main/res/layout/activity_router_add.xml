@@ -134,6 +134,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="Router IP Address or DNS name" />
 
+            <TextView
+                android:id="@+id/router_add_ip_demo_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="italic"
+                android:text="Enter '%PACKAGE_NAME%' for a demo" />
+
             <EditText
                 android:id="@+id/router_add_ip"
                 android:layout_width="match_parent"

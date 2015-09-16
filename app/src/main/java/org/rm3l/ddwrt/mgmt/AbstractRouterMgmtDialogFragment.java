@@ -736,6 +736,11 @@ public abstract class AbstractRouterMgmtDialogFragment
             final AlertDialog d = (AlertDialog) getDialog();
             if (d != null) {
 
+                final TextView demoTextView = (TextView) d.findViewById(R.id.router_add_ip_demo_text);
+                demoTextView.setText(
+                        demoTextView.getText().toString()
+                                .replaceAll("%PACKAGE_NAME%", BuildConfig.APPLICATION_ID));
+
                 final View ddwrtInstructionsView = d.findViewById(R.id.router_add_ddwrt_instructions);
                 final View ddwrtInstructionsWithAds = d.findViewById(R.id.router_add_ddwrt_instructions_ads);
 
