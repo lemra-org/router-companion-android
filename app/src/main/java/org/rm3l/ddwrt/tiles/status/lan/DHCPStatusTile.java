@@ -109,7 +109,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.LAN_PROTO, "dhcp")
                                     .setProperty(NVRAMInfo.DHCP_DNSMASQ, "1")
-                                    .setProperty(NVRAMInfo.DHCP_START, "172.17.17.30")
+                                    .setProperty(NVRAMInfo.DHCP_START, "30")
                                     .setProperty(NVRAMInfo.DHCP_NUM, "50")
                                     .setProperty(NVRAMInfo.DHCP_LEASE, "1440")
                                     .setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
