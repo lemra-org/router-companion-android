@@ -53,6 +53,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
+
 /**
  * TODO
  */
@@ -112,7 +114,14 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             throws Exception {
 
         //Start by getting information about the WAN iface name
-        final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+        final NVRAMInfo nvRamInfoFromRouter;
+        if (isDemoRouter(mRouter)) {
+            nvRamInfoFromRouter = new NVRAMInfo()
+                    .setProperty(NVRAMInfo.WAN_IFACE, "wan0");
+        } else {
+            nvRamInfoFromRouter = SSHUtils
+                    .getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+        }
         if (nvRamInfoFromRouter == null) {
             throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
         }
@@ -124,7 +133,15 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
         }
 
-        final String[] netDevWanIfaces = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+        final String[] netDevWanIfaces;
+        if (isDemoRouter(mRouter)) {
+            netDevWanIfaces = new String[1];
+            netDevWanIfaces[0] =
+                    "  eth0: 3403368500 3103262    0    1    0     0          0         0 652048226 2056456    0    0    0     0       0          0";
+        } else {
+            netDevWanIfaces = SSHUtils
+                    .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+        }
         if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
             return null;
         }

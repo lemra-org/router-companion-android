@@ -44,6 +44,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 /**
  *
@@ -89,13 +90,25 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
 
                     mLastSync = System.currentTimeMillis();
 
-                    return SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                            mGlobalPreferences, NVRAMInfo.LAN_IPADDR,
-                            NVRAMInfo.LAN_DOMAIN,
-                            NVRAMInfo.LAN_GATEWAY,
-                            NVRAMInfo.LAN_HWADDR,
-                            NVRAMInfo.LAN_NETMASK,
-                            NVRAMInfo.LOCAL_DNS);
+                    final NVRAMInfo nvramInfo;
+                    if (Utils.isDemoRouter(mRouter)) {
+                        nvramInfo = new NVRAMInfo()
+                                .setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
+                                .setProperty(NVRAMInfo.LAN_DOMAIN, "lan.domain")
+                                .setProperty(NVRAMInfo.LAN_GATEWAY, "172.17.17.254")
+                                .setProperty(NVRAMInfo.LAN_HWADDR, "la:nm:ac:hw:ad:dr")
+                                .setProperty(NVRAMInfo.LAN_NETMASK, "255.255.255.0")
+                                .setProperty(NVRAMInfo.LOCAL_DNS, "172.17.17.1");
+                    } else {
+                        nvramInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                mGlobalPreferences, NVRAMInfo.LAN_IPADDR,
+                                NVRAMInfo.LAN_DOMAIN,
+                                NVRAMInfo.LAN_GATEWAY,
+                                NVRAMInfo.LAN_HWADDR,
+                                NVRAMInfo.LAN_NETMASK,
+                                NVRAMInfo.LOCAL_DNS);
+                    }
+                    return nvramInfo;
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();

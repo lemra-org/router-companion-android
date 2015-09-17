@@ -162,7 +162,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                 "With escargots drink BBQ sauce.Yarr there's nothing like the misty amnesty screaming on the sea.\n" +
                                 "Death is a stormy whale.The undead parrot smartly leads the anchor.\n\n\n";
                         nvramInfo.setProperty(SYSLOG, syslogData);
-                        nvramInfo.setProperty(SYSLOGD_ENABLE, String.valueOf(new Random().nextInt()));
+                        final boolean syslogState = new Random().nextBoolean();
+                        nvramInfo.setProperty(SYSLOGD_ENABLE, syslogState ? "1" : "0");
                     } else {
                         NVRAMInfo nvramInfoTmp = null;
                         try {

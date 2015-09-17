@@ -47,6 +47,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
 
@@ -104,14 +105,25 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, NVRAMInfo.LAN_PROTO,
-                                NVRAMInfo.DHCP_DNSMASQ,
-                                NVRAMInfo.DHCP_START,
-                                NVRAMInfo.DHCP_NUM,
-                                NVRAMInfo.DHCP_LEASE,
-                                NVRAMInfo.LAN_IPADDR,
-                                NVRAMInfo.LAN_NETMASK);
+                        if (Utils.isDemoRouter(mRouter)) {
+                            nvramInfoTmp = new NVRAMInfo()
+                                    .setProperty(NVRAMInfo.LAN_PROTO, "dhcp")
+                                    .setProperty(NVRAMInfo.DHCP_DNSMASQ, "1")
+                                    .setProperty(NVRAMInfo.DHCP_START, "172.17.17.30")
+                                    .setProperty(NVRAMInfo.DHCP_NUM, "50")
+                                    .setProperty(NVRAMInfo.DHCP_LEASE, "1440")
+                                    .setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
+                                    .setProperty(NVRAMInfo.LAN_NETMASK, "255.255.255.0");
+                        } else {
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, NVRAMInfo.LAN_PROTO,
+                                    NVRAMInfo.DHCP_DNSMASQ,
+                                    NVRAMInfo.DHCP_START,
+                                    NVRAMInfo.DHCP_NUM,
+                                    NVRAMInfo.DHCP_LEASE,
+                                    NVRAMInfo.LAN_IPADDR,
+                                    NVRAMInfo.LAN_NETMASK);
+                        }
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);

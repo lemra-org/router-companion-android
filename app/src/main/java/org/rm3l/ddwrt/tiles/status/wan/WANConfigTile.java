@@ -165,26 +165,56 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
-                        nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, NVRAMInfo.WAN_PROTO,
-                                NVRAMInfo.WAN_3_G_SIGNAL,
-                                NVRAMInfo.WAN_HWADDR,
-                                NVRAMInfo.WAN_LEASE,
-                                NVRAMInfo.WAN_IPADDR,
-                                NVRAMInfo.WAN_NETMASK,
-                                NVRAMInfo.WAN_GATEWAY,
-                                NVRAMInfo.WAN_GET_DNS,
-                                NVRAMInfo.WAN_DNS);
+                        if (isDemoRouter(mRouter)) {
+                            final String[] possibleWanProtos = new String[] {
+                                    "ppoe",
+                                    "3g",
+                                    "heartbeat",
+                                    "disabled",
+                                    "dhcp"
+                            };
+                            nvramInfoTmp = new NVRAMInfo()
+                                    .setProperty(NVRAMInfo.WAN_PROTO,
+                                            possibleWanProtos[new Random().nextInt(possibleWanProtos.length)])
+                                    .setProperty(NVRAMInfo.WAN_3_G_SIGNAL, "-10dBm")
+                                    .setProperty(NVRAMInfo.WAN_HWADDR, "wa:nm:ac:hw:ad:dr")
+                                    .setProperty(NVRAMInfo.WAN_LEASE, "14400")
+                                    .setProperty(NVRAMInfo.WAN_IPADDR, "10.11.12.13")
+                                    .setProperty(NVRAMInfo.WAN_NETMASK, "255.0.0.0")
+                                    .setProperty(NVRAMInfo.WAN_GATEWAY, "10.0.0.254")
+                                    .setProperty(NVRAMInfo.WAN_GET_DNS, "8.8.8.8")
+                                    .setProperty(NVRAMInfo.WAN_DNS, "8.8.4.4");
+
+                        } else {
+                            nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
+                                    mGlobalPreferences, NVRAMInfo.WAN_PROTO,
+                                    NVRAMInfo.WAN_3_G_SIGNAL,
+                                    NVRAMInfo.WAN_HWADDR,
+                                    NVRAMInfo.WAN_LEASE,
+                                    NVRAMInfo.WAN_IPADDR,
+                                    NVRAMInfo.WAN_NETMASK,
+                                    NVRAMInfo.WAN_GATEWAY,
+                                    NVRAMInfo.WAN_GET_DNS,
+                                    NVRAMInfo.WAN_DNS);
+                        }
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
 
                         //Connection Uptime is stored in /tmp/.wanuptime and sys uptime from /proc/uptime
-                        final String[] uptimes = SSHUtils
-                                .getManualProperty(mParentFragmentActivity,
-                                        mRouter, mGlobalPreferences,
-                                        "cat /tmp/.wanuptime; echo; cat /proc/uptime");
+                        final String[] uptimes;
+
+                        if (isDemoRouter(mRouter)) {
+                            uptimes = new String[2];
+                            uptimes[0] = "14.030000";
+                            uptimes[1] = "256532.59 452454.12";
+                        } else {
+                            uptimes = SSHUtils
+                                    .getManualProperty(mParentFragmentActivity,
+                                            mRouter, mGlobalPreferences,
+                                            "cat /tmp/.wanuptime; echo; cat /proc/uptime");
+                        }
                         if (uptimes != null && uptimes.length > 1) {
                             final String wanUptimeStr = uptimes[0];
 

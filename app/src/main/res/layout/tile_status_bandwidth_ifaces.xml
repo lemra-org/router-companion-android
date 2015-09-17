@@ -230,15 +230,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
             android:visibility="invisible" />
 
-        <GridLayout
-            android:id="@+id/tile_status_bandwidth_ifaces_list_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
-            android:orientation="vertical"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/tile_status_bandwidth_ifaces_loading_view_desc"
             android:layout_width="wrap_content"
@@ -259,6 +250,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:maxHeight="35dip"
             android:minHeight="35dip"
             android:visibility="gone"/>
+
+        <GridLayout
+            android:id="@+id/tile_status_bandwidth_ifaces_list_container"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.74"
+            android:columnCount="2"
+            android:orientation="vertical"
+            android:visibility="gone" />
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
             android:id="@+id/tile_last_sync"

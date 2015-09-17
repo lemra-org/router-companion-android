@@ -46,7 +46,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -132,7 +134,8 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                         final String[] currentDate;
                         if (isDemoRouter(mRouter)) {
                             currentDate = new String[1];
-                            currentDate[0] = new Date().toString();
+                            currentDate[0] = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                                    .format(new Date());
                         } else {
                             currentDate = SSHUtils
                                     .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "date");
