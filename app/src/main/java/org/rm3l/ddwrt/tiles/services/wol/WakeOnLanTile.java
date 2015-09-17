@@ -787,7 +787,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 }
 
                 //Highlight CardView
-                cardView.setCardElevation(20f);
+//                cardView.setCardElevation(20f);
 
                 final String macAddress = device.getMacAddress();
 

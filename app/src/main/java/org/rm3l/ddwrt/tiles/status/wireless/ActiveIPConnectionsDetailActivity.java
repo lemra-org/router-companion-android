@@ -521,7 +521,7 @@ public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
                     }
 
                     //Highlight CardView
-                    cardView.setCardElevation(20f);
+//                    cardView.setCardElevation(20f);
 
                     final String sourceAddressOriginalSide = ipConntrackRow.getSourceAddressOriginalSide();
                     ((TextView) cardView.findViewById(R.id.activity_ip_connections_device_source_ip))

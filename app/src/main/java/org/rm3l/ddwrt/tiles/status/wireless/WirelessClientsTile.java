@@ -1649,7 +1649,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
 
                     //Highlight CardView
-                    cardView.setCardElevation(10f);
+//                    cardView.setCardElevation(10f);
 
                     final String macAddress = device.getMacAddress();
 
@@ -2105,11 +2105,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     if (ouiAndLastSeenView.getVisibility() == View.VISIBLE) {
                                         ouiAndLastSeenView.setVisibility(View.GONE);
                                         clientsExpanded.remove(macAddress);
-                                        cardView.setCardElevation(40f);
+//                                        cardView.setCardElevation(40f);
                                     } else {
                                         ouiAndLastSeenView.setVisibility(View.VISIBLE);
                                         clientsExpanded.add(macAddress);
-                                        cardView.setCardElevation(2f);
+//                                        cardView.setCardElevation(2f);
                                     }
                                     if (hideGraphPlaceHolder) {
                                         trafficGraphPlaceHolderView.setVisibility(View.GONE);
@@ -2135,7 +2135,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     expandedClients = mParentFragmentPreferences.getStringSet(expandedClientsPrefKey,
                             new HashSet<String>());
                     if (expandedClients.contains(macAddress)) {
-                        cardView.setCardElevation(40f);
+//                        cardView.setCardElevation(40f);
                         //Expand detailed view
                         ouiAndLastSeenView.setVisibility(View.VISIBLE);
                         if (hideGraphPlaceHolder) {

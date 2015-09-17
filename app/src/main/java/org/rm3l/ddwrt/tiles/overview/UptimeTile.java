@@ -110,7 +110,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                         if (isDemoRouter(mRouter)) {
                             final Random random = new Random();
                             final String days = Integer.toString(random.nextInt(60));
-                            final String hours = Integer.toString(random.nextInt(59));
+                            final String hours = Integer.toString(random.nextInt(23));
                             final String minutes = Integer.toString(random.nextInt(59));
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(UPTIME, "22:31:45 up " + days + " days, " + hours +

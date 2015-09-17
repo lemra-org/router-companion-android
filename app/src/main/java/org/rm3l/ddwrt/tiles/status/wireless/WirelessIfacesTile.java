@@ -118,10 +118,10 @@ public class WirelessIfacesTile extends IfacesTile {
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        mProgressBarDesc.setVisibility(View.VISIBLE);
+//                        mProgressBar.setVisibility(View.VISIBLE);
+//                        mProgressBarDesc.setVisibility(View.VISIBLE);
                         mProgressBar.setProgress(25);
-                        mProgressBarDesc.setText("Retrieving list of wireless ifaces...\n\n");
+                        mProgressBarDesc.setText("Retrieving list of wireless ifaces...");
                     }
                 });
 
@@ -138,7 +138,7 @@ public class WirelessIfacesTile extends IfacesTile {
                         public void run() {
                             mProgressBar.setProgress(57);
                             mProgressBarDesc.setText(
-                                    String.format("Retrieved %d wireless ifaces. Now loading their details...\n\n",
+                                    String.format("Retrieved %d wireless ifaces. Now loading their details...",
                                             size));
                         }
                     });
@@ -160,7 +160,7 @@ public class WirelessIfacesTile extends IfacesTile {
                             @Override
                             public void run() {
                                 mProgressBarDesc.setText(
-                                        String.format("Retrieving details about iface %s (%d/%d)...\n\n",
+                                        String.format("Retrieving details about iface %s (%d/%d)...",
                                                 mWirelessIfaceTile.getIface(),
                                                 j, size));
                             }
@@ -183,7 +183,7 @@ public class WirelessIfacesTile extends IfacesTile {
                         @Override
                         public void run() {
                             mProgressBar.setProgress(95);
-                            mProgressBarDesc.setText("Now building final view...\n\n");
+                            mProgressBarDesc.setText("Now building final view...");
                         }
                     });
 
@@ -222,7 +222,7 @@ public class WirelessIfacesTile extends IfacesTile {
         }
 
         mProgressBar.setProgress(97);
-        mProgressBarDesc.setText("Generating views...\n\n");
+        mProgressBarDesc.setText("Generating views...");
 
         mProgressBar.setVisibility(View.GONE);
         mProgressBarDesc.setVisibility(View.GONE);
@@ -307,7 +307,7 @@ public class WirelessIfacesTile extends IfacesTile {
                 cardView.setUseCompatPadding(true);
 
                 //Highlight CardView
-                cardView.setCardElevation(10f);
+//                cardView.setCardElevation(10f);
 
                 if (isThemeLight) {
                     //Light

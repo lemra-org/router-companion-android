@@ -83,7 +83,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
         } else {
             mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
         }
-        mProgressBarDesc.setText("Loading...\n\n");
+        mProgressBarDesc.setText("Loading...");
     }
 
     @Override
