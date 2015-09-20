@@ -435,6 +435,8 @@ public class DDWRTMainActivity extends ActionBarActivity
         } finally {
             try {
                 unregisterReceiver(mMessageReceiver);
+            } catch (final Exception e) {
+                e.printStackTrace();
             } finally {
                 super.onStop();
             }

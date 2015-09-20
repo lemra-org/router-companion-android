@@ -173,7 +173,8 @@ public class WANMonthlyTrafficTile
                 final NVRAMInfo data = getTrafficDataForMonth(toDisplay);
                 if (data == null || data.isEmpty()) {
                     Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
-                            String.format("No traffic data for '%s'", toDisplay), Toast.LENGTH_SHORT).show();
+                            String.format("No traffic data for '%s'. Please try again later.", toDisplay),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -301,7 +302,7 @@ public class WANMonthlyTrafficTile
 
     @Nullable
     private NVRAMInfo getTrafficDataForMonth(@Nullable final String monthToDisplay) {
-        if (monthToDisplay == null) {
+        if (monthToDisplay == null || traffData == null) {
             return null;
         }
         final ImmutableMap<Integer, ArrayList<Double>> row = traffData.row(monthToDisplay);
