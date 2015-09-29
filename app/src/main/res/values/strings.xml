@@ -229,6 +229,63 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>off</item>
     </string-array>
 
+    <!-- Wireless Security -->
+    <string-array name="wireless_security_settings_security_mode_array">
+        <item>Disabled</item>
+        <item>WPA Personal</item>
+        <item>WPA Enterprise</item>
+        <item>WPA2 Personal</item>
+        <item>WPA2 Enterprise</item>
+        <item>WPA2 Personal Mixed</item>
+        <item>WPA2 Enterprise Mixed</item>
+        <item>RADIUS</item>
+        <item>WEP</item>
+    </string-array>
+    <string-array name="wireless_security_settings_security_mode_array_values">
+        <item>disabled</item>
+        <item>psk</item>
+        <item>wpa</item>
+        <item>psk2</item>
+        <item>wpa2</item>
+        <item>psk psk2</item>
+        <item>wpa wpa2</item>
+        <item>radius</item>
+        <item>wep</item>
+    </string-array>
+
+    <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array">
+        <item>TKIP</item>
+        <item>AES</item>
+        <item>TKIP+AES</item>
+    </string-array>
+    <string-array name="wireless_security_settings_wpa_personal_wpa_algorithms_array_values">
+        <item>tkip</item>
+        <item>aes</item>
+        <item>tkip+aes</item>
+    </string-array>
+
+    <string-array name="wireless_security_settings_radius_mac_format_array">
+        <item>aabbcc-ddeeff</item>
+        <item>aabbccddeeff</item>
+        <item>aa:bb:cc:dd:ee:ff</item>
+        <item>aa-bb-cc-dd-ee-ff</item>
+    </string-array>
+    <string-array name="wireless_security_settings_radius_mac_format_array_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="wireless_security_settings_wep_encryption_array">
+        <item>64 bits 10 hex digits</item>
+        <item>128 bits 26 hex digits</item>
+    </string-array>
+    <string-array name="wireless_security_settings_wep_encryption_array_values">
+        <item>64</item>
+        <item>128</item>
+    </string-array>
+
     <!-- Sections -->
     <!-- 1 = Status => {Router, WAN, LAN, Wireless, Bandwidth, Syslog, Sysinfo} -->
     <string name="status">Status</string>
@@ -649,4 +706,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="services_pptp_server">PPTP Server</string>
     <string name="uptime">Uptime</string>
     <string name="wan_total_traffic">WAN Total Traffic</string>
+    <string name="security_mode">Security Mode</string>
+    <string name="wpa_algorithms">WPA Algorithms</string>
+    <string name="mac_format">MAC Format</string>
+    <string name="encryption">Encryption</string>
 </resources>

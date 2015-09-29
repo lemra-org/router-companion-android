@@ -23,8 +23,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/tile_status_wireless_iface_qrcode"
+        android:id="@+id/tile_status_wireless_iface_security"
         android:orderInCategory="1"
+        android:title="Security"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/tile_status_wireless_iface_qrcode"
+        android:orderInCategory="2"
         android:title="@string/gen_qr_code"
         app:showAsAction="never" />
 
@@ -32,7 +38,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- FIXME Disabled for now! -->
     <item
         android:id="@+id/tile_status_wireless_iface_traffic_shaping"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="Traffic Shaping"
         android:visible="false"
         app:showAsAction="never" />

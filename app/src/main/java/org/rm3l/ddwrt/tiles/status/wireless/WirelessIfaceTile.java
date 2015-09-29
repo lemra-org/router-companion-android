@@ -92,6 +92,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     public static final char DEGREE_SYMBOL = '\u00B0';
     private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
+    public static final String IFACE = "iface";
     @NonNull
     private final String iface;
 
@@ -103,6 +104,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Nullable
     private String wifiPassword;
+
+    @Nullable
+    private String hwAddr;
 
     @Nullable
     private WirelessEncryptionTypeForQrCode wifiEncryptionType;
@@ -611,7 +615,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
             //MAC
             final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
-            hwAddrView.setText(data.getProperty(this.iface + "_hwaddr", "-"));
+            hwAddr = data.getProperty(this.iface + "_hwaddr", "-");
+            hwAddrView.setText(hwAddr);
 
             //Radio
             final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
@@ -757,8 +762,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        final String routerUuid = mRouter.getUuid();
         switch (item.getItemId()) {
-            case R.id.tile_status_wireless_iface_qrcode:
+            case R.id.tile_status_wireless_iface_qrcode: {
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,
@@ -774,7 +780,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         escapeString(nullToEmpty(wifiPassword)),
                         wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
 
-                final String routerUuid = mRouter.getUuid();
 
                 final Intent intent = new Intent(mParentFragmentActivity, WirelessIfaceQrCodeActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
@@ -792,9 +797,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         alertDialog.cancel();
                     }
                 }, 2500);
-
+            }
                 return true;
-            case R.id.tile_status_wireless_iface_traffic_shaping:
+            case R.id.tile_status_wireless_iface_traffic_shaping: {
                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     //Download the full version to unlock this version
                     Utils.displayUpgradeMessage(mParentFragmentActivity, "Traffic Shaping");
@@ -802,6 +807,41 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 }
 
                 //TODO
+            }
+                return true;
+            case R.id.tile_status_wireless_iface_security: {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit WiFi Security Settings");
+                    return true;
+                }
+
+                final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
+
+                final NVRAMInfo nvramInfo = new NVRAMInfo();
+                nvramInfo.setProperty(WirelessIfaceTile.IFACE, this.iface);
+                nvramInfo.setProperty(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
+                nvramInfo.setProperty(EditWirelessSecuritySettingsActivity.HWADDR,
+                        nullToEmpty(hwAddr));
+
+                final Intent intent = new Intent(mParentFragmentActivity, EditWirelessSecuritySettingsActivity.class);
+                intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
+                intent.putExtra(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
+                intent.putExtra(EditWirelessSecuritySettingsActivity.WIRELESS_SECURITY_NVRAMINFO,
+                        nvramInfo);
+
+                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+                        String.format("Loading Security Settings for '%s'", wifiSsidNullToEmpty), false, false);
+                alertDialog.show();
+                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mParentFragmentActivity.startActivity(intent);
+                        alertDialog.cancel();
+                    }
+                }, 2500);
+            }
                 return true;
             default:
                 break;
