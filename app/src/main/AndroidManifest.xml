@@ -371,6 +371,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:windowSoftInputMode="adjustResize"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
+            
+        <activity
+            android:name=".tiles.status.wireless.EditWirelessSecuritySettingsActivity"
+            android:label="Wireless Security Settings"
+            android:parentActivityName=".main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.DDWRTMainActivity" />
+        </activity>
 
     </application>
 
