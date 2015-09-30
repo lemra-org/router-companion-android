@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,8 +16,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.InterstitialAd;
+
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -50,6 +56,9 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
     private View mRadius;
     private View mWEP;
     private View[] detailedViews;
+
+    @Nullable
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,16 +150,24 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                 mWPAEnterprise, mWPA2Enterprise, mWPA2EnterpriseMixed,
                 mRadius, mWEP};
 
-        mSecurityModeSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSecurityModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     hideAllDetailedViews();
                 } else {
-                    showDetailedViewAt(position-1);
+                    showDetailedViewAt(position - 1);
                 }
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_wireless_network_security_settings);
 
     }
 
@@ -209,5 +226,41 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
     }
 
     //TODO Add onFinish() method
+    @Override
+    public void finish() {
+
+        if (BuildConfig.WITH_ADS &&
+                mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
+
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    EditWirelessSecuritySettingsActivity.super.finish();
+                }
+
+                @Override
+                public void onAdOpened() {
+                    //Save preference
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                            Context.MODE_PRIVATE)
+                            .edit()
+                            .putLong(
+                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    System.currentTimeMillis())
+                            .apply();
+                }
+            });
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                EditWirelessSecuritySettingsActivity.super.finish();
+            }
+
+        } else {
+            super.finish();
+        }
+
+    }
 
 }

@@ -810,11 +810,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             }
                 return true;
             case R.id.tile_status_wireless_iface_security: {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
-                    //Download the full version to unlock this version
-                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit WiFi Security Settings");
-                    return true;
-                }
 
                 final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
 
