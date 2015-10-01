@@ -50,6 +50,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="Physical Interface"
             android:textStyle="bold" />
 
@@ -58,6 +61,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="8.0dip"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginRight="8.0dip"
             android:text="@string/one_space" />
 
@@ -66,16 +70,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:checked="false"
             android:ellipsize="end"
             android:gravity="start"
             android:singleLine="false"
             android:text="@string/loading" />
-        
+
         <!-- SSID -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:text="@string/SSID"
             android:textStyle="bold" />
 
@@ -102,6 +109,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:text="HW Address"
             android:textStyle="bold" />
 
@@ -849,6 +858,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:gravity="center"
+                    android:text="Use of WEP is discouraged due to security weaknesses."
+                    android:textColor="@color/ddwrt_purple"
+                    android:drawableStart="@android:drawable/ic_dialog_alert"
+                    android:drawableLeft="@android:drawable/ic_dialog_alert"
+                    android:textStyle="bold"/>
+
                 <!-- Default Transmit Key -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -857,6 +880,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Default Transmit Key" />
+
                 <RadioGroup
                     android:id="@+id/wireless_security_settings_wep_default_transmit_key"
                     android:layout_width="fill_parent"
@@ -911,16 +935,33 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Passphrase" />
-                <EditText
-                    android:id="@+id/wireless_security_settings_wep_passphrase"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"/>
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/wireless_security_settings_wep_passphrase"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="3"
+                        android:hint="Strong Password"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textPassword"
+                        android:maxLines="1"/>
+                    <Button
+                        android:id="@+id/wireless_security_settings_wep_passphrase_generate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="Generate"/>
+                </LinearLayout>
                 <CheckBox
                     android:id="@+id/wireless_security_settings_wep_passphrase_show_checkbox"
                     android:layout_width="wrap_content"
@@ -929,14 +970,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
-                <Button
-                    android:id="@+id/wireless_security_settings_wep_passphrase_generate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="4dp"
                     android:text="Show/Hide"/>
 
                 <!-- Key 1 -->
