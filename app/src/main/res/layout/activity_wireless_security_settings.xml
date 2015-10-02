@@ -134,6 +134,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </GridLayout>
 
+    <TextView
+        android:id="@+id/wireless_security_settings_wep_alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:text="Use of WEP is discouraged due to security weaknesses."
+        android:textColor="@color/ddwrt_purple"
+        android:drawableStart="@android:drawable/ic_dialog_alert"
+        android:drawableLeft="@android:drawable/ic_dialog_alert"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -204,6 +220,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:hint="Strong Password"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
+                    android:maxLength="64"
                     android:maxLines="1"/>
                 <CheckBox
                     android:id="@+id/wireless_security_settings_wpa_personal_wpa_key_show_checkbox"
@@ -213,7 +230,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key Renewal Interval (in Seconds) -->
                 <TextView
@@ -224,7 +241,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key Renewal Interval (seconds)" />
                 <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa_personal_key_renewal_port"
+                    android:id="@+id/wireless_security_settings_wpa_personal_key_renewal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
@@ -235,161 +252,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="numberSigned"
                     android:maxLines="1"
-                    android:text="3600" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/wireless_security_settings_wpa2_personal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- WPA Algorithms -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/wpa_algorithms" />
-                <Spinner
-                    android:id="@+id/wireless_security_settings_wpa2_personal_wpa_algorithms"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:entries="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array"
-                    android:entryValues="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array_values"
-                    android:imeOptions="flagNoExtractUi"
-                    android:prompt="@string/wpa_algorithms" />
-
-                <!-- WPA Shared Key -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="WPA Shared Key" />
-                <EditText
-                    android:id="@+id/wireless_security_settings_wpa2_personal_wpa_shared_key"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"/>
-                <CheckBox
-                    android:id="@+id/wireless_security_settings_wpa2_personal_wpa_key_show_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:checked="false"
-                    android:text="Show/Hide"/>
-
-                <!-- Key Renewal Interval (in Seconds) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_personal_key_renewal_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:text="3600" />
-
-            </LinearLayout>
-
-            <!-- WPA2 Personal Mixed -->
-            <LinearLayout
-                android:id="@+id/wireless_security_settings_wpa2_personal_mixed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- WPA Algorithms -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/wpa_algorithms" />
-                <Spinner
-                    android:id="@+id/wireless_security_settings_wpa2_personal_mixed_wpa_algorithms"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:entries="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array"
-                    android:entryValues="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array_values"
-                    android:imeOptions="flagNoExtractUi"
-                    android:prompt="@string/wpa_algorithms" />
-
-                <!-- WPA Shared Key -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="WPA Shared Key" />
-                <EditText
-                    android:id="@+id/wireless_security_settings_wpa2_personal_mixed_wpa_shared_key"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"/>
-                <CheckBox
-                    android:id="@+id/wireless_security_settings_wpa2_personal_mixed_wpa_key_show_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:checked="false"
-                    android:text="Show/Hide"/>
-
-                <!-- Key Renewal Interval (in Seconds) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_personal_mixed_key_renewal_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
+                    android:maxLength="5"
                     android:text="3600" />
 
             </LinearLayout>
@@ -437,6 +300,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:hint="Valid IP Address"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text"
+                    android:maxLength="12"
                     android:maxLines="1"/>
 
                 <!-- Radius Auth Server Port -->
@@ -455,10 +319,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
+                    android:hint="between 1 and 65535"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="numberSigned"
                     android:maxLines="1"
+                    android:maxLength="5"
                     android:text="1812" />
 
                 <!-- Radius Auth Shared Secret -->
@@ -475,9 +340,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
+                    android:maxLength="79"
                     android:maxLines="1"/>
                 <CheckBox
                     android:id="@+id/wireless_security_settings_wpa_enterprise_radius_secret_show_checkbox"
@@ -487,7 +352,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key Renewal Interval (in Seconds) -->
                 <TextView
@@ -505,246 +370,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:text="3600" />
-
-            </LinearLayout>
-
-            <!-- WPA2 Enterprise -->
-            <LinearLayout
-                android:id="@+id/wireless_security_settings_wpa2_enterprise"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- WPA Algorithms -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/wpa_algorithms" />
-                <Spinner
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_wpa_algorithms"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:entries="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array"
-                    android:entryValues="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array_values"
-                    android:imeOptions="flagNoExtractUi"
-                    android:prompt="@string/wpa_algorithms" />
-
-                <!-- Radius Auth Server Address -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_ip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Valid IP Address"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-                <!-- Radius Auth Server Port -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:text="1812" />
-
-                <!-- Radius Auth Shared Secret -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Shared Secret" />
-                <EditText
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_secret"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"/>
-                <CheckBox
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_secret_show_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:checked="false"
-                    android:text="Show/Hide"/>
-
-                <!-- Key Renewal Interval (in Seconds) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_key_renewal_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:text="3600" />
-
-            </LinearLayout>
-
-            <!-- WPA2 Enterprise Mixed -->
-            <LinearLayout
-                android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- WPA Algorithms -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/wpa_algorithms" />
-                <Spinner
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_wpa_algorithms"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:entries="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array"
-                    android:entryValues="@array/wireless_security_settings_wpa_personal_wpa_algorithms_array_values"
-                    android:imeOptions="flagNoExtractUi"
-                    android:prompt="@string/wpa_algorithms" />
-
-                <!-- Radius Auth Server Address -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Server Address" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_ip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Valid IP Address"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-                <!-- Radius Auth Server Port -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Server Port" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberSigned"
-                    android:maxLines="1"
-                    android:text="1812" />
-
-                <!-- Radius Auth Shared Secret -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Radius Auth Shared Secret" />
-                <EditText
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_secret"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:hint="Strong Password"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textPassword"
-                    android:maxLines="1"/>
-                <CheckBox
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_secret_show_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:checked="false"
-                    android:text="Show/Hide"/>
-
-                <!-- Key Renewal Interval (in Seconds) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="Key Renewal Interval (seconds)" />
-                <org.rm3l.ddwrt.widgets.InstantAutoCompleteTextView
-                    android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_key_renewal_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:ems="10"
+                    android:maxLength="5"
                     android:hint="@string/openvpncl_setting_server_port_hint"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="numberSigned"
@@ -797,6 +423,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:hint="Valid IP Address"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text"
+                    android:maxLength="12"
                     android:maxLines="1"/>
 
                 <!-- Radius Auth Server Port -->
@@ -815,7 +442,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:ems="10"
-                    android:hint="@string/openvpncl_setting_server_port_hint"
+                    android:hint="between 1 and 65535"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="numberSigned"
                     android:maxLines="1"
@@ -838,6 +465,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:hint="Strong Password"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
+                    android:maxLength="79"
                     android:maxLines="1"/>
                 <CheckBox
                     android:id="@+id/wireless_security_settings_radius_secret_show_checkbox"
@@ -847,7 +475,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
             </LinearLayout>
 
@@ -857,20 +485,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:gravity="center"
-                    android:text="Use of WEP is discouraged due to security weaknesses."
-                    android:textColor="@color/ddwrt_purple"
-                    android:drawableStart="@android:drawable/ic_dialog_alert"
-                    android:drawableLeft="@android:drawable/ic_dialog_alert"
-                    android:textStyle="bold"/>
 
                 <!-- Default Transmit Key -->
                 <TextView
@@ -945,10 +559,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
-                        android:layout_weight="3"
+                        android:layout_weight="2.5"
                         android:hint="Strong Password"
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textPassword"
+                        android:maxLength="16"
                         android:maxLines="1"/>
                     <Button
                         android:id="@+id/wireless_security_settings_wep_passphrase_generate"
@@ -960,6 +575,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="3dp"
                         android:layout_marginEnd="4dp"
                         android:layout_marginBottom="4dp"
+                        android:textAppearance="?android:textAppearanceSmall"
                         android:text="Generate"/>
                 </LinearLayout>
                 <CheckBox
@@ -970,7 +586,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key 1 -->
                 <TextView
@@ -998,7 +614,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key 2 -->
                 <TextView
@@ -1026,7 +642,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key 3 -->
                 <TextView
@@ -1054,7 +670,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
                 <!-- Key 4 -->
                 <TextView
@@ -1082,7 +698,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:checked="false"
-                    android:text="Show/Hide"/>
+                    android:text="Unmask"/>
 
             </LinearLayout>
 

@@ -252,7 +252,23 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                             wlIface + "_txpwr",
                             wlIface + "_rate",
                             wlIface + "_akm",
-                            wlIface + "_wpa_psk");
+                            wlIface + "_wpa_psk",
+                            wlIface + "_security_mode",
+                            wlIface + "_crypto",
+                            wlIface + "_wl_unmask",
+                            wlIface + "_wpa_gtk_rekey",
+                            wlIface + "_radius_ipaddr",
+                            wlIface + "_radius_port",
+                            wlIface + "_radius_key",
+                            wlIface + "_radius_unmask",
+                            wlIface + "_radmactype",
+                            wlIface + "_key",
+                            wlIface + "_key1",
+                            wlIface + "_key2",
+                            wlIface + "_key3",
+                            wlIface + "_key4",
+                            wlIface + "_wep_bit",
+                            wlIface + "_passphrase");
                 } finally {
                     if (nvramInfoTmp != null) {
                         nvramInfo.putAll(nvramInfoTmp);

@@ -25,6 +25,7 @@ import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -59,6 +60,7 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    private View mWEPAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,13 +131,14 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         mSecurityModeSpinner = ((Spinner) findViewById(R.id.wireless_security_settings_security_mode));
 
         mWPAPersonal = findViewById(R.id.wireless_security_settings_wpa_personal);
-        mWPA2Personal = findViewById(R.id.wireless_security_settings_wpa2_personal);
-        mWPA2PersonalMixed = findViewById(R.id.wireless_security_settings_wpa2_personal_mixed);
+        mWPA2Personal = mWPAPersonal;
+        mWPA2PersonalMixed = mWPA2Personal;
         mWPAEnterprise = findViewById(R.id.wireless_security_settings_wpa_enterprise);
-        mWPA2Enterprise = findViewById(R.id.wireless_security_settings_wpa2_enterprise);
-        mWPA2EnterpriseMixed = findViewById(R.id.wireless_security_settings_wpa2_enterprise_mixed);
+        mWPA2Enterprise = mWPAEnterprise;
+        mWPA2EnterpriseMixed = mWPA2Enterprise;
         mRadius = findViewById(R.id.wireless_security_settings_radius);
         mWEP = findViewById(R.id.wireless_security_settings_wep);
+        mWEPAlert = findViewById(R.id.wireless_security_settings_wep_alert);
 
         mWPAPersonal.setVisibility(View.GONE);
         mWPA2Personal.setVisibility(View.GONE);
@@ -183,8 +186,14 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                 continue;
             }
             if (i == position) {
+                if (detailedView == mWEP) {
+                    mWEPAlert.setVisibility(View.VISIBLE);
+                } else {
+                    mWEPAlert.setVisibility(View.GONE);
+                }
                 detailedView.setVisibility(View.VISIBLE);
             } else {
+                mWEPAlert.setVisibility(View.GONE);
                 detailedView.setVisibility(View.GONE);
             }
         }
@@ -209,6 +218,88 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                 .setText(mSsid);
         ((TextView) findViewById(R.id.wireless_security_settings_hw_address))
                 .setText(mHwAddr);
+
+        final Spinner securityModeSpinner =
+                (Spinner) findViewById(R.id.wireless_security_settings_security_mode);
+        final String securityMode = mNvramInfo.getProperty(this.mPhyIface + "_security_mode");
+        if (!isNullOrEmpty(securityMode)) {
+            final int position;
+            switch (securityMode) {
+                case "disabled":
+                    position = 0;
+                    break;
+                case "psk":
+                    position = 1;
+                    break;
+                case "wpa":
+                    position = 2;
+                    break;
+                case "psk2":
+                    position = 3;
+                    break;
+                case "wpa2":
+                    position = 4;
+                    break;
+                case "psk psk2":
+                    position = 5;
+                    break;
+                case "wpa wpa2":
+                    position = 6;
+                    break;
+                case "radius":
+                    position = 7;
+                    break;
+                case "wep":
+                    position = 8;
+                    break;
+                default:
+                    Utils.reportException(new
+                            IllegalStateException("Unknown securityMode: " + securityMode));
+                    position = 0;
+                    break;
+
+            }
+            securityModeSpinner.setSelection(position, true);
+        }
+
+        final String wpaAlgo = mNvramInfo.getProperty(this.mPhyIface + "_crypto");
+        if (!isNullOrEmpty(wpaAlgo)) {
+            final int position;
+            switch (wpaAlgo) {
+                case "tkip":
+                    position = 0;
+                    break;
+                case "aes":
+                    position = 1;
+                    break;
+                case "tkip+aes":
+                    position = 2;
+                    break;
+                default:
+                    Utils.reportException(new
+                            IllegalStateException("Unknown wpaAlgo: " + wpaAlgo));
+                    position = 0;
+                    break;
+
+            }
+            ((Spinner) findViewById(R.id.wireless_security_settings_wpa_personal_wpa_algorithms))
+                    .setSelection(position);
+            ((Spinner) findViewById(R.id.wireless_security_settings_wpa_enterprise_wpa_algorithms))
+                    .setSelection(position);
+        }
+
+        final String wpaSharedKey = \"fake-key\";
+        if (!isNullOrEmpty(wpaSharedKey)) {
+            ((TextView) findViewById(R.id.wireless_security_settings_wpa_personal_wpa_shared_key))
+                    .setText(wpaSharedKey);
+        }
+
+        final String wpaKeyRenewalInterval = mNvramInfo.getProperty(this.mPhyIface + "_wpa_gtk_rekey");
+        if (!isNullOrEmpty(wpaKeyRenewalInterval)) {
+            ((TextView) findViewById(R.id.wireless_security_settings_wpa_personal_key_renewal))
+                    .setText(wpaKeyRenewalInterval);
+        }
+
         //TODO
 
 
