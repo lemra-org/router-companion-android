@@ -1,6 +1,5 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -63,7 +63,6 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
     private InterstitialAd mInterstitialAd;
     private View mWEPAlert;
 
-    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,11 +132,11 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         mSecurityModeSpinner = ((Spinner) findViewById(R.id.wireless_security_settings_security_mode));
 
         mWPAPersonal = findViewById(R.id.wireless_security_settings_wpa_personal);
-        mWPA2Personal = findViewById(R.id.wireless_security_settings_wpa_personal);
-        mWPA2PersonalMixed = findViewById(R.id.wireless_security_settings_wpa_personal);
+        mWPA2Personal = mWPAPersonal;
+        mWPA2PersonalMixed = mWPA2Personal;
         mWPAEnterprise = findViewById(R.id.wireless_security_settings_wpa_enterprise);
-        mWPA2Enterprise = findViewById(R.id.wireless_security_settings_wpa_enterprise);
-        mWPA2EnterpriseMixed = findViewById(R.id.wireless_security_settings_wpa_enterprise);
+        mWPA2Enterprise = mWPAEnterprise;
+        mWPA2EnterpriseMixed = mWPA2Enterprise;
         mRadius = findViewById(R.id.wireless_security_settings_radius);
         mWEP = findViewById(R.id.wireless_security_settings_wep);
         mWEPAlert = findViewById(R.id.wireless_security_settings_wep_alert);
@@ -151,9 +150,15 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         mRadius.setVisibility(View.GONE);
         mWEP.setVisibility(View.GONE);
 
-        detailedViews = new View[]{mWPAPersonal, mWPA2Personal, mWPA2PersonalMixed,
-                mWPAEnterprise, mWPA2Enterprise, mWPA2EnterpriseMixed,
-                mRadius, mWEP};
+        detailedViews = new View[] {
+                mWPAPersonal,
+                mWPAEnterprise,
+                mWPA2Personal,
+                mWPA2Enterprise,
+                mWPA2PersonalMixed,
+                mWPA2EnterpriseMixed,
+                mRadius,
+                mWEP};
 
         mSecurityModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -177,6 +182,8 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
     }
 
     private void showDetailedViewAt(final int position) {
+        Log.d(LOG_TAG, "showDetailedViewAt @" + position);
+
         final int length = detailedViews.length;
 
         if (position < 0 || position >= length) {
@@ -188,12 +195,12 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                 continue;
             }
             if (i == position) {
+                detailedView.setVisibility(View.VISIBLE);
                 if (detailedView == mWEP) {
                     mWEPAlert.setVisibility(View.VISIBLE);
                 } else {
                     mWEPAlert.setVisibility(View.GONE);
                 }
-                detailedView.setVisibility(View.VISIBLE);
             } else {
                 mWEPAlert.setVisibility(View.GONE);
                 detailedView.setVisibility(View.GONE);
