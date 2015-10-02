@@ -150,6 +150,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:textStyle="bold"
         android:visibility="gone"/>
 
+    <!-- Security Mode -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/security_mode" />
+    <Spinner
+        android:id="@+id/wireless_security_settings_security_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:entries="@array/wireless_security_settings_security_mode_array"
+        android:entryValues="@array/wireless_security_settings_security_mode_array_values"
+        android:imeOptions="flagNoExtractUi"
+        android:prompt="@string/security_mode" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,24 +177,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- Security Mode -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/security_mode" />
-            <Spinner
-                android:id="@+id/wireless_security_settings_security_mode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:entries="@array/wireless_security_settings_security_mode_array"
-                android:entryValues="@array/wireless_security_settings_security_mode_array_values"
-                android:imeOptions="flagNoExtractUi"
-                android:prompt="@string/security_mode" />
 
             <LinearLayout
                 android:id="@+id/wireless_security_settings_wpa_personal"

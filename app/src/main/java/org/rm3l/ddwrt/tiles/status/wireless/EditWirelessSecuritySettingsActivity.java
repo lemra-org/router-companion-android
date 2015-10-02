@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,6 +63,7 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
     private InterstitialAd mInterstitialAd;
     private View mWEPAlert;
 
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,11 +133,11 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         mSecurityModeSpinner = ((Spinner) findViewById(R.id.wireless_security_settings_security_mode));
 
         mWPAPersonal = findViewById(R.id.wireless_security_settings_wpa_personal);
-        mWPA2Personal = mWPAPersonal;
-        mWPA2PersonalMixed = mWPA2Personal;
+        mWPA2Personal = findViewById(R.id.wireless_security_settings_wpa_personal);
+        mWPA2PersonalMixed = findViewById(R.id.wireless_security_settings_wpa_personal);
         mWPAEnterprise = findViewById(R.id.wireless_security_settings_wpa_enterprise);
-        mWPA2Enterprise = mWPAEnterprise;
-        mWPA2EnterpriseMixed = mWPA2Enterprise;
+        mWPA2Enterprise = findViewById(R.id.wireless_security_settings_wpa_enterprise);
+        mWPA2EnterpriseMixed = findViewById(R.id.wireless_security_settings_wpa_enterprise);
         mRadius = findViewById(R.id.wireless_security_settings_radius);
         mWEP = findViewById(R.id.wireless_security_settings_wep);
         mWEPAlert = findViewById(R.id.wireless_security_settings_wep_alert);
