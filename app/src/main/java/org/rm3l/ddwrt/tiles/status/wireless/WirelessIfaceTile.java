@@ -71,6 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -107,6 +108,10 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
     @Nullable
     private String hwAddr;
+
+    private NVRAMInfo mNvramInfo;
+
+    private AtomicBoolean mWirelessSecurityFormOpened = new AtomicBoolean(false);
 
     @Nullable
     private WirelessEncryptionTypeForQrCode wifiEncryptionType;
@@ -152,7 +157,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
                 inflater.inflate(R.menu.tile_wireless_iface_options, menu);
 
-                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     menu.findItem(R.id.tile_status_wireless_iface_qrcode).setEnabled(false);
                 }
 
@@ -191,7 +196,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                     Log.d(LOG_TAG, "Init background loader for " + WirelessIfaceTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                    if (mWirelessSecurityFormOpened.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
                         //Skip run
                         Log.d(LOG_TAG, "Skip loader run");
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
@@ -200,16 +205,16 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
 
 //                    mLastSync = System.currentTimeMillis();
 
-                    final NVRAMInfo nvramInfo = getIfaceNvramInfo(iface);
+                    mNvramInfo = getIfaceNvramInfo(iface);
                     if (parentIface != null && !parentIface.isEmpty()) {
-                        nvramInfo.putAll(getIfaceNvramInfo(parentIface));
+                        mNvramInfo.putAll(getIfaceNvramInfo(parentIface));
                     }
 
-                    if (nvramInfo.isEmpty()) {
+                    if (mNvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
 
-                    return nvramInfo;
+                    return mNvramInfo;
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
@@ -615,6 +620,39 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
 
+            //Encryption
+            final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
+            final String akm = data.getProperty(this.iface + "_akm");
+            String encryption = "-";
+            if ("psk".equalsIgnoreCase(akm)) {
+                encryption = "WPA Pre-shared Key";
+            } else if ("wpa".equalsIgnoreCase(akm)) {
+                encryption = "WPA RADIUS";
+            } else if ("psk2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 Pre-shared Key";
+            } else if ("wpa2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 RADIUS";
+            } else if ("psk psk2".equalsIgnoreCase(akm)) {
+                encryption = "WPA2 Pre-shared Key Mixed";
+            } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
+                encryption = "WPA RADIUS Mixed";
+            } else if ("radius".equalsIgnoreCase(akm)) {
+                encryption = "RADIUS";
+            } else if ("wep".equalsIgnoreCase(akm)) {
+                encryption = "WEP";
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+            }
+
+            if (startsWith(encryption, "WPA")) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
+            } else if (startsWith(encryption, "WEP")) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+            } else if (!"radius".equalsIgnoreCase(encryption)) {
+                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
+            }
+
+            encryptionView.setText(encryption);
+
             //SSID
             final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
             this.wifiSsid = data.getProperty(this.iface + "_ssid", EMPTY_STRING);
@@ -623,7 +661,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_details_ssid))
                     .setText(this.wifiSsid);
 
-            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
+            if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WEP) {
+                this.wifiPassword = data.getProperty(this.iface + "_passphrase", EMPTY_STRING);
+            } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WPA) {
+                this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
+            } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.NONE) {
+                this.wifiPassword = "";
+            }
+//            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
 
             //Ifname
             final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
@@ -710,39 +755,6 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-"));
             noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
 
-            //Encryption
-            final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
-            final String akm = data.getProperty(this.iface + "_akm");
-            String encryption = "-";
-            if ("psk".equalsIgnoreCase(akm)) {
-                encryption = "WPA Pre-shared Key";
-            } else if ("wpa".equalsIgnoreCase(akm)) {
-                encryption = "WPA RADIUS";
-            } else if ("psk2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 Pre-shared Key";
-            } else if ("wpa2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 RADIUS";
-            } else if ("psk psk2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 Pre-shared Key Mixed";
-            } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
-                encryption = "WPA RADIUS Mixed";
-            } else if ("radius".equalsIgnoreCase(akm)) {
-                encryption = "RADIUS";
-            } else if ("wep".equalsIgnoreCase(akm)) {
-                encryption = "WEP";
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
-            }
-
-            if (startsWith(encryption, "WPA")) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
-            } else if (startsWith(encryption, "WEP")) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
-            } else if (!"radius".equalsIgnoreCase(encryption)) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
-            }
-
-            encryptionView.setText(encryption);
-
 //            //Update last sync
 //            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
 //            lastSyncView.setReferenceTime(mLastSync);
@@ -781,7 +793,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         final String routerUuid = mRouter.getUuid();
         switch (item.getItemId()) {
             case R.id.tile_status_wireless_iface_qrcode: {
-                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && isNullOrEmpty(wifiPassword))) {
+                if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
                     Toast.makeText(mParentFragmentActivity,
                             "Missing parameters to generate QR-Code - try again later", Toast.LENGTH_SHORT).show();
@@ -792,7 +804,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
                 final String wifiQrCodeString = String.format("WIFI:S:%s;T:%s;P:%s;%s;",
                         escapeString(wifiSsidNullToEmpty),
-                        wifiEncryptionType.toString(),
+                        wifiEncryptionType.toString().toUpperCase(),
                         escapeString(nullToEmpty(wifiPassword)),
                         wifiSsidNullToEmpty.isEmpty() ? "H:true" : "");
 
@@ -827,13 +839,22 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 return true;
             case R.id.tile_status_wireless_iface_security: {
 
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    //Download the full version to unlock this version
+                    Utils.displayUpgradeMessage(mParentFragmentActivity, "Edit Wireless Security Settings");
+                    return true;
+                }
+
                 final String wifiSsidNullToEmpty = nullToEmpty(wifiSsid);
 
-                final NVRAMInfo nvramInfo = new NVRAMInfo();
-                nvramInfo.setProperty(WirelessIfaceTile.IFACE, this.iface);
-                nvramInfo.setProperty(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty);
-                nvramInfo.setProperty(EditWirelessSecuritySettingsActivity.HWADDR,
-                        nullToEmpty(hwAddr));
+                final NVRAMInfo nvramInfo = new NVRAMInfo()
+                        .setProperty(WirelessIfaceTile.IFACE, this.iface)
+                        .setProperty(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty)
+                        .setProperty(EditWirelessSecuritySettingsActivity.HWADDR,
+                                nullToEmpty(hwAddr));
+                if (mNvramInfo != null) {
+                    nvramInfo.putAll(mNvramInfo);
+                }
 
                 final Intent intent = new Intent(mParentFragmentActivity, EditWirelessSecuritySettingsActivity.class);
                 intent.putExtra(RouterManagementActivity.ROUTER_SELECTED, routerUuid);
@@ -848,6 +869,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        mWirelessSecurityFormOpened.set(true);
                         mParentFragmentActivity.startActivity(intent);
                         alertDialog.cancel();
                     }

@@ -305,15 +305,11 @@ public abstract class AbstractRouterMgmtDialogFragment
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (!isChecked) {
-//                        pwdView.setTransformationMethod(
-//                                PasswordTransformationMethod.getInstance());
                             pwdView.setInputType(
                                     InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                             Utils.scrollToView(contentScrollView, pwdView);
                             pwdView.requestFocus();
                         } else {
-//                        pwdView.setTransformationMethod(
-//                                HideReturnsTransformationMethod.getInstance());
                             pwdView.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                             Utils.scrollToView(contentScrollView, pwdView);
                             pwdView.requestFocus();
