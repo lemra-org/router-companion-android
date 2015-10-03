@@ -80,8 +80,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.background.service.enable"
-            android:summaryOff="Disabled. You will need to open the app to get notifications."
-            android:summaryOn="Enabled. You may get notifications even if you are not using the app."
+            android:summaryOff="Disabled. You will need to open the app to get notifications. Notifications can be managed in each router settings."
+            android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
             android:title="Background Service" />
 
         <org.rm3l.ddwrt.utils.LongListPreference
@@ -96,7 +96,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Should be general settings -->
         <RingtonePreference
-            android:dependency="notifications.background.service.enable"
             android:title="Notification Sound"
             android:ringtoneType="notification"
             android:key="notifications.sound"
@@ -105,7 +104,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:defaultValue="content://settings/system/notification_sound"/>
 
         <CheckBoxPreference
-            android:dependency="notifications.background.service.enable"
             android:defaultValue="true"
             android:key="notifications.vibrate"
             android:summaryOff="Disabled."
