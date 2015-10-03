@@ -31,11 +31,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -122,6 +124,21 @@ public class EditWOLDaemonSettingsActivity extends ActionBarActivity {
         //Preferences saved globally, to be shared across different routers
         sharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
+
+        final EditText secureOnPasswordEditText = (EditText) findViewById(R.id.wol_daemon_settings_secure_on_password);
+        ((CheckBox) findViewById(R.id.wol_daemon_settings_secure_on_password_show_checkbox))
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (!isChecked) {
+                            secureOnPasswordEditText.setInputType(
+                                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        } else {
+                            secureOnPasswordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        }
+                        secureOnPasswordEditText.setSelection(secureOnPasswordEditText.length());
+                    }
+                });
 
     }
 
