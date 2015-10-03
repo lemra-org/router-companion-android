@@ -123,13 +123,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/wol_daemon_settings_secure_on_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="1dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:hint="SecureOn Password"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textPassword"
                     android:maxLines="1"/>
+
+                <CheckBox
+                    android:id="@+id/wol_daemon_settings_secure_on_password_show_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:checked="false"
+                    android:text="Show"/>
 
                 <!-- MAC Adrdesses -->
                 <TextView
