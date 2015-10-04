@@ -616,6 +616,9 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         if (!isNullOrEmpty(wepPassphrase)) {
             ((EditText) findViewById(R.id.wireless_security_settings_wep_passphrase))
                     .setText(wepPassphrase, EDITABLE);
+            findViewById(R.id.wireless_security_settings_wep_passphrase_generate).setEnabled(true);
+        } else {
+            findViewById(R.id.wireless_security_settings_wep_passphrase_generate).setEnabled(false);
         }
 
         final String wepPassphraseKey1 = mNvramInfo.getProperty(this.mPhyIface + "_key1");
