@@ -42,6 +42,7 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -843,7 +844,20 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         if (securityModeSelectedItem != null &&
                 !securityModeSelectedItem.equals(mNvramInfo.getProperty(this.mPhyIface + "_security_mode",
                         mNvramInfo.getProperty(StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode")))) {
-            nvramVarsToUpdate.setProperty(this.mPhyIface + "_security_mode", securityModeSelectedItem);
+            final Properties props = mNvramInfo.getData();
+            if (props == null) {
+                Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
+                Utils.reportException(new IllegalStateException("mNvramInfo.getData() == NULL"));
+                setResult(RESULT_CANCELED, data);
+                super.finish();
+                return;
+            }
+            if (props.containsKey(this.mPhyIface + "_security_mode")) {
+                nvramVarsToUpdate.setProperty(this.mPhyIface + "_security_mode", securityModeSelectedItem);
+            } else {
+                nvramVarsToUpdate.setProperty(StringUtils.replace(this.mPhyIface, ".", "X"),
+                        securityModeSelectedItem);
+            }
         }
         switch (securityModeSelectedItemPosition) {
             case 0:
