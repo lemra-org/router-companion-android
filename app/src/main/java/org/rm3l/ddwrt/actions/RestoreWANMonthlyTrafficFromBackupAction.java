@@ -67,7 +67,7 @@ public class RestoreWANMonthlyTrafficFromBackupAction extends AbstractRouterActi
 
             final RouterActionResult<Void> setNvramActionResult =
                     SetNVRAMVariablesAction.getRouterActionResult(
-                            mContext, globalSharedPreferences, router, linesToNVRAM, false);
+                            mContext, globalSharedPreferences, router, linesToNVRAM, false, null);
 
             if (setNvramActionResult == null) {
                 throw new IllegalStateException("Failed to execute action");

@@ -28,6 +28,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -36,7 +37,9 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -54,13 +57,24 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
     @NonNull
     private final Context mContext;
 
-    public SetNVRAMVariablesAction(@NonNull Context context, @NonNull NVRAMInfo nvramInfo, boolean withReboot,
+    @NonNull
+    private final ImmutableList<String> commandsToRunAfterCommit;
+
+    public SetNVRAMVariablesAction(@NonNull Context context, @NonNull NVRAMInfo nvramInfo,
+                                   boolean withReboot,
                                    @Nullable RouterActionListener listener,
-                                   @NonNull SharedPreferences globalSharedPreferences) {
+                                   @NonNull SharedPreferences globalSharedPreferences,
+                                   @Nullable String... commandsToRunAfterCommit) {
         super(listener, RouterAction.SET_NVRAM_VARIABLES, globalSharedPreferences);
         this.mContext = context;
         this.nvramInfo = nvramInfo;
         this.withReboot = withReboot;
+        if (commandsToRunAfterCommit != null) {
+            this.commandsToRunAfterCommit = ImmutableList
+                    .copyOf(Arrays.asList(commandsToRunAfterCommit));
+        } else {
+            this.commandsToRunAfterCommit = ImmutableList.of();
+        }
     }
 
     @NonNull
@@ -70,14 +84,16 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                 globalSharedPreferences,
                 router,
                 nvramInfo,
-                withReboot);
+                withReboot,
+                this.commandsToRunAfterCommit);
     }
 
     public static RouterActionResult<Void> getRouterActionResult(@NonNull final Context mContext,
-                                                           @NonNull SharedPreferences globalSharedPreferences,
-                                                           @NonNull Router router,
-                                                           @NonNull final NVRAMInfo nvramInfo,
-                                                           final boolean withReboot) {
+                                                                 @NonNull SharedPreferences globalSharedPreferences,
+                                                                 @NonNull Router router,
+                                                                 @NonNull final NVRAMInfo nvramInfo,
+                                                                 final boolean withReboot,
+                                                                 @Nullable final List<String> commandsToRunAfterCommit) {
         Exception exception = null;
         File outputFile = null;
         final String remotePath = "/tmp/." + SetNVRAMVariablesAction.class.getSimpleName() + "_" + UUID.randomUUID() + ".sh";
@@ -88,22 +104,27 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
             }
             final Properties data = nvramInfo.getData();
             //noinspection ConstantConditions
-            String[] cmd = new String[data.size() + 2];
+            final ArrayList<String> cmdList = new ArrayList<>();
             int i = 0;
             for (final Map.Entry<Object, Object> entry : data.entrySet()) {
-                cmd[i++] = String.format("/usr/sbin/nvram set %s=\"%s\"", entry.getKey(), entry.getValue());
+                cmdList.add(String.format("/usr/sbin/nvram set %s=\"%s\"", entry.getKey(), entry.getValue()));
             }
-            cmd[cmd.length - 2] = "/usr/sbin/nvram commit";
-            cmd[cmd.length - 1] = (withReboot ? "/sbin/reboot" : "echo");
+            cmdList.add("/usr/sbin/nvram commit");
+            if (commandsToRunAfterCommit != null) {
+                cmdList.addAll(commandsToRunAfterCommit);
+            }
+            if (withReboot) {
+                cmdList.add("/sbin/reboot");
+            }
 
             if (globalSharedPreferences.getBoolean(DEBUG_MODE, false)) {
-                Log.d(LOG_TAG, "cmd: " + Arrays.toString(cmd));
+                Log.d(LOG_TAG, "cmdList: " + cmdList);
             }
 
-            //FIXME Seems there is a limit on the number of characters we can pass to the SSH server console
+            // Seems there is a limit on the number of characters we can pass to the SSH server console
             // => copy all those in a temporary file, upload the file to the router and exec it
             outputFile = File.createTempFile(SetNVRAMVariablesAction.class.getSimpleName(), ".sh", mContext.getCacheDir());
-            FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmd));
+            FileUtils.writeStringToFile(outputFile, Joiner.on(" && ").skipNulls().join(cmdList));
 
             //Now upload this file onto the remote router
             if (!SSHUtils.scpTo(mContext, router, globalSharedPreferences, outputFile.getAbsolutePath(), remotePath)) {

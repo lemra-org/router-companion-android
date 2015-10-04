@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,15 +47,21 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.undobar.UndoBarController;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ProcNetDevNetworkData;
 import org.rm3l.ddwrt.resources.ProcNetDevReceive;
@@ -76,6 +83,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -88,7 +97,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SPACE;
 /**
  *
  */
-public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
+public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
+        implements PopupMenu.OnMenuItemClickListener {
 
     public static final String CAT_SYS_CLASS_NET_S_STATISTICS = "cat /sys/class/net/%s/statistics";
     public static final Pattern HEX_ONLY_QR_CODE_PATTERN = Pattern.compile("/^[0-9a-f]+$/i");
@@ -623,146 +633,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
             }
-
-            //Encryption
-            final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
-            final String akm = data.getProperty(this.iface + "_akm");
-            String encryption = "-";
-            if ("psk".equalsIgnoreCase(akm)) {
-                encryption = "WPA Pre-shared Key";
-            } else if ("wpa".equalsIgnoreCase(akm)) {
-                encryption = "WPA RADIUS";
-            } else if ("psk2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 Pre-shared Key";
-            } else if ("wpa2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 RADIUS";
-            } else if ("psk psk2".equalsIgnoreCase(akm)) {
-                encryption = "WPA2 Pre-shared Key Mixed";
-            } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
-                encryption = "WPA RADIUS Mixed";
-            } else if ("radius".equalsIgnoreCase(akm)) {
-                encryption = "RADIUS";
-            } else if ("wep".equalsIgnoreCase(akm)) {
-                encryption = "WEP";
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
-            }
-
-            if (startsWith(encryption, "WPA")) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
-            } else if (startsWith(encryption, "WEP")) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
-            } else if (!"radius".equalsIgnoreCase(encryption)) {
-                this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
-            }
-
-            encryptionView.setText(encryption);
-
-            //SSID
-            final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
-            this.wifiSsid = data.getProperty(this.iface + "_ssid", EMPTY_STRING);
-            ssidView.setText(this.wifiSsid);
-
-            ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_details_ssid))
-                    .setText(this.wifiSsid);
-
-            if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WEP) {
-                this.wifiPassword = data.getProperty(this.iface + "_passphrase", EMPTY_STRING);
-            } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WPA) {
-                this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
-            } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.NONE) {
-                this.wifiPassword = "";
-            }
-//            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
-
-            //Ifname
-            final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
-            ifnameView.setText(data.getProperty(this.iface + "_ifname", "-"));
-
-            //MAC
-            final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
-            hwAddr = data.getProperty(this.iface + "_hwaddr", "-");
-            hwAddrView.setText(hwAddr);
-
-            //Radio
-            final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
-            radioView.setEnabled(false);
-            radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio", data.getProperty(this.parentIface + "_radio"))));
-            //Disabled for now, as the same value seems to be returned, regardless of the actual Radio state
-            radioView.setVisibility(View.GONE);
-
-            //Mode
-            final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
-            String property = data.getProperty(this.iface + "_mode", "-");
-            modeView.setText(property != null ? property.toUpperCase() : "-");
-
-            //Net Mode
-            final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
-            final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode"));
-            String mode = "-";
-            if ("disabled".equalsIgnoreCase(netmode)) {
-                mode = "Disabled";
-            } else if ("mixed".equalsIgnoreCase(netmode)) {
-                mode = "Mixed";
-            } else if ("g-only".equalsIgnoreCase(netmode)) {
-                mode = "G-Only";
-            } else if ("b-only".equalsIgnoreCase(netmode)) {
-                mode = "B-Only";
-            } else if ("a-only".equalsIgnoreCase(netmode)) {
-                mode = "A-Only";
-            } else if ("n-only".equalsIgnoreCase(netmode)) {
-                mode = "N-Only";
-            } else if ("ng-only".equalsIgnoreCase(netmode)) {
-                mode = "NG-Only";
-            } else if ("n5-only".equalsIgnoreCase(netmode)) {
-                mode = "N-Only (5GHz)";
-            } else if (netmode != null) {
-                mode = netmode;
-            }
-            netModeView.setText(mode);
-
-            //Temperature
-            final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
-            final String temperatureProperty = data.getProperty(this.iface + "_temperature", data.getProperty(this.parentIface + "_temperature", "-"));
-            temperatureView.setText(temperatureProperty);
-
-            //Channel
-            final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
-            final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "-"));
-            channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
-
-//            //Rate
-//            @NonNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
-//            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "-");
-//            rateView.setText(rateProperty);
-            //Rate
-            final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
-            final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "-");
-            rxRateView.setText(rxRateProperty);
-
-            final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
-            final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "-");
-            txRateView.setText(txRateProperty);
-
-            //Packet Info
-            final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
-            rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "-"));
-
-            final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
-            txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "-"));
-
-            //TX Power
-            final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
-            xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "-")));
-
-            //Noise
-            final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
-            final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-"));
-            noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
-
-//            //Update last sync
-//            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-//            lastSyncView.setReferenceTime(mLastSync);
-//            lastSyncView.setPrefix("Last sync: ");
+            updateTileDisplayInfo(data, true);
 
         }
 
@@ -783,6 +654,153 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void updateTileDisplayInfo(@Nullable NVRAMInfo data, final boolean defaultValuesIfNotFound) {
+
+        if (data == null) {
+            return;
+        }
+
+        //Encryption
+        final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
+        final String akm = data.getProperty(this.iface + "_akm");
+        String encryption = "-";
+        if ("psk".equalsIgnoreCase(akm)) {
+            encryption = "WPA Pre-shared Key";
+        } else if ("wpa".equalsIgnoreCase(akm)) {
+            encryption = "WPA RADIUS";
+        } else if ("psk2".equalsIgnoreCase(akm)) {
+            encryption = "WPA2 Pre-shared Key";
+        } else if ("wpa2".equalsIgnoreCase(akm)) {
+            encryption = "WPA2 RADIUS";
+        } else if ("psk psk2".equalsIgnoreCase(akm)) {
+            encryption = "WPA2 Pre-shared Key Mixed";
+        } else if ("wpa wpa2".equalsIgnoreCase(akm)) {
+            encryption = "WPA RADIUS Mixed";
+        } else if ("radius".equalsIgnoreCase(akm)) {
+            encryption = "RADIUS";
+        } else if ("wep".equalsIgnoreCase(akm)) {
+            encryption = "WEP";
+            this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+        }
+
+        if (startsWith(encryption, "WPA")) {
+            this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WPA;
+        } else if (startsWith(encryption, "WEP")) {
+            this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.WEP;
+        } else if (!"radius".equalsIgnoreCase(encryption)) {
+            this.wifiEncryptionType = WirelessEncryptionTypeForQrCode.NONE;
+        }
+
+        encryptionView.setText(encryption);
+
+        //SSID
+        final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
+        this.wifiSsid = data.getProperty(this.iface + "_ssid", EMPTY_STRING);
+        ssidView.setText(this.wifiSsid);
+
+        ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_details_ssid))
+                .setText(this.wifiSsid);
+
+        if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WEP) {
+            this.wifiPassword = data.getProperty(this.iface + "_passphrase", EMPTY_STRING);
+        } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WPA) {
+            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
+        } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.NONE) {
+            this.wifiPassword = "";
+        }
+//            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
+
+        //Ifname
+        final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
+        ifnameView.setText(data.getProperty(this.iface + "_ifname", "-"));
+
+        //MAC
+        final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
+        hwAddr = data.getProperty(this.iface + "_hwaddr", "-");
+        hwAddrView.setText(hwAddr);
+
+        //Radio
+        final CheckBox radioView = (CheckBox) this.layout.findViewById(R.id.tile_status_wireless_iface_radio);
+        radioView.setEnabled(false);
+        radioView.setChecked("1".equals(data.getProperty(this.iface + "_radio", data.getProperty(this.parentIface + "_radio"))));
+        //Disabled for now, as the same value seems to be returned, regardless of the actual Radio state
+        radioView.setVisibility(View.GONE);
+
+        //Mode
+        final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
+        String property = data.getProperty(this.iface + "_mode", "-");
+        modeView.setText(property != null ? property.toUpperCase() : "-");
+
+        //Net Mode
+        final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
+        final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode"));
+        String mode = "-";
+        if ("disabled".equalsIgnoreCase(netmode)) {
+            mode = "Disabled";
+        } else if ("mixed".equalsIgnoreCase(netmode)) {
+            mode = "Mixed";
+        } else if ("g-only".equalsIgnoreCase(netmode)) {
+            mode = "G-Only";
+        } else if ("b-only".equalsIgnoreCase(netmode)) {
+            mode = "B-Only";
+        } else if ("a-only".equalsIgnoreCase(netmode)) {
+            mode = "A-Only";
+        } else if ("n-only".equalsIgnoreCase(netmode)) {
+            mode = "N-Only";
+        } else if ("ng-only".equalsIgnoreCase(netmode)) {
+            mode = "NG-Only";
+        } else if ("n5-only".equalsIgnoreCase(netmode)) {
+            mode = "N-Only (5GHz)";
+        } else if (netmode != null) {
+            mode = netmode;
+        }
+        netModeView.setText(mode);
+
+        //Temperature
+        final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
+        final String temperatureProperty = data.getProperty(this.iface + "_temperature", data.getProperty(this.parentIface + "_temperature", "-"));
+        temperatureView.setText(temperatureProperty);
+
+        //Channel
+        final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
+        final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel", "-"));
+        channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
+
+//            //Rate
+//            @NonNull final TextView rateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rate);
+//            final String rateProperty = data.getProperty(this.iface + "_rate_human_readable", "-");
+//            rateView.setText(rateProperty);
+        //Rate
+        final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
+        final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable", "-");
+        rxRateView.setText(rxRateProperty);
+
+        final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
+        final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable", "-");
+        txRateView.setText(txRateProperty);
+
+        //Packet Info
+        final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
+        rxPacketsView.setText(data.getProperty(this.iface + "_rx_packets", "-"));
+
+        final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
+        txPacketsView.setText(data.getProperty(this.iface + "_tx_packets", "-"));
+
+        //TX Power
+        final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
+        xmitView.setText(data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr", "-")));
+
+        //Noise
+        final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
+        final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise", "-"));
+        noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
+
+//            //Update last sync
+//            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+//            lastSyncView.setReferenceTime(mLastSync);
+//            lastSyncView.setPrefix("Last sync: ");
     }
 
     @Nullable
@@ -876,7 +894,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                         mWirelessSecurityFormOpened.set(true);
                         ((AbstractBaseFragment) mParentFragment)
                                 .startActivityForResult(intent,
-                                        new WirelessSecuritySettingsActivityResultListener());
+                                        new WirelessSecuritySettingsActivityResultListener(wifiSsidNullToEmpty));
                         alertDialog.cancel();
                     }
                 }, 2500);
@@ -956,16 +974,38 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     }
 
     private class WirelessSecuritySettingsActivityResultListener
-            implements ActivityResultListener {
+            implements ActivityResultListener, UndoBarController.AdvancedUndoListener, RouterActionListener {
+
+        @NonNull
+        private final String wifiSsid;
+
+        private WirelessSecuritySettingsActivityResultListener(@NonNull final String wifiSsid) {
+            this.wifiSsid = wifiSsid;
+        }
 
         @Override
         public void onResultCode(int resultCode, Intent data) {
-
             try {
                 Log.d(LOG_TAG, "onResultCode: " + resultCode);
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        //TODO
+                        final NVRAMInfo newNvramInfoData = (NVRAMInfo) data.getSerializableExtra(WL_SECURITY_NVRAMINFO);
+                        if (newNvramInfoData == null || newNvramInfoData.isEmpty()) {
+                            Utils.displayMessage(mParentFragmentActivity, "No change", Style.INFO);
+                            break;
+                        }
+
+                        final Bundle token = new Bundle();
+                        token.putString(DDWRTMainActivity.ROUTER_ACTION, RouterAction.SET_NVRAM_VARIABLES.name());
+                        token.putSerializable(WL_SECURITY_NVRAMINFO, newNvramInfoData);
+
+                        new UndoBarController.UndoBar(mParentFragmentActivity)
+                                .message(
+                                        String.format("Security Settings for wireless network '%s' will be updated.",
+                                                wifiSsid))
+                                .listener(this)
+                                .token(token)
+                                .show();
                         break;
                     default:
                         //Ignored
@@ -974,6 +1014,79 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
             } finally {
                 mWirelessSecurityFormOpened.set(false);
             }
+        }
+
+        @Override
+        public void onHide(@Nullable Parcelable parcelable) {
+            if (parcelable instanceof Bundle) {
+                final Bundle token = (Bundle) parcelable;
+                final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
+                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                if (isNullOrEmpty(routerAction)) {
+                    return;
+                }
+                try {
+                    switch (RouterAction.valueOf(routerAction)) {
+                        case SET_NVRAM_VARIABLES:
+                            final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(WL_SECURITY_NVRAMINFO);
+                            if (nvramInfo == null) {
+                                throw new IllegalStateException("Internal error - please try again later.");
+                            }
+                            new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                    nvramInfo,
+                                    false,
+                                    this,
+                                    mGlobalPreferences,
+                                    /*
+                                    # the next few lines will restart the interface,
+                                    # which simulates the save and apply buttons in the webGUI
+                                     */
+                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )")
+                                    .execute(mRouter);
+                            break;
+                        default:
+                            //Ignored
+                            break;
+                    }
+                } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onClear(@NonNull Parcelable[] parcelables) {
+            //Nothing to do
+        }
+
+        @Override
+        public void onUndo(@Nullable Parcelable parcelable) {
+            //Nothing to do
+        }
+
+        @Override
+        public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, final Object returnData) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    "Security Settings updated for WiFi network '" + wifiSsid + "'",
+                    Style.CONFIRM);
+//            Update info right away
+//            if (returnData instanceof NVRAMInfo) {
+//                //Run on main thread to avoid the exception:
+//                //"Only the original thread that created a view hierarchy can touch its views."
+//                mParentFragmentActivity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateTileDisplayInfo((NVRAMInfo) returnData, false);
+//                    }
+//                });
+//            }
+        }
+
+        @Override
+        public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+            Utils.displayMessage(mParentFragmentActivity,
+                    String.format("Error: %s", ExceptionUtils.getRootCauseMessage(exception)),
+                    Style.ALERT);
         }
     }
 }
