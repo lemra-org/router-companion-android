@@ -10,12 +10,15 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -293,6 +296,15 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                     }
                 });
 
+        final Button wepKeyGenerateButton = (Button) findViewById(R.id.wireless_security_settings_wep_passphrase_generate);
+        wepKeyGenerateButton
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //FIXME
+                    }
+                });
+
         final EditText wepPassphraseEditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_show_checkbox))
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -307,15 +319,23 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                         wepPassphraseEditText.setSelection(wepPassphraseEditText.length());
                     }
                 });
+        //Enable "Generate" Button only if passphrase is not empty
+        wepPassphraseEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        findViewById(R.id.wireless_security_settings_wep_passphrase_generate)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            }
 
-                    }
-                });
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                wepKeyGenerateButton.setEnabled(s != null && s.length() > 0);
+            }
+        });
 
         final EditText wepPassphraseKey1EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key1);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_key1_show_checkbox))
