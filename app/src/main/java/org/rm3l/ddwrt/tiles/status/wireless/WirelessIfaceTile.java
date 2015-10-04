@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +54,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.ProcNetDevNetworkData;
 import org.rm3l.ddwrt.resources.ProcNetDevReceive;
@@ -94,6 +96,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
     private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
     public static final String IFACE = "iface";
+    public static final String WL_SECURITY_NVRAMINFO = "WL_SECURITY_NVRAMINFO";
+
     @NonNull
     private final String iface;
 
@@ -870,7 +874,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
                     @Override
                     public void run() {
                         mWirelessSecurityFormOpened.set(true);
-                        mParentFragmentActivity.startActivity(intent);
+                        ((AbstractBaseFragment) mParentFragment)
+                                .startActivityForResult(intent,
+                                        new WirelessSecuritySettingsActivityResultListener());
                         alertDialog.cancel();
                     }
                 }, 2500);
@@ -946,6 +952,23 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         @Override
         public String toString() {
             return unitDisplay;
+        }
+    }
+
+    private class WirelessSecuritySettingsActivityResultListener
+            implements ActivityResultListener {
+
+        @Override
+        public void onResultCode(int resultCode, Intent data) {
+
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    //TODO
+                    break;
+                default:
+                    //Ignored
+                    break;
+            }
         }
     }
 }
