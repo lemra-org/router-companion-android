@@ -52,6 +52,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -274,6 +275,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             wlIface + "_akm", //FIXME Useless?
                             wlIface + "_wpa_psk",
                             wlIface + "_security_mode",
+                            StringUtils.replace(wlIface, ".", "X") + "_security_mode",
                             wlIface + "_crypto",
                             wlIface + "_wl_unmask",
                             wlIface + "_wpa_gtk_rekey",
@@ -666,9 +668,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Encryption
         final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
         final String wlSecModeToDisplay = data.getProperty(this.iface + "_security_mode",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode",
+                    defaultValuesIfNotFound ? EMPTY_STRING : null));
         if (wlSecModeToDisplay != null) {
-            final String wlSecurityMode = data.getProperty(this.iface + "_security_mode");
+            final String wlSecurityMode = data.getProperty(this.iface + "_security_mode",
+                    data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode"));
             String encryption = wlSecurityMode;
             if ("disabled".equalsIgnoreCase(wlSecurityMode)) {
                 encryption = "Disabled";
