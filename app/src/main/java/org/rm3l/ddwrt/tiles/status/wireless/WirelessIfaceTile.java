@@ -106,6 +106,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     private static final String WIRELESS_IFACE = "wireless_iface";
     private static final String LOG_TAG = WirelessIfaceTile.class.getSimpleName();
     public static final String IFACE = "iface";
+    public static final String PARENT_IFACE = "parent_iface";
     public static final String WL_SECURITY_NVRAMINFO = "WL_SECURITY_NVRAMINFO";
 
     @NonNull
@@ -941,6 +942,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                 final NVRAMInfo nvramInfo = new NVRAMInfo()
                         .setProperty(WirelessIfaceTile.IFACE, this.iface)
+                        .setProperty(WirelessIfaceTile.PARENT_IFACE, nullToEmpty(this.parentIface))
                         .setProperty(WirelessIfaceQrCodeActivity.SSID, wifiSsidNullToEmpty)
                         .setProperty(EditWirelessSecuritySettingsActivity.HWADDR,
                                 nullToEmpty(hwAddr));

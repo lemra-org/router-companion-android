@@ -53,7 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Physical Interface"
+            android:text="Interface"
             android:textStyle="bold" />
 
         <TextView

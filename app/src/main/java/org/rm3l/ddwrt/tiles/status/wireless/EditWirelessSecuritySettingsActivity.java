@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.utils.ColorUtils;
@@ -98,9 +99,9 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         wepEncryptionValues.put("64", 0);
         wepEncryptionValues.put("128", 1);
 
-
     }
 
+    private String mParentIface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +145,8 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
 
         mPhyIface = mNvramInfo.getProperty(WirelessIfaceTile.IFACE,
                 DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
+
+        mParentIface = mNvramInfo.getProperty(WirelessIfaceTile.PARENT_IFACE);
 
         mSsid = mNvramInfo.getProperty(WirelessIfaceQrCodeActivity.SSID,
                 DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
@@ -598,13 +601,16 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         super.onStart();
         //Fill form with data loaded
         ((TextView) findViewById(R.id.wireless_security_settings_phy_iface))
-                .setText(mPhyIface);
+                .setText(mPhyIface + (isNullOrEmpty(mParentIface) ? "" : (" (virt. interface of " + mParentIface + ")")));
         ((TextView) findViewById(R.id.wireless_security_settings_ssid))
                 .setText(mSsid);
         ((TextView) findViewById(R.id.wireless_security_settings_hw_address))
                 .setText(mHwAddr);
 
-        final String securityMode = mNvramInfo.getProperty(this.mPhyIface + "_security_mode");
+//        final String securityMode = mNvramInfo.getProperty(isNullOrEmpty(this.mParentIface) ?
+//                (this.mPhyIface + "_security_mode") : (this.mPhyIface + "_akm"));
+        final String securityMode = mNvramInfo.getProperty(this.mPhyIface + "_security_mode",
+                mNvramInfo.getProperty(StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode"));
         Integer position = (securityMode != null ? securityModeValues.get(securityMode) : null);
         if (!securityModeValues.containsKey(securityMode)) {
             Utils.reportException(new
