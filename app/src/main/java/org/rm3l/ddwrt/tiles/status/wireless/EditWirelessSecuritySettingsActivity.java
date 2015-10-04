@@ -841,7 +841,8 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
         final String securityModeSelectedItem = securityModeValues.inverse().get(
                 securityModeSelectedItemPosition);
         if (securityModeSelectedItem != null &&
-                !securityModeSelectedItem.equals(mNvramInfo.getProperty(this.mPhyIface + "_security_mode"))) {
+                !securityModeSelectedItem.equals(mNvramInfo.getProperty(this.mPhyIface + "_security_mode",
+                        mNvramInfo.getProperty(StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode")))) {
             nvramVarsToUpdate.setProperty(this.mPhyIface + "_security_mode", securityModeSelectedItem);
         }
         switch (securityModeSelectedItemPosition) {

@@ -93,6 +93,7 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.Temperature
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.TemperatureUnit.FAHRENHEIT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.COLON;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SPACE;
 
 /**
@@ -669,7 +670,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
         final String wlSecModeToDisplay = data.getProperty(this.iface + "_security_mode",
                 data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode",
-                    defaultValuesIfNotFound ? EMPTY_STRING : null));
+                    defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (wlSecModeToDisplay != null) {
             final String wlSecurityMode = data.getProperty(this.iface + "_security_mode",
                     data.getProperty(StringUtils.replace(this.iface, ".", "X") + "_security_mode"));
@@ -713,7 +714,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
         //SSID
         final TextView ssidView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ssid);
-        final String wlSsid = data.getProperty(this.iface + "_ssid", defaultValuesIfNotFound ? EMPTY_STRING : null);
+        final String wlSsid = data.getProperty(this.iface + "_ssid", defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (wlSsid != null) {
             this.wifiSsid = wlSsid;
             ssidView.setText(this.wifiSsid);
@@ -723,25 +724,25 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
         if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WEP) {
             final String wlPassword = data.getProperty(this.iface + "_passphrase",
-                    defaultValuesIfNotFound ? EMPTY_STRING : null);
+                    defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
             if (wlPassword != null) {
                 this.wifiPassword = wlPassword;
             }
         } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.WPA) {
             final String wlWpaPsk = data.getProperty(this.iface + "_wpa_psk",
-                    defaultValuesIfNotFound ? EMPTY_STRING : null);
+                    defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
             if (wlWpaPsk != null) {
                 this.wifiPassword = wlWpaPsk;
             }
         } else if (this.wifiEncryptionType == WirelessEncryptionTypeForQrCode.NONE) {
             this.wifiPassword = "";
         }
-//            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_STRING);
+//            this.wifiPassword = data.getProperty(this.iface + "_wpa_psk", EMPTY_VALUE_TO_DISPLAY);
 
         //Ifname
         final TextView ifnameView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_ifname);
         final String wlIfname = data.getProperty(this.iface + "_ifname",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (wlIfname != null) {
             ifnameView.setText(wlIfname);
         }
@@ -749,7 +750,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //MAC
         final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
         final String wlHwAddr = data.getProperty(this.iface + "_hwaddr",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (wlHwAddr != null) {
             hwAddr = data.getProperty(this.iface + "_hwaddr", "-");
             hwAddrView.setText(hwAddr);
@@ -765,7 +766,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Mode
         final TextView modeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mode);
         String property = data.getProperty(this.iface + "_mode",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (property != null) {
             modeView.setText(property.toUpperCase());
         }
@@ -773,7 +774,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Net Mode
         final TextView netModeView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_network);
         final String netmode = data.getProperty(this.iface + "_net_mode", data.getProperty(this.parentIface + "_net_mode",
-                defaultValuesIfNotFound ? EMPTY_STRING : null));
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (netmode != null) {
             final String mode;
             if ("disabled".equalsIgnoreCase(netmode)) {
@@ -809,7 +810,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Temperature
         final TextView temperatureView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_temperature);
         final String temperatureProperty = data.getProperty(this.iface + "_temperature", data.getProperty(this.parentIface + "_temperature",
-                defaultValuesIfNotFound ? EMPTY_STRING : null));
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (temperatureProperty != null) {
             temperatureView.setText(temperatureProperty);
         }
@@ -817,7 +818,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Channel
         final TextView channelView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_channel);
         final String channelProperty = data.getProperty(this.iface + "_channel", data.getProperty(this.parentIface + "_channel",
-                defaultValuesIfNotFound ? EMPTY_STRING : null));
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (channelProperty != null) {
             channelView.setText("0".equals(channelProperty) ? "Auto" : channelProperty);
         }
@@ -829,14 +830,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Rate
         final TextView rxRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_rate);
         final String rxRateProperty = data.getProperty(this.iface + "_rx_rate_human_readable",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (rxRateProperty != null) {
             rxRateView.setText(rxRateProperty);
         }
 
         final TextView txRateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_rate);
         final String txRateProperty = data.getProperty(this.iface + "_tx_rate_human_readable",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (txRateProperty != null) {
             txRateView.setText(txRateProperty);
         }
@@ -844,14 +845,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Packet Info
         final TextView rxPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_rx_packets);
         final String rxPacketsProperty = data.getProperty(this.iface + "_rx_packets",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (rxPacketsProperty != null) {
             rxPacketsView.setText(rxPacketsProperty);
         }
 
         final TextView txPacketsView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_packets);
         final String txPacketsProperty = data.getProperty(this.iface + "_tx_packets",
-                defaultValuesIfNotFound ? EMPTY_STRING : null);
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
         if (txPacketsProperty != null) {
             txPacketsView.setText(txPacketsProperty);
         }
@@ -859,7 +860,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //TX Power
         final TextView xmitView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_tx_power);
         final String txPwrProperty = data.getProperty(this.iface + "_txpwr", data.getProperty(this.parentIface + "_txpwr",
-                defaultValuesIfNotFound ? EMPTY_STRING : null));
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (txPwrProperty != null) {
             xmitView.setText(txPwrProperty);
         }
@@ -867,7 +868,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         //Noise
         final TextView noiseView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_noise_dBm);
         final String noiseProp = data.getProperty(this.iface + "_noise", data.getProperty(this.parentIface + "_noise",
-                defaultValuesIfNotFound ? EMPTY_STRING : null));
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null));
         if (noiseProp != null) {
             noiseView.setText(isNullOrEmpty(noiseProp) ? "-" : (noiseProp + " dBm"));
         }
