@@ -1219,8 +1219,7 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.ic_action_alert_warning)
                     .setMessage("Some settings have been updated. Do you want to save them?\n" +
-                            "If you choose to apply the new settings, your router will be rebooted, " +
-                            "and you might have to wait some time before connection is re-established.")
+                            "They will be applied right away.")
                     .setCancelable(true)
                     .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                         @Override

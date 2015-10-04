@@ -108,10 +108,10 @@ public abstract class DDWRTTile<T>
         this.mParentFragment = parentFragment;
         this.mParentFragmentActivity = this.mParentFragment.getActivity();
         mDao = RouterManagementActivity.getDao(mParentFragmentActivity);
-        this.mParentFragmentPreferences = (router != null ? this.mParentFragmentActivity
+        this.mParentFragmentPreferences = ((router != null && this.mParentFragmentActivity != null) ? this.mParentFragmentActivity
                 .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE) : null);
-        this.mGlobalPreferences = this.mParentFragmentActivity
-                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        this.mGlobalPreferences = (this.mParentFragmentActivity != null ? this.mParentFragmentActivity
+                .getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE) : null);
         this.mRouter = router;
         this.mSupportLoaderManager = this.mParentFragment.getLoaderManager();
         this.mFragmentArguments = arguments;

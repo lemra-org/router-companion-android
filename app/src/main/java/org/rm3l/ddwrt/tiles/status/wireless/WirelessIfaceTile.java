@@ -252,7 +252,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             .setProperty(wlIface + "_channel", String.valueOf(new Random().nextInt(100)))
                             .setProperty(wlIface + "_txpwr", String.valueOf(new Random().nextInt(100)))
                             .setProperty(wlIface + "_rate", String.valueOf(new Random().nextInt(100)))
-                            .setProperty(wlIface + "_akm", "psk psk2");
+                            .setProperty(wlIface + "_security_mode", "psk psk2");
                 }
 
                 final NVRAMInfo nvramInfo = new NVRAMInfo();
@@ -270,7 +270,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             wlIface + "_channel",
                             wlIface + "_txpwr",
                             wlIface + "_rate",
-                            wlIface + "_akm",
+                            wlIface + "_akm", //FIXME Useless?
                             wlIface + "_wpa_psk",
                             wlIface + "_security_mode",
                             wlIface + "_crypto",
@@ -664,7 +664,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
         //Encryption
         final TextView encryptionView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_encryption);
-        final String akm = data.getProperty(this.iface + "_akm");
+        final String akm = data.getProperty(this.iface + "_security_mode");
         String encryption = "-";
         if ("psk".equalsIgnoreCase(akm)) {
             encryption = "WPA Pre-shared Key";
