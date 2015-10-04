@@ -961,14 +961,18 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo> implements PopupMenu
         @Override
         public void onResultCode(int resultCode, Intent data) {
 
-            Log.d(LOG_TAG, "onResultCode: " + resultCode);
-            switch (resultCode) {
-                case Activity.RESULT_OK:
-                    //TODO
-                    break;
-                default:
-                    //Ignored
-                    break;
+            try {
+                Log.d(LOG_TAG, "onResultCode: " + resultCode);
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        //TODO
+                        break;
+                    default:
+                        //Ignored
+                        break;
+                }
+            } finally {
+                mWirelessSecurityFormOpened.set(false);
             }
         }
     }

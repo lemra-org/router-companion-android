@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,13 +39,18 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static android.widget.TextView.BufferType.EDITABLE;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessIfaceTile.WL_SECURITY_NVRAMINFO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.Utils.getHexString;
 
 /**
  * Created by rm3l on 29/09/15.
@@ -296,12 +303,161 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                     }
                 });
 
+        final EditText wepPassphraseKey1EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key1);
+        final EditText wepPassphraseKey2EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key2);
+        final EditText wepPassphraseKey3EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key3);
+        final EditText wepPassphraseKey4EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key4);
+
         final Button wepKeyGenerateButton = (Button) findViewById(R.id.wireless_security_settings_wep_passphrase_generate);
         wepKeyGenerateButton
                 .setOnClickListener(new View.OnClickListener() {
+
+                    @NonNull
+                    private String wep128Passphase(@NonNull final String passphrase) throws NoSuchAlgorithmException {
+                        String key = "";
+                        final MessageDigest md = MessageDigest.getInstance("MD5");
+                        md.reset();
+                        md.update(padto64(passphrase).getBytes(UTF_8));
+                        byte[] hash = md.digest();
+                        for(int i = 0; i < 13; ++i) {
+                            key += getHexString((short) hash[i]);
+                        }
+                        return key.toUpperCase();
+                    }
+
+                    @NonNull
+                    private String padto64(@Nullable String val) {
+                        if(val == null || val.isEmpty()) {
+                            return "";
+                        }
+
+                        String ret = "";
+                        for(int i = 0; i < (1 + (64 / (val.length()))); ++i) {
+                            ret += val;
+                        }
+
+                        return ret.substring(0, 64);
+                    }
+
                     @Override
                     public void onClick(View v) {
-                        //FIXME
+                        //Mimic'ing the behavior of the built-in WEP key generator
+                        //cf. http://svn.dd-wrt.com/browser/src/router/httpd/validate/wepkey.c
+                        //cf. https://github.com/crockpotveggies/VeggieRecipies/blob/master/VeggieRecipies/src/it/evilsocket/dsploit/wifi/algorithms/OnoKeygen.java
+
+                        final String wepPassphrase = ((EditText) findViewById(R.id.wireless_security_settings_wep_passphrase))
+                                .getText().toString();
+                        //WEP Bit: 64 or 128
+                        final String wepBitStr = wepEncryptionValues.inverse().get(
+                                ((Spinner) findViewById(R.id.wireless_security_settings_wep_encryption)).getSelectedItemPosition());
+                        if (wepBitStr == null || wepBitStr.isEmpty()) {
+                            Toast.makeText(EditWirelessSecuritySettingsActivity.this,
+                                    "Internal Error - please try again later.", Toast.LENGTH_LONG)
+                                    .show();
+                            return;
+                        }
+                        final int wepBit;
+                        try {
+                            wepBit = Integer.parseInt(wepBitStr);
+                        } catch (final NumberFormatException e) {
+                            Toast.makeText(EditWirelessSecuritySettingsActivity.this,
+                                    "Internal Error - please try again later.", Toast.LENGTH_LONG)
+                                    .show();
+                            e.printStackTrace();
+                            Utils.reportException(e);
+                            return;
+                        }
+
+                        final int[] pseed = new int[] {0,0,0,0};
+
+                        int randNumber;
+                        char[][] key128 = new char[4][14];
+                        char[][] key64 = new char[4][5];
+
+                        switch (wepBit) {
+                            case 64:
+                            {
+                                try {
+                                    /*
+                                     * generate seed for random number generator using key string...
+                                     */
+                                    for (int i = 0; i < wepPassphrase.length(); i++) {
+                                        pseed[i % 4] ^= (int) wepPassphrase.charAt(i);
+                                    }
+
+                                    /*
+                                     * init PRN generator... note that this is equivalent to the
+                                     * Microsoft srand() function.
+                                     */
+                                    randNumber = pseed[0] | (pseed[1] << 8) | (pseed[2] << 16) | (pseed[3] << 24);
+                                    short tmp;
+
+                                    /*
+                                     * generate keys.
+                                     */
+                                    for (int i = 0; i < 4; i++) {
+                                        String key = "";
+                                        for (int j = 0; j < 5; j++) {
+                                            //noinspection PointlessBitwiseExpression
+                                            randNumber = (randNumber * 0x343fd + 0x269ec3) & 0xffffffff;
+                                            tmp = (short) ((randNumber >> 16) & 0xff);
+                                            key += getHexString(tmp).toUpperCase();
+                                        }
+                                        key64[i] = key.toCharArray();
+                                    }
+
+                                    wepPassphraseKey1EditText.setText(String.valueOf(key64[0]), EDITABLE);
+                                    wepPassphraseKey2EditText.setText(String.valueOf(key64[1]), EDITABLE);
+                                    wepPassphraseKey3EditText.setText(String.valueOf(key64[2]), EDITABLE);
+                                    wepPassphraseKey4EditText.setText(String.valueOf(key64[3]), EDITABLE);
+
+                                    Utils.hideSoftKeyboard(EditWirelessSecuritySettingsActivity.this);
+
+                                } catch (Exception e) {
+                                    Toast.makeText(EditWirelessSecuritySettingsActivity.this,
+                                            "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                    Utils.reportException(e);
+                                }
+
+                            }
+                                break;
+                            case 128:
+                            {
+                                try {
+
+                                    String str = wepPassphrase;
+                                    key128[0] = wep128Passphase(str).toCharArray();
+
+                                    str += "#$%";
+                                    key128[1] = wep128Passphase(str).toCharArray();
+
+                                    str += "!@#";
+                                    key128[2] = wep128Passphase(str).toCharArray();
+
+                                    str += "%&^";
+                                    key128[3] = wep128Passphase(str).toCharArray();
+
+                                    wepPassphraseKey1EditText.setText(String.valueOf(key128[0]), EDITABLE);
+                                    wepPassphraseKey2EditText.setText(String.valueOf(key128[1]), EDITABLE);
+                                    wepPassphraseKey3EditText.setText(String.valueOf(key128[2]), EDITABLE);
+                                    wepPassphraseKey4EditText.setText(String.valueOf(key128[3]), EDITABLE);
+
+                                    Utils.hideSoftKeyboard(EditWirelessSecuritySettingsActivity.this);
+
+                                } catch (Exception e) {
+                                    Toast.makeText(EditWirelessSecuritySettingsActivity.this,
+                                            "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                    Utils.reportException(e);
+                                }
+                            }
+                                break;
+                            default:
+                                //Error
+                                Utils.reportException(new IllegalStateException("Illegal wepBit: " + wepBit));
+                                break;
+                        }
                     }
                 });
 
@@ -337,7 +493,6 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
             }
         });
 
-        final EditText wepPassphraseKey1EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key1);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_key1_show_checkbox))
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -352,7 +507,6 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                     }
                 });
 
-        final EditText wepPassphraseKey2EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key2);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_key2_show_checkbox))
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -367,7 +521,6 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                     }
                 });
 
-        final EditText wepPassphraseKey3EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key3);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_key3_show_checkbox))
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -382,7 +535,6 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                     }
                 });
 
-        final EditText wepPassphraseKey4EditText = (EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key4);
         ((CheckBox) findViewById(R.id.wireless_security_settings_wep_passphrase_key4_show_checkbox))
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override

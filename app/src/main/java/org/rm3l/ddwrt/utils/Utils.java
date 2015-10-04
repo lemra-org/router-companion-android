@@ -56,6 +56,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -91,6 +92,7 @@ import io.doorbell.android.Doorbell;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
@@ -110,6 +112,11 @@ public final class Utils {
     public static final Random RANDOM = new Random();
 
     private static AtomicLong nextLoaderId = new AtomicLong(1);
+
+    static final byte[] HEX_CHAR_TABLE = {(byte) '0', (byte) '1', (byte) '2',
+            (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
+            (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c',
+            (byte) 'd', (byte) 'e', (byte) 'f'};
 
     private Utils() {
     }
@@ -616,6 +623,54 @@ public final class Utils {
                 .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
                 .text(R.string.app_rate)
                 .checkAndShow();
+    }
+
+    public static String getHexString(byte[] raw) {
+        byte[] hex = new byte[2 * raw.length];
+        int index = 0;
+
+        for(byte b : raw){
+            int v = b & 0xFF;
+            hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+            hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+        }
+        return new String(hex, UTF_8);
+    }
+
+    public static String getHexString(short[] raw) {
+        byte[] hex = new byte[2 * raw.length];
+        int index = 0;
+
+        for(short b : raw){
+            int v = b & 0xFF;
+            hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+            hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+        }
+        return new String(hex, UTF_8);
+    }
+
+    public static String getHexString(short raw){
+        byte[] hex = new byte[2];
+        int v = raw & 0xFF;
+        hex[0] = HEX_CHAR_TABLE[v >>> 4];
+        hex[1] = HEX_CHAR_TABLE[v & 0xF];
+        return new String(hex, UTF_8);
+    }
+
+    public static void hideSoftKeyboard(@Nullable final Activity activity) {
+        if (activity == null) {
+            return;
+        }
+        final InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager == null) {
+            return;
+        }
+        final View currentFocus = activity.getCurrentFocus();
+        if (currentFocus == null) {
+            return;
+        }
+        inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
     }
 
     protected static final class BugReportException extends DDWRTCompanionException {
