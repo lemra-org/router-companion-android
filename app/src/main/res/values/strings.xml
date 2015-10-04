@@ -443,6 +443,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wireless_iface_noise_dBm">Noise</string>
     <string name="wireless_iface_rate">Rate</string>
     <string name="wireless_iface_encryption">Encryption</string>
+    <string name="wireless_iface_security_mode">Security Mode</string>
     <string name="syslog">Syslog</string>
     <string name="enabled_disabled">Enabled Disabled</string>
     <string name="find">Find</string>

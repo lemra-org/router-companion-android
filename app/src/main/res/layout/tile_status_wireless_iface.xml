@@ -500,12 +500,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/loading" />
 
 
-                    <!-- Encryption -->
+                    <!-- Security Mode -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:text="@string/wireless_iface_encryption"
+                        android:text="@string/wireless_iface_security_mode"
                         android:textStyle="bold" />
 
                     <TextView
