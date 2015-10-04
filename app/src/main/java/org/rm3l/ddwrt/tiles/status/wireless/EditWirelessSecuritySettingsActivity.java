@@ -453,6 +453,7 @@ public class EditWirelessSecuritySettingsActivity extends ActionBarActivity {
                                 }
                             }
                                 break;
+
                             default:
                                 //Error
                                 Utils.reportException(new IllegalStateException("Illegal wepBit: " + wepBit));
