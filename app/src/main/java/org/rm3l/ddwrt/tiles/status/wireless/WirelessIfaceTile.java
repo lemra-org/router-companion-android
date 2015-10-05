@@ -1111,14 +1111,16 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             }
                             new SetNVRAMVariablesAction(mParentFragmentActivity,
                                     nvramInfo,
-                                    false,
+                                    true,
                                     this,
-                                    mGlobalPreferences,
-                                    /*
-                                    # the next few lines will restart the interface,
-                                    # which simulates the save and apply buttons in the webGUI
-                                     */
-                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )")
+                                    mGlobalPreferences
+//                                    ,
+//                                    /*
+//                                    # the next few lines will restart the interface,
+//                                    # which simulates the save and apply buttons in the webGUI
+//                                     */
+//                                    "( /sbin/stopservice wan || true ) && sleep 2 && ( /sbin/startservice wan || true )"
+                                    )
                                     .execute(mRouter);
                             break;
                         default:
