@@ -168,8 +168,13 @@ public class WirelessIfacesTile extends IfacesTile {
 
                         Log.d(TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
                         try {
-                            mWirelessIfaceTile.buildView(
-                                    mWirelessIfaceTileLoader.loadInBackground());
+                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mWirelessIfaceTile.buildView(
+                                            mWirelessIfaceTileLoader.loadInBackground());
+                                }
+                            });
                             allViewsBuilt &= true;
                         } catch (final Exception e) {
                             Utils.reportException(e);
