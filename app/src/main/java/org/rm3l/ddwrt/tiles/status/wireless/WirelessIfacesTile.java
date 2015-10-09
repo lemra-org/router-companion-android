@@ -68,6 +68,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
     private static final String TAG = WirelessIfacesTile.class.getSimpleName();
     public static final String WL_RADIO = "WL_RADIO";
+    public static final String WL_NO_OUTPUT = "WL_NO_OUTPUT";
 
     @NonNull
     private List<WirelessIfaceTile> mWirelessIfaceTiles = new CopyOnWriteArrayList<>();
@@ -102,9 +103,11 @@ public class WirelessIfacesTile extends IfacesTile {
                         final String[] wlRadioOutput = SSHUtils
                                 .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                         //On = 0x0000 and off = 0x0001
-                                        "/usr/sbin/wl radio 2>&1");
-                        if (wlRadioOutput != null && wlRadioOutput.length > 0) {
-                            nvramInfo.setProperty(WL_RADIO, "0x0000".equals(wlRadioOutput[0]) ? "1" : "0");
+                                        "/usr/sbin/wl radio 2>/dev/null || /usr/sbin/wl_atheros radio 2>/dev/null");
+                        if (wlRadioOutput != null) {
+                            nvramInfo.setProperty(WL_RADIO,
+                                    (wlRadioOutput.length > 0) ?
+                                            ("0x0000".equals(wlRadioOutput[0]) ? "1" : "0") : WL_NO_OUTPUT);
                         }
                     }
                 } catch (Exception e) {
@@ -251,8 +254,9 @@ public class WirelessIfacesTile extends IfacesTile {
             preliminaryCheckException = new DDWRTNoDataException("No Data!");
         } else //noinspection ThrowableResultOfMethodCallIgnored
             if (data.getException() == null) {
-                final String pptpdServerEnabled = data.getProperty(WL_RADIO);
-                if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
+                final String wlRadioEnabled = data.getProperty(WL_RADIO);
+
+                if (wlRadioEnabled == null || !Arrays.asList(WL_NO_OUTPUT, "0", "1").contains(wlRadioEnabled)) {
                     //noinspection ThrowableInstanceNeverThrown
                     preliminaryCheckException = new DDWRTNoDataException("Unknown state");
                 }
@@ -282,6 +286,14 @@ public class WirelessIfacesTile extends IfacesTile {
             }
 
             enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
+        }
+
+        if (data != null && data.getData() != null) {
+            if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
+                enableRadioButton.setVisibility(View.GONE);
+            } else {
+                enableRadioButton.setVisibility(View.VISIBLE);
+            }
         }
 
         if (preliminaryCheckException != null) {
