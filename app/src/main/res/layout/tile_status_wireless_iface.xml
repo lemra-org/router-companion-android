@@ -144,6 +144,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:singleLine="false"
                         android:text="@string/loading" />
 
+                    <!-- Iface State -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/iface_state"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/tile_status_wireless_iface_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:checked="false"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
                     <!-- Radio : disabled for now-->
                     <TextView
                         android:layout_width="wrap_content"
@@ -173,7 +199,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:singleLine="false"
                         android:visibility="gone"/>
 
-                    <!-- Ifname -->
+                    <!-- SSID -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

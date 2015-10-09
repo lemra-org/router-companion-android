@@ -712,4 +712,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wpa_algorithms">WPA Algorithms</string>
     <string name="mac_format">MAC Format</string>
     <string name="encryption">Encryption</string>
+    <string name="iface_state">Interface State</string>
 </resources>

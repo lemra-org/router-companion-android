@@ -45,7 +45,8 @@ public enum RouterAction {
     DELETE_WAN_TRAFF("Delete WAN Monthly Traffic"),
     TOGGLE_WL_RADIO("Toggle Wireless Radio"),
     DHCP_RELEASE("DHCP Release"),
-    DHCP_RENEW("DHCP Renew");
+    DHCP_RENEW("DHCP Renew"),
+    TOGGLE_PHY_IFACE_STATE("Toggle Physical Interface State");
 
     private final String displayName;
 

@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -59,6 +60,8 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
+import org.rm3l.ddwrt.actions.TogglePhysicalInterfaceStateRouterAction;
+import org.rm3l.ddwrt.actions.TogglePhysicalInterfaceStateRouterAction.PhysicalInterfaceState;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
@@ -74,6 +77,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,6 +85,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -110,12 +115,17 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     public static final String IFACE = "iface";
     public static final String PARENT_IFACE = "parent_iface";
     public static final String WL_SECURITY_NVRAMINFO = "WL_SECURITY_NVRAMINFO";
+    public static final String IFACE_STATE = "_iface_state";
+    public static final String PHYSICAL_IFACE_STATE_ACTION = "PHYSICAL_IFACE_STATE_ACTION";
 
     @NonNull
     private final String iface;
 
     @Nullable
     private final String parentIface;
+
+    @Nullable
+    private String phyIface;
 
     @Nullable
     private String wifiSsid;
@@ -300,8 +310,49 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     nvramInfo.setProperty(WIRELESS_IFACE + (wlIface.equals(parentIface) ? "_parent" : ""),
                             wlIface);
 
+                    final List<String> activePhysicalIfacesList = new CopyOnWriteArrayList<>();
+                    //Get list of active physical ifaces
+                    final String[] ifconfigResultActive = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                            mGlobalPreferences,
+                            "/sbin/ifconfig | grep 'Link' | awk '{print $1}'");
+                    if (ifconfigResultActive != null && ifconfigResultActive.length > 0) {
+                        for (final String ifconfigActive : ifconfigResultActive) {
+                            if (ifconfigActive == null || ifconfigActive.isEmpty()) {
+                                continue;
+                            }
+                            activePhysicalIfacesList.add(ifconfigActive.trim());
+                        }
+                    }
+
+                    final List<String> allPhysicalIfacesList = new CopyOnWriteArrayList<>();
+                    //Get list of active physical ifaces
+                    final String[] ifconfigResultAll = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                            mGlobalPreferences,
+                            "/sbin/ifconfig -a | grep 'Link' | awk '{print $1}'");
+                    if (ifconfigResultAll != null && ifconfigResultAll.length > 0) {
+                        for (final String ifconfigAll : ifconfigResultAll) {
+                            if (ifconfigAll == null || ifconfigAll.isEmpty()) {
+                                continue;
+                            }
+                            allPhysicalIfacesList.add(ifconfigAll.trim());
+                        }
+                    }
+
                     //Set Temp, RX and TX Network Bandwidths on Physical Interface
-                    final String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
+                    String phyIface = nvramInfo.getProperty(wlIface + "_ifname");
+                    if (isNullOrEmpty(phyIface)) {
+                        //Determine if current iface is actually a physical interface
+                        if (allPhysicalIfacesList.contains(wlIface)) {
+                            phyIface = wlIface;
+                            nvramInfo.setProperty(wlIface + "_ifname", wlIface);
+                        }
+                    }
+
+                    nvramInfo.setProperty(wlIface + IFACE_STATE,
+                            activePhysicalIfacesList.contains(phyIface) ? "Up" : "Down");
+
+                    WirelessIfaceTile.this.phyIface = phyIface;
+
                     if (!isNullOrEmpty(phyIface)) {
 
                         try {
@@ -747,6 +798,14 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             ifnameView.setText(wlIfname);
         }
 
+        //Iface State
+        final TextView ifaceStateView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_state);
+        final String phyIfaceState = data.getProperty(this.iface + IFACE_STATE,
+                defaultValuesIfNotFound ? EMPTY_VALUE_TO_DISPLAY : null);
+        if (phyIfaceState != null) {
+            ifaceStateView.setText(phyIfaceState);
+        }
+
         //MAC
         final TextView hwAddrView = (TextView) this.layout.findViewById(R.id.tile_status_wireless_iface_mac_address);
         final String wlHwAddr = data.getProperty(this.iface + "_hwaddr",
@@ -889,7 +948,8 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         final String routerUuid = mRouter.getUuid();
-        switch (item.getItemId()) {
+        final int itemId = item.getItemId();
+        switch (itemId) {
             case R.id.tile_status_wireless_iface_qrcode: {
                 if (wifiEncryptionType == null || (isNullOrEmpty(wifiSsid) && wifiPassword == null)) {
                     //menu item should have been disabled, but anyways, you never know :)
@@ -933,6 +993,97 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 }
 
                 //TODO
+            }
+                return true;
+            case R.id.tile_status_wireless_iface_set_up:
+            case R.id.tile_status_wireless_iface_set_down: {
+                if (Strings.isNullOrEmpty(phyIface)) {
+                    Utils.displayMessage(mParentFragmentActivity,
+                            "Could not determine physical interface at this time - please try again later",
+                            Style.ALERT);
+                    return true;
+                }
+                final Bundle token = new Bundle();
+                final PhysicalInterfaceState physicalInterfaceState = itemId == R.id.tile_status_wireless_iface_set_up ?
+                        PhysicalInterfaceState.UP :
+                        PhysicalInterfaceState.DOWN;
+
+                token.putSerializable(PHYSICAL_IFACE_STATE_ACTION,
+                        physicalInterfaceState);
+
+                new UndoBarController.UndoBar(mParentFragmentActivity)
+                        .message(
+                                String.format(
+                                        "Bringing %s physical interface %s (backing wireless network '%s').",
+                                        physicalInterfaceState.toString().toLowerCase(),
+                                        phyIface,
+                                        wifiSsid))
+                        .listener(new UndoBarController.AdvancedUndoListener() {
+
+                            @Override
+                            public void onUndo(@Nullable Parcelable token) {
+                                //Nothing to do
+                            }
+
+                            @Override
+                            public void onHide(@Nullable Parcelable parcelable) {
+                                if (parcelable instanceof Bundle) {
+                                    final Bundle token = (Bundle) parcelable;
+
+                                    try {
+                                        final Serializable phyInterfaceStateSer = token.getSerializable(PHYSICAL_IFACE_STATE_ACTION);
+                                        Log.d(LOG_TAG, "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
+                                        if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
+                                            return;
+                                        }
+
+                                        final PhysicalInterfaceState interfaceState =
+                                                (PhysicalInterfaceState) phyInterfaceStateSer;
+
+                                        new TogglePhysicalInterfaceStateRouterAction(mParentFragmentActivity,
+                                                new RouterActionListener() {
+                                                    @Override
+                                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                                                        Utils.displayMessage(mParentFragmentActivity,
+                                                                "Physical Interface '" + phyIface + "' (for wireless network '" +
+                                                                        wifiSsid + "') is now '" + interfaceState + "'",
+                                                                Style.CONFIRM);
+                                                        // Update info right away
+                                                        //Run on main thread to avoid the exception:
+                                                        //"Only the original thread that created a view hierarchy can touch its views."
+                                                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                ((TextView) layout.findViewById(R.id.tile_status_wireless_iface_state))
+                                                                        .setText(StringUtils.capitalize(interfaceState.toString().toLowerCase()));
+                                                            }
+                                                        });
+                                                    }
+
+                                                    @Override
+                                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                                        Utils.displayMessage(mParentFragmentActivity,
+                                                                String.format("Error: %s", ExceptionUtils.getRootCauseMessage(exception)),
+                                                                Style.ALERT);
+                                                    }
+                                                },
+                                                mGlobalPreferences,
+                                                phyIface,
+                                                interfaceState)
+                                            .execute(mRouter);
+                                    } catch (IllegalArgumentException | NullPointerException | IllegalStateException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onClear(@NonNull Parcelable[] token) {
+                                //Nothing to do
+                            }
+                        })
+                        .token(token)
+                        .show();
             }
                 return true;
             case R.id.tile_status_wireless_iface_security: {

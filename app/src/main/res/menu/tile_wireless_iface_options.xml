@@ -23,6 +23,28 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/tile_status_wireless_iface_state"
+        android:orderInCategory="1"
+        android:title="Interface State"
+        app:showAsAction="never" >
+
+        <menu>
+            <item
+                android:id="@+id/tile_status_wireless_iface_set_up"
+                android:orderInCategory="1"
+                android:title="Bring Up"
+                app:showAsAction="ifRoom" />
+
+            <item
+                android:id="@+id/tile_status_wireless_iface_set_down"
+                android:orderInCategory="2"
+                android:title="Bring Down"
+                app:showAsAction="ifRoom" />
+        </menu>
+
+    </item>
+
+    <item
         android:id="@+id/tile_status_wireless_iface_security"
         android:orderInCategory="1"
         android:title="Security"
