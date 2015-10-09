@@ -289,10 +289,19 @@ public class WirelessIfacesTile extends IfacesTile {
         }
 
         if (data != null && data.getData() != null) {
+            final View enableRadioTitle =
+                    layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_title);
+            final View enableRadioSep =
+                    layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_sep);
+
             if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
                 enableRadioButton.setVisibility(View.GONE);
+                enableRadioTitle.setVisibility(View.GONE);
+                enableRadioSep.setVisibility(View.GONE);
             } else {
                 enableRadioButton.setVisibility(View.VISIBLE);
+                enableRadioTitle.setVisibility(View.VISIBLE);
+                enableRadioSep.setVisibility(View.VISIBLE);
             }
         }
 

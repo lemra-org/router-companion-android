@@ -169,6 +169,19 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                     continue;
                 }
 
+                //Check that iface has a "Security Mode" explicitly set (at least "disabled")
+                final String securityModeKeyword = (landev + "_security_mode");
+                final NVRAMInfo securityModeFromNvram = SSHUtils.getNVRamInfoFromRouter(
+                        activity,
+                        router,
+                        sharedPreferences,
+                        securityModeKeyword);
+                if (securityModeFromNvram == null ||
+                        Strings.isNullOrEmpty(securityModeFromNvram.getProperty(securityModeKeyword))) {
+                    //Ignore iface
+                    continue;
+                }
+
                 tiles.add(new WirelessIfaceTile(landev, parentFragment, args, router));
                 //Also get Virtual Interfaces
                 try {
