@@ -22,7 +22,7 @@
 
 package org.rm3l.ddwrt.tiles;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,11 +36,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -363,10 +361,15 @@ public abstract class DDWRTTile<T>
                 } else {
                     final String dialogMsg = onClickIntentAndListener.getDialogMessage();
                     //noinspection ConstantConditions
-                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                            Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                    final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                            Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
+//                    alertDialog.show();
+//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//
+                    final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+                            "Opening tile details",
+                            Strings.isNullOrEmpty(dialogMsg) ? "Please Wait..." : dialogMsg,
+                            true);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -380,10 +383,14 @@ public abstract class DDWRTTile<T>
             } else {
                 final String dialogMsg = onClickIntentAndListener.getDialogMessage();
                 //noinspection ConstantConditions
-                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                        Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                        Strings.isNullOrEmpty(dialogMsg) ? "Loading detailed view..." : dialogMsg, false, false);
+//                alertDialog.show();
+//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+                        "Opening tile details",
+                        Strings.isNullOrEmpty(dialogMsg) ? "Please Wait..." : dialogMsg,
+                        true);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

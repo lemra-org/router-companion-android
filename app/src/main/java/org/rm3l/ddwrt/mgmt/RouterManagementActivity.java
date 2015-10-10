@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -781,9 +782,11 @@ public class RouterManagementActivity
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                 } else {
-                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-                    alertDialog.show();
-                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                    alertDialog.show();
+//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                    final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
+                            "Loading Router details", "Please wait...", true);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -794,9 +797,11 @@ public class RouterManagementActivity
                 }
 
             } else {
-                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-                alertDialog.show();
-                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                alertDialog.show();
+//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
+                        "Loading Router details", "Please wait...", true);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

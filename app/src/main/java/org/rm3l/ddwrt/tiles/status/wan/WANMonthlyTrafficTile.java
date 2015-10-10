@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.tiles.status.wan;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -633,10 +634,15 @@ public class WANMonthlyTrafficTile
                         intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
 
                         //noinspection ConstantConditions
-                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
+//                        alertDialog.show();
+//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+
+                        final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
+                                true);
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {

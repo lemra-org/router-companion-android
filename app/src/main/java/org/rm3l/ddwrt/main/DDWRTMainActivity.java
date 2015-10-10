@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.main;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -597,10 +598,12 @@ public class DDWRTMainActivity extends ActionBarActivity
                             mInterstitialAd.show();
                         } else {
                             //Reload UI
-                            final AlertDialog alertDialog = Utils.
-                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                            alertDialog.show();
-                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                            final AlertDialog alertDialog = Utils.
+//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                            alertDialog.show();
+//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                    "Switching Routers", "Please wait...", true);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -613,10 +616,12 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                     } else {
                         //Reload UI
-                        final AlertDialog alertDialog = Utils.
-                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                        final AlertDialog alertDialog = Utils.
+//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                        alertDialog.show();
+//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                "Switching Routers", "Please wait...", true);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -1574,10 +1579,12 @@ public class DDWRTMainActivity extends ActionBarActivity
                                     mInterstitialAd.show();
                                 } else {
                                     //Reload UI
-                                    final AlertDialog alertDialog = Utils.
-                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                    alertDialog.show();
-                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                    final AlertDialog alertDialog = Utils.
+//                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                                    alertDialog.show();
+                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                            "Switching Routers", "Please wait...", true);
+//                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
@@ -1590,10 +1597,12 @@ public class DDWRTMainActivity extends ActionBarActivity
 
                             } else {
                                 //Reload UI
-                                final AlertDialog alertDialog = Utils.
-                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-                                alertDialog.show();
-                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                final AlertDialog alertDialog = Utils.
+//                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                                alertDialog.show();
+//                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                        "Switching Routers", "Please wait...", true);
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {

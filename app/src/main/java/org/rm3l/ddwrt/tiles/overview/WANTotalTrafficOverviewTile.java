@@ -1,6 +1,6 @@
 package org.rm3l.ddwrt.tiles.overview;
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -346,10 +345,14 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                     ImmutableMap.copyOf(mCurrentTraffMonthlyData));
 
                             //noinspection ConstantConditions
-                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
-                            alertDialog.show();
-                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+//                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
+//                            alertDialog.show();
+//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+
+                            final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+                                    String.format("Loading traffic data for '%s'", currentMonth), "Please Wait...",
+                                    true);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
