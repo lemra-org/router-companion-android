@@ -26,4 +26,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:background="?attr/colorPrimary"
     android:minHeight="?attr/actionBarSize">
 
+    <Spinner
+        android:id="@+id/toolbar_routers_list_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"/>
+
 </android.support.v7.widget.Toolbar>

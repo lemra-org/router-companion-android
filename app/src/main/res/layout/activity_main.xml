@@ -43,43 +43,53 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Left drawer: made up of the Routers Picker Spinner, and the actual nav. drawer -->
-        <LinearLayout
-            android:layout_width="240dp"
+        <!-- Left Navigation Drawer -->
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:orientation="vertical">
+            android:background="#151515"
+            android:choiceMode="singleChoice"
+            android:dividerHeight="0dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@drawable/router_picker_background"
-                android:orientation="vertical">
-                <TextView
-                    style="?android:textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/routers"
-                    android:textColor="@color/primary_material_light" />
+        <!--&lt;!&ndash; Left drawer: made up of the Routers Picker Spinner, and the actual nav. drawer &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="240dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:orientation="vertical">-->
 
-                <Spinner
-                    android:id="@+id/left_drawer_routers_dropdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start" />
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:background="@drawable/router_picker_background"-->
+                <!--android:orientation="vertical">-->
+                <!--<TextView-->
+                    <!--style="?android:textAppearanceLarge"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/routers"-->
+                    <!--android:textColor="@color/primary_material_light" />-->
 
-            <!-- Left Navigation Drawer -->
-            <ListView
-                android:id="@+id/left_drawer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:background="#151515"
-                android:choiceMode="singleChoice"
-                android:dividerHeight="0dp" />
+                <!--<Spinner-->
+                    <!--android:id="@+id/left_drawer_routers_dropdown"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start" />-->
+            <!--</LinearLayout>-->
 
-        </LinearLayout>
+            <!--&lt;!&ndash; Left Navigation Drawer &ndash;&gt;-->
+            <!--<ListView-->
+                <!--android:id="@+id/left_drawer"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="start"-->
+                <!--android:background="#151515"-->
+                <!--android:choiceMode="singleChoice"-->
+                <!--android:dividerHeight="0dp" />-->
+
+        <!--</LinearLayout>-->
 
     </android.support.v4.widget.DrawerLayout>
 
