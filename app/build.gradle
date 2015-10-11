@@ -112,6 +112,9 @@ def getVersionName(String flavorName) {
 
 android {
 
+    //This is for Doorbell, still using Legacy Apache HTTP, the support of which has been dropped in Android 6
+    useLibrary 'org.apache.http.legacy'
+
     tracepotConfig {
         apiGroupKey "26ccfd6824334b879a2ed6a1f87b7891"
         enabledFor "release", "google", "fdroid", "amazon",
