@@ -22,11 +22,13 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,6 +42,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
@@ -1137,25 +1140,30 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         });
 
                         try {
-                            final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
-                            mUsageDbBackupPath = file.getAbsolutePath();
-                            Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+                            if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                                    PackageManager.PERMISSION_GRANTED) {
 
-                            //Compute checksum of remote script, and see if usage DB exists remotely
-                            final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
-                                    .getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                                            "[ -f " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " ] && " +
-                                                    "md5sum " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " | awk '{print $1}'",
-                                            "[ -f " + USAGE_DB + " ]; echo $?");
-                            if (remoteMd5ChecksumAndUsageDBCheckOutput != null && remoteMd5ChecksumAndUsageDBCheckOutput.length > 1) {
-                                remoteChecksum = nullToEmpty(remoteMd5ChecksumAndUsageDBCheckOutput[0]).trim();
-                                final String doesUsageDataExistRemotely = remoteMd5ChecksumAndUsageDBCheckOutput[1];
-                                Log.d(LOG_TAG, "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
-                                if (doesUsageDataExistRemotely != null &&
-                                        file.exists() &&
-                                        !"0".equals(doesUsageDataExistRemotely.trim())) {
-                                    //Usage Data File does not exist - restore what we have on file (if any)
-                                    SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                                final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
+                                mUsageDbBackupPath = file.getAbsolutePath();
+                                Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+
+                                //Compute checksum of remote script, and see if usage DB exists remotely
+                                final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
+                                        .getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                                "[ -f " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " ] && " +
+                                                        "md5sum " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " | awk '{print $1}'",
+                                                "[ -f " + USAGE_DB + " ]; echo $?");
+                                if (remoteMd5ChecksumAndUsageDBCheckOutput != null && remoteMd5ChecksumAndUsageDBCheckOutput.length > 1) {
+                                    remoteChecksum = nullToEmpty(remoteMd5ChecksumAndUsageDBCheckOutput[0]).trim();
+                                    final String doesUsageDataExistRemotely = remoteMd5ChecksumAndUsageDBCheckOutput[1];
+                                    Log.d(LOG_TAG, "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
+                                    if (doesUsageDataExistRemotely != null &&
+                                            file.exists() &&
+                                            !"0".equals(doesUsageDataExistRemotely.trim())) {
+                                        //Usage Data File does not exist - restore what we have on file (if any)
+                                        SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                                    }
                                 }
                             }
 
@@ -1361,7 +1369,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     Log.d(LOG_TAG, "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
                     if (!disableBackup) {
                         try {
-                            if (!isNullOrEmpty(mUsageDbBackupPath)) {
+                            if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                                    PackageManager.PERMISSION_GRANTED &&
+                                    !isNullOrEmpty(mUsageDbBackupPath)) {
                                 //Backup to new data file
                                 synchronized (usageDataLock) {
                                     if (SSHUtils

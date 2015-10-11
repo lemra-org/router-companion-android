@@ -24,6 +24,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:tools="http://schemas.android.com/tools"
     package="org.rm3l.ddwrt" >
 
+    <!-- "Normal Permission" -->
     <!-- To connect to the router, and donation providers such as Flattr, as well as Feedback Server -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!--
@@ -32,11 +33,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     -->
     <!-- <uses-permission android:name="com.android.vending.BILLING" /> -->
 
-
     <!-- To get DhcpInfo, so as to default forms with the current gateway -->
+    <!-- "Normal Permission" -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- "Normal Permission" -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!-- /!\ "Dangerous Permission" -->
     <!-- Saving router usage DB -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -45,11 +48,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
-    <!-- ACRA Error Reporting, if the user accepts to send their device IDs -->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-
+    <!-- "Normal Permission" -->
     <!-- For background service notifications -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- "Normal Permission" -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- For Samsung SDK -->
@@ -57,16 +59,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
     <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
 
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <!--<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>-->
 
-    <!-- This is a situation where we want a dependency but
+    <!--
+    This is a situation where we want a dependency but
     not the permissions that the dependency wants.
-     Some of those permissions come from Google Play Services dependency. They
-     are not necessary for the app itself, but are added by the Manifest Merger. So remove them. -->
+    Some of those permissions come from Google Play Services dependency. They
+    are not necessary for the app itself, but are added by the Manifest Merger. So remove them.
+    -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" tools:node="remove" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" tools:node="remove" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
+        tools:node="remove" />
 
     <application
         android:name=".DDWRTApplication"

@@ -1090,6 +1090,11 @@ public class RouterManagementActivity
 
     }
 
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+    }
+
     private void myToggleSelection(int idx) {
         if (actionMode == null) {
             return;

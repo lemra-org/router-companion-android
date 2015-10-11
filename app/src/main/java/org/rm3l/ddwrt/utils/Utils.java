@@ -65,6 +65,7 @@ import com.google.common.collect.Lists;
 
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
@@ -292,10 +293,16 @@ public final class Utils {
 
     public static void displayUpgradeMessage(@NonNull final Context ctx, @Nullable final String featureTitle,
                                              @NonNull final String message) {
+
+        final String dialogMsg =
+                (StringUtils.replace(message, "Thank you for supporting this initiative!", "") +
+                        "More details on https://goo.gl/QnJB01\n\n" +
+                        "Thank you for supporting this initiative!");
+
         //Download the full version to unlock this version
         new AlertDialog.Builder(ctx)
                 .setTitle(featureTitle)
-                .setMessage(message)
+                .setMessage(dialogMsg)
                 .setCancelable(true)
                 .setPositiveButton("Upgrade!", new DialogInterface.OnClickListener() {
                     @Override

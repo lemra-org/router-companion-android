@@ -130,8 +130,8 @@ android {
         }
     }
 
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -161,7 +161,7 @@ android {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 23
         // Enabling multidex support.
 //        multiDexEnabled true
         // Fetch the version according to git latest tag and "how far are we from last tag"
@@ -347,11 +347,11 @@ dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'ch.acra:acra:4.6.1'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:cardview-v7:21.0.2'
-    compile 'com.android.support:recyclerview-v7:21.0.2'
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.cocosw:undobar:1.8.1@aar'
     compile 'com.google.zxing:core:3.1.0'
     compile 'com.github.curioustechizen.android-ago:library:1.2.0'
@@ -360,8 +360,6 @@ dependencies {
     compile 'io.doorbell:android-sdk:0.2.3@aar'
     compile 'com.google.android.gms:play-services-ads:7.5.0'
     compile 'fr.nicolaspomepuy:discreetapprate:2.0.3@aar'
-
-//    compile 'com.adsdk.sdk:MobFox-Android-SDK:7.0.3'
 
 //    compile 'com.android.support:multidex:1.0.0'
 

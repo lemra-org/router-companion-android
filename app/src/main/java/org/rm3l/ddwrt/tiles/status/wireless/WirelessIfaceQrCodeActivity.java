@@ -22,8 +22,10 @@
 
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -32,6 +34,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -95,6 +99,7 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+    private static final int WRITE_EXTERNAL_STORAGE_PERM = 1;
     private Toolbar mToolbar;
     private String mTitle;
     private String mRouterUuid;
@@ -109,6 +114,7 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    private Bitmap mBitmapToExport;
 
     @Nullable
     private static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int imgWidth, int imgHeight) throws WriterException {
@@ -271,39 +277,125 @@ public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
         //Construct Bitmap and share it
         final int width = viewToShare.getWidth();
         final int height = viewToShare.getHeight();
-        final Bitmap bitmapToExport = Bitmap
+        mBitmapToExport = Bitmap
                 .createBitmap(width > 0 ? width : DEFAULT_BITMAP_WIDTH,
                         height > 0 ? height : DEFAULT_BITMAP_HEIGHT,
                         Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(bitmapToExport);
+        final Canvas canvas = new Canvas(mBitmapToExport);
         viewToShare.draw(canvas);
 
-        mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("QR-Code_for_Wireless_Network__%s__on_router_%s",
-                        nullToEmpty(mSsid), nullToEmpty(mRouterUuid))) + ".png");
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-            bitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
-                    .show();
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                //No Worries
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            //Permission to write to external storage is required for sharing the QR Code
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Utils.displayMessage(this,
+                        "Permission to write to external storage is required for sharing the QR Code",
+                        Style.ALERT);
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        WRITE_EXTERNAL_STORAGE_PERM);
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        WRITE_EXTERNAL_STORAGE_PERM);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
             }
+
+
+            return true;
         }
 
-        setShareFile(mFileToShare);
+//        mFileToShare = new File(getCacheDir(),
+//                Utils.getEscapedFileName(String.format("QR-Code_for_Wireless_Network__%s__on_router_%s",
+//                        nullToEmpty(mSsid), nullToEmpty(mRouterUuid))) + ".png");
+//        OutputStream outputStream = null;
+//        try {
+//            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+//            bitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
+//            outputStream.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
+//                    .show();
+//        } finally {
+//            try {
+//                if (outputStream != null) {
+//                    outputStream.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                //No Worries
+//            }
+//        }
+//
+//        setShareFile(mFileToShare);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case WRITE_EXTERNAL_STORAGE_PERM: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    mFileToShare = new File(getCacheDir(),
+                            Utils.getEscapedFileName(String.format("QR-Code_for_Wireless_Network__%s__on_router_%s",
+                                    nullToEmpty(mSsid), nullToEmpty(mRouterUuid))) + ".png");
+                    OutputStream outputStream = null;
+                    try {
+                        outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+                        mBitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
+                                .show();
+                    } finally {
+                        try {
+                            if (outputStream != null) {
+                                outputStream.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            //No Worries
+                        }
+                    }
+
+                    setShareFile(mFileToShare);
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override

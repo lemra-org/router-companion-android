@@ -67,14 +67,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avocarrot.androidsdk.AvocarrotUser;
 import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.StringUtils;
@@ -107,12 +102,10 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -127,6 +120,14 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
+
+//import com.avocarrot.androidsdk.AvocarrotUser;
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.plus.Plus;
+//import com.google.android.gms.plus.model.people.Person;
+//import java.text.SimpleDateFormat;
+//import java.util.Locale;
 
 
 /**
@@ -183,7 +184,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Nullable
     private InterstitialAd mInterstitialAd;
-    private GoogleApiClient mGoogleApiClient;
+//    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -308,115 +309,115 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         Utils.displayRatingBarIfNeeded(this);
 
-        try {
-            if (BuildConfig.WITH_ADS) {
-
-                final String acraEmailAddr = this
-                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                        .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
-
-                if (!isNullOrEmpty(acraEmailAddr)) {
-
-                    Log.d(TAG, ">>> Request G+ Profile for user [" + acraEmailAddr + "] <<<");
-
-                    //TODO This requires much more work (such as user-prompting to sign-in)
-                    //see https://developers.google.com/+/mobile/android/getting-started
-                    //Set Avocarrot User Gender and Age if any, from G+ API
-                    mGoogleApiClient = new GoogleApiClient.Builder(this)
-                            .addApi(Plus.API)
-                            .addScope(Plus.SCOPE_PLUS_LOGIN)
-                            .setAccountName(acraEmailAddr)
-                            .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                                @Override
-                                public void onConnectionFailed(ConnectionResult connectionResult) {
-                                    Log.e(TAG, "connectionResult: " + connectionResult);
-                                    if (connectionResult != null) {
-                                        Utils.reportException(new IllegalStateException(connectionResult.toString()));
-                                    }
-                                }
-                            })
-                            .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                                @Override
-                                public void onConnected(Bundle bundle) {
-                                    if (mGoogleApiClient == null) {
-                                        Log.d(TAG, "mGoogleApiClient == NULL");
-                                        Utils.reportException(new IllegalStateException("mGoogleApiClient is NULL"));
-                                    }
-                                    final Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-                                    if (personProfile != null) {
-                                        try {
-                                            if (personProfile.hasBirthday()) {
-                                                final String birthday = personProfile.getBirthday(); //YYYY-MM-DD
-                                                AvocarrotUser.setAge(Long.valueOf(
-                                                        new Date().getTime() -
-                                                                new SimpleDateFormat("YYYY-MM-DD", Locale.US)
-                                                                        .parse(birthday)
-                                                                        .getTime()).intValue());
-                                            }
-                                        } catch (final Exception e) {
-                                            Utils.reportException(e);
-                                            //Try AgeRange
-                                            if (personProfile.hasAgeRange()) {
-                                                final Person.AgeRange ageRange = personProfile.getAgeRange();
-                                                if (ageRange != null) {
-                                                    if (ageRange.hasMax()) {
-                                                        AvocarrotUser.setAge(ageRange.getMax());
-                                                    } else if (ageRange.hasMin()) {
-                                                        AvocarrotUser.setAge(ageRange.getMin());
-                                                    }
-
-                                                }
-                                            }
-                                        } finally {
-                                            if (personProfile.hasGender()) {// it's not guaranteed
-                                                final int gender = personProfile.getGender();
-                                                final AvocarrotUser.Gender avocarrotUserGender;
-                                                switch (gender) {
-                                                    case Person.Gender.MALE:
-                                                        avocarrotUserGender = AvocarrotUser.Gender.MALE;
-                                                        break;
-                                                    case Person.Gender.FEMALE:
-                                                        avocarrotUserGender = AvocarrotUser.Gender.FEMALE;
-                                                        break;
-                                                    case Person.Gender.OTHER:
-                                                        avocarrotUserGender = AvocarrotUser.Gender.OTHER;
-                                                        break;
-                                                    default:
-                                                        avocarrotUserGender = null;
-                                                        break;
-                                                }
-                                                if (avocarrotUserGender != null) {
-                                                    AvocarrotUser.setGender(avocarrotUserGender);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onConnectionSuspended(int i) {
-                                    Log.w(TAG, "Connection to G+ API *suspended* : " + i);
-                                }
-                            })
-                            .build();
-
-                }
-            }
-        } catch (final Exception e) {
-            Utils.reportException(e);
-            //No worries
-        }
+//        try {
+//            if (BuildConfig.WITH_ADS) {
+//
+//                final String acraEmailAddr = this
+//                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+//                        .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+//
+//                if (!isNullOrEmpty(acraEmailAddr)) {
+//
+//                    Log.d(TAG, ">>> Request G+ Profile for user [" + acraEmailAddr + "] <<<");
+//
+//                    //TODO This requires much more work (such as user-prompting to sign-in)
+//                    //see https://developers.google.com/+/mobile/android/getting-started
+//                    //Set Avocarrot User Gender and Age if any, from G+ API
+//                    mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                            .addApi(Plus.API)
+//                            .addScope(Plus.SCOPE_PLUS_LOGIN)
+//                            .setAccountName(acraEmailAddr)
+//                            .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+//                                @Override
+//                                public void onConnectionFailed(ConnectionResult connectionResult) {
+//                                    Log.e(TAG, "connectionResult: " + connectionResult);
+//                                    if (connectionResult != null) {
+//                                        Utils.reportException(new IllegalStateException(connectionResult.toString()));
+//                                    }
+//                                }
+//                            })
+//                            .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+//                                @Override
+//                                public void onConnected(Bundle bundle) {
+//                                    if (mGoogleApiClient == null) {
+//                                        Log.d(TAG, "mGoogleApiClient == NULL");
+//                                        Utils.reportException(new IllegalStateException("mGoogleApiClient is NULL"));
+//                                    }
+//                                    final Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+//                                    if (personProfile != null) {
+//                                        try {
+//                                            if (personProfile.hasBirthday()) {
+//                                                final String birthday = personProfile.getBirthday(); //YYYY-MM-DD
+//                                                AvocarrotUser.setAge(Long.valueOf(
+//                                                        new Date().getTime() -
+//                                                                new SimpleDateFormat("YYYY-MM-DD", Locale.US)
+//                                                                        .parse(birthday)
+//                                                                        .getTime()).intValue());
+//                                            }
+//                                        } catch (final Exception e) {
+//                                            Utils.reportException(e);
+//                                            //Try AgeRange
+//                                            if (personProfile.hasAgeRange()) {
+//                                                final Person.AgeRange ageRange = personProfile.getAgeRange();
+//                                                if (ageRange != null) {
+//                                                    if (ageRange.hasMax()) {
+//                                                        AvocarrotUser.setAge(ageRange.getMax());
+//                                                    } else if (ageRange.hasMin()) {
+//                                                        AvocarrotUser.setAge(ageRange.getMin());
+//                                                    }
+//
+//                                                }
+//                                            }
+//                                        } finally {
+//                                            if (personProfile.hasGender()) {// it's not guaranteed
+//                                                final int gender = personProfile.getGender();
+//                                                final AvocarrotUser.Gender avocarrotUserGender;
+//                                                switch (gender) {
+//                                                    case Person.Gender.MALE:
+//                                                        avocarrotUserGender = AvocarrotUser.Gender.MALE;
+//                                                        break;
+//                                                    case Person.Gender.FEMALE:
+//                                                        avocarrotUserGender = AvocarrotUser.Gender.FEMALE;
+//                                                        break;
+//                                                    case Person.Gender.OTHER:
+//                                                        avocarrotUserGender = AvocarrotUser.Gender.OTHER;
+//                                                        break;
+//                                                    default:
+//                                                        avocarrotUserGender = null;
+//                                                        break;
+//                                                }
+//                                                if (avocarrotUserGender != null) {
+//                                                    AvocarrotUser.setGender(avocarrotUserGender);
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onConnectionSuspended(int i) {
+//                                    Log.w(TAG, "Connection to G+ API *suspended* : " + i);
+//                                }
+//                            })
+//                            .build();
+//
+//                }
+//            }
+//        } catch (final Exception e) {
+//            Utils.reportException(e);
+//            //No worries
+//        }
     }
 
     private BroadcastReceiver mMessageReceiver = new NetworkChangeReceiver();
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (mGoogleApiClient != null) {
+//            mGoogleApiClient.connect();
+//        }
+//    }
 
     @Override
     protected void onResume() {
@@ -430,18 +431,25 @@ public class DDWRTMainActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         try {
-            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.disconnect();
-            }
+            unregisterReceiver(mMessageReceiver);
+        } catch (final Exception e) {
+            e.printStackTrace();
         } finally {
-            try {
-                unregisterReceiver(mMessageReceiver);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            } finally {
-                super.onStop();
-            }
+            super.onStop();
         }
+//        try {
+////            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+////                mGoogleApiClient.disconnect();
+////            }
+//        } finally {
+//            try {
+//                unregisterReceiver(mMessageReceiver);
+//            } catch (final Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                super.onStop();
+//            }
+//        }
     }
 
     private void initView() {
