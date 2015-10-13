@@ -164,8 +164,14 @@
 -keep class org.rm3l.ddwrt.resources.** {
     *;
 }
+-keep class org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter {
+    *;
+}
 
 # Keep inner private classes
+-keep public class android.widget.Filter$* {
+    *;
+}
 -keep public class org.rm3l.ddwrt.DDWRTApplication$* {
     *;
 }
@@ -173,6 +179,9 @@
     *;
 }
 -keep public class org.rm3l.ddwrt.mgmt.RouterManagementActivity$* {
+    *;
+}
+-keep public class org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter$* {
     *;
 }
 -keep public class org.rm3l.ddwrt.mgmt.AbstractRouterMgmtDialogFragment$* {

@@ -120,6 +120,7 @@ public class RouterManagementActivity
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
+    public static final String COPY_ROUTER = "copy_router";
     @Nullable
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
@@ -383,7 +384,7 @@ public class RouterManagementActivity
             final Bundle args = new Bundle();
             args.putString(ROUTER_SELECTED, router.getUuid());
             copyFragment.setArguments(args);
-            copyFragment.show(getSupportFragmentManager(), "copy_router");
+            copyFragment.show(getSupportFragmentManager(), COPY_ROUTER);
         } else {
             Crouton.makeText(this, "Entry no longer exists!", Style.ALERT).show();
         }

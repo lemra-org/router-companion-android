@@ -22,28 +22,51 @@
 
 package org.rm3l.ddwrt.mgmt.adapters;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.RebootRouterAction;
+import org.rm3l.ddwrt.actions.RouterAction;
+import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
+import org.rm3l.ddwrt.mgmt.RouterDuplicateDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.RouterUpdateDialogFragment;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -51,13 +74,22 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ADD_ROUTER_FRAGMENT_TAG;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.COPY_ROUTER;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.UPDATE_ROUTER_FRAGMENT_TAG;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
@@ -69,15 +101,69 @@ public class RouterListRecycleViewAdapter extends
     final DDWRTCompanionDAO dao;
     private final Context context;
     private final Resources resources;
+    private final SharedPreferences mGlobalPreferences;
+    private final Filter mFilter;
     private List<Router> routersList;
     private SparseBooleanArray selectedItems;
 
-    public RouterListRecycleViewAdapter(Context context, List<Router> results) {
+    public RouterListRecycleViewAdapter(final Context context, final List<Router> results) {
         routersList = results;
         this.context = context;
+        this.mGlobalPreferences = context.getSharedPreferences(
+                DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.dao = RouterManagementActivity.getDao(context);
         resources = context.getResources();
         selectedItems = new SparseBooleanArray();
+        mFilter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(final CharSequence constraint) {
+                final List<Router> routers = dao.getAllRouters();
+                final FilterResults oReturn = new FilterResults();
+                if (routers == null || routers.isEmpty()) {
+                    return oReturn;
+                }
+
+                if (TextUtils.isEmpty(constraint)) {
+                    oReturn.values = routers;
+                } else {
+                    //Filter routers list
+                    oReturn.values = FluentIterable
+                            .from(routers)
+                            .filter(new Predicate<Router>() {
+                                @Override
+                                public boolean apply(Router input) {
+                                    if (input == null) {
+                                        return false;
+                                    }
+                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method, router model)
+                                    final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
+                                    final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
+                                    final String inputModel = context.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
+                                            .getString(NVRAMInfo.MODEL, "");
+                                    //noinspection ConstantConditions
+                                    return containsIgnoreCase(input.getName(), constraint)
+                                            || containsIgnoreCase(input.getRemoteIpAddress(), constraint)
+                                            || containsIgnoreCase(inputModel, constraint)
+                                            || (routerFirmware != null && containsIgnoreCase(routerFirmware.toString(), constraint))
+                                            || containsIgnoreCase(input.getUsernamePlain(), constraint)
+                                            || (routerConnectionProtocol != null && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
+                                }
+                            }).toList();
+                }
+
+                return oReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                final Object values = results.values;
+                if (values instanceof List) {
+                    //noinspection unchecked
+                    setRoutersList((List<Router>) values);
+                    notifyDataSetChanged();
+                }
+            }
+        };
     }
 
     public List<Router> getRoutersList() {
@@ -139,6 +225,27 @@ public class RouterListRecycleViewAdapter extends
             holder.routerModel.setText("Model: " + routerModelStr);
             holder.routerModel.setVisibility(View.VISIBLE);
         }
+
+        final boolean isThemeLight = ColorUtils.isThemeLight(this.context);
+
+        if (!isThemeLight) {
+            //Set menu background to white
+            holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        holder.routerMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(context, v);
+                popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+                menu.findItem(R.id.action_actions_reboot_routers)
+                        .setTitle("Reboot");
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -164,6 +271,23 @@ public class RouterListRecycleViewAdapter extends
 
     public int getSelectedItemCount() {
         return selectedItems.size();
+    }
+
+    @Nullable
+    public Integer findRouterPosition(@Nullable final String routerUuid) {
+        if (routerUuid == null || routerUuid.isEmpty()) {
+            return null;
+        }
+        for (int i = 0; i < routersList.size(); i++) {
+            final Router router = routersList.get(i);
+            if (router == null) {
+                continue;
+            }
+            if (routerUuid.equals(router.getUuid())) {
+                return i;
+            }
+        }
+        return null;
     }
 
     /**
@@ -257,56 +381,7 @@ public class RouterListRecycleViewAdapter extends
 
     @Override
     public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(final CharSequence constraint) {
-                final List<Router> routers = dao.getAllRouters();
-                final FilterResults oReturn = new FilterResults();
-                if (routers == null || routers.isEmpty()) {
-                    return oReturn;
-                }
-
-                if (TextUtils.isEmpty(constraint)) {
-                    oReturn.values = routers;
-                } else {
-                    //Filter routers list
-                    oReturn.values = FluentIterable
-                            .from(routers)
-                            .filter(new Predicate<Router>() {
-                                @Override
-                                public boolean apply(Router input) {
-                                    if (input == null) {
-                                        return false;
-                                    }
-                                    //Filter on visible fields (Name, Remote IP, Firmware and SSH Username, Method, router model)
-                                    final Router.RouterFirmware routerFirmware = input.getRouterFirmware();
-                                    final Router.RouterConnectionProtocol routerConnectionProtocol = input.getRouterConnectionProtocol();
-                                    final String inputModel = context.getSharedPreferences(input.getUuid(), Context.MODE_PRIVATE)
-                                            .getString(NVRAMInfo.MODEL, "");
-                                    //noinspection ConstantConditions
-                                    return containsIgnoreCase(input.getName(), constraint)
-                                            || containsIgnoreCase(input.getRemoteIpAddress(), constraint)
-                                            || containsIgnoreCase(inputModel, constraint)
-                                            || (routerFirmware != null && containsIgnoreCase(routerFirmware.toString(), constraint))
-                                            || containsIgnoreCase(input.getUsernamePlain(), constraint)
-                                            || (routerConnectionProtocol != null && containsIgnoreCase(routerConnectionProtocol.toString(), constraint));
-                                }
-                            }).toList();
-                }
-
-                return oReturn;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                final Object values = results.values;
-                if (values instanceof List) {
-                    //noinspection unchecked
-                    setRoutersList((List<Router>) values);
-                    notifyDataSetChanged();
-                }
-            }
-        };
+        return mFilter;
     }
 
     // Provide a reference to the views for each data item
@@ -328,6 +403,8 @@ public class RouterListRecycleViewAdapter extends
         final TextView routerFirmware;
         @NonNull
         final TextView routerModel;
+        @NonNull
+        private ImageButton routerMenu;
 
         private final Context context;
         private final View itemView;
@@ -344,8 +421,230 @@ public class RouterListRecycleViewAdapter extends
             this.routerUsername = (TextView) this.itemView.findViewById(R.id.router_username);
             this.routerFirmware = (TextView) this.itemView.findViewById(R.id.router_firmware);
             this.routerModel = (TextView) this.itemView.findViewById(R.id.router_model);
+
+            this.routerMenu = (ImageButton) this.itemView.findViewById(R.id.router_menu);
         }
 
+    }
+
+    class RouterItemMenuOnClickListener implements PopupMenu.OnMenuItemClickListener {
+
+        final Router mRouter;
+
+        public RouterItemMenuOnClickListener(final Router router) {
+            this.mRouter = router;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            final Integer itemPos = findRouterPosition(mRouter.getUuid());
+
+            switch (menuItem.getItemId()) {
+                case R.id.action_actions_reboot_routers: {
+
+                    new AlertDialog.Builder(context)
+                            .setIcon(R.drawable.ic_action_alert_warning)
+                            .setTitle("Reboot Router?")
+                            .setMessage("Are you sure you wish to continue? ")
+                            .setCancelable(true)
+                            .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                                    final String infoMsg = String.format("Rebooting '%s' (%s)...",
+                                            mRouter.getDisplayName(), mRouter.getRemoteIpAddress());
+                                    if (context instanceof Activity) {
+                                        Utils.displayMessage((Activity) context,
+                                                infoMsg,
+                                                Style.INFO);
+                                    } else {
+                                        Toast.makeText(context, infoMsg, Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                    final RouterActionListener rebootRouterActionListener = new RouterActionListener() {
+                                        @Override
+                                        public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+
+                                            //No error
+                                            final String msg = String.format("Action '%s' executed successfully",
+                                                    routerAction.toString());
+                                            if (context instanceof Activity) {
+                                                Utils.displayMessage((Activity) context,
+                                                        msg,
+                                                        Style.CONFIRM);
+                                            } else {
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                                            //An error occurred
+                                            final String msg = String.format("Error: %s",
+                                                    ExceptionUtils.getRootCauseMessage(exception));
+
+                                            if (context instanceof Activity) {
+                                                Utils.displayMessage((Activity) context,
+                                                        msg,
+                                                        Style.INFO);
+                                            } else {
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    };
+
+                                    new RebootRouterAction(context,
+                                            rebootRouterActionListener,
+                                            mGlobalPreferences).execute(mRouter);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Cancelled - nothing more to do!
+                                }
+                            }).create().show();
+                }
+                return true;
+                case R.id.action_actions_restore_factory_defaults: {
+                    //TODO Hidden for now
+
+                }
+                return true;
+                case R.id.action_actions_firmwares_upgrade:
+                    //TODO Hidden for now
+                    return true;
+                case R.id.menu_router_list_delete: {
+                    if (itemPos == null || itemPos < 0) {
+                        Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
+                                .show();
+                        Utils.reportException(new IllegalStateException("Weird routerPosition: " + itemPos));
+                        return true;
+                    }
+
+                    new AlertDialog.Builder(context)
+                            .setIcon(R.drawable.ic_action_alert_warning)
+                            .setTitle("Delete Router?")
+                            .setMessage("You'll lose this record!")
+                            .setCancelable(true)
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialogInterface, final int i) {
+                                    int numberOfItems = removeData(itemPos);
+                                    if (numberOfItems == 0) {
+                                        //All items dropped = open up 'Add Router' dialog
+                                        openAddRouterForm();
+                                    }
+
+                                    if (context instanceof Activity) {
+                                        Crouton.makeText((Activity) context,
+                                                "Record deleted", Style.CONFIRM).show();
+                                    } else {
+                                        Toast.makeText(context, "Record deleted", Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+
+                                    //Request Backup
+                                    Utils.requestBackup(context);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Cancelled - nothing more to do!
+                                }
+                            }).create().show();
+                }
+                    return true;
+                case R.id.menu_router_item_edit: {
+                    openUpdateRouterForm(mRouter);
+                }
+                return true;
+                case R.id.menu_router_item_copy: {
+                    openDuplicateRouterForm(mRouter);
+                }
+                return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
+    private void openAddRouterForm() {
+        if (!(context instanceof FragmentActivity)) {
+            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            return;
+        }
+        final FragmentActivity activity = (FragmentActivity) context;
+        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+
+        final Fragment addRouter = fragmentManager
+                .findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
+        if (addRouter instanceof DialogFragment) {
+            ((DialogFragment) addRouter).dismiss();
+        }
+
+        //Display Donate Message if trying to add more than the max routers for Free version
+        final List<Router> allRouters = dao.getAllRouters();
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
+                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+            //Download the full version to unlock this version
+            Utils.displayUpgradeMessage(context, "Manage a new Router");
+            return;
+        }
+
+        final DialogFragment addFragment = new RouterAddDialogFragment();
+        addFragment.show(fragmentManager, ADD_ROUTER_FRAGMENT_TAG);
+    }
+
+    private void openUpdateRouterForm(@Nullable Router router) {
+        if (!(context instanceof FragmentActivity)) {
+            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            return;
+        }
+        final FragmentActivity activity = (FragmentActivity) context;
+        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+
+        if (router != null) {
+            final DialogFragment updateFragment = new RouterUpdateDialogFragment();
+            final Bundle args = new Bundle();
+            args.putString(ROUTER_SELECTED, router.getUuid());
+            updateFragment.setArguments(args);
+            updateFragment.show(fragmentManager, UPDATE_ROUTER_FRAGMENT_TAG);
+        } else {
+            Crouton.makeText(activity, "Entry no longer exists!", Style.ALERT).show();
+        }
+    }
+
+    private void openDuplicateRouterForm(@Nullable Router router) {
+        if (!(context instanceof FragmentActivity)) {
+            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            return;
+        }
+        final FragmentActivity activity = (FragmentActivity) context;
+        final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+
+        //Display Donate Message if trying to add more than the max routers for Free version
+        final List<Router> allRouters = dao.getAllRouters();
+        //noinspection PointlessBooleanExpression,ConstantConditions
+        if ((BuildConfig.DONATIONS || BuildConfig.WITH_ADS) &&
+                allRouters != null && allRouters.size() >= MAX_ROUTERS_FREE_VERSION) {
+            //Download the full version to unlock this version
+            Utils.displayUpgradeMessage(context, "Duplicate Router");
+            return;
+        }
+
+        if (router != null) {
+            final DialogFragment copyFragment = new RouterDuplicateDialogFragment();
+            final Bundle args = new Bundle();
+            args.putString(ROUTER_SELECTED, router.getUuid());
+            copyFragment.setArguments(args);
+            copyFragment.show(fragmentManager, COPY_ROUTER);
+        } else {
+            Crouton.makeText(activity, "Entry no longer exists!", Style.ALERT).show();
+        }
     }
 
 }
