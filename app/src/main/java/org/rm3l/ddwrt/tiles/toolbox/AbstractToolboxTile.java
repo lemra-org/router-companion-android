@@ -322,6 +322,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 progressBar.setVisibility(View.VISIBLE);
                 button.setEnabled(false);
 
+                Utils.hideSoftKeyboard(mParentFragmentActivity);
                 mCurrentRouterActionTask = getRouterAction(textToFind);
                 mCurrentRouterActionTask.execute(mRouter);
 
