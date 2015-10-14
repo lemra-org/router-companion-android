@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -197,7 +199,7 @@ public class RouterListRecycleViewAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Router routerAt = routersList.get(position);
@@ -233,17 +235,50 @@ public class RouterListRecycleViewAdapter extends
             holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
 
-        holder.routerMenu.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.post(new Runnable() {
+            // Post in the parent's message queue to make sure the parent
+            // lays out its children before you call getHitRect()
             @Override
-            public void onClick(View v) {
-                final PopupMenu popup = new PopupMenu(context, v);
-                popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
-                final MenuInflater inflater = popup.getMenuInflater();
-                final Menu menu = popup.getMenu();
-                inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
-                menu.findItem(R.id.action_actions_reboot_routers)
-                        .setTitle("Reboot");
-                popup.show();
+            public void run() {
+                // The bounds for the delegate view (an ImageButton
+                // in this example)
+                final Rect delegateArea = new Rect();
+                holder.routerMenu.setEnabled(true);
+                holder.routerMenu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final PopupMenu popup = new PopupMenu(context, v);
+                        popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
+                        final MenuInflater inflater = popup.getMenuInflater();
+                        final Menu menu = popup.getMenu();
+                        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+                        menu.findItem(R.id.action_actions_reboot_routers)
+                                .setTitle("Reboot");
+                        popup.show();
+                    }
+                });
+
+                // The hit rectangle for the ImageButton
+                holder.routerMenu.getHitRect(delegateArea);
+
+                // Extend the touch area of the ImageButton beyond its bounds
+                // on the right and bottom.
+                delegateArea.right += 100;
+                delegateArea.bottom += 100;
+
+                // Instantiate a TouchDelegate.
+                // "delegateArea" is the bounds in local coordinates of
+                // the containing view to be mapped to the delegate view.
+                // "myButton" is the child view that should receive motion
+                // events.
+                final TouchDelegate touchDelegate = new TouchDelegate(delegateArea,
+                        holder.routerMenu);
+
+                // Sets the TouchDelegate on the parent view, such that touches
+                // within the touch delegate bounds are routed to the child.
+                if (View.class.isInstance(holder.routerMenu.getParent())) {
+                    ((View) holder.routerMenu.getParent()).setTouchDelegate(touchDelegate);
+                }
             }
         });
     }

@@ -703,7 +703,7 @@ public class RouterManagementActivity
 
         if (view.getId() == R.id.router_list_add) {
             this.openAddRouterForm();
-        } else if (view.getId() == R.id.container_list_item) {
+        } else if (view.getId() == R.id.router_item_cardview_content) {
             // item click
             final int idx = mRecyclerView.getChildPosition(view);
             final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
