@@ -410,6 +410,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="router_add_name">Router Name</string>
     <string name="action_remove">Remove</string>
     <string name="selected_count">%1$s selected</string>
+    <string name="action_open">Open</string>
     <string name="action_edit">Edit</string>
     <string name="action_copy">Copy as new</string>
     <string name="menuitem_donate">Donate</string>

@@ -24,9 +24,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_router_item_open"
+        android:orderInCategory="1"
+        android:alphabeticShortcut="o"
+        android:title="@string/action_open"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:enabled="false"/>
+
+    <item
         android:id="@+id/menu_router_item_edit"
         android:icon="@drawable/ic_action_editor_mode_edit"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:alphabeticShortcut="e"
         android:title="@string/action_edit"
         app:showAsAction="ifRoom" />
@@ -35,14 +44,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/menu_router_item_copy"
         android:icon="@drawable/ic_action_content_content_copy"
         android:alphabeticShortcut="c"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_router_list_delete"
         android:icon="@drawable/ic_action_remove_ddwrt_companion"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:alphabeticShortcut="r"
         android:title="@string/action_remove"
         app:showAsAction="ifRoom" />
@@ -51,7 +60,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/action_actions"
         android:alphabeticShortcut="A"
         android:icon="@drawable/ic_action_action_launch"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/menuitem_actions"
         app:showAsAction="ifRoom">
         <menu>
@@ -59,7 +68,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/action_actions_reboot_routers"
                 android:alphabeticShortcut="R"
                 android:icon="@drawable/ic_action_action_settings_power"
-                android:orderInCategory="5"
+                android:orderInCategory="1"
                 android:title="@string/menuitem_actions_reboot_selected"
                 app:showAsAction="ifRoom" />
 
@@ -68,7 +77,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/action_actions_restore_factory_defaults"
                 android:alphabeticShortcut="D"
                 android:icon="@drawable/ic_action_action_restore"
-                android:orderInCategory="6"
+                android:orderInCategory="2"
                 android:title="@string/menuitem_actions_restore_factory_defaults"
                 app:showAsAction="ifRoom"
                 android:visible="false"/>
@@ -79,7 +88,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:alphabeticShortcut="U"
                 android:enabled="false"
                 android:icon="@drawable/ic_action_action_system_update_tv"
-                android:orderInCategory="7"
+                android:orderInCategory="3"
                 android:title="@string/menuitem_actions_upgrade_firmware"
                 android:visible="false"
                 app:showAsAction="ifRoom" />

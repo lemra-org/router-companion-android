@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.mgmt;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -816,12 +817,17 @@ public class RouterManagementActivity
     }
 
     private void startActivity(View view, Intent ddWrtMainIntent) {
-        final String transitionName = getString(R.string.transition_router);
-        final ActivityOptionsCompat options =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        RouterManagementActivity.this, view, transitionName);
+        startActivity(RouterManagementActivity.this, view, ddWrtMainIntent);
+    }
 
-        ActivityCompat.startActivity(RouterManagementActivity.this, ddWrtMainIntent, options.toBundle());
+    public static void startActivity(Activity activity, View view, Intent ddWrtMainIntent) {
+        final String transitionName = activity.getString(R.string.transition_router);
+        final ActivityOptionsCompat options = (view != null ?
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, view, transitionName) : null);
+
+        ActivityCompat.startActivity(activity, ddWrtMainIntent,
+                options != null ? options.toBundle() : null);
     }
 
     @Override
@@ -863,6 +869,12 @@ public class RouterManagementActivity
         }
         final MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+
+        menu.findItem(R.id.menu_router_item_open)
+                .setVisible(false);
+        menu.findItem(R.id.menu_router_item_open)
+                .setEnabled(false);
+
         addNewButton.setVisibility(View.GONE);
         return true;
     }

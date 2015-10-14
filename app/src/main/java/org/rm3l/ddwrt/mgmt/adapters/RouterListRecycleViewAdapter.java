@@ -24,12 +24,15 @@ package org.rm3l.ddwrt.mgmt.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -54,6 +57,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -65,6 +70,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterDuplicateDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -73,6 +79,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
+import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
@@ -254,6 +261,10 @@ public class RouterListRecycleViewAdapter extends
                         inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
                         menu.findItem(R.id.action_actions_reboot_routers)
                                 .setTitle("Reboot");
+                        menu.findItem(R.id.menu_router_item_open)
+                                .setVisible(true);
+                        menu.findItem(R.id.menu_router_item_open)
+                                .setEnabled(true);
                         popup.show();
                     }
                 });
@@ -466,8 +477,13 @@ public class RouterListRecycleViewAdapter extends
 
         final Router mRouter;
 
+        @Nullable
+        private InterstitialAd mInterstitialAd;
+
         public RouterItemMenuOnClickListener(final Router router) {
             this.mRouter = router;
+            mInterstitialAd = AdUtils.requestNewInterstitial(context,
+                    R.string.interstitial_ad_unit_id_router_list_to_router_main);
         }
 
         @Override
@@ -475,6 +491,72 @@ public class RouterListRecycleViewAdapter extends
             final Integer itemPos = findRouterPosition(mRouter.getUuid());
 
             switch (menuItem.getItemId()) {
+                case R.id.menu_router_item_open: {
+                    final String routerUuid = mRouter.getUuid();
+
+                    final Intent ddWrtMainIntent = new Intent(context, DDWRTMainActivity.class);
+                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+
+                    final SharedPreferences routerSharedPreferences =
+                            context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+                    if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+                        routerSharedPreferences.edit()
+                                .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
+                                .apply();
+                    }
+
+                    if (BuildConfig.WITH_ADS &&
+                            mInterstitialAd != null &&
+                            AdUtils.canDisplayInterstialAd(context)) {
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdClosed() {
+                                startActivity(ddWrtMainIntent);
+                            }
+
+                            @Override
+                            public void onAdOpened() {
+                                mGlobalPreferences.edit()
+                                        .putLong(
+                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                System.currentTimeMillis())
+                                        .apply();
+                            }
+                        });
+
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+//                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                    alertDialog.show();
+//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            final ProgressDialog alertDialog = ProgressDialog.show(context,
+                                    "Loading Router details", "Please wait...", true);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(ddWrtMainIntent);
+                                    alertDialog.cancel();
+                                }
+                            }, 1000);
+                        }
+
+                    } else {
+//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                alertDialog.show();
+//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                        final ProgressDialog alertDialog = ProgressDialog.show(context,
+                                "Loading Router details", "Please wait...", true);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(ddWrtMainIntent);
+                                alertDialog.cancel();
+                            }
+                        }, 1000);
+                    }
+                }
+                    return true;
                 case R.id.action_actions_reboot_routers: {
 
                     new AlertDialog.Builder(context)
@@ -522,7 +604,7 @@ public class RouterListRecycleViewAdapter extends
                                             if (context instanceof Activity) {
                                                 Utils.displayMessage((Activity) context,
                                                         msg,
-                                                        Style.INFO);
+                                                        Style.ALERT);
                                             } else {
                                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                                             }
@@ -603,6 +685,15 @@ public class RouterListRecycleViewAdapter extends
                 default:
                     return false;
             }
+        }
+    }
+
+    private void startActivity(Intent ddWrtMainIntent) {
+        if (context instanceof Activity) {
+            RouterManagementActivity.startActivity((Activity) context, null, ddWrtMainIntent);
+        } else {
+            //Start in a much more classical way
+            context.startActivity(ddWrtMainIntent);
         }
     }
 
