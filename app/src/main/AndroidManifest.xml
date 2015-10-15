@@ -78,6 +78,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <application
         android:name=".DDWRTApplication"
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:backupAgent=".backup.DDWRTCompanionBackupAgent"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher_ddwrt_companion"
