@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/activity_main_nav_drawer_overview"
+            android:title="Overview"/>
+
+        <item
+            android:title="Status">
+            <menu>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_status_status"
+                    android:title="Status"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_status_wireless"
+                    android:title="Wireless"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_status_clients"
+                    android:title="Clients"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_status_monitoring"
+                    android:title="Monitoring"/>
+            </menu>
+        </item>
+
+        <item
+            android:title="Services">
+            <menu>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_services_openvpn"
+                    android:title="OpenVPN"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_services_pptp"
+                    android:title="PPTP"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_services_wol"
+                    android:title="Wake On LAN"/>
+            </menu>
+        </item>
+
+        <item
+            android:title="Admin Area">
+            <menu>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_admin_commands"
+                    android:title="Commands"/>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_admin_nvram"
+                    android:title="NVRAM"/>
+            </menu>
+        </item>
+
+        <item
+            android:title="Toolbox">
+            <menu>
+                <item
+                    android:id="@+id/activity_main_nav_drawer_toolbox_network"
+                    android:title="Network"/>
+            </menu>
+        </item>
+
+    </group>
+
+</menu>

@@ -42,6 +42,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -62,7 +63,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -138,7 +138,7 @@ public class DDWRTMainActivity extends ActionBarActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
         RouterMgmtDialogListener,
-        RouterRestoreDialogListener {
+        RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
@@ -150,7 +150,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     private static final int LISTENED_REQUEST_CODE = 77;
     public static final String RESTORE_ROUTER_FRAGMENT_TAG = "RESTORE_ROUTER_FRAGMENT_TAG";
     DrawerLayout mDrawerLayout;
-    ListView mDrawerList;
+//    ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
     @NonNull
@@ -160,7 +160,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     private Menu optionsMenu;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mDDWRTNavigationMenuSections;
+//    private String[] mDDWRTNavigationMenuSections;
     //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
     private int mPosition = 0;
     private String mCurrentSortingStrategy;
@@ -178,12 +178,13 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
-    private NavigationDrawerArrayAdapter mNavigationDrawerAdapter;
+//    private NavigationDrawerArrayAdapter mNavigationDrawerAdapter;
     private ArrayAdapter<String> mRoutersListAdapter;
     private ArrayList<Router> mRoutersListForPicker;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+    private NavigationView mNavigationView;
 //    private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -283,10 +284,12 @@ public class DDWRTMainActivity extends ActionBarActivity
             position = 1;
         }
 
-        mDrawerList.performItemClick(
-                mDrawerList.getChildAt(position),
-                position,
-                mDrawerList.getAdapter().getItemId(position));
+        selectItemInDrawer(position);
+
+//        mDrawerList.performItemClick(
+//                mDrawerList.getChildAt(position),
+//                position,
+//                mDrawerList.getAdapter().getItemId(position));
 
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
@@ -453,7 +456,7 @@ public class DDWRTMainActivity extends ActionBarActivity
     }
 
     private void initView() {
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         final Resources resources = getResources();
@@ -482,14 +485,15 @@ public class DDWRTMainActivity extends ActionBarActivity
         // set a custom shadow that overlays the main content when the drawer
         // opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
+//        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
 
-        initNavigationDrawerAdapter();
+//        initNavigationDrawerAdapter();
+        initNavigationView();
 
 //        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
 //                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
-        mDrawerList.setAdapter(mNavigationDrawerAdapter);
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+//        mDrawerList.setAdapter(mNavigationDrawerAdapter);
+//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         //Routers picker
 //        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
@@ -658,43 +662,48 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
     }
 
-    private void initNavigationDrawerAdapter() {
-        final Resources resources = getResources();
-
-        mNavigationDrawerAdapter = new NavigationDrawerArrayAdapter(this);
-
-        // Section 1: Status: { Status, Wireless, Clients, Monitoring}
-        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item1_header));
-        String[] menuItems = resources.getStringArray(
-                R.array.navigation_drawer_items_array_item1_items);
-        for (final String item : menuItems) {
-            mNavigationDrawerAdapter.addItem(item, false);
-        }
-
-        //Section 2: Services: {OpenVPN, ...}
-        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item2_header));
-        menuItems = resources.getStringArray(
-                R.array.navigation_drawer_items_array_item2_items);
-        for (final String item : menuItems) {
-            mNavigationDrawerAdapter.addItem(item, false);
-        }
-
-        //Section 3: Admin Area: {Commands, NVRAM, ...}
-        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item3_header));
-        menuItems = resources.getStringArray(
-                R.array.navigation_drawer_items_array_item3_items);
-        for (final String item : menuItems) {
-            mNavigationDrawerAdapter.addItem(item, false);
-        }
-
-        //Section 4: Toolbox: {Network, System, ...}
-        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item4_header));
-        menuItems = resources.getStringArray(
-                R.array.navigation_drawer_items_array_item4_items);
-        for (final String item : menuItems) {
-            mNavigationDrawerAdapter.addItem(item, false);
-        }
+    private void initNavigationView() {
+        mNavigationView = (NavigationView) mDrawerLayout.findViewById(R.id.activity_main_nav_drawer);
+        mNavigationView.setNavigationItemSelectedListener(this);
     }
+
+//    private void initNavigationDrawerAdapter() {
+//        final Resources resources = getResources();
+//
+//        mNavigationDrawerAdapter = new NavigationDrawerArrayAdapter(this);
+//
+//        // Section 1: Status: { Status, Wireless, Clients, Monitoring}
+//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item1_header));
+//        String[] menuItems = resources.getStringArray(
+//                R.array.navigation_drawer_items_array_item1_items);
+//        for (final String item : menuItems) {
+//            mNavigationDrawerAdapter.addItem(item, false);
+//        }
+//
+//        //Section 2: Services: {OpenVPN, ...}
+//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item2_header));
+//        menuItems = resources.getStringArray(
+//                R.array.navigation_drawer_items_array_item2_items);
+//        for (final String item : menuItems) {
+//            mNavigationDrawerAdapter.addItem(item, false);
+//        }
+//
+//        //Section 3: Admin Area: {Commands, NVRAM, ...}
+//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item3_header));
+//        menuItems = resources.getStringArray(
+//                R.array.navigation_drawer_items_array_item3_items);
+//        for (final String item : menuItems) {
+//            mNavigationDrawerAdapter.addItem(item, false);
+//        }
+//
+//        //Section 4: Toolbox: {Network, System, ...}
+//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item4_header));
+//        menuItems = resources.getStringArray(
+//                R.array.navigation_drawer_items_array_item4_items);
+//        for (final String item : menuItems) {
+//            mNavigationDrawerAdapter.addItem(item, false);
+//        }
+//    }
 
     private void openAddRouterForm() {
         final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
@@ -1434,24 +1443,83 @@ public class DDWRTMainActivity extends ActionBarActivity
         //Nothing to do here, as we are not updating routers from here!
     }
 
-    // The click listener for ListView in the navigation drawer
-    private class DrawerItemClickListener implements
-            ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            selectItemInDrawer(position);
-//            selectItem(position);
-//            mNavigationDrawerAdapter.setSelectedItem(position);
-//            mNavigationDrawerAdapter.notifyDataSetChanged();
-//            mDrawerLayout.invalidate();
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        final int position;
+        final int itemId = menuItem.getItemId();
+        switch (itemId) {
+            case R.id.activity_main_nav_drawer_overview:
+                position = 1;
+                break;
+            case R.id.activity_main_nav_drawer_status_status:
+                position = 2;
+
+            break;
+            case R.id.activity_main_nav_drawer_status_wireless:
+                position = 3;
+
+            break;
+            case R.id.activity_main_nav_drawer_status_clients:
+                position = 4;
+
+            break;
+            case R.id.activity_main_nav_drawer_status_monitoring:
+                position = 5;
+
+            break;
+            case R.id.activity_main_nav_drawer_services_openvpn:
+                position = 7;
+
+            break;
+            case R.id.activity_main_nav_drawer_services_pptp:
+                position = 8;
+
+                break;
+            case R.id.activity_main_nav_drawer_services_wol:
+                position = 9;
+
+                break;
+            case R.id.activity_main_nav_drawer_admin_commands:
+                position = 11;
+
+            break;
+            case R.id.activity_main_nav_drawer_admin_nvram:
+                position = 12;
+
+            break;
+            case R.id.activity_main_nav_drawer_toolbox_network:
+                position = 14;
+
+            break;
+            default:
+                position = -1;
+                break;
         }
+        if (position >= 0) {
+            selectItem(position);
+        }
+
+        return (position >= 0);
     }
 
+    // The click listener for ListView in the navigation drawer
+//    private class DrawerItemClickListener implements
+//            ListView.OnItemClickListener {
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position,
+//                                long id) {
+//            selectItemInDrawer(position);
+////            selectItem(position);
+////            mNavigationDrawerAdapter.setSelectedItem(position);
+////            mNavigationDrawerAdapter.notifyDataSetChanged();
+////            mDrawerLayout.invalidate();
+//        }
+//    }
+
     public void selectItemInDrawer(int position) {
-        selectItem(position);
-        mNavigationDrawerAdapter.setSelectedItem(position);
-        mNavigationDrawerAdapter.notifyDataSetChanged();
+        mNavigationView.getMenu().getItem(position).setChecked(true);
+//        mNavigationDrawerAdapter.setSelectedItem(position);
+//        mNavigationDrawerAdapter.notifyDataSetChanged();
         mDrawerLayout.invalidate();
     }
 
