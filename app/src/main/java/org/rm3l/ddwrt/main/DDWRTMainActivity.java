@@ -70,6 +70,8 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.StringUtils;
@@ -186,6 +188,21 @@ public class DDWRTMainActivity extends ActionBarActivity
     private InterstitialAd mInterstitialAd;
     private NavigationView mNavigationView;
 //    private GoogleApiClient mGoogleApiClient;
+
+    private static final BiMap<Integer, Integer> navigationViewMenuItemsPositions = HashBiMap.create(11);
+    static {
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_overview, 1);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_status_status, 2);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_status_wireless, 3);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_status_clients, 4);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_status_monitoring, 5);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_services_openvpn, 7);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_services_pptp, 8);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_services_wol, 9);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_admin_commands, 11);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_admin_nvram, 12);
+        navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_toolbox_network, 14);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -1145,7 +1162,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                 .commit();
 
 //        mDrawerLayout.closeDrawer(mDrawerList);
-        mDrawerLayout.closeDrawers();
+//        mDrawerLayout.closeDrawers();
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     public Toolbar getToolbar() {
@@ -1445,61 +1463,12 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        final int position;
-        final int itemId = menuItem.getItemId();
-        switch (itemId) {
-            case R.id.activity_main_nav_drawer_overview:
-                position = 1;
-                break;
-            case R.id.activity_main_nav_drawer_status_status:
-                position = 2;
-
-            break;
-            case R.id.activity_main_nav_drawer_status_wireless:
-                position = 3;
-
-            break;
-            case R.id.activity_main_nav_drawer_status_clients:
-                position = 4;
-
-            break;
-            case R.id.activity_main_nav_drawer_status_monitoring:
-                position = 5;
-
-            break;
-            case R.id.activity_main_nav_drawer_services_openvpn:
-                position = 7;
-
-            break;
-            case R.id.activity_main_nav_drawer_services_pptp:
-                position = 8;
-
-                break;
-            case R.id.activity_main_nav_drawer_services_wol:
-                position = 9;
-
-                break;
-            case R.id.activity_main_nav_drawer_admin_commands:
-                position = 11;
-
-            break;
-            case R.id.activity_main_nav_drawer_admin_nvram:
-                position = 12;
-
-            break;
-            case R.id.activity_main_nav_drawer_toolbox_network:
-                position = 14;
-
-            break;
-            default:
-                position = -1;
-                break;
-        }
-        if (position >= 0) {
+        menuItem.setChecked(true);
+        final Integer position = navigationViewMenuItemsPositions.get(menuItem.getItemId());
+        if (position != null && position >= 0) {
             selectItem(position);
         }
-
-        return (position >= 0);
+        return (position != null && position >= 0);
     }
 
     // The click listener for ListView in the navigation drawer
@@ -1517,10 +1486,17 @@ public class DDWRTMainActivity extends ActionBarActivity
 //    }
 
     public void selectItemInDrawer(int position) {
-        mNavigationView.getMenu().getItem(position).setChecked(true);
+        final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
+        Log.d(TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
+        if (menuItemId != null) {
+            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
+            if (menuItem != null) {
+                menuItem.setChecked(true);
+            }
 //        mNavigationDrawerAdapter.setSelectedItem(position);
 //        mNavigationDrawerAdapter.notifyDataSetChanged();
-        mDrawerLayout.invalidate();
+//            mDrawerLayout.invalidate();
+        }
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
