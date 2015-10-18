@@ -63,6 +63,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +71,7 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
@@ -342,6 +344,13 @@ public class DDWRTMainActivity extends ActionBarActivity
 
             mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
             mNavigationView.setNavigationItemSelectedListener(this);
+
+            //Init Header Avatar
+            final ImageView navigationViewHeaderAvatar = (ImageView) findViewById(R.id.left_drawer_router_avatar);
+            final String routerModel = Router.getRouterModel(this, mRouter);
+            if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
+                Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
+            }
 
             initDrawer();
 

@@ -139,6 +139,9 @@ public final class DDWRTCompanionConstants {
     public static final String DEFAULT_HTTP_PORT = "80";
     public static final long[] NO_VIBRATION_PATTERN = new long[]{0l};
 
+    public static final String IMAGE_CDN_URL_PREFIX =
+            "http://res.cloudinary.com/rm3l/image/upload/w_100,h_100,c_thumb,r_max";
+
     public static int MB = 1024 * 1024;
 
     public static final String COLON = ":";

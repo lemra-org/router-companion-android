@@ -31,15 +31,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -61,7 +59,11 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
@@ -76,10 +78,10 @@ import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetAddress;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -696,32 +698,113 @@ public final class Utils {
     protected static final class RateAppDismissedException extends DDWRTCompanionException {
     }
 
-    public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+    public static void downloadImageForRouter(@Nullable Context context,
+                                               @NonNull final String routerModel,
+                                               @Nullable final ImageView imageView) {
+        try {
+            final String url = String.format("%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                    URLEncoder.encode(routerModel, Charsets.UTF_8.name()));
+            downloadImageFromUrl(context,
+                    url,
+                    imageView,
+                    null,
+                    context != null ? context.getResources().getDrawable(R.drawable.router) : null,
+                    new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d(TAG, "onSuccess: " + url);
+                        }
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                if (e.getMessage() != null) {
-                    Log.w("Error", e.getMessage());
-                }
-                Utils.reportException(e);
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+                        @Override
+                        public void onError() {
+                            Log.d(TAG, "onError: " + url);
+                            reportException(new MissingRouterModelImageException(routerModel));
+                        }
+                    });
+        } catch (final Exception e) {
+            e.printStackTrace();
+            reportException(new DownloadImageException(e));
         }
     }
+
+    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+                                            @Nullable final ImageView imageView,
+                                            @Nullable final Drawable placeHolderDrawable,
+                                            @Nullable final Drawable errorPlaceHolderDrawable,
+                                            @Nullable final Callback callback) {
+
+        try {
+            if (context == null || imageView == null) {
+                return;
+            }
+            final Picasso picasso = Picasso.with(context);
+            picasso.setIndicatorsEnabled(true);
+            picasso.setLoggingEnabled(BuildConfig.DEBUG);
+            final RequestCreator requestCreator = picasso.load(url);
+            if (placeHolderDrawable != null) {
+                requestCreator.placeholder(placeHolderDrawable);
+            }
+            if (errorPlaceHolderDrawable != null) {
+                requestCreator.error(errorPlaceHolderDrawable);
+            }
+
+            requestCreator.into(imageView, callback);
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            reportException(new DownloadImageException(e));
+        }
+    }
+
+    public static class DownloadImageException extends DDWRTCompanionException {
+        public DownloadImageException() {
+        }
+
+        public DownloadImageException(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+
+        public DownloadImageException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+        public DownloadImageException(@Nullable Throwable throwable) {
+            super(throwable);
+        }
+    }
+
+    public static class MissingRouterModelImageException extends DownloadImageException {
+        public MissingRouterModelImageException(@Nullable String routerModel) {
+            super(routerModel);
+        }
+    }
+
+//    public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+//        ImageView bmImage;
+//
+//        public DownloadImageTask(ImageView bmImage) {
+//            this.bmImage = bmImage;
+//        }
+//
+//        protected Bitmap doInBackground(String... urls) {
+//            String urldisplay = urls[0];
+//            Bitmap mIcon11 = null;
+//            try {
+//                InputStream in = new java.net.URL(urldisplay).openStream();
+//                mIcon11 = BitmapFactory.decodeStream(in);
+//            } catch (Exception e) {
+//                if (e.getMessage() != null) {
+//                    Log.w("Error", e.getMessage());
+//                }
+//                Utils.reportException(e);
+//                e.printStackTrace();
+//            }
+//            return mIcon11;
+//        }
+//
+//        protected void onPostExecute(Bitmap result) {
+//            bmImage.setImageBitmap(result);
+//        }
+//    }
 
 }

@@ -363,6 +363,7 @@ dependencies {
     compile 'io.doorbell:android-sdk:0.2.3@aar'
     compile 'com.google.android.gms:play-services-ads:8.1.0'
     compile 'fr.nicolaspomepuy:discreetapprate:2.0.3@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
 //    compile 'com.android.support:multidex:1.0.0'
 

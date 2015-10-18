@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.avocarrot.androidsdk.AdError;
 import com.avocarrot.androidsdk.CustomModel;
 import com.google.android.gms.ads.AdView;
+import com.squareup.picasso.Callback;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -153,7 +154,27 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                             title.setText(ad.getTitle());
                             button.setText(ad.getCTAText());
                             description.setText(ad.getDescription());
-                            new Utils.DownloadImageTask(ratingImageView).execute(ad.getRatingImageUrl());
+                            Utils.downloadImageFromUrl(mParentFragmentActivity,
+                                    ad.getRatingImageUrl(),
+                                    ratingImageView,
+                                    null,
+                                    null,
+                                    new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+
+                                        }
+
+                                        @Override
+                                        public void onError() {
+                                            mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    ratingImageView.setVisibility(View.INVISIBLE);
+                                                }
+                                            });
+                                        }
+                                    });
 
                             // Load the advertisement's creative into your ImageView
                             avocarrotCustom.loadIcon(ad, imageIconView);

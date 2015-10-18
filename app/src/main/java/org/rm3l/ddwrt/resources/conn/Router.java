@@ -595,6 +595,15 @@ public class Router implements Serializable {
         Utils.requestBackup(ctx);
     }
 
+    @Nullable
+    public static String getRouterModel(@Nullable final Context context, @Nullable final Router routerAt) {
+        if (context == null || routerAt == null) {
+            return null;
+        }
+        return context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
+                .getString(NVRAMInfo.MODEL, null);
+    }
+
     public static class LocalSSIDLookup {
 
         private String networkSsid;
