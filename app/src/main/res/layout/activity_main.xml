@@ -27,8 +27,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:transitionName="@string/transition_router"
     tools:context="org.rm3l.ddwrt.main.DDWRTMainActivity">
 
     <android.support.design.widget.CoordinatorLayout

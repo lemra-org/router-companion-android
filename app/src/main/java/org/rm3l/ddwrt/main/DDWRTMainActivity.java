@@ -666,6 +666,7 @@ public class DDWRTMainActivity extends ActionBarActivity
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setStatusBarBackground(android.R.color.transparent);
     }
 
     @Override
