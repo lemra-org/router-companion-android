@@ -1,21 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:background="@drawable/router_picker_background"
-    android:orientation="vertical" >
+    android:layout_height="200dp"
+    android:background="@drawable/router_picker_background">
+
+    <ImageView
+        android:id="@+id/left_drawer_router_avatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="45dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/router" />
 
     <TextView
-        style="?android:textAppearanceLarge"
+        android:id="@+id/left_drawer_router_ip_port"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/routers"
-        android:textColor="@color/primary_material_light" />
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:ellipsize="middle"
+        android:gravity="right|center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:singleLine="true"
+        android:text="ip:port"
+        android:textAllCaps="false"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/left_drawer_router_name"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:ellipsize="middle"
+        android:layout_above="@id/left_drawer_router_ip_port"
+        android:layout_alignParentRight="true"
+        android:gravity="right|center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:singleLine="true"
+        android:text="My Awesome Router"
+        android:textAllCaps="false"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:textSize="24sp" />
 
-    <Spinner
-        android:id="@+id/left_drawer_routers_dropdown"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start" />
-
-</LinearLayout>
+</RelativeLayout>

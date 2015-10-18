@@ -31,22 +31,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:transitionName="@string/transition_router"
     tools:context="org.rm3l.ddwrt.main.DDWRTMainActivity">
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fitsSystemWindows="true">
 
-        <!-- Toolbar -->
-        <include layout="@layout/activity_main_toolbar" />
-
-        <!-- Main Content View -->
-        <FrameLayout
-            android:id="@+id/content"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <!-- Toolbar -->
+            <include layout="@layout/activity_main_toolbar" />
+
+            <!-- Main Content View -->
+            <FrameLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <!--app:headerLayout="@layout/drawer_header"-->
     <android.support.design.widget.NavigationView
@@ -54,90 +61,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header"
         app:menu="@menu/activity_main_nav_drawer"
         android:fitsSystemWindows="true"/>
 
 </android.support.v4.widget.DrawerLayout>
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:orientation="vertical"-->
-    <!--android:transitionName="@string/transition_router"-->
-    <!--tools:context="org.rm3l.ddwrt.main.DDWRTMainActivity">-->
-
-    <!--&lt;!&ndash; Toolbar &ndash;&gt;-->
-    <!--<include layout="@layout/activity_main_toolbar" />-->
-
-    <!--&lt;!&ndash; The navigation drawer &ndash;&gt;-->
-    <!--<android.support.v4.widget.DrawerLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fitsSystemWindows="true">-->
-
-        <!--&lt;!&ndash; Main Content View &ndash;&gt;-->
-        <!--<FrameLayout-->
-            <!--android:id="@+id/content"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent" />-->
-
-        <!--&lt;!&ndash;app:headerLayout="@layout/drawer_header"&ndash;&gt;-->
-        <!--<android.support.design.widget.NavigationView-->
-            <!--android:id="@+id/activity_main_nav_drawer"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_gravity="start"-->
-            <!--app:menu="@menu/activity_main_nav_drawer"/>-->
-
-        <!--&lt;!&ndash; Left Navigation Drawer &ndash;&gt;-->
-        <!--&lt;!&ndash;<ListView&ndash;&gt;-->
-            <!--&lt;!&ndash;android:id="@+id/left_drawer"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_width="180dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_gravity="start"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:background="#151515"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:choiceMode="singleChoice"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:dividerHeight="0dp" />&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash; Left drawer: made up of the Routers Picker Spinner, and the actual nav. drawer &ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;<LinearLayout&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_width="240dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_gravity="start"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:orientation="vertical">&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<LinearLayout&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="100dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:background="@drawable/router_picker_background"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:orientation="vertical">&ndash;&gt;-->
-                <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                    <!--&lt;!&ndash;style="?android:textAppearanceLarge"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:text="@string/routers"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:textColor="@color/primary_material_light" />&ndash;&gt;-->
-
-                <!--&lt;!&ndash;<Spinner&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:id="@+id/left_drawer_routers_dropdown"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_gravity="start" />&ndash;&gt;-->
-            <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
-
-            <!--&lt;!&ndash;&lt;!&ndash; Left Navigation Drawer &ndash;&gt;&ndash;&gt;-->
-            <!--&lt;!&ndash;<ListView&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/left_drawer"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_gravity="start"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:background="#151515"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:choiceMode="singleChoice"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:dividerHeight="0dp" />&ndash;&gt;-->
-
-        <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
-
-    <!--</android.support.v4.widget.DrawerLayout>-->
-
-<!--</LinearLayout>-->

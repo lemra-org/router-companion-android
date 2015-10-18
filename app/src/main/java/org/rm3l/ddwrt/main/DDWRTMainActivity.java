@@ -123,15 +123,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
-//import com.avocarrot.androidsdk.AvocarrotUser;
-//import com.google.android.gms.common.ConnectionResult;
-//import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.plus.Plus;
-//import com.google.android.gms.plus.model.people.Person;
-//import java.text.SimpleDateFormat;
-//import java.util.Locale;
-
-
 /**
  * Main Android Activity
  * <p/>
@@ -263,34 +254,8 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
-        final String routerName = router.getName();
-        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, this);
-        final Integer effectivePort = Router.getEffectivePort(router, this);
-
-        setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-
-        mTitle = mDrawerTitle = getTitle();
-        initView();
-        if (mToolbar != null) {
-            mToolbar.setTitle(mTitle);
-            mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-                    (effectiveRemoteAddr + ":" + effectivePort));
-            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
-            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
-            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
-            setSupportActionBar(mToolbar);
-        }
-
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(false);
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
-        }
-
-        initDrawer();
+        setUpToolbar();
+        setUpNavDrawer();
 
         final Integer savedPosition;
         int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 1);
@@ -328,116 +293,9 @@ public class DDWRTMainActivity extends ActionBarActivity
         }
 
         Utils.displayRatingBarIfNeeded(this);
-
-//        try {
-//            if (BuildConfig.WITH_ADS) {
-//
-//                final String acraEmailAddr = this
-//                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-//                        .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
-//
-//                if (!isNullOrEmpty(acraEmailAddr)) {
-//
-//                    Log.d(TAG, ">>> Request G+ Profile for user [" + acraEmailAddr + "] <<<");
-//
-//                    //TODO This requires much more work (such as user-prompting to sign-in)
-//                    //see https://developers.google.com/+/mobile/android/getting-started
-//                    //Set Avocarrot User Gender and Age if any, from G+ API
-//                    mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                            .addApi(Plus.API)
-//                            .addScope(Plus.SCOPE_PLUS_LOGIN)
-//                            .setAccountName(acraEmailAddr)
-//                            .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-//                                @Override
-//                                public void onConnectionFailed(ConnectionResult connectionResult) {
-//                                    Log.e(TAG, "connectionResult: " + connectionResult);
-//                                    if (connectionResult != null) {
-//                                        Utils.reportException(new IllegalStateException(connectionResult.toString()));
-//                                    }
-//                                }
-//                            })
-//                            .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-//                                @Override
-//                                public void onConnected(Bundle bundle) {
-//                                    if (mGoogleApiClient == null) {
-//                                        Log.d(TAG, "mGoogleApiClient == NULL");
-//                                        Utils.reportException(new IllegalStateException("mGoogleApiClient is NULL"));
-//                                    }
-//                                    final Person personProfile = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-//                                    if (personProfile != null) {
-//                                        try {
-//                                            if (personProfile.hasBirthday()) {
-//                                                final String birthday = personProfile.getBirthday(); //YYYY-MM-DD
-//                                                AvocarrotUser.setAge(Long.valueOf(
-//                                                        new Date().getTime() -
-//                                                                new SimpleDateFormat("YYYY-MM-DD", Locale.US)
-//                                                                        .parse(birthday)
-//                                                                        .getTime()).intValue());
-//                                            }
-//                                        } catch (final Exception e) {
-//                                            Utils.reportException(e);
-//                                            //Try AgeRange
-//                                            if (personProfile.hasAgeRange()) {
-//                                                final Person.AgeRange ageRange = personProfile.getAgeRange();
-//                                                if (ageRange != null) {
-//                                                    if (ageRange.hasMax()) {
-//                                                        AvocarrotUser.setAge(ageRange.getMax());
-//                                                    } else if (ageRange.hasMin()) {
-//                                                        AvocarrotUser.setAge(ageRange.getMin());
-//                                                    }
-//
-//                                                }
-//                                            }
-//                                        } finally {
-//                                            if (personProfile.hasGender()) {// it's not guaranteed
-//                                                final int gender = personProfile.getGender();
-//                                                final AvocarrotUser.Gender avocarrotUserGender;
-//                                                switch (gender) {
-//                                                    case Person.Gender.MALE:
-//                                                        avocarrotUserGender = AvocarrotUser.Gender.MALE;
-//                                                        break;
-//                                                    case Person.Gender.FEMALE:
-//                                                        avocarrotUserGender = AvocarrotUser.Gender.FEMALE;
-//                                                        break;
-//                                                    case Person.Gender.OTHER:
-//                                                        avocarrotUserGender = AvocarrotUser.Gender.OTHER;
-//                                                        break;
-//                                                    default:
-//                                                        avocarrotUserGender = null;
-//                                                        break;
-//                                                }
-//                                                if (avocarrotUserGender != null) {
-//                                                    AvocarrotUser.setGender(avocarrotUserGender);
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onConnectionSuspended(int i) {
-//                                    Log.w(TAG, "Connection to G+ API *suspended* : " + i);
-//                                }
-//                            })
-//                            .build();
-//
-//                }
-//            }
-//        } catch (final Exception e) {
-//            Utils.reportException(e);
-//            //No worries
-//        }
     }
 
     private BroadcastReceiver mMessageReceiver = new NetworkChangeReceiver();
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (mGoogleApiClient != null) {
-//            mGoogleApiClient.connect();
-//        }
-//    }
 
     @Override
     protected void onResume() {
@@ -457,22 +315,40 @@ public class DDWRTMainActivity extends ActionBarActivity
         } finally {
             super.onStop();
         }
-//        try {
-////            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-////                mGoogleApiClient.disconnect();
-////            }
-//        } finally {
-//            try {
-//                unregisterReceiver(mMessageReceiver);
-//            } catch (final Exception e) {
-//                e.printStackTrace();
-//            } finally {
-//                super.onStop();
-//            }
-//        }
     }
 
-    private void initView() {
+    private void setUpNavDrawer() {
+        if (mToolbar != null) {
+
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+            // set a custom shadow that overlays the main content when the drawer
+            // opens
+//            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+//        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
+
+//        initNavigationDrawerAdapter();
+
+//            mDrawerLayout = (DrawerLayout)     findViewById(R.id.drawer_layout);
+
+            //noinspection ConstantConditions
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+
+            mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
+            mNavigationView.setNavigationItemSelectedListener(this);
+
+            initDrawer();
+
+        }
+    }
+
+    private void setUpToolbar() {
 //        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -498,19 +374,6 @@ public class DDWRTMainActivity extends ActionBarActivity
                 }
             }
         }
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        // set a custom shadow that overlays the main content when the drawer
-        // opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-//        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
-
-//        initNavigationDrawerAdapter();
-        initNavigationView();
-
-//        mNavigationDrawerAdapter = new ArrayAdapter<>(this,
-//                R.layout.drawer_list_item, mDDWRTNavigationMenuSections);
-//        mDrawerList.setAdapter(mNavigationDrawerAdapter);
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         //Routers picker
 //        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
@@ -676,12 +539,35 @@ public class DDWRTMainActivity extends ActionBarActivity
 //                    return true;
 //                }
 //            });
-        }
-    }
 
-    private void initNavigationView() {
-        mNavigationView = (NavigationView) mDrawerLayout.findViewById(R.id.activity_main_nav_drawer);
-        mNavigationView.setNavigationItemSelectedListener(this);
+
+        }
+
+        mTitle = mDrawerTitle = getTitle();
+        if (mToolbar != null) {
+
+            final String routerName = mRouter.getName();
+            final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, this);
+            final Integer effectivePort = Router.getEffectivePort(mRouter, this);
+
+            mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                    (effectiveRemoteAddr + ":" + effectivePort));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
+            setSupportActionBar(mToolbar);
+        }
+
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+        }
+
     }
 
 //    private void initNavigationDrawerAdapter() {
