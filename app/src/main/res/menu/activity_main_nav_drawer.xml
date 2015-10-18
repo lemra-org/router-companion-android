@@ -53,7 +53,7 @@
             <menu>
                 <item
                     android:id="@+id/activity_main_nav_drawer_admin_commands"
-                    android:icon="@drawable/terminal"
+                    android:icon="@drawable/ic_action_terminal"
                     android:title="Commands"/>
                 <item
                     android:id="@+id/activity_main_nav_drawer_admin_nvram"
