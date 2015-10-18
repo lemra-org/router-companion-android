@@ -75,6 +75,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -700,6 +701,13 @@ public class DDWRTMainActivity extends ActionBarActivity
             unregisterReceiver(mMessageReceiver);
         } catch (final Exception e) {
             e.printStackTrace();
+        } finally {
+            //Drop strong reference to Picasso
+            final ImageView navigationViewHeaderAvatar =
+                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
+            if (navigationViewHeaderAvatar != null) {
+                Picasso.with(this).cancelRequest(navigationViewHeaderAvatar);
+            }
         }
         super.onDestroy();
     }

@@ -140,7 +140,7 @@ public final class DDWRTCompanionConstants {
     public static final long[] NO_VIBRATION_PATTERN = new long[]{0l};
 
     public static final String IMAGE_CDN_URL_PREFIX =
-            "http://res.cloudinary.com/rm3l/image/upload/w_320,h_200";
+            "http://res.cloudinary.com/rm3l/image/upload/w_270,h_150,e_blur";
 
     public static int MB = 1024 * 1024;
 

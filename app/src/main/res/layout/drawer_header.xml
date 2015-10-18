@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/header_layout"
-    android:layout_width="320dp"
-    android:layout_height="200dp">
+    android:layout_width="270dp"
+    android:layout_height="150dp">
 
     <ImageView
         android:id="@+id/left_drawer_router_avatar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
+        android:background="@android:color/transparent"
         android:src="@drawable/router_picker_background"/>
 
     <ImageView
@@ -17,7 +18,7 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_centerVertical="true"
         android:src="@drawable/ic_launcher_ddwrt_companion"/>
 
     <!--<LinearLayout-->

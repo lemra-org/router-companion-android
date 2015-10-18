@@ -58,7 +58,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--app:headerLayout="@layout/drawer_header"-->
     <android.support.design.widget.NavigationView
         android:id="@+id/activity_main_nav_drawer"
-        android:layout_width="320dp"
+        android:layout_width="270dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/drawer_header"
