@@ -702,23 +702,25 @@ public final class Utils {
                                                @NonNull final String routerModel,
                                                @Nullable final ImageView imageView) {
         try {
+            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
             final String url = String.format("%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
-                    URLEncoder.encode(routerModel, Charsets.UTF_8.name()));
+                    URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
             downloadImageFromUrl(context,
                     url,
                     imageView,
                     null,
-                    context != null ? context.getResources().getDrawable(R.drawable.router) : null,
+                    context != null ? context.getResources().getDrawable(R.drawable.router_picker_background) : null,
                     new Callback() {
                         @Override
                         public void onSuccess() {
-                            Log.d(TAG, "onSuccess: " + url);
+                            //Great!
                         }
 
                         @Override
                         public void onError() {
                             Log.d(TAG, "onError: " + url);
-                            reportException(new MissingRouterModelImageException(routerModel));
+                            reportException(new MissingRouterModelImageException(routerModel + " (" +
+                                    routerModelNormalized + ")"));
                         }
                     });
         } catch (final Exception e) {

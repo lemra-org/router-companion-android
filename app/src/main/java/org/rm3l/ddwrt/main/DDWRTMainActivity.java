@@ -346,7 +346,8 @@ public class DDWRTMainActivity extends ActionBarActivity
             mNavigationView.setNavigationItemSelectedListener(this);
 
             //Init Header Avatar
-            final ImageView navigationViewHeaderAvatar = (ImageView) findViewById(R.id.left_drawer_router_avatar);
+            final ImageView navigationViewHeaderAvatar =
+                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
             final String routerModel = Router.getRouterModel(this, mRouter);
             if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                 Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
