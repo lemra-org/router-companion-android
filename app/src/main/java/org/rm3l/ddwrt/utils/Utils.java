@@ -699,8 +699,24 @@ public final class Utils {
     }
 
     public static void downloadImageForRouter(@Nullable Context context,
+                                              @NonNull final String routerModel,
+                                              @Nullable final ImageView imageView) {
+        downloadImageForRouter(context,
+                routerModel,
+                imageView,
+                null,
+                context !=null ?
+                        context
+                                .getResources()
+                                .getDrawable(R.drawable.router_picker_background) :
+                        null);
+    }
+
+    public static void downloadImageForRouter(@Nullable Context context,
                                                @NonNull final String routerModel,
-                                               @Nullable final ImageView imageView) {
+                                               @Nullable final ImageView imageView,
+                                              @Nullable final Drawable placeHolderRes,
+                                              @Nullable final Drawable errorPlaceHolderRes) {
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
             final String url = String.format("%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
@@ -708,8 +724,8 @@ public final class Utils {
             downloadImageFromUrl(context,
                     url,
                     imageView,
-                    null,
-                    context != null ? context.getResources().getDrawable(R.drawable.router_picker_background) : null,
+                    placeHolderRes != null ? placeHolderRes : null,
+                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null,
                     new Callback() {
                         @Override
                         public void onSuccess() {

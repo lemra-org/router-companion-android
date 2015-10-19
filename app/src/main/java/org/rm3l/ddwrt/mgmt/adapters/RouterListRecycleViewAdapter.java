@@ -53,6 +53,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +116,9 @@ public class RouterListRecycleViewAdapter extends
     private List<Router> routersList;
     private SparseBooleanArray selectedItems;
 
+    @Nullable
+    private InterstitialAd mInterstitialAd;
+
     public RouterListRecycleViewAdapter(final Context context, final List<Router> results) {
         routersList = results;
         this.context = context;
@@ -173,6 +177,9 @@ public class RouterListRecycleViewAdapter extends
                 }
             }
         };
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(context,
+                R.string.interstitial_ad_unit_id_router_list_to_router_main);
     }
 
     public List<Router> getRoutersList() {
@@ -226,8 +233,7 @@ public class RouterListRecycleViewAdapter extends
         final Router.RouterFirmware routerFirmware = routerAt.getRouterFirmware();
         holder.routerFirmware.setText("Firmware: " + (routerFirmware != null ? routerFirmware.getDisplayName() : "-"));
 
-        final String routerModelStr = context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
-                .getString(NVRAMInfo.MODEL, "-");
+        final String routerModelStr = Router.getRouterModel(context, routerAt);
         if (Strings.isNullOrEmpty(routerModelStr) || "-".equals(routerModelStr)) {
             holder.routerModel.setVisibility(View.GONE);
         } else {
@@ -240,6 +246,21 @@ public class RouterListRecycleViewAdapter extends
         if (!isThemeLight) {
             //Set menu background to white
             holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        holder.routerOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doOpenRouterDetails(routerAt);
+            }
+        });
+
+        if (!Strings.isNullOrEmpty(routerModelStr)) {
+            Utils.downloadImageForRouter(context,
+                    routerModelStr,
+                    holder.routerAvatarImage,
+                    null,
+                    context.getResources().getDrawable(R.drawable.router));
         }
 
         holder.itemView.post(new Runnable() {
@@ -451,6 +472,11 @@ public class RouterListRecycleViewAdapter extends
         final TextView routerModel;
         @NonNull
         private ImageButton routerMenu;
+        @NonNull
+        private ImageButton routerOpenButton;
+        @NonNull
+        private ImageView routerAvatarImage;
+
 
         private final Context context;
         private final View itemView;
@@ -469,6 +495,9 @@ public class RouterListRecycleViewAdapter extends
             this.routerModel = (TextView) this.itemView.findViewById(R.id.router_model);
 
             this.routerMenu = (ImageButton) this.itemView.findViewById(R.id.router_menu);
+            this.routerOpenButton = (ImageButton) this.itemView.findViewById(R.id.router_go);
+
+            this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
         }
 
     }
@@ -477,13 +506,8 @@ public class RouterListRecycleViewAdapter extends
 
         final Router mRouter;
 
-        @Nullable
-        private InterstitialAd mInterstitialAd;
-
         public RouterItemMenuOnClickListener(final Router router) {
             this.mRouter = router;
-            mInterstitialAd = AdUtils.requestNewInterstitial(context,
-                    R.string.interstitial_ad_unit_id_router_list_to_router_main);
         }
 
         @Override
@@ -492,69 +516,7 @@ public class RouterListRecycleViewAdapter extends
 
             switch (menuItem.getItemId()) {
                 case R.id.menu_router_item_open: {
-                    final String routerUuid = mRouter.getUuid();
-
-                    final Intent ddWrtMainIntent = new Intent(context, DDWRTMainActivity.class);
-                    ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
-
-                    final SharedPreferences routerSharedPreferences =
-                            context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
-                    if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
-                        routerSharedPreferences.edit()
-                                .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
-                                .apply();
-                    }
-
-                    if (BuildConfig.WITH_ADS &&
-                            mInterstitialAd != null &&
-                            AdUtils.canDisplayInterstialAd(context)) {
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                startActivity(ddWrtMainIntent);
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                                mGlobalPreferences.edit()
-                                        .putLong(
-                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                System.currentTimeMillis())
-                                        .apply();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-//                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                    alertDialog.show();
-//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            final ProgressDialog alertDialog = ProgressDialog.show(context,
-                                    "Loading Router details", "Please wait...", true);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(ddWrtMainIntent);
-                                    alertDialog.cancel();
-                                }
-                            }, 1000);
-                        }
-
-                    } else {
-//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                alertDialog.show();
-//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        final ProgressDialog alertDialog = ProgressDialog.show(context,
-                                "Loading Router details", "Please wait...", true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(ddWrtMainIntent);
-                                alertDialog.cancel();
-                            }
-                        }, 1000);
-                    }
+                    doOpenRouterDetails(mRouter);
                 }
                     return true;
                 case R.id.action_actions_reboot_routers: {
@@ -685,6 +647,73 @@ public class RouterListRecycleViewAdapter extends
                 default:
                     return false;
             }
+        }
+
+    }
+
+    private void doOpenRouterDetails(@NonNull final Router router) {
+        final String routerUuid = router.getUuid();
+
+        final Intent ddWrtMainIntent = new Intent(context, DDWRTMainActivity.class);
+        ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+
+        final SharedPreferences routerSharedPreferences =
+                context.getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+        if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+            routerSharedPreferences.edit()
+                    .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
+                    .apply();
+        }
+
+        if (BuildConfig.WITH_ADS &&
+                mInterstitialAd != null &&
+                AdUtils.canDisplayInterstialAd(context)) {
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    startActivity(ddWrtMainIntent);
+                }
+
+                @Override
+                public void onAdOpened() {
+                    mGlobalPreferences.edit()
+                            .putLong(
+                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    System.currentTimeMillis())
+                            .apply();
+                }
+            });
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+//                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                    alertDialog.show();
+//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                final ProgressDialog alertDialog = ProgressDialog.show(context,
+                        "Loading Router details", "Please wait...", true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(ddWrtMainIntent);
+                        alertDialog.cancel();
+                    }
+                }, 1000);
+            }
+
+        } else {
+//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+//                alertDialog.show();
+//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+            final ProgressDialog alertDialog = ProgressDialog.show(context,
+                    "Loading Router details", "Please wait...", true);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(ddWrtMainIntent);
+                    alertDialog.cancel();
+                }
+            }, 1000);
         }
     }
 

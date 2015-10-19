@@ -65,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -246,6 +247,10 @@ public class RouterManagementActivity
         // specify an adapter (see also next example)
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
+
+        final RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(itemDecoration);
 
 //        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
