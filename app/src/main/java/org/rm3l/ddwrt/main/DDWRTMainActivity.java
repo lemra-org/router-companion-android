@@ -1368,9 +1368,9 @@ public class DDWRTMainActivity extends ActionBarActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        menuItem.setChecked(true);
         final Integer position = navigationViewMenuItemsPositions.get(menuItem.getItemId());
         if (position != null && position >= 0) {
+            menuItem.setChecked(true);
             selectItem(position);
         }
         return (position != null && position >= 0);
@@ -1394,10 +1394,21 @@ public class DDWRTMainActivity extends ActionBarActivity
         final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
         Log.d(TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
         if (menuItemId != null) {
+//            for (final Map.Entry<Integer, Integer> menuItems : navigationViewMenuItemsPositions.entrySet()) {
+//                if (menuItems.getValue() == null || position != menuItems.getValue()) {
+//                    final MenuItem item = mNavigationView.getMenu().findItem(menuItems.getKey());
+//                    if (item == null) {
+//                        continue;
+//                    }
+//                    item.setChecked(false);
+//                }
+//            }
             final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
             if (menuItem != null) {
-                menuItem.setChecked(true);
+                mNavigationView.setCheckedItem(menuItemId);
+//                onNavigationItemSelected(menuItem);
             }
+            selectItem(position);
 //        mNavigationDrawerAdapter.setSelectedItem(position);
 //        mNavigationDrawerAdapter.notifyDataSetChanged();
 //            mDrawerLayout.invalidate();
