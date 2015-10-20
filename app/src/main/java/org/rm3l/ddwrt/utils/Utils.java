@@ -60,6 +60,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -717,10 +718,29 @@ public final class Utils {
                                                @Nullable final ImageView imageView,
                                               @Nullable final Drawable placeHolderRes,
                                               @Nullable final Drawable errorPlaceHolderRes) {
+        downloadImageForRouter(context,
+                routerModel,
+                imageView,
+                placeHolderRes,
+                errorPlaceHolderRes,
+                null);
+    }
+
+    public static void downloadImageForRouter(@Nullable Context context,
+                                              @NonNull final String routerModel,
+                                              @Nullable final ImageView imageView,
+                                              @Nullable final Drawable placeHolderRes,
+                                              @Nullable final Drawable errorPlaceHolderRes,
+                                              @Nullable final String[] opts) {
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = String.format("%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+            final String url = String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                    Joiner
+                            .on(",")
+                            .skipNulls().join(opts != null ?
+                                opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
                     URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
+
             downloadImageFromUrl(context,
                     url,
                     imageView,

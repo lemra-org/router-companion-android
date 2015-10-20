@@ -256,11 +256,15 @@ public class RouterListRecycleViewAdapter extends
         });
 
         if (!Strings.isNullOrEmpty(routerModelStr)) {
+
+            final String[] opts = new String[] {"w_150","h_70"};
+
             Utils.downloadImageForRouter(context,
                     routerModelStr,
                     holder.routerAvatarImage,
                     null,
-                    context.getResources().getDrawable(R.drawable.router));
+                    context.getResources().getDrawable(R.drawable.router),
+                    opts);
         }
 
         holder.itemView.post(new Runnable() {
