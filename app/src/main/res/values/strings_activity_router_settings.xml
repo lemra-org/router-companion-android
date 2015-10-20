@@ -134,4 +134,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string-array name="notificationsChoice">
+        <item>Connected Hosts</item>
+        <item>WAN IP Updates</item>
+    </string-array>
+    <string-array name="notificationsChoice_values">
+        <item>ConnectedHostsServiceTask</item>
+        <item>PublicIPChangesServiceTask</item>
+    </string-array>
+
 </resources>

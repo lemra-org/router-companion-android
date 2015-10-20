@@ -94,6 +94,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Background Service Frequency" />
 
+        <org.rm3l.ddwrt.utils.MyMultiSelectListPreference
+            android:dialogTitle="Select Notifications"
+            android:key="notifications.choice"
+            android:summary="Select Notifications you would like to receive"
+            android:title="Notifications you are interested in"
+            android:entries="@array/notificationsChoice"
+            android:entryValues="@array/notificationsChoice_values"
+            android:defaultValue="@array/notificationsChoice_values"/>
+
         <!-- Should be general settings -->
         <RingtonePreference
             android:title="Notification Sound"

@@ -98,6 +98,7 @@ public final class DDWRTCompanionConstants {
             "notifications.openvpnClient.syncIntervalMinutes";
     public static final String OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF =
             "ntm.check.internet.connectivity";
+    public static final String NOTIFICATIONS_CHOICE_PREF = "notifications.choice";
 
     public static final long DEFAULT_THEME = 30l;
     public static final String ACRA_BACKEND_URL = "https://collector.tracepot.com/75ca4f41";

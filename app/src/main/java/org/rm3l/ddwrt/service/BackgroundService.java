@@ -1,6 +1,7 @@
 package org.rm3l.ddwrt.service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -15,10 +16,13 @@ import org.rm3l.ddwrt.service.tasks.ConnectedHostsServiceTask;
 import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterWebInterfaceParametersUpdaterServiceTask;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by rm3l on 05/07/15.
@@ -135,8 +139,19 @@ public class BackgroundService extends IntentService {
             //Add any other tasks over here
             tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
             tasks.add(new RouterWebInterfaceParametersUpdaterServiceTask(BackgroundService.this));
-            tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
-            tasks.add(new PublicIPChangesServiceTask(BackgroundService.this));
+
+            //According to user preference
+            final Set<String> notificationsChoiceSet =
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                        .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
+
+            Log.d(TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
+            if (notificationsChoiceSet.contains(ConnectedHostsServiceTask.class.getSimpleName())) {
+                tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
+            }
+            if (notificationsChoiceSet.contains(PublicIPChangesServiceTask.class.getSimpleName())) {
+                tasks.add(new PublicIPChangesServiceTask(BackgroundService.this));
+            }
         }
 
         @Override
