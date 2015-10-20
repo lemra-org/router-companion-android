@@ -732,6 +732,7 @@ public final class Utils {
                                               @Nullable final Drawable placeHolderRes,
                                               @Nullable final Drawable errorPlaceHolderRes,
                                               @Nullable final String[] opts) {
+
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
             final String url = String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
@@ -759,6 +760,54 @@ public final class Utils {
                                     routerModelNormalized + ")"));
                         }
                     });
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            reportException(new DownloadImageException(e));
+        }
+    }
+
+    public static void downloadImageForRouter(@Nullable Context context,
+                                              @NonNull final String routerModel,
+                                              @Nullable final ImageView imageView,
+                                              @Nullable final Drawable placeHolderRes,
+                                              @Nullable final Drawable errorPlaceHolderRes,
+                                              @Nullable final String[] opts,
+                                              @Nullable final Callback callback) {
+        try {
+            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
+            final String url = String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                    Joiner
+                            .on(",")
+                            .skipNulls().join(opts != null ?
+                            opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
+                    URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
+
+            downloadImageFromUrl(context,
+                    url,
+                    imageView,
+                    placeHolderRes != null ? placeHolderRes : null,
+                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null,
+                    new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            //Great!
+                            if (callback != null) {
+                                callback.onSuccess();
+                            }
+                        }
+
+                        @Override
+                        public void onError() {
+                            Log.d(TAG, "onError: " + url);
+                            reportException(new MissingRouterModelImageException(routerModel + " (" +
+                                    routerModelNormalized + ")"));
+                            if (callback != null) {
+                                callback.onError();
+                            }
+                        }
+                    });
+
         } catch (final Exception e) {
             e.printStackTrace();
             reportException(new DownloadImageException(e));

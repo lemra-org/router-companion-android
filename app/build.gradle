@@ -329,6 +329,9 @@ repositories {
     maven {
         url "https://repository-achartengine.forge.cloudbees.com/snapshot/"
     }
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
     mavenCentral()
 }
 
@@ -365,6 +368,7 @@ dependencies {
     compile 'fr.nicolaspomepuy:discreetapprate:2.0.3@aar'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.mikhaellopez:circularimageview:2.0.1'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
 //    compile 'com.android.support:multidex:1.0.0'
 
