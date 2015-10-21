@@ -57,22 +57,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginRight="15dp"
             android:layout_marginEnd="15dp">
 
-            <com.mikhaellopez.circularimageview.CircularImageView
+            <ImageView
                 android:id="@+id/router_avatar"
-                android:layout_width="120dp"
+                android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/router"
-                android:layout_gravity="center_vertical"
-                app:border_color="#EEEEEE"
-                app:border_width="4dp"
-                app:shadow="true"/>
+                android:layout_gravity="center_vertical"/>
 
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:id="@+id/router_avatar_textDrawable"
-                android:layout_gravity="center_vertical"
                 android:visibility="gone"/>
 
         </RelativeLayout>
