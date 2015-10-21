@@ -31,6 +31,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -98,6 +99,13 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                                                  SharedPreferences routerPreferences,
                                                  String[] wanPublicIpCmdStatus,
                                                  String wanIp) {
+
+        if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,
+                new HashSet<String>()).contains(PublicIPChangesServiceTask.class.getSimpleName())) {
+            Log.w(LOG_TAG, "PublicIPChangesServiceTask notifications disabled");
+            return;
+        }
 
         final String wanIpFromPrefs = d(
                 routerPreferences.getString(LAST_WAN_IP, null));

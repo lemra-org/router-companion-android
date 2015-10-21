@@ -200,6 +200,13 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                                                           @Nullable Router router,
                                                           @NonNull Collection<Device> deviceCollection) {
 
+        if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,
+                new HashSet<String>()).contains(ConnectedHostsServiceTask.class.getSimpleName())) {
+            Log.w(TAG, "ConnectedHostsServiceTask notifications disabled");
+            return;
+        }
+
         Log.d(TAG, "generateConnectedHostsNotification(" + router + ")");
 
         if (router == null) {
