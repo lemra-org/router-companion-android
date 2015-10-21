@@ -28,7 +28,7 @@ import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -57,7 +57,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class RouterCpuInfoActivity extends ActionBarActivity {
+public class RouterCpuInfoActivity extends AppCompatActivity {
 
     public static final String CPU_INFO_OUTPUT = "CPU_INFO_OUTPUT";
 

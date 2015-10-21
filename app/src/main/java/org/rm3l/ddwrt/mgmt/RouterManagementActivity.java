@@ -44,7 +44,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -111,7 +111,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 
 public class RouterManagementActivity
-        extends ActionBarActivity
+        extends AppCompatActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
         ActionMode.Callback, RecyclerView.OnItemTouchListener,

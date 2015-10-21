@@ -55,6 +55,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <dimen name="fab_compat_margin">16dp</dimen>
 
+    <dimen name="elevation_toolbar">4dp</dimen>
+
     <!--
 Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout

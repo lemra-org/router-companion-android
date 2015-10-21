@@ -31,28 +31,21 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:fitsSystemWindows="true"
     tools:context="org.rm3l.ddwrt.main.DDWRTMainActivity">
 
-    <android.support.design.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <!-- Main Content View -->
+        <FrameLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginTop="?attr/actionBarSize"/>
 
-            <!-- Toolbar -->
-            <include layout="@layout/activity_main_toolbar" />
+        <!-- Toolbar -->
+        <include layout="@layout/activity_main_toolbar" />
 
-            <!-- Main Content View -->
-            <FrameLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-        </LinearLayout>
-
-    </android.support.design.widget.CoordinatorLayout>
+    </RelativeLayout>
 
     <!--app:headerLayout="@layout/drawer_header"-->
     <android.support.design.widget.NavigationView
@@ -62,6 +55,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_gravity="start"
         app:headerLayout="@layout/drawer_header"
         app:menu="@menu/activity_main_nav_drawer"
-        android:fitsSystemWindows="true"/>
+        />
 
 </android.support.v4.widget.DrawerLayout>

@@ -50,8 +50,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -130,7 +130,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  * Main Android Activity
  * <p/>
  */
-public class DDWRTMainActivity extends ActionBarActivity
+public class DDWRTMainActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
         RouterMgmtDialogListener,
@@ -321,7 +321,6 @@ public class DDWRTMainActivity extends ActionBarActivity
     }
 
     private void setUpNavDrawer() {
-        if (mToolbar != null) {
 
             mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             // set a custom shadow that overlays the main content when the drawer
@@ -336,12 +335,12 @@ public class DDWRTMainActivity extends ActionBarActivity
             //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            });
+//            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                }
+//            });
 
             mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
             mNavigationView.setNavigationItemSelectedListener(this);
@@ -350,13 +349,13 @@ public class DDWRTMainActivity extends ActionBarActivity
             final ImageView navigationViewHeaderAvatar =
                     (ImageView) findViewById(R.id.left_drawer_router_avatar);
             final String routerModel = Router.getRouterModel(this, mRouter);
+        Log.d(TAG, "routerModel: " + routerModel);
             if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                 Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
             }
 
             initDrawer();
 
-        }
     }
 
     private void setUpToolbar() {
@@ -388,6 +387,7 @@ public class DDWRTMainActivity extends ActionBarActivity
 
         //Routers picker
 //        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
+        @SuppressWarnings("ConstantConditions")
         final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
         final List<Router> allRouters = dao.getAllRouters();
         if (allRouters == null || allRouters.isEmpty()) {
@@ -648,23 +648,24 @@ public class DDWRTMainActivity extends ActionBarActivity
 //                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
                 R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close /* "close drawer" description for accessibility */
-        ) {
-            public void onDrawerClosed(View view) {
-//                if (actionBar != null)
-//                    actionBar.setTitle(mTitle);
-//                invalidateOptionsMenu(); // creates call to
-//                // onPrepareOptionsMenu()
-                super.onDrawerClosed(view);
-            }
-
-            public void onDrawerOpened(View drawerView) {
-//                if (actionBar != null)
-//                    actionBar.setTitle(mDrawerTitle);
-//                invalidateOptionsMenu(); // creates call to
-//                // onPrepareOptionsMenu()
-                super.onDrawerOpened(drawerView);
-            }
-        };
+        ) ;
+//        {
+//            public void onDrawerClosed(View view) {
+////                if (actionBar != null)
+////                    actionBar.setTitle(mTitle);
+////                invalidateOptionsMenu(); // creates call to
+////                // onPrepareOptionsMenu()
+//                super.onDrawerClosed(view);
+//            }
+//
+//            public void onDrawerOpened(View drawerView) {
+////                if (actionBar != null)
+////                    actionBar.setTitle(mDrawerTitle);
+////                invalidateOptionsMenu(); // creates call to
+////                // onPrepareOptionsMenu()
+//                super.onDrawerOpened(drawerView);
+//            }
+//        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerLayout.setStatusBarBackground(android.R.color.transparent);
     }
@@ -1067,8 +1068,8 @@ public class DDWRTMainActivity extends ActionBarActivity
                 .commit();
 
 //        mDrawerLayout.closeDrawer(mDrawerList);
-//        mDrawerLayout.closeDrawers();
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawers();
+//        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     public Toolbar getToolbar() {
@@ -1371,7 +1372,12 @@ public class DDWRTMainActivity extends ActionBarActivity
         final Integer position = navigationViewMenuItemsPositions.get(menuItem.getItemId());
         if (position != null && position >= 0) {
             menuItem.setChecked(true);
+            mDrawerLayout.closeDrawers();
             selectItem(position);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final Float elevation = getResources().getDimension(R.dimen.elevation_toolbar);
+                mToolbar.setElevation(elevation);
+            }
         }
         return (position != null && position >= 0);
     }
@@ -1408,7 +1414,7 @@ public class DDWRTMainActivity extends ActionBarActivity
                 mNavigationView.setCheckedItem(menuItemId);
 //                onNavigationItemSelected(menuItem);
             }
-            selectItem(position);
+//            selectItem(position);
 //        mNavigationDrawerAdapter.setSelectedItem(position);
 //        mNavigationDrawerAdapter.notifyDataSetChanged();
 //            mDrawerLayout.invalidate();
