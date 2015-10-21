@@ -903,4 +903,16 @@ public final class Utils {
 //        }
 //    }
 
+    // A method to find height of the status bar
+    @Nullable
+    public static Integer getStatusBarHeight(@NonNull final Context context) {
+        Integer result = null;
+        final Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
 }
