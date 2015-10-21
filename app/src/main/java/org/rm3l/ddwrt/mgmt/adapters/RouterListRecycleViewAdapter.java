@@ -269,7 +269,7 @@ public class RouterListRecycleViewAdapter extends
                 .beginConfig()
                 .withBorder(4)
                 .endConfig()
-                .round();
+                .rect();
         final TextDrawable textDrawable = builder
                 .build(Character.toString(routerNameDisplayed.charAt(0)),
                         colorForRouterModel);
