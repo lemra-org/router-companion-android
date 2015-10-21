@@ -62,12 +62,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/router"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
                 android:layout_gravity="center_vertical"/>
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
                 android:id="@+id/router_avatar_textDrawable"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
                 android:visibility="gone"/>
 
         </RelativeLayout>
