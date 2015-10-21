@@ -31,7 +31,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -63,6 +62,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -706,18 +706,14 @@ public final class Utils {
                 routerModel,
                 imageView,
                 null,
-                context !=null ?
-                        context
-                                .getResources()
-                                .getDrawable(R.drawable.router_picker_background) :
-                        null);
+                R.drawable.router_picker_background);
     }
 
     public static void downloadImageForRouter(@Nullable Context context,
                                                @NonNull final String routerModel,
                                                @Nullable final ImageView imageView,
-                                              @Nullable final Drawable placeHolderRes,
-                                              @Nullable final Drawable errorPlaceHolderRes) {
+                                              @Nullable final Integer placeHolderRes,
+                                              @Nullable final Integer errorPlaceHolderRes) {
         downloadImageForRouter(context,
                 routerModel,
                 imageView,
@@ -729,8 +725,8 @@ public final class Utils {
     public static void downloadImageForRouter(@Nullable Context context,
                                               @NonNull final String routerModel,
                                               @Nullable final ImageView imageView,
-                                              @Nullable final Drawable placeHolderRes,
-                                              @Nullable final Drawable errorPlaceHolderRes,
+                                              @Nullable final Integer placeHolderRes,
+                                              @Nullable final Integer errorPlaceHolderRes,
                                               @Nullable final String[] opts) {
 
         try {
@@ -770,8 +766,8 @@ public final class Utils {
     public static void downloadImageForRouter(@Nullable Context context,
                                               @NonNull final String routerModel,
                                               @Nullable final ImageView imageView,
-                                              @Nullable final Drawable placeHolderRes,
-                                              @Nullable final Drawable errorPlaceHolderRes,
+                                              @Nullable final Integer placeHolderRes,
+                                              @Nullable final Integer errorPlaceHolderRes,
                                               @Nullable final String[] opts,
                                               @Nullable final Callback callback) {
         try {
@@ -792,6 +788,9 @@ public final class Utils {
                         @Override
                         public void onSuccess() {
                             //Great!
+                            reportException(new SuccessfulRouterModelImageDownloadNotice(
+                                    routerModel + " (" + routerModelNormalized + ")"
+                            ));
                             if (callback != null) {
                                 callback.onSuccess();
                             }
@@ -816,8 +815,8 @@ public final class Utils {
 
     public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
                                             @Nullable final ImageView imageView,
-                                            @Nullable final Drawable placeHolderDrawable,
-                                            @Nullable final Drawable errorPlaceHolderDrawable,
+                                            @Nullable final Integer placeHolderDrawable,
+                                            @Nullable final Integer errorPlaceHolderDrawable,
                                             @Nullable final Callback callback) {
 
         try {
@@ -828,11 +827,15 @@ public final class Utils {
             picasso.setIndicatorsEnabled(true);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(url);
-            if (placeHolderDrawable != null) {
-                requestCreator.placeholder(placeHolderDrawable);
-            }
+
+            requestCreator.placeholder(placeHolderDrawable != null ?
+                        placeHolderDrawable : R.drawable.progress_animation);
+
             if (errorPlaceHolderDrawable != null) {
                 requestCreator.error(errorPlaceHolderDrawable);
+            }
+            if (BuildConfig.DEBUG) {
+                requestCreator.networkPolicy(NetworkPolicy.NO_CACHE);
             }
 
             requestCreator.into(imageView, callback);
@@ -862,6 +865,12 @@ public final class Utils {
 
     public static class MissingRouterModelImageException extends DownloadImageException {
         public MissingRouterModelImageException(@Nullable String routerModel) {
+            super(routerModel);
+        }
+    }
+
+    public static class SuccessfulRouterModelImageDownloadNotice extends DownloadImageException {
+        public SuccessfulRouterModelImageDownloadNotice(@Nullable String routerModel) {
             super(routerModel);
         }
     }

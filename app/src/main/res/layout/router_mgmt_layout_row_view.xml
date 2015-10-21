@@ -32,8 +32,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:paddingRight="10dip"
     android:paddingTop="10dip"
     android:transitionName="@string/transition_router"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="2dp"
     card_view:cardPreventCornerOverlap="true"
     card_view:cardUseCompatPadding="true"
     card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
@@ -48,46 +46,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/router_avatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/router"
+            android:adjustViewBounds="true"
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:layout_marginRight="15dp"
-            android:layout_marginEnd="15dp">
-
-            <ImageView
-                android:id="@+id/router_avatar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/router"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="Overview" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:adjustViewBounds="true"
-                android:id="@+id/router_avatar_textDrawable"
-                android:layout_gravity="center_vertical"
-                android:scaleType="fitXY"
-                android:visibility="gone"
-                android:contentDescription="R" />
-
-        </RelativeLayout>
-
-        <!--<ImageView-->
-            <!--android:id="@+id/router_avatar"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="100dp"-->
-            <!--android:scaleType="centerInside"-->
-            <!--android:src="@drawable/router"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:layout_weight="2"-->
-            <!--android:layout_marginRight="15dp"-->
-            <!--android:layout_marginEnd="15dp"/>-->
+            android:layout_marginEnd="15dp"
+            android:contentDescription="Overview" />
 
         <LinearLayout
             android:id="@+id/router_item_cardview_content"

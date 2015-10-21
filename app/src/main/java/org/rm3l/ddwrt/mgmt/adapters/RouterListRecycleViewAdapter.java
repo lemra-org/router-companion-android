@@ -58,15 +58,12 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amulyakhare.textdrawable.TextDrawable;
-import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
-import com.squareup.picasso.Callback;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -259,21 +256,21 @@ public class RouterListRecycleViewAdapter extends
                 doOpenRouterDetails(routerAt);
             }
         });
-
-        final ColorGenerator generator = ColorGenerator.MATERIAL;
-        // generate color based on a key (same key returns the same color), useful for list/grid views
-        final int colorForRouterModel = generator
-                .getColor(routerModelStr != null ? routerModelStr : "-");
-        // declare the builder object once.
-        final TextDrawable.IBuilder builder = TextDrawable.builder()
-                .beginConfig()
-                .withBorder(4)
-                .endConfig()
-                .rect();
-        final TextDrawable textDrawable = builder
-                .build(Character.toString(routerNameDisplayed.charAt(0)),
-                        colorForRouterModel);
-        holder.routerAvatarImageTextDrawable.setImageDrawable(textDrawable);
+//
+//        final ColorGenerator generator = ColorGenerator.MATERIAL;
+//        // generate color based on a key (same key returns the same color), useful for list/grid views
+//        final int colorForRouterModel = generator
+//                .getColor(routerModelStr != null ? routerModelStr : "-");
+//        // declare the builder object once.
+//        final TextDrawable.IBuilder builder = TextDrawable.builder()
+//                .beginConfig()
+//                .withBorder(4)
+//                .endConfig()
+//                .rect();
+//        final TextDrawable textDrawable = builder
+//                .build(Character.toString(routerNameDisplayed.charAt(0)),
+//                        colorForRouterModel);
+//        holder.routerAvatarImageTextDrawable.setImageDrawable(textDrawable);
 
         if (!Strings.isNullOrEmpty(routerModelStr)) {
 
@@ -288,32 +285,15 @@ public class RouterListRecycleViewAdapter extends
                 "r_20",
                 "e_improve",
                 "e_make_transparent",
-                "e_trim:50"
+                "e_trim"
             };
 
             Utils.downloadImageForRouter(context,
                     routerModelStr,
                     holder.routerAvatarImage,
                     null,
-                    context.getResources().getDrawable(R.drawable.router),
-                    opts,
-                    new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            holder.routerAvatarImage.setVisibility(View.VISIBLE);
-                            holder.routerAvatarImageTextDrawable.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onError() {
-                            //Hide this image view, and activate TextDrawable
-                            holder.routerAvatarImage.setVisibility(View.GONE);
-                            holder.routerAvatarImageTextDrawable.setVisibility(View.VISIBLE);
-                        }
-                    });
-        } else {
-            holder.routerAvatarImage.setVisibility(View.GONE);
-            holder.routerAvatarImageTextDrawable.setVisibility(View.VISIBLE);
+                    R.drawable.router,
+                    opts);
         }
 
         holder.itemView.post(new Runnable() {
@@ -529,8 +509,6 @@ public class RouterListRecycleViewAdapter extends
         private ImageButton routerOpenButton;
         @NonNull
         private ImageView routerAvatarImage;
-        @NonNull
-        private ImageView routerAvatarImageTextDrawable;
 
 
         private final Context context;
@@ -553,7 +531,6 @@ public class RouterListRecycleViewAdapter extends
             this.routerOpenButton = (ImageButton) this.itemView.findViewById(R.id.router_go);
 
             this.routerAvatarImage = (ImageView) this.itemView.findViewById(R.id.router_avatar);
-            this.routerAvatarImageTextDrawable = (ImageView) this.itemView.findViewById(R.id.router_avatar_textDrawable);
         }
 
     }
