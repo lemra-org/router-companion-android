@@ -277,7 +277,19 @@ public class RouterListRecycleViewAdapter extends
 
         if (!Strings.isNullOrEmpty(routerModelStr)) {
 
-            final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
+            //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
+            final String[] opts = new String[] 
+            {
+                "w_300",
+                "h_300",
+                "q_100",
+                "c_thumb",
+                "g_center",
+                "r_20",
+                "e_improve",
+                "e_make_transparent",
+                "e_trim:50"
+            };
 
             Utils.downloadImageForRouter(context,
                     routerModelStr,
