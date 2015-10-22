@@ -120,6 +120,7 @@ import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DRAWER_CLOSE_DELAY_MS;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
@@ -145,6 +146,9 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     private static final int LISTENED_REQUEST_CODE = 77;
     public static final String RESTORE_ROUTER_FRAGMENT_TAG = "RESTORE_ROUTER_FRAGMENT_TAG";
+
+    private Handler mDrawerActionHandler;
+
     DrawerLayout mDrawerLayout;
 //    ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
@@ -254,6 +258,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .apply();
 
         setContentView(R.layout.activity_main);
+
+        mDrawerActionHandler = new Handler();
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
@@ -1381,16 +1387,26 @@ public class DDWRTMainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
+    public boolean onNavigationItemSelected(final MenuItem menuItem) {
         final Integer position = navigationViewMenuItemsPositions.get(menuItem.getItemId());
         if (position != null && position >= 0) {
             menuItem.setChecked(true);
-            mDrawerLayout.closeDrawers();
-            selectItem(position);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                final Float elevation = getResources().getDimension(R.dimen.elevation_toolbar);
-                mToolbar.setElevation(elevation);
-            }
+            // allow some time after closing the drawer before performing real navigation
+            // so the user can see what is happening
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            mDrawerActionHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    selectItem(position);
+                }
+            }, DRAWER_CLOSE_DELAY_MS);
+
+//            mDrawerLayout.closeDrawers();
+//            selectItem(position);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                final Float elevation = getResources().getDimension(R.dimen.elevation_toolbar);
+//                mToolbar.setElevation(elevation);
+//            }
         }
         return (position != null && position >= 0);
     }
@@ -1427,7 +1443,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 mNavigationView.setCheckedItem(menuItemId);
 //                onNavigationItemSelected(menuItem);
             }
-            selectItem(position);
+//            selectItem(position);
 //        mNavigationDrawerAdapter.setSelectedItem(position);
 //        mNavigationDrawerAdapter.notifyDataSetChanged();
 //            mDrawerLayout.invalidate();

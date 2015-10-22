@@ -53,6 +53,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:src="@drawable/router"
             android:adjustViewBounds="true"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:layout_weight="2"
             android:layout_marginRight="15dp"
             android:layout_marginEnd="15dp"

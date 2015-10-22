@@ -27,6 +27,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="org.rm3l.ddwrt.mgmt.RouterManagementActivity">
 
     <include layout="@layout/activity_router_management_toolbar" />
@@ -46,8 +47,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <android.support.v7.widget.RecyclerView
@@ -56,33 +55,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="match_parent"
             android:scrollbars="vertical"/>
 
+        <!--<com.melnykov.fab.FloatingActionButton-->
+            <!--android:id="@+id/router_list_add"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|right|end"-->
+            <!--android:layout_margin="@dimen/fab_margin"-->
+            <!--android:src="@drawable/ic_plus_white_24dp"-->
+            <!--fab:fab_colorNormal="@color/accent"-->
+            <!--fab:fab_colorPressed="@color/accent_pressed"-->
+            <!--fab:fab_colorRipple="@color/ripple" />-->
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/router_list_add"
             android:contentDescription="@string/router_add_new"
-            android:src="@android:drawable/ic_input_add"
+            android:src="@drawable/ic_plus_white_24dp"
             android:tint="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
+            android:layout_margin="@dimen/fab_margin"
             app:fabSize="normal"
             android:layout_gravity="bottom|end"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp"
             app:layout_anchorGravity="end|bottom"/>
-
-        <Button
-            android:id="@+id/router_list_remove_ads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/remove_ads"
-            android:background="@color/android_green"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:padding="10dp"
-            android:layout_gravity="start|bottom"/>
-
 
     </FrameLayout>
 

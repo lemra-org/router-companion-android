@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -294,6 +295,14 @@ public class RouterListRecycleViewAdapter extends
                     null,
                     R.drawable.router,
                     opts);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.routerAvatarImage.setImageDrawable(context.getDrawable(R.drawable.router));
+            } else {
+                holder.routerAvatarImage.setImageDrawable(
+                        context.getResources().getDrawable(R.drawable.router,
+                                context.getTheme()));
+            }
         }
 
         holder.itemView.post(new Runnable() {

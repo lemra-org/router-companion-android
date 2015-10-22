@@ -157,6 +157,8 @@ public final class DDWRTCompanionConstants {
 
     public static final String IP_TO_PING_TO_CHECK_INTERNET_CONNECTIVITY = "8.8.8.8";
 
+    public static final long DRAWER_CLOSE_DELAY_MS = 10l;
+
     private DDWRTCompanionConstants() {
     }
 

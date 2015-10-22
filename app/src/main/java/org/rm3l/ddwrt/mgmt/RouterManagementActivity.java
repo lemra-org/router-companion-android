@@ -22,7 +22,6 @@
 
 package org.rm3l.ddwrt.mgmt;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -31,8 +30,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Outline;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -59,8 +56,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewOutlineProvider;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,7 +122,7 @@ public class RouterManagementActivity
     ActionMode actionMode;
     GestureDetectorCompat gestureDetector;
     int itemCount;
-    View addNewButton;
+    android.support.design.widget.FloatingActionButton addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
@@ -193,19 +188,19 @@ public class RouterManagementActivity
 
         setContentView(R.layout.activity_router_management);
 
-        final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
-        final View.OnClickListener adsOnClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
-                }
-            };
-        if (BuildConfig.WITH_ADS) {
-            removeAdsButton.setVisibility(View.VISIBLE);
-            removeAdsButton.setOnClickListener(adsOnClickListener);
-        } else {
-            removeAdsButton.setVisibility(View.INVISIBLE);
-        }
+//        final Button removeAdsButton = (Button) findViewById(R.id.router_list_remove_ads);
+//        final View.OnClickListener adsOnClickListener = new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Utils.displayUpgradeMessageForAdsRemoval(RouterManagementActivity.this);
+//                }
+//            };
+//        if (BuildConfig.WITH_ADS) {
+//            removeAdsButton.setVisibility(View.VISIBLE);
+//            removeAdsButton.setOnClickListener(adsOnClickListener);
+//        } else {
+//            removeAdsButton.setVisibility(View.INVISIBLE);
+//        }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.router_list_adView));
 
@@ -290,20 +285,24 @@ public class RouterManagementActivity
         mRecyclerView.addOnItemTouchListener(this);
         gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
 
-        addNewButton = findViewById(R.id.router_list_add);
+        addNewButton = (android.support.design.widget.FloatingActionButton) findViewById(R.id.router_list_add);
+
+        //Attach to recyclerview for scrolling effect
+//        addNewButton.attachToRecyclerView(mRecyclerView);
+
         addNewButton.setOnClickListener(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addNewButton.setOutlineProvider(new ViewOutlineProvider() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    final int diameter = getResources().getDimensionPixelSize(R.dimen.diameter);
-                    outline.setOval(0, 0, diameter, diameter);
-                }
-            });
-            addNewButton.setClipToOutline(true);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            addNewButton.setOutlineProvider(new ViewOutlineProvider() {
+//                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//                @Override
+//                public void getOutline(View view, Outline outline) {
+//                    final int diameter = getResources().getDimensionPixelSize(R.dimen.diameter);
+//                    outline.setOval(0, 0, diameter, diameter);
+//                }
+//            });
+//            addNewButton.setClipToOutline(true);
+//        }
 
         initOpenAddRouterFormIfNecessary();
 
@@ -400,20 +399,15 @@ public class RouterManagementActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         this.optionsMenu = menu;
         getMenuInflater().inflate(R.menu.menu_router_management, menu);
-        //noinspection PointlessBooleanExpression
-        if (!BuildConfig.DONATIONS) {
-            final MenuItem item = menu.findItem(R.id.router_list_donate);
-            if (item != null) {
-                item.setVisible(false);
-            }
+
+        final MenuItem donateMenuItem = menu.findItem(R.id.router_list_donate);
+        if (donateMenuItem != null) {
+            donateMenuItem.setVisible(BuildConfig.DONATIONS);
         }
 
-        if (!StringUtils.containsIgnoreCase(BuildConfig.FLAVOR, "google")) {
-            //Only available on Google Play Store
-            final MenuItem item = menu.findItem(R.id.router_list_take_bug_report);
-            if (item != null) {
-                item.setVisible(false);
-            }
+        final MenuItem removeAdsMenuItem = menu.findItem(R.id.router_list_remove_ads);
+        if (removeAdsMenuItem != null) {
+            removeAdsMenuItem.setVisible(BuildConfig.WITH_ADS);
         }
 
         //Search
@@ -488,6 +482,9 @@ public class RouterManagementActivity
                 return true;
             case R.id.router_list_actions_firmwares_upgrade:
                 //TODO Hidden for now
+                return true;
+            case R.id.router_list_remove_ads:
+                Utils.displayUpgradeMessageForAdsRemoval(this);
                 return true;
             case R.id.router_list_actions_reboot_routers:
             {

@@ -42,8 +42,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </style>
 
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -56,14 +56,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:actionModeBackground">@color/holo_green_dark</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -76,7 +77,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="actionModeBackground">@color/holo_green_dark</item>
         <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <!--<item name="android:fitsSystemWindows">true</item>-->
         <!--<item name="android:windowBackground">@android:color/background_dark</item>-->
         <!--<item name="cardBackgroundColor">@color/cardview_dark_background</item>-->
     </style>
