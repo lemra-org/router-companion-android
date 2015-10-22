@@ -33,6 +33,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--You do not need values-v21 and if you create them make sure you extend from this one-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
@@ -48,6 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!--You do not need values-v21 and if you create them make sure you extend from this one-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
@@ -72,6 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowEnterTransition">@android:transition/explode</item>
         <item name="android:windowExitTransition">@android:transition/explode</item>
+        <item name="android:fitsSystemWindows">true</item>
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
     </style>
@@ -98,6 +101,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowEnterTransition">@android:transition/explode</item>
         <item name="android:windowExitTransition">@android:transition/explode</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
