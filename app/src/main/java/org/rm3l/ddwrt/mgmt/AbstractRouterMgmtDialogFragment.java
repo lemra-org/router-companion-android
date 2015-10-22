@@ -84,7 +84,6 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -813,7 +812,7 @@ public abstract class AbstractRouterMgmtDialogFragment
         final Router router = buildRouter(d);
 
         if (isDemoRouter(router)) {
-            router.setName(DDWRTCompanionConstants.DEMO);
+//            router.setName(DDWRTCompanionConstants.DEMO);
             return router;
         }
 

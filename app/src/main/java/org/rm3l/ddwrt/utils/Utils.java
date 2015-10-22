@@ -66,6 +66,7 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
 
 import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
@@ -729,6 +730,22 @@ public final class Utils {
                                               @Nullable final Integer placeHolderRes,
                                               @Nullable final Integer errorPlaceHolderRes,
                                               @Nullable final String[] opts) {
+        downloadImageForRouter(context,
+                routerModel,
+                imageView,
+                null,
+                placeHolderRes,
+                errorPlaceHolderRes,
+                opts);
+    }
+
+    public static void downloadImageForRouter(@Nullable Context context,
+                                              @NonNull final String routerModel,
+                                              @Nullable final ImageView imageView,
+                                              @Nullable final List<Transformation> transformations,
+                                              @Nullable final Integer placeHolderRes,
+                                              @Nullable final Integer errorPlaceHolderRes,
+                                              @Nullable final String[] opts) {
 
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
@@ -742,6 +759,7 @@ public final class Utils {
             downloadImageFromUrl(context,
                     url,
                     imageView,
+                    transformations,
                     placeHolderRes != null ? placeHolderRes : null,
                     errorPlaceHolderRes != null ? errorPlaceHolderRes : null,
                     new Callback() {
@@ -819,6 +837,21 @@ public final class Utils {
                                             @Nullable final Integer placeHolderDrawable,
                                             @Nullable final Integer errorPlaceHolderDrawable,
                                             @Nullable final Callback callback) {
+        downloadImageFromUrl(context,
+                url,
+                imageView,
+                null,
+                placeHolderDrawable,
+                errorPlaceHolderDrawable,
+                callback);
+    }
+
+    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+                                            @Nullable final ImageView imageView,
+                                            @Nullable final List<Transformation> transformations,
+                                            @Nullable final Integer placeHolderDrawable,
+                                            @Nullable final Integer errorPlaceHolderDrawable,
+                                            @Nullable final Callback callback) {
 
         try {
             if (context == null || imageView == null) {
@@ -830,7 +863,11 @@ public final class Utils {
             final RequestCreator requestCreator = picasso.load(url);
 
             requestCreator.placeholder(placeHolderDrawable != null ?
-                        placeHolderDrawable : R.drawable.progress_animation);
+                    placeHolderDrawable : R.drawable.progress_animation);
+
+            if (transformations !=null) {
+                requestCreator.transform(transformations);
+            }
 
             if (errorPlaceHolderDrawable != null) {
                 requestCreator.error(errorPlaceHolderDrawable);

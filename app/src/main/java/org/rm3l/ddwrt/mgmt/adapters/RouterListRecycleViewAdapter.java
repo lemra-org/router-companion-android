@@ -64,6 +64,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.nextstagesearch.design.WatermarkTransformation;
+import com.squareup.picasso.Transformation;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -87,6 +89,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -248,6 +251,7 @@ public class RouterListRecycleViewAdapter extends
         if (!isThemeLight) {
             //Set menu background to white
             holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            holder.routerOpenButton.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
         }
 
         holder.routerOpenButton.setOnClickListener(new View.OnClickListener() {
@@ -276,6 +280,10 @@ public class RouterListRecycleViewAdapter extends
             Utils.downloadImageForRouter(context,
                     routerModelStr,
                     holder.routerAvatarImage,
+                    Utils.isDemoRouter(routerAt) ?
+                            Collections.<Transformation> singletonList(
+                                    new WatermarkTransformation("DEMO")
+                            ) : null,
                     null,
                     R.drawable.router,
                     opts);
