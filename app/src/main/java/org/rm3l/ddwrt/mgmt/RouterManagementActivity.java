@@ -40,6 +40,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -110,7 +111,7 @@ public class RouterManagementActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
         ActionMode.Callback, RecyclerView.OnItemTouchListener,
-        SearchView.OnQueryTextListener {
+        SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -129,6 +130,7 @@ public class RouterManagementActivity
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private Toolbar mToolbar;
     private SharedPreferences mPreferences;
@@ -247,35 +249,6 @@ public class RouterManagementActivity
                 new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         mRecyclerView.addItemDecoration(itemDecoration);
 
-//        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                final ActionBar ab = getSupportActionBar();
-//                switch (newState) {
-//                    case RecyclerView.SCROLL_STATE_DRAGGING:
-//                        //The RecyclerView is currently being dragged by outside input such as user touch input.
-//                        if (ab.isShowing()) {
-//                            ab.hide();
-//                        }
-//                        break;
-//                    case RecyclerView.SCROLL_STATE_SETTLING:
-//                        //The RecyclerView is currently animating to a final position while not under outside control.
-//                        if (!ab.isShowing()) {
-//                            ab.show();
-//                        }
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-
         /*
          * onClickDetection is done in this Activity's onItemTouchListener
          * with the help of a GestureDetector;
@@ -304,7 +277,8 @@ public class RouterManagementActivity
 //            addNewButton.setClipToOutline(true);
 //        }
 
-        initOpenAddRouterFormIfNecessary();
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
@@ -317,6 +291,9 @@ public class RouterManagementActivity
         }
 
         Utils.displayRatingBarIfNeeded(this);
+
+        initOpenAddRouterFormIfNecessary();
+
     }
 
     private void initOpenAddRouterFormIfNecessary() {
@@ -621,42 +598,48 @@ public class RouterManagementActivity
     }
 
     private void doRefreshRoutersListWithSpinner(@NonNull final RoutersListRefreshCause cause, final Integer position) {
+        mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                final List<Router> allRouters = RouterManagementActivity.this.dao.getAllRouters();
-                ((RouterListRecycleViewAdapter) RouterManagementActivity.this.mAdapter).setRoutersList(allRouters);
-                switch (cause) {
-                    case DATA_SET_CHANGED:
-                        RouterManagementActivity.this.mAdapter.notifyDataSetChanged();
-                        break;
-                    case INSERTED:
-                        RouterManagementActivity.this.mAdapter.notifyItemInserted(position);
-                        break;
-                    case REMOVED:
-                        RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
-                    case UPDATED:
-                        RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
+                try {
+                    final List<Router> allRouters = RouterManagementActivity.this.dao.getAllRouters();
+                    ((RouterListRecycleViewAdapter) RouterManagementActivity.this.mAdapter).setRoutersList(allRouters);
+                    switch (cause) {
+                        case DATA_SET_CHANGED:
+                            RouterManagementActivity.this.mAdapter.notifyDataSetChanged();
+                            break;
+                        case INSERTED:
+                            RouterManagementActivity.this.mAdapter.notifyItemInserted(position);
+                            break;
+                        case REMOVED:
+                            RouterManagementActivity.this.mAdapter.notifyItemRemoved(position);
+                        case UPDATED:
+                            RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
+                    }
+                    setRefreshActionButtonState(false);
+                } finally {
+                    mSwipeRefreshLayout.setEnabled(true);
                 }
-                setRefreshActionButtonState(false);
             }
         }, 1000);
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
-        if (optionsMenu != null) {
-            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_list_refresh);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-//                    addNewButton.setVisibility(View.GONE);
-                } else {
-                    refreshItem.setActionView(null);
-//                    addNewButton.setVisibility(View.VISIBLE);
-                }
-            }
-        }
+        mSwipeRefreshLayout.setRefreshing(refreshing);
+//        if (optionsMenu != null) {
+//            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_list_refresh);
+//            if (refreshItem != null) {
+//                if (refreshing) {
+//                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+////                    addNewButton.setVisibility(View.GONE);
+//                } else {
+//                    refreshItem.setActionView(null);
+////                    addNewButton.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -1152,6 +1135,11 @@ public class RouterManagementActivity
             adapter.getFilter().filter(s);
         }
         return true;
+    }
+
+    @Override
+    public void onRefresh() {
+        doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
     }
 
     public enum RoutersListRefreshCause {

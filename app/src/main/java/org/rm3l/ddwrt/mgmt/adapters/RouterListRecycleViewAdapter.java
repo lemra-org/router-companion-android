@@ -31,7 +31,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -257,21 +256,6 @@ public class RouterListRecycleViewAdapter extends
                 doOpenRouterDetails(routerAt);
             }
         });
-//
-//        final ColorGenerator generator = ColorGenerator.MATERIAL;
-//        // generate color based on a key (same key returns the same color), useful for list/grid views
-//        final int colorForRouterModel = generator
-//                .getColor(routerModelStr != null ? routerModelStr : "-");
-//        // declare the builder object once.
-//        final TextDrawable.IBuilder builder = TextDrawable.builder()
-//                .beginConfig()
-//                .withBorder(4)
-//                .endConfig()
-//                .rect();
-//        final TextDrawable textDrawable = builder
-//                .build(Character.toString(routerNameDisplayed.charAt(0)),
-//                        colorForRouterModel);
-//        holder.routerAvatarImageTextDrawable.setImageDrawable(textDrawable);
 
         if (!Strings.isNullOrEmpty(routerModelStr)) {
 
@@ -296,13 +280,7 @@ public class RouterListRecycleViewAdapter extends
                     R.drawable.router,
                     opts);
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                holder.routerAvatarImage.setImageDrawable(context.getDrawable(R.drawable.router));
-            } else {
-                holder.routerAvatarImage.setImageDrawable(
-                        context.getResources().getDrawable(R.drawable.router,
-                                context.getTheme()));
-            }
+            holder.routerAvatarImage.setImageResource(R.drawable.router);
         }
 
         holder.itemView.post(new Runnable() {
@@ -519,13 +497,11 @@ public class RouterListRecycleViewAdapter extends
         @NonNull
         private ImageView routerAvatarImage;
 
-
-        private final Context context;
         private final View itemView;
 
         public ViewHolder(Context context, View itemView) {
             super(itemView);
-            this.context = context;
+
             this.itemView = itemView;
 
             this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
