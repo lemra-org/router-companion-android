@@ -570,17 +570,17 @@ public class DDWRTMainActivity extends AppCompatActivity
             mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
 
-            // Check if the version of Android is Lollipop or higher
-            if (Build.VERSION.SDK_INT >= 21) {
-
-                // Set the status bar to dark-semi-transparentish
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-                // Set paddingTop of toolbar to height of status bar.
-                // Fixes statusbar covers toolbar issue
-                mToolbar.setPadding(0, Utils.getStatusBarHeight(this), 0, 0);
-            }
+//            // Check if the version of Android is Lollipop or higher
+//            if (Build.VERSION.SDK_INT >= 21) {
+//
+//                // Set the status bar to dark-semi-transparentish
+//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+//                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//
+//                // Set paddingTop of toolbar to height of status bar.
+//                // Fixes statusbar covers toolbar issue
+//                mToolbar.setPadding(0, Utils.getStatusBarHeight(this), 0, 0);
+//            }
 
         }
 
