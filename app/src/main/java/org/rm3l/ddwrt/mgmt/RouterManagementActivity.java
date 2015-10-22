@@ -618,8 +618,8 @@ public class RouterManagementActivity
                         case UPDATED:
                             RouterManagementActivity.this.mAdapter.notifyItemChanged(position);
                     }
-                    setRefreshActionButtonState(false);
                 } finally {
+                    setRefreshActionButtonState(false);
                     mSwipeRefreshLayout.setEnabled(true);
                 }
             }
@@ -628,18 +628,18 @@ public class RouterManagementActivity
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         mSwipeRefreshLayout.setRefreshing(refreshing);
-//        if (optionsMenu != null) {
-//            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_list_refresh);
-//            if (refreshItem != null) {
-//                if (refreshing) {
-//                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-////                    addNewButton.setVisibility(View.GONE);
-//                } else {
-//                    refreshItem.setActionView(null);
-////                    addNewButton.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        }
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_list_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+//                    addNewButton.setVisibility(View.GONE);
+                } else {
+                    refreshItem.setActionView(null);
+//                    addNewButton.setVisibility(View.VISIBLE);
+                }
+            }
+        }
     }
 
     @Override

@@ -41,8 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_menu_refresh"
         android:orderInCategory="2"
         android:title="@string/menuitem_refresh"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/router_list_actions"
@@ -50,7 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_launch"
         android:orderInCategory="3"
         android:title="@string/menuitem_actions"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
         <menu>
             <item
                 android:id="@+id/router_list_actions_reboot_routers"
@@ -90,7 +89,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="4"
         android:title="@string/menuitem_settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 
     <item
