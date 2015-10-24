@@ -442,6 +442,10 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
         }
     }
 
+    protected String getTitle() {
+        return "Syslog";
+    }
+
     private class ManageSyslogdToggle implements View.OnClickListener {
 
         private boolean enable;
@@ -486,8 +490,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
             nvramInfoToSet.setProperty(SYSLOGD_ENABLE, enable ? "1" : "0");
 
+            final String title = getTitle();
+
             new UndoBarController.UndoBar(mParentFragmentActivity)
-                    .message(String.format("Syslog will be %s on '%s' (%s). Router will be rebooted. ",
+                    .message(String.format("%s will be %s on '%s' (%s). Router will be rebooted. ",
+                            title,
                             enable ? "enabled" : "disabled",
                             mRouter.getDisplayName(),
                             mRouter.getRemoteIpAddress()))
@@ -496,8 +503,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                   public void onHide(@Nullable Parcelable parcelable) {
 
                                       Utils.displayMessage(mParentFragmentActivity,
-                                              String.format("%s Syslog...",
-                                                      enable ? "Enabling" : "Disabling"),
+                                              String.format("%s %s...",
+                                                      enable ? "Enabling" : "Disabling",
+                                                      title),
                                               Style.INFO);
 
                                       new SetNVRAMVariablesAction(mParentFragmentActivity,
@@ -513,7 +521,8 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                                               try {
                                                                   compoundButton.setChecked(enable);
                                                                   Utils.displayMessage(mParentFragmentActivity,
-                                                                          String.format("Syslog %s successfully on host '%s' (%s). ",
+                                                                          String.format("%s %s successfully on host '%s' (%s). ",
+                                                                                  title,
                                                                                   enable ? "enabled" : "disabled",
                                                                                   router.getDisplayName(),
                                                                                   router.getRemoteIpAddress()),
@@ -545,8 +554,9 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                                               try {
                                                                   compoundButton.setChecked(!enable);
                                                                   Utils.displayMessage(mParentFragmentActivity,
-                                                                          String.format("Error while trying to %s Syslog on '%s' (%s): %s",
+                                                                          String.format("Error while trying to %s %s on '%s' (%s): %s",
                                                                                   enable ? "enable" : "disable",
+                                                                                  title,
                                                                                   router.getDisplayName(),
                                                                                   router.getRemoteIpAddress(),
                                                                                   ExceptionUtils.getRootCauseMessage(exception)),

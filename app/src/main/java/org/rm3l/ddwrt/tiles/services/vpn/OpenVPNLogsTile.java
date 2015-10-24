@@ -52,6 +52,11 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
     }
 
     @Override
+    protected String getTitle() {
+        return "OpenVPN Logs";
+    }
+
+    @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
         return new AsyncTaskLoader<NVRAMInfo>(this.mParentFragmentActivity) {
 
