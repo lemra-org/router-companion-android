@@ -136,7 +136,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     private PageSlidingTabStripFragment parentFragment;
 
     @Nullable
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private static final Map<RouterFirmware,
             ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>>
