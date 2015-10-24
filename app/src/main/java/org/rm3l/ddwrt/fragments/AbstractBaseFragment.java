@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -107,7 +108,7 @@ import static android.widget.FrameLayout.LayoutParams;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class AbstractBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T> {
+public abstract class AbstractBaseFragment<T> extends Fragment implements LoaderManager.LoaderCallbacks<T>, SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAB_TITLE = "fragment_tab_title";
     public static final String FRAGMENT_CLASS = "fragment_class";
@@ -133,6 +134,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     private Class<? extends AbstractBaseFragment> mClazz;
     @NonNull
     private PageSlidingTabStripFragment parentFragment;
+
+    @Nullable
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private static final Map<RouterFirmware,
             ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>>
@@ -831,7 +835,19 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     @NonNull
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return this.getLayout();
+        mSwipeRefreshLayout = new SwipeRefreshLayout(getActivity());
+        mSwipeRefreshLayout.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+//        getActivity().getLayoutInflater()
+//                .inflate(R.layout.swipe_refresh, null);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
+        return mSwipeRefreshLayout;
     }
 
     @Override
@@ -925,8 +941,16 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onDestroy();
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.removeAllViews();
+        }
+        super.onDestroyView();
+    }
+
     @NonNull
-    private ViewGroup getLayout() {
+    private ViewGroup getLayout(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
                 .getDisplayMetrics());
@@ -1173,4 +1197,28 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         parentFragment.startActivityForResult(intent, listener);
     }
 
+    @Override
+    public void onRefresh() {
+
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setEnabled(false);
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    stopLoaders();
+                    initLoaders();
+                } finally {
+                    if (mSwipeRefreshLayout != null) {
+                        mSwipeRefreshLayout.setEnabled(true);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        }, 1000l);
+
+    }
 }

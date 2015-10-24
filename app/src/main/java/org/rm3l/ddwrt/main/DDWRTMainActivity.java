@@ -721,7 +721,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         try {
             unregisterReceiver(mMessageReceiver);
         } catch (final Exception e) {
-            e.printStackTrace();
+            //No worries
         } finally {
             //Drop strong reference to Picasso
             final ImageView navigationViewHeaderAvatar =

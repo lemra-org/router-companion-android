@@ -272,6 +272,40 @@ public class RouterManagementActivity
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int firstVisibleItem, int visibleItemCount) {
+                boolean enable = false;
+                if(recyclerView != null && recyclerView.getChildCount() > 0){
+                    final LinearLayoutManager layoutManager = (LinearLayoutManager)
+                            recyclerView.getLayoutManager();
+                    if (layoutManager != null) {
+                        // check if the first item of the list is visible
+                        final boolean firstItemVisible =
+                                (layoutManager.findFirstVisibleItemPosition() == 0);
+
+                        // check if the top of the first item is visible
+                        final View childAt = layoutManager.getChildAt(0);
+                        final boolean topOfFirstItemVisible = (childAt != null &&
+                                childAt.getTop() == 0);
+
+                        // enabling or disabling the refresh layout
+                        enable = firstItemVisible && topOfFirstItemVisible;
+                    }
+                }
+                mSwipeRefreshLayout.setEnabled(enable);
+//                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
         BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
