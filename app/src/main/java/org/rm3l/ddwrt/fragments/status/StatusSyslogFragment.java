@@ -37,10 +37,27 @@ import java.util.List;
  */
 public class StatusSyslogFragment extends AbstractBaseFragment {
 
+    private List<DDWRTTile> tiles = null;
+
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new StatusSyslogTile(this, mLayout, savedInstanceState, null, true, this.router, null));
+        if (tiles == null) {
+            tiles = Arrays.<DDWRTTile>asList(
+                    new StatusSyslogTile(this, mLayout,
+                            savedInstanceState, null, true, this.router, null));
+        }
+        return tiles;
+    }
+
+    @Override
+    protected boolean canChildScrollUp() {
+        final List<DDWRTTile> tiles = this.getTiles(null);
+        if (tiles == null || tiles.isEmpty()) {
+            return false;
+        }
+        final DDWRTTile tile = tiles.get(0);
+        return (tile instanceof StatusSyslogTile &&
+                ((StatusSyslogTile) tile).canChildScrollUp());
     }
 }

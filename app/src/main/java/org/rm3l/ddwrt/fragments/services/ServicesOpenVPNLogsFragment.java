@@ -27,16 +27,33 @@ import android.support.annotation.Nullable;
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.services.vpn.OpenVPNLogsTile;
+import org.rm3l.ddwrt.tiles.syslog.StatusSyslogTile;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ServicesOpenVPNLogsFragment extends AbstractBaseFragment {
 
+    private List<DDWRTTile> tiles = null;
+
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(
-                new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
+        if (tiles == null) {
+            tiles = Arrays.<DDWRTTile>asList(
+                    new OpenVPNLogsTile(this, mLayout, savedInstanceState, this.router));
+        }
+        return tiles;
+    }
+
+    @Override
+    protected boolean canChildScrollUp() {
+        final List<DDWRTTile> tiles = this.getTiles(null);
+        if (tiles == null || tiles.isEmpty()) {
+            return false;
+        }
+        final DDWRTTile tile = tiles.get(0);
+        return (tile instanceof StatusSyslogTile &&
+                ((StatusSyslogTile) tile).canChildScrollUp());
     }
 }

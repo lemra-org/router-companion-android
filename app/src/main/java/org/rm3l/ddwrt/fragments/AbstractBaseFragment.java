@@ -33,6 +33,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
@@ -814,6 +815,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         }
     }
 
+    protected boolean canChildScrollUp() {
+        return ViewCompat.canScrollVertically(viewGroup, -1);
+    }
+
     /**
      * Called to have the fragment instantiate its user interface view.
      * This is optional, and non-graphical fragments can return null (which
@@ -835,7 +840,12 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     @NonNull
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mSwipeRefreshLayout = new SwipeRefreshLayout(getActivity());
+        mSwipeRefreshLayout = new SwipeRefreshLayout(getActivity()) {
+            @Override
+            public boolean canChildScrollUp() {
+                return AbstractBaseFragment.this.canChildScrollUp();
+            }
+        };
         mSwipeRefreshLayout.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));

@@ -33,6 +33,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Html;
 import android.text.SpannableString;
@@ -114,6 +115,22 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
         this.parentViewGroup = parentViewGroup;
 
+    }
+
+    public boolean canChildScrollUp() {
+        final boolean canScrollVertically = ViewCompat.canScrollVertically(
+                layout
+                        .findViewById(R.id.tile_status_router_syslog_content_scrollview),
+                -1);
+        if (!canScrollVertically) {
+            return canScrollVertically;
+        }
+
+        // ScrollView can scroll vertically,
+        // but detect whether the touch was done outside of the scroll view
+        // (in which case we should return false)
+
+        return canScrollVertically;
     }
 
     @Override
