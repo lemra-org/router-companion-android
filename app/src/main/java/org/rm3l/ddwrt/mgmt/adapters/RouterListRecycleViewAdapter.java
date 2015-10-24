@@ -64,8 +64,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
-import com.nextstagesearch.design.WatermarkTransformation;
-import com.squareup.picasso.Transformation;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -89,7 +87,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -280,15 +277,16 @@ public class RouterListRecycleViewAdapter extends
             Utils.downloadImageForRouter(context,
                     routerModelStr,
                     holder.routerAvatarImage,
-                    Utils.isDemoRouter(routerAt) ?
-                            Collections.<Transformation> singletonList(
-                                    new WatermarkTransformation("DEMO")
-                            ) : null,
                     null,
-                    R.drawable.router,
+                    null,
+                    Utils.isDemoRouter(routerAt) ?
+                            R.drawable.demo_router : R.drawable.router,
                     opts);
+
         } else {
-            holder.routerAvatarImage.setImageResource(R.drawable.router);
+            holder.routerAvatarImage.setImageResource(
+                    Utils.isDemoRouter(routerAt) ?
+                        R.drawable.demo_router : R.drawable.router);
         }
 
         holder.itemView.post(new Runnable() {
@@ -296,51 +294,92 @@ public class RouterListRecycleViewAdapter extends
             // lays out its children before you call getHitRect()
             @Override
             public void run() {
+
+                setClickListenerForNestedView(
+                        holder.routerViewParent,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Open Router
+                                doOpenRouterDetails(routerAt);
+                            }
+                        },
+                        new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                createContextualPopupMenu(v, routerAt);
+                                return true;
+                            }
+                        });
+
                 // The bounds for the delegate view (an ImageButton
                 // in this example)
-                final Rect delegateArea = new Rect();
-                holder.routerMenu.setEnabled(true);
-                holder.routerMenu.setOnClickListener(new View.OnClickListener() {
+                setClickListenerForNestedView(holder.routerMenu, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final PopupMenu popup = new PopupMenu(context, v);
-                        popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
-                        final MenuInflater inflater = popup.getMenuInflater();
-                        final Menu menu = popup.getMenu();
-                        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
-                        menu.findItem(R.id.action_actions_reboot_routers)
-                                .setTitle("Reboot");
-                        menu.findItem(R.id.menu_router_item_open)
-                                .setVisible(true);
-                        menu.findItem(R.id.menu_router_item_open)
-                                .setEnabled(true);
-                        popup.show();
+                        createContextualPopupMenu(v, routerAt);
                     }
-                });
+                }, null);
 
-                // The hit rectangle for the ImageButton
-                holder.routerMenu.getHitRect(delegateArea);
-
-                // Extend the touch area of the ImageButton beyond its bounds
-                // on the right and bottom.
-                delegateArea.right += 100;
-                delegateArea.bottom += 100;
-
-                // Instantiate a TouchDelegate.
-                // "delegateArea" is the bounds in local coordinates of
-                // the containing view to be mapped to the delegate view.
-                // "myButton" is the child view that should receive motion
-                // events.
-                final TouchDelegate touchDelegate = new TouchDelegate(delegateArea,
-                        holder.routerMenu);
-
-                // Sets the TouchDelegate on the parent view, such that touches
-                // within the touch delegate bounds are routed to the child.
-                if (View.class.isInstance(holder.routerMenu.getParent())) {
-                    ((View) holder.routerMenu.getParent()).setTouchDelegate(touchDelegate);
-                }
+                setClickListenerForNestedView(holder.routerOpenButton, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doOpenRouterDetails(routerAt);
+                    }
+                }, null);
             }
         });
+    }
+
+    private void createContextualPopupMenu(View v, Router routerAt) {
+        final PopupMenu popup = new PopupMenu(context, v);
+        popup.setOnMenuItemClickListener(new RouterItemMenuOnClickListener(routerAt));
+        final MenuInflater inflater = popup.getMenuInflater();
+        final Menu menu = popup.getMenu();
+        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+        menu.findItem(R.id.action_actions_reboot_routers)
+                .setTitle("Reboot");
+        menu.findItem(R.id.menu_router_item_open)
+                .setVisible(true);
+        menu.findItem(R.id.menu_router_item_open)
+                .setEnabled(true);
+        popup.show();
+    }
+
+    private void setClickListenerForNestedView(@NonNull View view,
+                                               @Nullable final View.OnClickListener clickListener,
+                                               @Nullable final View.OnLongClickListener longClickListener)
+    {
+        final Rect delegateArea = new Rect();
+        view.setEnabled(true);
+        if (clickListener != null) {
+            view.setOnClickListener(clickListener);
+        }
+        if (longClickListener != null) {
+            view.setOnLongClickListener(longClickListener);
+        }
+
+        // The hit rectangle for the ImageButton
+        view.getHitRect(delegateArea);
+
+        // Extend the touch area of the ImageButton beyond its bounds
+        // on the right and bottom.
+        delegateArea.right += 100;
+        delegateArea.bottom += 100;
+
+        // Instantiate a TouchDelegate.
+        // "delegateArea" is the bounds in local coordinates of
+        // the containing view to be mapped to the delegate view.
+        // "myButton" is the child view that should receive motion
+        // events.
+        final TouchDelegate touchDelegate = new TouchDelegate(delegateArea,
+                view);
+
+        // Sets the TouchDelegate on the parent view, such that touches
+        // within the touch delegate bounds are routed to the child.
+        if (View.class.isInstance(view.getParent())) {
+            ((View) view.getParent()).setTouchDelegate(touchDelegate);
+        }
     }
 
     @Override
@@ -498,6 +537,7 @@ public class RouterListRecycleViewAdapter extends
         final TextView routerFirmware;
         @NonNull
         final TextView routerModel;
+        private final Context mContext;
         @NonNull
         private ImageButton routerMenu;
         @NonNull
@@ -507,10 +547,14 @@ public class RouterListRecycleViewAdapter extends
 
         private final View itemView;
 
+        private final View routerViewParent;
+
         public ViewHolder(Context context, View itemView) {
             super(itemView);
+            mContext = context;
 
             this.itemView = itemView;
+            this.routerViewParent = this.itemView.findViewById(R.id.router_view_parent);
 
             this.routerName = (TextView) this.itemView.findViewById(R.id.router_name);
             this.routerIp = (TextView) this.itemView.findViewById(R.id.router_ip_address);

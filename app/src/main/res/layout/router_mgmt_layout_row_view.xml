@@ -47,6 +47,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:clickable="true">
 
     <LinearLayout
+        android:id="@+id/router_view_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -148,6 +149,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:contentDescription="@string/menu"
                 android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
 
+            <!-- Not needed for now,as popup menu provides it and clicking on the view too -->
             <ImageButton
                 android:id="@+id/router_go"
                 android:layout_width="wrap_content"
@@ -156,7 +158,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="end|bottom"
                 android:layout_alignParentBottom="true"
                 android:contentDescription="@string/open"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 

@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.mgmt;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,11 +34,11 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -49,17 +48,12 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.google.android.gms.ads.AdListener;
@@ -78,7 +72,6 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
-import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.adapters.RouterListRecycleViewAdapter;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
@@ -102,7 +95,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFER
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OPENED_AT_LEAST_ONCE_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 
@@ -110,8 +102,9 @@ public class RouterManagementActivity
         extends AppCompatActivity
         implements View.OnClickListener,
         RouterMgmtDialogListener,
-        ActionMode.Callback, RecyclerView.OnItemTouchListener,
-        SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
+//        RecyclerView.OnItemTouchListener,
+        SearchView.OnQueryTextListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     public static final int ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE = 111;
     public static final String ROUTER_SELECTED = "ROUTER_SELECTED";
@@ -119,11 +112,11 @@ public class RouterManagementActivity
     public static final String UPDATE_ROUTER_FRAGMENT_TAG = "update_router";
     private static final String LOG_TAG = RouterManagementActivity.class.getSimpleName();
     public static final String COPY_ROUTER = "copy_router";
-    @Nullable
-    ActionMode actionMode;
-    GestureDetectorCompat gestureDetector;
-    int itemCount;
-    android.support.design.widget.FloatingActionButton addNewButton;
+//    @Nullable
+//    ActionMode actionMode;
+//    GestureDetectorCompat gestureDetector;
+//    int itemCount;
+    FloatingActionButton addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
     private RecyclerView mRecyclerView;
@@ -255,10 +248,10 @@ public class RouterManagementActivity
          * Tip by Ian Lake on G+ in a comment to this post:
          * https://plus.google.com/+LucasRocha/posts/37U8GWtYxDE
          */
-        mRecyclerView.addOnItemTouchListener(this);
-        gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
+//        mRecyclerView.addOnItemTouchListener(this);
+//        gestureDetector = new GestureDetectorCompat(this, new RouterManagementViewOnGestureListener());
 
-        addNewButton = (android.support.design.widget.FloatingActionButton) findViewById(R.id.router_list_add);
+        addNewButton = (FloatingActionButton) findViewById(R.id.router_list_add);
 
         //Attach to recyclerview for scrolling effect
 //        addNewButton.attachToRecyclerView(mRecyclerView);
@@ -689,116 +682,117 @@ public class RouterManagementActivity
 
         if (view.getId() == R.id.router_list_add) {
             this.openAddRouterForm();
-        } else if (view.getId() == R.id.router_item_cardview_content) {
-            // item click
-            final int idx = mRecyclerView.getChildPosition(view);
-            final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
-            if (actionMode != null) {
-                final int previousSelectedItemCount = adapter.getSelectedItemCount();
-                myToggleSelection(idx);
-                //Set background color, depending on whether this is a selection or a de-selection
-                final int currentSelectedItemCount = adapter.getSelectedItemCount();
-                if (currentSelectedItemCount == previousSelectedItemCount - 1) {
-                    //De-selection: remove background
-                    view.setBackgroundResource(android.R.color.transparent);
-                } else if (currentSelectedItemCount == previousSelectedItemCount + 1) {
-                    //Selection: apply background
-                    if (ColorUtils.isThemeLight(this)) {
-                        view.setBackgroundResource(R.color.DarkOrange);
-                    } else {
-                        view.setBackgroundResource(R.color.yellow);
-                    }
-                } //other cases should not occur (as this is a single selection)
-
-                //Now hide ActionMode if selected items count falls to 0
-                if (currentSelectedItemCount == 0) {
-                    actionMode.finish();
-                }
-                return;
-            }
-
-            //No action mode - normal mode => open up main activity for this router
-            final List<Router> routersList = adapter.getRoutersList();
-            final Router router;
-            if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
-                Crouton.makeText(RouterManagementActivity.this,
-                        "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
-                return;
-            }
-
-            //FIXME Uncomment once other firmwares are fully supported
-//            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
-//            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-//                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
-//                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
+        }
+//        else if (view.getId() == R.id.router_item_cardview_content) {
+//            // item click
+//            final int idx = mRecyclerView.getChildPosition(view);
+//            final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+//            if (actionMode != null) {
+//                final int previousSelectedItemCount = adapter.getSelectedItemCount();
+//                myToggleSelection(idx);
+//                //Set background color, depending on whether this is a selection or a de-selection
+//                final int currentSelectedItemCount = adapter.getSelectedItemCount();
+//                if (currentSelectedItemCount == previousSelectedItemCount - 1) {
+//                    //De-selection: remove background
+//                    view.setBackgroundResource(android.R.color.transparent);
+//                } else if (currentSelectedItemCount == previousSelectedItemCount + 1) {
+//                    //Selection: apply background
+//                    if (ColorUtils.isThemeLight(this)) {
+//                        view.setBackgroundResource(R.color.DarkOrange);
+//                    } else {
+//                        view.setBackgroundResource(R.color.yellow);
+//                    }
+//                } //other cases should not occur (as this is a single selection)
+//
+//                //Now hide ActionMode if selected items count falls to 0
+//                if (currentSelectedItemCount == 0) {
+//                    actionMode.finish();
+//                }
 //                return;
 //            }
-            //FIXME End
-
-            final String routerUuid = router.getUuid();
-
-            final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
-            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
-
-            final SharedPreferences routerSharedPreferences = getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
-            if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
-                routerSharedPreferences.edit()
-                        .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
-                        .apply();
-            }
-
-            if (BuildConfig.WITH_ADS &&
-                    mInterstitialAd != null &&
-                    AdUtils.canDisplayInterstialAd(this)) {
-                mInterstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
-                            startActivity(view, ddWrtMainIntent);
-                        }
-
-                        @Override
-                        public void onAdOpened() {
-                            mPreferences.edit()
-                                    .putLong(
-                                            DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                            System.currentTimeMillis())
-                                    .apply();
-                        }
-                });
-
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                } else {
-//                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                    alertDialog.show();
-//                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                    final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
-                            "Loading Router details", "Please wait...", true);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(view, ddWrtMainIntent);
-                            alertDialog.cancel();
-                        }
-                    }, 1000);
-                }
-
-            } else {
-//                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
-//                alertDialog.show();
-//                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
-                        "Loading Router details", "Please wait...", true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(view, ddWrtMainIntent);
-                        alertDialog.cancel();
-                    }
-                }, 1000);
-            }
-
-        }
+//
+//            //No action mode - normal mode => open up main activity for this router
+//            final List<Router> routersList = adapter.getRoutersList();
+//            final Router router;
+//            if (idx < 0 || idx >= routersList.size() || (router = routersList.get(idx)) == null) {
+//                Crouton.makeText(RouterManagementActivity.this,
+//                        "Unknown router - please refresh list or add a new one.", Style.ALERT).show();
+//                return;
+//            }
+//
+//            //FIXME Uncomment once other firmwares are fully supported
+////            final Router.RouterFirmware routerFirmware = router.getRouterFirmware();
+////            if (routerFirmware == null || Router.RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+////                Utils.displayMessage(this, "Router Firmware unknown or not supported (yet!). " +
+////                        "You may manually force the router firmware to use by editing this entry.", Style.ALERT);
+////                return;
+////            }
+//            //FIXME End
+//
+//            final String routerUuid = router.getUuid();
+//
+//            final Intent ddWrtMainIntent = new Intent(RouterManagementActivity.this, DDWRTMainActivity.class);
+//            ddWrtMainIntent.putExtra(ROUTER_SELECTED, routerUuid);
+//
+//            final SharedPreferences routerSharedPreferences = getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+//            if (!routerSharedPreferences.getBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, false)) {
+//                routerSharedPreferences.edit()
+//                        .putBoolean(OPENED_AT_LEAST_ONCE_PREF_KEY, true)
+//                        .apply();
+//            }
+//
+//            if (BuildConfig.WITH_ADS &&
+//                    mInterstitialAd != null &&
+//                    AdUtils.canDisplayInterstialAd(this)) {
+//                mInterstitialAd.setAdListener(new AdListener() {
+//                        @Override
+//                        public void onAdClosed() {
+//                            startActivity(view, ddWrtMainIntent);
+//                        }
+//
+//                        @Override
+//                        public void onAdOpened() {
+//                            mPreferences.edit()
+//                                    .putLong(
+//                                            DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+//                                            System.currentTimeMillis())
+//                                    .apply();
+//                        }
+//                });
+//
+//                if (mInterstitialAd.isLoaded()) {
+//                    mInterstitialAd.show();
+//                } else {
+////                    final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+////                    alertDialog.show();
+////                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                    final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
+//                            "Loading Router details", "Please wait...", true);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            startActivity(view, ddWrtMainIntent);
+//                            alertDialog.cancel();
+//                        }
+//                    }, 1000);
+//                }
+//
+//            } else {
+////                final AlertDialog alertDialog = Utils.buildAlertDialog(this, null, "Loading...", false, false);
+////                alertDialog.show();
+////                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                final ProgressDialog alertDialog = ProgressDialog.show(RouterManagementActivity.this,
+//                        "Loading Router details", "Please wait...", true);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        startActivity(view, ddWrtMainIntent);
+//                        alertDialog.cancel();
+//                    }
+//                }, 1000);
+//            }
+//
+//        }
     }
 
     private void startActivity(View view, Intent ddWrtMainIntent) {
@@ -837,288 +831,288 @@ public class RouterManagementActivity
         }
     }
 
-    /**
-     * Called when action mode is first created. The menu supplied will be used to
-     * generate action buttons for the action mode.
-     *
-     * @param actionMode ActionMode being created
-     * @param menu       Menu used to populate action buttons
-     * @return true if the action mode should be created, false if entering this
-     * mode should be aborted.
-     */
-    @Override
-    public boolean onCreateActionMode(@NonNull ActionMode actionMode, Menu menu) {
-        // Inflate a menu resource providing context menu items
-        if (mToolbar != null) {
-            mToolbar.setVisibility(View.GONE);
-        }
-        final MenuInflater inflater = actionMode.getMenuInflater();
-        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+//    /**
+//     * Called when action mode is first created. The menu supplied will be used to
+//     * generate action buttons for the action mode.
+//     *
+//     * @param actionMode ActionMode being created
+//     * @param menu       Menu used to populate action buttons
+//     * @return true if the action mode should be created, false if entering this
+//     * mode should be aborted.
+//     */
+//    @Override
+//    public boolean onCreateActionMode(@NonNull ActionMode actionMode, Menu menu) {
+//        // Inflate a menu resource providing context menu items
+//        if (mToolbar != null) {
+//            mToolbar.setVisibility(View.GONE);
+//        }
+//        final MenuInflater inflater = actionMode.getMenuInflater();
+//        inflater.inflate(R.menu.menu_router_list_selection_menu, menu);
+//
+//        menu.findItem(R.id.menu_router_item_open)
+//                .setVisible(false);
+//        menu.findItem(R.id.menu_router_item_open)
+//                .setEnabled(false);
+//
+//        addNewButton.setVisibility(View.GONE);
+//        return true;
+//    }
 
-        menu.findItem(R.id.menu_router_item_open)
-                .setVisible(false);
-        menu.findItem(R.id.menu_router_item_open)
-                .setEnabled(false);
+//    /**
+//     * Called to refresh an action mode's action menu whenever it is invalidated.
+//     *
+//     * @param actionMode ActionMode being prepared
+//     * @param menu       Menu used to populate action buttons
+//     * @return true if the menu or action mode was updated, false otherwise.
+//     */
+//    @Override
+//    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+//        return false;
+//    }
 
-        addNewButton.setVisibility(View.GONE);
-        return true;
-    }
+//    /**
+//     * Called to report a user click on an action button.
+//     *
+//     * @param actionMode The current ActionMode
+//     * @param menuItem   The item that was clicked
+//     * @return true if this callback handled the event, false if the standard MenuItem
+//     * invocation should continue.
+//     */
+//    @Override
+//    public boolean onActionItemClicked(@NonNull final ActionMode actionMode, @NonNull final MenuItem menuItem) {
+//        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+//        final List<Router> routersList = adapter.getRoutersList();
+//
+//        switch (menuItem.getItemId()) {
+//            case R.id.action_actions_reboot_routers: {
+//                final List<Integer> selectedItems = adapter.getSelectedItems();
+//
+//                if (selectedItems.isEmpty()) {
+//                    Toast.makeText(this, "No Router selected", Toast.LENGTH_SHORT).show();
+//                    return true;
+//                }
+//
+//                final List<Router> selectedRouters = new ArrayList<>();
+//                final List<String> selectedRoutersStr = new ArrayList<>();
+//                for (Integer selectedItem : selectedItems) {
+//                    if (selectedItem == null || selectedItem < 0 || selectedItem >= routersList.size()) {
+//                        continue;
+//                    }
+//                    final Router selectedRouter;
+//                    if ((selectedRouter = routersList.get(selectedItem)) == null) {
+//                        continue;
+//                    }
+//                    selectedRouters.add(selectedRouter);
+//                    selectedRoutersStr.add(String.format("- '%s' (%s)",
+//                            selectedRouter.getDisplayName(), selectedRouter.getRemoteIpAddress()));
+//                }
+//
+//                new AlertDialog.Builder(this)
+//                        .setIcon(R.drawable.ic_action_alert_warning)
+//                        .setTitle(String.format("Reboot %d Router(s)?", selectedItems.size()))
+//                        .setMessage(String.format("Are you sure you wish to continue? " +
+//                                        "The following Routers will be rebooted: \n\n%s",
+//                                Joiner.on("\n\n").skipNulls().join(selectedRoutersStr)))
+//                        .setCancelable(true)
+//                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(final DialogInterface dialogInterface, final int i) {
+//
+//                                Utils.displayMessage(RouterManagementActivity.this,
+//                                        String.format("Rebooting %d Router(s)....", selectedItems.size()),
+//                                        Style.INFO);
+//
+//                                final AtomicInteger currentNum = new AtomicInteger(0);
+//                                final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
+//                                final int totalNumOfDevices = selectedRouters.size();
+//
+//                                final RouterActionListener rebootRouterActionListener = new RouterActionListener() {
+//                                    @Override
+//                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+//                                        final int incrementAndGet = currentNum.incrementAndGet();
+//                                        if (incrementAndGet >= totalNumOfDevices) {
+//                                            final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
+//                                            if (numActionsThatDidNotSucceed > 0) {
+//                                                //An error occurred
+//                                                if (numActionsThatDidNotSucceed < totalNumOfDevices) {
+//                                                    Utils.displayMessage(RouterManagementActivity.this,
+//                                                            String.format("Action '%s' executed but %d error(s) occurred",
+//                                                                    routerAction.toString(), numActionsThatDidNotSucceed),
+//                                                            Style.INFO);
+//                                                } else {
+//                                                    //No action succeeded
+//                                                    Utils.displayMessage(RouterManagementActivity.this,
+//                                                            String.format("None of the '%s' actions submitted succeeded - please try again later.",
+//                                                                    routerAction.toString()),
+//                                                            Style.INFO);
+//                                                }
+//
+//                                            } else {
+//                                                //No error
+//                                                Utils.displayMessage(RouterManagementActivity.this,
+//                                                        String.format("Action '%s' executed successfully on %d Routers",
+//                                                                routerAction.toString(), selectedItems.size()),
+//                                                        Style.CONFIRM);
+//                                            }
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+//                                        final int incrementAndGet = currentNum.incrementAndGet();
+//                                        numActionsWithNoSuccess.incrementAndGet();
+//                                        if (incrementAndGet >= totalNumOfDevices) {
+//                                            //An error occurred
+//                                            Utils.displayMessage(RouterManagementActivity.this,
+//                                                    String.format("Action '%s' executed but %d error(s) occurred: %s",
+//                                                            routerAction.toString(), numActionsWithNoSuccess.get(),
+//                                                            ExceptionUtils.getRootCauseMessage(exception)),
+//                                                    Style.INFO);
+//                                        }
+//                                    }
+//                                };
+//
+//                                for (final Router selectedRouter : selectedRouters) {
+//                                    new RebootRouterAction(RouterManagementActivity.this,
+//                                            rebootRouterActionListener,
+//                                            mPreferences).execute(selectedRouter);
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                //Cancelled - nothing more to do!
+//                            }
+//                        }).create().show();
+//            }
+//                return true;
+//            case R.id.action_actions_restore_factory_defaults: {
+//                //TODO Hidden for now
+//
+//            }
+//                return true;
+//            case R.id.action_actions_firmwares_upgrade:
+//                //TODO Hidden for now
+//                return true;
+//            case R.id.menu_router_list_delete:
+//                final int selectedItemCount = adapter.getSelectedItemCount();
+//                new AlertDialog.Builder(this)
+//                        .setIcon(R.drawable.ic_action_alert_warning)
+//                        .setTitle(String.format("Delete %d Router(s)?", selectedItemCount))
+//                        .setMessage("You'll lose those records!")
+//                        .setCancelable(true)
+//                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(final DialogInterface dialogInterface, final int i) {
+//                                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
+//                                int numberOfItems = -1;
+//                                for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
+//                                    numberOfItems = adapter.removeData(selectedItemPositions.get(itemPosition));
+//                                }
+//                                actionMode.finish();
+//                                if (numberOfItems == 0) {
+//                                    //All items dropped = open up 'Add Router' diaalog
+//                                    RouterManagementActivity.this.openAddRouterForm();
+//                                }
+//
+//                                Crouton.makeText(RouterManagementActivity.this, selectedItemCount + " item(s) deleted", Style.CONFIRM).show();
+//                                //Request Backup
+//                                Utils.requestBackup(RouterManagementActivity.this);
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                //Cancelled - nothing more to do!
+//                            }
+//                        }).create().show();
+//
+//                return true;
+//            case R.id.menu_router_item_edit: {
+//                final Integer itemPos = adapter.getSelectedItems().get(0);
+//                this.openUpdateRouterForm(
+//                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
+//                );
+//            }
+//            return true;
+//            case R.id.menu_router_item_copy: {
+//                final Integer itemPos = adapter.getSelectedItems().get(0);
+//                this.openDuplicateRouterForm(
+//                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
+//                );
+//            }
+//            return true;
+//            default:
+//                return false;
+//        }
+//    }
 
-    /**
-     * Called to refresh an action mode's action menu whenever it is invalidated.
-     *
-     * @param actionMode ActionMode being prepared
-     * @param menu       Menu used to populate action buttons
-     * @return true if the menu or action mode was updated, false otherwise.
-     */
-    @Override
-    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-        return false;
-    }
+//    /**
+//     * Called when an action mode is about to be exited and destroyed.
+//     *
+//     * @param actionMode The current ActionMode being destroyed
+//     */
+//    @Override
+//    public void onDestroyActionMode(ActionMode actionMode) {
+//        this.actionMode = null;
+//        //Reset background for selected items
+//        for (int i = 0; i < this.dao.getAllRouters().size(); i++) {
+//            final View childAt;
+//            if ((childAt = mRecyclerView.getLayoutManager().getChildAt(i)) == null) {
+//                continue;
+//            }
+//            childAt.setBackgroundResource(android.R.color.transparent);
+//        }
+//        ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
+//        addNewButton.setVisibility(View.VISIBLE);
+//        if (mToolbar != null) {
+//            mToolbar.setVisibility(View.VISIBLE);
+//        }
+//    }
+//
+//    @Override
+//    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+//        gestureDetector.onTouchEvent(motionEvent);
+//        return false;
+//    }
 
-    /**
-     * Called to report a user click on an action button.
-     *
-     * @param actionMode The current ActionMode
-     * @param menuItem   The item that was clicked
-     * @return true if this callback handled the event, false if the standard MenuItem
-     * invocation should continue.
-     */
-    @Override
-    public boolean onActionItemClicked(@NonNull final ActionMode actionMode, @NonNull final MenuItem menuItem) {
-        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
-        final List<Router> routersList = adapter.getRoutersList();
+//    @Override
+//    public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+//
+//    }
+//
+//    @Override
+//    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+//
+//    }
 
-        switch (menuItem.getItemId()) {
-            case R.id.action_actions_reboot_routers: {
-                final List<Integer> selectedItems = adapter.getSelectedItems();
-
-                if (selectedItems.isEmpty()) {
-                    Toast.makeText(this, "No Router selected", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-                final List<Router> selectedRouters = new ArrayList<>();
-                final List<String> selectedRoutersStr = new ArrayList<>();
-                for (Integer selectedItem : selectedItems) {
-                    if (selectedItem == null || selectedItem < 0 || selectedItem >= routersList.size()) {
-                        continue;
-                    }
-                    final Router selectedRouter;
-                    if ((selectedRouter = routersList.get(selectedItem)) == null) {
-                        continue;
-                    }
-                    selectedRouters.add(selectedRouter);
-                    selectedRoutersStr.add(String.format("- '%s' (%s)",
-                            selectedRouter.getDisplayName(), selectedRouter.getRemoteIpAddress()));
-                }
-
-                new AlertDialog.Builder(this)
-                        .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Reboot %d Router(s)?", selectedItems.size()))
-                        .setMessage(String.format("Are you sure you wish to continue? " +
-                                        "The following Routers will be rebooted: \n\n%s",
-                                Joiner.on("\n\n").skipNulls().join(selectedRoutersStr)))
-                        .setCancelable(true)
-                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
-
-                                Utils.displayMessage(RouterManagementActivity.this,
-                                        String.format("Rebooting %d Router(s)....", selectedItems.size()),
-                                        Style.INFO);
-
-                                final AtomicInteger currentNum = new AtomicInteger(0);
-                                final AtomicInteger numActionsWithNoSuccess = new AtomicInteger(0);
-                                final int totalNumOfDevices = selectedRouters.size();
-
-                                final RouterActionListener rebootRouterActionListener = new RouterActionListener() {
-                                    @Override
-                                    public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
-                                        final int incrementAndGet = currentNum.incrementAndGet();
-                                        if (incrementAndGet >= totalNumOfDevices) {
-                                            final int numActionsThatDidNotSucceed = numActionsWithNoSuccess.get();
-                                            if (numActionsThatDidNotSucceed > 0) {
-                                                //An error occurred
-                                                if (numActionsThatDidNotSucceed < totalNumOfDevices) {
-                                                    Utils.displayMessage(RouterManagementActivity.this,
-                                                            String.format("Action '%s' executed but %d error(s) occurred",
-                                                                    routerAction.toString(), numActionsThatDidNotSucceed),
-                                                            Style.INFO);
-                                                } else {
-                                                    //No action succeeded
-                                                    Utils.displayMessage(RouterManagementActivity.this,
-                                                            String.format("None of the '%s' actions submitted succeeded - please try again later.",
-                                                                    routerAction.toString()),
-                                                            Style.INFO);
-                                                }
-
-                                            } else {
-                                                //No error
-                                                Utils.displayMessage(RouterManagementActivity.this,
-                                                        String.format("Action '%s' executed successfully on %d Routers",
-                                                                routerAction.toString(), selectedItems.size()),
-                                                        Style.CONFIRM);
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
-                                        final int incrementAndGet = currentNum.incrementAndGet();
-                                        numActionsWithNoSuccess.incrementAndGet();
-                                        if (incrementAndGet >= totalNumOfDevices) {
-                                            //An error occurred
-                                            Utils.displayMessage(RouterManagementActivity.this,
-                                                    String.format("Action '%s' executed but %d error(s) occurred: %s",
-                                                            routerAction.toString(), numActionsWithNoSuccess.get(),
-                                                            ExceptionUtils.getRootCauseMessage(exception)),
-                                                    Style.INFO);
-                                        }
-                                    }
-                                };
-
-                                for (final Router selectedRouter : selectedRouters) {
-                                    new RebootRouterAction(RouterManagementActivity.this,
-                                            rebootRouterActionListener,
-                                            mPreferences).execute(selectedRouter);
-                                }
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        }).create().show();
-            }
-                return true;
-            case R.id.action_actions_restore_factory_defaults: {
-                //TODO Hidden for now
-
-            }
-                return true;
-            case R.id.action_actions_firmwares_upgrade:
-                //TODO Hidden for now
-                return true;
-            case R.id.menu_router_list_delete:
-                final int selectedItemCount = adapter.getSelectedItemCount();
-                new AlertDialog.Builder(this)
-                        .setIcon(R.drawable.ic_action_alert_warning)
-                        .setTitle(String.format("Delete %d Router(s)?", selectedItemCount))
-                        .setMessage("You'll lose those records!")
-                        .setCancelable(true)
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialogInterface, final int i) {
-                                final List<Integer> selectedItemPositions = adapter.getSelectedItems();
-                                int numberOfItems = -1;
-                                for (int itemPosition = selectedItemPositions.size() - 1; itemPosition >= 0; itemPosition--) {
-                                    numberOfItems = adapter.removeData(selectedItemPositions.get(itemPosition));
-                                }
-                                actionMode.finish();
-                                if (numberOfItems == 0) {
-                                    //All items dropped = open up 'Add Router' diaalog
-                                    RouterManagementActivity.this.openAddRouterForm();
-                                }
-
-                                Crouton.makeText(RouterManagementActivity.this, selectedItemCount + " item(s) deleted", Style.CONFIRM).show();
-                                //Request Backup
-                                Utils.requestBackup(RouterManagementActivity.this);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Cancelled - nothing more to do!
-                            }
-                        }).create().show();
-
-                return true;
-            case R.id.menu_router_item_edit: {
-                final Integer itemPos = adapter.getSelectedItems().get(0);
-                this.openUpdateRouterForm(
-                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
-                );
-            }
-            return true;
-            case R.id.menu_router_item_copy: {
-                final Integer itemPos = adapter.getSelectedItems().get(0);
-                this.openDuplicateRouterForm(
-                        (itemPos == null || itemPos < 0 || itemPos >= routersList.size()) ? null : routersList.get(itemPos)
-                );
-            }
-            return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Called when an action mode is about to be exited and destroyed.
-     *
-     * @param actionMode The current ActionMode being destroyed
-     */
-    @Override
-    public void onDestroyActionMode(ActionMode actionMode) {
-        this.actionMode = null;
-        //Reset background for selected items
-        for (int i = 0; i < this.dao.getAllRouters().size(); i++) {
-            final View childAt;
-            if ((childAt = mRecyclerView.getLayoutManager().getChildAt(i)) == null) {
-                continue;
-            }
-            childAt.setBackgroundResource(android.R.color.transparent);
-        }
-        ((RouterListRecycleViewAdapter) mAdapter).clearSelections();
-        addNewButton.setVisibility(View.VISIBLE);
-        if (mToolbar != null) {
-            mToolbar.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-        gestureDetector.onTouchEvent(motionEvent);
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
-
-    private void myToggleSelection(int idx) {
-        if (actionMode == null) {
-            return;
-        }
-        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
-        adapter.toggleSelection(idx);
-        final int selectedItemCount = adapter.getSelectedItemCount();
-
-        String title = getString(R.string.selected_count, selectedItemCount);
-        actionMode.setTitle(title);
-
-        //Show 'Edit' button only if one item is selected
-        final MenuItem editButton = actionMode.getMenu().getItem(0);
-        final boolean menuItemRelevantForOneItemSelectedOnly = (selectedItemCount == 1);
-        if (editButton != null) {
-            editButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
-        }
-        final MenuItem copyButton = actionMode.getMenu().getItem(1);
-        if (copyButton != null) {
-            copyButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
-        }
-        final MenuItem deleteButton = actionMode.getMenu().getItem(2);
-        if (deleteButton != null) {
-            deleteButton.setVisible(selectedItemCount > 0);
-        }
-    }
+//    private void myToggleSelection(int idx) {
+//        if (actionMode == null) {
+//            return;
+//        }
+//        final RouterListRecycleViewAdapter adapter = (RouterListRecycleViewAdapter) mAdapter;
+//        adapter.toggleSelection(idx);
+//        final int selectedItemCount = adapter.getSelectedItemCount();
+//
+//        String title = getString(R.string.selected_count, selectedItemCount);
+//        actionMode.setTitle(title);
+//
+//        //Show 'Edit' button only if one item is selected
+//        final MenuItem editButton = actionMode.getMenu().getItem(0);
+//        final boolean menuItemRelevantForOneItemSelectedOnly = (selectedItemCount == 1);
+//        if (editButton != null) {
+//            editButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
+//        }
+//        final MenuItem copyButton = actionMode.getMenu().getItem(1);
+//        if (copyButton != null) {
+//            copyButton.setVisible(menuItemRelevantForOneItemSelectedOnly);
+//        }
+//        final MenuItem deleteButton = actionMode.getMenu().getItem(2);
+//        if (deleteButton != null) {
+//            deleteButton.setVisible(selectedItemCount > 0);
+//        }
+//    }
 
     @Override
     public boolean onQueryTextSubmit(String s) {
@@ -1146,34 +1140,34 @@ public class RouterManagementActivity
         INSERTED, REMOVED, DATA_SET_CHANGED, UPDATED
     }
 
-    private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
-            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-            onClick(view);
-            return super.onSingleTapConfirmed(e);
-        }
-
-        public void onLongPress(@NonNull MotionEvent e) {
-            if (actionMode != null) {
-                return;
-            }
-            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
-            //Item long-pressed: set background
-            if (view == null) {
-                return;
-            }
-            //Selection: apply background
-            if (ColorUtils.isThemeLight(RouterManagementActivity.this)) {
-                view.setBackgroundResource(R.color.DarkOrange);
-            } else {
-                view.setBackgroundResource(R.color.yellow);
-            }
-            // Start the CAB using the ActionMode.Callback defined above
-            actionMode = startActionMode(RouterManagementActivity.this);
-            int idx = mRecyclerView.getChildPosition(view);
-            myToggleSelection(idx);
-            super.onLongPress(e);
-        }
-    }
+//    private class RouterManagementViewOnGestureListener extends GestureDetector.SimpleOnGestureListener {
+//        @Override
+//        public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
+//            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+//            onClick(view);
+//            return super.onSingleTapConfirmed(e);
+//        }
+//
+//        public void onLongPress(@NonNull MotionEvent e) {
+//            if (actionMode != null) {
+//                return;
+//            }
+//            final View view = mRecyclerView.findChildViewUnder(e.getX(), e.getY());
+//            //Item long-pressed: set background
+//            if (view == null) {
+//                return;
+//            }
+//            //Selection: apply background
+//            if (ColorUtils.isThemeLight(RouterManagementActivity.this)) {
+//                view.setBackgroundResource(R.color.DarkOrange);
+//            } else {
+//                view.setBackgroundResource(R.color.yellow);
+//            }
+//            // Start the CAB using the ActionMode.Callback defined above
+//            actionMode = startActionMode(RouterManagementActivity.this);
+//            int idx = mRecyclerView.getChildPosition(view);
+//            myToggleSelection(idx);
+//            super.onLongPress(e);
+//        }
+//    }
 }
