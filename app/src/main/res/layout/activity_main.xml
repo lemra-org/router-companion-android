@@ -19,36 +19,129 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
+<!--<android.support.design.widget.CoordinatorLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/router_main_content"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:fitsSystemWindows="true"-->
+    <!--tools:context=".main.DDWRTMainActivity">-->
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:id="@+id/appbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+        <!--<android.support.design.widget.CollapsingToolbarLayout-->
+            <!--android:id="@+id/collapsing_toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:foregroundGravity="bottom|right"-->
+            <!--android:foregroundTintMode="add"-->
+            <!--app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
+
+            <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/header"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:background="@color/primary" />&ndash;&gt;-->
+
+            <!--<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+                <!--xmlns:tools="http://schemas.android.com/tools"-->
+                <!--android:id="@+id/toolbar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="?actionBarSize"-->
+                <!--android:elevation="4dp"-->
+                <!--android:minHeight="?actionBarSize"-->
+                <!--android:transitionName="actionBar"-->
+                <!--app:layout_collapseMode="pin"-->
+                <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+                <!--tools:ignore="UnusedAttribute">-->
+
+                <!--<Spinner-->
+                    <!--android:id="@+id/toolbar_routers_list_spinner"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"/>-->
+
+            <!--</android.support.v7.widget.Toolbar>-->
+
+        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="?attr/actionBarSize" />-->
+
+    <!--&lt;!&ndash;<android.support.v4.widget.NestedScrollView&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/content_view"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:fitsSystemWindows="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;app:layout_behavior="@string/appbar_scrolling_view_behavior">&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. A lot of text to get a scrolling area. " />&ndash;&gt;-->
+    <!--&lt;!&ndash;</android.support.v4.widget.NestedScrollView>&ndash;&gt;-->
+
+<!--</android.support.design.widget.CoordinatorLayout>-->
+
+
+<!--<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/drawer_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:fitsSystemWindows="true"-->
+    <!--tools:context=".main.DDWRTMainActivity">-->
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<FrameLayout-->
+            <!--android:id="@+id/content"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginTop="?attr/actionBarSize" />-->
+
+        <!--<include layout="@layout/activity_main_toolbar" />-->
+
+    <!--</RelativeLayout>-->
+
+    <!--<android.support.design.widget.NavigationView-->
+        <!--android:id="@+id/activity_main_nav_drawer"-->
+        <!--android:layout_width="270dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="start"-->
+        <!--app:headerLayout="@layout/drawer_header"-->
+        <!--app:menu="@menu/activity_main_nav_drawer" />-->
+<!--</android.support.v4.widget.DrawerLayout>-->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".main.DDWRTMainActivity">
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <FrameLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
-
-        <include layout="@layout/activity_main_toolbar" />
-
-    </RelativeLayout>
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/activity_main_nav_drawer"
-        android:layout_width="270dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/activity_main_nav_drawer" />
-</android.support.v4.widget.DrawerLayout>
+        android:layout_marginTop="?attr/actionBarSize" />
 
+    <include layout="@layout/activity_main_toolbar" />
+
+</RelativeLayout>

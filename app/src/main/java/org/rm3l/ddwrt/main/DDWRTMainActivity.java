@@ -32,6 +32,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -46,11 +47,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -71,10 +69,22 @@ import android.widget.Toast;
 import com.cocosw.undobar.UndoBarController;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.common.base.Strings;
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -107,6 +117,8 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -120,7 +132,6 @@ import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DRAWER_CLOSE_DELAY_MS;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
@@ -146,12 +157,14 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     private static final int LISTENED_REQUEST_CODE = 77;
     public static final String RESTORE_ROUTER_FRAGMENT_TAG = "RESTORE_ROUTER_FRAGMENT_TAG";
+    public static final int ADD_NEW_ROUTER = 123;
+    public static final int MANAGE_ROUTERS = 234;
 
-    private Handler mDrawerActionHandler;
+//    private Handler mDrawerActionHandler;
 
-    DrawerLayout mDrawerLayout;
+//    DrawerLayout mDrawerLayout;
 //    ListView mDrawerList;
-    ActionBarDrawerToggle mDrawerToggle;
+//    ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
     @NonNull
     private DDWRTCompanionDAO dao;
@@ -182,9 +195,12 @@ public class DDWRTMainActivity extends AppCompatActivity
     private ArrayAdapter<String> mRoutersListAdapter;
     private ArrayList<Router> mRoutersListForPicker;
 
+    private AccountHeader mDrawerHeaderResult;
+    private Drawer mDrawerResult;
+
     @Nullable
     private InterstitialAd mInterstitialAd;
-    private NavigationView mNavigationView;
+//    private NavigationView mNavigationView;
 //    private GoogleApiClient mGoogleApiClient;
 
     private static final BiMap<Integer, Integer> navigationViewMenuItemsPositions = HashBiMap.create(11);
@@ -223,6 +239,32 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
+        //initialize and create the image loader logic
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext())
+                        .load(uri)
+                        .placeholder(placeholder)
+                        .into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext())
+                        .cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                final int routerDrawable = R.drawable.router;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    return ctx.getResources().getDrawable(routerDrawable, getTheme());
+                }
+                return ctx.getResources().getDrawable(routerDrawable);
+            }
+        });
+
         this.mRouterUuid = router.getUuid();
         this.mRouter = router;
 
@@ -259,12 +301,125 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        mDrawerActionHandler = new Handler();
+//        mDrawerActionHandler = new Handler();
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         setUpToolbar();
         setUpNavDrawer();
+
+        IProfile activeProfile = null;
+        final List<Router> allRouters = dao.getAllRouters();
+        final IProfile[] iProfiles;
+
+        final String[] opts = new String[]
+            {
+                    "w_300",
+                    "h_300",
+                    "q_100",
+                    "c_thumb",
+                    "g_center",
+                    "r_20",
+                    "e_improve",
+                    "e_make_transparent",
+                    "e_trim"
+            };
+
+        if (allRouters != null) {
+            iProfiles = new IProfile[allRouters.size() + 2];
+            int i = 0;
+            for (final Router routerFromAll : allRouters) {
+                final String routerModel = Router.getRouterModel(this, routerFromAll);
+                Log.d(TAG, "routerModel: " + routerModel);
+                final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
+                        .withName(routerFromAll.getDisplayName())
+                        .withEmail(routerFromAll.getRemoteIpAddress() + ":" +
+                                routerFromAll.getRemotePort());
+                if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
+                    if (Utils.isDemoRouter(routerFromAll)) {
+                        profileDrawerItem.withIcon(R.drawable.demo_router);
+                    } else {
+                        final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
+                        try {
+                            final String url = String.format("%s/%s/%s",
+                                    DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                                    Joiner
+                                            .on(",")
+                                            .skipNulls().join(opts),
+                                    URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
+                            profileDrawerItem.withIcon(url);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            Utils.reportException(e);
+                        }
+                    }
+
+                } else {
+                    profileDrawerItem.withIcon(Utils.isDemoRouter(routerFromAll) ?
+                            R.drawable.demo_router : R.drawable.router);
+                }
+
+                iProfiles[i++] = profileDrawerItem;
+                if (mRouter.getUuid().equals(routerFromAll.getUuid())) {
+                    activeProfile = profileDrawerItem;
+                }
+            }
+        } else {
+            iProfiles = new IProfile[2];
+        }
+        iProfiles[iProfiles.length-2] = //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
+                new ProfileSettingDrawerItem().withName("Add Router").withDescription("Add new Router")
+                        .withIcon(R.drawable.ic_router_add)
+                        .withIdentifier(ADD_NEW_ROUTER);
+        iProfiles[iProfiles.length-1] = //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
+                new ProfileSettingDrawerItem().withName("Manage Routers").withDescription("Manage registered Routers")
+                        .withIcon(R.drawable.ic_action_action_settings)
+                        .withIdentifier(MANAGE_ROUTERS);
+        mDrawerHeaderResult = new AccountHeaderBuilder()
+            .withActivity(this)
+                .withHeaderBackground(R.drawable.router_picker_background)
+                .addProfiles(iProfiles)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+                        //sample usage of the onProfileChanged listener
+                        //if the clicked item has the identifier 1 add a new profile ;)
+                        if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == ADD_NEW_ROUTER) {
+                            IProfile newProfile = new ProfileDrawerItem()
+                                    .withNameShown(true)
+                                    .withName("Batman")
+                                    .withEmail("batman@gmail.com"); //FIXME
+//                                    .withIcon(getResources().getDrawable(R.drawable.profile5));
+                            if (mDrawerHeaderResult.getProfiles() != null) {
+                                //we know that there are 2 setting elements. set the new profile above them ;)
+                                mDrawerHeaderResult.addProfile(newProfile,
+                                        mDrawerHeaderResult.getProfiles().size() - 2);
+                            } else {
+                                mDrawerHeaderResult.addProfiles(newProfile);
+                            }
+                        }
+
+                        //false if you have not consumed the event and it should close the drawer
+                        return false;
+                    }
+                })
+                .withSavedInstance(savedInstanceState)
+                .build();
+
+        mDrawerResult = new DrawerBuilder()
+                .withActivity(this)
+                .withTranslucentStatusBar(false)
+                .withActionBarDrawerToggle(true)
+                .withSavedInstance(savedInstanceState)
+                .withToolbar(mToolbar)
+                .withAccountHeader(mDrawerHeaderResult) //set the AccountHeader we created earlier for the header
+                .withSavedInstance(savedInstanceState)
+                .withShowDrawerOnFirstLaunch(true)
+                .build();
+
+        //if you have many different types of DrawerItems you can magically pre-cache those items to get a better scroll performance
+        //make sure to init the cache after the DrawerBuilder was created as this will first clear the cache to make sure no old elements are in
+        RecyclerViewCacheUtil.getInstance().withCacheSize(3).init(mDrawerResult);
 
         final Integer savedPosition;
         int position = intent.getIntExtra(SAVE_ITEM_SELECTED, 1);
@@ -275,7 +430,15 @@ public class DDWRTMainActivity extends AppCompatActivity
             position = 1;
         }
 
-        selectItemInDrawer(position);
+        // set the selection to the item with the identifier 11
+        mDrawerResult.setSelection(position, false);
+
+//        selectItemInDrawer(position);
+
+        //set the active profile
+        if (activeProfile != null) {
+            mDrawerHeaderResult.setActiveProfile(activeProfile);
+        }
 
 //        mDrawerList.performItemClick(
 //                mDrawerList.getChildAt(position),
@@ -328,7 +491,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private void setUpNavDrawer() {
 
-            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             // set a custom shadow that overlays the main content when the drawer
             // opens
 //            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -348,17 +511,17 @@ public class DDWRTMainActivity extends AppCompatActivity
 //                }
 //            });
 
-            mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
-            mNavigationView.setNavigationItemSelectedListener(this);
+//            mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
+//            mNavigationView.setNavigationItemSelectedListener(this);
 
             //Init Header Avatar
-            final ImageView navigationViewHeaderAvatar =
-                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
-            final String routerModel = Router.getRouterModel(this, mRouter);
-        Log.d(TAG, "routerModel: " + routerModel);
-            if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
-                Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
-            }
+//            final ImageView navigationViewHeaderAvatar =
+//                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
+//            final String routerModel = Router.getRouterModel(this, mRouter);
+//            Log.d(TAG, "routerModel: " + routerModel);
+//            if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
+//                Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
+//            }
 
             initDrawer();
 
@@ -661,41 +824,46 @@ public class DDWRTMainActivity extends AppCompatActivity
     private void initDrawer() {
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
-        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-                mDrawerLayout, /* DrawerLayout object */
-                mToolbar,
-//                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
-        ) ;
-//        {
-//            public void onDrawerClosed(View view) {
-////                if (actionBar != null)
-////                    actionBar.setTitle(mTitle);
-////                invalidateOptionsMenu(); // creates call to
-////                // onPrepareOptionsMenu()
-//                super.onDrawerClosed(view);
-//            }
-//
-//            public void onDrawerOpened(View drawerView) {
-////                if (actionBar != null)
-////                    actionBar.setTitle(mDrawerTitle);
-////                invalidateOptionsMenu(); // creates call to
-////                // onPrepareOptionsMenu()
-//                super.onDrawerOpened(drawerView);
-//            }
-//        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.setStatusBarBackground(android.R.color.transparent);
+//        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
+//                mDrawerLayout, /* DrawerLayout object */
+//                mToolbar,
+////                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+//                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
+//                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
+//        ) ;
+////        {
+////            public void onDrawerClosed(View view) {
+//////                if (actionBar != null)
+//////                    actionBar.setTitle(mTitle);
+//////                invalidateOptionsMenu(); // creates call to
+//////                // onPrepareOptionsMenu()
+////                super.onDrawerClosed(view);
+////            }
+////
+////            public void onDrawerOpened(View drawerView) {
+//////                if (actionBar != null)
+//////                    actionBar.setTitle(mDrawerTitle);
+//////                invalidateOptionsMenu(); // creates call to
+//////                // onPrepareOptionsMenu()
+////                super.onDrawerOpened(drawerView);
+////            }
+////        };
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+//        mDrawerLayout.setStatusBarBackground(android.R.color.transparent);
     }
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawers();
-            return;
+//        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            mDrawerLayout.closeDrawers();
+//            return;
+//        }
+        //handle the back press :D close the drawer first and if the drawer is closed close the activity
+        if (mDrawerResult != null && mDrawerResult.isDrawerOpen()) {
+            mDrawerResult.closeDrawer();
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     @Override
@@ -962,7 +1130,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         }
 
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        return true;
+//        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
     }
 
@@ -1061,14 +1230,14 @@ public class DDWRTMainActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+//        mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-        mDrawerToggle.onConfigurationChanged(newConfig);
+//        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void selectItem(int position) {
@@ -1087,7 +1256,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .commit();
 
 //        mDrawerLayout.closeDrawer(mDrawerList);
-        mDrawerLayout.closeDrawers();
+//        mDrawerLayout.closeDrawers();
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
@@ -1393,13 +1562,13 @@ public class DDWRTMainActivity extends AppCompatActivity
             menuItem.setChecked(true);
             // allow some time after closing the drawer before performing real navigation
             // so the user can see what is happening
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            mDrawerActionHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    selectItem(position);
-                }
-            }, DRAWER_CLOSE_DELAY_MS);
+//            mDrawerLayout.closeDrawer(GravityCompat.START);
+//            mDrawerActionHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    selectItem(position);
+//                }
+//            }, DRAWER_CLOSE_DELAY_MS);
 
 //            mDrawerLayout.closeDrawers();
 //            selectItem(position);
@@ -1438,11 +1607,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 //                    item.setChecked(false);
 //                }
 //            }
-            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
-            if (menuItem != null) {
-                mNavigationView.setCheckedItem(menuItemId);
-//                onNavigationItemSelected(menuItem);
-            }
+//            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
+//            if (menuItem != null) {
+//                mNavigationView.setCheckedItem(menuItemId);
+////                onNavigationItemSelected(menuItem);
+//            }
 //            selectItem(position);
 //        mNavigationDrawerAdapter.setSelectedItem(position);
 //        mNavigationDrawerAdapter.notifyDataSetChanged();
