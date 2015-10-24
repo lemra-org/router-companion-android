@@ -118,15 +118,16 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
     }
 
     public boolean canChildScrollUp() {
+        final View syslogContentScrollView = layout
+                .findViewById(R.id.tile_status_router_syslog_content_scrollview);
         final boolean canScrollVertically = ViewCompat.canScrollVertically(
-                layout
-                        .findViewById(R.id.tile_status_router_syslog_content_scrollview),
+                syslogContentScrollView,
                 -1);
         if (!canScrollVertically) {
             return canScrollVertically;
         }
 
-        // ScrollView can scroll vertically,
+        //TODO ScrollView can scroll vertically,
         // but detect whether the touch was done outside of the scroll view
         // (in which case we should return false)
 
