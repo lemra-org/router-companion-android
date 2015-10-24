@@ -332,6 +332,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 final String routerModel = Router.getRouterModel(this, routerFromAll);
                 Log.d(TAG, "routerModel: " + routerModel);
                 final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
+                        .withNameShown(true)
                         .withName(routerFromAll.getDisplayName())
                         .withEmail(routerFromAll.getRemoteIpAddress() + ":" +
                                 routerFromAll.getRemotePort());
@@ -388,7 +389,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             IProfile newProfile = new ProfileDrawerItem()
                                     .withNameShown(true)
                                     .withName("Batman")
-                                    .withEmail("batman@gmail.com"); //FIXME
+                                    .withEmail("batman@gmail.com"); //FIXME Set actual router added
 //                                    .withIcon(getResources().getDrawable(R.drawable.profile5));
                             if (mDrawerHeaderResult.getProfiles() != null) {
                                 //we know that there are 2 setting elements. set the new profile above them ;)
