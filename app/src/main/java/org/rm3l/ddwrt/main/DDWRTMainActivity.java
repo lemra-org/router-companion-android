@@ -32,7 +32,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -78,12 +77,13 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
-import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 import com.squareup.picasso.Picasso;
 
@@ -218,6 +218,19 @@ public class DDWRTMainActivity extends AppCompatActivity
         navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_toolbox_network, 14);
     }
 
+    private static final String[] opts = new String[]
+            {
+                    "w_300",
+                    "h_300",
+                    "q_100",
+                    "c_thumb",
+                    "g_center",
+                    "r_20",
+                    "e_improve",
+                    "e_make_transparent",
+                    "e_trim"
+            };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,32 +251,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             finish();
             return;
         }
-
-        //initialize and create the image loader logic
-        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
-            @Override
-            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Picasso.with(imageView.getContext())
-                        .load(uri)
-                        .placeholder(placeholder)
-                        .into(imageView);
-            }
-
-            @Override
-            public void cancel(ImageView imageView) {
-                Picasso.with(imageView.getContext())
-                        .cancelRequest(imageView);
-            }
-
-            @Override
-            public Drawable placeholder(Context ctx) {
-                final int routerDrawable = R.drawable.router;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    return ctx.getResources().getDrawable(routerDrawable, getTheme());
-                }
-                return ctx.getResources().getDrawable(routerDrawable);
-            }
-        });
 
         this.mRouterUuid = router.getUuid();
         this.mRouter = router;
@@ -312,30 +299,17 @@ public class DDWRTMainActivity extends AppCompatActivity
         final List<Router> allRouters = dao.getAllRouters();
         final IProfile[] iProfiles;
 
-        final String[] opts = new String[]
-            {
-                    "w_300",
-                    "h_300",
-                    "q_100",
-                    "c_thumb",
-                    "g_center",
-                    "r_20",
-                    "e_improve",
-                    "e_make_transparent",
-                    "e_trim"
-            };
-
         if (allRouters != null) {
             iProfiles = new IProfile[allRouters.size() + 2];
             int i = 0;
             for (final Router routerFromAll : allRouters) {
-                final String routerModel = Router.getRouterModel(this, routerFromAll);
-                Log.d(TAG, "routerModel: " + routerModel);
                 final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
                         .withNameShown(true)
                         .withName(routerFromAll.getDisplayName())
                         .withEmail(routerFromAll.getRemoteIpAddress() + ":" +
                                 routerFromAll.getRemotePort());
+                final String routerModel = Router.getRouterModel(this, routerFromAll);
+                Log.d(TAG, "routerModel: " + routerModel);
                 if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                     if (Utils.isDemoRouter(routerFromAll)) {
                         profileDrawerItem.withIcon(R.drawable.demo_router);
@@ -374,7 +348,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         .withIdentifier(ADD_NEW_ROUTER);
         iProfiles[iProfiles.length-1] = //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
                 new ProfileSettingDrawerItem().withName("Manage Routers").withDescription("Manage registered Routers")
-                        .withIcon(R.drawable.ic_action_action_settings)
+                        .withIcon(android.R.drawable.ic_menu_preferences)
                         .withIdentifier(MANAGE_ROUTERS);
         mDrawerHeaderResult = new AccountHeaderBuilder()
             .withActivity(this)
@@ -382,25 +356,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .addProfiles(iProfiles)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-                        //sample usage of the onProfileChanged listener
-                        //if the clicked item has the identifier 1 add a new profile ;)
-                        if (profile instanceof IDrawerItem && ((IDrawerItem) profile).getIdentifier() == ADD_NEW_ROUTER) {
-                            IProfile newProfile = new ProfileDrawerItem()
-                                    .withNameShown(true)
-                                    .withName("Batman")
-                                    .withEmail("batman@gmail.com"); //FIXME Set actual router added
-//                                    .withIcon(getResources().getDrawable(R.drawable.profile5));
-                            if (mDrawerHeaderResult.getProfiles() != null) {
-                                //we know that there are 2 setting elements. set the new profile above them ;)
-                                mDrawerHeaderResult.addProfile(newProfile,
-                                        mDrawerHeaderResult.getProfiles().size() - 2);
-                            } else {
-                                mDrawerHeaderResult.addProfiles(newProfile);
-                            }
-                        }
-
-                        //false if you have not consumed the event and it should close the drawer
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
                         return false;
                     }
                 })
@@ -416,6 +372,71 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withAccountHeader(mDrawerHeaderResult) //set the AccountHeader we created earlier for the header
                 .withSavedInstance(savedInstanceState)
                 .withShowDrawerOnFirstLaunch(true)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("Overview").withIcon(R.drawable.ic_action_dashboard).withIdentifier(1),
+
+                        new SectionDrawerItem().withName("Status").withSelectable(false),
+                        new SecondaryDrawerItem().withName("Status").withIcon(R.drawable.ic_action_action_info).withIdentifier(2),
+                        new SecondaryDrawerItem().withName("Wireless").withIcon(R.drawable.ic_action_device_signal_wifi_3_bar).withIdentifier(3),
+                        new SecondaryDrawerItem().withName("Clients").withIcon(R.drawable.ic_action_devices).withIdentifier(4),
+                        new SecondaryDrawerItem().withName("Monitoring").withIcon(R.drawable.ic_action_trending_up).withIdentifier(5),
+
+                        new SectionDrawerItem().withName("Services").withSelectable(false),
+                        new SecondaryDrawerItem().withName("OpenVPN").withIcon(R.drawable.ic_action_openvpn).withIdentifier(7),
+                        new SecondaryDrawerItem().withName("PPTP").withIcon(R.drawable.ic_action_communication_vpn_key).withIdentifier(8),
+                        new SecondaryDrawerItem().withName("Wake On LAN").withIcon(R.drawable.ic_action_wol_3).withIdentifier(9),
+
+                        new SectionDrawerItem().withName("Admin Area").withSelectable(false),
+                        new SecondaryDrawerItem().withName("Commands").withIcon(R.drawable.ic_action_terminal).withIdentifier(11),
+                        new SecondaryDrawerItem().withName("NVRAM").withIcon(R.drawable.ic_action_ram_3).withIdentifier(12),
+
+                        new SectionDrawerItem().withName("Toolbox").withSelectable(false),
+                        new SecondaryDrawerItem().withName("Network").withIcon(R.drawable.ic_action_network).withIdentifier(14)
+                        )
+                .addStickyDrawerItems(
+                        new PrimaryDrawerItem().withName("Help").withIcon(android.R.drawable.ic_menu_help).withIdentifier(1001),
+                        new PrimaryDrawerItem().withName("What's new").withIcon(R.drawable.ic_action_action_info_outline).withIdentifier(1002),
+                        new PrimaryDrawerItem().withName("Send Feedback").withIcon(R.drawable.ic_action_action_thumbs_up_down).withIdentifier(1003),
+                        new PrimaryDrawerItem().withName("About").withIcon(R.drawable.ic_action_social_person).withIdentifier(1004)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        if (drawerItem == null) {
+                            Utils.reportException(new IllegalStateException("drawerItem == null"));
+                            return false;
+                        }
+                        final int identifier = drawerItem.getIdentifier();
+                        if (identifier < 0) {
+                            Utils.reportException(new IllegalStateException("identifier < 0"));
+                            return false;
+                        }
+                        if (identifier < 1000) {
+                            selectItem(identifier);
+                        } else {
+                            switch (identifier) {
+                                case 1001:
+                                    //Help
+                                    startActivity(new Intent(DDWRTMainActivity.this, HelpActivity.class));
+                                    break;
+                                case 1002:
+                                    //Changelog
+                                    startActivity(new Intent(DDWRTMainActivity.this, ChangelogActivity.class));
+                                    break;
+                                case 1003:
+                                    //Feedback
+                                    Utils.buildFeedbackDialog(DDWRTMainActivity.this, true);
+                                    break;
+                                case 1004:
+                                    //About
+                                    new AboutDialog(DDWRTMainActivity.this).show();
+                                    break;
+                            }
+                        }
+                        return true;
+                    }
+                })
                 .build();
 
         //if you have many different types of DrawerItems you can magically pre-cache those items to get a better scroll performance
@@ -432,7 +453,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
 
         // set the selection to the item with the identifier 11
-        mDrawerResult.setSelection(position, false);
+        mDrawerResult.setSelection(position, true);
 
 //        selectItemInDrawer(position);
 
@@ -1548,6 +1569,44 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             //Open Spinner right away
             routersPicker.performClick();
+
+            final IProfile newProfile = new ProfileDrawerItem()
+                    .withNameShown(true)
+                    .withName(newRouter.getDisplayName())
+                    .withEmail(newRouter.getRemotePort() + ":" + newRouter.getRemotePort());
+
+            final String routerModel = Router.getRouterModel(this, newRouter);
+            Log.d(TAG, "routerModel: " + routerModel);
+            if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
+                if (Utils.isDemoRouter(newRouter)) {
+                    newProfile.withIcon(R.drawable.demo_router);
+                } else {
+                    final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
+                    try {
+                        final String url = String.format("%s/%s/%s",
+                                DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                                Joiner
+                                        .on(",")
+                                        .skipNulls().join(opts),
+                                URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
+                        newProfile.withIcon(url);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        Utils.reportException(e);
+                    }
+                }
+
+            } else {
+                newProfile.withIcon(Utils.isDemoRouter(newRouter) ?
+                        R.drawable.demo_router : R.drawable.router);
+            }
+            if (mDrawerHeaderResult.getProfiles() != null) {
+                //we know that there are 2 setting elements. set the new profile above them ;)
+                mDrawerHeaderResult.addProfile(newProfile,
+                        mDrawerHeaderResult.getProfiles().size() - 2);
+            } else {
+                mDrawerHeaderResult.addProfiles(newProfile);
+            }
         }
     }
 
@@ -1596,28 +1655,30 @@ public class DDWRTMainActivity extends AppCompatActivity
 //    }
 
     public void selectItemInDrawer(int position) {
-        final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
-        Log.d(TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
-        if (menuItemId != null) {
-//            for (final Map.Entry<Integer, Integer> menuItems : navigationViewMenuItemsPositions.entrySet()) {
-//                if (menuItems.getValue() == null || position != menuItems.getValue()) {
-//                    final MenuItem item = mNavigationView.getMenu().findItem(menuItems.getKey());
-//                    if (item == null) {
-//                        continue;
-//                    }
-//                    item.setChecked(false);
-//                }
-//            }
-//            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
-//            if (menuItem != null) {
-//                mNavigationView.setCheckedItem(menuItemId);
-////                onNavigationItemSelected(menuItem);
-//            }
-//            selectItem(position);
-//        mNavigationDrawerAdapter.setSelectedItem(position);
-//        mNavigationDrawerAdapter.notifyDataSetChanged();
-//            mDrawerLayout.invalidate();
-        }
+        mDrawerResult.setSelection(position, true);
+
+//        final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
+//        Log.d(TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
+//        if (menuItemId != null) {
+////            for (final Map.Entry<Integer, Integer> menuItems : navigationViewMenuItemsPositions.entrySet()) {
+////                if (menuItems.getValue() == null || position != menuItems.getValue()) {
+////                    final MenuItem item = mNavigationView.getMenu().findItem(menuItems.getKey());
+////                    if (item == null) {
+////                        continue;
+////                    }
+////                    item.setChecked(false);
+////                }
+////            }
+////            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
+////            if (menuItem != null) {
+////                mNavigationView.setCheckedItem(menuItemId);
+//////                onNavigationItemSelected(menuItem);
+////            }
+////            selectItem(position);
+////        mNavigationDrawerAdapter.setSelectedItem(position);
+////        mNavigationDrawerAdapter.notifyDataSetChanged();
+////            mDrawerLayout.invalidate();
+//        }
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {

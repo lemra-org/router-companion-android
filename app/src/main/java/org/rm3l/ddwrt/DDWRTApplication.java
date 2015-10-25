@@ -24,7 +24,15 @@ package org.rm3l.ddwrt;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.widget.ImageView;
+
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -73,6 +81,32 @@ public class DDWRTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext())
+                        .load(uri)
+                        .placeholder(placeholder)
+                        .into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext())
+                        .cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                final int routerDrawable = R.drawable.router;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    return ctx.getResources().getDrawable(routerDrawable, getTheme());
+                }
+                return ctx.getResources().getDrawable(routerDrawable);
+            }
+        });
 
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
