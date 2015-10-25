@@ -371,7 +371,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withToolbar(mToolbar)
                 .withAccountHeader(mDrawerHeaderResult) //set the AccountHeader we created earlier for the header
                 .withSavedInstance(savedInstanceState)
-                .withShowDrawerOnFirstLaunch(true)
+                .withShowDrawerOnFirstLaunch(false)
+                .withCloseOnClick(true)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Overview").withIcon(R.drawable.ic_action_dashboard).withIdentifier(1),
 
@@ -395,9 +396,9 @@ public class DDWRTMainActivity extends AppCompatActivity
                         )
                 .addStickyDrawerItems(
                         new PrimaryDrawerItem().withName("Help").withIcon(android.R.drawable.ic_menu_help).withIdentifier(1001),
-                        new PrimaryDrawerItem().withName("What's new").withIcon(R.drawable.ic_action_action_info_outline).withIdentifier(1002),
-                        new PrimaryDrawerItem().withName("Send Feedback").withIcon(R.drawable.ic_action_action_thumbs_up_down).withIdentifier(1003),
-                        new PrimaryDrawerItem().withName("About").withIcon(R.drawable.ic_action_social_person).withIdentifier(1004)
+//                        new PrimaryDrawerItem().withName("What's new").withIcon(R.drawable.ic_action_action_info_outline).withIdentifier(1002),
+                        new PrimaryDrawerItem().withName("Send Feedback").withIcon(R.drawable.ic_action_action_thumbs_up_down).withIdentifier(1003)
+//                        new PrimaryDrawerItem().withName("About").withIcon(R.drawable.ic_action_social_person).withIdentifier(1004)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
