@@ -413,7 +413,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
         iProfiles[iProfiles.length-2] = //don't ask but google uses 14dp for the add account icon in gmail but 20dp for the normal icons (like manage account)
                 new ProfileSettingDrawerItem().withName("Add Router").withDescription("Add new Router")
-                        .withIcon(R.drawable.ic_router_add)
+                        .withIcon(R.drawable.ic_action_content_add_drawer_header)
                         .withIdentifier(ADD_NEW_ROUTER)
                         .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                             @Override
