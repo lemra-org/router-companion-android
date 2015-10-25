@@ -435,6 +435,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     break;
                             }
                         }
+                        //Force close after selection
+                        if (mDrawerResult.isDrawerOpen()) {
+                            mDrawerResult.closeDrawer();
+                        }
                         return true;
                     }
                 })
