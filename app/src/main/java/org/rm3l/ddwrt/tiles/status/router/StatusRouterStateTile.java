@@ -120,10 +120,16 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -331,140 +337,143 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
      */
     @Override
     public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_router_router_state_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_router_state_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_router_state_gridLayout)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_status_router_router_state_header_layout)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_router_state_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_router_state_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_router_state_gridLayout)
+                    .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_router_state_header_layout)
+                    .setVisibility(View.VISIBLE);
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //Router Name
-            final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
-            final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
-            final boolean routerNameNull = (routerName == null);
-            String routerNameToSet = routerName;
-            if (routerNameNull) {
-                routerNameToSet = "(empty)";
-            }
-            routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_error);
 
-            routerNameView.setText(routerNameToSet);
+            final Exception exception = data.getException();
 
-            ((TextView) layout.findViewById(R.id.tile_status_router_router_state_name))
-                    .setText(routerNameNull ? "-" : routerName);
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            //WAN IP
-            final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
-            final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
-            wanIpView.setText(wanIpText);
-
-            final TextView wanIpViewDetail = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
-            wanIpViewDetail.setText(wanIpText);
-
-            final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
-            final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_sep);
-            final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
-            if (!checkActualInternetConnectivity) {
-                internetIpTitle.setVisibility(View.GONE);
-                internetIpSep.setVisibility(View.GONE);
-                internetIpTextView.setVisibility(View.GONE);
-            } else {
-                final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
-                if (publicIp != null &&
-                        !(UNKNOWN.equals(publicIp) || NOK.equals(publicIp))) {
-                    internetIpTextView.setText(publicIp);
-                } else {
-                    internetIpTextView.setText("-");
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-                if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
-                    //Hide public IP in this case
+
+                //Router Name
+                final TextView routerNameView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_title);
+                final String routerName = data.getProperty(NVRAMInfo.ROUTER_NAME);
+                final boolean routerNameNull = (routerName == null);
+                String routerNameToSet = routerName;
+                if (routerNameNull) {
+                    routerNameToSet = "(empty)";
+                }
+                routerNameView.setTypeface(null, routerNameNull ? Typeface.ITALIC : Typeface.NORMAL);
+
+                routerNameView.setText(routerNameToSet);
+
+                ((TextView) layout.findViewById(R.id.tile_status_router_router_state_name))
+                        .setText(routerNameNull ? "-" : routerName);
+
+                //WAN IP
+                final TextView wanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip);
+                final String wanIpText = data.getProperty(NVRAMInfo.WAN_IPADDR, "-");
+                wanIpView.setText(wanIpText);
+
+                final TextView wanIpViewDetail = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_wan_ip_detail);
+                wanIpViewDetail.setText(wanIpText);
+
+                final TextView internetIpTitle = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_title);
+                final TextView internetIpSep = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip_sep);
+                final TextView internetIpTextView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_internet_ip);
+                if (!checkActualInternetConnectivity) {
                     internetIpTitle.setVisibility(View.GONE);
                     internetIpSep.setVisibility(View.GONE);
                     internetIpTextView.setVisibility(View.GONE);
+                } else {
+                    final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
+                    if (publicIp != null &&
+                            !(UNKNOWN.equals(publicIp) || NOK.equals(publicIp))) {
+                        internetIpTextView.setText(publicIp);
+                    } else {
+                        internetIpTextView.setText("-");
+                    }
+                    if (publicIp != null && publicIp.equalsIgnoreCase(wanIpText)) {
+                        //Hide public IP in this case
+                        internetIpTitle.setVisibility(View.GONE);
+                        internetIpSep.setVisibility(View.GONE);
+                        internetIpTextView.setVisibility(View.GONE);
+                    }
+
                 }
 
-            }
-
-            final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
-            final String routerModel = data.getProperty(NVRAMInfo.MODEL, "-");
-            routerModelView.setText(routerModel);
-            if (mParentFragmentPreferences != null) {
-                final String routerModelFromPrefs =
-                        mParentFragmentPreferences.getString(NVRAMInfo.MODEL, "-");
-                //noinspection ConstantConditions
-                if (!("-".equals(routerModel) ||
-                        routerModelFromPrefs.equals(routerModel))) {
-                    mParentFragmentPreferences
-                            .edit()
-                            .putString(NVRAMInfo.MODEL, routerModel)
-                            .apply();
-                    Utils.requestBackup(mParentFragmentActivity);
-                }
-            }
-
-            final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
-            lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
-
-            final TextView fwView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
-            fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "-"));
-
-            final TextView kernelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
-            kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "-"));
-
-            final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
-            uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "-"));
-
-            final TextView currentDateView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
-            currentDateView.setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                final TextView routerModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_model);
+                final String routerModel = data.getProperty(NVRAMInfo.MODEL, "-");
+                routerModelView.setText(routerModel);
+                if (mParentFragmentPreferences != null) {
+                    final String routerModelFromPrefs =
+                            mParentFragmentPreferences.getString(NVRAMInfo.MODEL, "-");
+                    //noinspection ConstantConditions
+                    if (!("-".equals(routerModel) ||
+                            routerModelFromPrefs.equals(routerModel))) {
+                        mParentFragmentPreferences
+                                .edit()
+                                .putString(NVRAMInfo.MODEL, routerModel)
+                                .apply();
+                        Utils.requestBackup(mParentFragmentActivity);
                     }
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                final TextView lanIpView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_lan_ip);
+                lanIpView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+
+                final TextView fwView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_firmware);
+                fwView.setText(data.getProperty(NVRAMInfo.FIRMWARE, "-"));
+
+                final TextView kernelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_kernel);
+                kernelView.setText(data.getProperty(NVRAMInfo.KERNEL, "-"));
+
+                final TextView uptimeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_uptime);
+                uptimeView.setText(data.getProperty(NVRAMInfo.UPTIME, "-"));
+
+                final TextView currentDateView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_state_datetime);
+                currentDateView.setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_router_router_state_togglebutton_title, R.id.tile_status_router_router_state_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_router_router_state_togglebutton_title, R.id.tile_status_router_router_state_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
-
     }
 
     @Nullable

@@ -1215,6 +1215,16 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             mSwipeRefreshLayout.setRefreshing(true);
         }
 
+        //Set forceRefresh flag for all tiles composing this fragment
+        if (this.fragmentTiles != null) {
+            for (final DDWRTTile fragmentTile : fragmentTiles) {
+                if (fragmentTile == null) {
+                    continue;
+                }
+                fragmentTile.setForceRefresh(true);
+            }
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

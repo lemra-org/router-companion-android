@@ -80,7 +80,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
@@ -122,7 +121,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -231,6 +232,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                     "e_trim"
             };
 
+    private boolean mIsThemeLight;
+
+    private final Map<Integer, String> routerIdToUuid = new HashMap<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -288,6 +293,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
+        mIsThemeLight = ColorUtils.isThemeLight(this);
+
 //        mDrawerActionHandler = new Handler();
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
@@ -303,80 +310,17 @@ public class DDWRTMainActivity extends AppCompatActivity
             iProfiles = new IProfile[allRouters.size() + 2];
             int i = 0;
             for (final Router routerFromAll : allRouters) {
+                final int routerFromAllId = routerFromAll.getId();
+                final String routerFromAllUuid = routerIdToUuid.get(routerFromAllId);
+                if (routerFromAllUuid == null) {
+                    routerIdToUuid.put(routerFromAllId, routerFromAll.getUuid());
+                }
                 final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
+                        .withIdentifier(routerFromAllId)
                         .withNameShown(true)
                         .withName(routerFromAll.getDisplayName())
                         .withEmail(routerFromAll.getRemoteIpAddress() + ":" +
-                                routerFromAll.getRemotePort())
-                        .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                //Switch Router
-                                final Intent intent = getIntent();
-                                intent.putExtra(ROUTER_SELECTED, routerFromAll.getUuid());
-                                intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-
-                                if (BuildConfig.WITH_ADS &&
-                                        mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-
-                                    mInterstitialAd.setAdListener(new AdListener() {
-                                        @Override
-                                        public void onAdClosed() {
-                                            finish();
-                                            startActivity(intent);
-                                        }
-
-                                        @Override
-                                        public void onAdOpened() {
-                                            //Save preference
-                                            mGlobalPreferences.edit()
-                                                    .putLong(
-                                                            DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                            System.currentTimeMillis())
-                                                    .apply();
-                                        }
-                                    });
-
-                                    if (mInterstitialAd.isLoaded()) {
-                                        mInterstitialAd.show();
-                                    } else {
-                                        //Reload UI
-//                            final AlertDialog alertDialog = Utils.
-//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                                "Switching Routers", "Please wait...", true);
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                finish();
-                                                startActivity(intent);
-                                                alertDialog.cancel();
-                                            }
-                                        }, 2000);
-                                    }
-
-                                } else {
-                                    //Reload UI
-//                        final AlertDialog alertDialog = Utils.
-//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                            "Switching Routers", "Please wait...", true);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finish();
-                                            startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 2000);
-                                }
-                                return true;
-                            }
-                        });
+                                routerFromAll.getRemotePort());
                 final String routerModel = Router.getRouterModel(this, routerFromAll);
                 Log.d(TAG, "routerModel: " + routerModel);
                 if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
@@ -435,11 +379,123 @@ public class DDWRTMainActivity extends AppCompatActivity
                             }
                         })
                         .withIdentifier(MANAGE_ROUTERS);
+
+        //Set Drawer Header Background
+        final int drawerHeaderDrawable;
+        if (routerFirmware != null) {
+            switch (routerFirmware) {
+                case DDWRT:
+                    drawerHeaderDrawable = R.drawable.logo_ddwrt;
+                    break;
+                //TODO Add other logos down here
+                default:
+                    drawerHeaderDrawable = R.drawable.router_picker_background;
+                    break;
+            }
+        } else {
+            drawerHeaderDrawable = R.drawable.router_picker_background;
+        }
         mDrawerHeaderResult = new AccountHeaderBuilder()
-            .withActivity(this)
-                .withHeaderBackground(R.drawable.router_picker_background)
+                .withActivity(this)
                 .addProfiles(iProfiles)
                 .withSavedInstance(savedInstanceState)
+                .withHeaderBackground(drawerHeaderDrawable)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
+                        if (profile == null) {
+                            Utils.reportException(new IllegalStateException("routerUuid is NULL or empty"));
+                            Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                        final int profileIdentifier = profile.getIdentifier();
+                        Log.d(TAG, "OnAccountHeaderListener: " + profileIdentifier);
+                        if (profileIdentifier == ADD_NEW_ROUTER ||
+                                profileIdentifier == MANAGE_ROUTERS) {
+                            //Already handled
+                            return true;
+                        }
+                        final String routerUuid = routerIdToUuid.get(profileIdentifier);
+                        if (routerUuid == null || routerUuid.isEmpty()) {
+                            Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                            Utils.reportException(new IllegalStateException("routerUuid is NULL or empty"));
+                            return false;
+                        }
+
+                        final Router daoRouter = dao.getRouter(routerUuid);
+                        if (daoRouter == null) {
+                            Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                            Utils.reportException(new IllegalStateException("daoRouter NOT found"));
+                            return false;
+                        }
+
+                        //Switch Router
+                        final Intent intent = getIntent();
+                        intent.putExtra(ROUTER_SELECTED, routerUuid);
+                        intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+
+                        if (BuildConfig.WITH_ADS &&
+                                mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
+
+                            mInterstitialAd.setAdListener(new AdListener() {
+                                @Override
+                                public void onAdClosed() {
+                                    finish();
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    //Save preference
+                                    mGlobalPreferences.edit()
+                                            .putLong(
+                                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                                    System.currentTimeMillis())
+                                            .apply();
+                                }
+                            });
+
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
+                            } else {
+                                //Reload UI
+//                            final AlertDialog alertDialog = Utils.
+//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                            alertDialog.show();
+//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                        "Switching Routers", "Please wait...", true);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                        startActivity(intent);
+                                        alertDialog.cancel();
+                                    }
+                                }, 2000);
+                            }
+
+                        } else {
+                            //Reload UI
+//                        final AlertDialog alertDialog = Utils.
+//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+//                        alertDialog.show();
+//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                                    "Switching Routers", "Please wait...", true);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                    startActivity(intent);
+                                    alertDialog.cancel();
+                                }
+                            }, 2000);
+                        }
+
+                        return true;
+                    }
+                })
                 .build();
 
         mDrawerResult = new DrawerBuilder()
@@ -453,30 +509,70 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withShowDrawerOnFirstLaunch(false)
                 .withCloseOnClick(true)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Overview").withIcon(R.drawable.ic_action_dashboard).withIdentifier(1),
+                        new PrimaryDrawerItem().withName("Overview")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_dashboard : R.drawable.ic_action_dashboard_dark)
+                                .withIdentifier(1),
 
                         new SectionDrawerItem().withName("Status").withSelectable(false),
-                        new SecondaryDrawerItem().withName("Status").withIcon(R.drawable.ic_action_action_info).withIdentifier(2),
-                        new SecondaryDrawerItem().withName("Wireless").withIcon(R.drawable.ic_action_device_signal_wifi_3_bar).withIdentifier(3),
-                        new SecondaryDrawerItem().withName("Clients").withIcon(R.drawable.ic_action_devices).withIdentifier(4),
-                        new SecondaryDrawerItem().withName("Monitoring").withIcon(R.drawable.ic_action_trending_up).withIdentifier(5),
+                        new PrimaryDrawerItem().withName("Status")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_action_info : R.drawable.ic_action_action_info_dark)
+                                .withIdentifier(2),
+                        new PrimaryDrawerItem().withName("Wireless")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_device_signal_wifi_3_bar :
+                                        R.drawable.ic_action_device_signal_wifi_3_bar_dark)
+                                .withIdentifier(3),
+                        new PrimaryDrawerItem().withName("Clients")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_devices :
+                                        R.drawable.ic_action_devices_dark)
+                                .withIdentifier(4),
+                        new PrimaryDrawerItem().withName("Monitoring")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_trending_up :
+                                        R.drawable.ic_action_trending_up_dark)
+                                .withIdentifier(5),
 
                         new SectionDrawerItem().withName("Services").withSelectable(false),
-                        new SecondaryDrawerItem().withName("OpenVPN").withIcon(R.drawable.ic_action_openvpn).withIdentifier(7),
-                        new SecondaryDrawerItem().withName("PPTP").withIcon(R.drawable.ic_action_communication_vpn_key).withIdentifier(8),
-                        new SecondaryDrawerItem().withName("Wake On LAN").withIcon(R.drawable.ic_action_wol_3).withIdentifier(9),
+                        new PrimaryDrawerItem().withName("OpenVPN")
+                                .withIcon(mIsThemeLight ? R.drawable.ic_action_openvpn : R.drawable.ic_action_openvpn_dark)
+                                .withIdentifier(7),
+                        new PrimaryDrawerItem().withName("PPTP")
+                                .withIcon(mIsThemeLight ? R.drawable.ic_action_communication_vpn_key :
+                                        R.drawable.ic_action_communication_vpn_key_dark)
+                                .withIdentifier(8),
+                        new PrimaryDrawerItem().withName("Wake On LAN")
+                                .withIcon(mIsThemeLight ? R.drawable.ic_action_wol_3 : R.drawable.ic_action_wol_3_dark)
+                                .withIdentifier(9),
 
                         new SectionDrawerItem().withName("Admin Area").withSelectable(false),
-                        new SecondaryDrawerItem().withName("Commands").withIcon(R.drawable.ic_action_terminal).withIdentifier(11),
-                        new SecondaryDrawerItem().withName("NVRAM").withIcon(R.drawable.ic_action_ram_3).withIdentifier(12),
+                        new PrimaryDrawerItem().withName("Commands")
+                                .withIcon(mIsThemeLight ? R.drawable.ic_action_terminal : R.drawable.ic_action_terminal_dark)
+                                .withIdentifier(11),
+                        new PrimaryDrawerItem().withName("NVRAM")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_ram_3 : R.drawable.ic_action_ram_3_dark)
+                                .withIdentifier(12),
 
                         new SectionDrawerItem().withName("Toolbox").withSelectable(false),
-                        new SecondaryDrawerItem().withName("Network").withIcon(R.drawable.ic_action_network).withIdentifier(14)
+                        new PrimaryDrawerItem().withName("Network")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_network :
+                                        R.drawable.ic_action_network_dark)
+                                .withIdentifier(14)
                         )
                 .addStickyDrawerItems(
-                        new PrimaryDrawerItem().withName("Help").withIcon(android.R.drawable.ic_menu_help).withIdentifier(1001),
+                        new PrimaryDrawerItem().withName("Help")
+                                .withIcon(android.R.drawable.ic_menu_help)
+                                .withIdentifier(1001),
 //                        new PrimaryDrawerItem().withName("What's new").withIcon(R.drawable.ic_action_action_info_outline).withIdentifier(1002),
-                        new PrimaryDrawerItem().withName("Send Feedback").withIcon(R.drawable.ic_action_action_thumbs_up_down).withIdentifier(1003)
+                        new PrimaryDrawerItem().withName("Send Feedback")
+                                .withIcon(mIsThemeLight ?
+                                    R.drawable.ic_action_action_thumbs_up_down :
+                                        R.drawable.ic_action_action_thumbs_up_down_dark)
+                                .withIdentifier(1003)
 //                        new PrimaryDrawerItem().withName("About").withIcon(R.drawable.ic_action_social_person).withIdentifier(1004)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -609,7 +705,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+//            mToolbar.setNavigationIcon(R.drawable.ic_menu_dark_24dp);
 //            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {

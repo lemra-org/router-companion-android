@@ -599,10 +599,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     Log.d(LOG_TAG, "Init background loader for " + AdminNVRAMTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -692,117 +698,122 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
     @Override
     public void onLoadFinished(Loader<None> loader, None data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_admin_nvram_toolbar).setVisibility(View.VISIBLE);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        if (data == null || mNvramInfoToDisplay.isEmpty()) {
-            data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
-        }
+            layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_admin_nvram_toolbar).setVisibility(View.VISIBLE);
 
-        layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
-
-        final Exception exception = data.getException();
-
-        //NVRAM
-        final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);
-        ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
-                .setText(nvramSize != null ? nvramSize.toString() : "-");
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null || mNvramInfoToDisplay.isEmpty()) {
+                data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //Filter out by search and sort preferences
-            final String textToFind = mParentFragmentPreferences != null ?
-                    mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+            layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
 
-            if (isNullOrEmpty(textToFind)) {
-                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
-                mAdapter.notifyDataSetChanged();
-            } else {
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
 
-                //Filter out (and sort by user-preference)
-                final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
-                //Update adapter in the preferences
-                final Map<Object, Object> mNvramInfoToDisplayCopy;
-                if (mParentFragmentPreferences != null) {
-                    final Integer currentSort = sortIds.inverse()
-                            .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
-                    if (currentSort == null || currentSort <= 0) {
-                        mNvramInfoToDisplayCopy = new HashMap<>();
+            final Exception exception = data.getException();
+
+            //NVRAM
+            final Object nvramSize = mNvramInfoToDisplay.remove(NVRAM_SIZE);
+            ((TextView) this.layout.findViewById(R.id.tile_admin_nvram_size))
+                    .setText(nvramSize != null ? nvramSize.toString() : "-");
+
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+
+                //Filter out by search and sort preferences
+                final String textToFind = mParentFragmentPreferences != null ?
+                        mParentFragmentPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+                if (isNullOrEmpty(textToFind)) {
+                    ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplay);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+
+                    //Filter out (and sort by user-preference)
+                    final Properties mNvramInfoDefaultSortingData = mNvramInfoDefaultSorting.getData();
+                    //Update adapter in the preferences
+                    final Map<Object, Object> mNvramInfoToDisplayCopy;
+                    if (mParentFragmentPreferences != null) {
+                        final Integer currentSort = sortIds.inverse()
+                                .get(mParentFragmentPreferences.getInt(getFormattedPrefKey(SORT), -1));
+                        if (currentSort == null || currentSort <= 0) {
+                            mNvramInfoToDisplayCopy = new HashMap<>();
+                        } else {
+                            switch (currentSort) {
+                                case R.id.tile_admin_nvram_sort_asc:
+                                    //asc
+                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_desc:
+                                    //desc
+                                    mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
+                                    break;
+                                case R.id.tile_admin_nvram_sort_default:
+                                default:
+                                    mNvramInfoToDisplayCopy = new HashMap<>();
+                                    break;
+                            }
+                        }
                     } else {
-                        switch (currentSort) {
-                            case R.id.tile_admin_nvram_sort_asc:
-                                //asc
-                                mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_STRING_CASE_INSENSITIVE);
-                                break;
-                            case R.id.tile_admin_nvram_sort_desc:
-                                //desc
-                                mNvramInfoToDisplayCopy = new TreeMap<>(COMPARATOR_REVERSE_STRING_CASE_INSENSITIVE);
-                                break;
-                            case R.id.tile_admin_nvram_sort_default:
-                            default:
-                                mNvramInfoToDisplayCopy = new HashMap<>();
-                                break;
+                        mNvramInfoToDisplayCopy = new HashMap<>();
+                    }
+
+                    //noinspection ConstantConditions
+                    for (Map.Entry<Object, Object> entry :
+                            (mParentFragmentPreferences == null ? mNvramInfoToDisplay : mNvramInfoDefaultSortingData).entrySet()) {
+                        final Object key = entry.getKey();
+                        final Object value = entry.getValue();
+                        if (key == null) {
+                            continue;
+                        }
+                        if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
+                            mNvramInfoToDisplayCopy.put(key, value);
                         }
                     }
-                } else {
-                    mNvramInfoToDisplayCopy = new HashMap<>();
+
+                    ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
+                    mAdapter.notifyDataSetChanged();
                 }
 
-                //noinspection ConstantConditions
-                for (Map.Entry<Object, Object> entry :
-                        (mParentFragmentPreferences == null ? mNvramInfoToDisplay : mNvramInfoDefaultSortingData).entrySet()) {
-                    final Object key = entry.getKey();
-                    final Object value = entry.getValue();
-                    if (key == null) {
-                        continue;
-                    }
-                    if (containsIgnoreCase(key.toString(), textToFind) || containsIgnoreCase(value.toString(), textToFind)) {
-                        mNvramInfoToDisplayCopy.put(key, value);
-                    }
-                }
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
 
-                ((NVRAMDataRecyclerViewAdapter) mAdapter).setEntryList(mNvramInfoToDisplayCopy);
-                mAdapter.notifyDataSetChanged();
             }
 
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_admin_nvram_togglebutton_title, R.id.tile_admin_nvram_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_admin_nvram_togglebutton_title, R.id.tile_admin_nvram_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
 }

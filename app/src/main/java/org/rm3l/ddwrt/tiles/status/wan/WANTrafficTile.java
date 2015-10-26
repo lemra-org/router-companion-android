@@ -90,10 +90,16 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -226,95 +232,98 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
      */
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            layout.findViewById(R.id.tile_status_wan_traffic_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_wan_traffic_gridLayout)
+                    .setVisibility(View.VISIBLE);
 
-        layout.findViewById(R.id.tile_status_wan_traffic_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_wan_traffic_gridLayout)
-                .setVisibility(View.VISIBLE);
-
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            final String wanIface = data
-                    .getProperty(NVRAMInfo.WAN_IFACE);
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_error);
 
-            //Iface Name
-            final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
-            wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "-" : wanIface);
+            final Exception exception = data.getException();
 
-            final TextView wanIngressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
-            String text;
-            final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
-            try {
-                final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
-                if (wanRcvMBytes < 0.) {
-                    text = "-";
-                } else {
-                    text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-            } catch (@NonNull final NumberFormatException nfe) {
-                text = "-";
-            }
-            wanIngressView.setText(text);
+                final String wanIface = data
+                        .getProperty(NVRAMInfo.WAN_IFACE);
 
-            final TextView wanEgressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
-            final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
-            try {
-                final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
-                if (wanXmitMBytes < 0.) {
-                    text = "-";
-                } else {
-                    text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                }
+                //Iface Name
+                final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_iface);
+                wanIfaceView.setText(Strings.isNullOrEmpty(wanIface) ? "-" : wanIface);
 
-            } catch (@NonNull final NumberFormatException nfe) {
-                text = "-";
-            }
-            wanEgressView.setText(text);
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                final TextView wanIngressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_ingress);
+                String text;
+                final String wanRcvBytes = data.getProperty(wanIface + "_rcv_bytes", "-1");
+                try {
+                    final double wanRcvMBytes = Double.parseDouble(wanRcvBytes) / (1024 * 1024);
+                    if (wanRcvMBytes < 0.) {
+                        text = "-";
+                    } else {
+                        text = Double.toString(new BigDecimal(wanRcvMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     }
+
+                } catch (@NonNull final NumberFormatException nfe) {
+                    text = "-";
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+                wanIngressView.setText(text);
+
+                final TextView wanEgressView = (TextView) this.layout.findViewById(R.id.tile_status_wan_traffic_egress);
+                final String wanXmitBytes = data.getProperty(wanIface + "_xmit_bytes", "-1");
+                try {
+                    final double wanXmitMBytes = Double.parseDouble(wanXmitBytes) / (1024 * 1024);
+                    if (wanXmitMBytes < 0.) {
+                        text = "-";
+                    } else {
+                        text = Double.toString(new BigDecimal(wanXmitMBytes).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    }
+
+                } catch (@NonNull final NumberFormatException nfe) {
+                    text = "-";
+                }
+                wanEgressView.setText(text);
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_wan_traffic_togglebutton_title, R.id.tile_status_wan_traffic_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wan_traffic_togglebutton_title, R.id.tile_status_wan_traffic_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
     }
 

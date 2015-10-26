@@ -111,10 +111,16 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -250,78 +256,81 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
      */
     @Override
     public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
-
-        layout.findViewById(R.id.tile_status_router_router_cpu_speed_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_router_cpu_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_router_cpu_speed)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_status_router_router_cpu_grid_layout)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_router_cpu_speed_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_router_cpu_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_router_cpu_speed)
+                    .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_router_cpu_grid_layout)
+                    .setVisibility(View.VISIBLE);
 
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //Model
-            final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
-            final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
-            cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_error);
 
-            //Model
-            final TextView cpuModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
-            cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "-"));
+            final Exception exception = data.getException();
 
-            //Cores Count
-            final TextView cpuCountView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
-            cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "-"));
-
-            //Load Avg
-            final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
-            loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                //Model
+                final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
+                final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
+                cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
+
+                //Model
+                final TextView cpuModelView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_model);
+                cpuModelView.setText(data.getProperty(NVRAMInfo.CPU_MODEL, "-"));
+
+                //Cores Count
+                final TextView cpuCountView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_cores);
+                cpuCountView.setText(data.getProperty(NVRAMInfo.CPU_CORES_COUNT, "-"));
+
+                //Load Avg
+                final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
+                loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_router_router_cpu_togglebutton_title, R.id.tile_status_router_router_cpu_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_router_router_cpu_togglebutton_title, R.id.tile_status_router_router_cpu_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @Nullable

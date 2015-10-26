@@ -108,10 +108,16 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     Log.d(LOG_TAG, "Init background loader for " + BandwidthMonitoringTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -226,75 +232,76 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
     public void onLoadFinished(Loader<None> loader, None data) {
         Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder)
-                .setVisibility(View.VISIBLE);
+        try {
+            layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder)
+                    .setVisibility(View.VISIBLE);
 
-        //noinspection ConstantConditions
-        if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
-            data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            //noinspection ConstantConditions
+            if (data == null || bandwidthMonitoringIfaceData.getData().isEmpty()) {
+                data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title))
-                    .setText(this.mParentFragmentActivity.getResources()
-                            .getString(R.string.bandwidth_usage_mb) + (!Strings.isNullOrEmpty(wanIface) ?
-                            (": " + wanIface) : ""));
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_error);
 
-            final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
-            final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
+            final Exception exception = data.getException();
 
-            long maxX = System.currentTimeMillis() + 5000;
-            long minX = System.currentTimeMillis() - 5000;
-            double maxY = 10;
-            double minY = 1.;
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-            final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-
-            for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
-                final String iface = entry.getKey();
-                final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
-                final XYSeries series = new XYSeries(iface);
-                for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
-                    final long x = point.getTimestamp();
-                    final double y = point.getValue();
-                    series.add(x, y);
-                    maxX = Math.max(maxX, x);
-                    minX = Math.min(minX, x);
-                    maxY = Math.max(maxY, y);
-                    minY = Math.min(minY, y);
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-                // Now we add our series
-                dataset.addSeries(series);
 
-                // Now we create the renderer
-                final XYSeriesRenderer renderer = new XYSeriesRenderer();
-                renderer.setLineWidth(2);
+                ((TextView) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_title))
+                        .setText(this.mParentFragmentActivity.getResources()
+                                .getString(R.string.bandwidth_usage_mb) + (!Strings.isNullOrEmpty(wanIface) ?
+                                (": " + wanIface) : ""));
 
-                renderer.setColor(ColorUtils.getColor(iface));
-                // Include low and max value
-                renderer.setDisplayBoundingPoints(true);
-                // we add point markers
-                renderer.setPointStyle(PointStyle.POINT);
-                renderer.setPointStrokeWidth(1);
+                final LinearLayout graphPlaceHolder = (LinearLayout) this.layout.findViewById(R.id.tile_status_bandwidth_monitoring_graph_placeholder);
+                final Map<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> dataCircularBuffer = bandwidthMonitoringIfaceData.getData();
 
-                mRenderer.addSeriesRenderer(renderer);
-            }
+                long maxX = System.currentTimeMillis() + 5000;
+                long minX = System.currentTimeMillis() - 5000;
+                double maxY = 10;
+                double minY = 1.;
 
-            // We want to avoid black border
-            mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
-            // Disable Pan on two axis
+                final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+                final XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+
+                for (final Map.Entry<String, EvictingQueue<BandwidthMonitoringTile.DataPoint>> entry : dataCircularBuffer.entrySet()) {
+                    final String iface = entry.getKey();
+                    final EvictingQueue<BandwidthMonitoringTile.DataPoint> dataPoints = entry.getValue();
+                    final XYSeries series = new XYSeries(iface);
+                    for (final BandwidthMonitoringTile.DataPoint point : dataPoints) {
+                        final long x = point.getTimestamp();
+                        final double y = point.getValue();
+                        series.add(x, y);
+                        maxX = Math.max(maxX, x);
+                        minX = Math.min(minX, x);
+                        maxY = Math.max(maxY, y);
+                        minY = Math.min(minY, y);
+                    }
+                    // Now we add our series
+                    dataset.addSeries(series);
+
+                    // Now we create the renderer
+                    final XYSeriesRenderer renderer = new XYSeriesRenderer();
+                    renderer.setLineWidth(2);
+
+                    renderer.setColor(ColorUtils.getColor(iface));
+                    // Include low and max value
+                    renderer.setDisplayBoundingPoints(true);
+                    // we add point markers
+                    renderer.setPointStyle(PointStyle.POINT);
+                    renderer.setPointStrokeWidth(1);
+
+                    mRenderer.addSeriesRenderer(renderer);
+                }
+
+                // We want to avoid black border
+                mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+                // Disable Pan on two axis
 //            mRenderer.setPanEnabled(false, false);
 //            mRenderer.setYAxisMax(maxY + 10);
 //            mRenderer.setYAxisMin(minY);
@@ -309,83 +316,86 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
 //            mRenderer.setFitLegend(true);
 //            mRenderer.setInScroll(true);
 
-            mRenderer.setYLabels(0);
-            mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
-                    .replace("bytes", "B"));
-            if (maxY != 0 && maxY / 2 >= 9000) {
-                mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
+                mRenderer.setYLabels(0);
+                mRenderer.addYTextLabel(maxY, byteCountToDisplaySize(Double.valueOf(maxY).longValue())
                         .replace("bytes", "B"));
-            }
+                if (maxY != 0 && maxY / 2 >= 9000) {
+                    mRenderer.addYTextLabel(maxY / 2, byteCountToDisplaySize(Double.valueOf(maxY / 2).longValue())
+                            .replace("bytes", "B"));
+                }
 
-            // We want to avoid black border
-            //setting text size of the title
-            mRenderer.setChartTitleTextSize(22);
+                // We want to avoid black border
+                //setting text size of the title
+                mRenderer.setChartTitleTextSize(22);
 //            //setting text size of the axis title
 //            mRenderer.setAxisTitleTextSize(15);
 //            //setting text size of the graph label
 //            mRenderer.setLabelsTextSize(15);
-            mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
-            // Disable Pan on two axis
-            mRenderer.setPanEnabled(false, false);
-            mRenderer.setYAxisMax(maxY + 10);
-            mRenderer.setYAxisMin(minY);
-            mRenderer.setXAxisMin(minX);
-            mRenderer.setXAxisMax(maxX + 10);
-            mRenderer.setShowGrid(false);
-            mRenderer.setClickEnabled(false);
-            mRenderer.setZoomEnabled(false, false);
-            mRenderer.setPanEnabled(false, false);
-            mRenderer.setZoomRate(6.0f);
-            mRenderer.setShowLabels(true);
-            mRenderer.setFitLegend(true);
-            mRenderer.setInScroll(true);
-            mRenderer.setXLabelsAlign(Paint.Align.CENTER);
-            mRenderer.setYLabelsAlign(Paint.Align.LEFT);
-            mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
-            mRenderer.setAntialiasing(true);
-            mRenderer.setExternalZoomEnabled(false);
-            mRenderer.setInScroll(false);
-            mRenderer.setFitLegend(true);
+                mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+                // Disable Pan on two axis
+                mRenderer.setPanEnabled(false, false);
+                mRenderer.setYAxisMax(maxY + 10);
+                mRenderer.setYAxisMin(minY);
+                mRenderer.setXAxisMin(minX);
+                mRenderer.setXAxisMax(maxX + 10);
+                mRenderer.setShowGrid(false);
+                mRenderer.setClickEnabled(false);
+                mRenderer.setZoomEnabled(false, false);
+                mRenderer.setPanEnabled(false, false);
+                mRenderer.setZoomRate(6.0f);
+                mRenderer.setShowLabels(true);
+                mRenderer.setFitLegend(true);
+                mRenderer.setInScroll(true);
+                mRenderer.setXLabelsAlign(Paint.Align.CENTER);
+                mRenderer.setYLabelsAlign(Paint.Align.LEFT);
+                mRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
+                mRenderer.setAntialiasing(true);
+                mRenderer.setExternalZoomEnabled(false);
+                mRenderer.setInScroll(false);
+                mRenderer.setFitLegend(true);
 
-            final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
-                    .getContext(), dataset, mRenderer, null);
-            chartView.repaint();
+                final GraphicalView chartView = ChartFactory.getTimeChartView(graphPlaceHolder
+                        .getContext(), dataset, mRenderer, null);
+                chartView.repaint();
 
-            graphPlaceHolder.addView(chartView, 0);
+                graphPlaceHolder.addView(chartView, 0);
 
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
-        } else {
-            if (bandwidthMonitoringIfaceData.getData().isEmpty()) {
-                errorPlaceHolderView.setText("Error: No Data!");
-                errorPlaceHolderView.setVisibility(View.VISIBLE);
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
             }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            } else {
+                if (bandwidthMonitoringIfaceData.getData().isEmpty()) {
+                    errorPlaceHolderView.setText("Error: No Data!");
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_bandwidth_monitoring_togglebutton_title, R.id.tile_status_bandwidth_monitoring_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_bandwidth_monitoring_togglebutton_title, R.id.tile_status_bandwidth_monitoring_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
 

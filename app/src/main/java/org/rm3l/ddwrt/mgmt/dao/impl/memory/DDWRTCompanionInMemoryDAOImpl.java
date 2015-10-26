@@ -142,4 +142,18 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
         Log.d(LOG_TAG, "getRouter(" + uuid + ")");
         return DB.get(uuid);
     }
+
+    @Nullable
+    @Override
+    public Router getRouter(int id) {
+        for (final Router router : DB.values()) {
+            if (router == null) {
+                continue;
+            }
+            if (router.getId() == id) {
+                return router;
+            }
+        }
+        return null;
+    }
 }

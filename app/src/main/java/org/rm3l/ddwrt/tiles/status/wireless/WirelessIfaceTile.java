@@ -223,10 +223,20 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                     Log.d(LOG_TAG, "Init background loader for " + WirelessIfaceTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (mWirelessSecurityFormOpened.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (mWirelessSecurityFormOpened.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
+                    } else {
+                        if (mWirelessSecurityFormOpened.get()) {
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -653,16 +663,20 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
      */
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
 
-        buildView(data);
+            buildView(data);
 
 //        doneWithLoaderInstance(this, loader,
 //                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
-        doneWithLoaderInstance(this, loader);
+            doneWithLoaderInstance(this, loader);
 
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
+        }
     }
 
     public void buildView(@Nullable NVRAMInfo data) {

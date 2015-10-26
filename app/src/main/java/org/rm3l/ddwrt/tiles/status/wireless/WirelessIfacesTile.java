@@ -206,149 +206,153 @@ public class WirelessIfacesTile extends IfacesTile {
 
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-        //Hide Non-wireless lines
-        final int[] viewsToHide = new int[]{
-                R.id.tile_status_bandwidth_ifaces_lan_title,
-                R.id.tile_status_bandwidth_ifaces_lan_separator,
-                R.id.tile_status_bandwidth_ifaces_lan,
-                R.id.tile_status_bandwidth_ifaces_wan,
-                R.id.tile_status_bandwidth_ifaces_wan_separator,
-                R.id.tile_status_bandwidth_ifaces_wan_title
-        };
-        for (final int viewToHide : viewsToHide) {
-            this.layout.findViewById(viewToHide).setVisibility(View.GONE);
-        }
-
-        //Show Radio
-        final int[] viewsToShow = new int[] {
-                R.id.tile_status_bandwidth_ifaces_wireless_radio_title,
-                R.id.tile_status_bandwidth_ifaces_wireless_radio_sep,
-                R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton
-        };
-        for (final int viewToShow : viewsToShow) {
-            this.layout.findViewById(viewToShow).setVisibility(View.VISIBLE);
-        }
-
-        mProgressBar.setProgress(97);
-        mProgressBarDesc.setText("Generating views...");
-
-        mProgressBar.setVisibility(View.GONE);
-        mProgressBarDesc.setVisibility(View.GONE);
-
-        final GridLayout container = (GridLayout) this.layout
-                .findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
-        container.setVisibility(View.VISIBLE);
-
-        //Now add each wireless iface tile
-
-        container.removeAllViews();
-
-        final Resources resources = mParentFragmentActivity.getResources();
-        container.setBackgroundColor(resources.getColor(android.R.color.transparent));
-
-        final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
-        Exception preliminaryCheckException = null;
-        if (data == null) {
-            //noinspection ThrowableInstanceNeverThrown
-            preliminaryCheckException = new DDWRTNoDataException("No Data!");
-        } else //noinspection ThrowableResultOfMethodCallIgnored
-            if (data.getException() == null) {
-                final String wlRadioEnabled = data.getProperty(WL_RADIO);
-
-                if (wlRadioEnabled == null || !Arrays.asList(WL_NO_OUTPUT, "0", "1").contains(wlRadioEnabled)) {
-                    //noinspection ThrowableInstanceNeverThrown
-                    preliminaryCheckException = new DDWRTNoDataException("Unknown state");
-                }
+        try {
+            //Hide Non-wireless lines
+            final int[] viewsToHide = new int[]{
+                    R.id.tile_status_bandwidth_ifaces_lan_title,
+                    R.id.tile_status_bandwidth_ifaces_lan_separator,
+                    R.id.tile_status_bandwidth_ifaces_lan,
+                    R.id.tile_status_bandwidth_ifaces_wan,
+                    R.id.tile_status_bandwidth_ifaces_wan_separator,
+                    R.id.tile_status_bandwidth_ifaces_wan_title
+            };
+            for (final int viewToHide : viewsToHide) {
+                this.layout.findViewById(viewToHide).setVisibility(View.GONE);
             }
 
-        final SwitchCompat enableRadioButton =
-                (SwitchCompat) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
-        enableRadioButton.setVisibility(View.VISIBLE);
+            //Show Radio
+            final int[] viewsToShow = new int[]{
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_title,
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_sep,
+                    R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton
+            };
+            for (final int viewToShow : viewsToShow) {
+                this.layout.findViewById(viewToShow).setVisibility(View.VISIBLE);
+            }
 
-        final boolean makeToogleEnabled = (data != null &&
-                data.getData() != null &&
-                data.getData().containsKey(WL_RADIO));
+            mProgressBar.setProgress(97);
+            mProgressBarDesc.setText("Generating views...");
 
-        if (!isToggleStateActionRunning.get()) {
-            if (makeToogleEnabled) {
-                if ("1".equals(data.getProperty(WL_RADIO))) {
-                    //Enabled
-                    enableRadioButton.setChecked(true);
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBarDesc.setVisibility(View.GONE);
+
+            final GridLayout container = (GridLayout) this.layout
+                    .findViewById(R.id.tile_status_bandwidth_ifaces_list_container);
+            container.setVisibility(View.VISIBLE);
+
+            //Now add each wireless iface tile
+
+            container.removeAllViews();
+
+            final Resources resources = mParentFragmentActivity.getResources();
+            container.setBackgroundColor(resources.getColor(android.R.color.transparent));
+
+            final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+            Exception preliminaryCheckException = null;
+            if (data == null) {
+                //noinspection ThrowableInstanceNeverThrown
+                preliminaryCheckException = new DDWRTNoDataException("No Data!");
+            } else //noinspection ThrowableResultOfMethodCallIgnored
+                if (data.getException() == null) {
+                    final String wlRadioEnabled = data.getProperty(WL_RADIO);
+
+                    if (wlRadioEnabled == null || !Arrays.asList(WL_NO_OUTPUT, "0", "1").contains(wlRadioEnabled)) {
+                        //noinspection ThrowableInstanceNeverThrown
+                        preliminaryCheckException = new DDWRTNoDataException("Unknown state");
+                    }
+                }
+
+            final SwitchCompat enableRadioButton =
+                    (SwitchCompat) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_togglebutton);
+            enableRadioButton.setVisibility(View.VISIBLE);
+
+            final boolean makeToogleEnabled = (data != null &&
+                    data.getData() != null &&
+                    data.getData().containsKey(WL_RADIO));
+
+            if (!isToggleStateActionRunning.get()) {
+                if (makeToogleEnabled) {
+                    if ("1".equals(data.getProperty(WL_RADIO))) {
+                        //Enabled
+                        enableRadioButton.setChecked(true);
+                    } else {
+                        //Disabled
+                        enableRadioButton.setChecked(false);
+                    }
+                    enableRadioButton.setEnabled(true);
                 } else {
-                    //Disabled
                     enableRadioButton.setChecked(false);
-                }
-                enableRadioButton.setEnabled(true);
-            } else {
-                enableRadioButton.setChecked(false);
-                enableRadioButton.setEnabled(false);
-            }
-
-            enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
-        }
-
-        if (data != null && data.getData() != null) {
-            final View enableRadioTitle =
-                    layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_title);
-            final View enableRadioSep =
-                    layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_sep);
-
-            if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
-                enableRadioButton.setVisibility(View.GONE);
-                enableRadioTitle.setVisibility(View.GONE);
-                enableRadioSep.setVisibility(View.GONE);
-            } else {
-                enableRadioButton.setVisibility(View.VISIBLE);
-                enableRadioTitle.setVisibility(View.VISIBLE);
-                enableRadioSep.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (preliminaryCheckException != null) {
-            data = new NVRAMInfo().setException(preliminaryCheckException);
-        }
-
-
-        for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
-            if (tile == null) {
-                continue;
-            }
-            final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
-            if (tileViewGroupLayout instanceof CardView) {
-
-                final CardView cardView = (CardView) tileViewGroupLayout;
-
-                //Create Options Menu
-                final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
-
-                if (!isThemeLight) {
-                    //Set menu background to white
-                    tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+                    enableRadioButton.setEnabled(false);
                 }
 
-                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                cardView.setPreventCornerOverlap(true);
-                //Add padding in API v21+ as well to have the same measurements with previous versions.
-                cardView.setUseCompatPadding(true);
+                enableRadioButton.setOnClickListener(new ManageWirelessRadioToggle());
+            }
 
-                //Highlight CardView
+            if (data != null && data.getData() != null) {
+                final View enableRadioTitle =
+                        layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_title);
+                final View enableRadioSep =
+                        layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless_radio_sep);
+
+                if (WL_NO_OUTPUT.equals(data.getProperty(WL_RADIO))) {
+                    enableRadioButton.setVisibility(View.GONE);
+                    enableRadioTitle.setVisibility(View.GONE);
+                    enableRadioSep.setVisibility(View.GONE);
+                } else {
+                    enableRadioButton.setVisibility(View.VISIBLE);
+                    enableRadioTitle.setVisibility(View.VISIBLE);
+                    enableRadioSep.setVisibility(View.VISIBLE);
+                }
+            }
+
+            if (preliminaryCheckException != null) {
+                data = new NVRAMInfo().setException(preliminaryCheckException);
+            }
+
+
+            for (final WirelessIfaceTile tile : mWirelessIfaceTiles) {
+                if (tile == null) {
+                    continue;
+                }
+                final ViewGroup tileViewGroupLayout = tile.getViewGroupLayout();
+                if (tileViewGroupLayout instanceof CardView) {
+
+                    final CardView cardView = (CardView) tileViewGroupLayout;
+
+                    //Create Options Menu
+                    final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_iface_menu);
+
+                    if (!isThemeLight) {
+                        //Set menu background to white
+                        tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+                    }
+
+                    //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                    cardView.setPreventCornerOverlap(true);
+                    //Add padding in API v21+ as well to have the same measurements with previous versions.
+                    cardView.setUseCompatPadding(true);
+
+                    //Highlight CardView
 //                cardView.setCardElevation(10f);
 
-                if (isThemeLight) {
-                    //Light
-                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
-                } else {
-                    //Default is Dark
-                    cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                    if (isThemeLight) {
+                        //Light
+                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                    } else {
+                        //Default is Dark
+                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                    }
+                }
+                if (tileViewGroupLayout != null) {
+                    container.addView(tileViewGroupLayout);
                 }
             }
-            if (tileViewGroupLayout != null) {
-                container.addView(tileViewGroupLayout);
-            }
-        }
 
-        super.onLoadFinished(loader, data);
+            super.onLoadFinished(loader, data);
+        } finally {
+            mRefreshing.set(false);
+        }
     }
 
     @Nullable

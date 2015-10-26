@@ -102,10 +102,16 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + WANTotalTrafficOverviewTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -386,6 +392,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
 
         }  finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            mRefreshing.set(false);
             doneWithLoaderInstance(this, loader,
                     R.id.tile_overview_wan_total_traffic_togglebutton_title,
                     R.id.tile_overview_wan_total_traffic_togglebutton_separator);

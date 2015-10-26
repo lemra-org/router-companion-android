@@ -277,4 +277,42 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
     }
 
+    @Nullable
+    @Override
+    public Router getRouter(int id) {
+        SQLiteDatabase database = null;
+        try {
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+                database = dbHelper.getWritableDatabase();
+
+                final Cursor cursor = database.query(TABLE_ROUTERS,
+                        allColumns, String.format(COLUMN_ID + "=%d", id), null, null, null, COLUMN_ID + " DESC");
+                //noinspection TryFinallyCanBeTryWithResources
+                try {
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        final Router router = cursorToRouter(cursor);
+                        updateRouterIds();
+
+                        router.setId(routersToIds.get(router.getUuid()));
+                        return router;
+                    }
+
+                } finally {
+                    cursor.close();
+                }
+
+                return null;
+            }
+        } catch (final RuntimeException e) {
+            Utils.reportException(e);
+            return null;
+        } finally {
+            if (database != null && database.isOpen()) {
+                Log.d(LOG_TAG, "getAllRouters: close db");
+                database.close();
+            }
+        }
+    }
+
 }

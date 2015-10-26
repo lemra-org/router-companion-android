@@ -161,10 +161,16 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + StatusSyslogTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -223,108 +229,109 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_router_syslog_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_syslog_content_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_router_syslog_state)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_status_router_syslog_content)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_syslog_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_syslog_content_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_router_syslog_state)
+                    .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_router_syslog_content)
+                    .setVisibility(View.VISIBLE);
 
-        Exception preliminaryCheckException = null;
-        if (data == null) {
-            //noinspection ThrowableInstanceNeverThrown
-            preliminaryCheckException = new DDWRTNoDataException("No Data!");
-        } else //noinspection ThrowableResultOfMethodCallIgnored
-            if (data.getException() == null) {
-                final String syslogdEnabled = data.getProperty(SYSLOGD_ENABLE);
-                if (syslogdEnabled == null || !Arrays.asList("0", "1").contains(syslogdEnabled)) {
-                    //noinspection ThrowableInstanceNeverThrown
-                    preliminaryCheckException = new DDWRTSyslogdStateUnknown("Unknown state");
+            Exception preliminaryCheckException = null;
+            if (data == null) {
+                //noinspection ThrowableInstanceNeverThrown
+                preliminaryCheckException = new DDWRTNoDataException("No Data!");
+            } else //noinspection ThrowableResultOfMethodCallIgnored
+                if (data.getException() == null) {
+                    final String syslogdEnabled = data.getProperty(SYSLOGD_ENABLE);
+                    if (syslogdEnabled == null || !Arrays.asList("0", "1").contains(syslogdEnabled)) {
+                        //noinspection ThrowableInstanceNeverThrown
+                        preliminaryCheckException = new DDWRTSyslogdStateUnknown("Unknown state");
+                    }
                 }
-            }
 
-        final SwitchCompat enableTraffDataButton =
-                (SwitchCompat) this.layout.findViewById(R.id.tile_status_router_syslog_status);
-        enableTraffDataButton.setVisibility(View.VISIBLE);
+            final SwitchCompat enableTraffDataButton =
+                    (SwitchCompat) this.layout.findViewById(R.id.tile_status_router_syslog_status);
+            enableTraffDataButton.setVisibility(View.VISIBLE);
 
-        final boolean makeToogleEnabled = (data != null &&
-                data.getData() != null &&
-                data.getData().containsKey(SYSLOGD_ENABLE));
+            final boolean makeToogleEnabled = (data != null &&
+                    data.getData() != null &&
+                    data.getData().containsKey(SYSLOGD_ENABLE));
 
-        if (!isToggleStateActionRunning.get()) {
-            if (makeToogleEnabled) {
-                if ("1".equals(data.getProperty(SYSLOGD_ENABLE))) {
-                    //Enabled
-                    enableTraffDataButton.setChecked(true);
+            if (!isToggleStateActionRunning.get()) {
+                if (makeToogleEnabled) {
+                    if ("1".equals(data.getProperty(SYSLOGD_ENABLE))) {
+                        //Enabled
+                        enableTraffDataButton.setChecked(true);
+                    } else {
+                        //Disabled
+                        enableTraffDataButton.setChecked(false);
+                    }
+                    enableTraffDataButton.setEnabled(true);
                 } else {
-                    //Disabled
                     enableTraffDataButton.setChecked(false);
+                    enableTraffDataButton.setEnabled(false);
                 }
-                enableTraffDataButton.setEnabled(true);
-            } else {
-                enableTraffDataButton.setChecked(false);
-                enableTraffDataButton.setEnabled(false);
+
+                enableTraffDataButton.setOnClickListener(new ManageSyslogdToggle());
             }
 
-            enableTraffDataButton.setOnClickListener(new ManageSyslogdToggle());
-        }
-
-        if (preliminaryCheckException != null) {
-            data = new NVRAMInfo().setException(preliminaryCheckException);
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (preliminaryCheckException != null) {
+                data = new NVRAMInfo().setException(preliminaryCheckException);
             }
 
-            final String syslogdEnabledPropertyValue = data.getProperty(SYSLOGD_ENABLE);
-            final boolean isSyslogEnabled = "1".equals(syslogdEnabledPropertyValue);
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_error);
 
-            final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
+            final Exception exception = data.getException();
 
-            final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
-            final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
-
-            syslogState.setVisibility(mDisplayStatus ? View.VISIBLE : View.GONE);
-
-            final TextView logTextView = (TextView) syslogContentView;
-            if (isSyslogEnabled) {
-
-                //Highlight textToFind for new log lines
-                final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
-
-                //Hide container if no data at all (no existing data, and incoming data is empty too)
-                final View scrollView = layout.findViewById(R.id.tile_status_router_syslog_content_scrollview);
-
-                //noinspection ConstantConditions
-                Spanned newSyslogSpan = new SpannableString(newSyslog);
-
-                final SharedPreferences sharedPreferences = this.mParentFragmentPreferences;
-                final String existingSearch = sharedPreferences != null ?
-                        sharedPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
-
-                if (!isNullOrEmpty(existingSearch)) {
-                    if (isNullOrEmpty(filterEditText.getText().toString())) {
-                        filterEditText.setText(existingSearch);
-                    }
-                    if (!isNullOrEmpty(newSyslog)) {
-                        //noinspection ConstantConditions
-                        newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
-                    }
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
+
+                final String syslogdEnabledPropertyValue = data.getProperty(SYSLOGD_ENABLE);
+                final boolean isSyslogEnabled = "1".equals(syslogdEnabledPropertyValue);
+
+                final TextView syslogState = (TextView) this.layout.findViewById(R.id.tile_status_router_syslog_state);
+
+                final View syslogContentView = this.layout.findViewById(R.id.tile_status_router_syslog_content);
+                final EditText filterEditText = (EditText) this.layout.findViewById(R.id.tile_status_router_syslog_filter);
+
+                syslogState.setText(syslogdEnabledPropertyValue == null ? "-" : (isSyslogEnabled ? "Enabled" : "Disabled"));
+
+                syslogState.setVisibility(mDisplayStatus ? View.VISIBLE : View.GONE);
+
+                final TextView logTextView = (TextView) syslogContentView;
+                if (isSyslogEnabled) {
+
+                    //Highlight textToFind for new log lines
+                    final String newSyslog = data.getProperty(SYSLOG, EMPTY_STRING);
+
+                    //Hide container if no data at all (no existing data, and incoming data is empty too)
+                    final View scrollView = layout.findViewById(R.id.tile_status_router_syslog_content_scrollview);
+
+                    //noinspection ConstantConditions
+                    Spanned newSyslogSpan = new SpannableString(newSyslog);
+
+                    final SharedPreferences sharedPreferences = this.mParentFragmentPreferences;
+                    final String existingSearch = sharedPreferences != null ?
+                            sharedPreferences.getString(getFormattedPrefKey(LAST_SEARCH), null) : null;
+
+                    if (!isNullOrEmpty(existingSearch)) {
+                        if (isNullOrEmpty(filterEditText.getText().toString())) {
+                            filterEditText.setText(existingSearch);
+                        }
+                        if (!isNullOrEmpty(newSyslog)) {
+                            //noinspection ConstantConditions
+                            newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
+                        }
+                    }
 
 //                if (!(isNullOrEmpty(existingSearch) || isNullOrEmpty(newSyslog))) {
 //                    filterEditText.setText(existingSearch);
@@ -332,110 +339,113 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
 //                    newSyslogSpan = findAndHighlightOutput(newSyslog, existingSearch);
 //                }
 
-                if (isNullOrEmpty(logTextView.getText().toString()) && isNullOrEmpty(newSyslog)) {
-                    scrollView.setVisibility(View.INVISIBLE);
-                } else {
-                    scrollView.setVisibility(View.VISIBLE);
+                    if (isNullOrEmpty(logTextView.getText().toString()) && isNullOrEmpty(newSyslog)) {
+                        scrollView.setVisibility(View.INVISIBLE);
+                    } else {
+                        scrollView.setVisibility(View.VISIBLE);
 
-                    logTextView.setMovementMethod(new ScrollingMovementMethod());
+                        logTextView.setMovementMethod(new ScrollingMovementMethod());
 
-                    logTextView.append(new SpannableStringBuilder()
-                            .append(Html.fromHtml("<br/>"))
-                            .append(newSyslogSpan));
-                }
+                        logTextView.append(new SpannableStringBuilder()
+                                .append(Html.fromHtml("<br/>"))
+                                .append(newSyslogSpan));
+                    }
 
-                filterEditText.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        final int DRAWABLE_LEFT = 0;
-                        final int DRAWABLE_TOP = 1;
-                        final int DRAWABLE_RIGHT = 2;
-                        final int DRAWABLE_BOTTOM = 3;
+                    filterEditText.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            final int DRAWABLE_LEFT = 0;
+                            final int DRAWABLE_TOP = 1;
+                            final int DRAWABLE_RIGHT = 2;
+                            final int DRAWABLE_BOTTOM = 3;
 
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            if (event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                                //Reset everything
-                                filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                if (event.getRawX() >= (filterEditText.getRight() - filterEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                                    //Reset everything
+                                    filterEditText.setText(EMPTY_STRING); //this will trigger the TextWatcher, thus disabling the "Find" button
+                                    //Highlight text in textview
+                                    final String currentText = logTextView.getText().toString();
+
+                                    logTextView.setText(currentText
+                                            .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
+                                            .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING));
+
+                                    if (sharedPreferences != null) {
+                                        final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
+                                        editor.apply();
+                                    }
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    });
+
+                    filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                                final String textToFind = filterEditText.getText().toString();
+                                if (isNullOrEmpty(textToFind)) {
+                                    //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
+                                    return true;
+                                }
+                                if (sharedPreferences != null) {
+                                    if (textToFind.equalsIgnoreCase(existingSearch)) {
+                                        //No need to go further as this is already the string we are looking for
+                                        return true;
+                                    }
+                                    final SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString(getFormattedPrefKey(LAST_SEARCH), textToFind);
+                                    editor.apply();
+                                }
                                 //Highlight text in textview
                                 final String currentText = logTextView.getText().toString();
 
-                                logTextView.setText(currentText
+                                logTextView.setText(findAndHighlightOutput(currentText
                                         .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                        .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING));
+                                        .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING), textToFind));
 
-                                if (sharedPreferences != null) {
-                                    final SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString(getFormattedPrefKey(LAST_SEARCH), EMPTY_STRING);
-                                    editor.apply();
-                                }
                                 return true;
                             }
+                            return false;
                         }
-                        return false;
-                    }
-                });
+                    });
 
-                filterEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                            final String textToFind = filterEditText.getText().toString();
-                            if (isNullOrEmpty(textToFind)) {
-                                //extra-check, even though we can be pretty sure the button is enabled only if textToFind is present
-                                return true;
-                            }
-                            if (sharedPreferences != null) {
-                                if (textToFind.equalsIgnoreCase(existingSearch)) {
-                                    //No need to go further as this is already the string we are looking for
-                                    return true;
-                                }
-                                final SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString(getFormattedPrefKey(LAST_SEARCH), textToFind);
-                                editor.apply();
-                            }
-                            //Highlight text in textview
-                            final String currentText = logTextView.getText().toString();
+                }
 
-                            logTextView.setText(findAndHighlightOutput(currentText
-                                    .replaceAll(SLASH_FONT_HTML, EMPTY_STRING)
-                                    .replaceAll(FONT_COLOR_MATCHING_HTML, EMPTY_STRING), textToFind));
-
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
             }
 
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_router_syslog_togglebutton_title, R.id.tile_status_router_syslog_togglebutton);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_router_syslog_togglebutton_title, R.id.tile_status_router_syslog_togglebutton);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @NonNull

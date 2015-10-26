@@ -114,17 +114,23 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                     mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-            if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                //Skip run
-                Log.d(LOG_TAG, "Skip loader run");
-                mParentFragmentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.GONE);
-                        mProgressBarDesc.setVisibility(View.GONE);
-                    }
-                });
+            if (mRefreshing.getAndSet(true)) {
                 return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+            }
+            if (!isForceRefresh()) {
+                //Force Manual Refresh
+                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                    //Skip run
+                    Log.d(LOG_TAG, "Skip loader run");
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.GONE);
+                            mProgressBarDesc.setVisibility(View.GONE);
+                        }
+                    });
+                    return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                }
             }
             nbRunsLoader++;
 
@@ -231,68 +237,72 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
 
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
+                    .setVisibility(View.VISIBLE);
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //LAN
-            final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
-            lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "-"));
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_error);
 
-            //WAN
-            final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
-            wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "-"));
+            final Exception exception = data.getException();
 
-            //Wireless
-            final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
-            wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                //LAN
+                final TextView lanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_lan);
+                lanIfaceView.setText(data.getProperty(NVRAMInfo.LAN_IFNAME, "-"));
+
+                //WAN
+                final TextView wanIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wan);
+                wanIfaceView.setText(data.getProperty(NVRAMInfo.WAN_IFNAME, "-"));
+
+                //Wireless
+                final TextView wlIfaceView = (TextView) this.layout.findViewById(R.id.tile_status_bandwidth_ifaces_wireless);
+                wlIfaceView.setText(data.getProperty(NVRAMInfo.LANDEVS, "-"));
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_bandwidth_ifaces_togglebutton_title, R.id.tile_status_bandwidth_ifaces_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_bandwidth_ifaces_togglebutton_title, R.id.tile_status_bandwidth_ifaces_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
     }
 

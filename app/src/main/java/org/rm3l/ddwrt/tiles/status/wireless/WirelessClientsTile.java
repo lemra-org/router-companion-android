@@ -613,17 +613,23 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //No worries
                 }
 
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
-                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setVisibility(View.GONE);
-                            mProgressBarDesc.setVisibility(View.GONE);
-                        }
-                    });
+                if (mRefreshing.getAndSet(true)) {
                     return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                }
+                if (!isForceRefresh()) {
+                    //Force Manual Refresh
+                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                        //Skip run
+                        Log.d(LOG_TAG, "Skip loader run");
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setVisibility(View.GONE);
+                                mProgressBarDesc.setVisibility(View.GONE);
+                            }
+                        });
+                        return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
                 }
                 nbRunsLoader++;
 
@@ -2360,6 +2366,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         } finally {
             Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            mRefreshing.set(false);
             try {
 //                if (mProgressBar.getVisibility() != View.GONE) {
 //                    mProgressBar.setVisibility(View.GONE);

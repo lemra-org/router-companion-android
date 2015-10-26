@@ -92,10 +92,16 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + OpenVPNServerTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -166,104 +172,108 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_services_openvpn_server_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_services_openvpn_server_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_services_openvpn_server_grid_layout)
-                .setVisibility(View.VISIBLE);
-        //FIXME Disabled for now
+            layout.findViewById(R.id.tile_services_openvpn_server_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_services_openvpn_server_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_services_openvpn_server_grid_layout)
+                    .setVisibility(View.VISIBLE);
+            //FIXME Disabled for now
 //        layout.findViewById(R.id.tile_services_openvpn_server_note)
 //                .setVisibility(View.VISIBLE);
 
-        Exception preliminaryCheckException = null;
-        if (data == null) {
-            //noinspection ThrowableInstanceNeverThrown
-            preliminaryCheckException = new DDWRTNoDataException("No Data!");
-        } else //noinspection ThrowableResultOfMethodCallIgnored
-            if (data.getException() == null) {
-                final String pptpdServerEnabled = data.getProperty(OPENVPN_ENABLE);
-                if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
-                    //noinspection ThrowableInstanceNeverThrown
-                    preliminaryCheckException = new DDWRTOpenVPNdClienStateUnknown("Unknown state");
-                }
-            }
-
-        final SwitchCompat enableTraffDataButton =
-                (SwitchCompat) this.layout.findViewById(R.id.tile_services_openvpn_server_status);
-        enableTraffDataButton.setVisibility(View.VISIBLE);
-
-        final boolean makeToogleEnabled = (data != null &&
-                data.getData() != null &&
-                data.getData().containsKey(OPENVPN_ENABLE));
-
-        if (!isToggleStateActionRunning.get()) {
-            if (makeToogleEnabled) {
-                if ("1".equals(data.getProperty(OPENVPN_ENABLE))) {
-                    //Enabled
-                    enableTraffDataButton.setChecked(true);
-                } else {
-                    //Disabled
-                    enableTraffDataButton.setChecked(false);
-                }
-                enableTraffDataButton.setEnabled(true);
-            } else {
-                enableTraffDataButton.setChecked(false);
-                enableTraffDataButton.setEnabled(false);
-            }
-
-            enableTraffDataButton.setOnClickListener(new ManageOpenVPNServerToggle());
-        }
-
-        if (preliminaryCheckException != null) {
-            data = new NVRAMInfo().setException(preliminaryCheckException);
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_openvpn_server_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            mNvramInfo = new NVRAMInfo();
-            mNvramInfo.putAll(data);
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
-            }
-
-            updateTileDisplayData(data, true);
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+            Exception preliminaryCheckException = null;
+            if (data == null) {
+                //noinspection ThrowableInstanceNeverThrown
+                preliminaryCheckException = new DDWRTNoDataException("No Data!");
+            } else //noinspection ThrowableResultOfMethodCallIgnored
+                if (data.getException() == null) {
+                    final String pptpdServerEnabled = data.getProperty(OPENVPN_ENABLE);
+                    if (pptpdServerEnabled == null || !Arrays.asList("0", "1").contains(pptpdServerEnabled)) {
+                        //noinspection ThrowableInstanceNeverThrown
+                        preliminaryCheckException = new DDWRTOpenVPNdClienStateUnknown("Unknown state");
                     }
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+            final SwitchCompat enableTraffDataButton =
+                    (SwitchCompat) this.layout.findViewById(R.id.tile_services_openvpn_server_status);
+            enableTraffDataButton.setVisibility(View.VISIBLE);
+
+            final boolean makeToogleEnabled = (data != null &&
+                    data.getData() != null &&
+                    data.getData().containsKey(OPENVPN_ENABLE));
+
+            if (!isToggleStateActionRunning.get()) {
+                if (makeToogleEnabled) {
+                    if ("1".equals(data.getProperty(OPENVPN_ENABLE))) {
+                        //Enabled
+                        enableTraffDataButton.setChecked(true);
+                    } else {
+                        //Disabled
+                        enableTraffDataButton.setChecked(false);
+                    }
+                    enableTraffDataButton.setEnabled(true);
+                } else {
+                    enableTraffDataButton.setChecked(false);
+                    enableTraffDataButton.setEnabled(false);
+                }
+
+                enableTraffDataButton.setOnClickListener(new ManageOpenVPNServerToggle());
+            }
+
+            if (preliminaryCheckException != null) {
+                data = new NVRAMInfo().setException(preliminaryCheckException);
+            }
+
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_services_openvpn_server_error);
+
+            final Exception exception = data.getException();
+
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+                mNvramInfo = new NVRAMInfo();
+                mNvramInfo.putAll(data);
+
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+
+                updateTileDisplayData(data, true);
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_services_openvpn_server_togglebutton_title, R.id.tile_services_openvpn_server_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_services_openvpn_server_togglebutton_title, R.id.tile_services_openvpn_server_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     private void updateTileDisplayData(@NonNull final NVRAMInfo data, final boolean defaultValuesIfNotFound) {

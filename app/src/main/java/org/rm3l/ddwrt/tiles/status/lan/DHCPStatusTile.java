@@ -92,10 +92,16 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + DHCPStatusTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -244,94 +250,98 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
 
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_lan_dhcp_status_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_lan_dhcp_status_gridLayout)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_lan_dhcp_status_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_lan_dhcp_status_gridLayout)
+                    .setVisibility(View.VISIBLE);
 
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //Server Status
-            final TextView dhcpServerView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
-            final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
-            final String lanProtoTxt;
-            if (lanProto == null) {
-                lanProtoTxt = "-";
-            } else if ("dhcp".equalsIgnoreCase(lanProto)) {
-                lanProtoTxt = "Enabled";
-            } else {
-                lanProtoTxt = "Disabled";
-            }
-            dhcpServerView.setText(lanProtoTxt);
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_error);
 
-            //Daemon
-            final TextView dhcpDaemonView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
-            final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
-            final String dhcpDnsmasqTxt;
-            if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
-                dhcpDnsmasqTxt = "DNSMasq";
-            } else {
-                dhcpDnsmasqTxt = "-";
-            }
-            dhcpDaemonView.setText(dhcpDnsmasqTxt);
+            final Exception exception = data.getException();
 
-            //Start IP
-            ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_start_ip))
-                    .setText(data.getProperty(DHCP_START_IP, "-"));
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            //End IP
-            ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_end_ip))
-                    .setText(data.getProperty(DHCP_END_IP, "-"));
-
-            final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
-            final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
-            clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "-" :
-                    (dhcpClientLeaseTime + " min"));
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                //Server Status
+                final TextView dhcpServerView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_server);
+                final String lanProto = data.getProperty(NVRAMInfo.LAN_PROTO);
+                final String lanProtoTxt;
+                if (lanProto == null) {
+                    lanProtoTxt = "-";
+                } else if ("dhcp".equalsIgnoreCase(lanProto)) {
+                    lanProtoTxt = "Enabled";
+                } else {
+                    lanProtoTxt = "Disabled";
+                }
+                dhcpServerView.setText(lanProtoTxt);
+
+                //Daemon
+                final TextView dhcpDaemonView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_daemon);
+                final String dhcpDnsmasq = data.getProperty(NVRAMInfo.DHCP_DNSMASQ);
+                final String dhcpDnsmasqTxt;
+                if ("1".equalsIgnoreCase(dhcpDnsmasq)) {
+                    dhcpDnsmasqTxt = "DNSMasq";
+                } else {
+                    dhcpDnsmasqTxt = "-";
+                }
+                dhcpDaemonView.setText(dhcpDnsmasqTxt);
+
+                //Start IP
+                ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_start_ip))
+                        .setText(data.getProperty(DHCP_START_IP, "-"));
+
+                //End IP
+                ((TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_end_ip))
+                        .setText(data.getProperty(DHCP_END_IP, "-"));
+
+                final TextView clientLeaseView = (TextView) this.layout.findViewById(R.id.tile_status_lan_dhcp_status_client_lease_time);
+                final String dhcpClientLeaseTime = data.getProperty(NVRAMInfo.DHCP_LEASE);
+                clientLeaseView.setText(Strings.isNullOrEmpty(dhcpClientLeaseTime) ? "-" :
+                        (dhcpClientLeaseTime + " min"));
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_lan_dhcp_status_togglebutton_title, R.id.tile_status_lan_dhcp_status_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_lan_dhcp_status_togglebutton_title, R.id.tile_status_lan_dhcp_status_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @Nullable

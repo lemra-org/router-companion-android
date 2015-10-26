@@ -55,6 +55,8 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
 /**
@@ -98,6 +100,10 @@ public abstract class DDWRTTile<T>
     protected ViewGroup parentViewGroup;
     protected Integer layoutId;
     private boolean mLoaderStopped = true;
+
+    private final AtomicBoolean mForceRefresh = new AtomicBoolean(false);
+
+    protected final AtomicBoolean mRefreshing = new AtomicBoolean(false);
 
     @Nullable
     private InterstitialAd mTileClickInterstitialAd;
@@ -407,6 +413,14 @@ public abstract class DDWRTTile<T>
 
     }
 
+    public boolean isForceRefresh() {
+        return mForceRefresh.get();
+    }
+
+    public void setForceRefresh(boolean forceRefresh) {
+        this.mForceRefresh.set(forceRefresh);
+    }
+
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
 
@@ -447,4 +461,5 @@ public abstract class DDWRTTile<T>
             return dialogMessage;
         }
     }
+
 }

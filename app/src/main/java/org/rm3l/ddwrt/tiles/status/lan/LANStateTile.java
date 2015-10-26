@@ -81,10 +81,16 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + LANStateTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -165,72 +171,76 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
      */
     @Override
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_lan_status_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_lan_status_gridLayout)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_lan_status_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_lan_status_gridLayout)
+                    .setVisibility(View.VISIBLE);
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //MAC Address
-            final TextView macView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
-            macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "-"));
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_error);
 
-            //IP Address
-            final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
-            ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+            final Exception exception = data.getException();
 
-            //Subnet Mask
-            final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
-            maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "-"));
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            //GW
-            final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
-            gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "-"));
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                //MAC Address
+                final TextView macView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_mac);
+                macView.setText(data.getProperty(NVRAMInfo.LAN_HWADDR, "-"));
+
+                //IP Address
+                final TextView ipView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_ip);
+                ipView.setText(data.getProperty(NVRAMInfo.LAN_IPADDR, "-"));
+
+                //Subnet Mask
+                final TextView maskView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_subnet_mask);
+                maskView.setText(data.getProperty(NVRAMInfo.LAN_NETMASK, "-"));
+
+                //GW
+                final TextView gwView = (TextView) this.layout.findViewById(R.id.tile_status_lan_status_gateway);
+                gwView.setText(data.getProperty(NVRAMInfo.LAN_GATEWAY, "-"));
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_lan_status_togglebutton_title, R.id.tile_status_lan_status_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_lan_status_togglebutton_title, R.id.tile_status_lan_status_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 
     @Nullable

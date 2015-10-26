@@ -97,10 +97,16 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     Log.d(LOG_TAG, "Init background loader for " + StatusTimeTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                    if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                        }
                     }
                     nbRunsLoader++;
 
@@ -173,96 +179,100 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
-        //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        try {
+            //Set tiles
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-        layout.findViewById(R.id.tile_status_time_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_time_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_time_current_date)
-                .setVisibility(View.VISIBLE);
-        layout.findViewById(R.id.tile_status_time_grid_layout)
-                .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_time_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_time_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_time_current_date)
+                    .setVisibility(View.VISIBLE);
+            layout.findViewById(R.id.tile_status_time_grid_layout)
+                    .setVisibility(View.VISIBLE);
 
-        if (data == null) {
-            data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_time_error);
-
-        final Exception exception = data.getException();
-
-        if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-
-            if (exception == null) {
-                errorPlaceHolderView.setVisibility(View.GONE);
+            if (data == null) {
+                data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            //Current Date
-            ((TextView) this.layout.findViewById(R.id.tile_status_time_current_date))
-                    .setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_time_error);
 
-            //NTP Client
-            final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
-            ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_client)).setText((ntpClientEnabled ?
-                    "En" : "Dis") + "abled");
-            if (ntpClientEnabled) {
-                //NTP Server
-                ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText(
-                        data.getProperty(NVRAMInfo.NTP_SERVER, "-"));
-            } else {
-                //NTP Server
-                ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText("-");
-            }
+            final Exception exception = data.getException();
 
-            //Time Zone
-            final String timezone = data.getProperty(NVRAMInfo.TIME_ZONE);
-            final String tzValue;
-            if (timezone == null || timezone.isEmpty()) {
-                tzValue = "-";
-            } else {
-                tzValue = "UTC" + (timezone.contains(".") ?
-                        timezone
-                                .replaceAll(".25", ":15")
-                                .replaceAll(".5", ":30")
-                                .replaceAll(".75", ":45") :
-                        (timezone + ":00"));
-            }
-            ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_timezone)).setText(tzValue);
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
-            //Daylight
-            final String daylightPeriodString = daylightMap.get(data.getProperty(NVRAMInfo.DAYLIGHT_TIME));
-            ((TextView) this.layout.findViewById(R.id.tile_status_time_summertime)).setText(
-                    daylightPeriodString != null ? daylightPeriodString : "-");
-
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
                 }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
+
+                //Current Date
+                ((TextView) this.layout.findViewById(R.id.tile_status_time_current_date))
+                        .setText(data.getProperty(NVRAMInfo.CURRENT_DATE, "-"));
+
+                //NTP Client
+                final boolean ntpClientEnabled = "1".equals(data.getProperty(NVRAMInfo.NTP_ENABLE));
+                ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_client)).setText((ntpClientEnabled ?
+                        "En" : "Dis") + "abled");
+                if (ntpClientEnabled) {
+                    //NTP Server
+                    ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText(
+                            data.getProperty(NVRAMInfo.NTP_SERVER, "-"));
+                } else {
+                    //NTP Server
+                    ((TextView) this.layout.findViewById(R.id.tile_status_time_time_server)).setText("-");
+                }
+
+                //Time Zone
+                final String timezone = data.getProperty(NVRAMInfo.TIME_ZONE);
+                final String tzValue;
+                if (timezone == null || timezone.isEmpty()) {
+                    tzValue = "-";
+                } else {
+                    tzValue = "UTC" + (timezone.contains(".") ?
+                            timezone
+                                    .replaceAll(".25", ":15")
+                                    .replaceAll(".5", ":30")
+                                    .replaceAll(".75", ":45") :
+                            (timezone + ":00"));
+                }
+                ((TextView) this.layout.findViewById(R.id.tile_status_time_ntp_timezone)).setText(tzValue);
+
+                //Daylight
+                final String daylightPeriodString = daylightMap.get(data.getProperty(NVRAMInfo.DAYLIGHT_TIME));
+                ((TextView) this.layout.findViewById(R.id.tile_status_time_summertime)).setText(
+                        daylightPeriodString != null ? daylightPeriodString : "-");
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+            }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_time_togglebutton_title, R.id.tile_status_time_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_time_togglebutton_title, R.id.tile_status_time_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
     }
 }

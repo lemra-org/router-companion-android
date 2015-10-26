@@ -44,4 +44,7 @@ public interface DDWRTCompanionDAO {
 
     @Nullable
     Router getRouter(String uuid);
+
+    @Nullable
+    Router getRouter(int id);
 }

@@ -400,10 +400,21 @@ public class WANMonthlyTrafficTile
                     Log.d(LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
-                    if (isToggleStateActionRunning.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
-                        //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
-                        throw new DDWRTTileAutoRefreshNotAllowedException();
+                    if (mRefreshing.getAndSet(true)) {
+                        return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
+                    }
+                    if (!isForceRefresh()) {
+                        //Force Manual Refresh
+                        if (isToggleStateActionRunning.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
+                            //Skip run
+                            Log.d(LOG_TAG, "Skip loader run");
+                            throw new DDWRTTileAutoRefreshNotAllowedException();
+                        }
+                    } else {
+                        if (isToggleStateActionRunning.get()) {
+                            //Action running - skip
+                            throw new DDWRTTileAutoRefreshNotAllowedException();
+                        }
                     }
                     nbRunsLoader++;
 
@@ -533,211 +544,215 @@ public class WANMonthlyTrafficTile
 
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
+        try {
+            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
 
-        setLoadingViewVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_wan_monthly_traffic_header_loading_view)
-                .setVisibility(View.GONE);
-        layout.findViewById(R.id.tile_status_wan_monthly_traffic_title).setVisibility(View.VISIBLE);
+            setLoadingViewVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_wan_monthly_traffic_header_loading_view)
+                    .setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_status_wan_monthly_traffic_title).setVisibility(View.VISIBLE);
 
-        Exception preliminaryCheckException = null;
-        if (data == null) {
-            preliminaryCheckException = new DDWRTNoDataException("No Data!");
-        } else //noinspection ThrowableResultOfMethodCallIgnored
-            if (data.getException() == null) {
-                if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
-                    preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
-                } else if (traffData == null || traffData.isEmpty()) {
-                    preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
+            Exception preliminaryCheckException = null;
+            if (data == null) {
+                preliminaryCheckException = new DDWRTNoDataException("No Data!");
+            } else //noinspection ThrowableResultOfMethodCallIgnored
+                if (data.getException() == null) {
+                    if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+                        preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
+                    } else if (traffData == null || traffData.isEmpty()) {
+                        preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
+                    }
                 }
-            }
 
-        final SwitchCompat enableTraffDataButton =
-                (SwitchCompat) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_status);
-        enableTraffDataButton.setVisibility(View.VISIBLE);
+            final SwitchCompat enableTraffDataButton =
+                    (SwitchCompat) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_status);
+            enableTraffDataButton.setVisibility(View.VISIBLE);
 
-        final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData().containsKey(NVRAMInfo.TTRAFF_ENABLE));
+            final boolean makeToogleEnabled = (data != null && data.getData() != null && data.getData().containsKey(NVRAMInfo.TTRAFF_ENABLE));
 
-        if (!isToggleStateActionRunning.get()) {
-            if (makeToogleEnabled) {
-                if ("1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
-                    //Enabled
-                    enableTraffDataButton.setChecked(true);
-                } else {
-                    //Disabled
-                    enableTraffDataButton.setChecked(false);
-                }
-                enableTraffDataButton.setEnabled(true);
-            } else {
-                enableTraffDataButton.setChecked(false);
-                enableTraffDataButton.setEnabled(false);
-            }
-            enableTraffDataButton.setOnClickListener(new ManageWANTrafficCounterToggle());
-        }
-
-        if (preliminaryCheckException != null) {
-            data = new NVRAMInfo().setException(preliminaryCheckException);
-        }
-
-        final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_error);
-
-        final Exception exception = data.getException();
-
-        final View displayButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button);
-        final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
-        final View previousButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
-        final View nextButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
-        final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
-
-        final View[] ctrlViews = new View[]{monthYearDisplayed, displayButton, currentButton, previousButton, nextButton};
-
-        //Create Options Menu
-        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wan_monthly_traffic_menu);
-
-        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
-            //Set menu background to white
-            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
-        }
-
-        tileMenu.setVisibility(View.VISIBLE);
-
-        if (exception == null) {
-            errorPlaceHolderView.setVisibility(View.GONE);
-
-            final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
-
-            final Date currentDate = new Date();
-            final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
-                    SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
-
-            //TODO Load last value from preferences
-            monthYearDisplayed.setText(currentMonthYear);
-
-            displayButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
-
-                    final String monthFormatted = monthYearDisplayedText.toString();
-                    final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
-                            getTraffDataForMonth(monthFormatted);
-
-                    if (traffDataForMonth == null || traffDataForMonth.isEmpty()) {
-                        Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
-                                String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
+            if (!isToggleStateActionRunning.get()) {
+                if (makeToogleEnabled) {
+                    if ("1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
+                        //Enabled
+                        enableTraffDataButton.setChecked(true);
                     } else {
-                        final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
-                        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                                mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
-                        intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
-                        intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
+                        //Disabled
+                        enableTraffDataButton.setChecked(false);
+                    }
+                    enableTraffDataButton.setEnabled(true);
+                } else {
+                    enableTraffDataButton.setChecked(false);
+                    enableTraffDataButton.setEnabled(false);
+                }
+                enableTraffDataButton.setOnClickListener(new ManageWANTrafficCounterToggle());
+            }
 
-                        //noinspection ConstantConditions
+            if (preliminaryCheckException != null) {
+                data = new NVRAMInfo().setException(preliminaryCheckException);
+            }
+
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_error);
+
+            final Exception exception = data.getException();
+
+            final View displayButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button);
+            final View currentButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current);
+            final View previousButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_previous);
+            final View nextButton = this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next);
+            final TextView monthYearDisplayed = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
+
+            final View[] ctrlViews = new View[]{monthYearDisplayed, displayButton, currentButton, previousButton, nextButton};
+
+            //Create Options Menu
+            final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_status_wan_monthly_traffic_menu);
+
+            if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+                //Set menu background to white
+                tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            }
+
+            tileMenu.setVisibility(View.VISIBLE);
+
+            if (exception == null) {
+                errorPlaceHolderView.setVisibility(View.GONE);
+
+                final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
+
+                final Date currentDate = new Date();
+                final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
+                        SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
+
+                //TODO Load last value from preferences
+                monthYearDisplayed.setText(currentMonthYear);
+
+                displayButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
+
+                        final String monthFormatted = monthYearDisplayedText.toString();
+                        final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
+                                getTraffDataForMonth(monthFormatted);
+
+                        if (traffDataForMonth == null || traffDataForMonth.isEmpty()) {
+                            Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
+                                    String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
+                        } else {
+                            final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
+                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
+                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
+                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
+
+                            //noinspection ConstantConditions
 //                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
 //                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
 //                        alertDialog.show();
 //                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
 
-                        final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
-                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
-                                true);
+                            final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+                                    String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
+                                    true);
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mParentFragmentActivity.startActivity(intent);
-                                alertDialog.cancel();
-                            }
-                        }, 1000);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mParentFragmentActivity.startActivity(intent);
+                                    alertDialog.cancel();
+                                }
+                            }, 1000);
+                        }
+
                     }
+                });
 
-                }
-            });
-
-            currentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    monthYearDisplayed.setText(SIMPLE_DATE_FORMAT.format(currentDate));
-                }
-            });
-
-            previousButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
-                    if (currentYearMonth.length < 2) {
-                        return;
+                currentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        monthYearDisplayed.setText(SIMPLE_DATE_FORMAT.format(currentDate));
                     }
+                });
 
-                    final int currentMonth = currentYearMonth[1];
-                    final int currentYear = currentYearMonth[0];
+                previousButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
+                        if (currentYearMonth.length < 2) {
+                            return;
+                        }
 
-                    final int previousMonth = currentMonth - 1;
-                    final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear - 1)) :
-                            (((previousMonth <= 9) ? ("0" + previousMonth) : previousMonth) + "-" + currentYear));
+                        final int currentMonth = currentYearMonth[1];
+                        final int currentYear = currentYearMonth[0];
 
-                    monthYearDisplayed.setText(previousMonthYear);
-                }
-            });
+                        final int previousMonth = currentMonth - 1;
+                        final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear - 1)) :
+                                (((previousMonth <= 9) ? ("0" + previousMonth) : previousMonth) + "-" + currentYear));
 
-            nextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
-                    if (currentYearMonth.length < 2) {
-                        return;
+                        monthYearDisplayed.setText(previousMonthYear);
                     }
+                });
 
-                    final int currentMonth = currentYearMonth[1];
-                    final int currentYear = currentYearMonth[0];
-                    final int nextMonth = currentMonth + 1;
-                    final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear + 1)) :
-                            (((nextMonth <= 9) ? ("0" + nextMonth) : nextMonth) + "-" + currentYear));
+                nextButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    monthYearDisplayed.setText(nextMonthYear);
-                }
-            });
+                        final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
+                        if (currentYearMonth.length < 2) {
+                            return;
+                        }
 
-            setVisibility(ctrlViews, View.VISIBLE);
+                        final int currentMonth = currentYearMonth[1];
+                        final int currentYear = currentYearMonth[0];
+                        final int nextMonth = currentMonth + 1;
+                        final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear + 1)) :
+                                (((nextMonth <= 9) ? ("0" + nextMonth) : nextMonth) + "-" + currentYear));
 
-            //Update last sync
-            final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
-            lastSyncView.setReferenceTime(mLastSync);
-            lastSyncView.setPrefix("Last sync: ");
-        }
-
-        if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
-            //noinspection ThrowableResultOfMethodCallIgnored
-            final Throwable rootCause = Throwables.getRootCause(exception);
-            errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
-            final Context parentContext = this.mParentFragmentActivity;
-            errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    //noinspection ThrowableResultOfMethodCallIgnored
-                    if (rootCause != null) {
-                        Toast.makeText(parentContext,
-                                rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        monthYearDisplayed.setText(nextMonthYear);
                     }
-                }
-            });
-            errorPlaceHolderView.setVisibility(View.VISIBLE);
-            setVisibility(ctrlViews, View.GONE);
+                });
 
-        } else {
-            if (traffData == null || traffData.isEmpty()) {
-                errorPlaceHolderView.setText("Error: No Data!");
+                setVisibility(ctrlViews, View.VISIBLE);
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 setVisibility(ctrlViews, View.GONE);
+
+            } else {
+                if (traffData == null || traffData.isEmpty()) {
+                    errorPlaceHolderView.setText("Error: No Data!");
+                    errorPlaceHolderView.setVisibility(View.VISIBLE);
+                    setVisibility(ctrlViews, View.GONE);
+                }
             }
+
+            doneWithLoaderInstance(this, loader,
+                    R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+
+            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
         }
-
-        doneWithLoaderInstance(this, loader,
-                R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
-
-        Log.d(LOG_TAG, "onLoadFinished(): done loading!");
 
     }
 
