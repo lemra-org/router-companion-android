@@ -1750,79 +1750,17 @@ public class DDWRTMainActivity extends AppCompatActivity
             //Open Spinner right away
             routersPicker.performClick();
 
+            final int newRouterId = newRouter.getId();
+            final String newRouterUuid = routerIdToUuid.get(newRouterId);
+            if (newRouterUuid == null) {
+                routerIdToUuid.put(newRouterId, newRouter.getUuid());
+            }
+
             final IProfile newProfile = new ProfileDrawerItem()
+                    .withIdentifier(newRouterId)
                     .withNameShown(true)
                     .withName(newRouter.getDisplayName())
-                    .withEmail(newRouter.getRemoteIpAddress() + ":" + newRouter.getRemotePort())
-                    .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                        @Override
-                        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                            //Switch Router
-                            final Intent intent = getIntent();
-                            intent.putExtra(ROUTER_SELECTED, newRouter.getUuid());
-                            intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-
-                            if (BuildConfig.WITH_ADS &&
-                                    mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-
-                                mInterstitialAd.setAdListener(new AdListener() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        finish();
-                                        startActivity(intent);
-                                    }
-
-                                    @Override
-                                    public void onAdOpened() {
-                                        //Save preference
-                                        mGlobalPreferences.edit()
-                                                .putLong(
-                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                        System.currentTimeMillis())
-                                                .apply();
-                                    }
-                                });
-
-                                if (mInterstitialAd.isLoaded()) {
-                                    mInterstitialAd.show();
-                                } else {
-                                    //Reload UI
-//                            final AlertDialog alertDialog = Utils.
-//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                            "Switching Routers", "Please wait...", true);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finish();
-                                            startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 2000);
-                                }
-
-                            } else {
-                                //Reload UI
-//                        final AlertDialog alertDialog = Utils.
-//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                        "Switching Routers", "Please wait...", true);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                        startActivity(intent);
-                                        alertDialog.cancel();
-                                    }
-                                }, 2000);
-                            }
-                            return true;
-                        }
-                    });
+                    .withEmail(newRouter.getRemoteIpAddress() + ":" + newRouter.getRemotePort());
 
             final String routerModel = Router.getRouterModel(this, newRouter);
             Log.d(TAG, "routerModel: " + routerModel);
