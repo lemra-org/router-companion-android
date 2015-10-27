@@ -36,7 +36,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
@@ -100,7 +100,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.utils.Utils.getEscapedFileName;
 
-public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
+public class ActiveIPConnectionsDetailActivity extends ActionBarActivity {
 
     public static final String ACTIVE_IP_CONNECTIONS_OUTPUT = "ACTIVE_IP_CONNECTIONS_OUTPUT";
 

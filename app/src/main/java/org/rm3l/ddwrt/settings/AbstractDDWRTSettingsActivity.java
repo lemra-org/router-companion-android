@@ -36,7 +36,7 @@ import android.preference.RingtonePreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -52,7 +52,7 @@ import java.util.Set;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
-public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
+public abstract class AbstractDDWRTSettingsActivity extends ActionBarActivity {
 
     public static final String SETTINGS = "Settings";
 

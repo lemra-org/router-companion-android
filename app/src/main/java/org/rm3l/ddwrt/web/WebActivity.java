@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -34,7 +34,7 @@ import org.rm3l.ddwrt.utils.Utils;
 /**
  * Created by rm3l on 04/07/15.
  */
-public abstract class WebActivity extends AppCompatActivity {
+public abstract class WebActivity extends ActionBarActivity {
 
     protected Toolbar mToolbar;
 

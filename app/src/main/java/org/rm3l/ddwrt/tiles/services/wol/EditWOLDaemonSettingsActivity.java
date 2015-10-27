@@ -29,7 +29,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -63,7 +63,7 @@ import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WOL_PASSWD;
 import static org.rm3l.ddwrt.tiles.services.wol.WakeOnLanDaemonTile.WOL_DAEMON_NVRAMINFO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
-public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
+public class EditWOLDaemonSettingsActivity extends ActionBarActivity {
 
     public static final String WOL_DAEMON_HOSTNAMES_PREF_KEY = \"fake-key\";
     private static final String TAG = EditWOLDaemonSettingsActivity.class.getSimpleName();

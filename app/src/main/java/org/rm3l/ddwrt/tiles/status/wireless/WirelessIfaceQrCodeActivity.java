@@ -39,7 +39,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -78,7 +78,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
+public class WirelessIfaceQrCodeActivity extends ActionBarActivity {
 
     public static final String WIFI_QR_CODE = "WIFI_QR_CODE";
     public static final String SSID = "SSID";

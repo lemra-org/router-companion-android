@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +51,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERS
 /**
  * The configuration screen for the {@link WOLWidgetProvider WOLWidgetProvider} AppWidget.
  */
-public class RouterActionsWidgetConfigureActivity extends AppCompatActivity implements RouterMgmtDialogListener {
+public class RouterActionsWidgetConfigureActivity extends ActionBarActivity implements RouterMgmtDialogListener {
 
     private static final String PREFS_NAME = DDWRTCompanionConstants.WIDGETS_PREFERENCES_KEY;
     private static final String PREF_PREFIX_KEY = \"fake-key\";

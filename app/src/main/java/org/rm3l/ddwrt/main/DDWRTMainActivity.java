@@ -48,7 +48,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -143,7 +143,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
  * Main Android Activity
  * <p/>
  */
-public class DDWRTMainActivity extends AppCompatActivity
+public class DDWRTMainActivity extends ActionBarActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
         RouterMgmtDialogListener,

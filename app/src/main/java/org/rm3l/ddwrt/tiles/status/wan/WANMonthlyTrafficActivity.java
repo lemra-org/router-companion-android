@@ -35,7 +35,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -85,7 +85,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
-public class WANMonthlyTrafficActivity extends AppCompatActivity {
+public class WANMonthlyTrafficActivity extends ActionBarActivity {
 
     public static final String WAN_MONTHLY_TRAFFIC = "WAN Monthly Traffic";
     public static final String MONTHLY_TRAFFIC_DATA_UNSORTED = "MONTHLY_TRAFFIC_DATA_UNSORTED";
