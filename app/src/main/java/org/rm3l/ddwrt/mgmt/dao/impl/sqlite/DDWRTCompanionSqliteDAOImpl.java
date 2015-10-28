@@ -31,7 +31,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -39,7 +38,6 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
@@ -58,7 +56,6 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     private static final String LOG_TAG = DDWRTCompanionSqliteDAOImpl.class.getSimpleName();
-    final Map<String, Integer> routersToIds = Maps.newConcurrentMap();
     @NonNull
     private final DDWRTCompanionSqliteOpenHelper dbHelper;
     private final Context mContext;
@@ -101,14 +98,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         router.setRouterFirmware(cursor.getString(10));
 
         return router;
-    }
-
-    private void updateRouterIds() {
-        final List<Router> allRouters = this.getAllRouters();
-        int i = 0;
-        for (Router aRouter : allRouters) {
-            routersToIds.put(aRouter.getUuid(), i++);
-        }
     }
 
     public void destroy() {
@@ -188,14 +177,13 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
                 database = dbHelper.getWritableDatabase();
 
-                System.out.println("Delete Router with uuid: " + uuid);
+                Log.d(LOG_TAG, "Delete Router with uuid: " + uuid);
                 database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "deleteRouter: close db");
                 database.close();
             }
         }
@@ -226,7 +214,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                     cursor.close();
                 }
 
-                return Utils.dbIdsToPosition(routers);
+                return routers;
             }
         } catch (final RuntimeException e) {
             Utils.reportException(e);
@@ -248,19 +236,17 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 database = dbHelper.getWritableDatabase();
 
                 final Cursor cursor = database.query(TABLE_ROUTERS,
-                        allColumns, String.format(ROUTER_UUID + "='%s'", uuid), null, null, null, COLUMN_ID + " DESC");
+                        allColumns, String.format(ROUTER_UUID + "='%s'", uuid),
+                        null, null, null,
+                        COLUMN_ID + " DESC");
+
                 //noinspection TryFinallyCanBeTryWithResources
                 try {
                     if (cursor.getCount() > 0) {
                         cursor.moveToFirst();
-                        final Router router = cursorToRouter(cursor);
-                        updateRouterIds();
-
-                        router.setId(routersToIds.get(router.getUuid()));
-                        return router;
+                        return cursorToRouter(cursor);
                     }
-
-                } finally {
+                }  finally {
                     cursor.close();
                 }
 
@@ -291,11 +277,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 try {
                     if (cursor.getCount() > 0) {
                         cursor.moveToFirst();
-                        final Router router = cursorToRouter(cursor);
-                        updateRouterIds();
-
-                        router.setId(routersToIds.get(router.getUuid()));
-                        return router;
+                        return cursorToRouter(cursor);
                     }
 
                 } finally {

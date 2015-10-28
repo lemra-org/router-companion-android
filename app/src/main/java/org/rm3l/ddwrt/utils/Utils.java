@@ -208,19 +208,6 @@ public final class Utils {
         return InetAddress.getByAddress(quads);
     }
 
-    @NonNull
-    public static List<Router> dbIdsToPosition(@NonNull final List<Router> routersList) {
-        final List<Router> routers = Lists.newArrayListWithCapacity(routersList.size());
-
-        int i = 0;
-        for (final Router router : routersList) {
-            final Router r = new Router(router);
-            r.setId(i++);
-            routers.add(r);
-        }
-        return routers;
-    }
-
     public static String toHumanReadableByteCount(final long sizeInBytes) {
         return FileUtils.byteCountToDisplaySize(sizeInBytes);
     }

@@ -27,7 +27,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterConnectionProtocol.HTTPS;
@@ -49,7 +49,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     public static final int MAX_INIT_ENTRIES = 35;
     private static final String LOG_TAG = DDWRTCompanionInMemoryDAOImpl.class.getSimpleName();
-    private final Map<String, Router> DB = Maps.newHashMap();
+    private final Map<String, Router> DB = new ConcurrentHashMap<>();
 
     public DDWRTCompanionInMemoryDAOImpl() {
         if (DDWRTCompanionConstants.TEST_MODE) {
