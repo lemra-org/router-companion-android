@@ -51,6 +51,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:maxLength="13"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/loading_router_name"
