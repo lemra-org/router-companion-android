@@ -288,8 +288,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:id="@+id/tile_network_map_router_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="end"
                                 android:paddingTop="30dp"
+                                android:layout_gravity="end"
+                                android:maxLength="17"
                                 android:ellipsize="end"
                                 android:singleLine="true"
                                 android:text="Loading Router Name..."/>
