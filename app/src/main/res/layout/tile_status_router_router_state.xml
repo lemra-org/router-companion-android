@@ -51,7 +51,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:maxLength="13"
+                    android:maxLength="17"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/loading_router_name"
@@ -65,6 +66,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_gravity="start"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="true"
@@ -111,35 +113,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_status_router_router_state_gridLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="4"
+                android:columnCount="3"
                 android:visibility="gone">
 
                 <!-- Router Name -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="0"
                     android:text="@string/router_state_name"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="0"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="0"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -149,28 +145,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="1"
                     android:text="@string/router_state_model"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="1"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_model"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="1"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -180,28 +170,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="2"
                     android:text="@string/router_state_firmware"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="2"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_firmware"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="2"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -211,28 +195,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="3"
                     android:text="@string/router_state_kernel"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="3"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_kernel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="3"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -242,28 +220,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="4"
                     android:text="@string/router_state_lan_ip"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="4"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_lan_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="4"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -274,8 +246,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_wan_ip_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="5"
                     android:text="WAN IP"
                     android:textStyle="bold" />
 
@@ -283,20 +253,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_wan_ip_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="5"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_wan_ip_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="5"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -307,8 +273,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_internet_ip_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="6"
                     android:text="Public IP"
                     android:textStyle="bold" />
 
@@ -316,20 +280,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_internet_ip_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="6"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_internet_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="6"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -339,28 +299,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="7"
                     android:text="@string/router_state_date_time"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="7"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_datetime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="7"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -370,28 +324,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="8"
                     android:text="@string/router_state_uptime"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="8"
                     android:text="@string/one_space" />
 
                 <TextView
                     android:id="@+id/tile_status_router_router_state_uptime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
-                    android:layout_row="8"
                     android:ellipsize="end"
                     android:gravity="start"
                     android:singleLine="false"
@@ -402,8 +350,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_togglebutton_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="0"
-                    android:layout_row="9"
                     android:text="@string/auto_refresh"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -412,11 +358,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_togglebutton_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="8.0dip"
                     android:layout_marginRight="8.0dip"
-                    android:layout_row="9"
                     android:text="@string/one_space"
                     android:visibility="gone" />
 
@@ -424,10 +368,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/tile_status_router_router_state_togglebutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_column="3"
                     android:layout_gravity="start"
                     android:layout_marginBottom="5dp"
-                    android:layout_row="9"
                     android:checked="true"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textOff="OFF"

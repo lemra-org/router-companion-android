@@ -291,6 +291,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:paddingTop="30dp"
                                 android:layout_gravity="end"
                                 android:maxLength="17"
+                                android:maxLines="1"
                                 android:ellipsize="end"
                                 android:singleLine="true"
                                 android:text="Loading Router Name..."/>
