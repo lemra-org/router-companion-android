@@ -115,14 +115,20 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     cycle = CYCLE_MONTH;
                 }
                 //Month is the default
+                final MenuItem dayMenuItem = menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_day);
+                final MenuItem monthMenuItem = menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_month);
                 switch (cycle) {
                     case CYCLE_DAY:
-                        menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_day)
+                        dayMenuItem
                                 .setChecked(true);
+                        monthMenuItem
+                                .setChecked(false);
                         break;
                     default:
-                        menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_month)
+                        monthMenuItem
                                 .setChecked(true);
+                        dayMenuItem
+                                .setChecked(false);
                         break;
                 }
 
@@ -523,6 +529,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 if (!menuItem.isChecked()) {
                     menuItem.setChecked(true);
                     cycle = CYCLE_MONTH;
+                } else {
+                    menuItem.setChecked(false);
                 }
                 knownMenuItem = true;
                 break;
@@ -530,6 +538,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 if (!menuItem.isChecked()) {
                     menuItem.setChecked(true);
                     cycle = CYCLE_DAY;
+                } else {
+                    menuItem.setChecked(false);
                 }
                 knownMenuItem = true;
                 break;
