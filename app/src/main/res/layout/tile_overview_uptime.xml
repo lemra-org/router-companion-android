@@ -209,7 +209,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:indeterminate="false" />
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
