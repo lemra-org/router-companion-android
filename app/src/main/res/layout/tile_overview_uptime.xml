@@ -220,6 +220,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_alignParentBottom="true"
             android:ellipsize="end"
             android:gravity="end"
+            android:layout_below="@+id/tile_overview_uptime_gridLayout"
             android:singleLine="false"
             android:text="Last sync: "/>
 

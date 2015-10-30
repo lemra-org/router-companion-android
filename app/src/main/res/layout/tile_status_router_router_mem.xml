@@ -208,6 +208,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:layout_below="@+id/tile_status_router_router_mem_grid_layout"
                 android:textStyle="italic"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:layout_alignParentBottom="true"

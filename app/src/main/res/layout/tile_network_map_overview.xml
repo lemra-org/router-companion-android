@@ -405,6 +405,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="end"
             android:singleLine="false"
+            android:layout_below="@+id/tile_network_map_gridLayout"
             android:text="Last sync: "/>
 
     </RelativeLayout>
