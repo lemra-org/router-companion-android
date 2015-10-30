@@ -11,7 +11,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +44,7 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -54,26 +60,75 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 
-public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
+public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = WANTotalTrafficOverviewTile.class.getSimpleName();
-    public static final String CURRENT_MONTH = "CURRENT_MONTH";
+    public static final String CURRENT = "CURRENT";
     public static final String TOTAL_DL_CURRENT_MONTH = "TOTAL_DL_CURRENT_MONTH";
     public static final String TOTAL_UL_CURRENT_MONTH = "TOTAL_UL_CURRENT_MONTH";
     public static final String TOTAL_DL_CURRENT_MONTH_MB = "TOTAL_DL_CURRENT_MONTH_MB";
     public static final String TOTAL_UL_CURRENT_MONTH_MB = "TOTAL_UL_CURRENT_MONTH_MB";
+    public static final String TOTAL_DL_CURRENT_DAY = "TOTAL_DL_CURRENT_DAY";
+    public static final String TOTAL_UL_CURRENT_DAY = "TOTAL_UL_CURRENT_DAY";
+    public static final String TOTAL_DL_CURRENT_DAY_MB = "TOTAL_DL_CURRENT_DAY_MB";
+    public static final String TOTAL_UL_CURRENT_DAY_MB = "TOTAL_UL_CURRENT_DAY_MB";
     public static final String HIDDEN_ = "_HIDDEN_";
+    public static final String CYCLE_MONTH = "M";
+    public static final String CYCLE_DAY = "d";
+    public static final String CYCLE = "cycle";
 
     private boolean isThemeLight;
     private long mLastSync;
     private String mCurrentMonth;
 
     private final Map<Integer, ArrayList<Double>> mCurrentTraffMonthlyData = new ConcurrentHashMap<>();
+    private int mCurrentDay;
+    private String mCycle;
+
+    private NVRAMInfo mNvramInfo;
 
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic,
                 R.id.tile_overview_wan_total_traffic_togglebutton);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        //Create Options Menu
+        final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
+
+        if (!ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            //Set menu background to white
+            tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+        }
+
+        tileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
+                popup.setOnMenuItemClickListener(WANTotalTrafficOverviewTile.this);
+                final MenuInflater inflater = popup.getMenuInflater();
+                final Menu menu = popup.getMenu();
+                inflater.inflate(R.menu.tile_overview_wan_total_traffic_options, menu);
+                final String cycle;
+                if (mParentFragmentPreferences != null) {
+                    cycle = mParentFragmentPreferences.getString(
+                            getFormattedPrefKey(CYCLE), CYCLE_MONTH);
+                } else {
+                    cycle = CYCLE_MONTH;
+                }
+                //Month is the default
+                switch (cycle) {
+                    case CYCLE_DAY:
+                        menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_day)
+                                .setChecked(true);
+                        break;
+                    default:
+                        menu.findItem(R.id.tile_overview_wan_total_traffic_options_selection_month)
+                                .setChecked(true);
+                        break;
+                }
+
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -98,6 +153,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 try {
 
                     isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+                    mCycle = (mParentFragmentPreferences != null ?
+                            mParentFragmentPreferences.getString(
+                                getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
                     Log.d(LOG_TAG, "Init background loader for " + WANTotalTrafficOverviewTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
@@ -120,13 +178,15 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     mLastSync = System.currentTimeMillis();
 
                     mCurrentMonth = new SimpleDateFormat("MM-yyyy", Locale.US).format(new Date());
+                    mCurrentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     final String traffForCurrentMonthKey = \"fake-key\";
 
                     try {
-                        nvramInfo.setProperty(CURRENT_MONTH, mCurrentMonth);
+                        nvramInfo.setProperty(CURRENT, mCurrentMonth);
 
                         if (isDemoRouter(mRouter)) {
                             final boolean ttraffEnabled = new Random().nextBoolean();
@@ -218,9 +278,52 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                                     nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
                                             String.valueOf(totalUploadMBytes));
                                 }
+
+                                //Day
+                                final ArrayList<Double> currentDayTraffData =
+                                        mCurrentTraffMonthlyData.get(mCurrentDay);
+                                double totalDownloadMBytesForCurrentDay = -1.;
+                                double totalUploadMBytesForCurrentDay = -1.;
+                                if (currentDayTraffData != null && currentDayTraffData.size() >= 2) {
+                                    totalDownloadMBytesForCurrentDay =
+                                            currentDayTraffData.get(0);
+                                    totalUploadMBytesForCurrentDay =
+                                            currentDayTraffData.get(1);
+                                }
+
+                                final String inHumanReadableCurrentDay = FileUtils
+                                        .byteCountToDisplaySize(
+                                                Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
+                                                    .longValue());
+                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
+                                        inHumanReadableCurrentDay);
+                                if (inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " MB") ||
+                                        inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " bytes")) {
+                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                            HIDDEN_);
+                                } else {
+                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                            String.valueOf(totalDownloadMBytesForCurrentDay));
+                                }
+                                final String outHumanReadableCurrentDay = FileUtils
+                                        .byteCountToDisplaySize(
+                                                Double.valueOf(totalUploadMBytesForCurrentDay * MB)
+                                                    .longValue());
+                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
+                                        outHumanReadableCurrentDay);
+                                if (outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " MB") ||
+                                        outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " bytes")) {
+                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                            HIDDEN_);
+                                } else {
+                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                            String.valueOf(totalUploadMBytesForCurrentDay));
+                                }
                             }
                         }
                     }
+
+                    mNvramInfo = nvramInfo;
 
                     return nvramInfo;
 
@@ -261,6 +364,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                             (Strings.isNullOrEmpty(mCurrentMonth) ?
                                     "" : (": " + mCurrentMonth)));
 
+            final View menu = layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
+
             Exception preliminaryCheckException = null;
             if (data == null) {
                 preliminaryCheckException = new DDWRTNoDataException("No Data!");
@@ -268,6 +373,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 if (data.getException() == null) {
                     if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
                         preliminaryCheckException = new WANMonthlyTrafficTile.DDWRTTraffDataDisabled("Traffic monitoring disabled!");
+                        menu.setVisibility(View.GONE);
+                    } else {
+                        menu.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -295,16 +403,21 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     ulDrawable = R.drawable.ic_ul_light;
                 }
 
+                final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
+
                 final TextView wanDLView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl);
                 wanDLView.setCompoundDrawablesWithIntrinsicBounds(dlDrawable, 0, 0, 0);
-                wanDLView.setText(data.getProperty(TOTAL_DL_CURRENT_MONTH, "-"));
+                wanDLView.setText(data.getProperty(
+                        isDayCycle ? TOTAL_DL_CURRENT_DAY : TOTAL_DL_CURRENT_MONTH , "-"));
 
                 final TextView wanULView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul);
                 wanULView.setCompoundDrawablesWithIntrinsicBounds(ulDrawable, 0, 0, 0);
-                wanULView.setText(data.getProperty(TOTAL_UL_CURRENT_MONTH, "-"));
+                wanULView.setText(data.getProperty(
+                        isDayCycle ? TOTAL_UL_CURRENT_DAY : TOTAL_UL_CURRENT_MONTH, "-"));
 
                 final TextView dlMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl_mb);
-                final String dlMBytesFromNvram = data.getProperty(TOTAL_DL_CURRENT_MONTH_MB);
+                final String dlMBytesFromNvram = data.getProperty(
+                        isDayCycle ? TOTAL_DL_CURRENT_DAY_MB : TOTAL_DL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(dlMBytesFromNvram)) {
                     dlMB.setVisibility(View.INVISIBLE);
                 } else {
@@ -314,7 +427,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                         ("(" + dlMBytesFromNvram + " MB)") : "-");
 
                 final TextView ulMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul_mb);
-                final String ulMBytesFromNvram = data.getProperty(TOTAL_UL_CURRENT_MONTH_MB);
+                final String ulMBytesFromNvram = data.getProperty(
+                        isDayCycle ? TOTAL_UL_CURRENT_DAY_MB : TOTAL_UL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(ulMBytesFromNvram)) {
                     ulMB.setVisibility(View.INVISIBLE);
                 } else {
@@ -332,7 +446,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                 gridLayoutContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final String currentMonth = dataCopy.getProperty(CURRENT_MONTH);
+                        final String currentMonth = dataCopy.getProperty(CURRENT);
                         if (currentMonth == null) {
                             Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
                             Utils.reportException(new IllegalStateException("currentMonth == null"));
@@ -397,5 +511,75 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> {
                     R.id.tile_overview_wan_total_traffic_togglebutton_title,
                     R.id.tile_overview_wan_total_traffic_togglebutton_separator);
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(final MenuItem menuItem) {
+        final int itemId = menuItem.getItemId();
+        String cycle = null;
+        boolean knownMenuItem = false;
+        switch (itemId) {
+            case R.id.tile_overview_wan_total_traffic_options_selection_month:
+                if (!menuItem.isChecked()) {
+                    menuItem.setChecked(true);
+                    cycle = CYCLE_MONTH;
+                }
+                knownMenuItem = true;
+                break;
+            case R.id.tile_overview_wan_total_traffic_options_selection_day:
+                if (!menuItem.isChecked()) {
+                    menuItem.setChecked(true);
+                    cycle = CYCLE_DAY;
+                }
+                knownMenuItem = true;
+                break;
+            default:
+                break;
+        }
+
+        if (cycle != null) {
+            if (mParentFragmentPreferences != null) {
+                mParentFragmentPreferences.edit()
+                        .putString(getFormattedPrefKey(CYCLE), cycle)
+                        .apply();
+            }
+
+            if (mNvramInfo != null) {
+                final boolean isDayCycle = CYCLE_DAY.equals(cycle);
+
+                final TextView wanDLView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl);
+                wanDLView.setText(mNvramInfo.getProperty(
+                        isDayCycle ? TOTAL_DL_CURRENT_DAY : TOTAL_DL_CURRENT_MONTH, "-"));
+
+                final TextView wanULView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul);
+                wanULView.setText(mNvramInfo.getProperty(
+                        isDayCycle ? TOTAL_UL_CURRENT_DAY : TOTAL_UL_CURRENT_MONTH, "-"));
+
+                final TextView dlMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl_mb);
+                final String dlMBytesFromNvram = mNvramInfo.getProperty(
+                        isDayCycle ? TOTAL_DL_CURRENT_DAY_MB : TOTAL_DL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(dlMBytesFromNvram)) {
+                    dlMB.setVisibility(View.INVISIBLE);
+                } else {
+                    dlMB.setVisibility(View.VISIBLE);
+                }
+                dlMB.setText(dlMBytesFromNvram != null ?
+                        ("(" + dlMBytesFromNvram + " MB)") : "-");
+
+                final TextView ulMB = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_ul_mb);
+                final String ulMBytesFromNvram = mNvramInfo.getProperty(
+                        isDayCycle ? TOTAL_UL_CURRENT_DAY_MB : TOTAL_UL_CURRENT_MONTH_MB);
+                if (HIDDEN_.equals(ulMBytesFromNvram)) {
+                    ulMB.setVisibility(View.INVISIBLE);
+                } else {
+                    ulMB.setVisibility(View.VISIBLE);
+                }
+                ulMB.setText(ulMBytesFromNvram != null ?
+                        ("(" + ulMBytesFromNvram + " MB)") : "-");
+            }
+
+        }
+
+        return knownMenuItem;
     }
 }
