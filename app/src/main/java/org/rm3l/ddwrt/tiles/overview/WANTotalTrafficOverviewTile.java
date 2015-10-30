@@ -76,7 +76,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     public static final String CYCLE_MONTH = "M";
     public static final String CYCLE_DAY = "d";
     public static final String CYCLE = "cycle";
-    public static final String WAN_TOTAL_TRAFFIC = "WAN Total Traffic";
+    public static final String WAN_TOTAL_TRAFFIC = "WAN Traffic";
 
     private boolean isThemeLight;
     private long mLastSync;
@@ -388,7 +388,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
 
             ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
-                    .setText(WAN_TOTAL_TRAFFIC +
+                    .setText(WAN_TOTAL_TRAFFIC + ": " + 
                             (isDayCycle ? mCurrentDayDisplayed : mCurrentMonthDisplayed));
 
             final View menu = layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
