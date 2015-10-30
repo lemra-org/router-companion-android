@@ -223,15 +223,28 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     }
 
                     if (isDemoRouter(mRouter)) {
+                        final int totalDlMonth = new Random().nextInt(200) * MB * MB;
                         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
                                 FileUtils
-                                        .byteCountToDisplaySize(new Random().nextInt(200) * MB * MB));
+                                        .byteCountToDisplaySize(totalDlMonth));
                         nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
                                 HIDDEN_);
+                        final int totalUlMonth = new Random().nextInt(10) * MB;
                         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
                                 FileUtils
-                                        .byteCountToDisplaySize(new Random().nextInt(10) * MB));
+                                        .byteCountToDisplaySize(totalUlMonth));
                         nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                HIDDEN_);
+
+                        nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
+                                FileUtils
+                                        .byteCountToDisplaySize(totalDlMonth / 30));
+                        nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                HIDDEN_);
+                        nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
+                                FileUtils
+                                        .byteCountToDisplaySize(totalUlMonth / 30));
+                        nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
                                 HIDDEN_);
 
                     } else {
