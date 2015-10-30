@@ -444,7 +444,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final String dlMBytesFromNvram = data.getProperty(
                         isDayCycle ? TOTAL_DL_CURRENT_DAY_MB : TOTAL_DL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(dlMBytesFromNvram)) {
-                    dlMB.setVisibility(View.INVISIBLE);
+                    dlMB.setVisibility(View.GONE);
                 } else {
                     dlMB.setVisibility(View.VISIBLE);
                 }
@@ -455,7 +455,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final String ulMBytesFromNvram = data.getProperty(
                         isDayCycle ? TOTAL_UL_CURRENT_DAY_MB : TOTAL_UL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(ulMBytesFromNvram)) {
-                    ulMB.setVisibility(View.INVISIBLE);
+                    ulMB.setVisibility(View.GONE);
                 } else {
                     ulMB.setVisibility(View.VISIBLE);
                 }
@@ -575,6 +575,11 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
             if (mNvramInfo != null) {
                 final boolean isDayCycle = CYCLE_DAY.equals(cycle);
+
+                //Update title
+                ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
+                        .setText(WAN_TOTAL_TRAFFIC + ": " + 
+                                (isDayCycle ? mCurrentDayDisplayed : mCurrentMonthDisplayed));
 
                 final TextView wanDLView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl);
                 wanDLView.setText(mNvramInfo.getProperty(
