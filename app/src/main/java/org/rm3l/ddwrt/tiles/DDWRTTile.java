@@ -56,6 +56,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
 
@@ -104,6 +105,8 @@ public abstract class DDWRTTile<T>
     private final AtomicBoolean mForceRefresh = new AtomicBoolean(false);
 
     protected final AtomicBoolean mRefreshing = new AtomicBoolean(false);
+
+    private final AtomicReference<DDWRTTileRefreshListener> mRefreshListener = new AtomicReference<>();
 
     @Nullable
     private InterstitialAd mTileClickInterstitialAd;
@@ -256,50 +259,58 @@ public abstract class DDWRTTile<T>
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
                                                                 final long nextRunMillis, @Nullable final int... additionalButtonsToMakeVisible) {
-        final ViewGroup viewGroupLayout = this.getViewGroupLayout();
-        if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
-            mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
-            if (additionalButtonsToMakeVisible != null) {
-                for (int viewToMakeVisible : additionalButtonsToMakeVisible) {
-                    final View viewById = viewGroupLayout.findViewById(viewToMakeVisible);
-                    if (viewById == null) {
-                        continue;
+
+        try {
+            final ViewGroup viewGroupLayout = this.getViewGroupLayout();
+            if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
+                mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
+                if (additionalButtonsToMakeVisible != null) {
+                    for (int viewToMakeVisible : additionalButtonsToMakeVisible) {
+                        final View viewById = viewGroupLayout.findViewById(viewToMakeVisible);
+                        if (viewById == null) {
+                            continue;
+                        }
+                        viewById.setVisibility(View.VISIBLE);
                     }
-                    viewById.setVisibility(View.VISIBLE);
                 }
             }
+
+            mSupportLoaderManager.destroyLoader(loader.getId());
+
+            final boolean schedNextRun =
+                    ((!Utils.isDemoRouter(mRouter)) &&
+                            !(this.mLoaderStopped ||
+                                    nextRunMillis <= 0 ||
+                                    mRouter == null ||
+                                    mDao.getRouter(mRouter.getUuid()) == null));
+            /*
+             * Check if router still exists - if not, entry may have been deleted.
+             * In this case, do NOT schedule next run.
+             * Also re-schedule it if loader has not been stopped!
+             */
+
+            if (schedNextRun) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
+                    }
+                }, nextRunMillis);
+            }
+
+            Log.d(LOG_TAG, String.format("onLoadFinished(): done loading: %s" +
+                            "\n" +
+                            "-> schedNextRun: %s\n" +
+                            "->this.mLoaderStopped: %s" +
+                            "\n" +
+                            " - delay: %dms",
+                    loader, schedNextRun, this.mLoaderStopped, nextRunMillis));
+        } finally {
+            final DDWRTTileRefreshListener refreshListener = this.mRefreshListener.get();
+            if (refreshListener != null) {
+                refreshListener.onTileRefreshed(this);
+            }
         }
-
-        mSupportLoaderManager.destroyLoader(loader.getId());
-
-        final boolean schedNextRun =
-                ((!Utils.isDemoRouter(mRouter)) &&
-                        !(this.mLoaderStopped ||
-                                nextRunMillis <= 0 ||
-                                mRouter == null ||
-                                mDao.getRouter(mRouter.getUuid()) == null));
-        /*
-         * Check if router still exists - if not, entry may have been deleted.
-         * In this case, do NOT schedule next run.
-         * Also re-schedule it if loader has not been stopped!
-         */
-
-        if (schedNextRun) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mSupportLoaderManager.restartLoader(loader.getId(), mFragmentArguments, tile);
-                }
-            }, nextRunMillis);
-        }
-
-        Log.d(LOG_TAG, String.format("onLoadFinished(): done loading: %s" +
-                        "\n" +
-                        "-> schedNextRun: %s\n" +
-                        "->this.mLoaderStopped: %s" +
-                        "\n" +
-                        " - delay: %dms",
-                loader, schedNextRun, this.mLoaderStopped, nextRunMillis));
     }
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
@@ -421,6 +432,10 @@ public abstract class DDWRTTile<T>
         this.mForceRefresh.set(forceRefresh);
     }
 
+    public void setRefreshListener(@Nullable final DDWRTTileRefreshListener refreshListener) {
+        this.mRefreshListener.set(refreshListener);
+    }
+
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
 
@@ -460,6 +475,12 @@ public abstract class DDWRTTile<T>
         public String getDialogMessage() {
             return dialogMessage;
         }
+    }
+
+    public interface DDWRTTileRefreshListener {
+
+        void onTileRefreshed(@NonNull final DDWRTTile tile);
+
     }
 
 }

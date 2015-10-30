@@ -50,7 +50,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -100,6 +102,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.widget.FrameLayout.LayoutParams;
 
@@ -1215,30 +1218,60 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             mSwipeRefreshLayout.setRefreshing(true);
         }
 
-        //Set forceRefresh flag for all tiles composing this fragment
-        if (this.fragmentTiles != null) {
-            for (final DDWRTTile fragmentTile : fragmentTiles) {
-                if (fragmentTile == null) {
-                    continue;
-                }
-                fragmentTile.setForceRefresh(true);
-            }
-        }
+        final int totalNbTiles = (this.fragmentTiles != null ?
+                Collections2.filter(this.fragmentTiles, new Predicate<DDWRTTile>() {
+                    @Override
+                    public boolean apply(@Nullable DDWRTTile input) {
+                        return (input != null);
+                    }
+                }).size() : 0);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
+
+                //Set forceRefresh flag for all tiles composing this fragment
+                if (AbstractBaseFragment.this.fragmentTiles != null && totalNbTiles > 0) {
+                    final AtomicInteger nbRefreshes = new AtomicInteger(0);
+                    final DDWRTTile.DDWRTTileRefreshListener refreshListener = new DDWRTTile.DDWRTTileRefreshListener() {
+                        @Override
+                        public void onTileRefreshed(@NonNull final DDWRTTile tile) {
+                            try {
+                                final int currentNbOfRefreshes = nbRefreshes.incrementAndGet();
+                                if (currentNbOfRefreshes >= totalNbTiles) {
+                                    if (mSwipeRefreshLayout != null) {
+                                        mSwipeRefreshLayout.setEnabled(true);
+                                        mSwipeRefreshLayout.setRefreshing(false);
+                                    }
+                                }
+                            } finally {
+                                tile.setForceRefresh(false);
+                                tile.setRefreshListener(null);
+                            }
+                        }
+                    };
+
+                    for (final DDWRTTile fragmentTile : fragmentTiles) {
+                        if (fragmentTile == null) {
+                            continue;
+                        }
+                        fragmentTile.setForceRefresh(true);
+                        fragmentTile.setRefreshListener(refreshListener);
+                    }
+
                     stopLoaders();
                     initLoaders();
-                } finally {
+
+                } else {
                     if (mSwipeRefreshLayout != null) {
                         mSwipeRefreshLayout.setEnabled(true);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
+
             }
         }, 1000l);
 
     }
+
 }
