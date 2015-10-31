@@ -1222,7 +1222,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 Collections2.filter(this.fragmentTiles, new Predicate<DDWRTTile>() {
                     @Override
                     public boolean apply(@Nullable DDWRTTile input) {
-                        return (input != null);
+                        return (input != null && !input.isAdTile());
                     }
                 }).size() : 0);
 
@@ -1252,7 +1252,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     };
 
                     for (final DDWRTTile fragmentTile : fragmentTiles) {
-                        if (fragmentTile == null) {
+                        if (fragmentTile == null || fragmentTile.isAdTile()) {
                             continue;
                         }
                         fragmentTile.setForceRefresh(true);
