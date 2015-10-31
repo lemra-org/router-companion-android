@@ -484,7 +484,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManageSyslogdToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManageSyslogdToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

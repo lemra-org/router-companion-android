@@ -112,7 +112,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
         if (mRouter == null) {
             Toast.makeText(this, "Whoops - Router not found. Has it been deleted?",
                     Toast.LENGTH_SHORT).show();
-            Utils.reportException(new IllegalStateException("Router not found"));
+            Utils.reportException(null, new IllegalStateException("Router not found"));
             finish();
             return;
         }

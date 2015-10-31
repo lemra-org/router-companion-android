@@ -133,7 +133,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
         if (connectionsCountMap == null || connectionsCountMap.isEmpty()) {
             Toast.makeText(this, "Internal Error - No Data available!", Toast.LENGTH_SHORT).show();
-            Utils.reportException(new IllegalStateException("connectionsCountMap NULL or empty"));
+            Utils.reportException(null, new IllegalStateException("connectionsCountMap NULL or empty"));
             finish();
             return;
         }
@@ -273,7 +273,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         } catch (final Exception e) {
             mException = e;
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             findViewById(R.id.active_ip_connections_detail_pie_chart_error)
                     .setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);

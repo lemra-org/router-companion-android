@@ -81,7 +81,7 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
             }.getType());
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             Toast.makeText(this,
                     "Internal Error - please try again later!",
                     Toast.LENGTH_SHORT).show();

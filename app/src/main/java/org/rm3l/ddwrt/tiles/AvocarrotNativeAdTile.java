@@ -94,6 +94,11 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
     }
 
     @Override
+    public boolean isAdTile() {
+        return true;
+    }
+
+    @Override
     public void onLoadFinished(final Loader<Void> loader, Void data) {
         final com.avocarrot.androidsdk.AvocarrotCustom avocarrotCustom =
                 new com.avocarrot.androidsdk.AvocarrotCustom(
@@ -113,7 +118,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                         try {
                             super.onAdError(error);
                             Utils.reportException(
-                                    new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
+                                    null, new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
                             //Fallback to AdMob Banner Tile
                             final AdView adView = (AdView) layout.findViewById(R.id.admob_banner);
                             if (adView != null) {

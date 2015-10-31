@@ -246,7 +246,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
         try {
             mCurrentRouterActionTask.cancel(true);
         } catch (final Exception e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         } finally {
             layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_admin_commands_submit_button).setEnabled(true);

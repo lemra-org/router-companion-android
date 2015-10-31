@@ -200,7 +200,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             try {
                 localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
             } catch (final Exception e) {
-                Utils.reportException(e);
+                Utils.reportException(null, e);
                 localSSIDLookup.setPort(22); //default SSH port
             }
             lookups.add(localSSIDLookup);
@@ -699,7 +699,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 uriCursor.close();
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                Utils.reportException(e);
+                                Utils.reportException(null, e);
                             }
                         }
                     }
@@ -992,7 +992,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                             true, true).show();
                 }
                 Utils.reportException(
-                        new DDWRTCompanionExceptionForConnectionChecksException(
+                        null, new DDWRTCompanionExceptionForConnectionChecksException(
                                 router != null ?
                                         router.toString() : e.getMessage(), e));
             } else {

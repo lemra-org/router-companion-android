@@ -57,7 +57,7 @@ public abstract class AbstractRouterAction<T> extends
     protected final RouterActionResult<T> doInBackground(Router... params) {
         try {
             //To get stats over the number of actions executed
-            Utils.reportException(new RouterActionTriggered("Action triggered: '" + routerAction + "'"));
+            Utils.reportException(null, new RouterActionTriggered("Action triggered: '" + routerAction + "'"));
         } catch (final Exception e) {
             //No worries
         }
@@ -69,7 +69,7 @@ public abstract class AbstractRouterAction<T> extends
         } catch (final Exception e) {
             actionResult = new RouterActionResult<>(null, e);
             //Report exception
-            Utils.reportException(new RouterActionException("Exception on Action '" + routerAction + "'",
+            Utils.reportException(null, new RouterActionException("Exception on Action '" + routerAction + "'",
                     e));
         } finally {
             if (actionResult != null && listener != null) {
@@ -83,7 +83,7 @@ public abstract class AbstractRouterAction<T> extends
                 } catch (final Exception listenerException) {
                     listenerException.printStackTrace();
                     //No Worries, but report exception
-                    Utils.reportException(new RouterActionException("Listener Exception on Action '"
+                    Utils.reportException(null, new RouterActionException("Listener Exception on Action '"
                             + routerAction + "'", listenerException));
                 }
             }

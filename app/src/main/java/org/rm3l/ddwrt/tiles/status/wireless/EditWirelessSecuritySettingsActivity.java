@@ -368,7 +368,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                                     "Internal Error - please try again later.", Toast.LENGTH_LONG)
                                     .show();
                             e.printStackTrace();
-                            Utils.reportException(e);
+                            Utils.reportException(null, e);
                             return;
                         }
 
@@ -421,7 +421,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                                     Toast.makeText(EditWirelessSecuritySettingsActivity.this,
                                             "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
-                                    Utils.reportException(e);
+                                    Utils.reportException(null, e);
                                 }
 
                             }
@@ -453,14 +453,14 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                                     Toast.makeText(EditWirelessSecuritySettingsActivity.this,
                                             "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
-                                    Utils.reportException(e);
+                                    Utils.reportException(null, e);
                                 }
                             }
                                 break;
 
                             default:
                                 //Error
-                                Utils.reportException(new IllegalStateException("Illegal wepBit: " + wepBit));
+                                Utils.reportException(null, new IllegalStateException("Illegal wepBit: " + wepBit));
                                 break;
                         }
                     }
@@ -614,7 +614,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                 mNvramInfo.getProperty(StringUtils.replace(this.mPhyIface, ".", "X") + "_security_mode"));
         Integer position = (securityMode != null ? securityModeValues.get(securityMode) : null);
         if (!securityModeValues.containsKey(securityMode)) {
-            Utils.reportException(new
+            Utils.reportException(null, new
                     IllegalStateException("Unknown securityMode: " + securityMode));
         }
         position = (position != null ? position : 0);
@@ -624,7 +624,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         final String wpaAlgo = mNvramInfo.getProperty(this.mPhyIface + "_crypto");
         position = (wpaAlgo != null ? wpaAlgoValues.get(wpaAlgo) : null);
         if (!wpaAlgoValues.containsKey(wpaAlgo)) {
-            Utils.reportException(new
+            Utils.reportException(null, new
                     IllegalStateException("Unknown wpaAlgo: " + wpaAlgo));
         }
         position = (position != null ? position : 0);
@@ -727,7 +727,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         final String radiusMacFormat = mNvramInfo.getProperty(this.mPhyIface + "_radmactype");
         position = (radiusMacFormat != null ? radiusMacFormatValues.get(radiusMacFormat) : null);
         if (!radiusMacFormatValues.containsKey(radiusMacFormat)) {
-            Utils.reportException(new
+            Utils.reportException(null, new
                     IllegalStateException("Unknown radiusMacFormat: " + radiusMacFormat));
         }
         position = (position != null ? position : 0);
@@ -755,7 +755,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                             .setChecked(true);
                     break;
                 default:
-                    Utils.reportException(new
+                    Utils.reportException(null, new
                             IllegalStateException("Unknown wepTransmitKey: " + wepTransmitKey));
                     break;
 
@@ -765,7 +765,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         final String wepEncryption = mNvramInfo.getProperty(this.mPhyIface + "_wep_bit");
         position = (wepEncryption != null ? wepEncryptionValues.get(wepEncryption) : null);
         if (!wepEncryptionValues.containsKey(wepEncryption)) {
-            Utils.reportException(new
+            Utils.reportException(null, new
                     IllegalStateException("Unknown wepEncryption: " + wepEncryption));
         }
         position = (position != null ? position : 0);
@@ -847,7 +847,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             final Properties props = mNvramInfo.getData();
             if (props == null) {
                 Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
-                Utils.reportException(new IllegalStateException("mNvramInfo.getData() == NULL"));
+                Utils.reportException(null, new IllegalStateException("mNvramInfo.getData() == NULL"));
                 setResult(RESULT_CANCELED, data);
                 super.finish();
                 return;
@@ -1219,7 +1219,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                 break;
 
             default:
-                Utils.reportException(new
+                Utils.reportException(null, new
                         IllegalStateException("Unknown position selected in wireless_security_settings_security_mode spinner: " +
                             securityModeSelectedItemPosition));
                 break;

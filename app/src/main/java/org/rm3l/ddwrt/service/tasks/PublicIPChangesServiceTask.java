@@ -143,7 +143,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
                         editor.putInt(LAST_PUBLIC_IP_PREF_PREFIX + router.getId(), notifyID);
                     } catch (final Exception e) {
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                         return;
                     }
                 }

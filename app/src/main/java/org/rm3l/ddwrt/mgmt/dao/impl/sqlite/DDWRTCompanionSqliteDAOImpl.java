@@ -118,7 +118,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 return getRouter(uuid);
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             return null;
         } finally {
             if (database != null && database.isOpen()) {
@@ -140,7 +140,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 return getRouter(uuid);
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             return null;
         } finally {
             if (database != null && database.isOpen()) {
@@ -181,7 +181,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         } finally {
             if (database != null && database.isOpen()) {
                 database.close();
@@ -217,7 +217,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 return routers;
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             throw e;
         } finally {
             if (database != null && database.isOpen()) {
@@ -253,7 +253,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 return null;
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             return null;
         } finally {
             if (database != null && database.isOpen()) {
@@ -287,7 +287,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 return null;
             }
         } catch (final RuntimeException e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             return null;
         } finally {
             if (database != null && database.isOpen()) {

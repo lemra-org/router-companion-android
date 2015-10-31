@@ -106,7 +106,7 @@ public abstract class WebActivity extends AppCompatActivity {
         mWebview.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Utils.reportException(new WebException(("Error: " + failingUrl + " - errorCode=" + errorCode +
+                Utils.reportException(null, new WebException(("Error: " + failingUrl + " - errorCode=" + errorCode +
                         ": " + description)));
                 Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
             }

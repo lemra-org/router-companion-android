@@ -668,7 +668,7 @@ public class RouterListRecycleViewAdapter extends
                     if (itemPos == null || itemPos < 0) {
                         Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                                 .show();
-                        Utils.reportException(new IllegalStateException("Weird routerPosition: " + itemPos));
+                        Utils.reportException(null, new IllegalStateException("Weird routerPosition: " + itemPos));
                         return true;
                     }
 
@@ -798,7 +798,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openAddRouterForm() {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
@@ -826,7 +826,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openUpdateRouterForm(@Nullable Router router) {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
@@ -845,7 +845,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openDuplicateRouterForm(@Nullable Router router) {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(new IllegalStateException("context is NOT an FragmentActivity"));
+            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;

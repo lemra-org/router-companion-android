@@ -92,7 +92,7 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
 
-            Utils.reportException(new WidgetInstalledACRANotification("Actions"));
+            Utils.reportException(null, new WidgetInstalledACRANotification("Actions"));
 
             finish();
         }

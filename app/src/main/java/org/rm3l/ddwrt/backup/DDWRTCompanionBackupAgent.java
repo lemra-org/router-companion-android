@@ -122,7 +122,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(new DDWRTCompanionBackupException(e));
+            Utils.reportException(null, new DDWRTCompanionBackupException(e));
         }
     }
 
@@ -137,7 +137,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(new DDWRTCompanionBackupRestoreException(e));
+            Utils.reportException(null, new DDWRTCompanionBackupRestoreException(e));
         }
     }
 

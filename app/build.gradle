@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 /*
  * DD-WRT Companion is a mobile app that lets you connect to,
  * monitor and manage your DD-WRT routers on the go.
@@ -26,6 +35,7 @@
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'tracepot'
 
 //Prompt for keystore file and password (same for private key and store file)
@@ -333,6 +343,7 @@ repositories {
         url 'http://dl.bintray.com/amulyakhare/maven'
     }
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 //Dependencies
@@ -376,4 +387,7 @@ dependencies {
 //    compile 'com.android.support:multidex:1.0.0'
 
 //    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
 }

@@ -879,7 +879,7 @@ public class WANMonthlyTrafficTile
                                                         Utils.displayMessage(mParentFragmentActivity,
                                                                 msg,
                                                                 Style.INFO);
-                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        Utils.reportException(null, new IllegalStateException(msg));
                                                         return;
                                                     }
 
@@ -897,7 +897,7 @@ public class WANMonthlyTrafficTile
                                                         Utils.displayMessage(mParentFragmentActivity,
                                                                 msg,
                                                                 Style.INFO);
-                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        Utils.reportException(null, new IllegalStateException(msg));
                                                         return;
                                                     }
 
@@ -968,7 +968,7 @@ public class WANMonthlyTrafficTile
                 }
             } catch (IllegalArgumentException | NullPointerException e) {
                 e.printStackTrace();
-                Utils.reportException(e);
+                Utils.reportException(null, e);
             }
         }
     }
@@ -1015,7 +1015,7 @@ public class WANMonthlyTrafficTile
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManageWANTrafficCounterToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManageWANTrafficCounterToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

@@ -95,7 +95,7 @@ public class WOLWidgetConfigureActivity extends AppCompatActivity implements Rou
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
 
-            Utils.reportException(new WidgetInstalledACRANotification("Wake On LAN"));
+            Utils.reportException(null, new WidgetInstalledACRANotification("Wake On LAN"));
 
             finish();
         }

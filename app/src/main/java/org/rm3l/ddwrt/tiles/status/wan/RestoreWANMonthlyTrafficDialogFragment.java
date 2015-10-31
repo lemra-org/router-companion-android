@@ -105,7 +105,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                 .getRouter(getArguments().getString(ROUTER_SELECTED));
 
         if (mRouter == null) {
-            Utils.reportException(new IllegalStateException("Router passed to RestoreWANMonthlyTrafficDialogFragment is NULL"));
+            Utils.reportException(null, new IllegalStateException("Router passed to RestoreWANMonthlyTrafficDialogFragment is NULL"));
             Toast.makeText(mCtx,
                     "Router is NULL - does it still exist?", Toast.LENGTH_SHORT).show();
             dismiss();
@@ -227,7 +227,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                         }
                     } catch (final Exception e) {
                         e.printStackTrace();
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                     } finally {
                         mUriCursor = null;
                     }
@@ -299,7 +299,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         } finally {
             mUriCursor = null;
             super.onDestroy();
@@ -316,7 +316,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             mListener = (RouterRestoreDialogListener) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             Toast.makeText(activity, "Whoops - Internal error! " +
                     "The issue has been reported. Please try again later", Toast.LENGTH_SHORT).show();
             getDialog().cancel();
@@ -378,7 +378,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                         final FragmentActivity activity = getActivity();
 
                         //For reporting
-                        Utils.reportException(new AgreementToRestoreWANTraffDataFromBackup(activity));
+                        Utils.reportException(null, new AgreementToRestoreWANTraffDataFromBackup(activity));
 
                         // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.
@@ -500,7 +500,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                                         Utils.displayMessage(mCtx,
                                                                 msg,
                                                                 Style.INFO);
-                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        Utils.reportException(null, new IllegalStateException(msg));
                                                         return;
                                                     }
 
@@ -518,7 +518,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                                         Utils.displayMessage(mCtx,
                                                                 msg,
                                                                 Style.INFO);
-                                                        Utils.reportException(new IllegalStateException(msg));
+                                                        Utils.reportException(null, new IllegalStateException(msg));
                                                         return;
                                                     }
 
@@ -592,7 +592,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                 }
             } catch (IllegalArgumentException | NullPointerException e) {
                 e.printStackTrace();
-                Utils.reportException(e);
+                Utils.reportException(null, e);
             }
 
         }

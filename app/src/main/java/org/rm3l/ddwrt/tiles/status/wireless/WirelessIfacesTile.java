@@ -111,7 +111,7 @@ public class WirelessIfacesTile extends IfacesTile {
                         }
                     }
                 } catch (Exception e) {
-                    Utils.reportException(e);
+                    Utils.reportException(null, e);
                     e.printStackTrace();
                 }
 
@@ -180,7 +180,7 @@ public class WirelessIfacesTile extends IfacesTile {
                             });
                             allViewsBuilt &= true;
                         } catch (final Exception e) {
-                            Utils.reportException(e);
+                            Utils.reportException(null, e);
                             e.printStackTrace();
                             allViewsBuilt = false;
                             //No worries
@@ -371,7 +371,7 @@ public class WirelessIfacesTile extends IfacesTile {
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManageWirelessRadioToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManageWirelessRadioToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

@@ -105,7 +105,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
 
         if (routerSelected == null || routerSelected.isEmpty()) {
             Toast.makeText(activity, "Internal Error: unknown router. Please try again later", Toast.LENGTH_SHORT).show();
-            Utils.reportException(new IllegalStateException("Internal Error: unknown router"));
+            Utils.reportException(null, new IllegalStateException("Internal Error: unknown router"));
             dismiss();
         }
 
@@ -171,7 +171,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                 mWaitingDialog.cancel();
             }
         } catch (final Exception e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         }
         super.onCancel(dialog);
     }
@@ -262,14 +262,14 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                                 Utils.displayMessage(getActivity(),
                                         "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
                                         Style.ALERT);
-                                Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
+                                Utils.reportException(null, new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
                                 return;
                             }
 
                             final AlertDialog d = (AlertDialog) getDialog();
                             if (d == null) {
                                 displayMessage("WOL Internal Error. Try again later.", Style.ALERT);
-                                Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                                Utils.reportException(null, new IllegalStateException("WOL Internal Error: Dialog is NULL."));
                                 return;
                             }
 
@@ -293,7 +293,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                         }
                         ///else dialog stays open. 'Cancel' button can still close it.
                     } catch (final Exception e) {
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                     } finally {
                         if (positiveButton != null) {
                             positiveButton.setEnabled(true);
@@ -314,7 +314,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                     if (d == null) {
                         displayMessage("WOL Internal Error. Action succeeded, but failed to save entry",
                                 Style.INFO);
-                        Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                        Utils.reportException(null, new IllegalStateException("WOL Internal Error: Dialog is NULL."));
                         return;
                     }
 
@@ -349,7 +349,7 @@ public class AddWOLHostDialogFragment extends DialogFragment {
                     displayMessage(
                             String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                             Style.ALERT);
-                    Utils.reportException(exception);
+                    Utils.reportException(null, exception);
                 } finally {
                     if (mWaitingDialog != null) {
                         mWaitingDialog.cancel();

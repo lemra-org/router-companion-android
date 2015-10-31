@@ -178,7 +178,7 @@ public class BackgroundService extends IntentService {
                         backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                         //No worries
                     }
                 }

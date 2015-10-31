@@ -379,7 +379,7 @@ public class IPConntrack {
             }
 
         } catch (final Exception e) {
-            Utils.reportException(new IllegalStateException("Error when parsing IP Conntrack row: " + row,
+            Utils.reportException(null, new IllegalStateException("Error when parsing IP Conntrack row: " + row,
                     e));
             return null;
         }

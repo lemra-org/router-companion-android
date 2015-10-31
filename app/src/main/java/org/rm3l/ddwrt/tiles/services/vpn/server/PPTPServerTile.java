@@ -525,7 +525,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManagePPTPServerToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManagePPTPServerToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

@@ -477,7 +477,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManagePPTPClientToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManagePPTPClientToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

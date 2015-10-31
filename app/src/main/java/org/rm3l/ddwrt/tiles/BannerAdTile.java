@@ -40,6 +40,11 @@ public class BannerAdTile extends DDWRTTile<Void> {
         return mParentFragmentActivity.getResources().getColor(android.R.color.transparent);
     }
 
+    @Override
+    public boolean isAdTile() {
+        return true;
+    }
+
     @Nullable
     @Override
     protected Loader<Void> getLoader(int id, Bundle args) {

@@ -461,7 +461,7 @@ public class Router implements Serializable {
         try {
             setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
         } catch (final Exception e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         }
     }
 

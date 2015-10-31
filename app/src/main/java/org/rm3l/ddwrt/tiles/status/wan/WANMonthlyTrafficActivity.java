@@ -157,7 +157,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                 intent.getSerializableExtra(MONTHLY_TRAFFIC_DATA_UNSORTED);
         if (traffDataRaw == null || traffDataRaw.isEmpty()) {
             Toast.makeText(this, "Internal Error - No Traffic Data available!", Toast.LENGTH_SHORT).show();
-            Utils.reportException(new IllegalStateException("traffDataRaw NULL or empty"));
+            Utils.reportException(null, new IllegalStateException("traffDataRaw NULL or empty"));
             finish();
             return;
         }
@@ -402,7 +402,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         } catch (final Exception e) {
             mException = e;
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             findViewById(R.id.tile_status_wan_monthly_traffic_chart_error)
                     .setVisibility(View.VISIBLE);
             loadingView.setVisibility(View.GONE);

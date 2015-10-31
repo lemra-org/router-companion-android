@@ -257,7 +257,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
 
                                 } catch (final Exception e) {
                                     e.printStackTrace();
-                                    Utils.reportException(e);
+                                    Utils.reportException(null, e);
                                 }
                             }
 

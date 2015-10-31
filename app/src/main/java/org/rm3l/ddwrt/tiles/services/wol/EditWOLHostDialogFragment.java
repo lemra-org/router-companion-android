@@ -66,7 +66,7 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
             }
             mDeviceToEditUuid = mDeviceToEdit.getDeviceUuidForWol();
         } catch (final Exception e) {
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             Toast.makeText(getActivity(), "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
             dismiss();
         }
@@ -102,7 +102,7 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
                         Utils.displayMessage(activity,
                                 "WOL Internal Error. Action succeeded, but failed to save entry",
                                 Style.INFO);
-                        Utils.reportException(new IllegalStateException("WOL Internal Error: Dialog is NULL."));
+                        Utils.reportException(null, new IllegalStateException("WOL Internal Error: Dialog is NULL."));
                         return;
                     }
 
@@ -142,7 +142,7 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
                     Utils.requestBackup(activity);
 
                 } catch (final Exception e) {
-                    Utils.reportException(e);
+                    Utils.reportException(null, e);
                 } finally {
                     if (mWaitingDialog != null) {
                         mWaitingDialog.cancel();
@@ -157,7 +157,7 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
                     Utils.displayMessage(getActivity(),
                             String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
                             Style.ALERT);
-                    Utils.reportException(exception);
+                    Utils.reportException(null, exception);
                 } finally {
                     if (mWaitingDialog != null) {
                         mWaitingDialog.cancel();

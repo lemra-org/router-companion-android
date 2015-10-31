@@ -128,7 +128,7 @@ public final class ColorUtils {
 
     public static boolean isThemeLight(@Nullable final Context context) {
         if (context == null) {
-            Utils.reportException(new DDWRTCompanionException() {
+            Utils.reportException(null, new DDWRTCompanionException() {
                 @Override
                 public String getMessage() {
                     return "Context is NULL";

@@ -470,7 +470,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManageWoLDaemonToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManageWoLDaemonToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;

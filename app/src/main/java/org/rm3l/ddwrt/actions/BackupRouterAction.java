@@ -77,7 +77,7 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
                 SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                         String.format("/bin/rm -rf %s", mRemoteBackupFilename));
             } catch (final Exception e) {
-                Utils.reportException(e);
+                Utils.reportException(null, e);
                 //No worries
             }
         }

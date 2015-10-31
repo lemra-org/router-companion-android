@@ -94,4 +94,9 @@ public class MobFoxNativeAdTile {
 //        nativeAdManager.getNativeAdView(nativeAd, mobFoxNativeViewBinder);
 //
 //    }
+
+//    @Override
+//    public boolean isAdTile() {
+//        return true;
+//    }
 }

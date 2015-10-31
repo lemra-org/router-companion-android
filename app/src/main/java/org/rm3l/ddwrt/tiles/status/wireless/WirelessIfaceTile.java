@@ -607,7 +607,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Utils.reportException(e);
+                    Utils.reportException(null, e);
                 }
 
                 return procNetDevNetworkDataMap.get(phyIface);

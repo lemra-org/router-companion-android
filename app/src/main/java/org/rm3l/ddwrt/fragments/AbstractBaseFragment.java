@@ -185,9 +185,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         } catch (java.lang.InstantiationException ie) {
             ie.printStackTrace();
-            Utils.reportException(ie);
+            Utils.reportException(null, ie);
         } catch (IllegalAccessException iae) {
-            Utils.reportException(iae);
+            Utils.reportException(null, iae);
             iae.printStackTrace();
         }
         return null;
@@ -236,7 +236,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         } else {
             routerFirmwareForFragments = RouterFirmware.UNKNOWN;
             Utils.reportException(
-                    new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
+                    null, new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
         }
 
         //FIXME Once full support of other firmwares is implemented
@@ -262,14 +262,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         .show();
             }
             Utils.reportException(
-                    new IllegalArgumentException("Router Firmware unknown or not supported"));
+                    null, new IllegalArgumentException("Router Firmware unknown or not supported"));
             tabsToSort = new AbstractBaseFragment[0];
         } else {
             final List<FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabDescriptions =
                     tabDescriptionMultimap.get(parentSectionNumber);
             if (fragmentTabDescriptions == null || fragmentTabDescriptions.isEmpty()) {
                 Utils.reportException(
-                        new IllegalArgumentException("Not implemented yet: " + parentSectionNumber));
+                        null, new IllegalArgumentException("Not implemented yet: " + parentSectionNumber));
                 //This should NOT happen => Error
                 tabsToSort = new AbstractBaseFragment[1];
                 tabsToSort[0] = mNoDataFragment;

@@ -58,6 +58,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -212,8 +213,23 @@ public final class Utils {
         return FileUtils.byteCountToDisplaySize(sizeInBytes);
     }
 
-    public static void reportException(@NonNull final Throwable error) {
+    public static void reportException(
+            @Nullable final Context context,
+            @NonNull final Throwable error) {
+        //ACRA Notification
         ACRA.getErrorReporter().handleSilentException(error);
+
+        //Crashlytics Notification
+        if (context != null) {
+            final String acraEmailAddr = context
+                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+            if (!isNullOrEmpty(acraEmailAddr)) {
+                Crashlytics.setUserEmail(acraEmailAddr);
+            }
+        }
+        Crashlytics.logException(error);
+
     }
 
     public static String removeLastChar(@Nullable final String str) {
@@ -250,7 +266,7 @@ public final class Utils {
                     .getInstallerPackageName(context.getPackageName());
         } catch (final Exception e) {
             //just in case...
-            Utils.reportException(e);
+            Utils.reportException(null, e);
             return null;
         }
     }
@@ -335,7 +351,7 @@ public final class Utils {
 
     public static void checkDataSyncAlllowedByUsagePreference(@Nullable final Context ctx) {
         if (ctx == null) {
-            Utils.reportException(new IllegalStateException("ctx is NULL"));
+            Utils.reportException(null, new IllegalStateException("ctx is NULL"));
             return;
         }
 
@@ -524,7 +540,7 @@ public final class Utils {
             bugReportException = new BugReportException(e.getMessage(), e);
 
         } finally {
-            Utils.reportException(bugReportException);
+            Utils.reportException(null, bugReportException);
         }
     }
 
@@ -561,7 +577,7 @@ public final class Utils {
             @Override
             public void handle() {
                 //Generate a custom error-report (for ACRA)
-                Utils.reportException(new
+                Utils.reportException(null, new
                         UserGeneratedReportException("Feedback " + randomUUID));
             }
         });
@@ -611,12 +627,12 @@ public final class Utils {
 
                     @Override
                     public void onRateAppDismissed() {
-                        reportException(new RateAppDismissedException());
+                        reportException(null, new RateAppDismissedException());
                     }
 
                     @Override
                     public void onRateAppClicked() {
-                        reportException(new RateAppClickedException());
+                        reportException(null, new RateAppClickedException());
                     }
                 })
                 .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)
@@ -758,14 +774,14 @@ public final class Utils {
                         @Override
                         public void onError() {
                             Log.d(TAG, "onError: " + url);
-                            reportException(new MissingRouterModelImageException(routerModel + " (" +
+                            reportException(null, new MissingRouterModelImageException(routerModel + " (" +
                                     routerModelNormalized + ")"));
                         }
                     });
 
         } catch (final Exception e) {
             e.printStackTrace();
-            reportException(new DownloadImageException(e));
+            reportException(null, new DownloadImageException(e));
         }
     }
 
@@ -794,7 +810,7 @@ public final class Utils {
                         @Override
                         public void onSuccess() {
                             //Great!
-                            reportException(new SuccessfulRouterModelImageDownloadNotice(
+                            reportException(null, new SuccessfulRouterModelImageDownloadNotice(
                                     routerModel + " (" + routerModelNormalized + ")"
                             ));
                             if (callback != null) {
@@ -805,7 +821,7 @@ public final class Utils {
                         @Override
                         public void onError() {
                             Log.d(TAG, "onError: " + url);
-                            reportException(new MissingRouterModelImageException(routerModel + " (" +
+                            reportException(null, new MissingRouterModelImageException(routerModel + " (" +
                                     routerModelNormalized + ")"));
                             if (callback != null) {
                                 callback.onError();
@@ -815,7 +831,7 @@ public final class Utils {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            reportException(new DownloadImageException(e));
+            reportException(null, new DownloadImageException(e));
         }
     }
 
@@ -869,7 +885,7 @@ public final class Utils {
 
         } catch (final Exception e) {
             e.printStackTrace();
-            reportException(new DownloadImageException(e));
+            reportException(null, new DownloadImageException(e));
         }
     }
 

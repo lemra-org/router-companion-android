@@ -72,7 +72,7 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
                 SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                         String.format("/bin/rm -rf %s", TO_REMOTE_PATH));
             } catch (final Exception e) {
-                Utils.reportException(e);
+                Utils.reportException(null, e);
                 //No worries
             } finally {
                 if (tempFile != null) {

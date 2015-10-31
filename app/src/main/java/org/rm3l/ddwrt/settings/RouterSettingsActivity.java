@@ -65,7 +65,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     public SharedPreferences getSharedPreferences(String name, int mode) {
         if (isNullOrEmpty(this.mRouterUuid)) {
             Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG).show();
-            Utils.reportException(new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+            Utils.reportException(null, new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
             finish();
         }
         return super.getSharedPreferences(this.mRouterUuid, mode);

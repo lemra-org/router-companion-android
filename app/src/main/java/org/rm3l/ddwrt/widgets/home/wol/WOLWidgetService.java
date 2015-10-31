@@ -126,7 +126,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
         // we use getCount here so that it doesn't return null when empty
         final int count = getCount();
         if (position < 0 || position >= count) {
-            Utils.reportException(new IllegalStateException(position+ "=position < 0 || position >= getCount()=" + count));
+            Utils.reportException(null, new IllegalStateException(position+ "=position < 0 || position >= getCount()=" + count));
             return null;
         }
 
@@ -165,7 +165,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
                     WakeOnLanTile.GSON_BUILDER.create().toJson(Collections.singletonList(device)));
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         }
         final Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
@@ -250,7 +250,7 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
             Utils.requestBackup(mContext);
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         }
 
     }

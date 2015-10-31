@@ -30,6 +30,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
@@ -46,6 +47,8 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
@@ -142,7 +145,7 @@ public class DDWRTApplication extends Application {
             } else {
                 firstLaunchReport = new FirstLaunch(FLAVOR);
             }
-            Utils.reportException(firstLaunchReport);
+            Utils.reportException(null, firstLaunchReport);
         }
 
         final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
@@ -154,6 +157,8 @@ public class DDWRTApplication extends Application {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
         }
+
+        Fabric.with(this, new Crashlytics());
     }
 
     private class FirstLaunch extends DDWRTCompanionException {

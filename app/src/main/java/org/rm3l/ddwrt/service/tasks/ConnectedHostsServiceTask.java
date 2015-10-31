@@ -294,7 +294,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             } catch (final Exception e) {
                 //No worries
                 e.printStackTrace();
-                Utils.reportException(new
+                Utils.reportException(null, new
                         IllegalStateException("Failed to decode and parse JSON: " + devStrEncrypted, e));
             }
         }

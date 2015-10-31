@@ -903,7 +903,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                     }
 
                     final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
@@ -1072,7 +1072,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     }
                                     device.setWirelessConnectionInfo(wirelessConnectionInfo);
                                 } else {
-                                    Utils.reportException(new IllegalStateException("Found device in assocList, but with invalid iface name!"));
+                                    Utils.reportException(null, new IllegalStateException("Found device in assocList, but with invalid iface name!"));
                                 }
                             }
 
@@ -2692,7 +2692,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
                 } catch (IllegalArgumentException | NullPointerException e) {
                     e.printStackTrace();
-                    Utils.reportException(e);
+                    Utils.reportException(null, e);
                 }
             }
         }
@@ -2842,7 +2842,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 case R.id.tile_status_wireless_client_rename:
                     if (mParentFragmentPreferences == null) {
                         Toast.makeText(mParentFragmentActivity, "Internal Error: ", Toast.LENGTH_SHORT).show();
-                        Utils.reportException(new
+                        Utils.reportException(null, new
                                 IllegalStateException("Click on R.id.tile_status_wireless_client_rename - mParentFragmentPreferences == null"));
                     } else {
                         final String currentAlias =
@@ -2872,7 +2872,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             deviceNameView.setText(device.getName());
                                             Utils.displayMessage(mParentFragmentActivity, "Alias set! Changes will appear upon next sync.", Style.CONFIRM);
                                         } catch (final Exception e) {
-                                            Utils.reportException(new
+                                            Utils.reportException(null, new
                                                     IllegalStateException("Error: Click on R.id.tile_status_wireless_client_rename", e));
                                             Utils.displayMessage(mParentFragmentActivity, "Internal Error - please try again later", Style.ALERT);
                                         }
@@ -2909,7 +2909,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 Utils.displayMessage(mParentFragmentActivity,
                                         "WOL Internal Error: unable to fetch broadcast addresses. Try again later.",
                                         Style.ALERT);
-                                Utils.reportException(new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
+                                Utils.reportException(null, new IllegalStateException("WOL Internal Error: unable to fetch broadcast addresses. Try again later."));
                                 return;
                             }
                             new WakeOnLANRouterAction(mParentFragmentActivity, this, mGlobalPreferences, device,
@@ -2928,7 +2928,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
                 } catch (IllegalArgumentException | NullPointerException e) {
                     e.printStackTrace();
-                    Utils.reportException(e);
+                    Utils.reportException(null, e);
                 }
             }
         }

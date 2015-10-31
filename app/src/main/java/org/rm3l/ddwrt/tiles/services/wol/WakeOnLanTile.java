@@ -427,7 +427,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
-                        Utils.reportException(new
+                        Utils.reportException(null, new
                                 IllegalStateException("Failed to parse JSON: " + userDefinedWolHost, e));
                     }
                 }
@@ -626,7 +626,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                 e.printStackTrace();
                                                                 Utils.displayMessage(mParentFragmentActivity,
                                                                         "WOL Internal Error. Try again later.", Style.ALERT);
-                                                                Utils.reportException(e);
+                                                                Utils.reportException(null, e);
                                                             }
                                                         }
                                                     }
@@ -993,7 +993,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                     .newInstance(mRouter.getUuid(), broadcastAddresses, wolHostsPrefKey, GSON_BUILDER.create().toJson(device));
                             editFragment.show(supportFragmentManager, EDIT_HOST_FRAGMENT_TAG);
                         } catch (final Exception e) {
-                            Utils.reportException(e);
+                            Utils.reportException(null, e);
                             Toast.makeText(mParentFragmentActivity, "Internal Error - please try again later.", Toast.LENGTH_SHORT).show();
                         }
 
@@ -1107,7 +1107,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         e.printStackTrace();
                         Utils.displayMessage(mParentFragmentActivity,
                                 "WOL Internal Error. Try again later.", Style.ALERT);
-                        Utils.reportException(e);
+                        Utils.reportException(null, e);
                     }
                 }
             }

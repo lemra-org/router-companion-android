@@ -436,6 +436,10 @@ public abstract class DDWRTTile<T>
         this.mRefreshListener.set(refreshListener);
     }
 
+    public boolean isAdTile() {
+        return false;
+    }
+
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
 

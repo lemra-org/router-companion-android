@@ -474,7 +474,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         final String currentMonth = dataCopy.getProperty(CURRENT);
                         if (currentMonth == null) {
                             Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
-                            Utils.reportException(new IllegalStateException("currentMonth == null"));
+                            Utils.reportException(null, new IllegalStateException("currentMonth == null"));
                             return;
                         }
                         if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {

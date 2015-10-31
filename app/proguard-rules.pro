@@ -68,7 +68,9 @@
 -dump class_files.txt
 -printseeds seeds.txt
 -printusage unused.txt
--printmapping mapping.txt
+# Must be commented out, as specified by Crashlytics / Fabric guide
+#see https://docs.fabric.io/android/crashlytics/dex-and-proguard.html
+#-printmapping mapping.txt
 
 -keepattributes SourceFile,LineNumberTable,Exceptions,Signature,Enclosing
 
@@ -237,4 +239,7 @@
 }
 
 -dontwarn com.squareup.okhttp.**
+
+-keep class com.crashlytics.** { *; }
+-keep class com.crashlytics.android.**
 

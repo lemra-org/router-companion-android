@@ -237,7 +237,7 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
                         } catch (final Exception e) {
                             e.printStackTrace();
                             mException = e;
-                            Utils.reportException(e);
+                            Utils.reportException(null, e);
                             findViewById(R.id.tile_status_wireless_iface_qrcode_image_error)
                                     .setVisibility(View.VISIBLE);
                             qrCodeImageView.setVisibility(View.GONE);

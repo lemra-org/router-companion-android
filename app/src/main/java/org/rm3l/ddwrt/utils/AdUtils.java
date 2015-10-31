@@ -41,7 +41,7 @@ public final class AdUtils {
             obj = String.format("%032X", new BigInteger(1, ((MessageDigest) obj).digest()));
         } catch (Exception e) {
             obj = aid.substring(0, 32);
-            Utils.reportException(e);
+            Utils.reportException(null, e);
         }
 
         Log.d(TAG, "deviceIdForAdMob: [" + obj + "]");

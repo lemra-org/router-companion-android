@@ -822,7 +822,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             isToggleStateActionRunning.set(true);
 
             if (!(view instanceof CompoundButton)) {
-                Utils.reportException(new IllegalStateException("ManageOpenVpnClientToggle#onClick: " +
+                Utils.reportException(null, new IllegalStateException("ManageOpenVpnClientToggle#onClick: " +
                         "view is NOT an instance of CompoundButton!"));
                 isToggleStateActionRunning.set(false);
                 return;
