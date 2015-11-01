@@ -27,6 +27,12 @@ public abstract class AbstractToolboxFragment extends AbstractBaseFragment {
     }
 
     @Override
+    protected boolean isSwipeRefreshLayoutEnabled() {
+        //Disabled, as swipe refresh actually does not make sense in this kind of fragment
+        return false;
+    }
+
+    @Override
     protected boolean canChildScrollUp() {
         final List<DDWRTTile> tiles = this.getTiles(null);
         if (tiles == null || tiles.isEmpty()) {

@@ -822,6 +822,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         return ViewCompat.canScrollVertically(viewGroup, -1);
     }
 
+    protected boolean isSwipeRefreshLayoutEnabled() {
+        return true;
+    }
+
     /**
      * Called to have the fragment instantiate its user interface view.
      * This is optional, and non-graphical fragments can return null (which
@@ -860,6 +864,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
+
+        mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
+
         return mSwipeRefreshLayout;
     }
 
