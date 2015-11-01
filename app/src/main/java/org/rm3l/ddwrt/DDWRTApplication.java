@@ -159,6 +159,8 @@ public class DDWRTApplication extends Application {
         }
 
         Fabric.with(this, new Crashlytics());
+        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
+        Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
     }
 
     private class FirstLaunch extends DDWRTCompanionException {
