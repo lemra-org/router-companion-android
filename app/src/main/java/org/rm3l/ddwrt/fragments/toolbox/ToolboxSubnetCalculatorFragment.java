@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.fragments.toolbox;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 
 import java.util.List;
@@ -32,10 +31,10 @@ import java.util.List;
 /**
  * TODO To include this utility n a future release
  */
-public class ToolboxSubnetCalculatorFragment extends AbstractBaseFragment {
+public class ToolboxSubnetCalculatorFragment extends AbstractToolboxFragment {
     @Nullable
     @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
         return null;
     }
 }

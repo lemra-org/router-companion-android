@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -347,6 +348,23 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 }
             }
         });
+    }
+
+    public boolean canChildScrollUp() {
+        final View contentScrollView = layout
+                .findViewById(R.id.tile_toolbox_abstract_content_scrollview);
+        final boolean canScrollVertically = ViewCompat.canScrollVertically(
+                contentScrollView,
+                -1);
+        if (!canScrollVertically) {
+            return canScrollVertically;
+        }
+
+        //TODO ScrollView can scroll vertically,
+        // but detect whether the touch was done outside of the scroll view
+        // (in which case we should return false)
+
+        return canScrollVertically;
     }
 
     @Nullable

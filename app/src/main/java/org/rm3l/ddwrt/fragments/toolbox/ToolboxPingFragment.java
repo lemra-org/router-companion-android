@@ -24,17 +24,16 @@ package org.rm3l.ddwrt.fragments.toolbox;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.toolbox.ToolboxPingTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ToolboxPingFragment extends AbstractBaseFragment {
+public class ToolboxPingFragment extends AbstractToolboxFragment {
     @Nullable
     @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(new ToolboxPingTile(this, savedInstanceState, this.router));
     }
 }

@@ -24,17 +24,16 @@ package org.rm3l.ddwrt.fragments.toolbox;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.toolbox.ToolboxNsLookupTile;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ToolboxNsLookupFragment extends AbstractBaseFragment {
+public class ToolboxNsLookupFragment extends AbstractToolboxFragment {
     @Nullable
     @Override
-    protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
+    protected List<DDWRTTile> doGetTiles(@Nullable Bundle savedInstanceState) {
         return Arrays.<DDWRTTile>asList(new ToolboxNsLookupTile(this, savedInstanceState, this.router));
     }
 }
