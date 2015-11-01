@@ -338,7 +338,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             profileDrawerItem.withIcon(url);
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
-                            Utils.reportException(null, e);
+                            Utils.reportException(DDWRTMainActivity.this, e);
                         }
                     }
 
@@ -404,7 +404,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
                         if (profile == null) {
-                            Utils.reportException(null, new IllegalStateException("routerUuid is NULL or empty"));
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                             return false;
                         }
@@ -418,14 +418,14 @@ public class DDWRTMainActivity extends AppCompatActivity
                         final String routerUuid = routerIdToUuid.get(profileIdentifier);
                         if (routerUuid == null || routerUuid.isEmpty()) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                            Utils.reportException(null, new IllegalStateException("routerUuid is NULL or empty"));
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
                             return false;
                         }
 
                         final Router daoRouter = dao.getRouter(routerUuid);
                         if (daoRouter == null) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                            Utils.reportException(null, new IllegalStateException("daoRouter NOT found"));
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("daoRouter NOT found"));
                             return false;
                         }
 
@@ -580,12 +580,12 @@ public class DDWRTMainActivity extends AppCompatActivity
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
                         if (drawerItem == null) {
-                            Utils.reportException(null, new IllegalStateException("drawerItem == null"));
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("drawerItem == null"));
                             return false;
                         }
                         final int identifier = drawerItem.getIdentifier();
                         if (identifier < 0) {
-                            Utils.reportException(null, new IllegalStateException("identifier < 0"));
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("identifier < 0"));
                             return false;
                         }
                         if (identifier < 1000) {
@@ -762,7 +762,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
         final List<Router> allRouters = dao.getAllRouters();
         if (allRouters == null || allRouters.isEmpty()) {
-            Utils.reportException(null, new
+            Utils.reportException(DDWRTMainActivity.this, new
                     IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
             routersPicker.setVisibility(View.GONE);
         } else {
@@ -1278,7 +1278,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             public void onClick(final DialogInterface dialogInterface, final int i) {
 
                                 //For reporting
-                                Utils.reportException(null, new
+                                Utils.reportException(DDWRTMainActivity.this, new
                                         RestoreRouterDefaultsAction.AgreementToResetRouter(DDWRTMainActivity.this));
 
                                 final Bundle token = new Bundle();
@@ -1554,7 +1554,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 Utils.displayMessage(DDWRTMainActivity.this,
                                                         msg,
                                                         Style.INFO);
-                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                Utils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
                                                 return;
                                             }
 
@@ -1572,7 +1572,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 Utils.displayMessage(DDWRTMainActivity.this,
                                                         msg,
                                                         Style.INFO);
-                                                Utils.reportException(null, new IllegalStateException(msg));
+                                                Utils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
                                                 return;
                                             }
 
@@ -1779,7 +1779,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         newProfile.withIcon(url);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
-                        Utils.reportException(null, e);
+                        Utils.reportException(DDWRTMainActivity.this, e);
                     }
                 }
 
@@ -1890,7 +1890,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
                 final List<Router> allRouters = dao.getAllRouters();
                 if (allRouters == null || allRouters.isEmpty()) {
-                    Utils.reportException(null, new
+                    Utils.reportException(DDWRTMainActivity.this, new
                             IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
                     routersPicker.setVisibility(View.GONE);
                 } else {

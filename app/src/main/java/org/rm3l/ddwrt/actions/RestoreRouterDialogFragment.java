@@ -88,7 +88,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                 .getRouter(getArguments().getString(ROUTER_SELECTED));
 
         if (mRouter == null) {
-            Utils.reportException(null, new IllegalStateException("Router passed to RestoreRouterDialogFragment is NULL"));
+            Utils.reportException(getContext(), new IllegalStateException("Router passed to RestoreRouterDialogFragment is NULL"));
             Toast.makeText(getActivity(),
                     "Router is NULL - does it still exist?", Toast.LENGTH_SHORT).show();
             dismiss();
@@ -202,7 +202,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         }
                     } catch (final Exception e) {
                         e.printStackTrace();
-                        Utils.reportException(null, e);
+                        Utils.reportException(getContext(), e);
                     } finally {
                         mUriCursor = null;
                     }
@@ -274,7 +274,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(null, e);
+            Utils.reportException(getContext(), e);
         } finally {
             mUriCursor = null;
             super.onDestroy();
@@ -290,7 +290,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
             mListener = (RouterRestoreDialogListener) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            Utils.reportException(null, e);
+            Utils.reportException(getContext(), e);
             Toast.makeText(activity, "Whoops - Internal error! " +
                     "The issue has been reported. Please try again later", Toast.LENGTH_SHORT).show();
             getDialog().cancel();
@@ -353,7 +353,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
                         final FragmentActivity activity = getActivity();
 
                         //For reporting
-                        Utils.reportException(null, new AgreementToRestoreRouterFromBackup(activity));
+                        Utils.reportException(getContext(), new AgreementToRestoreRouterFromBackup(activity));
 
                         // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.

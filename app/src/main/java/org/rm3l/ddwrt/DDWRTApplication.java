@@ -145,7 +145,7 @@ public class DDWRTApplication extends Application {
             } else {
                 firstLaunchReport = new FirstLaunch(FLAVOR);
             }
-            Utils.reportException(null, firstLaunchReport);
+            Utils.reportException(this, firstLaunchReport);
         }
 
         final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)

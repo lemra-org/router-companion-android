@@ -147,14 +147,14 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                     outputFile.delete();
                 }
             } catch (final Exception e) {
-                Utils.reportException(null, e);
+                Utils.reportException(mContext, e);
                 //No worries
             } finally {
                 try {
                     SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                             "rm -rf " + remotePath);
                 } catch (final Exception e) {
-                    Utils.reportException(null, e);
+                    Utils.reportException(mContext, e);
                     //No worries
                 }
             }
