@@ -121,9 +121,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -234,8 +232,6 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private boolean mIsThemeLight;
 
-    private final Map<Integer, String> routerIdToUuid = new HashMap<>();
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,10 +307,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             int i = 0;
             for (final Router routerFromAll : allRouters) {
                 final int routerFromAllId = routerFromAll.getId();
-                final String routerFromAllUuid = routerIdToUuid.get(routerFromAllId);
-                if (routerFromAllUuid == null) {
-                    routerIdToUuid.put(routerFromAllId, routerFromAll.getUuid());
-                }
                 final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem()
                         .withIdentifier(routerFromAllId)
                         .withNameShown(true)
@@ -415,17 +407,18 @@ public class DDWRTMainActivity extends AppCompatActivity
                             //Already handled
                             return true;
                         }
-                        final String routerUuid = routerIdToUuid.get(profileIdentifier);
-                        if (routerUuid == null || routerUuid.isEmpty()) {
-                            Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
-                            return false;
-                        }
+                        final Router daoRouter = dao.getRouter(profileIdentifier);
 
-                        final Router daoRouter = dao.getRouter(routerUuid);
                         if (daoRouter == null) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                             Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("daoRouter NOT found"));
+                            return false;
+                        }
+
+                        final String routerUuid = daoRouter.getUuid();
+                        if (routerUuid.isEmpty()) {
+                            Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
                             return false;
                         }
 
@@ -506,7 +499,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withToolbar(mToolbar)
                 .withAccountHeader(mDrawerHeaderResult) //set the AccountHeader we created earlier for the header
                 .withSavedInstance(savedInstanceState)
-                .withShowDrawerOnFirstLaunch(false)
+                .withShowDrawerOnFirstLaunch(true)
                 .withCloseOnClick(true)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Overview")
@@ -562,7 +555,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                         R.drawable.ic_action_network :
                                         R.drawable.ic_action_network_dark)
                                 .withIdentifier(14)
-                        )
+                )
                 .addStickyDrawerItems(
                         new PrimaryDrawerItem().withName("Help")
                                 .withIcon(android.R.drawable.ic_menu_help)
@@ -1751,10 +1744,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             routersPicker.performClick();
 
             final int newRouterId = newRouter.getId();
-            final String newRouterUuid = routerIdToUuid.get(newRouterId);
-            if (newRouterUuid == null) {
-                routerIdToUuid.put(newRouterId, newRouter.getUuid());
-            }
 
             final IProfile newProfile = new ProfileDrawerItem()
                     .withIdentifier(newRouterId)
