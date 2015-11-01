@@ -271,7 +271,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         //Load from Shared Preferences
         this.mCurrentSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
-        this.mCurrentSyncInterval = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
+        this.mCurrentSyncInterval = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -10l);
 
         final long mCurrentTheme = this.mGlobalPreferences.getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
         if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
@@ -642,7 +642,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
-        final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval <= 0l);
+        final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval < -1l);
         final boolean putDefaultTheme = (mCurrentTheme <= 0l);
         if (putDefaultSortingStrategy || putDefaultSyncInterval || putDefaultTheme) {
             //Add default preferences values
@@ -1381,7 +1381,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 // Make sure the request was successful and reload UI if necessary
                 if (resultCode == RESULT_OK) {
                     final SharedPreferences mPreferences = this.getSharedPreferences(this.mRouterUuid, Context.MODE_PRIVATE);
-                    final long prefSyncIntervalMillis = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -1l);
+                    final long prefSyncIntervalMillis = mPreferences.getLong(SYNC_INTERVAL_MILLIS_PREF, -10l);
                     final String prefSortingStrategy = mPreferences.getString(SORTING_STRATEGY_PREF, "");
                     if (this.mCurrentSyncInterval != prefSyncIntervalMillis ||
                             !this.mCurrentSortingStrategy.equals(prefSortingStrategy)) {

@@ -59,7 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Data &amp; Sync">
 
         <org.rm3l.ddwrt.utils.LongListPreference
-            android:defaultValue="1800000"
+            android:defaultValue="3600000"
             android:entries="@array/pref_sync_frequency_titles"
             android:entryValues="@array/pref_sync_frequency_values"
             android:key="syncIntervalMillis"

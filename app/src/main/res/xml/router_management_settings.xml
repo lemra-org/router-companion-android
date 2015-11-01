@@ -85,7 +85,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Background Service" />
 
         <org.rm3l.ddwrt.utils.LongListPreference
-            android:defaultValue="30"
+            android:defaultValue="360"
             android:dependency="notifications.background.service.enable"
             android:entries="@array/pref_notifications_sync_frequency_titles"
             android:entryValues="@array/pref_notifications_sync_frequency_values"

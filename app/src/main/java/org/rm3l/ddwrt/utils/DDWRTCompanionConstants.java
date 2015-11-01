@@ -38,8 +38,7 @@ public final class DDWRTCompanionConstants {
 
     public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
 
-    //FIXME Consider increasing this value prior to release
-    public static final long TILE_REFRESH_MILLIS = 30 * 1000l;
+    public static final long TILE_REFRESH_MILLIS = 3600 * 1000l;
 
     public static final String AD_FREE_APP_APPLICATION_ID = BuildConfig.APPLICATION_ID
             .replaceAll(".free", "");

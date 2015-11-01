@@ -58,8 +58,6 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
-
 /**
  * Abstract DDWRT Tile
  */
@@ -318,7 +316,8 @@ public abstract class DDWRTTile<T>
         doneWithLoaderInstance(tile, loader,
                 this.mParentFragmentPreferences != null ?
                         this.mParentFragmentPreferences.
-                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS) : TILE_REFRESH_MILLIS,
+                                getLong(DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF, -1l) :
+                        -1l,
                 additionalButtonsToMakeVisible);
     }
 
