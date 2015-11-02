@@ -307,7 +307,8 @@ public class RouterManagementActivity
             }
         });
 
-        BootReceiver.doStartBackgroundServiceIfNeeded(this);
+        //No need to restart the background service each time - this is correctly handled by Android
+//        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
         /* Use this when you want to run a background update check */
         final UpdateRunnable updateRunnable =

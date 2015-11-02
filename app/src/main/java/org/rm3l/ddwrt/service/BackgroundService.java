@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.rm3l.ddwrt.mgmt.BootReceiver;
@@ -62,89 +61,14 @@ public class BackgroundService extends IntentService {
                 return;
             }
 
-            // do the actual work, in a separate thread
-            new BackgroundServiceTasksExecutor().execute();
-        } finally {
-            // Release the wake lock provided by the WakefulBroadcastReceiver.
-            if (intent != null) {
-                BootReceiver.completeWakefulIntent(intent);
-            }
-        }
-    }
-
-//    /**
-//     * This is where we initialize. We call this when onStart/onStartCommand is
-//     * called by the system. We won't do anything with the intent here, and you
-//     * probably won't, either.
-//     */
-//    private void handleIntent(Intent intent) {
-//
-//        // obtain the wake lock
-//        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-//        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-//        mWakeLock.acquire();
-//
-//        // check the global background data setting
-//        final ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//        if (intent == null || cm == null || cm.getActiveNetworkInfo() == null) {
-//            /*
-//             * If getActiveNetworkInfo() is null, you do not have a network connection,
-//             * either because the device does not have a network connection,
-//             * or because user settings (e.g., bandwidth caps) prevent your app
-//             * from having a network connection.
-//             */
-//            stopSelf();
-//            return;
-//        }
-//
-//        // do the actual work, in a separate thread
-//        new BackgroundServiceTasksExecutor().execute();
-//    }
-
-//    /**
-//     * This is deprecated, but you have to implement it if you're planning on
-//     * supporting devices with an API level lower than 5 (Android 2.0).
-//     */
-//    @Override
-//    public void onStart(Intent intent, int startId) {
-//        handleIntent(intent);
-//    }
-//
-//    /**
-//     * This is called on 2.0+ (API level 5 or higher). Returning
-//     * START_NOT_STICKY tells the system to not restart the service if it is
-//     * killed because of poor resource (memory/cpu) conditions.
-//     */
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        handleIntent(intent);
-//        return START_NOT_STICKY;
-//    }
-//
-//    /**
-//     * In onDestroy() we release our wake lock. This ensures that whenever the
-//     * Service stops (killed for resources, stopSelf() called, etc.), the wake
-//     * lock will be released.
-//     */
-//    public void onDestroy() {
-//        super.onDestroy();
-//        mWakeLock.release();
-//    }
-
-    private class BackgroundServiceTasksExecutor extends AsyncTask<Void, Void, Void> {
-
-        private final List<AbstractBackgroundServiceTask> tasks = new ArrayList<>();
-
-        public BackgroundServiceTasksExecutor() {
-            //Add any other tasks over here
+            //Do the actual work - no need to do so in a separate thread
+            final List<AbstractBackgroundServiceTask> tasks = new ArrayList<>();
             tasks.add(new RouterModelUpdaterServiceTask(BackgroundService.this));
             tasks.add(new RouterWebInterfaceParametersUpdaterServiceTask(BackgroundService.this));
-
             //According to user preference
             final Set<String> notificationsChoiceSet =
                     getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                        .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-
+                            .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
             Log.d(TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
             if (notificationsChoiceSet.contains(ConnectedHostsServiceTask.class.getSimpleName())) {
                 tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
@@ -152,16 +76,12 @@ public class BackgroundService extends IntentService {
             if (notificationsChoiceSet.contains(PublicIPChangesServiceTask.class.getSimpleName())) {
                 tasks.add(new PublicIPChangesServiceTask(BackgroundService.this));
             }
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Log.d(TAG, "doInBackground");
+            //Add any other tasks over here
 
             final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(BackgroundService.this);
             final List<Router> allRouters = dao.getAllRouters();
             if (allRouters == null) {
-                return null;
+                return;
             }
             for (final Router router : allRouters) {
                 if (router == null) {
@@ -178,22 +98,20 @@ public class BackgroundService extends IntentService {
                         backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Utils.reportException(null, e);
+                        Utils.reportException(this, e);
                         //No worries
                     }
                 }
-
-
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
+        } finally {
             try {
-                Log.d(TAG, "onPostExecute");
-            } finally {
                 BackgroundService.this.stopSelf();
+            } finally {
+                // Release the wake lock provided by the WakefulBroadcastReceiver.
+                if (intent != null) {
+                    BootReceiver.completeWakefulIntent(intent);
+                }
             }
         }
     }
