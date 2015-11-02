@@ -89,20 +89,27 @@ public class DDWRTApplication extends Application {
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Picasso.with(imageView.getContext())
-                        .load(uri)
-                        .placeholder(placeholder)
-                        .into(imageView);
+                if (imageView != null) {
+                    Picasso.with(imageView.getContext())
+                            .load(uri)
+                            .placeholder(placeholder)
+                            .into(imageView);
+                }
             }
 
             @Override
             public void cancel(ImageView imageView) {
-                Picasso.with(imageView.getContext())
-                        .cancelRequest(imageView);
+                if (imageView != null) {
+                    Picasso.with(imageView.getContext())
+                            .cancelRequest(imageView);
+                }
             }
 
             @Override
             public Drawable placeholder(Context ctx) {
+                if (ctx == null) {
+                    return null;
+                }
                 final int routerDrawable = R.drawable.router;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     return ctx.getResources().getDrawable(routerDrawable, getTheme());
@@ -117,6 +124,12 @@ public class DDWRTApplication extends Application {
         ACRA.getErrorReporter()
                 .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
 
+
+        Fabric.with(this, new Crashlytics());
+        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
+        Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
+
+        //We must initialize Fabric prior to calling this
         if (isFirstLaunch(this)) {
             final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
@@ -158,9 +171,6 @@ public class DDWRTApplication extends Application {
             setTheme(R.style.AppThemeDark);
         }
 
-        Fabric.with(this, new Crashlytics());
-        Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
-        Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
     }
 
     private class FirstLaunch extends DDWRTCompanionException {
