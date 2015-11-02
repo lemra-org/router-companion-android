@@ -63,8 +63,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
@@ -882,11 +880,11 @@ public final class Utils {
             if (errorPlaceHolderDrawable != null) {
                 requestCreator.error(errorPlaceHolderDrawable);
             }
-            if (BuildConfig.DEBUG) {
-                //Forces Picasso to download image from the network everytime
-                requestCreator.networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE);
-                requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE);
-            }
+//            if (BuildConfig.DEBUG) {
+//                //Forces Picasso to download image from the network everytime
+//                requestCreator.networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE);
+//                requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE);
+//            }
 
             requestCreator.into(imageView, callback);
 
