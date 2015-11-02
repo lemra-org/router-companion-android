@@ -1232,6 +1232,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         return (input != null && !input.isAdTile());
                     }
                 }).size() : 0);
+                
+        stopLoaders();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1266,7 +1268,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         fragmentTile.setRefreshListener(refreshListener);
                     }
 
-                    stopLoaders();
                     initLoaders();
 
                 } else {
@@ -1277,7 +1278,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 }
 
             }
-        }, 1000l);
+        }, 1500l);
 
     }
 
