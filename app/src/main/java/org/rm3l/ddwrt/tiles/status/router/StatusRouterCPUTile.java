@@ -35,6 +35,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -108,7 +109,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 
                 try {
 
-                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -118,7 +119,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -149,7 +150,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                 .omitEmptyStrings()
                                 .trimResults()
                                 .splitToList(nullToEmpty(nvramInfo.getProperty(NVRAMInfo.CPU_CLOCK_FREQ)));
-                        Log.d(LOG_TAG, "strings for cpu clock: " + strings);
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "strings for cpu clock: " + strings);
                         if (strings != null && strings.size() > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CPU_CLOCK_FREQ, strings.get(0));
                         }
@@ -258,7 +259,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
     public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_router_router_cpu_speed_header_loading_view)
                     .setVisibility(View.GONE);
@@ -327,7 +328,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_router_router_cpu_togglebutton_title, R.id.tile_status_router_router_cpu_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

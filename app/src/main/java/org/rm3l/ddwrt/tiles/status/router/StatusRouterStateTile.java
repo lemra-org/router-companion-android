@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -117,7 +118,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                 .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
                     }
 
-                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusRouterStateTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -127,7 +128,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -256,7 +257,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                                     BuildConfig.VERSION_NAME,
                                                     PublicIPInfo.ICANHAZIP_HOST,
                                                     PublicIPInfo.ICANHAZIP_PORT));
-                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                     if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     } else {
@@ -339,7 +340,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
     public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_router_router_state_loading_view)
                     .setVisibility(View.GONE);
@@ -470,7 +471,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_router_router_state_togglebutton_title, R.id.tile_status_router_router_state_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

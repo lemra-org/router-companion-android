@@ -30,6 +30,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 
@@ -191,7 +192,7 @@ public class RestoreRouterDialogFragment extends DialogFragment {
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Log.i(LOG_TAG, "Uri: " + uri.toString());
+                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
 
                 if (d != null) {

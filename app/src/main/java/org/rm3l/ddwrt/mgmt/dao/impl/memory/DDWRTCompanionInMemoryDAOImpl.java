@@ -24,7 +24,6 @@ package org.rm3l.ddwrt.mgmt.dao.impl.memory;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.common.collect.Lists;
 
@@ -71,7 +70,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     @NonNull
     private List<Integer> getPrimeNumbersFromEratostheneSieve(final int up) {
-        final List<Integer> excluded = new ArrayList<Integer>();
+        final List<Integer> excluded = new ArrayList<>();
         for (int i = 2; i <= up; i++) {
             if (excluded.contains(i)) {
                 continue;
@@ -91,19 +90,14 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
             primes.add(l);
         }
 
-        Log.d(LOG_TAG, "primes: " + primes);
-
         return primes;
     }
 
     @Override
-    public void destroy() {
-        Log.d(LOG_TAG, "close");
-    }
+    public void destroy() {}
 
     @Override
     public Router insertRouter(@NonNull Router router) {
-        Log.d(LOG_TAG, "createRouter(" + router + ")");
         if (isNullOrEmpty(router.getUuid())) {
             router.setUuid(UUID.randomUUID().toString());
         }
@@ -126,20 +120,17 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
 
     @Override
     public void deleteRouter(String uuid) {
-        Log.d(LOG_TAG, "deleteRouter(" + uuid + ")");
         DB.remove(uuid);
     }
 
     @Override
     public List<Router> getAllRouters() {
-        Log.d(LOG_TAG, "getAllRouters()");
         return Lists.newArrayList(DB.values());
     }
 
     @Nullable
     @Override
     public Router getRouter(String uuid) {
-        Log.d(LOG_TAG, "getRouter(" + uuid + ")");
         return DB.get(uuid);
     }
 

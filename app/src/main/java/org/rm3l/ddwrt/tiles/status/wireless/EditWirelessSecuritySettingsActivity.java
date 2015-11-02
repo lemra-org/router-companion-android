@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -189,7 +190,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                 .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Log.d(LOG_TAG, "onItemSelected @" + position);
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "onItemSelected @" + position);
                         if (position == 0) {
                             hideAllDetailedViews();
                         } else {
@@ -557,12 +558,12 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
     }
 
     private void showDetailedViewAt(final int position) {
-        Log.d(LOG_TAG, "showDetailedViewAt @" + position);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "showDetailedViewAt @" + position);
 
         boolean wepVisible = false;
         for (int i = 0 ; i < mDetailedViews.length; i++) {
             final int detailedViewId = mDetailedViews[i];
-            Log.d(LOG_TAG, "<i,detailedViewId>=<"+i+","+detailedViewId+">");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "<i,detailedViewId>=<" + i + "," + detailedViewId + ">");
 
             final View detailedView = findViewById(detailedViewId);
             if (detailedView == null) {
@@ -1230,7 +1231,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        Log.d(LOG_TAG, "vars that have changed: " + nvramVarsToUpdate);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(WL_SECURITY_NVRAMINFO, nvramVarsToUpdate);

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.rm3l.ddwrt.mgmt.BootReceiver;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -69,7 +71,7 @@ public class BackgroundService extends IntentService {
             final Set<String> notificationsChoiceSet =
                     getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                             .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
-            Log.d(TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
+            Crashlytics.log(Log.DEBUG,  TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
             if (notificationsChoiceSet.contains(ConnectedHostsServiceTask.class.getSimpleName())) {
                 tasks.add(new ConnectedHostsServiceTask(BackgroundService.this));
             }
@@ -93,7 +95,7 @@ public class BackgroundService extends IntentService {
                     if (backgroundServiceTask == null) {
                         continue;
                     }
-                    Log.d(TAG, ">>> Running task: " + backgroundServiceTask.getClass() + " on router " + router);
+                    Crashlytics.log(Log.DEBUG,  TAG, ">>> Running task: " + backgroundServiceTask.getClass() + " on router " + router);
                     try {
                         backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {

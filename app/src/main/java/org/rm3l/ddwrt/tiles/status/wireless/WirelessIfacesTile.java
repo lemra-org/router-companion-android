@@ -40,6 +40,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -169,7 +170,7 @@ public class WirelessIfacesTile extends IfacesTile {
                             }
                         });
 
-                        Log.d(TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
+                        Crashlytics.log(Log.DEBUG, TAG, "Building view for iface " + mWirelessIfaceTile.getIface());
                         try {
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override

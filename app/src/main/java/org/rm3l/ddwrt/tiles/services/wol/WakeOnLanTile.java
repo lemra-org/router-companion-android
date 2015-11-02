@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -209,7 +210,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
         final long nbRunsLoader = wakeOnLanTile != null ? wakeOnLanTile.getNbRunsLoader() : 0;
 
-        Log.d(LOG_TAG, "Init background loader for " + WakeOnLanTile.class + ": routerInfo=" +
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WakeOnLanTile.class + ": routerInfo=" +
                 mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" +
                 nbRunsLoader);
 
@@ -240,7 +241,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 //Force Manual Refresh
                 if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                     //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                     return new RouterData<ArrayList<Device>>() {
                     }.setException(new DDWRTTileAutoRefreshNotAllowedException());
                 }
@@ -296,7 +297,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                             "\",$4,$2,$1}'",
                     "echo done");
 
-            Log.d(LOG_TAG, "output: " + Arrays.toString(output));
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
 
             if (output == null || output.length == 0) {
                 if (output == null) {
@@ -491,7 +492,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             }.setData(mDevices);
 
         } catch (@NonNull final Exception e) {
-            Log.e(LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
+            Crashlytics.log(Log.ERROR, LOG_TAG, e.getMessage() + ": " + Throwables.getStackTraceAsString(e));
             return new RouterData<ArrayList<Device>>() {
             }.setException(e);
         }
@@ -512,7 +513,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     @Override
     public void onLoadFinished(Loader<RouterData<ArrayList<Device>>> loader, RouterData<ArrayList<Device>> data) {
         try {
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
@@ -561,7 +562,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                         if (parcelable instanceof Bundle) {
                                                             final Bundle token = (Bundle) parcelable;
                                                             final String routerAction = token.getString(ROUTER_ACTION);
-                                                            Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                                                            Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
                                                             if (isNullOrEmpty(routerAction)) {
                                                                 return;
                                                             }
@@ -968,7 +969,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_services_wol_clients_togglebutton_title, R.id.tile_services_wol_clients_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }
@@ -1069,7 +1070,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 if (parcelable instanceof Bundle) {
                     final Bundle token = (Bundle) parcelable;
                     final String routerAction = token.getString(ROUTER_ACTION);
-                    Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
                     if (isNullOrEmpty(routerAction)) {
                         return;
                     }

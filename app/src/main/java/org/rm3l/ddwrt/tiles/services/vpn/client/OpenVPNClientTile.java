@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -150,7 +151,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + OpenVPNClientTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + OpenVPNClientTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -160,7 +161,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -449,7 +450,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_services_openvpn_client_header_loading_view)
                     .setVisibility(View.GONE);
@@ -546,7 +547,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             doneWithLoaderInstance(this, loader,
                     R.id.tile_services_openvpn_client_togglebutton_title, R.id.tile_services_openvpn_client_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }
@@ -745,7 +746,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
         if (parcelable instanceof Bundle) {
             final Bundle token = (Bundle) parcelable;
             final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-            Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }

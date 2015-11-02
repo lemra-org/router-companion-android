@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 
+import com.crashlytics.android.Crashlytics;
+
 public class InstantAutoCompleteTextView extends AutoCompleteTextView {
 
     public InstantAutoCompleteTextView(Context context) {
@@ -52,7 +54,7 @@ public class InstantAutoCompleteTextView extends AutoCompleteTextView {
                                   Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (getWindowVisibility() == View.GONE) {
-            Log.d(this.getClass().getSimpleName(), "Window not visible, will not show drop down");
+            Crashlytics.log(Log.DEBUG, this.getClass().getSimpleName(), "Window not visible, will not show drop down");
             return;
         }
 

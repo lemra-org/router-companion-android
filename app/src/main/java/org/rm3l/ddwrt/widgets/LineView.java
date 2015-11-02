@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 /**
@@ -108,7 +110,7 @@ public class LineView extends ImageView {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        Log.d(LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = (" +
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onDraw: (startX, startY, stopX, stopY) = (" +
                 startX + ", " + startY + ", " + stopX + ", " + stopY + ")");
         canvas.drawLine(startX, startY, stopX, stopY, mPaint);
         mPaint.setShadowLayer(0, 0, 0, 0);

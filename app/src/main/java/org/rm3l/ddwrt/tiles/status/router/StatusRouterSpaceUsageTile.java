@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -93,7 +94,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterSpaceUsageTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusRouterSpaceUsageTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -103,7 +104,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -130,7 +131,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                 mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
                     }
 
-                    Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
                     if (catProcMounts != null && catProcMounts.length >= 1) {
                         final List<String> nvramUsageList = NVRAM_SIZE_SPLITTER
@@ -205,7 +206,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                             itemToDfResult = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
                         }
-                        Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem = Splitter.on(" ").omitEmptyStrings().trimResults()
                                     .splitToList(itemToDfResult[0]);
@@ -283,7 +284,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
     public void onLoadFinished(@NonNull final Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_router_router_space_usage_loading_view)
                     .setVisibility(View.GONE);
@@ -342,7 +343,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_router_router_space_usage_togglebutton_title, R.id.tile_status_router_router_space_usage_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

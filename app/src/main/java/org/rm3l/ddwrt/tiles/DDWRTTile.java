@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -199,7 +200,6 @@ public abstract class DDWRTTile<T>
 
     @Override
     public final void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        Log.d(LOG_TAG, this.getClass() + "#onCheckedChanged: isChecked=" + isChecked);
         this.mAutoRefreshToggle = isChecked;
         if (this.mParentFragmentPreferences != null) {
             final SharedPreferences.Editor editor = this.mParentFragmentPreferences.edit();
@@ -296,7 +296,7 @@ public abstract class DDWRTTile<T>
                 }, nextRunMillis);
             }
 
-            Log.d(LOG_TAG, String.format("onLoadFinished(): done loading: %s" +
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, String.format("onLoadFinished(): done loading: %s" +
                             "\n" +
                             "-> schedNextRun: %s\n" +
                             "->this.mLoaderStopped: %s" +
@@ -333,7 +333,7 @@ public abstract class DDWRTTile<T>
      */
     @Override
     public final void onLoaderReset(Loader<T> loader) {
-        Log.d(getLogTag(), "onLoaderReset: loader=" + loader);
+        Crashlytics.log(Log.DEBUG,  getLogTag(), "onLoaderReset: loader=" + loader);
         loader.abandon();
     }
 

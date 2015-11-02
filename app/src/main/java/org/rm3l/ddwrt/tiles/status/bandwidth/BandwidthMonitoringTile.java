@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
@@ -110,7 +111,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             public None loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + BandwidthMonitoringTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + BandwidthMonitoringTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -120,7 +121,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -218,7 +219,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     @Override
     public void onLoadFinished(@NonNull Loader<None> loader, @Nullable None data) {
         //Set tiles
-        Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
         try {
             //noinspection ConstantConditions
@@ -339,7 +340,7 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_bandwidth_monitoring_togglebutton_title, R.id.tile_status_bandwidth_monitoring_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

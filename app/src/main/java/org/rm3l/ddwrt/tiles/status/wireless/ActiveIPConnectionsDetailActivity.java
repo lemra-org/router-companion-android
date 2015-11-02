@@ -54,6 +54,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -122,7 +123,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             try {
                 final String urlStr = String.format("%s/%s.json",
                         IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
-                Log.d(LOG_TAG, "--> GET " + urlStr);
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
                 final URL url = new URL(urlStr);
                 final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
@@ -135,7 +136,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             final GsonBuilder gsonBuilder = new GsonBuilder();
                             final Gson gson = gsonBuilder.create();
                             final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
-                            Log.d(LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
 
                             return ipWhoisInfo;
 
@@ -144,7 +145,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                             Closeables.closeQuietly(content);
                         }
                     } else {
-                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
                         if (statusCode == 204) {
                             //No Content found on the remote server - no need to retry later
                             return new IPWhoisInfo();

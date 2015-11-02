@@ -8,6 +8,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
@@ -51,7 +52,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -61,7 +62,7 @@ public class WANConfigTileOpenWrt extends WANConfigTile {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }

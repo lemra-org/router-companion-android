@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.reflect.TypeToken;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -206,7 +207,7 @@ public class WOLWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
-        Log.d(LOG_TAG, "onReceive: " + intent);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onReceive: " + intent);
 
         final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);

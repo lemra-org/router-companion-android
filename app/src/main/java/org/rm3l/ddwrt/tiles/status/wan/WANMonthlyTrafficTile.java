@@ -56,6 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -397,7 +398,7 @@ public class WANMonthlyTrafficTile
 
                     mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-                    Log.d(LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -407,7 +408,7 @@ public class WANMonthlyTrafficTile
                         //Force Manual Refresh
                         if (isToggleStateActionRunning.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             throw new DDWRTTileAutoRefreshNotAllowedException();
                         }
                     } else {
@@ -545,7 +546,7 @@ public class WANMonthlyTrafficTile
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
 
             setLoadingViewVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_wan_monthly_traffic_header_loading_view)
@@ -749,7 +750,7 @@ public class WANMonthlyTrafficTile
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }
@@ -778,7 +779,7 @@ public class WANMonthlyTrafficTile
 
     @Nullable
     private ImmutableMap<Integer, ArrayList<Double>> getTraffDataForMonth(@NonNull final String monthFormatted) {
-        Log.d(LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
 
         if (traffData == null) {
             return null;
@@ -792,7 +793,7 @@ public class WANMonthlyTrafficTile
         if (parcelable instanceof Bundle) {
             final Bundle token = (Bundle) parcelable;
             final String routerAction = token.getString(WAN_MONTHLY_TRAFFIC_ACTION);
-            Log.d(LOG_TAG, "WAN Monthly Traffic Data Action: [" + routerAction + "]");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "WAN Monthly Traffic Data Action: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }

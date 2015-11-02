@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.Device;
@@ -80,24 +82,18 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
     @Override
     public void onCreate() {
 
-        Log.d(TAG, "onCreate");
-
         mRouter = RouterManagementActivity.getDao(mContext).getRouter(mRouterUuid);
         if (mRouter == null) {
-            Log.d(TAG, "onCreate: mRouter IS null");
+            Crashlytics.log(Log.DEBUG, TAG, "onCreate: mRouter IS null");
         }
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.d(TAG, "onDataSetChanged");
-
         initDataLoader();
     }
 
     private void initDataLoader() {
-        Log.d(TAG, "initDataLoader");
-
         //Synchronous call to retrieve all data
         final RouterData<ArrayList<Device>> routerData =
                 WakeOnLanTile.getArrayListRouterDataSync(null, mRouter, mContext, mBcastAddresses,
@@ -109,19 +105,19 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Crashlytics.log(Log.DEBUG, TAG, "onDestroy");
     }
 
     @Override
     public int getCount() {
-        Log.d(TAG, "getCount");
+        Crashlytics.log(Log.DEBUG, TAG, "getCount");
 
         return mWidgetItems.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.d(TAG, "getViewAt(" + position + ")");
+        Crashlytics.log(Log.DEBUG, TAG, "getViewAt(" + position + ")");
 
         // we use getCount here so that it doesn't return null when empty
         final int count = getCount();
@@ -180,35 +176,35 @@ class WOLRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory,
 
     @Override
     public RemoteViews getLoadingView() {
-        Log.d(TAG, "getLoadingView");
+        Crashlytics.log(Log.DEBUG, TAG, "getLoadingView");
         // We aren't going to return a default loading view in this sample
         return null;
     }
 
     @Override
     public int getViewTypeCount() {
-        Log.d(TAG, "getLoadingView");
+        Crashlytics.log(Log.DEBUG, TAG, "getLoadingView");
         // Technically, we have only one type of view
         return 1;
     }
 
     @Override
     public long getItemId(int position) {
-        Log.d(TAG, "getItemId(" + position + ")");
+        Crashlytics.log(Log.DEBUG, TAG, "getItemId(" + position + ")");
 
         return position;
     }
 
     @Override
     public boolean hasStableIds() {
-        Log.d(TAG, "hasStableIds");
+        Crashlytics.log(Log.DEBUG, TAG, "hasStableIds");
 
         return true;
     }
 
     @Override
     public void onLoadComplete(@Nullable Loader<RouterData<ArrayList<Device>>> loader, @Nullable RouterData<ArrayList<Device>> data) {
-        Log.d(TAG, "onLoadComplete: data=" + data);
+        Crashlytics.log(Log.DEBUG, TAG, "onLoadComplete: data=" + data);
 
         mWidgetItems.clear();
         if (data != null) {

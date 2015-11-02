@@ -18,6 +18,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Objects;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -81,10 +82,9 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         PublicIPInfo.ICANHAZIP_HOST,
                         PublicIPInfo.ICANHAZIP_PORT));
 
-        Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+        Crashlytics.log(Log.DEBUG,  LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
 
         String wanIp = (nvramInfo != null ? nvramInfo.getProperty(WAN_IPADDR) : null);
-        Log.d(LOG_TAG, "wanIp: " + wanIp);
 
         if (wanIp != null && !Patterns.IP_ADDRESS.matcher(wanIp).matches()) {
             wanIp = null;
@@ -103,7 +103,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
         if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,
                 new HashSet<String>()).contains(PublicIPChangesServiceTask.class.getSimpleName())) {
-            Log.w(LOG_TAG, "PublicIPChangesServiceTask notifications disabled");
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "PublicIPChangesServiceTask notifications disabled");
             return;
         }
 
@@ -148,13 +148,11 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                     }
                 }
 
-                Log.d(LOG_TAG, "notifyID=" + notifyID);
-
                 //Now display notification
                 final boolean notificationsEnabled = routerPreferences
                         .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true);
 
-                Log.d(LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
+                Crashlytics.log(Log.DEBUG,  LOG_TAG, "NOTIFICATIONS_ENABLE=" + notificationsEnabled);
 
                 final NotificationManager mNotificationManager = (NotificationManager)
                         mCtx.getSystemService(Context.NOTIFICATION_SERVICE);

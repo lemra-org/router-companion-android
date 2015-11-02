@@ -18,6 +18,7 @@ import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -98,7 +99,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                         "\",$4,$2,$1}'",
                 "echo done");
 
-        Log.d(TAG, "output: " + Arrays.toString(output));
+        Crashlytics.log(Log.DEBUG,  TAG, "output: " + Arrays.toString(output));
 
         if (output == null || output.length == 0) {
             if (output == null) {
@@ -116,8 +117,6 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
         //Active clients
         final String[] activeClients = SSHUtils.getManualProperty(mCtx, router, globalPreferences,
                 "arp -a 2>/dev/null");
-
-        Log.d(TAG, "activeClients: " + Arrays.toString(activeClients));
 
         for (final String stdoutLine : output) {
             if ("done".equals(stdoutLine)) {
@@ -203,14 +202,12 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
         if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,
                 new HashSet<String>()).contains(ConnectedHostsServiceTask.class.getSimpleName())) {
-            Log.w(TAG, "ConnectedHostsServiceTask notifications disabled");
+            Crashlytics.log(Log.DEBUG,  TAG, "ConnectedHostsServiceTask notifications disabled");
             return;
         }
 
-        Log.d(TAG, "generateConnectedHostsNotification(" + router + ")");
-
         if (router == null) {
-            Log.w(TAG, "router == null");
+            Crashlytics.log(Log.WARN, TAG, "router == null");
             return;
         }
 
@@ -219,13 +216,11 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
         // Sets an ID for the notification, so it can be updated
         final int notifyID = router.getId();
 
-        Log.d(TAG,"notifyID=" + notifyID);
-
         final boolean onlyActiveHosts = mRouterPreferences
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY, true);
 
-        Log.d(TAG,"onlyActiveHosts=" + onlyActiveHosts);
-        Log.d(TAG,"deviceCollection=" + deviceCollection);
+        Crashlytics.log(Log.DEBUG,  TAG, "onlyActiveHosts=" + onlyActiveHosts);
+        Crashlytics.log(Log.DEBUG,  TAG, "deviceCollection=" + deviceCollection);
 
         final ImmutableSet<Device> devicesCollFiltered = FluentIterable.from(deviceCollection)
                 .filter(new Predicate<Device>() {
@@ -299,7 +294,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             }
         }
 
-        Log.d(TAG, "<sizeFiltered,previousConnectedHosts.size()>=<" +
+        Crashlytics.log(Log.DEBUG,  TAG, "<sizeFiltered,previousConnectedHosts.size()>=<" +
                 sizeFiltered + "," + previousConnectedHosts.size() + ">");
 
         boolean updateNotification = false;
@@ -307,8 +302,8 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             updateNotification = true;
         } else {
 
-            Log.d(TAG, "devicesCollFiltered: " + devicesCollFiltered);
-            Log.d(TAG, "previousConnectedHosts: " + previousConnectedHosts);
+            Crashlytics.log(Log.DEBUG,  TAG, "devicesCollFiltered: " + devicesCollFiltered);
+            Crashlytics.log(Log.DEBUG,  TAG, "previousConnectedHosts: " + previousConnectedHosts);
 
             //Now compare if anything has changed
             for (final Device newDevice : devicesCollFiltered) {
@@ -348,7 +343,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             }
         }
 
-        Log.d(TAG,"updateNotification=" + updateNotification);
+        Crashlytics.log(Log.DEBUG,  TAG, "updateNotification=" + updateNotification);
 
         //Build the String Set to save in preferences
         final ImmutableSet<String> stringImmutableSet = FluentIterable.from(devicesCollFiltered)
@@ -379,7 +374,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
         Utils.requestBackup(mCtx);
 
-        Log.d(TAG, "NOTIFICATIONS_ENABLE=" + mRouterPreferences
+        Crashlytics.log(Log.DEBUG,  TAG, "NOTIFICATIONS_ENABLE=" + mRouterPreferences
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_ENABLE, true));
 
         if (sizeFiltered == 0 ||

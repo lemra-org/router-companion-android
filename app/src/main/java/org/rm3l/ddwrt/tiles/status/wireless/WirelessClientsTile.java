@@ -70,6 +70,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -196,7 +197,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         @Override
         protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
             super.entryRemoved(evicted, key, oldValue, newValue);
-            Log.d(LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
         }
 
         @Override
@@ -208,7 +209,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             try {
                 final String urlStr = String.format("%s/%s",
                         MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-                Log.d(LOG_TAG, "--> GET " + urlStr);
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
                 final URL url = new URL(urlStr);
                 final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
@@ -221,7 +222,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             final GsonBuilder gsonBuilder = new GsonBuilder();
                             final Gson gson = gsonBuilder.create();
                             final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-                            Log.d(LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
                             if (macouiVendors == null || macouiVendors.length == 0) {
                                 //Returning null so we can try again later
                                 return null;
@@ -232,7 +233,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             Closeables.closeQuietly(content);
                         }
                     } else {
-                        Log.e(LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
                         if (statusCode == 204) {
                             //No Content found on the remote server - no need to retry later
                             return new MACOUIVendor();
@@ -598,7 +599,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
-                Log.d(LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
                         mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                 //Determine broadcast address at each run (because that might change if connected to another network)
@@ -620,7 +621,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //Force Manual Refresh
                     if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                         //Skip run
-                        Log.d(LOG_TAG, "Skip loader run");
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                         mParentFragmentActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -686,7 +687,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         e.printStackTrace();
                     }
 
-                    Log.d(LOG_TAG, "broadcastAddresses: " + broadcastAddresses);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "broadcastAddresses: " + broadcastAddresses);
 
                     final Multimap<String, String> phyToWlIfaces = ArrayListMultimap.create();
                     try {
@@ -732,7 +733,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 phyToWlIfaces.put(phy, wlIface);
                             }
                         }
-                        Log.d(LOG_TAG, "phyToWlIfaces: " + phyToWlIfaces);
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "phyToWlIfaces: " + phyToWlIfaces);
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
@@ -753,7 +754,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
-                    Log.d(LOG_TAG, "activeClients: " + Arrays.toString(activeClients));
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "activeClients: " + Arrays.toString(activeClients));
 
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -769,7 +770,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
 
-                    Log.d(LOG_TAG, "activeDhcpLeases: " + Arrays.toString(activeDhcpLeases));
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "activeDhcpLeases: " + Arrays.toString(activeDhcpLeases));
 
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -785,7 +786,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.setActiveIPConnections(activeIPConnections.length);
                     }
 
-                    Log.d(LOG_TAG, "#activeIPConnections: " + (activeIPConnections != null ?
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "#activeIPConnections: " + (activeIPConnections != null ?
                             activeIPConnections.length : "NULL"));
 
                     //Get WAN Gateway Address (we skip it!)
@@ -871,7 +872,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             );
                         }
 
-                        Log.d(LOG_TAG, "useAtheros= " + useAtheros + " / assocList: " + Arrays.toString(assocList));
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "useAtheros= " + useAtheros + " / assocList: " + Arrays.toString(assocList));
 
                         if (assocList != null) {
                             String iface;
@@ -898,7 +899,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                             }
                         }
-                        Log.d(LOG_TAG, "wirelessIfaceAssocList: " + wirelessIfaceAssocList);
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "wirelessIfaceAssocList: " + wirelessIfaceAssocList);
 
                     } catch (final Exception e) {
                         //No worries
@@ -921,7 +922,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     "\",$4,$2,$1}'",
                             "echo done");
 
-                    Log.d(LOG_TAG, "output: " + Arrays.toString(output));
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
 
                     if (output == null || output.length == 0) {
                         if (output == null) {
@@ -1024,7 +1025,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                                 "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
                                                                 "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
                                                         iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
-                                        Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                        Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
                                             //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
                                             if (!isNullOrEmpty(realWlIface)) {
@@ -1040,7 +1041,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                                 realWlIface, macAddress.toUpperCase(), realWlIface, macAddress, realWlIface, realWlIface));
                                             }
                                         }
-                                        Log.d(LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                        Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
                                         if (ssidAndrssiAndSNROutput != null) {
                                             if (ssidAndrssiAndSNROutput.length >= 1) {
                                                 wirelessConnectionInfo.setSsid(ssidAndrssiAndSNROutput[0]);
@@ -1133,7 +1134,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     String remoteChecksum = DDWRTCompanionConstants.EMPTY_STRING;
 
-                    Log.d(LOG_TAG, "Before usageDataLock");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Before usageDataLock");
 
                     synchronized (usageDataLock) {
 
@@ -1152,7 +1153,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                                 final File file = getClientsUsageDataFile(mParentFragmentActivity, mRouter.getUuid());
                                 mUsageDbBackupPath = file.getAbsolutePath();
-                                Log.d(LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
+                                Crashlytics.log(Log.DEBUG, LOG_TAG, "mUsageDbBackupPath: " + mUsageDbBackupPath);
 
                                 //Compute checksum of remote script, and see if usage DB exists remotely
                                 final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
@@ -1163,7 +1164,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 if (remoteMd5ChecksumAndUsageDBCheckOutput != null && remoteMd5ChecksumAndUsageDBCheckOutput.length > 1) {
                                     remoteChecksum = nullToEmpty(remoteMd5ChecksumAndUsageDBCheckOutput[0]).trim();
                                     final String doesUsageDataExistRemotely = remoteMd5ChecksumAndUsageDBCheckOutput[1];
-                                    Log.d(LOG_TAG, "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "doesUsageDataExistRemotely: " + doesUsageDataExistRemotely);
                                     if (doesUsageDataExistRemotely != null &&
                                             file.exists() &&
                                             !"0".equals(doesUsageDataExistRemotely.trim())) {
@@ -1182,7 +1183,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         /** http://www.dd-wrt.com/phpBB2/viewtopic.php?t=75275 */
 
                         //Copy wrtbwmon file to remote host (/tmp/), if needed
-                        Log.d(LOG_TAG, "[COPY] Copying monitoring script to remote router, if needed...");
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "[COPY] Copying monitoring script to remote router, if needed...");
                         wrtbwmonScriptPath = new File(mParentFragmentActivity.getCacheDir(), WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME);
 
                         FileUtils.copyInputStreamToFile(mParentFragmentActivity.getResources().openRawResource(R.raw.wrtbwmon_ddwrtcompanion),
@@ -1190,9 +1191,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                         //Compare MD5 checksum locally on remotely. If any differences, overwrite the remote one
                         final String localChecksum = Files.hash(wrtbwmonScriptPath, Hashing.md5()).toString();
-                        Log.d(LOG_TAG, String.format("<localChecksum=%s , remoteChecksum=%s>", localChecksum, remoteChecksum));
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, String.format("<localChecksum=%s , remoteChecksum=%s>", localChecksum, remoteChecksum));
                         if (!remoteChecksum.equalsIgnoreCase(localChecksum)) {
-                            Log.i(LOG_TAG, "Local and remote Checksums for the per-client monitoring script are different " +
+                            Crashlytics.log(Log.INFO, LOG_TAG, "Local and remote Checksums for the per-client monitoring script are different " +
                                     "=> uploading the local one...");
                             SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
                                     wrtbwmonScriptPath.getAbsolutePath(),
@@ -1200,7 +1201,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
 
                         //Run Setup (does not matter if already done)
-                        Log.d(LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
 
                         final String[] usageDbOutLines = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
 //                                "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
@@ -1221,7 +1222,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                                "rm -f " + USAGE_DB_OUT,
                                 String.format("rm -f %s", USAGE_DB_OUT));
 
-                        Log.d(LOG_TAG, "usageDbOutLines: " + Arrays.toString(usageDbOutLines));
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "usageDbOutLines: " + Arrays.toString(usageDbOutLines));
 
                         if (usageDbOutLines != null) {
 
@@ -1251,7 +1252,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 }
                                 final List<String> splitToList = Splitter.on(",").omitEmptyStrings().splitToList(usageDbOutLine);
                                 if (splitToList.size() < 6) {
-                                    Log.w(LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
+                                    Crashlytics.log(Log.WARN, LOG_TAG, "Line split should have more than 6 elements: " + splitToList);
                                     continue;
                                 }
                                 final String macAddress = nullToEmpty(splitToList.get(0)).toLowerCase();
@@ -1318,7 +1319,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     }
 
-                    Log.d(LOG_TAG, "AFTER usageDataLock");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "AFTER usageDataLock");
 
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -1372,7 +1373,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     //Save usage data file
                     final boolean disableBackup = (mParentFragmentPreferences != null &&
                             mParentFragmentPreferences.getBoolean("disableUsageDataAutoBackup", false));
-                    Log.d(LOG_TAG, "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
                     if (!disableBackup) {
                         try {
                             if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
@@ -1409,9 +1410,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
                             mParentFragmentPreferences, mRouter, deviceCollection);
 
-                    Log.d(LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
                     //FIXME Remove
-                    Log.d(LOG_TAG, "[REMOVEME] devices: " + devices);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "[REMOVEME] devices: " + devices);
 
                     return devices;
 
@@ -1475,7 +1476,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
         try {
 
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             //noinspection ThrowableResultOfMethodCallIgnored
             if (data == null ||
@@ -2081,7 +2082,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final RelativeTimeTextView lastSeenRowView = (RelativeTimeTextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_lastseen);
                     final long lastSeen = device.getLastSeen();
-                    Log.d(LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "XXX lastSeen for '" + macAddress + "' =[" + lastSeen + "]");
                     if (lastSeen <= 0l) {
                         lastSeenRowView.setText(EMPTY_VALUE_TO_DISPLAY);
                         lastSeenRowView.setReferenceTime(-1l);
@@ -2365,7 +2366,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             mProgressBar.setVisibility(View.INVISIBLE);
 
         } finally {
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             try {
 //                if (mProgressBar.getVisibility() != View.GONE) {
@@ -2666,7 +2667,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             if (parcelable instanceof Bundle) {
                 final Bundle token = (Bundle) parcelable;
                 final String routerAction = token.getString(ROUTER_ACTION);
-                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
                 if (isNullOrEmpty(routerAction)) {
                     return;
                 }
@@ -2898,7 +2899,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             if (parcelable instanceof Bundle) {
                 final Bundle token = (Bundle) parcelable;
                 final String routerAction = token.getString(ROUTER_ACTION);
-                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
                 if (isNullOrEmpty(routerAction)) {
                     return;
                 }

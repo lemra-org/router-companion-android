@@ -42,6 +42,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -591,7 +592,7 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
             nvramVarsToUpdate.setProperty(OPENVPNCL_STATIC, staticKey);
         }
 
-        Log.d(TAG, "vars that have changed: " + nvramVarsToUpdate);
+        Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(OpenVPNClientTile.OPENVPNCL_NVRAMINFO, nvramVarsToUpdate);

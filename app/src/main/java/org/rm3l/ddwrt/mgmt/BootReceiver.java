@@ -9,6 +9,8 @@ import android.os.SystemClock;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.rm3l.ddwrt.service.BackgroundService;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -44,15 +46,15 @@ public class BootReceiver extends WakefulBroadcastReceiver {
         final long minutes = preferences.getLong(
                 DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
 
-        Log.d(LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
+        Crashlytics.log(Log.DEBUG,  LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
 
         if ((!bgServiceEnabled) || minutes <= 0l) {
             //Skip
-            Log.d(LOG_TAG, "(!bgServiceEnabled) || minutes <= 0l");
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "(!bgServiceEnabled) || minutes <= 0l");
             return;
         }
 
-        Log.d(LOG_TAG, "(bgServiceEnabled && minutes > 0l) => scheduling repeating alarm");
+        Crashlytics.log(Log.DEBUG,  LOG_TAG, "(bgServiceEnabled && minutes > 0l) => scheduling repeating alarm");
 
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime(),

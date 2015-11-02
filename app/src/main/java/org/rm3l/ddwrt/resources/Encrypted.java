@@ -25,6 +25,8 @@ package org.rm3l.ddwrt.resources;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -135,7 +137,7 @@ public class Encrypted {
             e = ibse;
         }
 
-        Log.e(LOG_TAG, "Failed to encrypt: " + e);
+        Crashlytics.log(Log.ERROR, LOG_TAG, "Failed to encrypt: " + e);
         throw new IllegalStateException(e);
     }
 
@@ -181,7 +183,7 @@ public class Encrypted {
             e = bpe;
         }
 
-        Log.e(LOG_TAG, "Failed to decrypt: " + e);
+        Crashlytics.log(Log.ERROR, LOG_TAG, "Failed to decrypt: " + e);
         throw new IllegalStateException(e);
 
     }

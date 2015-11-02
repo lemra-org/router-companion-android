@@ -46,6 +46,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -219,7 +220,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         final LinearLayout chartPlaceholderView = (LinearLayout) findViewById(R.id.tile_status_wan_monthly_traffic_chart_placeholder);
 
         try {
-            Log.d(LOG_TAG, "renderTraffDateForMonth: " + mMonthDisplayed + " / dailyTraffMap=" + mTrafficDataForMonth);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "renderTraffDateForMonth: " + mMonthDisplayed + " / dailyTraffMap=" + mTrafficDataForMonth);
 
             final int size = mTrafficDataForMonth.size();
             final int[] days = new int[size];

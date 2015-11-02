@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -44,7 +45,7 @@ public final class AdUtils {
             Utils.reportException(null, e);
         }
 
-        Log.d(TAG, "deviceIdForAdMob: [" + obj + "]");
+        Crashlytics.log(Log.DEBUG, TAG, "deviceIdForAdMob: [" + obj + "]");
 
         return (obj != null ? obj.toString() : null);
     }

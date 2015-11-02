@@ -30,6 +30,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
@@ -64,7 +65,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
             @Override
             public NVRAMInfo loadInBackground() {
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + OpenVPNLogsTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + OpenVPNLogsTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -74,7 +75,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }

@@ -248,7 +248,7 @@ public final class Utils {
                 .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE);
 
         final boolean isFirstLaunch = defaultSharedPreferences.getBoolean(FIRST_APP_LAUNCH_PREF_KEY, true);
-        Log.i(TAG, "isFirstLaunch: " + isFirstLaunch);
+        Crashlytics.log(Log.INFO, TAG, "isFirstLaunch: " + isFirstLaunch);
         if (isFirstLaunch) {
             //Store flag
             defaultSharedPreferences.edit()
@@ -366,14 +366,14 @@ public final class Utils {
             final boolean isWifiConn = wifiNetworkInfo.isConnected();
             final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
             final boolean isMobileConn = mobileNetworkInfo.isConnected();
-            Log.d(TAG, "Wifi connected: " + isWifiConn);
-            Log.d(TAG, "Mobile connected: " + isMobileConn);
+            Crashlytics.log(Log.DEBUG, TAG, "Wifi connected: " + isWifiConn);
+            Crashlytics.log(Log.DEBUG, TAG, "Mobile connected: " + isMobileConn);
             if (isMobileConn && !isWifiConn) {
                 throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
                         ("Data Sync on Mobile Networks disabled!");
             }
         }
-        Log.d(TAG, "Data Sync Allowed By Usage Preference!");
+        Crashlytics.log(Log.DEBUG, TAG, "Data Sync Allowed By Usage Preference!");
     }
 
     /**
@@ -396,7 +396,7 @@ public final class Utils {
 //                .getBoolean(DATA_SYNC_BACKUP_PREF, true)) {
 //            new BackupManager(ctx).dataChanged();
 //        } else {
-//            Log.d(TAG, "Backup disabled by user!");
+//            Crashlytics.log(Log.DEBUG, TAG, "Backup disabled by user!");
 //        }
     }
 
@@ -623,7 +623,7 @@ public final class Utils {
                 .listener(new AppRate.OnShowListener() {
                     @Override
                     public void onRateAppShowing(AppRate appRate, View view) {
-                        Log.d(TAG, "onRateAppShowing");
+                        Crashlytics.log(Log.DEBUG, TAG, "onRateAppShowing");
                     }
 
                     @Override
@@ -780,7 +780,7 @@ public final class Utils {
 
                         @Override
                         public void onError() {
-                            Log.d(TAG, "onError: " + url);
+                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
                             reportException(null, new MissingRouterModelImageException(routerModel + " (" +
                                     routerModelNormalized + ")"));
                         }
@@ -827,7 +827,7 @@ public final class Utils {
 
                         @Override
                         public void onError() {
-                            Log.d(TAG, "onError: " + url);
+                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
                             reportException(null, new MissingRouterModelImageException(routerModel + " (" +
                                     routerModelNormalized + ")"));
                             if (callback != null) {

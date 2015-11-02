@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -220,7 +221,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + WirelessIfaceTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WirelessIfaceTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -230,7 +231,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                         //Force Manual Refresh
                         if (mWirelessSecurityFormOpened.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     } else {
@@ -665,7 +666,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader);
 
             buildView(data);
 
@@ -673,7 +674,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 //                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
             doneWithLoaderInstance(this, loader);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }
@@ -681,7 +682,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
     public void buildView(@Nullable NVRAMInfo data) {
 
-        Log.d(LOG_TAG, "buildView: " + iface + " / data=" + data);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "buildView: " + iface + " / data=" + data);
 
         layout.findViewById(R.id.tile_status_wireless_iface_loading_view)
                 .setVisibility(View.GONE);
@@ -1046,7 +1047,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
                                     try {
                                         final Serializable phyInterfaceStateSer = token.getSerializable(PHYSICAL_IFACE_STATE_ACTION);
-                                        Log.d(LOG_TAG, "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
+                                        Crashlytics.log(Log.DEBUG, LOG_TAG, "phyInterfaceStateSer: [" + phyInterfaceStateSer + "]");
                                         if (!(phyInterfaceStateSer instanceof PhysicalInterfaceState)) {
                                             return;
                                         }
@@ -1228,7 +1229,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         @Override
         public void onResultCode(int resultCode, Intent data) {
             try {
-                Log.d(LOG_TAG, "onResultCode: " + resultCode);
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "onResultCode: " + resultCode);
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         final NVRAMInfo newNvramInfoData = (NVRAMInfo) data.getSerializableExtra(WL_SECURITY_NVRAMINFO);
@@ -1263,7 +1264,7 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             if (parcelable instanceof Bundle) {
                 final Bundle token = (Bundle) parcelable;
                 final String routerAction = token.getString(DDWRTMainActivity.ROUTER_ACTION);
-                Log.d(LOG_TAG, "routerAction: [" + routerAction + "]");
+                Crashlytics.log(Log.DEBUG, LOG_TAG, "routerAction: [" + routerAction + "]");
                 if (isNullOrEmpty(routerAction)) {
                     return;
                 }

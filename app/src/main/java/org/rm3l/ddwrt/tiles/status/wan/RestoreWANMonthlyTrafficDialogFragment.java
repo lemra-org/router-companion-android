@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 
@@ -216,7 +217,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Log.i(LOG_TAG, "Uri: " + uri.toString());
+                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
 
                 if (d != null) {
@@ -465,7 +466,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
         if (parcelable instanceof Bundle) {
             final Bundle token = (Bundle) parcelable;
             final String routerAction = token.getString(WAN_MONTHLY_TRAFFIC_ACTION);
-            Log.d(LOG_TAG, "WAN Monthly Traffic Data Action: [" + routerAction + "]");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "WAN Monthly Traffic Data Action: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }

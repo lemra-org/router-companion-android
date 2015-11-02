@@ -41,6 +41,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -233,7 +234,7 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        Log.d(TAG, "vars that have changed: " + nvramVarsToUpdate);
+        Crashlytics.log(Log.DEBUG, TAG, "vars that have changed: " + nvramVarsToUpdate);
 
         //Set extra
         data.putExtra(WOL_DAEMON_NVRAMINFO, nvramVarsToUpdate);

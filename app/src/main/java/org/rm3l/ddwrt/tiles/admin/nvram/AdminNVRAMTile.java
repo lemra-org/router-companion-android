@@ -52,6 +52,7 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
@@ -596,7 +597,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             public None loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + AdminNVRAMTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG,  LOG_TAG, "Init background loader for " + AdminNVRAMTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -606,7 +607,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Skip loader run");
                             return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -701,7 +702,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_admin_nvram_menu).setVisibility(View.VISIBLE);
             layout.findViewById(R.id.tile_admin_nvram_toolbar).setVisibility(View.VISIBLE);
@@ -810,7 +811,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             doneWithLoaderInstance(this, loader,
                     R.id.tile_admin_nvram_togglebutton_title, R.id.tile_admin_nvram_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

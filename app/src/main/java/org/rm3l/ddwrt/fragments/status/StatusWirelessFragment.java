@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -81,7 +82,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
                                                                       Fragment parentFragment,
                                                                       Router router) {
         try {
-            Log.d(LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Init background loader for " + StatusWirelessFragment.class + ": routerInfo=" +
                     router);
 
             SharedPreferences sharedPreferences = activity
@@ -262,7 +263,7 @@ public class StatusWirelessFragment extends AbstractBaseFragment<Collection<Wire
      */
 //    @Override
 //    public void onLoadFinished(final Loader<Collection<WirelessIfaceTile>> loader, @Nullable final Collection<WirelessIfaceTile> tiles) {
-//        Log.d(LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "Done loading background task for " + StatusWirelessFragment.class.getCanonicalName());
 //        this.mIfaceTiles = tiles;
 //
 //        if (viewGroup == null || tiles == null || tiles.isEmpty()) {

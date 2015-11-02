@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.common.view.SlidingTabLayout;
+import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -220,7 +221,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             if (this.tabs.length <= position) {
-                Log.d(TAG, "tabs contains less than " + position + " items");
+                Crashlytics.log(Log.ERROR, TAG, "tabs contains less than " + position + " items");
                 return null;
             }
             return this.tabs[position];
@@ -230,11 +231,11 @@ public class PageSlidingTabStripFragment extends Fragment {
         @Override
         public CharSequence getPageTitle(int position) {
             if (this.tabs.length <= position) {
-                Log.d(TAG, "tabs contains less than " + position + " items");
+                Crashlytics.log(Log.ERROR, TAG, "tabs contains less than " + position + " items");
                 return null;
             }
             final AbstractBaseFragment tab = this.tabs[position];
-            Log.d(TAG, "Tab @position #" + position + ": " + tab);
+            Crashlytics.log(Log.DEBUG,  TAG, "Tab @position #" + position + ": " + tab);
             if (tab == null) {
                 return null;
             }

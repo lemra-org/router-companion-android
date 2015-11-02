@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.LruCache;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -144,11 +145,11 @@ public final class SSHUtils {
     private static final LruCache<String, Session> SSH_SESSIONS_LRU_CACHE = new LruCache<String, Session>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Session oldValue, Session newValue) {
-            Log.d(TAG, "entryRemoved @" + key + " / evicted? " + evicted);
+            Crashlytics.log(Log.DEBUG, TAG, "entryRemoved @" + key + " / evicted? " + evicted);
             super.entryRemoved(evicted, key, oldValue, newValue);
             try {
                 if (oldValue != null && oldValue.isConnected()) {
-                    Log.d(TAG, "Disconnect SSH session for router " + key);
+                    Crashlytics.log(Log.DEBUG, TAG, "Disconnect SSH session for router " + key);
                     oldValue.disconnect();
                 }
             } catch (final Exception e) {
@@ -189,7 +190,7 @@ public final class SSHUtils {
                 try {
                     lock.unlock();
                 } catch (final Exception e) {
-                    Log.w(TAG, e);
+                    Crashlytics.logException(e);
                 } finally {
                     SSH_SESSIONS_CACHE_LOCKS.remove(cacheKey);
                 }
@@ -203,7 +204,7 @@ public final class SSHUtils {
                                       String uuid,
                                       boolean usePrimaryAddrSolely) {
         final String cacheKey = \"fake-key\";
-        Log.d(TAG, "<usePrimaryAddrSolely,cacheKey> = <" + usePrimaryAddrSolely + ",'" +
+        Crashlytics.log(Log.DEBUG, TAG, "<usePrimaryAddrSolely,cacheKey> = <" + usePrimaryAddrSolely + ",'" +
                 cacheKey + "'>");
         return cacheKey;
     }
@@ -261,7 +262,7 @@ public final class SSHUtils {
                 }
             }
 
-            Log.d(TAG, String.format("<remoteIpAddress,remotePort> = <'%s', %d>, ",
+            Crashlytics.log(Log.DEBUG, TAG, String.format("<remoteIpAddress,remotePort> = <'%s', %d>, ",
                     remoteIpAddress, remotePort));
 
             final String privKey = \"fake-key\";
@@ -310,7 +311,7 @@ public final class SSHUtils {
             try {
                 lock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(cacheKey);
             }
 
@@ -318,7 +319,7 @@ public final class SSHUtils {
             final Long lastUpdate = cacheStatsElapsedTimeForDebugging.get();
             final long currentTimeMillis = System.currentTimeMillis();
             if (lastUpdate == null || (currentTimeMillis - lastUpdate) >= (60 * 60 * 1000l)) {
-                Log.d(TAG, "=== SSH_SESSIONS_LRU_CACHE stats ===\n" +
+                Crashlytics.log(Log.DEBUG, TAG, "=== SSH_SESSIONS_LRU_CACHE stats ===\n" +
                         "create_count=" + SSH_SESSIONS_LRU_CACHE.createCount() + ", " +
                         "eviction_count=" + SSH_SESSIONS_LRU_CACHE.evictionCount() + ", " +
                         "hit_count=" + SSH_SESSIONS_LRU_CACHE.hitCount() + ", " +
@@ -326,7 +327,7 @@ public final class SSHUtils {
                         "put_count=" + SSH_SESSIONS_LRU_CACHE.putCount() + ", " +
                         "cache size=" + SSH_SESSIONS_LRU_CACHE.size() + ", \n" +
                         "snapshot=" + SSH_SESSIONS_LRU_CACHE.snapshot());
-                Log.d(TAG, "=== sshSessionsCacheLock ===\n" +
+                Crashlytics.log(Log.DEBUG, TAG, "=== sshSessionsCacheLock ===\n" +
                         "holdCount=" + lock.getHoldCount());
                 cacheStatsElapsedTimeForDebugging.set(currentTimeMillis);
             }
@@ -456,7 +457,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
             } finally {
                 destroySession(cacheKey);
             }
@@ -467,7 +468,7 @@ public final class SSHUtils {
                                   @NonNull final Router router, @NonNull final Joiner commandsJoiner,
                                   @NonNull final String... cmdToExecute)
             throws Exception {
-        Log.d(TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+        Crashlytics.log(Log.DEBUG, TAG, "runCommands: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         checkDataSyncAlllowedByUsagePreference(context);
 
@@ -511,7 +512,7 @@ public final class SSHUtils {
                 e.printStackTrace();
                 return -100;
             }
-//            Log.d(TAG, "output: " + Arrays.toString(output));
+//            Crashlytics.log(Log.DEBUG, TAG, "output: " + Arrays.toString(output));
 
             //Line below does not return the actual status
 //            return channelExec.getExitStatus();
@@ -521,7 +522,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(context, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -576,7 +577,7 @@ public final class SSHUtils {
                     .notifyRouterActionProgress(routerAction, routerCopy, 0, null);
         }
 
-        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+        Crashlytics.log(Log.DEBUG, TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         checkDataSyncAlllowedByUsagePreference(ctx);
 
@@ -638,7 +639,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(ctx, routerCopy);
             } finally {
                 Closeables.closeQuietly(in);
@@ -654,7 +655,7 @@ public final class SSHUtils {
 
     @Nullable
     public static String[] getManualProperty(Context ctx, @NonNull final Router router, SharedPreferences globalPreferences, @NonNull final String... cmdToExecute) throws Exception {
-        Log.d(TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
+        Crashlytics.log(Log.DEBUG, TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         checkDataSyncAlllowedByUsagePreference(ctx);
 
@@ -694,7 +695,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -822,7 +823,7 @@ public final class SSHUtils {
     public static boolean scpTo(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
                                 @NonNull final String fromLocalPath, @NonNull final String toRemotePath)
             throws Exception {
-        Log.d(TAG, "scpTo: <router=" + router + " / fromLocalPath=" + fromLocalPath +
+        Crashlytics.log(Log.DEBUG, TAG, "scpTo: <router=" + router + " / fromLocalPath=" + fromLocalPath +
                 ", toRemotePath=" + toRemotePath + ">");
         if (router == null) {
             throw new IllegalArgumentException("No connection parameters");
@@ -837,7 +838,7 @@ public final class SSHUtils {
 
         String command =
                 "scp -q -o StrictHostKeyChecking=no -t " + toRemotePath;
-        Log.d(TAG, "scpTo: command=[" + command + "]");
+        Crashlytics.log(Log.DEBUG, TAG, "scpTo: command=[" + command + "]");
 
         final String uuid = router.getUuid();
 
@@ -934,7 +935,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -951,7 +952,7 @@ public final class SSHUtils {
     public static boolean scpFrom(Context ctx, @Nullable final Router router, SharedPreferences globalPreferences,
                                   @NonNull final String fromRemotePath, @NonNull final String toLocalPath, boolean skipDataSyncPreferene)
             throws Exception {
-        Log.d(TAG, "scpFrom: <router=" + router + " / fromRemotePath=" + fromRemotePath +
+        Crashlytics.log(Log.DEBUG, TAG, "scpFrom: <router=" + router + " / fromRemotePath=" + fromRemotePath +
                 ", toLocalPath=" + toLocalPath + ">");
         if (router == null) {
             throw new IllegalArgumentException("No connection parameters");
@@ -969,7 +970,7 @@ public final class SSHUtils {
 
         String command =
                 "scp -q -o StrictHostKeyChecking=no -f " + fromRemotePath;
-        Log.d(TAG, "scpTo: command=[" + command + "]");
+        Crashlytics.log(Log.DEBUG, TAG, "scpTo: command=[" + command + "]");
 
         final String uuid = router.getUuid();
 
@@ -1099,7 +1100,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Log.w(TAG, e);
+                Crashlytics.logException(e);
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -1151,10 +1152,10 @@ public final class SSHUtils {
                 sb.append((char) c);
             } while (c != '\n');
             if (b == 1) { // error
-                Log.e(TAG, sb.toString());
+                Crashlytics.log(Log.ERROR, TAG, sb.toString());
             }
             if (b == 2) { // fatal error
-                Log.wtf(TAG, sb.toString());
+                Crashlytics.log(Log.ERROR, TAG, sb.toString());
             }
         }
         return b;
@@ -1193,20 +1194,20 @@ public final class SSHUtils {
                     isNullOrEmpty(levelTag) ? "???" : levelTag, message);
             switch (level) {
                 case INFO:
-                    Log.i(LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.INFO, LOG_TAG, messageToDisplay);
                     break;
                 case WARN:
-                    Log.w(LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.WARN, LOG_TAG, messageToDisplay);
                     break;
                 case ERROR:
-                    Log.e(LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.ERROR, LOG_TAG, messageToDisplay);
                     break;
                 case FATAL:
-                    Log.wtf(LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.ERROR, LOG_TAG, messageToDisplay);
                     break;
                 case DEBUG:
                 default:
-                    Log.d(LOG_TAG, messageToDisplay);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, messageToDisplay);
                     break;
 
             }

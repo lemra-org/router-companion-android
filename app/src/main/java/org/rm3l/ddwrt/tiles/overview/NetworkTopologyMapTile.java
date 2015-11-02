@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -138,7 +139,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                 .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
                     }
 
-                    Log.d(LOG_TAG, "Init background loader for " + NetworkTopologyMapTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + NetworkTopologyMapTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -148,7 +149,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -249,7 +250,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                                     BuildConfig.VERSION_NAME,
                                                     PublicIPInfo.ICANHAZIP_HOST,
                                                     PublicIPInfo.ICANHAZIP_PORT));
-                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                     if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     } else {
@@ -302,7 +303,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_network_map_loading_view)
                     .setVisibility(View.GONE);
@@ -524,7 +525,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 //            }
 
         } finally {
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
             try {
                 //Destroy temporary SSH session

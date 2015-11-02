@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -111,7 +112,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
     public NVRAMInfo doLoadInBackground() {
         try {
-            Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                     mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
             if (mRefreshing.getAndSet(true)) {
@@ -121,7 +122,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                 //Force Manual Refresh
                 if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                     //Skip run
-                    Log.d(LOG_TAG, "Skip loader run");
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -239,7 +240,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_bandwidth_ifaces_loading_view)
                     .setVisibility(View.GONE);
@@ -299,7 +300,7 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_bandwidth_ifaces_togglebutton_title, R.id.tile_status_bandwidth_ifaces_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

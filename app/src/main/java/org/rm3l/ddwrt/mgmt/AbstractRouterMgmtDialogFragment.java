@@ -69,6 +69,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -157,10 +158,10 @@ public abstract class AbstractRouterMgmtDialogFragment
 //            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("SC");
 //            KeyPair kp;
 //            if (object instanceof PEMEncryptedKeyPair) {
-//                Log.d(LOG_TAG, "Encrypted key - we will use provided password");
+//                Crashlytics.log(Log.DEBUG, LOG_TAG, "Encrypted key - we will use provided password");
 //                kp = converter.getKeyPair(((PEMEncryptedKeyPair) object).decryptKeyPair(decProv));
 //            } else {
-//                Log.d(LOG_TAG, "Unencrypted key - no password needed");
+//                Crashlytics.log(Log.DEBUG, LOG_TAG, "Unencrypted key - no password needed");
 //                kp = converter.getKeyPair((PEMKeyPair) object);
 //            }
 //            final PrivateKey privateKey = \"fake-key\";
@@ -639,7 +640,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             Uri uri;
             if (resultData != null) {
                 uri = resultData.getData();
-                Log.i(LOG_TAG, "Uri: " + uri.toString());
+                Crashlytics.log(Log.INFO, LOG_TAG, "Uri: " + uri.toString());
                 final AlertDialog d = (AlertDialog) getDialog();
                 if (d != null) {
                     Cursor uriCursor = null;

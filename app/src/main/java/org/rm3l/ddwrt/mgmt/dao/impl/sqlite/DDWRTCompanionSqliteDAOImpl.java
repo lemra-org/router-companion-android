@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
@@ -113,7 +114,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 final String uuid = (Strings.isNullOrEmpty(router.getUuid()) ?
                         UUID.randomUUID().toString() : router.getUuid());
                 final long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValues(uuid, router));
-                Log.d(LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
+                Crashlytics.log(Log.DEBUG,  LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
 
                 return getRouter(uuid);
             }
@@ -122,7 +123,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             return null;
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "insertRouter: close db");
                 database.close();
             }
         }
@@ -136,7 +136,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 database = dbHelper.getWritableDatabase();
                 final String uuid = router.getUuid();
                 final int update = database.update(TABLE_ROUTERS, getContentValues(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
-                Log.d(LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
+                Crashlytics.log(Log.DEBUG,  LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
                 return getRouter(uuid);
             }
         } catch (final RuntimeException e) {
@@ -144,7 +144,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             return null;
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "updateRouter: close db");
                 database.close();
             }
         }
@@ -177,7 +176,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
                 database = dbHelper.getWritableDatabase();
 
-                Log.d(LOG_TAG, "Delete Router with uuid: " + uuid);
+                Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete Router with uuid: " + uuid);
                 database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
             }
         } catch (final RuntimeException e) {
@@ -221,7 +220,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             throw e;
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "getAllRouters: close db");
                 database.close();
             }
         }
@@ -257,7 +255,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             return null;
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "getAllRouters: close db");
                 database.close();
             }
         }
@@ -291,7 +288,6 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             return null;
         } finally {
             if (database != null && database.isOpen()) {
-                Log.d(LOG_TAG, "getAllRouters: close db");
                 database.close();
             }
         }

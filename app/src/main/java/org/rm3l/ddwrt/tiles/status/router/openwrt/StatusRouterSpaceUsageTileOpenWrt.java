@@ -30,6 +30,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -70,7 +71,7 @@ public class StatusRouterSpaceUsageTileOpenWrt extends StatusRouterSpaceUsageTil
             public NVRAMInfo loadInBackground() {
 
                 try {
-                    Log.d(LOG_TAG, "Init background loader for " + StatusRouterSpaceUsageTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusRouterSpaceUsageTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -80,7 +81,7 @@ public class StatusRouterSpaceUsageTileOpenWrt extends StatusRouterSpaceUsageTil
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -162,7 +163,7 @@ public class StatusRouterSpaceUsageTileOpenWrt extends StatusRouterSpaceUsageTil
                     for (final String itemToDf : itemsToDf) {
                         final String[] itemToDfResult = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "df -h " + itemToDf + " | grep -v Filessytem | grep \"" + itemToDf + "\"");
-                        Log.d(LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                         if (itemToDfResult != null && itemToDfResult.length > 0) {
                             final List<String> procMountLineItem = Splitter.on(" ").omitEmptyStrings().trimResults()
                                     .splitToList(itemToDfResult[0]);

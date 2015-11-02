@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -149,7 +150,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                 .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
                     }
 
-                    Log.d(LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANConfigTile.class + ": routerInfo=" +
                             mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
@@ -159,7 +160,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                         //Force Manual Refresh
                         if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
                             //Skip run
-                            Log.d(LOG_TAG, "Skip loader run");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                         }
                     }
@@ -294,7 +295,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                                     BuildConfig.VERSION_NAME,
                                                     PublicIPInfo.ICANHAZIP_HOST,
                                                     PublicIPInfo.ICANHAZIP_PORT));
-                                    Log.d(LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                     if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     } else {
@@ -334,7 +335,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                                     PublicIPInfo.ICANHAZPTR_HOST,
                                                     PublicIPInfo.ICANHAZPTR_PORT));
 
-                                    Log.d(LOG_TAG, "revDnsCmdStatus: " + Arrays.toString(revDnsCmdStatus));
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "revDnsCmdStatus: " + Arrays.toString(revDnsCmdStatus));
 
                                     if (revDnsCmdStatus != null && revDnsCmdStatus.length > 0) {
                                         nvramInfo.setProperty(REVERSE_DNS_PTR, revDnsCmdStatus[revDnsCmdStatus.length - 1]);
@@ -405,7 +406,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
     public void onLoadFinished(@NonNull Loader<NVRAMInfo> loader, @Nullable NVRAMInfo data) {
         try {
             //Set tiles
-            Log.d(LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
             layout.findViewById(R.id.tile_status_wan_config_loading_view)
                     .setVisibility(View.GONE);
@@ -575,7 +576,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
             doneWithLoaderInstance(this, loader,
                     R.id.tile_status_wan_config_togglebutton_title, R.id.tile_status_wan_config_togglebutton_separator);
 
-            Log.d(LOG_TAG, "onLoadFinished(): done loading!");
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
         }

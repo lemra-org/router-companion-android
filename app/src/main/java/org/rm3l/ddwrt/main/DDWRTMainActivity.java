@@ -66,6 +66,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Charsets;
@@ -314,7 +315,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         .withEmail(routerFromAll.getRemoteIpAddress() + ":" +
                                 routerFromAll.getRemotePort());
                 final String routerModel = Router.getRouterModel(this, routerFromAll);
-                Log.d(TAG, "routerModel: " + routerModel);
+                Crashlytics.log(Log.DEBUG,  TAG, "routerModel: " + routerModel);
                 if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                     if (Utils.isDemoRouter(routerFromAll)) {
                         profileDrawerItem.withIcon(R.drawable.demo_router);
@@ -401,7 +402,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             return false;
                         }
                         final int profileIdentifier = profile.getIdentifier();
-                        Log.d(TAG, "OnAccountHeaderListener: " + profileIdentifier);
+                        Crashlytics.log(Log.DEBUG,  TAG, "OnAccountHeaderListener: " + profileIdentifier);
                         if (profileIdentifier == ADD_NEW_ROUTER ||
                                 profileIdentifier == MANAGE_ROUTERS) {
                             //Already handled
@@ -713,7 +714,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 //            final ImageView navigationViewHeaderAvatar =
 //                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
 //            final String routerModel = Router.getRouterModel(this, mRouter);
-//            Log.d(TAG, "routerModel: " + routerModel);
+//            Crashlytics.log(Log.DEBUG, TAG, "routerModel: " + routerModel);
 //            if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
 //                Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
 //            }
@@ -1366,7 +1367,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+        Crashlytics.log(Log.DEBUG,  TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         // Check which request we're responding to
         switch (requestCode) {
             case LISTENED_REQUEST_CODE:
@@ -1437,7 +1438,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private void selectItem(int position) {
 
-        Log.d(TAG, "selectItem @" + position);
+        Crashlytics.log(Log.DEBUG,  TAG, "selectItem @" + position);
         if (position < 0) {
             return;
         }
@@ -1470,7 +1471,7 @@ public class DDWRTMainActivity extends AppCompatActivity
      */
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.d(TAG, "onPageScrolled @" + position);
+        Crashlytics.log(Log.DEBUG,  TAG, "onPageScrolled @" + position);
     }
 
     /**
@@ -1480,9 +1481,7 @@ public class DDWRTMainActivity extends AppCompatActivity
      * @param position Position index of the new selected page.
      */
     @Override
-    public void onPageSelected(int position) {
-        Log.d(TAG, "onPageSelected (" + position + ")");
-    }
+    public void onPageSelected(int position) {}
 
     /**
      * Called when the scroll state changes. Useful for discovering when the user
@@ -1495,9 +1494,7 @@ public class DDWRTMainActivity extends AppCompatActivity
      * @see android.support.v4.view.ViewPager#SCROLL_STATE_SETTLING
      */
     @Override
-    public void onPageScrollStateChanged(int state) {
-        Log.d(TAG, "onPageScrollStateChanged (" + state + ")");
-    }
+    public void onPageScrollStateChanged(int state) {}
 
     @Override
     public void onUndo(@android.support.annotation.Nullable Parcelable parcelable) {
@@ -1509,7 +1506,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         if (parcelable instanceof Bundle) {
             final Bundle token = (Bundle) parcelable;
             final String routerAction = token.getString(ROUTER_ACTION);
-            Log.d(TAG, "routerAction: [" + routerAction + "]");
+            Crashlytics.log(Log.DEBUG,  TAG, "routerAction: [" + routerAction + "]");
             if (isNullOrEmpty(routerAction)) {
                 return;
             }
@@ -1674,11 +1671,9 @@ public class DDWRTMainActivity extends AppCompatActivity
     }
 
     public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
-        Log.d(TAG, "startActivityForResult(" + intent + "," + listener +
-                ") / mCurrentActivityResultListener=" + mCurrentActivityResultListener);
 
         if (mCurrentActivityResultListener != null) {
-            Log.e(TAG, "Activity trying to start more than one activity at a time...");
+            Crashlytics.log(Log.ERROR, TAG, "Activity trying to start more than one activity at a time...");
             return;
         }
         mCurrentActivityResultListener = listener;
@@ -1752,7 +1747,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     .withEmail(newRouter.getRemoteIpAddress() + ":" + newRouter.getRemotePort());
 
             final String routerModel = Router.getRouterModel(this, newRouter);
-            Log.d(TAG, "routerModel: " + routerModel);
+            Crashlytics.log(Log.DEBUG,  TAG, "routerModel: " + routerModel);
             if (!(isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
                 if (Utils.isDemoRouter(newRouter)) {
                     newProfile.withIcon(R.drawable.demo_router);
@@ -1834,7 +1829,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         mDrawerResult.setSelection(position, true);
 
 //        final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
-//        Log.d(TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
+//        Crashlytics.log(Log.DEBUG, TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
 //        if (menuItemId != null) {
 ////            for (final Map.Entry<Integer, Integer> menuItems : navigationViewMenuItemsPositions.entrySet()) {
 ////                if (menuItems.getValue() == null || position != menuItems.getValue()) {

@@ -50,6 +50,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -197,7 +198,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     public static AbstractBaseFragment[] getFragments(@NonNull PageSlidingTabStripFragment parentFragment, @NonNull final Resources resources, int parentSectionNumber,
                                                       String sortingStrategy,
                                                       @Nullable final String router) {
-        Log.d(LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
+        Crashlytics.log(Log.DEBUG,  LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
 
         final Class sortingStrategyClass;
         SortingStrategy sortingStrategyInstance = null;
@@ -212,7 +213,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         if (exception != null) {
             //Default one
-            Log.d(LOG_TAG, "An error occurred - using DDWRTSortingStrategy default strategy: " + exception);
+            Crashlytics.log(Log.WARN, LOG_TAG, "An error occurred - using DDWRTSortingStrategy default strategy: " + exception);
             sortingStrategyInstance = new DDWRTSortingStrategy();
         }
 
@@ -757,10 +758,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         //setHasOptionsMenu(true);
 
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
-        Log.d(LOG_TAG, "onCreate() loaderIdsInUse: " + loaderIdsInUse);
+        Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsInUse: " + loaderIdsInUse);
         if (savedInstanceState != null) {
             final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
-            Log.d(LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
             if (loaderIdsSaved != null) {
                 //Destroy existing IDs, if any, as new loaders will get created in onResume()
                 final LoaderManager loaderManager = getLoaderManager();
@@ -886,8 +887,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         loaderManager.initLoader(0, null, this);
         this.setLoaderStopped(false);
         loaderIdsInUse.put(0, this);
-
-        Log.d(LOG_TAG, "fragmentTiles: " + this.fragmentTiles);
 
         if (this.fragmentTiles != null) {
             for (final DDWRTTile ddwrtTile : fragmentTiles) {
@@ -1070,8 +1069,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
 
             final boolean disableNowLayoutAnim = (cards.size() <= 1);
-
-            Log.d(LOG_TAG, "atLeastOneTileAdded: " + atLeastOneTileAdded + ", rows: " + cards.size());
 
             if (atLeastOneTileAdded) {
                 //Drop Everything

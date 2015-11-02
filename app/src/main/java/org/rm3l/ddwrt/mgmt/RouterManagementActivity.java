@@ -56,6 +56,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -594,7 +595,7 @@ public class RouterManagementActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (mPreferences.getBoolean(DEBUG_MODE, false)) {
-            Log.d(LOG_TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         }
         // Check which request we're responding to
         switch (requestCode) {
