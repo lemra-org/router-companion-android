@@ -84,6 +84,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.List;
@@ -742,6 +743,17 @@ public final class Utils {
                 opts);
     }
 
+    public static String getRouterAvatarUrl(@NonNull final String routerModel,
+                                            @Nullable final String[] opts) throws UnsupportedEncodingException {
+        return String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                Joiner
+                        .on(",")
+                        .skipNulls().join(opts != null ?
+                        opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
+                URLEncoder.encode(routerModel.toLowerCase().replaceAll("\\s+", ""),
+                        Charsets.UTF_8.name()));
+    }
+
     public static void downloadImageForRouter(@Nullable Context context,
                                               @NonNull final String routerModel,
                                               @Nullable final ImageView imageView,
@@ -752,12 +764,7 @@ public final class Utils {
 
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
-                    Joiner
-                            .on(",")
-                            .skipNulls().join(opts != null ?
-                                opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
-                    URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
+            final String url = getRouterAvatarUrl(routerModel, opts);
 
             downloadImageFromUrl(context,
                     url,

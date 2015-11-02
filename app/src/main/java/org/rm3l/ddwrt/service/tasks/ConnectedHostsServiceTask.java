@@ -388,11 +388,11 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             mNotificationManager.cancel(notifyID);
         } else {
 
-            final Bitmap largeIcon = BitmapFactory.decodeResource(
-                    mCtx.getResources(),
-                    R.drawable.ic_launcher_ddwrt_companion);
-
             if (updateNotification) {
+
+                final Bitmap largeIcon = BitmapFactory.decodeResource(
+                        mCtx.getResources(),
+                        R.drawable.ic_launcher_ddwrt_companion);
 
                 final Intent resultIntent = new Intent(mCtx,
                         DDWRTMainActivity.class);
@@ -421,7 +421,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
                 final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                         mCtx)
-                        .setSmallIcon(R.drawable.ic_launcher_ddwrt_companion)
+                        .setSmallIcon(R.drawable.ic_connected_hosts_notification)
                         .setLargeIcon(largeIcon)
                         .setAutoCancel(true)
                         .setGroup(WirelessClientsTile.class.getSimpleName())

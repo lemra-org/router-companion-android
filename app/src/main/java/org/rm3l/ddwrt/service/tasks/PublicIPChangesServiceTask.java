@@ -198,7 +198,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
                         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                                 mCtx)
-                                .setSmallIcon(R.drawable.ic_launcher_ddwrt_companion)
+                                .setSmallIcon(R.drawable.ic_stat_ip)
                                 .setLargeIcon(largeIcon)
                                 .setAutoCancel(true)
                                 .setGroup(PublicIPChangesServiceTask.class.getSimpleName())
