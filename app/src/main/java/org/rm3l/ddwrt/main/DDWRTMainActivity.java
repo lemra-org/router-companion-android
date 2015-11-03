@@ -494,7 +494,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         mDrawerResult = new DrawerBuilder()
                 .withActivity(this)
-                .withTranslucentStatusBar(false)
+                .withTranslucentStatusBar(true)
                 .withActionBarDrawerToggle(true)
                 .withSavedInstance(savedInstanceState)
                 .withToolbar(mToolbar)
