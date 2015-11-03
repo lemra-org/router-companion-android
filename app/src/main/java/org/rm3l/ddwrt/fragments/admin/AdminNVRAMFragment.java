@@ -39,10 +39,26 @@ import java.util.List;
  */
 public class AdminNVRAMFragment extends AbstractBaseFragment {
 
+    private List<DDWRTTile> tiles = null;
+
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+        if (tiles == null) {
+            tiles = Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+        }
+        return tiles;
+    }
+
+    @Override
+    protected boolean canChildScrollUp() {
+        final List<DDWRTTile> tiles = this.getTiles(null);
+        if (tiles == null || tiles.isEmpty()) {
+            return false;
+        }
+        final DDWRTTile tile = tiles.get(0);
+        return (tile instanceof AdminNVRAMTile &&
+                ((AdminNVRAMTile) tile).canChildScrollUp());
     }
 
 }

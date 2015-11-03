@@ -34,6 +34,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -395,6 +396,20 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
         });
 
+    }
+
+    public boolean canChildScrollUp() {
+        final boolean canScrollVertically = ViewCompat
+                .canScrollVertically(mRecyclerView, -1);
+        if (!canScrollVertically) {
+            return canScrollVertically;
+        }
+
+        //TODO ScrollView can scroll vertically,
+        // but detect whether the touch was done outside of the scroll view
+        // (in which case we should return false)
+
+        return canScrollVertically;
     }
 
     @Override
