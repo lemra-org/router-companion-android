@@ -640,10 +640,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         new ShowcaseView.Builder(this)
                 .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
-                .setContentTitle("Welcome")
-                .setContentText("- Get quick access to your routers from the side menu.\n\n" +
-                        "- Pull (from top to bottom) to manually refresh data.")
-                .singleShot(111)
+                .setContentTitle("Tips")
+                .setContentText("- Get quick access to your routers from the left side menu.\n\n" +
+                        "- Use the menu items to perform actions on the router or override the default settings.\n\n" +
+                        "- Pull (from top to bottom) whenever you want to manually reload the router data.")
+                .singleShot(1111)
                 .hideOnTouchOutside()
                 .build();
 
