@@ -31,6 +31,7 @@ import android.util.LruCache;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
@@ -190,7 +191,7 @@ public final class SSHUtils {
                 try {
                     lock.unlock();
                 } catch (final Exception e) {
-                    Crashlytics.logException(e);
+                    Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 } finally {
                     SSH_SESSIONS_CACHE_LOCKS.remove(cacheKey);
                 }
@@ -311,7 +312,7 @@ public final class SSHUtils {
             try {
                 lock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(cacheKey);
             }
 
@@ -457,7 +458,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
             } finally {
                 destroySession(cacheKey);
             }
@@ -522,7 +523,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(context, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -639,7 +640,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(ctx, routerCopy);
             } finally {
                 Closeables.closeQuietly(in);
@@ -695,7 +696,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -935,7 +936,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
@@ -1100,7 +1101,7 @@ public final class SSHUtils {
             try {
                 reentrantLock.unlock();
             } catch (final Exception e) {
-                Crashlytics.logException(e);
+                Crashlytics.log(Log.ERROR, TAG, Throwables.getStackTraceAsString(e));
                 destroySession(ctx, router);
             } finally {
                 Closeables.closeQuietly(in);
