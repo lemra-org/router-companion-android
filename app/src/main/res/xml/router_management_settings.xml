@@ -40,7 +40,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- General -->
     <PreferenceCategory
         android:key="@string/pref_header_general"
-        android:title="Data Sync">
+        android:title="Data Usage Control">
 
         <org.rm3l.ddwrt.utils.LongListPreference
             android:defaultValue="444"
@@ -49,7 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:key="data_usage_network"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/data_usage_theme" />
+            android:title="Sync Data" />
 
         <!--<CheckBoxPreference-->
             <!--android:defaultValue="true"-->
@@ -76,7 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.background.service.enable"
@@ -112,7 +112,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:showSilent="true"
             android:defaultValue="content://settings/system/notification_sound"/>
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="notifications.vibrate"
             android:summaryOff="Disabled."
@@ -130,7 +130,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:summaryOn="On"-->
             <!--android:title="Debug Mode" />-->
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="acra.enable"
             android:summaryOff="@string/pref_acra_disabled"

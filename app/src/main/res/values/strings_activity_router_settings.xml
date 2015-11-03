@@ -52,13 +52,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>Never</item>
-        <item>10 seconds</item>
-        <item>30 seconds</item>
-        <item>90 seconds</item>
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
+        <item>Never. I will refresh manually</item>
+        <item>Every 10 seconds</item>
+        <item>Every 30 seconds</item>
+        <item>Every 90 seconds</item>
+        <item>Every 5 minutes</item>
+        <item>Every 15 minutes</item>
+        <item>Every 30 minutes</item>
         <item>Hourly</item>
         <item>Daily</item>
     </string-array>
@@ -75,11 +75,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
 
     <string-array name="pref_notifications_sync_frequency_titles">
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
+        <item>Every 5 minutes</item>
+        <item>Every 15 minutes</item>
+        <item>Every 30 minutes</item>
         <item>Hourly</item>
-        <item>6 hours</item>
+        <item>Every 6 hours</item>
         <item>Daily</item>
     </string-array>
     <string-array name="pref_notifications_sync_frequency_values">
@@ -108,8 +108,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
 
     <string-array name="data_usage_titles">
-        <item>Only over Wi-Fi. Allows to save mobile bandwidth.</item>
-        <item>Over any network</item>
+        <item>Only when on Wi-Fi</item>
+        <item>On any network</item>
     </string-array>
     <string-array name="data_usage_values">
         <item>333</item>

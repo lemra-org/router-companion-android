@@ -33,6 +33,7 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -193,7 +194,8 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
                     }
                 }
 
-            } else if (!(preference instanceof CheckBoxPreference)) {
+            } else if (!(preference instanceof CheckBoxPreference ||
+                preference instanceof SwitchPreference)) {
                 // For all other preferences (but CheckBoxPreferences), set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
