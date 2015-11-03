@@ -67,6 +67,8 @@ import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.sample.ToolbarActionItemTarget;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Charsets;
@@ -635,6 +637,15 @@ public class DDWRTMainActivity extends AppCompatActivity
         if (activeProfile != null) {
             mDrawerHeaderResult.setActiveProfile(activeProfile);
         }
+
+        new ShowcaseView.Builder(this)
+                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
+                .setContentTitle("Welcome")
+                .setContentText("- Get quick access to your routers from the side menu.\n\n" +
+                        "- Pull (from top to bottom) to manually refresh data.")
+                .singleShot(111)
+                .hideOnTouchOutside()
+                .build();
 
 //        mDrawerList.performItemClick(
 //                mDrawerList.getChildAt(position),
@@ -1735,9 +1746,6 @@ public class DDWRTMainActivity extends AppCompatActivity
                 routersPicker.setSelection(currentItem);
             }
 
-            //Open Spinner right away
-            routersPicker.performClick();
-
             final int newRouterId = newRouter.getId();
 
             final IProfile newProfile = new ProfileDrawerItem()
@@ -1778,6 +1786,13 @@ public class DDWRTMainActivity extends AppCompatActivity
             } else {
                 mDrawerHeaderResult.addProfiles(newProfile);
             }
+
+            if (mDrawerResult.isDrawerOpen()) {
+                mDrawerResult.closeDrawer();
+            }
+
+            //Open Spinner right away
+            routersPicker.performClick();
         }
     }
 
