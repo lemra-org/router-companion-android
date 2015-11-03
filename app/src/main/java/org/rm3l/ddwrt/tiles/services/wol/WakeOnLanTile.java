@@ -108,8 +108,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     private final ArrayList<Device> mCurrentDevicesList = new ArrayList<>();
 
     public WakeOnLanTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_services_wol_clients,
-                R.id.tile_services_wol_clients_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_services_wol_clients, null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         // Create Options Menu
@@ -205,13 +204,11 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
     }
 
     public static RouterData<ArrayList<Device>> getArrayListRouterDataSync(@Nullable WakeOnLanTile wakeOnLanTile, Router mRouter, Context mParentFragmentActivity, List<String> broadcastAddresses, SharedPreferences mGlobalPreferences, SharedPreferences mParentFragmentPreferences) {
-        final boolean mAutoRefreshToggle =
-                (wakeOnLanTile == null || wakeOnLanTile.ismAutoRefreshToggle());
 
         final long nbRunsLoader = wakeOnLanTile != null ? wakeOnLanTile.getNbRunsLoader() : 0;
 
         Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WakeOnLanTile.class + ": routerInfo=" +
-                mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" +
+                mRouter + " / nbRunsLoader=" +
                 nbRunsLoader);
 
         //Determine broadcast address at each run (because that might change if connected to another network)
@@ -236,15 +233,6 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
             if (wakeOnLanTile.mRefreshing.getAndSet(true)) {
                 return new RouterData<ArrayList<Device>>() {
                 }.setException(new DDWRTTileAutoRefreshNotAllowedException());
-            }
-            if (!wakeOnLanTile.isForceRefresh()) {
-                //Force Manual Refresh
-                if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                    //Skip run
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                    return new RouterData<ArrayList<Device>>() {
-                    }.setException(new DDWRTTileAutoRefreshNotAllowedException());
-                }
             }
         }
         if (wakeOnLanTile != null) {
@@ -966,8 +954,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_services_wol_clients_togglebutton_title, R.id.tile_services_wol_clients_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {

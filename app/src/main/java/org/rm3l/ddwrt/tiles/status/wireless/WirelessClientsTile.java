@@ -27,7 +27,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -58,7 +57,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -308,7 +306,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public WirelessClientsTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments,
                 router,
-                R.layout.tile_status_wireless_clients, R.id.tile_status_wireless_clients_togglebutton);
+                R.layout.tile_status_wireless_clients, null);
 
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
@@ -325,18 +323,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         }
         mProgressBarDesc.setText("Loading...");
 
-        if (!this.mAutoRefreshToggle) {
-            if (mParentFragmentPreferences != null) {
-                mParentFragmentPreferences.edit()
-                        .remove(getFormattedPrefKey(RT_GRAPHS))
-                        .apply();
-            }
-        } else {
-            if (mParentFragmentPreferences != null && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
-                mParentFragmentPreferences.edit()
-                        .putBoolean(getFormattedPrefKey(RT_GRAPHS), true)
-                        .apply();
-            }
+        if (mParentFragmentPreferences != null && !mParentFragmentPreferences.contains(getFormattedPrefKey(RT_GRAPHS))) {
+            mParentFragmentPreferences.edit()
+                    .putBoolean(getFormattedPrefKey(RT_GRAPHS), true)
+                    .apply();
         }
 
         mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -551,25 +541,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     }
 
     @Override
-    protected void onAutoRefreshToggleCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        if (mParentFragmentPreferences != null) {
-            final SharedPreferences.Editor editor = mParentFragmentPreferences.edit();
-            final String rtPrefKey = \"fake-key\";
-            if (isChecked) {
-                editor.putBoolean(rtPrefKey, true);
-                //Destroy existing loader, and reload it
-            } else {
-                //This will cause menu item to be disabled
-                editor.remove(rtPrefKey);
-            }
-            editor.apply();
-            if (this.mCurrentLoader != null) {
-                doneLoading(this.mCurrentLoader);
-            }
-        }
-    }
-
-    @Override
     public int getTileHeaderViewId() {
         return R.id.tile_status_wireless_clients_hdr;
     }
@@ -600,7 +571,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
                 Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WirelessClientsTile.class + ": routerInfo=" +
-                        mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                        mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                 //Determine broadcast address at each run (because that might change if connected to another network)
                 try {
@@ -616,21 +587,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 if (mRefreshing.getAndSet(true)) {
                     return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                }
-                if (!isForceRefresh()) {
-                    //Force Manual Refresh
-                    if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                        //Skip run
-                        Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                        mParentFragmentActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mProgressBar.setVisibility(View.GONE);
-                                mProgressBarDesc.setVisibility(View.GONE);
-                            }
-                        });
-                        return new ClientDevices().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
                 }
                 nbRunsLoader++;
 
@@ -2390,12 +2346,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
             //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
-            doneWithLoaderInstance(this, loader, 1500l,
-                    R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
+            doneWithLoaderInstance(this, loader, 1500l);
         } else {
             //Use classical sync
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_status_wireless_clients_togglebutton_title, R.id.tile_status_wireless_clients_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
         }
     }
 

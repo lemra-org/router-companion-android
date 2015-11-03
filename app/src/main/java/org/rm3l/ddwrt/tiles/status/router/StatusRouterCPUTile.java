@@ -73,7 +73,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
 //    Drawable icon;
 
     public StatusRouterCPUTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_router_router_cpu, R.id.tile_status_router_router_cpu_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_status_router_router_cpu,
+                null);
     }
 
     @Override
@@ -110,18 +111,10 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                 try {
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusRouterCPUTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -325,8 +318,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_status_router_router_cpu_togglebutton_title, R.id.tile_status_router_router_cpu_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {

@@ -62,7 +62,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
     private long mLastSync;
 
     public StatusTimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_time, R.id.tile_status_time_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_status_time, null);
         daylightMap.put("1", "none");
         daylightMap.put("2", "first Sun Apr - last Sun Oct");
         daylightMap.put("3", "last Sun Mar - last Sun Oct");
@@ -96,18 +96,10 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
 
                 try {
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + StatusTimeTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -271,8 +263,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_status_time_togglebutton_title, R.id.tile_status_time_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {

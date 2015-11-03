@@ -47,8 +47,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 //    private final View.OnClickListener routerStateClickListener;
 
     public UptimeTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_overview_uptime,
-                R.id.tile_overview_uptime_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_overview_uptime,null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
 //        routerStateClickListener = new View.OnClickListener() {
@@ -93,18 +92,10 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                     isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + UptimeTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -353,9 +344,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
         }  finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_overview_uptime_togglebutton_title,
-                    R.id.tile_overview_uptime_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
         }
     }
 }

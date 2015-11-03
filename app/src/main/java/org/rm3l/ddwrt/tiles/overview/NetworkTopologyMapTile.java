@@ -71,8 +71,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
     private long mLastSync;
 
     public NetworkTopologyMapTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_network_map_overview,
-                R.id.tile_network_map_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_network_map_overview,null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         routerStateClickListener = new View.OnClickListener() {
@@ -140,18 +139,10 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + NetworkTopologyMapTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -533,9 +524,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     SSHUtils.destroySession(mParentFragmentActivity, mRouterCopy);
                 }
             } finally {
-                doneWithLoaderInstance(this, loader,
-                        R.id.tile_network_map_togglebutton_title,
-                        R.id.tile_network_map_togglebutton_separator);
+                doneWithLoaderInstance(this, loader);
             }
         }
     }

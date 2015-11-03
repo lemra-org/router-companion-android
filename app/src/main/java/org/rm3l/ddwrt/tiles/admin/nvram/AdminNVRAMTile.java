@@ -139,7 +139,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     private long mLastSync;
 
     public AdminNVRAMTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_admin_nvram, R.id.tile_admin_nvram_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_admin_nvram, null);
 
         sortIds.put(R.id.tile_admin_nvram_sort_default, 11);
         sortIds.put(R.id.tile_admin_nvram_sort_asc, 12);
@@ -598,18 +598,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
 
                 try {
                     Crashlytics.log(Log.DEBUG,  LOG_TAG, "Init background loader for " + AdminNVRAMTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Skip loader run");
-                            return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -808,8 +800,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_admin_nvram_togglebutton_title, R.id.tile_admin_nvram_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {

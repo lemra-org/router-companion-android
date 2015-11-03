@@ -143,7 +143,7 @@ public class WANMonthlyTrafficTile
     private boolean mIsThemeLight;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, R.id.tile_status_wan_monthly_traffic_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
 
         mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
         
@@ -384,7 +384,7 @@ public class WANMonthlyTrafficTile
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
 
-        if (nbRunsLoader <= 0 || mAutoRefreshToggle) {
+        if (nbRunsLoader <= 0) {
             setLoadingViewVisibility(View.VISIBLE);
         }
 
@@ -399,14 +399,14 @@ public class WANMonthlyTrafficTile
                     mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANMonthlyTrafficTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     if (!isForceRefresh()) {
                         //Force Manual Refresh
-                        if (isToggleStateActionRunning.get() || (nbRunsLoader > 0 && !mAutoRefreshToggle)) {
+                        if (isToggleStateActionRunning.get()) {
                             //Skip run
                             Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
                             throw new DDWRTTileAutoRefreshNotAllowedException();
@@ -747,8 +747,7 @@ public class WANMonthlyTrafficTile
                 }
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_status_wan_monthly_traffic_togglebutton_title, R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
@@ -826,9 +825,7 @@ public class WANMonthlyTrafficTile
                                                     //Reload everything right away
                                                     doneWithLoaderInstance(WANMonthlyTrafficTile.this,
                                                             mLoader,
-                                                            1l,
-                                                            R.id.tile_status_wan_monthly_traffic_togglebutton_title,
-                                                            R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+                                                            1l);
                                                 }
                                             }
 
@@ -1114,9 +1111,7 @@ public class WANMonthlyTrafficTile
                                                                       //Reload everything right away
                                                                       doneWithLoaderInstance(WANMonthlyTrafficTile.this,
                                                                               mLoader,
-                                                                              1l,
-                                                                              R.id.tile_status_wan_monthly_traffic_togglebutton_title,
-                                                                              R.id.tile_status_wan_monthly_traffic_togglebutton_separator);
+                                                                              1l);
                                                                   }
 
                                                               }

@@ -65,8 +65,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
     private long mLastSync;
 
     public OpenVPNServerTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_services_openvpn_server,
-                R.id.tile_services_openvpn_server_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_services_openvpn_server,null);
     }
 
     @Override
@@ -91,18 +90,10 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
 
                 try {
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + OpenVPNServerTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -268,8 +259,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
             }
 
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_services_openvpn_server_togglebutton_title, R.id.tile_services_openvpn_server_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
@@ -411,9 +401,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                                                                       //Reload everything right away
                                                                       doneWithLoaderInstance(OpenVPNServerTile.this,
                                                                               mLoader,
-                                                                              1l,
-                                                                              R.id.tile_services_openvpn_server_togglebutton_title,
-                                                                              R.id.tile_services_openvpn_server_togglebutton_separator);
+                                                                              1l);
                                                                   }
                                                               }
                                                           }

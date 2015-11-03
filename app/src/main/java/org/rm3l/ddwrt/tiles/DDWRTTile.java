@@ -38,7 +38,6 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
@@ -65,8 +64,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class DDWRTTile<T>
         implements
         View.OnClickListener,
-        LoaderManager.LoaderCallbacks<T>,
-        CompoundButton.OnCheckedChangeListener {
+        LoaderManager.LoaderCallbacks<T> {
 
     private static final String LOG_TAG = DDWRTTile.class.getSimpleName();
     @NonNull
@@ -93,9 +91,6 @@ public abstract class DDWRTTile<T>
         }
     }
     protected long nbRunsLoader = 0;
-    protected boolean mAutoRefreshToggle = true;
-    @Nullable
-    protected CompoundButton mToggleAutoRefreshButton = null;
     protected ViewGroup layout;
     protected ViewGroup parentViewGroup;
     protected Integer layoutId;
@@ -139,24 +134,6 @@ public abstract class DDWRTTile<T>
         if (layoutId != null) {
             this.layout = (ViewGroup) this.mParentFragment.getLayoutInflater(arguments).inflate(layoutId, null);
         }
-        this.mAutoRefreshToggle = this.mParentFragmentPreferences != null &&
-                this.mParentFragmentPreferences.getBoolean(getAutoRefreshPreferenceKey(), true);
-
-        if (toggleRefreshButtonId != null) {
-            this.mToggleAutoRefreshButton = (CompoundButton) layout.findViewById(toggleRefreshButtonId);
-            if (this.mToggleAutoRefreshButton != null) {
-                this.mToggleAutoRefreshButton.setOnCheckedChangeListener(this);
-                this.mToggleAutoRefreshButton.setChecked(this.mAutoRefreshToggle);
-            }
-        }
-    }
-
-    public boolean ismAutoRefreshToggle() {
-        return mAutoRefreshToggle;
-    }
-
-    public void setmAutoRefreshToggle(boolean mAutoRefreshToggle) {
-        this.mAutoRefreshToggle = mAutoRefreshToggle;
     }
 
     public long getNbRunsLoader() {
@@ -196,26 +173,6 @@ public abstract class DDWRTTile<T>
 
     public void setLoaderStopped(boolean mLoaderStopped) {
         this.mLoaderStopped = mLoaderStopped;
-    }
-
-    @Override
-    public final void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        this.mAutoRefreshToggle = isChecked;
-        if (this.mParentFragmentPreferences != null) {
-            final SharedPreferences.Editor editor = this.mParentFragmentPreferences.edit();
-            editor.putBoolean(getAutoRefreshPreferenceKey(), this.mAutoRefreshToggle);
-            editor.apply();
-            Utils.requestBackup(mParentFragmentActivity);
-        }
-        this.onAutoRefreshToggleCheckedChanged(compoundButton, isChecked);
-    }
-
-    protected void onAutoRefreshToggleCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        //Nothing to do here, but subclasses may override this to perform additional processing
-    }
-
-    protected String getAutoRefreshPreferenceKey() {
-        return getFormattedPrefKey("autoRefresh");
     }
 
     protected String getFormattedPrefKey(@NonNull final String scope) {
@@ -260,8 +217,7 @@ public abstract class DDWRTTile<T>
 
         try {
             final ViewGroup viewGroupLayout = this.getViewGroupLayout();
-            if (viewGroupLayout != null && mToggleAutoRefreshButton != null) {
-                mToggleAutoRefreshButton.setVisibility(View.VISIBLE);
+            if (viewGroupLayout != null) {
                 if (additionalButtonsToMakeVisible != null) {
                     for (int viewToMakeVisible : additionalButtonsToMakeVisible) {
                         final View viewById = viewGroupLayout.findViewById(viewToMakeVisible);

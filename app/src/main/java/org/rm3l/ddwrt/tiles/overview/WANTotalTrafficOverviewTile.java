@@ -92,8 +92,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     private NVRAMInfo mNvramInfo;
 
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic,
-                R.id.tile_overview_wan_total_traffic_togglebutton);
+        super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic, null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
@@ -168,18 +167,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANTotalTrafficOverviewTile.class + ": routerInfo=" +
-                            mRouter + " / this.mAutoRefreshToggle= " + mAutoRefreshToggle + " / nbRunsLoader=" + nbRunsLoader);
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
 
                     if (mRefreshing.getAndSet(true)) {
                         return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                    }
-                    if (!isForceRefresh()) {
-                        //Force Manual Refresh
-                        if (nbRunsLoader > 0 && !mAutoRefreshToggle) {
-                            //Skip run
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "Skip loader run");
-                            return new NVRAMInfo().setException(new DDWRTTileAutoRefreshNotAllowedException());
-                        }
                     }
                     nbRunsLoader++;
 
@@ -534,9 +525,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         }  finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
-            doneWithLoaderInstance(this, loader,
-                    R.id.tile_overview_wan_total_traffic_togglebutton_title,
-                    R.id.tile_overview_wan_total_traffic_togglebutton_separator);
+            doneWithLoaderInstance(this, loader);
         }
     }
 

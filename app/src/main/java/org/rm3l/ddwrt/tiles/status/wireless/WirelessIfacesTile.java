@@ -439,9 +439,7 @@ public class WirelessIfacesTile extends IfacesTile {
                                                                       //Reload everything right away
                                                                       doneWithLoaderInstance(WirelessIfacesTile.this,
                                                                               mLoader,
-                                                                              1l,
-                                                                              R.id.tile_status_bandwidth_ifaces_togglebutton_title,
-                                                                              R.id.tile_status_bandwidth_ifaces_togglebutton_separator);
+                                                                              1l);
                                                                   }
                                                               }
                                                           }
