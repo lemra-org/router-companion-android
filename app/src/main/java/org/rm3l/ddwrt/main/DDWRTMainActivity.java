@@ -32,6 +32,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -56,6 +59,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -654,11 +658,14 @@ public class DDWRTMainActivity extends AppCompatActivity
         final int scvTheme = (mIsThemeLight ? R.style.SCV_Custom_semi_transparent :
                 R.style.SCV_Custom_semi_transparent_Dark);
 
-        new ShowcaseView.Builder(this)
+        final Resources resources = getResources();
+
+        final ShowcaseView showcaseView = new ShowcaseView.Builder(this)
                 .setStyle(scvTheme)
-                .setTarget(new ViewTarget(mDrawerHeaderResult.getView()))
-                .setContentTitle("Tips")
-                .setContentText("Get quick access to your routers from here and the left side menu")
+                .setTarget(new ViewTarget(mToolbar.getChildCount() > 0 ?
+                        mToolbar.getChildAt(0) : mToolbar))
+                .setContentTitle("Tips (1/3)")
+                .setContentText("Slide left to right to get quick access to your routers")
                 .singleShot(1)
                 .hideOnTouchOutside()
                 .setShowcaseEventListener(new OnShowcaseEventListener() {
@@ -677,10 +684,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 }
                             }
                         });
-                        new ShowcaseView.Builder(DDWRTMainActivity.this)
+                        final ShowcaseView showcaseView1 = new ShowcaseView.Builder(DDWRTMainActivity.this)
                                 .setStyle(scvTheme)
                                 .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
-                                .setContentTitle("Tips")
+                                .setContentTitle("Tips (2/3)")
                                 .setContentText("Use the menu items to perform actions on the router or override the default settings.")
                                 .singleShot(11)
                                 .hideOnTouchOutside()
@@ -692,9 +699,9 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                                     @Override
                                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                                        new ShowcaseView.Builder(DDWRTMainActivity.this)
+                                        final ShowcaseView showcaseView2 = new ShowcaseView.Builder(DDWRTMainActivity.this)
                                                 .setStyle(scvTheme)
-                                                .setContentTitle("Tips")
+                                                .setContentTitle("Tips (3/3)")
                                                 .setContentText("Pull to manually refresh data.")
                                                 .singleShot(12)
                                                 .hideOnTouchOutside()
@@ -715,6 +722,17 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                     }
                                                 })
                                                 .build();
+
+                                        final Bitmap pullTopBottomScvBitmap = BitmapFactory.decodeResource(resources,
+                                                R.drawable.pull_refresh_transparent);
+                                        final BitmapDrawable pullTopBottomScvDrawable = new BitmapDrawable(resources,
+                                                pullTopBottomScvBitmap);
+                                        final ImageView pullTopBottomScvImageView = new ImageView(DDWRTMainActivity.this);
+                                        pullTopBottomScvImageView.setLayoutParams(new
+                                                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                        pullTopBottomScvImageView.setImageDrawable(pullTopBottomScvDrawable);
+                                        showcaseView2.addView(pullTopBottomScvImageView);
+
                                     }
 
                                     @Override
@@ -731,6 +749,23 @@ public class DDWRTMainActivity extends AppCompatActivity
                     }
                 })
                 .build();
+
+        final Bitmap slideLeftRightScvBitmap = BitmapFactory.decodeResource(resources,
+                R.drawable.slide_left_right_transparent);
+        final BitmapDrawable slideLeftRightScvDrawable = new BitmapDrawable(resources, slideLeftRightScvBitmap);
+        slideLeftRightScvDrawable.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+        final ImageView slideLeftRightScvImageView = new ImageView(DDWRTMainActivity.this);
+        final ViewGroup.LayoutParams params = new
+                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        slideLeftRightScvImageView.setLayoutParams(params);
+        slideLeftRightScvImageView.setImageDrawable(slideLeftRightScvDrawable);
+        showcaseView.addView(slideLeftRightScvImageView);
+//        for (int i = 0 ; i < showcaseView.getChildCount(); i++) {
+//            final View childAt = showcaseView.getChildAt(i);
+//            if (childAt == null) {
+//                continue;
+//            }
+//        }
 
 //        mDrawerList.performItemClick(
 //                mDrawerList.getChildAt(position),
