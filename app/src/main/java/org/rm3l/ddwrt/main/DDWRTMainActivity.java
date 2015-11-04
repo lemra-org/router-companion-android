@@ -600,6 +600,12 @@ public class DDWRTMainActivity extends AppCompatActivity
                                     //About
                                     new AboutDialog(DDWRTMainActivity.this).show();
                                     break;
+                                default:
+                                    break;
+                            }
+                            // Select previously selected item
+                            if (mPosition >= 0) {
+                                selectItem(mPosition);
                             }
                         }
                         //Force close after selection
@@ -1540,6 +1546,10 @@ public class DDWRTMainActivity extends AppCompatActivity
                         PageSlidingTabStripFragment
                                 .newInstance(this, position, this.mRouterUuid))
                 .commit();
+
+        if (mDrawerResult.isDrawerOpen()) {
+            mDrawerResult.closeDrawer();
+        }
 
 //        mDrawerLayout.closeDrawer(mDrawerList);
 //        mDrawerLayout.closeDrawers();
