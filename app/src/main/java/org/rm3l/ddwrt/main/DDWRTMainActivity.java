@@ -67,6 +67,7 @@ import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.ToolbarActionItemTarget;
 import com.google.android.gms.ads.AdListener;
@@ -638,14 +639,78 @@ public class DDWRTMainActivity extends AppCompatActivity
             mDrawerHeaderResult.setActiveProfile(activeProfile);
         }
 
+        final int scvTheme = (mIsThemeLight ? R.style.SCV_Custom_semi_transparent :
+                R.style.SCV_Custom_semi_transparent_Dark);
+
         new ShowcaseView.Builder(this)
-                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
+                .setStyle(scvTheme)
+                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.toolbar_routers_list_spinner))
                 .setContentTitle("Tips")
-                .setContentText("- Get quick access to your routers from the left side menu.\n\n" +
-                        "- Use the menu items to perform actions on the router or override the default settings.\n\n" +
-                        "- Pull (from top to bottom) whenever you want to manually reload the router data.")
-                .singleShot(1111)
+                .setContentText("Get quick access to your routers from here and the left side menu")
+                .singleShot(1)
                 .hideOnTouchOutside()
+                .setShowcaseEventListener(new OnShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+                    }
+
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+                        new ShowcaseView.Builder(DDWRTMainActivity.this)
+                                .setStyle(scvTheme)
+                                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
+                                .setContentTitle("Tips")
+                                .setContentText("Use the menu items to perform actions on the router or override the default settings.")
+                                .singleShot(11)
+                                .hideOnTouchOutside()
+                                .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                    @Override
+                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+                                    }
+
+                                    @Override
+                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                                        new ShowcaseView.Builder(DDWRTMainActivity.this)
+                                                .setStyle(scvTheme)
+                                                .setContentTitle("Tips")
+                                                .setContentText("Pull (from top to bottom) whenever you want to manually reload the router data.")
+                                                .singleShot(12)
+                                                .hideOnTouchOutside()
+                                                .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                                    @Override
+                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                                                    }
+                                                })
+                                                .build();
+                                    }
+
+                                    @Override
+                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                                    }
+                                })
+                                .build();
+                    }
+
+                    @Override
+                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                    }
+                })
                 .build();
 
 //        mDrawerList.performItemClick(
