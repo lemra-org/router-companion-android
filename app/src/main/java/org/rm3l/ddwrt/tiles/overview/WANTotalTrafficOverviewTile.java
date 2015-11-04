@@ -437,7 +437,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final String dlMBytesFromNvram = data.getProperty(
                         isDayCycle ? TOTAL_DL_CURRENT_DAY_MB : TOTAL_DL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(dlMBytesFromNvram)) {
-                    dlMB.setVisibility(View.GONE);
+                    dlMB.setVisibility(View.INVISIBLE);
                 } else {
                     dlMB.setVisibility(View.VISIBLE);
                 }
@@ -448,7 +448,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final String ulMBytesFromNvram = data.getProperty(
                         isDayCycle ? TOTAL_UL_CURRENT_DAY_MB : TOTAL_UL_CURRENT_MONTH_MB);
                 if (HIDDEN_.equals(ulMBytesFromNvram)) {
-                    ulMB.setVisibility(View.GONE);
+                    ulMB.setVisibility(View.INVISIBLE);
                 } else {
                     ulMB.setVisibility(View.VISIBLE);
                 }
