@@ -258,8 +258,14 @@ public class RouterListRecycleViewAdapter extends
             }
         });
 
-        if (!Strings.isNullOrEmpty(routerModelStr)) {
-
+        if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(routerAt)) {
+            if (Strings.isNullOrEmpty(routerModelStr)) {
+                //FIXME Router Model could not be detected - report exception
+            }
+            holder.routerAvatarImage.setImageResource(
+                    Utils.isDemoRouter(routerAt) ?
+                        R.drawable.demo_router : R.drawable.router);
+        } else {
             //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
             final String[] opts = new String[] 
             {
@@ -274,19 +280,14 @@ public class RouterListRecycleViewAdapter extends
                 "e_trim"
             };
 
+            //Download image in the background
             Utils.downloadImageForRouter(context,
                     routerModelStr,
                     holder.routerAvatarImage,
                     null,
                     null,
-                    Utils.isDemoRouter(routerAt) ?
-                            R.drawable.demo_router : R.drawable.router,
+                    R.drawable.router,
                     opts);
-
-        } else {
-            holder.routerAvatarImage.setImageResource(
-                    Utils.isDemoRouter(routerAt) ?
-                        R.drawable.demo_router : R.drawable.router);
         }
 
         holder.itemView.post(new Runnable() {
