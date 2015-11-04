@@ -58,10 +58,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,13 +67,13 @@ import com.crashlytics.android.Crashlytics;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.ToolbarActionItemTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -122,15 +119,12 @@ import org.rm3l.ddwrt.utils.Utils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -162,6 +156,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final String RESTORE_ROUTER_FRAGMENT_TAG = "RESTORE_ROUTER_FRAGMENT_TAG";
     public static final int ADD_NEW_ROUTER = 123;
     public static final int MANAGE_ROUTERS = 234;
+    public static final String DRAWER_OPEN_FIRST_LAUNCH_PREF = "drawer_open_first_launch";
 
 //    private Handler mDrawerActionHandler;
 
@@ -195,8 +190,8 @@ public class DDWRTMainActivity extends AppCompatActivity
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
 //    private NavigationDrawerArrayAdapter mNavigationDrawerAdapter;
-    private ArrayAdapter<String> mRoutersListAdapter;
-    private ArrayList<Router> mRoutersListForPicker;
+//    private ArrayAdapter<String> mRoutersListAdapter;
+//    private ArrayList<Router> mRoutersListForPicker;
 
     private AccountHeader mDrawerHeaderResult;
     private Drawer mDrawerResult;
@@ -503,7 +498,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withToolbar(mToolbar)
                 .withAccountHeader(mDrawerHeaderResult) //set the AccountHeader we created earlier for the header
                 .withSavedInstance(savedInstanceState)
-                .withShowDrawerOnFirstLaunch(true)
+                .withShowDrawerOnFirstLaunch(false)
                 .withCloseOnClick(true)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Overview")
@@ -639,12 +634,23 @@ public class DDWRTMainActivity extends AppCompatActivity
             mDrawerHeaderResult.setActiveProfile(activeProfile);
         }
 
+        final boolean drawerOpenFirstLaunch = mGlobalPreferences
+                .getBoolean(DRAWER_OPEN_FIRST_LAUNCH_PREF, false);
+        if (!drawerOpenFirstLaunch) {
+            if (!mDrawerResult.isDrawerOpen()) {
+                mDrawerResult.openDrawer();
+            }
+            mGlobalPreferences.edit()
+                    .putBoolean(DRAWER_OPEN_FIRST_LAUNCH_PREF, true)
+                    .apply();
+        }
+
         final int scvTheme = (mIsThemeLight ? R.style.SCV_Custom_semi_transparent :
                 R.style.SCV_Custom_semi_transparent_Dark);
 
         new ShowcaseView.Builder(this)
                 .setStyle(scvTheme)
-                .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.toolbar_routers_list_spinner))
+                .setTarget(new ViewTarget(mDrawerHeaderResult.getView()))
                 .setContentTitle("Tips")
                 .setContentText("Get quick access to your routers from here and the left side menu")
                 .singleShot(1)
@@ -657,7 +663,14 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDrawerResult.isDrawerOpen()) {
+                                    mDrawerResult.closeDrawer();
+                                }
+                            }
+                        });
                         new ShowcaseView.Builder(DDWRTMainActivity.this)
                                 .setStyle(scvTheme)
                                 .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
@@ -676,7 +689,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                         new ShowcaseView.Builder(DDWRTMainActivity.this)
                                                 .setStyle(scvTheme)
                                                 .setContentTitle("Tips")
-                                                .setContentText("Pull (from top to bottom) whenever you want to manually reload the router data.")
+                                                .setContentText("Pull to manually refresh data.")
                                                 .singleShot(12)
                                                 .hideOnTouchOutside()
                                                 .setShowcaseEventListener(new OnShowcaseEventListener() {
@@ -829,172 +842,172 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         //Routers picker
 //        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
-        @SuppressWarnings("ConstantConditions")
-        final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-        final List<Router> allRouters = dao.getAllRouters();
-        if (allRouters == null || allRouters.isEmpty()) {
-            Utils.reportException(DDWRTMainActivity.this, new
-                    IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
-            routersPicker.setVisibility(View.GONE);
-        } else {
-            routersPicker.setVisibility(View.VISIBLE);
-
-            final int allRoutersSize = allRouters.size();
-//            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
-            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-            for (final Router router : allRouters) {
-                //FIXME Uncomment once full support of other firmwares is implemented
-//                final RouterFirmware routerFirmware;
-//                if (router == null ||
-//                        (routerFirmware = router.getRouterFirmware()) == null ||
-//                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-//                    continue;
+//        @SuppressWarnings("ConstantConditions")
+//        final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
+//        final List<Router> allRouters = dao.getAllRouters();
+//        if (allRouters == null || allRouters.isEmpty()) {
+//            Utils.reportException(DDWRTMainActivity.this, new
+//                    IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
+//            routersPicker.setVisibility(View.GONE);
+//        } else {
+//            routersPicker.setVisibility(View.VISIBLE);
+//
+//            final int allRoutersSize = allRouters.size();
+////            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
+//            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
+//            for (final Router router : allRouters) {
+//                //FIXME Uncomment once full support of other firmwares is implemented
+////                final RouterFirmware routerFirmware;
+////                if (router == null ||
+////                        (routerFirmware = router.getRouterFirmware()) == null ||
+////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+////                    continue;
+////                }
+//                //FIXME End
+//                mRoutersListForPicker.add(router);
+//            }
+//
+//            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
+//            routersNamesArray[0] = "--- ADD NEW ---";
+//
+//            int i = 1;
+//            int currentItem = -1;
+//
+//            for (final Router router : mRoutersListForPicker) {
+//                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
+//                    currentItem = i;
 //                }
-                //FIXME End
-                mRoutersListForPicker.add(router);
-            }
-
-            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-            routersNamesArray[0] = "--- ADD NEW ---";
-
-            int i = 1;
-            int currentItem = -1;
-
-            for (final Router router : mRoutersListForPicker) {
-                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-                    currentItem = i;
-                }
-                final String routerName = router.getName();
-                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-
-                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-                final String subTitle =
-                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-                                (effectiveRemoteAddr + ":" + effectivePort));
-
-                routersNamesArray[i++] = (title + "\n(" +
-                        subTitle + ")");
-            }
-
-            mRoutersListAdapter = new ArrayAdapter<>(this,
-                    R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
-            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            routersPicker.setAdapter(mRoutersListAdapter);
-            if (currentItem >= 0) {
-                routersPicker.setSelection(currentItem);
-            }
-            final int currentItemPos = currentItem;
-            routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    //Recreate UI with new Router selected
-                    final int size = mRoutersListForPicker.size();
-                    if (position < 0 || position > size) {
-                        return;
-                    }
-                    if (position == 0) {
-                        //Add New Button
-                        openAddRouterForm();
-                        if (currentItemPos >= 0) {
-                            routersPicker.setSelection(currentItemPos);
-                        }
-                        return;
-                    }
-
-                    final Router selectedRouter = mRoutersListForPicker.get(position - 1);
-                    if (selectedRouter == null) {
-                        return;
-                    }
-                    final String selectedRouterUuid = selectedRouter.getUuid();
-                    final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
-                    if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
-                            || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
-                        return;
-                    }
-
-                    final Intent intent = getIntent();
-                    intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
-                    intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-
-                    if (BuildConfig.WITH_ADS &&
-                            mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            @Override
-                            public void onAdClosed() {
-                                finish();
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onAdOpened() {
-                                //Save preference
-                                mGlobalPreferences.edit()
-                                        .putLong(
-                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                System.currentTimeMillis())
-                                        .apply();
-                            }
-                        });
-
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        } else {
-                            //Reload UI
-//                            final AlertDialog alertDialog = Utils.
-//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                    "Switching Routers", "Please wait...", true);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    finish();
-                                    startActivity(intent);
-                                    alertDialog.cancel();
-                                }
-                            }, 2000);
-                        }
-
-                    } else {
-                        //Reload UI
-//                        final AlertDialog alertDialog = Utils.
-//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                "Switching Routers", "Please wait...", true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                                startActivity(intent);
-                                alertDialog.cancel();
-                            }
-                        }, 2000);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-
-//            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
+//                final String routerName = router.getName();
+//                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
+//                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
+//
+//                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
+//                final String subTitle =
+//                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+//                                (effectiveRemoteAddr + ":" + effectivePort));
+//
+//                routersNamesArray[i++] = (title + "\n(" +
+//                        subTitle + ")");
+//            }
+//
+//            mRoutersListAdapter = new ArrayAdapter<>(this,
+//                    R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
+//            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//            routersPicker.setAdapter(mRoutersListAdapter);
+//            if (currentItem >= 0) {
+//                routersPicker.setSelection(currentItem);
+//            }
+//            final int currentItemPos = currentItem;
+//            routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 //                @Override
-//                public boolean onLongClick(View v) {
-//                    //On long click open up Router Management activity by finishing this activity
-//                    finish();
-//                    return true;
+//                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                    //Recreate UI with new Router selected
+//                    final int size = mRoutersListForPicker.size();
+//                    if (position < 0 || position > size) {
+//                        return;
+//                    }
+//                    if (position == 0) {
+//                        //Add New Button
+//                        openAddRouterForm();
+//                        if (currentItemPos >= 0) {
+//                            routersPicker.setSelection(currentItemPos);
+//                        }
+//                        return;
+//                    }
+//
+//                    final Router selectedRouter = mRoutersListForPicker.get(position - 1);
+//                    if (selectedRouter == null) {
+//                        return;
+//                    }
+//                    final String selectedRouterUuid = selectedRouter.getUuid();
+//                    final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
+//                    if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
+//                            || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
+//                        return;
+//                    }
+//
+//                    final Intent intent = getIntent();
+//                    intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
+//                    intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+//
+//                    if (BuildConfig.WITH_ADS &&
+//                            mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
+//
+//                        mInterstitialAd.setAdListener(new AdListener() {
+//                            @Override
+//                            public void onAdClosed() {
+//                                finish();
+//                                startActivity(intent);
+//                            }
+//
+//                            @Override
+//                            public void onAdOpened() {
+//                                //Save preference
+//                                mGlobalPreferences.edit()
+//                                        .putLong(
+//                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+//                                                System.currentTimeMillis())
+//                                        .apply();
+//                            }
+//                        });
+//
+//                        if (mInterstitialAd.isLoaded()) {
+//                            mInterstitialAd.show();
+//                        } else {
+//                            //Reload UI
+////                            final AlertDialog alertDialog = Utils.
+////                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+////                            alertDialog.show();
+////                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+//                                    "Switching Routers", "Please wait...", true);
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    finish();
+//                                    startActivity(intent);
+//                                    alertDialog.cancel();
+//                                }
+//                            }, 2000);
+//                        }
+//
+//                    } else {
+//                        //Reload UI
+////                        final AlertDialog alertDialog = Utils.
+////                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+////                        alertDialog.show();
+////                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+//                                "Switching Routers", "Please wait...", true);
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                finish();
+//                                startActivity(intent);
+//                                alertDialog.cancel();
+//                            }
+//                        }, 2000);
+//                    }
+//                }
+//
+//                @Override
+//                public void onNothingSelected(AdapterView<?> parent) {
+//
 //                }
 //            });
-
-
-        }
+//
+////            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
+////                @Override
+////                public boolean onLongClick(View v) {
+////                    //On long click open up Router Management activity by finishing this activity
+////                    finish();
+////                    return true;
+////                }
+////            });
+//
+//
+//        }
 
         mTitle = mDrawerTitle = getTitle();
         if (mToolbar != null) {
@@ -1760,57 +1773,57 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onRouterAdd(final DialogFragment dialog, final Router newRouter, final boolean error) {
         if (!error) {
-            final List<Router> allRouters = dao.getAllRouters();
-            final int allRoutersSize = allRouters.size();
-            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-            for (final Router wrt : allRouters) {
-                //FIXME Uncomment once other firmwares are fully supported
-//                final RouterFirmware routerFirmware;
-//                if (wrt == null ||
-//                        (routerFirmware = wrt.getRouterFirmware()) == null ||
-//                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-//                    continue;
+//            final List<Router> allRouters = dao.getAllRouters();
+//            final int allRoutersSize = allRouters.size();
+//            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
+//            for (final Router wrt : allRouters) {
+//                //FIXME Uncomment once other firmwares are fully supported
+////                final RouterFirmware routerFirmware;
+////                if (wrt == null ||
+////                        (routerFirmware = wrt.getRouterFirmware()) == null ||
+////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+////                    continue;
+////                }
+//                //FIXME End
+//                mRoutersListForPicker.add(wrt);
+//            }
+//
+//            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
+//            routersNamesArray[0] = "--- ADD NEW ---";
+//
+//            int i = 1;
+//            int currentItem = -1;
+//            for (final Router router : mRoutersListForPicker) {
+//                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
+//                    currentItem = i;
 //                }
-                //FIXME End
-                mRoutersListForPicker.add(wrt);
-            }
-
-            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-            routersNamesArray[0] = "--- ADD NEW ---";
-
-            int i = 1;
-            int currentItem = -1;
-            for (final Router router : mRoutersListForPicker) {
-                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-                    currentItem = i;
-                }
+////                final String routerName = router.getName();
+////                routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
+////                        router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
 //                final String routerName = router.getName();
-//                routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
-//                        router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
-                final String routerName = router.getName();
-                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-
-                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-                final String subTitle =
-                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-                                (effectiveRemoteAddr + ":" + effectivePort));
-
-                routersNamesArray[i++] = (title + "\n(" +
-                        subTitle + ")");
-            }
-
-            mRoutersListAdapter = new ArrayAdapter<>(this,
-                    R.layout.routers_picker_spinner_item, routersNamesArray);
-            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-//            final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
-            final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-            routersPicker.setAdapter(mRoutersListAdapter);
-
-            if (currentItem >= 0) {
-                routersPicker.setSelection(currentItem);
-            }
+//                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
+//                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
+//
+//                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
+//                final String subTitle =
+//                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+//                                (effectiveRemoteAddr + ":" + effectivePort));
+//
+//                routersNamesArray[i++] = (title + "\n(" +
+//                        subTitle + ")");
+//            }
+//
+//            mRoutersListAdapter = new ArrayAdapter<>(this,
+//                    R.layout.routers_picker_spinner_item, routersNamesArray);
+//            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+////            final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
+//            final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
+//            routersPicker.setAdapter(mRoutersListAdapter);
+//
+//            if (currentItem >= 0) {
+//                routersPicker.setSelection(currentItem);
+//            }
 
             final int newRouterId = newRouter.getId();
 
@@ -1862,7 +1875,7 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
 
             //Open Spinner right away
-            routersPicker.performClick();
+//            routersPicker.performClick();
         }
     }
 
@@ -1944,181 +1957,182 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
             if (info != null && info.isConnected()) {
-//                final String routerName = mRouter.getName();
-//                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, DDWRTMainActivity.this);
-//                final Integer effectivePort = Router.getEffectivePort(mRouter, DDWRTMainActivity.this);
-//
-//                setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-//
-//                mTitle = mDrawerTitle = getTitle();
-//                if (mToolbar != null) {
-//                    mToolbar.setTitle(mTitle);
-//                    mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-//                            (effectiveRemoteAddr + ":" + effectivePort));
-//                }
-                final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-                final List<Router> allRouters = dao.getAllRouters();
-                if (allRouters == null || allRouters.isEmpty()) {
-                    Utils.reportException(DDWRTMainActivity.this, new
-                            IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
-                    routersPicker.setVisibility(View.GONE);
-                } else {
-                    routersPicker.setVisibility(View.VISIBLE);
+                final String routerName = mRouter.getName();
+                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, DDWRTMainActivity.this);
+                final Integer effectivePort = Router.getEffectivePort(mRouter, DDWRTMainActivity.this);
 
-                    final int allRoutersSize = allRouters.size();
-//            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
-                    mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-                    for (final Router router : allRouters) {
-                        //FIXME Uncomment once full support of other firmwares is implemented
-//                final RouterFirmware routerFirmware;
-//                if (router == null ||
-//                        (routerFirmware = router.getRouterFirmware()) == null ||
-//                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-//                    continue;
-//                }
-                        //FIXME End
-                        mRoutersListForPicker.add(router);
-                    }
+                setTitle(isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
 
-                    final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-                    routersNamesArray[0] = "--- ADD NEW ---";
-
-                    int i = 1;
-                    int currentItem = -1;
-
-                    for (final Router router : mRoutersListForPicker) {
-                        if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-                            currentItem = i;
-                        }
-                        final String routerName = router.getName();
-                        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-                        final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-
-                        final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-                        final String subTitle =
-                                (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-                                        (effectiveRemoteAddr + ":" + effectivePort));
-
-                        routersNamesArray[i++] = (title + "\n(" +
-                                subTitle + ")");
-                    }
-
-                    mRoutersListAdapter = new ArrayAdapter<>(DDWRTMainActivity.this,
-                            R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
-                    mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                    routersPicker.setAdapter(mRoutersListAdapter);
-                    if (currentItem >= 0) {
-                        routersPicker.setSelection(currentItem);
-                    }
-                    final int currentItemPos = currentItem;
-                    routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            //Recreate UI with new Router selected
-                            final int size = mRoutersListForPicker.size();
-                            if (position < 0 || position > size) {
-                                return;
-                            }
-                            if (position == 0) {
-                                //Add New Button
-                                openAddRouterForm();
-                                if (currentItemPos >= 0) {
-                                    routersPicker.setSelection(currentItemPos);
-                                }
-                                return;
-                            }
-
-                            final Router selectedRouter = mRoutersListForPicker.get(position - 1);
-                            if (selectedRouter == null) {
-                                return;
-                            }
-                            final String selectedRouterUuid = selectedRouter.getUuid();
-                            final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
-                            if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
-                                    || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
-                                return;
-                            }
-
-                            final Intent intent = getIntent();
-                            intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
-                            intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-
-                            if (BuildConfig.WITH_ADS &&
-                                    mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-
-                                mInterstitialAd.setAdListener(new AdListener() {
-                                    @Override
-                                    public void onAdClosed() {
-                                        finish();
-                                        startActivity(intent);
-                                    }
-
-                                    @Override
-                                    public void onAdOpened() {
-                                        //Save preference
-                                        mGlobalPreferences.edit()
-                                                .putLong(
-                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-                                                        System.currentTimeMillis())
-                                                .apply();
-                                    }
-                                });
-
-                                if (mInterstitialAd.isLoaded()) {
-                                    mInterstitialAd.show();
-                                } else {
-                                    //Reload UI
-//                                    final AlertDialog alertDialog = Utils.
-//                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                                    alertDialog.show();
-                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                            "Switching Routers", "Please wait...", true);
-//                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finish();
-                                            startActivity(intent);
-                                            alertDialog.cancel();
-                                        }
-                                    }, 2000);
-                                }
-
-                            } else {
-                                //Reload UI
-//                                final AlertDialog alertDialog = Utils.
-//                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                                alertDialog.show();
-//                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-                                        "Switching Routers", "Please wait...", true);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                        startActivity(intent);
-                                        alertDialog.cancel();
-                                    }
-                                }, 2000);
-                            }
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
-
-//            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    //On long click open up Router Management activity by finishing this activity
-//                    finish();
-//                    return true;
-//                }
-//            });
+                mTitle = mDrawerTitle = getTitle();
+                if (mToolbar != null) {
+                    mToolbar.setTitle(mTitle);
+                    mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+                            (effectiveRemoteAddr + ":" + effectivePort));
                 }
+
+//                final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
+//                final List<Router> allRouters = dao.getAllRouters();
+//                if (allRouters == null || allRouters.isEmpty()) {
+//                    Utils.reportException(DDWRTMainActivity.this, new
+//                            IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
+//                    routersPicker.setVisibility(View.GONE);
+//                } else {
+//                    routersPicker.setVisibility(View.VISIBLE);
+//
+//                    final int allRoutersSize = allRouters.size();
+////            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
+//                    mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
+//                    for (final Router router : allRouters) {
+//                        //FIXME Uncomment once full support of other firmwares is implemented
+////                final RouterFirmware routerFirmware;
+////                if (router == null ||
+////                        (routerFirmware = router.getRouterFirmware()) == null ||
+////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
+////                    continue;
+////                }
+//                        //FIXME End
+//                        mRoutersListForPicker.add(router);
+//                    }
+//
+//                    final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
+//                    routersNamesArray[0] = "--- ADD NEW ---";
+//
+//                    int i = 1;
+//                    int currentItem = -1;
+//
+//                    for (final Router router : mRoutersListForPicker) {
+//                        if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
+//                            currentItem = i;
+//                        }
+//                        final String routerName = router.getName();
+//                        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
+//                        final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
+//
+//                        final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
+//                        final String subTitle =
+//                                (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
+//                                        (effectiveRemoteAddr + ":" + effectivePort));
+//
+//                        routersNamesArray[i++] = (title + "\n(" +
+//                                subTitle + ")");
+//                    }
+//
+//                    mRoutersListAdapter = new ArrayAdapter<>(DDWRTMainActivity.this,
+//                            R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
+//                    mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//                    routersPicker.setAdapter(mRoutersListAdapter);
+//                    if (currentItem >= 0) {
+//                        routersPicker.setSelection(currentItem);
+//                    }
+//                    final int currentItemPos = currentItem;
+//                    routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                        @Override
+//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                            //Recreate UI with new Router selected
+//                            final int size = mRoutersListForPicker.size();
+//                            if (position < 0 || position > size) {
+//                                return;
+//                            }
+//                            if (position == 0) {
+//                                //Add New Button
+//                                openAddRouterForm();
+//                                if (currentItemPos >= 0) {
+//                                    routersPicker.setSelection(currentItemPos);
+//                                }
+//                                return;
+//                            }
+//
+//                            final Router selectedRouter = mRoutersListForPicker.get(position - 1);
+//                            if (selectedRouter == null) {
+//                                return;
+//                            }
+//                            final String selectedRouterUuid = selectedRouter.getUuid();
+//                            final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
+//                            if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
+//                                    || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
+//                                return;
+//                            }
+//
+//                            final Intent intent = getIntent();
+//                            intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
+//                            intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+//
+//                            if (BuildConfig.WITH_ADS &&
+//                                    mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
+//
+//                                mInterstitialAd.setAdListener(new AdListener() {
+//                                    @Override
+//                                    public void onAdClosed() {
+//                                        finish();
+//                                        startActivity(intent);
+//                                    }
+//
+//                                    @Override
+//                                    public void onAdOpened() {
+//                                        //Save preference
+//                                        mGlobalPreferences.edit()
+//                                                .putLong(
+//                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+//                                                        System.currentTimeMillis())
+//                                                .apply();
+//                                    }
+//                                });
+//
+//                                if (mInterstitialAd.isLoaded()) {
+//                                    mInterstitialAd.show();
+//                                } else {
+//                                    //Reload UI
+////                                    final AlertDialog alertDialog = Utils.
+////                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+////                                    alertDialog.show();
+//                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+//                                            "Switching Routers", "Please wait...", true);
+////                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                    new Handler().postDelayed(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            finish();
+//                                            startActivity(intent);
+//                                            alertDialog.cancel();
+//                                        }
+//                                    }, 2000);
+//                                }
+//
+//                            } else {
+//                                //Reload UI
+////                                final AlertDialog alertDialog = Utils.
+////                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
+////                                alertDialog.show();
+////                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+//                                        "Switching Routers", "Please wait...", true);
+//                                new Handler().postDelayed(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        finish();
+//                                        startActivity(intent);
+//                                        alertDialog.cancel();
+//                                    }
+//                                }, 2000);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onNothingSelected(AdapterView<?> parent) {
+//
+//                        }
+//                    });
+//
+////            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
+////                @Override
+////                public boolean onLongClick(View v) {
+////                    //On long click open up Router Management activity by finishing this activity
+////                    finish();
+////                    return true;
+////                }
+////            });
+//                }
             }
         }
     }
