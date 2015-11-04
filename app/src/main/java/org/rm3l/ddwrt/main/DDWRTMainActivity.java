@@ -1845,13 +1845,17 @@ public class DDWRTMainActivity extends AppCompatActivity
                 newProfile.withIcon(Utils.isDemoRouter(newRouter) ?
                         R.drawable.demo_router : R.drawable.router);
             }
-            if (mDrawerHeaderResult.getProfiles() != null) {
-                //we know that there are 2 setting elements. set the new profile above them ;)
-                mDrawerHeaderResult.addProfile(newProfile,
-                        mDrawerHeaderResult.getProfiles().size() - 2);
-            } else {
-                mDrawerHeaderResult.addProfiles(newProfile);
-            }
+
+            //Always add on top
+            mDrawerHeaderResult.addProfile(newProfile, 0);
+
+//            if (mDrawerHeaderResult.getProfiles() != null) {
+//                //we know that there are 2 setting elements. set the new profile above them ;)
+//                mDrawerHeaderResult.addProfile(newProfile,
+//                        mDrawerHeaderResult.getProfiles().size() - 2);
+//            } else {
+//                mDrawerHeaderResult.addProfiles(newProfile);
+//            }
 
             if (mDrawerResult.isDrawerOpen()) {
                 mDrawerResult.closeDrawer();
