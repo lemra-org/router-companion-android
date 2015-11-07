@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -669,7 +670,7 @@ public class RouterListRecycleViewAdapter extends
                     if (itemPos == null || itemPos < 0) {
                         Toast.makeText(context, "Internal Error - please try again later", Toast.LENGTH_SHORT)
                                 .show();
-                        Utils.reportException(null, new IllegalStateException("Weird routerPosition: " + itemPos));
+                        ReportingUtils.reportException(null, new IllegalStateException("Weird routerPosition: " + itemPos));
                         return true;
                     }
 
@@ -799,7 +800,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openAddRouterForm() {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
@@ -827,7 +828,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openUpdateRouterForm(@Nullable Router router) {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;
@@ -846,7 +847,7 @@ public class RouterListRecycleViewAdapter extends
 
     private void openDuplicateRouterForm(@Nullable Router router) {
         if (!(context instanceof FragmentActivity)) {
-            Utils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
+            ReportingUtils.reportException(null, new IllegalStateException("context is NOT an FragmentActivity"));
             return;
         }
         final FragmentActivity activity = (FragmentActivity) context;

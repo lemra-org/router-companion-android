@@ -20,7 +20,7 @@
  * Contact Info: Armel Soro <apps+ddwrt@rm3l.org>
  */
 
-package org.rm3l.ddwrt.utils;
+package org.rm3l.ddwrt.widgets;
 
 import android.content.Context;
 import android.preference.ListPreference;

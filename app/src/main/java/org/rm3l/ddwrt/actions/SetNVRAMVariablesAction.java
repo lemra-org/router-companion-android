@@ -34,8 +34,8 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -148,14 +148,14 @@ public class SetNVRAMVariablesAction extends AbstractRouterAction<Void> {
                     outputFile.delete();
                 }
             } catch (final Exception e) {
-                Utils.reportException(mContext, e);
+                ReportingUtils.reportException(mContext, e);
                 //No worries
             } finally {
                 try {
                     SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                             "rm -rf " + remotePath);
                 } catch (final Exception e) {
-                    Utils.reportException(mContext, e);
+                    ReportingUtils.reportException(mContext, e);
                     //No worries
                 }
             }

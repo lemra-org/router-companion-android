@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -53,6 +54,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -302,6 +304,13 @@ public abstract class DDWRTTile<T>
 
             onClickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+            ReportingUtils.reportContentViewEvent(new ContentViewEvent()
+                    .putContentType("Tile OnClick")
+                    .putContentName(onClickIntent.getComponent() != null ?
+                            onClickIntent.getComponent().getClassName() : "???")
+                    .putContentId(this.getClass().getSimpleName()));
+
+
             if (BuildConfig.WITH_ADS &&
                     mTileClickInterstitialAd != null &&
                     AdUtils.canDisplayInterstialAd(mParentFragmentActivity)) {
@@ -411,6 +420,10 @@ public abstract class DDWRTTile<T>
 
         @Nullable
         private final String dialogMessage;
+
+        private String contentUniqueId;
+
+        private String contentName;
 
         public OnClickIntent(@Nullable final String dialogMessage,
                              @Nullable Intent intent,

@@ -11,8 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -72,7 +72,7 @@ public class RestoreRouterFromBackupAction extends AbstractRouterAction<Void> {
                 SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                         String.format("/bin/rm -rf %s", TO_REMOTE_PATH));
             } catch (final Exception e) {
-                Utils.reportException(mContext, e);
+                ReportingUtils.reportException(mContext, e);
                 //No worries
             } finally {
                 if (tempFile != null) {

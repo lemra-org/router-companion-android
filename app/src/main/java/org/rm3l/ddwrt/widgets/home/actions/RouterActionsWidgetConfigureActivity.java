@@ -26,7 +26,6 @@ import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.exceptions.acra.WidgetInstalledACRANotification;
 import org.rm3l.ddwrt.mgmt.RouterAddDialogFragment;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.RouterMgmtDialogListener;
@@ -35,13 +34,16 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.home.wol.WOLWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -92,7 +94,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
             setResult(RESULT_OK, resultValue);
 
-            Utils.reportException(null, new WidgetInstalledACRANotification("Actions"));
+            final Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("Widget", "Actions");
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_WIDGET_INSTALLED, eventMap);
 
             finish();
         }

@@ -40,6 +40,7 @@ import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficActivity;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -467,7 +468,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         final String currentMonth = dataCopy.getProperty(CURRENT);
                         if (currentMonth == null) {
                             Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
-                            Utils.reportException(null, new IllegalStateException("currentMonth == null"));
+                            ReportingUtils.reportException(null, new IllegalStateException("currentMonth == null"));
                             return;
                         }
                         if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {

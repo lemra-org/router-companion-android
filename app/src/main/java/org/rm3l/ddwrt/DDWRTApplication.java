@@ -38,19 +38,20 @@ import com.squareup.picasso.Picasso;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.BuildConfig.DEBUG;
 import static org.rm3l.ddwrt.BuildConfig.FLAVOR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -133,32 +134,39 @@ public class DDWRTApplication extends Application {
         if (isFirstLaunch(this)) {
             final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
-            final FirstLaunch firstLaunchReport;
-            if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
-                if (GOOGLE_INSTALLER_PACKAGE_NAMES.contains(
-                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-                    firstLaunchReport = new GoogleFirstLaunch();
-                } else {
-                    firstLaunchReport = new GoogleUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-                }
-            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
-                if (AMAZON_INSTALLER_PACKAGE_NAMES.contains(
-                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-                    firstLaunchReport = new AmazonFirstLaunch();
-                } else {
-                    firstLaunchReport = new AmazonUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-                }
-            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "fdroid")) {
-                if (FDROID_INSTALLER_PACKAGE_NAMES.contains(
-                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-                    firstLaunchReport = new FDroidFirstLaunch();
-                } else {
-                    firstLaunchReport = new FDroidUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-                }
-            } else {
-                firstLaunchReport = new FirstLaunch(FLAVOR);
-            }
-            Utils.reportException(this, firstLaunchReport);
+//            final FirstLaunch firstLaunchReport;
+//            if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
+//                if (GOOGLE_INSTALLER_PACKAGE_NAMES.contains(
+//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+//                    firstLaunchReport = new GoogleFirstLaunch();
+//                } else {
+//                    firstLaunchReport = new GoogleUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+//                }
+//            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
+//                if (AMAZON_INSTALLER_PACKAGE_NAMES.contains(
+//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+//                    firstLaunchReport = new AmazonFirstLaunch();
+//                } else {
+//                    firstLaunchReport = new AmazonUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+//                }
+//            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "fdroid")) {
+//                if (FDROID_INSTALLER_PACKAGE_NAMES.contains(
+//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
+//                    firstLaunchReport = new FDroidFirstLaunch();
+//                } else {
+//                    firstLaunchReport = new FDroidUnknownOriginFirstLaunch(appOriginInstallerPackageName);
+//                }
+//            } else {
+//                firstLaunchReport = new FirstLaunch(FLAVOR);
+//            }
+            final Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("FLAVOR", FLAVOR);
+            eventMap.put("INSTALLER", appOriginInstallerPackageName);
+            eventMap.put("VERSION_CODE", BuildConfig.VERSION_CODE);
+            eventMap.put("VERSION_NAME", BuildConfig.VERSION_NAME);
+            eventMap.put("DEBUG", BuildConfig.DEBUG);
+            eventMap.put("WITH_ADS", BuildConfig.WITH_ADS);
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_FIRST_LAUNCH, eventMap);
         }
 
         final long currentTheme = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)

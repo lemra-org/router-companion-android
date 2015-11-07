@@ -27,9 +27,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.exceptions.RouterActionException;
-import org.rm3l.ddwrt.exceptions.acra.RouterActionTriggered;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Abstract Router Action async task
@@ -55,9 +58,13 @@ public abstract class AbstractRouterAction<T> extends
 
     @Override
     protected final RouterActionResult<T> doInBackground(Router... params) {
+        final UUID actionUuid = UUID.randomUUID();
         try {
             //To get stats over the number of actions executed
-            Utils.reportException(null, new RouterActionTriggered("Action triggered: '" + routerAction + "'"));
+            final Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("Action", routerAction);
+            eventMap.put("Executor class", this.getClass().getSimpleName());
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_ACTION_TRIGGERED, eventMap);
         } catch (final Exception e) {
             //No worries
         }
@@ -69,7 +76,9 @@ public abstract class AbstractRouterAction<T> extends
         } catch (final Exception e) {
             actionResult = new RouterActionResult<>(null, e);
             //Report exception
-            Utils.reportException(null, new RouterActionException("Exception on Action '" + routerAction + "'",
+            ReportingUtils.reportException(null,
+                    new RouterActionException("Exception on Action '" + routerAction + "': " +
+                        actionUuid,
                     e));
         } finally {
             if (actionResult != null && listener != null) {
@@ -83,8 +92,9 @@ public abstract class AbstractRouterAction<T> extends
                 } catch (final Exception listenerException) {
                     listenerException.printStackTrace();
                     //No Worries, but report exception
-                    Utils.reportException(null, new RouterActionException("Listener Exception on Action '"
-                            + routerAction + "'", listenerException));
+                    ReportingUtils.reportException(null, new RouterActionException("Listener Exception on Action '"
+                            + routerAction + "': " +
+                            actionUuid, listenerException));
                 }
             }
         }

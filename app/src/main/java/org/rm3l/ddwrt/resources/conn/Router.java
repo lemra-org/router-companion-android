@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.Serializable;
@@ -461,7 +462,7 @@ public class Router implements Serializable {
         try {
             setRouterFirmware(RouterFirmware.valueOf(routerFirmwareStr));
         } catch (final Exception e) {
-            Utils.reportException(null, e);
+            ReportingUtils.reportException(null, e);
         }
     }
 

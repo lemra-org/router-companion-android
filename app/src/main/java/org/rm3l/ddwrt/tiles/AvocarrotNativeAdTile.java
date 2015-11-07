@@ -21,6 +21,7 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
@@ -117,7 +118,7 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
                     public void onAdError(AdError error) {
                         try {
                             super.onAdError(error);
-                            Utils.reportException(
+                            ReportingUtils.reportException(
                                     null, new AdUtils.AdFailedToShowEvent("Avocarrot: " + (error != null ? error.toString() : "")));
                             //Fallback to AdMob Banner Tile
                             final AdView adView = (AdView) layout.findViewById(R.id.admob_banner);

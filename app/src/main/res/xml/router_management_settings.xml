@@ -26,7 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_theming"
         android:title="Theming">
 
-        <org.rm3l.ddwrt.utils.LongListPreference
+        <org.rm3l.ddwrt.widgets.LongListPreference
             android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
@@ -42,7 +42,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_general"
         android:title="Data Usage Control">
 
-        <org.rm3l.ddwrt.utils.LongListPreference
+        <org.rm3l.ddwrt.widgets.LongListPreference
             android:defaultValue="444"
             android:entries="@array/data_usage_titles"
             android:entryValues="@array/data_usage_values"
@@ -84,7 +84,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled. You may get notifications even if you are not using the app. Notifications can be managed in each router settings."
             android:title="Background Service" />
 
-        <org.rm3l.ddwrt.utils.LongListPreference
+        <org.rm3l.ddwrt.widgets.LongListPreference
             android:defaultValue="360"
             android:dependency="notifications.background.service.enable"
             android:entries="@array/pref_notifications_sync_frequency_titles"
@@ -94,7 +94,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Background Service Frequency" />
 
-        <org.rm3l.ddwrt.utils.MyMultiSelectListPreference
+        <org.rm3l.ddwrt.widgets.MyMultiSelectListPreference
             android:dialogTitle="Select Notifications"
             android:key="notifications.choice"
             android:summary="Select Notifications you would like to receive"

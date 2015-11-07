@@ -28,7 +28,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterStreamActionListener;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -246,7 +246,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
         try {
             mCurrentRouterActionTask.cancel(true);
         } catch (final Exception e) {
-            Utils.reportException(null, e);
+            ReportingUtils.reportException(null, e);
         } finally {
             layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view).setVisibility(View.GONE);
             layout.findViewById(R.id.tile_admin_commands_submit_button).setEnabled(true);

@@ -67,7 +67,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 
-import org.acra.ACRA;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -85,7 +84,9 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -116,6 +117,7 @@ public final class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
     public static final Random RANDOM = new Random();
+    public static final String BEHAVIOR = "Behavior";
 
     private static AtomicLong nextLoaderId = new AtomicLong(1);
 
@@ -215,19 +217,7 @@ public final class Utils {
     public static void reportException(
             @Nullable final Context context,
             @NonNull final Throwable error) {
-        //ACRA Notification
-        ACRA.getErrorReporter().handleSilentException(error);
-
-        //Crashlytics Notification
-        if (context != null) {
-            final String acraEmailAddr = context
-                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
-            if (!isNullOrEmpty(acraEmailAddr)) {
-                Crashlytics.setUserEmail(acraEmailAddr);
-            }
-        }
-        Crashlytics.logException(error);
+        ReportingUtils.reportException(context, error);
 
     }
 
@@ -626,12 +616,16 @@ public final class Utils {
 
                     @Override
                     public void onRateAppDismissed() {
-                        reportException(null, new RateAppDismissedException());
+                        final Map<String, Object> eventMap = new HashMap<>();
+                        eventMap.put(BEHAVIOR, "Dismissed");
+                        ReportingUtils.reportEvent(ReportingUtils.EVENT_RATING_INVITATON, eventMap);
                     }
 
                     @Override
                     public void onRateAppClicked() {
-                        reportException(null, new RateAppClickedException());
+                        final Map<String, Object> eventMap = new HashMap<>();
+                        eventMap.put(BEHAVIOR, "Clicked");
+                        ReportingUtils.reportEvent(ReportingUtils.EVENT_RATING_INVITATON, eventMap);
                     }
                 })
                 .theme(ColorUtils.isThemeLight(activity) ? AppRateTheme.DARK : AppRateTheme.LIGHT)

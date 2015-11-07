@@ -28,6 +28,7 @@ import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -143,7 +144,7 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         notifyID = 1 + Integer.parseInt(router.getId() + "00" + router.getId());
                         editor.putInt(LAST_PUBLIC_IP_PREF_PREFIX + router.getId(), notifyID);
                     } catch (final Exception e) {
-                        Utils.reportException(null, e);
+                        ReportingUtils.reportException(null, e);
                         return;
                     }
                 }

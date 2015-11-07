@@ -33,7 +33,7 @@ import android.widget.Toast;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
@@ -65,7 +65,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
     public SharedPreferences getSharedPreferences(String name, int mode) {
         if (isNullOrEmpty(this.mRouterUuid)) {
             Toast.makeText(this, "Whoops - internal error. Issue will be reported!", Toast.LENGTH_LONG).show();
-            Utils.reportException(null, new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
+            ReportingUtils.reportException(null, new IllegalStateException("RouterSettingsActivity: Router UUID is null: " + this.mRouterUuid));
             finish();
         }
         return super.getSharedPreferences(this.mRouterUuid, mode);

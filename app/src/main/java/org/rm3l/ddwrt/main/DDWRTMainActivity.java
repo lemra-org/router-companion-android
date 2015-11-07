@@ -117,6 +117,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -124,7 +125,9 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -333,7 +336,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             profileDrawerItem.withIcon(url);
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
-                            Utils.reportException(DDWRTMainActivity.this, e);
+                            ReportingUtils.reportException(DDWRTMainActivity.this, e);
                         }
                     }
 
@@ -399,7 +402,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
                         if (profile == null) {
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
+                            ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
                             return false;
                         }
@@ -414,14 +417,14 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                         if (daoRouter == null) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("daoRouter NOT found"));
+                            ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("daoRouter NOT found"));
                             return false;
                         }
 
                         final String routerUuid = daoRouter.getUuid();
                         if (routerUuid.isEmpty()) {
                             Toast.makeText(DDWRTMainActivity.this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
+                            ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("routerUuid is NULL or empty"));
                             return false;
                         }
 
@@ -576,12 +579,12 @@ public class DDWRTMainActivity extends AppCompatActivity
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
                         if (drawerItem == null) {
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("drawerItem == null"));
+                            ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("drawerItem == null"));
                             return false;
                         }
                         final int identifier = drawerItem.getIdentifier();
                         if (identifier < 0) {
-                            Utils.reportException(DDWRTMainActivity.this, new IllegalStateException("identifier < 0"));
+                            ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException("identifier < 0"));
                             return false;
                         }
                         if (identifier < 1000) {
@@ -1280,6 +1283,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         final String displayName = mRouter.getDisplayName();
 
+        final Map<String, Object> eventMap = new HashMap<>();
+
         switch (item.getItemId()) {
 
             case android.R.id.home:
@@ -1308,9 +1313,13 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
+                eventMap.put("Menu Item", "Help");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
             case R.id.changelog:
                 this.startActivity(new Intent(this, ChangelogActivity.class));
+                eventMap.put("Menu Item", "Changelog");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
             case R.id.action_settings:
                 //Open Settings activity for this item
@@ -1326,9 +1335,12 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.action_about:
                 new AboutDialog(this).show();
+                eventMap.put("Menu Item", "About");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_MENU_ITEM, eventMap);
                 return true;
             case R.id.action_feedback:
                 Utils.buildFeedbackDialog(this, true);
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);
@@ -1403,7 +1415,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             public void onClick(final DialogInterface dialogInterface, final int i) {
 
                                 //For reporting
-                                Utils.reportException(DDWRTMainActivity.this, new
+                                ReportingUtils.reportException(DDWRTMainActivity.this, new
                                         RestoreRouterDefaultsAction.AgreementToResetRouter(DDWRTMainActivity.this));
 
                                 final Bundle token = new Bundle();
@@ -1679,7 +1691,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 Utils.displayMessage(DDWRTMainActivity.this,
                                                         msg,
                                                         Style.INFO);
-                                                Utils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                                                ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
                                                 return;
                                             }
 
@@ -1697,7 +1709,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 Utils.displayMessage(DDWRTMainActivity.this,
                                                         msg,
                                                         Style.INFO);
-                                                Utils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
+                                                ReportingUtils.reportException(DDWRTMainActivity.this, new IllegalStateException(msg));
                                                 return;
                                             }
 
@@ -1895,7 +1907,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         newProfile.withIcon(url);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
-                        Utils.reportException(DDWRTMainActivity.this, e);
+                        ReportingUtils.reportException(DDWRTMainActivity.this, e);
                     }
                 }
 

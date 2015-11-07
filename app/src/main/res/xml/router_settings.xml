@@ -26,7 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--android:title="Theming"-->
     <!--android:key="@string/pref_header_theming">-->
 
-    <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+    <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
     <!--android:key="theming"-->
     <!--android:title="@string/pref_title_theme"-->
     <!--android:entries="@array/pref_theme_titles"-->
@@ -58,7 +58,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_data_sync"
         android:title="Data &amp; Sync">
 
-        <org.rm3l.ddwrt.utils.LongListPreference
+        <org.rm3l.ddwrt.widgets.LongListPreference
             android:defaultValue="3600000"
             android:entries="@array/pref_sync_frequency_titles"
             android:entryValues="@array/pref_sync_frequency_values"
@@ -114,7 +114,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:summaryOn="Enabled. You may get notifications even if you are not using the app."-->
                 <!--android:title="Receive Notifications" />-->
 
-            <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+            <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
                 <!--android:defaultValue="360"-->
                 <!--android:dependency="notifications.enable"-->
                 <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
@@ -124,7 +124,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!--android:positiveButtonText="@null"-->
                 <!--android:title="How frequently to check" />-->
 
-            <!--<org.rm3l.ddwrt.utils.MyMultiSelectListPreference-->
+            <!--<org.rm3l.ddwrt.widgets.MyMultiSelectListPreference-->
                 <!--android:dependency="notifications.enable"-->
                 <!--android:positiveButtonText="@null"-->
                 <!--android:negativeButtonText="@null"-->
@@ -146,7 +146,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:defaultValue="true"-->
                     <!--android:key="notifications.wanConnectivity.enable"/>-->
 
-                <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+                <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
                     <!--android:defaultValue="360"-->
                     <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
                     <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->
@@ -167,7 +167,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <!--android:defaultValue="true"-->
                     <!--android:key="notifications.openvpnClient.enable"/>-->
 
-                <!--<org.rm3l.ddwrt.utils.LongListPreference-->
+                <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
                     <!--android:defaultValue="360"-->
                     <!--android:entries="@array/pref_notifications_sync_frequency_titles"-->
                     <!--android:entryValues="@array/pref_notifications_sync_frequency_values"-->

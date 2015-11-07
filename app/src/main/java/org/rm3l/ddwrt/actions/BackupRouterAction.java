@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -77,7 +78,7 @@ public class BackupRouterAction extends AbstractRouterAction<String> {
                 SSHUtils.runCommands(mContext, globalSharedPreferences, router,
                         String.format("/bin/rm -rf %s", mRemoteBackupFilename));
             } catch (final Exception e) {
-                Utils.reportException(mContext, e);
+                ReportingUtils.reportException(mContext, e);
                 //No worries
             }
         }

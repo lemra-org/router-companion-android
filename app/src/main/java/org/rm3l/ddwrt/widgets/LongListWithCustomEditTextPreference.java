@@ -1,25 +1,7 @@
-package org.rm3l.ddwrt.utils;
+package org.rm3l.ddwrt.widgets;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.TextView;
-
-import org.rm3l.ddwrt.R;
-
-import java.util.ArrayList;
 
 /**
  * Created by rm3l on 26/08/15.

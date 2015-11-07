@@ -85,6 +85,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -201,7 +202,7 @@ public abstract class AbstractRouterMgmtDialogFragment
             try {
                 localSSIDLookup.setPort(Integer.parseInt(strings.get(2)));
             } catch (final Exception e) {
-                Utils.reportException(null, e);
+                ReportingUtils.reportException(null, e);
                 localSSIDLookup.setPort(22); //default SSH port
             }
             lookups.add(localSSIDLookup);
@@ -700,7 +701,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                 uriCursor.close();
                             } catch (final Exception e) {
                                 e.printStackTrace();
-                                Utils.reportException(null, e);
+                                ReportingUtils.reportException(null, e);
                             }
                         }
                     }
@@ -992,7 +993,7 @@ public abstract class AbstractRouterMgmtDialogFragment
                                     "Sorry for the inconvenience.",
                             true, true).show();
                 }
-                Utils.reportException(
+                ReportingUtils.reportException(
                         null, new DDWRTCompanionExceptionForConnectionChecksException(
                                 router != null ?
                                         router.toString() : e.getMessage(), e));

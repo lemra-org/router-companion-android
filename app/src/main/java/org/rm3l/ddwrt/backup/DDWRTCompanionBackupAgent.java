@@ -40,7 +40,7 @@ import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -113,7 +113,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(this, new DDWRTCompanionBackupException(e));
+            ReportingUtils.reportException(this, new DDWRTCompanionBackupException(e));
         }
     }
 
@@ -126,7 +126,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
             }
         } catch (final Exception e) {
             e.printStackTrace();
-            Utils.reportException(this, new DDWRTCompanionBackupRestoreException(e));
+            ReportingUtils.reportException(this, new DDWRTCompanionBackupRestoreException(e));
         }
     }
 

@@ -51,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -96,6 +97,7 @@ import org.rm3l.ddwrt.tiles.AvocarrotNativeAdTile;
 import org.rm3l.ddwrt.tiles.BannerAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
@@ -186,9 +188,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         } catch (java.lang.InstantiationException ie) {
             ie.printStackTrace();
-            Utils.reportException(null, ie);
+            ReportingUtils.reportException(null, ie);
         } catch (IllegalAccessException iae) {
-            Utils.reportException(null, iae);
+            ReportingUtils.reportException(null, iae);
             iae.printStackTrace();
         }
         return null;
@@ -236,7 +238,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
             }
         } else {
             routerFirmwareForFragments = RouterFirmware.UNKNOWN;
-            Utils.reportException(
+            ReportingUtils.reportException(
                     null, new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
         }
 
@@ -262,14 +264,14 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 Toast.makeText((Context) parentFragmentOnPageChangeListener, "Router Firmware unknown or not supported!", Toast.LENGTH_SHORT)
                         .show();
             }
-            Utils.reportException(
+            ReportingUtils.reportException(
                     null, new IllegalArgumentException("Router Firmware unknown or not supported"));
             tabsToSort = new AbstractBaseFragment[0];
         } else {
             final List<FragmentTabDescription<? extends AbstractBaseFragment>> fragmentTabDescriptions =
                     tabDescriptionMultimap.get(parentSectionNumber);
             if (fragmentTabDescriptions == null || fragmentTabDescriptions.isEmpty()) {
-                Utils.reportException(
+                ReportingUtils.reportException(
                         null, new IllegalArgumentException("Not implemented yet: " + parentSectionNumber));
                 //This should NOT happen => Error
                 tabsToSort = new AbstractBaseFragment[1];
@@ -868,6 +870,11 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
 
+        ReportingUtils.reportContentViewEvent(new ContentViewEvent()
+                .putContentType("Fragment viewed")
+                .putContentName("Navigation menu item selected")
+                .putContentId(this.getClass().getSimpleName()));
+
         return mSwipeRefreshLayout;
     }
 
@@ -1216,6 +1223,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
     @Override
     public void onRefresh() {
+
+        final Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("View", this.getClass().getSimpleName());
+        ReportingUtils.reportEvent(ReportingUtils.EVENT_MANUAL_REFRESH, eventMap);
 
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setEnabled(false);

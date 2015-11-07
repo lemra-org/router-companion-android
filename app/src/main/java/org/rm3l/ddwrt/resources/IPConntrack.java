@@ -29,7 +29,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import java.util.List;
 
@@ -379,7 +379,7 @@ public class IPConntrack {
             }
 
         } catch (final Exception e) {
-            Utils.reportException(null, new IllegalStateException("Error when parsing IP Conntrack row: " + row,
+            ReportingUtils.reportException(null, new IllegalStateException("Error when parsing IP Conntrack row: " + row,
                     e));
             return null;
         }

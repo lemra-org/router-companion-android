@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.utils;
+package org.rm3l.ddwrt.widgets;
 
 import android.content.Context;
 import android.preference.MultiSelectListPreference;

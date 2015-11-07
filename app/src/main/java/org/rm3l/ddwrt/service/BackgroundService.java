@@ -18,7 +18,7 @@ import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterModelUpdaterServiceTask;
 import org.rm3l.ddwrt.service.tasks.RouterWebInterfaceParametersUpdaterServiceTask;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
-import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -100,7 +100,7 @@ public class BackgroundService extends IntentService {
                         backgroundServiceTask.runBackgroundServiceTask(router);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Utils.reportException(this, e);
+                        ReportingUtils.reportException(this, e);
                         //No worries
                     }
                 }
