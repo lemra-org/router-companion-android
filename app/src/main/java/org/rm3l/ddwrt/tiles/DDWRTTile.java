@@ -307,7 +307,7 @@ public abstract class DDWRTTile<T>
             ReportingUtils.reportContentViewEvent(new ContentViewEvent()
                     .putContentType("Tile OnClick")
                     .putContentName(onClickIntent.getComponent() != null ?
-                            onClickIntent.getComponent().getClassName() : "???")
+                            onClickIntent.getComponent().getShortClassName() : "???")
                     .putContentId(this.getClass().getSimpleName()));
 
 
