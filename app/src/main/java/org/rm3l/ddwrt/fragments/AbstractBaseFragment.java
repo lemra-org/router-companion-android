@@ -51,7 +51,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -869,11 +868,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
 
         mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
-
-        ReportingUtils.reportContentViewEvent(new ContentViewEvent()
-                .putContentType("Fragment viewed")
-                .putContentName("Navigation menu item selected")
-                .putContentId(this.getClass().getSimpleName()));
 
         return mSwipeRefreshLayout;
     }
