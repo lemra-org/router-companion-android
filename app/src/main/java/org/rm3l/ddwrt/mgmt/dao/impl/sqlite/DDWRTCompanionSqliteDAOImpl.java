@@ -195,16 +195,11 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
                 database = dbHelper.getWritableDatabase();
 
-                final Router router = getRouter(uuid);
-
                 Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete Router with uuid: " + uuid);
                 database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
 
                 //Report
-                final Map<String, Object> eventMap = new HashMap<>();
-                eventMap.put("Model", Utils.isDemoRouter(router) ? DDWRTCompanionConstants.DEMO :
-                        Router.getRouterModel(mContext, router));
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_DELETED, eventMap);
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_DELETED, null);
 
             }
         } catch (final RuntimeException e) {
