@@ -391,5 +391,5 @@ dependencies {
         transitive = true;
     }
 
-    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
+    compile 'com.github.amlcurran.showcaseview:library:5.3.0'
 }
