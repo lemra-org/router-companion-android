@@ -741,7 +741,7 @@ public final class Utils {
 
     public static String getRouterAvatarUrl(@NonNull final String routerModel,
                                             @Nullable final String[] opts) throws UnsupportedEncodingException {
-        return String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+        return String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
                 Joiner
                         .on(",")
                         .skipNulls().join(opts != null ?
@@ -797,7 +797,7 @@ public final class Utils {
                                               @Nullable final Callback callback) {
         try {
             final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = String.format("%s/%s/%s", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+            final String url = String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
                     Joiner
                             .on(",")
                             .skipNulls().join(opts != null ?
