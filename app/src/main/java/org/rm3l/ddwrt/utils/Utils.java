@@ -246,7 +246,7 @@ public final class Utils {
                     .putBoolean(FIRST_APP_LAUNCH_PREF_KEY, false);
         }
         editor
-                .putString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, BuildConfig.FLAVOR)
+                .putString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, BuildConfig.VERSION_NAME)
                 .apply();
 
         return isFirstLaunch;
