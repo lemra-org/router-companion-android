@@ -237,14 +237,18 @@ public final class Utils {
 
         final boolean isFirstLaunch = defaultSharedPreferences.getBoolean(FIRST_APP_LAUNCH_PREF_KEY, true);
         Crashlytics.log(Log.INFO, TAG, "isFirstLaunch: " + isFirstLaunch);
+        final SharedPreferences.Editor editor = defaultSharedPreferences.edit();
         if (isFirstLaunch) {
             //Store flag
-            defaultSharedPreferences.edit()
+            editor
                     .remove(OLD_IS_FIRST_LAUNCH_PREF_KEY)
                     .remove(IS_FIRST_LAUNCH_PREF_KEY)
-                    .putBoolean(FIRST_APP_LAUNCH_PREF_KEY, false)
-                    .apply();
+                    .putBoolean(FIRST_APP_LAUNCH_PREF_KEY, false);
         }
+        editor
+                .putString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, BuildConfig.FLAVOR)
+                .apply();
+
         return isFirstLaunch;
     }
 

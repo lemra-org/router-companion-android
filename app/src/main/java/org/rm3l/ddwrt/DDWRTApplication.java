@@ -160,6 +160,13 @@ public class DDWRTApplication extends Application {
 //                firstLaunchReport = new FirstLaunch(FLAVOR);
 //            }
             final Map<String, Object> eventMap = new HashMap<>();
+            final String lastKnownVersionStr =
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                            Context.MODE_PRIVATE)
+                        .getString(DDWRTCompanionConstants.LAST_KNOWN_VERSION, null);
+            eventMap.put("PREVIOUS_VERSION",
+                    lastKnownVersionStr != null ? lastKnownVersionStr : "???");
+            eventMap.put("UPDATE", lastKnownVersionStr != null);
             eventMap.put("FLAVOR", FLAVOR);
             eventMap.put("INSTALLER", appOriginInstallerPackageName);
             eventMap.put("VERSION_CODE", BuildConfig.VERSION_CODE);
