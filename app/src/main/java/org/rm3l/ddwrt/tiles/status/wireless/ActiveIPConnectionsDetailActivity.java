@@ -351,6 +351,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 return;
             }
             final LinearLayout containerLayout = (LinearLayout) findViewById(R.id.tile_status_active_ip_connections_list_container);
+            if (containerLayout == null) {
+                Toast.makeText(this, "Internal Error - please try again later", Toast.LENGTH_SHORT).show();
+                Utils.reportException(this, new IllegalStateException("containerLayout == null"));
+                return;
+            }
             containerLayout.removeAllViews();
 
             final Map<IPConntrack, CardView> ipConntrackCardViewFilteredMap = Maps.filterKeys(ipConntrackMap, new Predicate<IPConntrack>() {
