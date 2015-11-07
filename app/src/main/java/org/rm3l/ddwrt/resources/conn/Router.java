@@ -27,13 +27,18 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -603,6 +608,17 @@ public class Router implements Serializable {
         }
         return context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
                 .getString(NVRAMInfo.MODEL, null);
+    }
+
+    public static String getRouterAvatarUrl(@NonNull final String routerModel,
+                                            @Nullable final String[] opts) throws UnsupportedEncodingException {
+        return String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
+                Joiner
+                        .on(",")
+                        .skipNulls().join(opts != null ?
+                        opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
+                URLEncoder.encode(routerModel.toLowerCase().replaceAll("\\s+", ""),
+                        Charsets.UTF_8.name()));
     }
 
     public static class LocalSSIDLookup {

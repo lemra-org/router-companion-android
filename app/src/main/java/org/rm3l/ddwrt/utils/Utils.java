@@ -59,12 +59,8 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 
 import org.apache.commons.io.FileUtils;
@@ -81,9 +77,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -703,139 +697,15 @@ public final class Utils {
 
     public static void downloadImageForRouter(@Nullable Context context,
                                               @NonNull final String routerModel,
-                                              @Nullable final ImageView imageView) {
-        downloadImageForRouter(context,
-                routerModel,
-                imageView,
-                null,
-                R.drawable.router_picker_background);
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-                                               @NonNull final String routerModel,
-                                               @Nullable final ImageView imageView,
-                                              @Nullable final Integer placeHolderRes,
-                                              @Nullable final Integer errorPlaceHolderRes) {
-        downloadImageForRouter(context,
-                routerModel,
-                imageView,
-                placeHolderRes,
-                errorPlaceHolderRes,
-                null);
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-                                              @NonNull final String routerModel,
-                                              @Nullable final ImageView imageView,
-                                              @Nullable final Integer placeHolderRes,
-                                              @Nullable final Integer errorPlaceHolderRes,
-                                              @Nullable final String[] opts) {
-        downloadImageForRouter(context,
-                routerModel,
-                imageView,
-                null,
-                placeHolderRes,
-                errorPlaceHolderRes,
-                opts);
-    }
-
-    public static String getRouterAvatarUrl(@NonNull final String routerModel,
-                                            @Nullable final String[] opts) throws UnsupportedEncodingException {
-        return String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
-                Joiner
-                        .on(",")
-                        .skipNulls().join(opts != null ?
-                        opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
-                URLEncoder.encode(routerModel.toLowerCase().replaceAll("\\s+", ""),
-                        Charsets.UTF_8.name()));
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-                                              @NonNull final String routerModel,
                                               @Nullable final ImageView imageView,
                                               @Nullable final List<Transformation> transformations,
                                               @Nullable final Integer placeHolderRes,
                                               @Nullable final Integer errorPlaceHolderRes,
                                               @Nullable final String[] opts) {
 
-        try {
-            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = getRouterAvatarUrl(routerModel, opts);
+        ImageUtils.downloadImageForRouter(context, routerModel, imageView,
+                transformations, placeHolderRes, errorPlaceHolderRes, opts);
 
-            downloadImageFromUrl(context,
-                    url,
-                    imageView,
-                    transformations,
-                    placeHolderRes != null ? placeHolderRes : null,
-                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null,
-                    new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            //Great!
-                        }
-
-                        @Override
-                        public void onError() {
-                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
-                            reportException(null, new MissingRouterModelImageException(routerModel + " (" +
-                                    routerModelNormalized + ")"));
-                        }
-                    });
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            reportException(null, new DownloadImageException(e));
-        }
-    }
-
-    public static void downloadImageForRouter(@Nullable Context context,
-                                              @NonNull final String routerModel,
-                                              @Nullable final ImageView imageView,
-                                              @Nullable final Integer placeHolderRes,
-                                              @Nullable final Integer errorPlaceHolderRes,
-                                              @Nullable final String[] opts,
-                                              @Nullable final Callback callback) {
-        try {
-            final String routerModelNormalized = routerModel.toLowerCase().replaceAll("\\s+", "");
-            final String url = String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
-                    Joiner
-                            .on(",")
-                            .skipNulls().join(opts != null ?
-                            opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
-                    URLEncoder.encode(routerModelNormalized, Charsets.UTF_8.name()));
-
-            downloadImageFromUrl(context,
-                    url,
-                    imageView,
-                    placeHolderRes != null ? placeHolderRes : null,
-                    errorPlaceHolderRes != null ? errorPlaceHolderRes : null,
-                    new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            //Great!
-                            reportException(null, new SuccessfulRouterModelImageDownloadNotice(
-                                    routerModel + " (" + routerModelNormalized + ")"
-                            ));
-                            if (callback != null) {
-                                callback.onSuccess();
-                            }
-                        }
-
-                        @Override
-                        public void onError() {
-                            Crashlytics.log(Log.DEBUG, TAG, "onError: " + url);
-                            reportException(null, new MissingRouterModelImageException(routerModel + " (" +
-                                    routerModelNormalized + ")"));
-                            if (callback != null) {
-                                callback.onError();
-                            }
-                        }
-                    });
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            reportException(null, new DownloadImageException(e));
-        }
     }
 
     public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
@@ -843,111 +713,8 @@ public final class Utils {
                                             @Nullable final Integer placeHolderDrawable,
                                             @Nullable final Integer errorPlaceHolderDrawable,
                                             @Nullable final Callback callback) {
-        downloadImageFromUrl(context,
-                url,
-                imageView,
-                null,
-                placeHolderDrawable,
-                errorPlaceHolderDrawable,
-                callback);
+        ImageUtils.downloadImageFromUrl(context, url, imageView, placeHolderDrawable, errorPlaceHolderDrawable, callback);
     }
-
-    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
-                                            @Nullable final ImageView imageView,
-                                            @Nullable final List<Transformation> transformations,
-                                            @Nullable final Integer placeHolderDrawable,
-                                            @Nullable final Integer errorPlaceHolderDrawable,
-                                            @Nullable final Callback callback) {
-
-        try {
-            if (context == null || imageView == null) {
-                return;
-            }
-            final Picasso picasso = Picasso.with(context);
-            picasso.setIndicatorsEnabled(true);
-            picasso.setLoggingEnabled(BuildConfig.DEBUG);
-            final RequestCreator requestCreator = picasso.load(url);
-
-            requestCreator.placeholder(placeHolderDrawable != null ?
-                    placeHolderDrawable : R.drawable.progress_animation);
-
-            if (transformations !=null) {
-                requestCreator.transform(transformations);
-            }
-
-            if (errorPlaceHolderDrawable != null) {
-                requestCreator.error(errorPlaceHolderDrawable);
-            }
-//            if (BuildConfig.DEBUG) {
-//                //Forces Picasso to download image from the network everytime
-//                requestCreator.networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE);
-//                requestCreator.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE);
-//            }
-
-            requestCreator.into(imageView, callback);
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            reportException(null, new DownloadImageException(e));
-        }
-    }
-
-    public static class DownloadImageException extends DDWRTCompanionException {
-        public DownloadImageException() {
-        }
-
-        public DownloadImageException(@Nullable String detailMessage) {
-            super(detailMessage);
-        }
-
-        public DownloadImageException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-            super(detailMessage, throwable);
-        }
-
-        public DownloadImageException(@Nullable Throwable throwable) {
-            super(throwable);
-        }
-    }
-
-    public static class MissingRouterModelImageException extends DownloadImageException {
-        public MissingRouterModelImageException(@Nullable String routerModel) {
-            super(routerModel);
-        }
-    }
-
-    public static class SuccessfulRouterModelImageDownloadNotice extends DownloadImageException {
-        public SuccessfulRouterModelImageDownloadNotice(@Nullable String routerModel) {
-            super(routerModel);
-        }
-    }
-
-//    public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-//        ImageView bmImage;
-//
-//        public DownloadImageTask(ImageView bmImage) {
-//            this.bmImage = bmImage;
-//        }
-//
-//        protected Bitmap doInBackground(String... urls) {
-//            String urldisplay = urls[0];
-//            Bitmap mIcon11 = null;
-//            try {
-//                InputStream in = new java.net.URL(urldisplay).openStream();
-//                mIcon11 = BitmapFactory.decodeStream(in);
-//            } catch (Exception e) {
-//                if (e.getMessage() != null) {
-//                    Log.w("Error", e.getMessage());
-//                }
-//                Utils.reportException(e);
-//                e.printStackTrace();
-//            }
-//            return mIcon11;
-//        }
-//
-//        protected void onPostExecute(Bitmap result) {
-//            bmImage.setImageBitmap(result);
-//        }
-//    }
 
     // A method to find height of the status bar
     @Nullable
