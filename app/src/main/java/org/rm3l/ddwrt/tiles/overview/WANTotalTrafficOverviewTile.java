@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.tiles.overview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +11,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +31,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,9 +62,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
+import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 
@@ -78,7 +87,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     public static final String CYCLE_MONTH = "M";
     public static final String CYCLE_DAY = "d";
     public static final String CYCLE = "cycle";
-    public static final String WAN_TOTAL_TRAFFIC = "WAN Traffic";
+    public static final String WAN_TOTAL_TRAFFIC = "WAN Usage";
 
     private boolean isThemeLight;
     private long mLastSync;
@@ -92,6 +101,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
     private NVRAMInfo mNvramInfo;
 
+    private CycleItem mCycleItem;
+
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic, null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
@@ -102,6 +113,36 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
+
+        final int wanCycleDay;
+        if (mParentFragmentPreferences != null) {
+            final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
+            wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
+        } else {
+            wanCycleDay = 1;
+        }
+        final Calendar calendar = Calendar.getInstance();
+        final long start;
+        final long end;
+        if (mCurrentDay < wanCycleDay) {
+            //Effective Period: [wanCycleDay-1M, wanCycleDay]
+            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+            calendar.add(Calendar.DATE, -1);
+            end = calendar.getTimeInMillis();
+
+            calendar.add(Calendar.MONTH, -1);
+            start = calendar.getTimeInMillis();
+        } else {
+            //Effective Period: [wanCycleDay, wanCycleDay + 1M]
+            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+            start = calendar.getTimeInMillis();
+
+            calendar.add(Calendar.MONTH, 1);
+            calendar.add(Calendar.DATE, -1);
+            end = calendar.getTimeInMillis();
+        }
+        mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+
 
         tileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +175,36 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         dayMenuItem
                                 .setChecked(false);
                         break;
+                }
+
+                final Date today = new Date();
+                final Calendar calendar = Calendar.getInstance();
+                mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                mCurrentDayDisplayed = new SimpleDateFormat("MMM dd, yyyy",
+                        Locale.getDefault()).format(today);
+                dayMenuItem.setTitle(String.format("Today (%s)", mCurrentDayDisplayed));
+
+                try {
+                    if (mCycleItem == null) {
+                        //1st of each month
+                        calendar.set(Calendar.DAY_OF_MONTH, 1);
+                        final long start = calendar.getTimeInMillis();
+
+                        calendar.add(Calendar.MONTH, 1);
+                        calendar.add(Calendar.DATE, -1);
+                        final long end = calendar.getTimeInMillis();
+
+                        mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+                    }
+                    //Overwrite with effective period (for monthly)
+                    monthMenuItem.setTitle(String.format("Month (%s)",
+                            mCycleItem.getLabel()));
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    ReportingUtils.reportException(mParentFragmentActivity, e);
+                    menu.findItem(R.id.tile_overview_wan_total_traffic_options_change_cycle)
+                        .setVisible(false);
                 }
 
                 popup.show();
@@ -178,6 +249,36 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     mCurrentTraffMonthlyData.clear();
 
                     mLastSync = System.currentTimeMillis();
+
+                    final int wanCycleDay;
+                    if (mParentFragmentPreferences != null) {
+                        final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
+                        wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
+                    } else {
+                        wanCycleDay = 1;
+                    }
+                    final Calendar calendar = Calendar.getInstance();
+                    final long start;
+                    final long end;
+                    if (mCurrentDay < wanCycleDay) {
+                        //Effective Period: [wanCycleDay-1M, wanCycleDay]
+                        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+                        calendar.add(Calendar.DATE, -1);
+                        end = calendar.getTimeInMillis();
+
+                        calendar.add(Calendar.MONTH, -1);
+                        start = calendar.getTimeInMillis();
+                    } else {
+                        //Effective Period: [wanCycleDay, wanCycleDay + 1M]
+                        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+                        start = calendar.getTimeInMillis();
+
+                        calendar.add(Calendar.MONTH, 1);
+                        calendar.add(Calendar.DATE, -1);
+                        end = calendar.getTimeInMillis();
+                    }
+                    mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+
 
                     final Date today = new Date();
                     mCurrentMonth = new SimpleDateFormat("MM-yyyy", Locale.US).format(today);
@@ -265,6 +366,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                     }
                                     final String inTraff = dailyInOutTraffDataList.get(0);
                                     final String outTraff = dailyInOutTraffDataList.get(1);
+
+                                    //FIXME Persist in DB
 
                                     totalDownloadMBytes += Long.parseLong(inTraff);
                                     totalUploadMBytes += Long.parseLong(outTraff);
@@ -383,7 +486,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
             ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                     .setText(WAN_TOTAL_TRAFFIC + ": " + 
-                            (isDayCycle ? mCurrentDayDisplayed : mCurrentMonthDisplayed));
+                            (isDayCycle ? mCurrentDayDisplayed :
+                                    (mCycleItem != null ? mCycleItem.getLabel() : mCurrentMonthDisplayed)));
 
             final View menu = layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
 
@@ -554,6 +658,84 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 }
                 knownMenuItem = true;
                 break;
+            case R.id.tile_overview_wan_total_traffic_options_change_cycle:
+                //TODO
+                final AlertDialog.Builder builder = new AlertDialog.Builder(mParentFragmentActivity);
+                final LayoutInflater dialogInflater = LayoutInflater.from(builder.getContext());
+
+                final View view = dialogInflater.inflate(R.layout.data_usage_cycle_editor, null, false);
+                final NumberPicker cycleDayPicker = (NumberPicker) view.findViewById(R.id.wan_cycle_day);
+
+                final int wanCycleDay;
+                if (mParentFragmentPreferences != null) {
+                    final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
+                    wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
+                } else {
+                    wanCycleDay = 1;
+                }
+
+                cycleDayPicker.setMinValue(1);
+                cycleDayPicker.setMaxValue(31);
+                cycleDayPicker.setValue(wanCycleDay);
+                cycleDayPicker.setWrapSelectorWheel(true);
+
+                builder.setTitle(R.string.data_usage_cycle_editor_title);
+                builder.setView(view);
+
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(R.string.data_usage_cycle_editor_positive,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // clear focus to finish pending text edits
+                                cycleDayPicker.clearFocus();
+
+                                final int wanCycleDay = cycleDayPicker.getValue();
+
+                                //Update preferences
+                                if (mParentFragmentPreferences == null) {
+                                    return ;
+                                }
+                                mParentFragmentPreferences.edit()
+                                        .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
+                                        .apply();
+
+                                final Calendar calendar = Calendar.getInstance();
+                                mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+                                final long start;
+                                final long end;
+                                if (mCurrentDay < wanCycleDay) {
+                                    //Effective Period: [wanCycleDay-1M, wanCycleDay]
+                                    calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+                                    calendar.add(Calendar.DATE, -1);
+                                    end = calendar.getTimeInMillis();
+
+                                    calendar.add(Calendar.MONTH, -1);
+                                    start = calendar.getTimeInMillis();
+                                } else {
+                                    //Effective Period: [wanCycleDay, wanCycleDay + 1M]
+                                    calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+                                    start = calendar.getTimeInMillis();
+
+                                    calendar.add(Calendar.MONTH, 1);
+                                    calendar.add(Calendar.DATE, -1);
+                                    end = calendar.getTimeInMillis();
+                                }
+
+                                mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+
+                                //FIXME Good to apply this new value right away
+//                                final String cycleTimezone = new Time().timezone;
+//                                editor.setPolicyCycleDay(template, cycleDay, cycleTimezone);
+//                                target.updatePolicy(true);
+                            }
+                        });
+
+                builder.create().show();
+
+                return true;
             default:
                 break;
         }
@@ -571,7 +753,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 //Update title
                 ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                         .setText(WAN_TOTAL_TRAFFIC + ": " + 
-                                (isDayCycle ? mCurrentDayDisplayed : mCurrentMonthDisplayed));
+                                (isDayCycle ? mCurrentDayDisplayed : (mCycleItem != null ?
+                                        mCycleItem.getLabel() : mCurrentMonthDisplayed)));
 
                 final TextView wanDLView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl);
                 wanDLView.setText(mNvramInfo.getProperty(
@@ -607,5 +790,81 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         }
 
         return knownMenuItem;
+    }
+
+    /**
+     * List item that reflects a specific data usage cycle.
+     */
+    public static class CycleItem implements Comparable<CycleItem> {
+        private CharSequence label;
+        private long start;
+        private long end;
+
+        CycleItem(CharSequence label) {
+            this.label = label;
+        }
+
+        public CycleItem(Context context, long start, long end) {
+            this.label = formatDateRange(context, start, end);
+            this.start = start;
+            this.end = end;
+        }
+
+        public CharSequence getLabel() {
+            return label;
+        }
+
+        public void setLabel(CharSequence label) {
+            this.label = label;
+        }
+
+        public long getStart() {
+            return start;
+        }
+
+        public void setStart(long start) {
+            this.start = start;
+        }
+
+        public long getEnd() {
+            return end;
+        }
+
+        public void setEnd(long end) {
+            this.end = end;
+        }
+
+        @Override
+        public String toString() {
+            return label.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof CycleItem) {
+                final CycleItem another = (CycleItem) o;
+                return start == another.start && end == another.end;
+            }
+            return false;
+        }
+
+        @Override
+        public int compareTo(@NonNull CycleItem another) {
+            return Longs.compare(start, another.start);
+        }
+    }
+
+    private static final StringBuilder sBuilder = new StringBuilder(50);
+    private static final java.util.Formatter sFormatter = new java.util.Formatter(
+            sBuilder, Locale.getDefault());
+
+    public static String formatDateRange(Context context, long start, long end) {
+        final int flags = FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH;
+
+        synchronized (sBuilder) {
+            sBuilder.setLength(0);
+            return DateUtils.formatDateRange(context, sFormatter, start, end, flags, null)
+                    .toString();
+        }
     }
 }

@@ -29,6 +29,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orderInCategory="1">
 
         <item
+            android:id="@+id/tile_overview_wan_total_traffic_options_selection_day"
+            android:orderInCategory="2"
+            android:checkable="true"
+            android:checked="false"
+            android:title="Today"
+            app:showAsAction="ifRoom" />
+
+        <item
             android:id="@+id/tile_overview_wan_total_traffic_options_selection_month"
             android:orderInCategory="1"
             android:checkable="true"
@@ -36,14 +44,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Month"
             app:showAsAction="ifRoom" />
 
-        <item
-            android:id="@+id/tile_overview_wan_total_traffic_options_selection_day"
-            android:orderInCategory="2"
-            android:checkable="true"
-            android:checked="false"
-            android:title="Day"
-            app:showAsAction="ifRoom" />
-
     </group>
+
+    <item
+        android:id="@+id/tile_overview_wan_total_traffic_options_change_cycle"
+        android:orderInCategory="2"
+        android:checkable="false"
+        android:title="Change monthly cycle..."
+        app:showAsAction="ifRoom" />
 
 </menu>

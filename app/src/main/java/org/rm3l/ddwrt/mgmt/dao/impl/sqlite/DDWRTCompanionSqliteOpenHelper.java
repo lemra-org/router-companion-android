@@ -64,6 +64,28 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_PRIVKEY + " TEXT DEFAULT NULL, " +
             ROUTER_FIRMWARE + " TEXT DEFAULT NULL" +
             ");";
+
+    public static final String TABLE_WAN_TRAFFIC = "wan_traffic";
+    public static final String TABLE_WAN_TRAFFIC_COLUMN_ID = "_id";
+    public static final String TABLE_WAN_TRAFFIC_ROUTER_UUID = "fk_router_uuid";
+    public static final String TABLE_WAN_TRAFFIC_TRAFFIC_DATE_HUMAN = "traff_date_human";
+    public static final String TABLE_WAN_TRAFFIC_TRAFFIC_DATE = "traff_date";
+    public static final String TABLE_WAN_TRAFFIC_TRAFFIC_IN = "traff_in";
+    public static final String TABLE_WAN_TRAFFIC_TRAFFIC_OUT = "traff_out";
+    // Database creation sql statement
+    private static final String TABLE_WAN_TRAFFIC_CREATE = "CREATE TABLE " + TABLE_WAN_TRAFFIC +
+            " (" +
+                TABLE_WAN_TRAFFIC_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                TABLE_WAN_TRAFFIC_ROUTER_UUID + " TEXT NOT NULL, " +
+                TABLE_WAN_TRAFFIC_TRAFFIC_DATE_HUMAN + " TEXT DEFAULT NULL, " +
+                TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " TEXT NOT NULL, " +
+                TABLE_WAN_TRAFFIC_TRAFFIC_IN + " REAL NOT NULL, " +
+                TABLE_WAN_TRAFFIC_TRAFFIC_OUT + " REAL NOT NULL, " +
+                    "FOREIGN KEY (" + TABLE_WAN_TRAFFIC_ROUTER_UUID + ") REFERENCES " +
+                    TABLE_ROUTERS + "(" + ROUTER_UUID +
+                ") " +
+            ");";
+
     public static final String DATABASE_NAME = "routers.db";
 
     public static final Object[] dbLock = new Object[0];
@@ -73,7 +95,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
     private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
 
@@ -90,6 +112,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         //V4: Add Router Firmware: Fix following 3.0.0 update
         DATABASE_UPGRADES.put(4, String.format("UPDATE %s SET %s=\"%s\";",
                 TABLE_ROUTERS, ROUTER_FIRMWARE, Router.RouterFirmware.DDWRT));
+
+        //V6: Add Router Firmware: Add DB for WAN Traffic Data
+        DATABASE_UPGRADES.put(6, TABLE_WAN_TRAFFIC_CREATE);
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {

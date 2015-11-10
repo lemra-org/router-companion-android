@@ -74,6 +74,9 @@ public final class DDWRTCompanionConstants {
     //FIXME Update prior to release
     public static final boolean TEST_MODE = false;
     public static final long MAX_PRIVKEY_SIZE_BYTES = 300 * 1024l;
+
+    public static final String WAN_CYCLE_DAY_PREF = "wan_cycle_day";
+
     public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String THEMING_PREF = "theming";
