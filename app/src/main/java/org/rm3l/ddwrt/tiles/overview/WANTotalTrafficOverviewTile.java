@@ -699,6 +699,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 }
                                 mParentFragmentPreferences.edit()
                                         .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
+                                        .putString(getFormattedPrefKey(CYCLE), CYCLE_MONTH)
                                         .apply();
 
                                 final Calendar calendar = Calendar.getInstance();
@@ -725,6 +726,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 }
 
                                 mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+                                
+                                //Update title
+                                ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
+                                        .setText(WAN_TOTAL_TRAFFIC + ": " + mCycleItem.getLabel());
+
+                                //FIXME Update bandwidth data right away
 
                                 //FIXME Good to apply this new value right away
 //                                final String cycleTimezone = new Time().timezone;
