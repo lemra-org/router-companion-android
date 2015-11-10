@@ -103,6 +103,8 @@ public final class SSHUtils {
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
     public static final int CONNECT_TIMEOUT_MILLIS = 10000;
     public static final int MAX_SSH_SESSIONS_IN_CACHE = 7;
+    
+    //FIXME Leverage Striped from Guava
     private static final LruCache<String, ReentrantLock> SSH_SESSIONS_CACHE_LOCKS = new LruCache<String, ReentrantLock>(MAX_SSH_SESSIONS_IN_CACHE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, ReentrantLock oldValue, ReentrantLock newValue) {
@@ -1177,6 +1179,16 @@ public final class SSHUtils {
         }
 
         public boolean isEnabled(int level) {
+            if (BuildConfig.DEBUG) {
+                //All levels are on
+                return true;
+            }
+            
+            //Otherwise, just WARN, ERROR and FATAL are on
+            return (level == WARN || 
+                        level == ERROR || 
+                        level == FATAL);
+            /*
             switch (level) {
                 case DEBUG:
                     return BuildConfig.DEBUG;
@@ -1187,6 +1199,7 @@ public final class SSHUtils {
                     return true;
             }
             return false;
+            */
         }
 
         public void log(int level, String message) {
