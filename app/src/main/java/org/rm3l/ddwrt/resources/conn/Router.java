@@ -61,6 +61,7 @@ import java.util.Set;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
+import static org.rm3l.ddwrt.utils.SSHUtils.CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
 import static org.rm3l.ddwrt.utils.SSHUtils.NO;
 import static org.rm3l.ddwrt.utils.SSHUtils.STRICT_HOST_KEY_CHECKING;
@@ -234,7 +235,10 @@ public class Router implements Serializable {
 
                         sshSession.setConfig(config);
 
-                        sshSession.connect(CONNECT_TIMEOUT_MILLIS);
+                        sshSession
+                                .setServerAliveInterval(CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS);
+                        sshSession
+                                .connect(CONNECT_TIMEOUT_MILLIS);
 
                         return sshSession;
                     }
