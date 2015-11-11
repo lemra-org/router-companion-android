@@ -65,6 +65,7 @@ import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
+import static org.rm3l.ddwrt.utils.SSHUtils.MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER;
 import static org.rm3l.ddwrt.utils.SSHUtils.NO;
 import static org.rm3l.ddwrt.utils.SSHUtils.STRICT_HOST_KEY_CHECKING;
 import static org.rm3l.ddwrt.utils.SSHUtils.YES;
@@ -174,11 +175,11 @@ public class Router implements Serializable {
             this.routerFirmware = router.routerFirmware;
         }
 
-        this.sessionsStripes = Striped.lock(2);
+        this.sessionsStripes = Striped.lock(MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER);
 
         //Init sessions cache
         this.sessionsCache = CacheBuilder.newBuilder()
-                .maximumSize(2) //There is a maximum of two sessions open
+                .maximumSize(MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER)
                 .removalListener(new RemovalListener<Pair<String, Integer>, Session>() {
                     @Override
                     public void onRemoval(@NonNull RemovalNotification<Pair<String, Integer>, Session> notification) {
