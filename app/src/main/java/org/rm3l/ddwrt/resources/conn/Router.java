@@ -39,6 +39,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.util.concurrent.Striped;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
@@ -57,6 +58,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
@@ -140,6 +142,8 @@ public class Router implements Serializable {
 
     private final LoadingCache<Pair<String, Integer>, Session> sessionsCache;
 
+    private final Striped<Lock> sessionsStripes;
+
     private final Context context;
 
     /**
@@ -169,6 +173,8 @@ public class Router implements Serializable {
             this.strictHostKeyChecking = router.strictHostKeyChecking;
             this.routerFirmware = router.routerFirmware;
         }
+
+        this.sessionsStripes = Striped.lock(2);
 
         //Init sessions cache
         this.sessionsCache = CacheBuilder.newBuilder()
@@ -610,16 +616,29 @@ public class Router implements Serializable {
 
     @Nullable
     public Session getSSHSession() throws Exception {
-        final Session session = this.sessionsCache
-                .get(getEffectiveIpAndPortTuple());
-        if (session != null && !session.isConnected()) {
-            session.connect(CONNECT_TIMEOUT_MILLIS);
+        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
+        final Lock lock = this.sessionsStripes.get(effectiveIpAndPortTuple);
+        try {
+            lock.lock();
+            final Session session = this.sessionsCache.get(effectiveIpAndPortTuple);
+            if (session != null && !session.isConnected()) {
+                session.connect(CONNECT_TIMEOUT_MILLIS);
+            }
+            return session;
+        } finally {
+            lock.unlock();
         }
-        return session;
     }
 
     public void destroyActiveSession() {
-        this.sessionsCache.invalidate(getEffectiveIpAndPortTuple());
+        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
+        final Lock lock = this.sessionsStripes.get(effectiveIpAndPortTuple);
+        try {
+            lock.lock();
+            this.sessionsCache.invalidate(effectiveIpAndPortTuple);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void destroyAllSessions() {
