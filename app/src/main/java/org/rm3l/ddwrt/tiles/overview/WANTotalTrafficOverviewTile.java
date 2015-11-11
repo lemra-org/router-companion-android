@@ -1,11 +1,8 @@
 package org.rm3l.ddwrt.tiles.overview;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,8 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Longs;
 
 import org.apache.commons.io.FileUtils;
@@ -39,16 +34,15 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficActivity;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
-import org.rm3l.ddwrt.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,11 +54,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.keyboardsurfer.android.widget.crouton.Style;
-
 import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
 import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
+import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DDWRT_MONTHLY_TRAFFIC_DATE_WRITER;
 import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
@@ -74,7 +67,9 @@ import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = WANTotalTrafficOverviewTile.class.getSimpleName();
-    public static final String CURRENT = "CURRENT";
+    public static final String PREVIOUS = "_PREVIOUS";
+    public static final String CURRENT = "_CURRENT";
+    public static final String NEXT = "_NEXT";
     public static final String TOTAL_DL_CURRENT_MONTH = "TOTAL_DL_CURRENT_MONTH";
     public static final String TOTAL_UL_CURRENT_MONTH = "TOTAL_UL_CURRENT_MONTH";
     public static final String TOTAL_DL_CURRENT_MONTH_MB = "TOTAL_DL_CURRENT_MONTH_MB";
@@ -88,6 +83,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     public static final String CYCLE_DAY = "d";
     public static final String CYCLE = "cycle";
     public static final String WAN_TOTAL_TRAFFIC = "WAN Usage";
+    public static final String TRAFF_PREFIX = "traff-";
+    public static final SimpleDateFormat DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy", Locale.US);
 
     private boolean isThemeLight;
     private long mLastSync;
@@ -103,8 +100,14 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
     private CycleItem mCycleItem;
 
+    private final DDWRTCompanionDAO dao;
+    private String mPrevMonth;
+    private String mNextMonth;
+
     public WANTotalTrafficOverviewTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_overview_wan_total_traffic, null);
+
+        dao = RouterManagementActivity.getDao(mParentFragmentActivity);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
@@ -127,10 +130,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         if (mCurrentDay < wanCycleDay) {
             //Effective Period: [wanCycleDay-1M, wanCycleDay]
             calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-            calendar.add(Calendar.DATE, -1);
             end = calendar.getTimeInMillis();
 
             calendar.add(Calendar.MONTH, -1);
+            calendar.add(Calendar.DATE, 1);
             start = calendar.getTimeInMillis();
         } else {
             //Effective Period: [wanCycleDay, wanCycleDay + 1M]
@@ -142,7 +145,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             end = calendar.getTimeInMillis();
         }
         mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
-
 
         tileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,10 +265,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     if (mCurrentDay < wanCycleDay) {
                         //Effective Period: [wanCycleDay-1M, wanCycleDay]
                         calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                        calendar.add(Calendar.DATE, -1);
                         end = calendar.getTimeInMillis();
 
                         calendar.add(Calendar.MONTH, -1);
+                        calendar.add(Calendar.DATE, 1);
                         start = calendar.getTimeInMillis();
                     } else {
                         //Effective Period: [wanCycleDay, wanCycleDay + 1M]
@@ -279,20 +281,32 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     }
                     mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
 
-
                     final Date today = new Date();
-                    mCurrentMonth = new SimpleDateFormat("MM-yyyy", Locale.US).format(today);
+                    mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today);
                     mCurrentMonthDisplayed = new SimpleDateFormat("MMM, yyyy", Locale.US).format(today);
                     mCurrentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
                     mCurrentDayDisplayed = new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(today);
 
+                    //Also retrieve data for previous month and next month
+                    final Calendar cal1 = Calendar.getInstance();
+                    cal1.add(Calendar.MONTH, -1);
+                    mPrevMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(cal1.getTime());
+
+                    final Calendar cal2 = Calendar.getInstance();
+                    cal2.add(Calendar.MONTH, 1);
+                    mNextMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(cal2.getTime());
+
+                    final String traffForPreviousMonthKey = \"fake-key\";
+                    final String traffForCurrentMonthKey = \"fake-key\";
+                    final String traffForNextMonthKey = \"fake-key\";
+
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
-                    final String traffForCurrentMonthKey = \"fake-key\";
-
                     try {
+                        nvramInfo.setProperty(PREVIOUS, mPrevMonth);
                         nvramInfo.setProperty(CURRENT, mCurrentMonth);
+                        nvramInfo.setProperty(NEXT, mNextMonth);
 
                         if (isDemoRouter(mRouter)) {
                             final boolean ttraffEnabled = new Random().nextBoolean();
@@ -303,7 +317,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
                                     mRouter, mGlobalPreferences,
                                     NVRAMInfo.TTRAFF_ENABLE,
-                                    traffForCurrentMonthKey);
+                                    traffForPreviousMonthKey,
+                                    traffForCurrentMonthKey,
+                                    traffForNextMonthKey);
                         }
 
                     } finally {
@@ -343,103 +359,96 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 HIDDEN_);
 
                     } else {
+                        WANMonthlyTrafficTile.retrieveAndPersistMonthlyTrafficData(mRouter, dao, nvramInfo);
+
+                        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(start));
+                        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(end));
+
+                        final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
+                                dao.getWANTrafficDataByRouterBetweenDates(mRouter.getUuid(), cycleStart, cycleEnd);
                         //Compute total in/out
+                        long totalDownloadMBytes = 0l;
+                        long totalUploadMBytes = 0l;
+                        for (final WANTrafficData wanTrafficData : wanTrafficDataByRouterBetweenDates) {
+                            if (wanTrafficData == null) {
+                                continue;
+                            }
+                            totalDownloadMBytes += wanTrafficData.getTraffIn().doubleValue();
+                            totalUploadMBytes += wanTrafficData.getTraffOut().doubleValue();
+                        }
+
+                        final String inHumanReadable = FileUtils
+                                .byteCountToDisplaySize(totalDownloadMBytes * MB);
+                        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
+                                inHumanReadable);
+                        if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
+                                inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
+                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                                    HIDDEN_);
+                        } else {
+                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                                    String.valueOf(totalDownloadMBytes));
+                        }
+
+                        final String outHumanReadable = FileUtils
+                                .byteCountToDisplaySize(totalUploadMBytes * MB);
+                        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
+                                outHumanReadable);
+                        if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
+                                outHumanReadable.equals(totalUploadMBytes + " bytes")) {
+                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                    HIDDEN_);
+                        } else {
+                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                                    String.valueOf(totalUploadMBytes));
+                        }
+
+                        //Compute date for current day
                         final String trafficForCurrentMonth = nvramInfo.getProperty(traffForCurrentMonthKey);
                         if (trafficForCurrentMonth != null) {
                             final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER
                                     .splitToList(trafficForCurrentMonth);
                             if (!(dailyTraffDataList == null || dailyTraffDataList.isEmpty())) {
-                                long totalDownloadMBytes = 0l;
-                                long totalUploadMBytes = 0l;
-                                int dayNum = 1;
-                                for (final String dailyInOutTraffData : dailyTraffDataList) {
-                                    if (Strings.isNullOrEmpty(dailyInOutTraffData)) {
-                                        continue;
+                                if (mCurrentDay > 1 && dailyTraffDataList.size() >= mCurrentDay) {
+                                    final String dailyInOutTraffData = dailyTraffDataList.get(mCurrentDay - 1);
+                                    if (!(Strings.isNullOrEmpty(dailyInOutTraffData) || StringUtils.contains(dailyInOutTraffData, "["))) {
+                                        //Day
+                                        final List<String> currentDayTraffData = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
+                                        if (currentDayTraffData.size() >= 2) {
+                                            final double totalDownloadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(0));
+                                            final double totalUploadMBytesForCurrentDay = Double.parseDouble(currentDayTraffData.get(1));
+
+                                            final String inHumanReadableCurrentDay = FileUtils
+                                                    .byteCountToDisplaySize(
+                                                            Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
+                                                                    .longValue());
+                                            nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
+                                                    inHumanReadableCurrentDay);
+                                            if (inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " MB") ||
+                                                    inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " bytes")) {
+                                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                                        HIDDEN_);
+                                            } else {
+                                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
+                                                        String.valueOf(totalDownloadMBytesForCurrentDay));
+                                            }
+                                            final String outHumanReadableCurrentDay = FileUtils
+                                                    .byteCountToDisplaySize(
+                                                            Double.valueOf(totalUploadMBytesForCurrentDay * MB)
+                                                                    .longValue());
+                                            nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
+                                                    outHumanReadableCurrentDay);
+                                            if (outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " MB") ||
+                                                    outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " bytes")) {
+                                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                                        HIDDEN_);
+                                            } else {
+                                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
+                                                        String.valueOf(totalUploadMBytesForCurrentDay));
+                                            }
+                                        }
                                     }
-                                    if (StringUtils.contains(dailyInOutTraffData, "[")) {
-                                        continue;
-                                    }
-                                    final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER
-                                            .splitToList(dailyInOutTraffData);
-                                    if (dailyInOutTraffDataList.size() < 2) {
-                                        continue;
-                                    }
-                                    final String inTraff = dailyInOutTraffDataList.get(0);
-                                    final String outTraff = dailyInOutTraffDataList.get(1);
 
-                                    //FIXME Persist in DB
-
-                                    totalDownloadMBytes += Long.parseLong(inTraff);
-                                    totalUploadMBytes += Long.parseLong(outTraff);
-
-                                    mCurrentTraffMonthlyData.put(dayNum++, Lists.newArrayList(
-                                            Double.parseDouble(inTraff), Double.parseDouble(outTraff)));
-                                }
-                                final String inHumanReadable = FileUtils
-                                        .byteCountToDisplaySize(totalDownloadMBytes * MB);
-                                nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-                                        inHumanReadable);
-                                if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
-                                        inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
-                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-                                            HIDDEN_);
-                                } else {
-                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-                                            String.valueOf(totalDownloadMBytes));
-                                }
-
-                                final String outHumanReadable = FileUtils
-                                        .byteCountToDisplaySize(totalUploadMBytes * MB);
-                                nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-                                        outHumanReadable);
-                                if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
-                                        outHumanReadable.equals(totalUploadMBytes + " bytes")) {
-                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-                                            HIDDEN_);
-                                } else {
-                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-                                            String.valueOf(totalUploadMBytes));
-                                }
-
-                                //Day
-                                final ArrayList<Double> currentDayTraffData =
-                                        mCurrentTraffMonthlyData.get(mCurrentDay);
-                                double totalDownloadMBytesForCurrentDay = -1.;
-                                double totalUploadMBytesForCurrentDay = -1.;
-                                if (currentDayTraffData != null && currentDayTraffData.size() >= 2) {
-                                    totalDownloadMBytesForCurrentDay =
-                                            currentDayTraffData.get(0);
-                                    totalUploadMBytesForCurrentDay =
-                                            currentDayTraffData.get(1);
-                                }
-
-                                final String inHumanReadableCurrentDay = FileUtils
-                                        .byteCountToDisplaySize(
-                                                Double.valueOf(totalDownloadMBytesForCurrentDay * MB)
-                                                    .longValue());
-                                nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY,
-                                        inHumanReadableCurrentDay);
-                                if (inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " MB") ||
-                                        inHumanReadableCurrentDay.equals(totalDownloadMBytesForCurrentDay + " bytes")) {
-                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
-                                            HIDDEN_);
-                                } else {
-                                    nvramInfo.setProperty(TOTAL_DL_CURRENT_DAY_MB,
-                                            String.valueOf(totalDownloadMBytesForCurrentDay));
-                                }
-                                final String outHumanReadableCurrentDay = FileUtils
-                                        .byteCountToDisplaySize(
-                                                Double.valueOf(totalUploadMBytesForCurrentDay * MB)
-                                                    .longValue());
-                                nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY,
-                                        outHumanReadableCurrentDay);
-                                if (outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " MB") ||
-                                        outHumanReadableCurrentDay.equals(totalUploadMBytesForCurrentDay + " bytes")) {
-                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
-                                            HIDDEN_);
-                                } else {
-                                    nvramInfo.setProperty(TOTAL_UL_CURRENT_DAY_MB,
-                                            String.valueOf(totalUploadMBytesForCurrentDay));
                                 }
                             }
                         }
@@ -565,47 +574,47 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
 
-                final NVRAMInfo dataCopy = data;
-                gridLayoutContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final String currentMonth = dataCopy.getProperty(CURRENT);
-                        if (currentMonth == null) {
-                            Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
-                            ReportingUtils.reportException(null, new IllegalStateException("currentMonth == null"));
-                            return;
-                        }
-                        if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {
-                            Toast.makeText(WANTotalTrafficOverviewTile.this.mParentFragmentActivity,
-                                    String.format("No traffic data for '%s'", currentMonth),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
-                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
-                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, currentMonth);
-                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED,
-                                    ImmutableMap.copyOf(mCurrentTraffMonthlyData));
-
-                            //noinspection ConstantConditions
-//                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-
-                            final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
-                                    String.format("Loading traffic data for '%s'", currentMonth), "Please Wait...",
-                                    true);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mParentFragmentActivity.startActivity(intent);
-                                    alertDialog.cancel();
-                                }
-                            }, 1000);
-                        }
-                    }
-                });
+//                final NVRAMInfo dataCopy = data;
+//                gridLayoutContainer.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        final String currentMonth = dataCopy.getProperty(CURRENT);
+//                        if (currentMonth == null) {
+//                            Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
+//                            ReportingUtils.reportException(null, new IllegalStateException("currentMonth == null"));
+//                            return;
+//                        }
+//                        if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {
+//                            Toast.makeText(WANTotalTrafficOverviewTile.this.mParentFragmentActivity,
+//                                    String.format("No traffic data for '%s'", currentMonth),
+//                                    Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
+//                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+//                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
+//                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, currentMonth);
+//                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED,
+//                                    ImmutableMap.copyOf(mCurrentTraffMonthlyData));
+//
+//                            //noinspection ConstantConditions
+////                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
+////                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
+////                            alertDialog.show();
+////                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+//
+//                            final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
+//                                    String.format("Loading traffic data for '%s'", currentMonth), "Please Wait...",
+//                                    true);
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mParentFragmentActivity.startActivity(intent);
+//                                    alertDialog.cancel();
+//                                }
+//                            }, 1000);
+//                        }
+//                    }
+//                });
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -710,10 +719,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 if (mCurrentDay < wanCycleDay) {
                                     //Effective Period: [wanCycleDay-1M, wanCycleDay]
                                     calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                                    calendar.add(Calendar.DATE, -1);
                                     end = calendar.getTimeInMillis();
 
                                     calendar.add(Calendar.MONTH, -1);
+                                    calendar.add(Calendar.DATE, 1);
                                     start = calendar.getTimeInMillis();
                                 } else {
                                     //Effective Period: [wanCycleDay, wanCycleDay + 1M]

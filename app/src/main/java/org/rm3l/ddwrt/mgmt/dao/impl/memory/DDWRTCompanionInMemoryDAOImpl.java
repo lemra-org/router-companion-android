@@ -29,10 +29,12 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -150,5 +152,31 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
             }
         }
         return null;
+    }
+
+    @Override
+    public Long insertWANTrafficData(@NonNull WANTrafficData trafficData) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public boolean isWANTrafficDataPresent(@NonNull String router, @NonNull String date) {
+        //TODO
+        return false;
+    }
+
+    @NonNull
+    @Override
+    public List<WANTrafficData> getWANTrafficDataByRouterByDate(@NonNull String router, @NonNull String date) {
+        //TODO
+        return Collections.emptyList();
+    }
+
+    @NonNull
+    @Override
+    public List<WANTrafficData> getWANTrafficDataByRouterBetweenDates(@NonNull String router, @NonNull String dateLower, @NonNull String dateHigher) {
+        //TODO
+        return Collections.emptyList();
     }
 }

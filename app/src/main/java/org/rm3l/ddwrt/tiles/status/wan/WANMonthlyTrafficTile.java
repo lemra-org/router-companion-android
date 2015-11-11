@@ -61,6 +61,7 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableCollection;
@@ -82,6 +83,8 @@ import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -92,6 +95,7 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -99,6 +103,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -112,6 +117,7 @@ import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_DL
 import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_DL_CURRENT_MONTH_MB;
 import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_UL_CURRENT_MONTH;
 import static org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile.TOTAL_UL_CURRENT_MONTH_MB;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 /**
@@ -120,6 +126,11 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 public class WANMonthlyTrafficTile
         extends DDWRTTile<NVRAMInfo>
         implements UndoBarController.AdvancedUndoListener, RouterActionListener {
+
+    public static final SimpleDateFormat DDWRT_MONTHLY_TRAFFIC_DATE_READER =
+            new SimpleDateFormat("MM-yyyy/dd", Locale.US);
+    public static final SimpleDateFormat DDWRT_MONTHLY_TRAFFIC_DATE_WRITER =
+            new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     public static final Splitter MONTHLY_TRAFF_DATA_SPLITTER = Splitter.on(" ").omitEmptyStrings();
     public static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
@@ -142,9 +153,12 @@ public class WANMonthlyTrafficTile
     
     private boolean mIsThemeLight;
 
+    private final DDWRTCompanionDAO dao;
+
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
 
+        dao = RouterManagementActivity.getDao(mParentFragmentActivity);
         mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
         
         final TextView monthYearTextViewToDisplay = (TextView) this.layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
@@ -380,6 +394,88 @@ public class WANMonthlyTrafficTile
         return R.id.tile_status_wan_monthly_traffic_title;
     }
 
+    public static void retrieveAndPersistMonthlyTrafficData(@Nullable final Router router,
+                                                            @Nullable final DDWRTCompanionDAO dao,
+                                                           @Nullable final NVRAMInfo nvramInfo) {
+        if (router == null || dao == null || nvramInfo == null || nvramInfo.isEmpty()) {
+            return;
+        }
+        final Properties data = nvramInfo.getData();
+        if (data == null) {
+            return;
+        }
+
+        final String routerUuid = router.getUuid();
+
+        for (final Map.Entry<Object, Object> dataEntrySet : data.entrySet()) {
+            final Object key = dataEntrySet.getKey();
+            final Object value = dataEntrySet.getValue();
+            if (key == null || value == null) {
+                continue;
+            }
+
+            if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
+                continue;
+            }
+
+            final String monthYear = key.toString().replace("traff-", EMPTY_STRING);
+
+            final String monthlyTraffData = value.toString();
+
+            final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(monthlyTraffData);
+            if (dailyTraffDataList == null || dailyTraffDataList.isEmpty()) {
+                continue;
+            }
+
+            int dayNum = 0;
+            for (final String dailyInOutTraffData : dailyTraffDataList) {
+                if (StringUtils.contains(dailyInOutTraffData, "[")) {
+                    continue;
+                }
+                final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
+                if (dailyInOutTraffDataList.size() < 2) {
+                    continue;
+                }
+                ++dayNum;
+
+                final String inTraff = dailyInOutTraffDataList.get(0);
+                final String outTraff = dailyInOutTraffDataList.get(1);
+
+                final String sqliteFormattedDate = getSqliteFormattedDate(monthYear, dayNum);
+                if (Strings.isNullOrEmpty(sqliteFormattedDate)) {
+                    continue;
+                }
+
+                if (("0".equals(inTraff) && "0".equals(outTraff)) ||
+                        !dao.isWANTrafficDataPresent(routerUuid, sqliteFormattedDate)) {
+                    //Persist data in DB
+                    final double inTraffDouble = Double.parseDouble(inTraff);
+                    final double outTraffDouble = Double.parseDouble(outTraff);
+
+                    final WANTrafficData wanTrafficData = new WANTrafficData(routerUuid,
+                            sqliteFormattedDate,
+                            inTraffDouble,
+                            outTraffDouble);
+
+                    dao.insertWANTrafficData(wanTrafficData);
+                }
+            }
+        }
+    }
+
+    @Nullable
+    public static String getSqliteFormattedDate(final String ddwrtRawMonthYear, final int dayNum) {
+        final Date date;
+        try {
+            date = DDWRT_MONTHLY_TRAFFIC_DATE_READER.parse(String.format("%s/%s", ddwrtRawMonthYear, dayNum));
+        } catch (final ParseException e) {
+            Utils.reportException(null, e);
+            e.printStackTrace();
+            return null;
+        }
+        return DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(date);
+    }
+
     @Nullable
     @Override
     protected Loader<NVRAMInfo> getLoader(int id, Bundle args) {
@@ -421,26 +517,11 @@ public class WANMonthlyTrafficTile
 
                     mLastSync = System.currentTimeMillis();
 
-                    final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-                    NVRAMInfo nvramInfoTmp = null;
-                    try {
-                        //noinspection ConstantConditions
-                        nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
-                                SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
-                                        "/usr/sbin/nvram show 2>/dev/null | grep traff[-_]"));
-                    } finally {
-                        if (nvramInfoTmp != null) {
-                            nvramInfo.putAll(nvramInfoTmp);
-                        }
-
-                    }
+                    final NVRAMInfo nvramInfo =
+                            getTrafficDataNvramInfoAndPersistIfNeeded
+                                    (mParentFragmentActivity, mRouter, mGlobalPreferences, dao);
 
                     traffDataTableBuilder = ImmutableTable.builder();
-
-                    if (nvramInfo.isEmpty()) {
-                        throw new DDWRTNoDataException("No Data!");
-                    }
 
                     @SuppressWarnings("ConstantConditions")
                     final Set<Map.Entry<Object, Object>> entries = nvramInfo.getData().entrySet();
@@ -466,7 +547,7 @@ public class WANMonthlyTrafficTile
                             continue;
                         }
 
-                        final String month = key.toString().replace("traff-", DDWRTCompanionConstants.EMPTY_STRING);
+                        final String month = key.toString().replace("traff-", EMPTY_STRING);
 
                         final String monthlyTraffData = value.toString();
 
@@ -524,6 +605,35 @@ public class WANMonthlyTrafficTile
         };
 
         return mLoader;
+    }
+
+    @NonNull
+    public static NVRAMInfo getTrafficDataNvramInfoAndPersistIfNeeded(Context ctx,
+                                                    Router router,
+                                                    SharedPreferences globalPreferences,
+                                                    DDWRTCompanionDAO dao) throws Exception {
+
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+        NVRAMInfo nvramInfoTmp = null;
+        try {
+            //noinspection ConstantConditions
+            nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
+                    SSHUtils.getManualProperty(ctx, router, globalPreferences,
+                            "/usr/sbin/nvram show 2>/dev/null | grep traff[-_]"));
+        } finally {
+            if (nvramInfoTmp != null) {
+                nvramInfo.putAll(nvramInfoTmp);
+            }
+        }
+
+        if (nvramInfo.isEmpty()) {
+            throw new DDWRTNoDataException("No Data!");
+        }
+
+        retrieveAndPersistMonthlyTrafficData(router, dao, nvramInfo);
+
+        return nvramInfo;
     }
 
     @Nullable
@@ -642,7 +752,7 @@ public class WANMonthlyTrafficTile
                         } else {
                             final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
+                                    mRouter != null ? mRouter.getRemoteIpAddress() : EMPTY_STRING);
                             intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
                             intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
 

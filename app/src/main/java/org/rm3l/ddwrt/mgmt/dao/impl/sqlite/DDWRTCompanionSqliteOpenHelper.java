@@ -26,7 +26,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -36,6 +38,8 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import java.util.Collection;
 
 public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
+
+    private static final String TAG = DDWRTCompanionSqliteOpenHelper.class.getSimpleName();
 
     public static final String TABLE_ROUTERS = "routers";
     public static final String COLUMN_ID = "_id";
@@ -50,7 +54,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String ROUTER_FIRMWARE = "firmware";
     public static final String ROUTER_SSH_STRICT_HOST_KEY_CHECKING = "ssh_strict_host_key_checking";
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "CREATE TABLE " + TABLE_ROUTERS +
+    private static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + TABLE_ROUTERS +
             " (" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             ROUTER_UUID + " TEXT NOT NULL UNIQUE, " +
@@ -68,22 +72,20 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String TABLE_WAN_TRAFFIC = "wan_traffic";
     public static final String TABLE_WAN_TRAFFIC_COLUMN_ID = "_id";
     public static final String TABLE_WAN_TRAFFIC_ROUTER_UUID = "fk_router_uuid";
-    public static final String TABLE_WAN_TRAFFIC_TRAFFIC_DATE_HUMAN = "traff_date_human";
     public static final String TABLE_WAN_TRAFFIC_TRAFFIC_DATE = "traff_date";
     public static final String TABLE_WAN_TRAFFIC_TRAFFIC_IN = "traff_in";
     public static final String TABLE_WAN_TRAFFIC_TRAFFIC_OUT = "traff_out";
     // Database creation sql statement
-    private static final String TABLE_WAN_TRAFFIC_CREATE = "CREATE TABLE " + TABLE_WAN_TRAFFIC +
+    private static final String TABLE_WAN_TRAFFIC_CREATE = "CREATE TABLE IF NOT EXISTS " + TABLE_WAN_TRAFFIC +
             " (" +
                 TABLE_WAN_TRAFFIC_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TABLE_WAN_TRAFFIC_ROUTER_UUID + " TEXT NOT NULL, " +
-                TABLE_WAN_TRAFFIC_TRAFFIC_DATE_HUMAN + " TEXT DEFAULT NULL, " +
                 TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " TEXT NOT NULL, " +
                 TABLE_WAN_TRAFFIC_TRAFFIC_IN + " REAL NOT NULL, " +
                 TABLE_WAN_TRAFFIC_TRAFFIC_OUT + " REAL NOT NULL, " +
                     "FOREIGN KEY (" + TABLE_WAN_TRAFFIC_ROUTER_UUID + ") REFERENCES " +
                     TABLE_ROUTERS + "(" + ROUTER_UUID +
-                ") " +
+                    ") ON DELETE CASCADE ON UPDATE CASCADE " +
             ");";
 
     public static final String DATABASE_NAME = "routers.db";
@@ -123,7 +125,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(@NonNull SQLiteDatabase sqLiteDatabase) {
+        Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + DATABASE_CREATE);
         sqLiteDatabase.execSQL(DATABASE_CREATE);
+        Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + TABLE_WAN_TRAFFIC_CREATE);
+        sqLiteDatabase.execSQL(TABLE_WAN_TRAFFIC_CREATE);
     }
 
     @Override
@@ -139,8 +144,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             //Loop because we do not know what version users will be converted from or to
             final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
             if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
+                Crashlytics.log(Log.INFO, TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
                 for (final String upgradeToSql : upgradeToSqlCollection) {
                     if (!Strings.isNullOrEmpty(upgradeToSql)) {
+                        Crashlytics.log(Log.DEBUG, TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
                         db.execSQL(upgradeToSql);
                     }
                 }

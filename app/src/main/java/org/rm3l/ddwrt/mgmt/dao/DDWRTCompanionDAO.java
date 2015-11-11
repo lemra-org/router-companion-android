@@ -22,8 +22,10 @@
 
 package org.rm3l.ddwrt.mgmt.dao;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.util.List;
@@ -47,4 +49,20 @@ public interface DDWRTCompanionDAO {
 
     @Nullable
     Router getRouter(int id);
+
+    @Nullable
+    Long insertWANTrafficData(@NonNull final WANTrafficData trafficData);
+
+    boolean isWANTrafficDataPresent(@NonNull final String router,
+                                    @NonNull final String date);
+
+    @NonNull
+    List<WANTrafficData> getWANTrafficDataByRouterByDate(@NonNull final String router,
+                                                         @NonNull final String date);
+
+    @NonNull
+    List<WANTrafficData> getWANTrafficDataByRouterBetweenDates(@NonNull final String router,
+                                                                @NonNull final String dateLower,
+                                                               @NonNull final String dateHigher);
+
 }
