@@ -83,9 +83,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
                 TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " TEXT NOT NULL, " +
                 TABLE_WAN_TRAFFIC_TRAFFIC_IN + " REAL NOT NULL, " +
                 TABLE_WAN_TRAFFIC_TRAFFIC_OUT + " REAL NOT NULL, " +
-                    "FOREIGN KEY (" + TABLE_WAN_TRAFFIC_ROUTER_UUID + ") REFERENCES " +
-                    TABLE_ROUTERS + "(" + ROUTER_UUID +
-                    ") ON DELETE CASCADE ON UPDATE CASCADE " +
+                "UNIQUE(" + TABLE_WAN_TRAFFIC_ROUTER_UUID + ", " + TABLE_WAN_TRAFFIC_TRAFFIC_DATE + ") ON CONFLICT REPLACE, " +
+                "FOREIGN KEY (" + TABLE_WAN_TRAFFIC_ROUTER_UUID + ") REFERENCES " +
+                TABLE_ROUTERS + "(" + ROUTER_UUID +
+                ") ON DELETE CASCADE ON UPDATE CASCADE " +
             ");";
 
     public static final String DATABASE_NAME = "routers.db";
