@@ -178,8 +178,11 @@ public class Router implements Serializable {
                     public void onRemoval(@NonNull RemovalNotification<Pair<String, Integer>, Session> notification) {
                         final RemovalCause removalCause = notification.getCause();
                         final Pair<String, Integer> pair = notification.getKey();
-                        Crashlytics.log(Log.INFO, TAG,
-                                "Removal Notification for " + pair +". Cause : " + removalCause);
+                        if (pair != null) {
+                            Crashlytics.log(Log.INFO, TAG,
+                                    "Removal Notification for <" + pair.first + "," + pair.second +
+                                            ">. Cause : " + removalCause);
+                        }
 
                         final Session session = notification.getValue();
                         if (session == null) {
@@ -237,6 +240,7 @@ public class Router implements Serializable {
 
                         sshSession
                                 .setServerAliveInterval(CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS);
+
                         sshSession
                                 .connect(CONNECT_TIMEOUT_MILLIS);
 
@@ -606,8 +610,12 @@ public class Router implements Serializable {
 
     @Nullable
     public Session getSSHSession() throws Exception {
-        return this.sessionsCache
+        final Session session = this.sessionsCache
                 .get(getEffectiveIpAndPortTuple());
+        if (session != null && !session.isConnected()) {
+            session.connect(CONNECT_TIMEOUT_MILLIS);
+        }
+        return session;
     }
 
     public void destroyActiveSession() {
