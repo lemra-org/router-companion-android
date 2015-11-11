@@ -501,7 +501,7 @@ public class RouterListRecycleViewAdapter extends
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SSHUtils.destroySession(context, router);
+                SSHUtils.destroySessions(router);
             }
         }).start();
     }

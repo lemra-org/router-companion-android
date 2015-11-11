@@ -193,7 +193,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     private final Runnable mDestroySessionRunnable = new Runnable() {
         @Override
         public void run() {
-            SSHUtils.destroySession(DDWRTMainActivity.this, mRouter);
+            SSHUtils.destroySessions(mRouter);
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;

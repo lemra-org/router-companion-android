@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.mgmt.dao.impl.memory;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -50,17 +51,20 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     private static final String LOG_TAG = DDWRTCompanionInMemoryDAOImpl.class.getSimpleName();
     private final Map<String, Router> DB = new ConcurrentHashMap<>();
 
+    private Context ctx;
+
     public DDWRTCompanionInMemoryDAOImpl() {
         if (DDWRTCompanionConstants.TEST_MODE) {
             populateDB();
         }
+        ctx = null;
     }
 
     private void populateDB() {
         final List<Integer> primeNumbersFromEratostheneSieve = getPrimeNumbersFromEratostheneSieve(MAX_INIT_ENTRIES);
 
         for (int i = 1; i <= MAX_INIT_ENTRIES; i++) {
-            final Router sr = new Router();
+            final Router sr = new Router(ctx);
             sr.setName("router #" + i);
             sr.setRemoteIpAddress("172.17.17." + i);
             sr.setRouterConnectionProtocol(primeNumbersFromEratostheneSieve.contains(i) ? SSH : HTTPS);

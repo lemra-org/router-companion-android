@@ -86,9 +86,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     @NonNull
-    private static Router cursorToRouter(@NonNull Cursor cursor) {
+    private Router cursorToRouter(@NonNull Cursor cursor) {
 
-        final Router router = new Router();
+        final Router router = new Router(this.mContext);
         router.setId(cursor.getInt(0));
         router.setUuid(cursor.getString(1));
         router.setName(cursor.getString(2));

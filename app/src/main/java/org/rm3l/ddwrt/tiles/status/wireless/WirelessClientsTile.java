@@ -609,7 +609,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
                 //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
                 mTempRouterUuid = UUID.randomUUID().toString();
-                mRouterCopy = new Router(mRouter).setUuid(mTempRouterUuid);
+                mRouterCopy = new Router(mParentFragmentActivity, mRouter).setUuid(mTempRouterUuid);
 
                 final ClientDevices devices = new ClientDevices();
 
@@ -2333,7 +2333,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                }
                 //Destroy temporary SSH session
                 if (mRouterCopy != null) {
-                    SSHUtils.destroySession(mParentFragmentActivity, mRouterCopy);
+                    SSHUtils.destroySessions(mRouterCopy);
                 }
             } finally {
                 doneLoading(loader);

@@ -26,10 +26,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalCause;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import com.google.gson.Gson;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -43,11 +55,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
+import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
+import static org.rm3l.ddwrt.utils.SSHUtils.NO;
+import static org.rm3l.ddwrt.utils.SSHUtils.STRICT_HOST_KEY_CHECKING;
+import static org.rm3l.ddwrt.utils.SSHUtils.YES;
 
 /**
  * Encapsulates everything needed to establish a connection to a given router.
@@ -57,6 +74,8 @@ import static org.rm3l.ddwrt.resources.Encrypted.e;
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
 public class Router implements Serializable {
+
+    private static final String TAG = Router.class.getSimpleName();
 
     public static final String USE_LOCAL_SSID_LOOKUP = "useLocalSSIDLookup";
     public static final String LOCAL_SSID_LOOKUPS = "localSSIDLookups";
@@ -118,10 +137,15 @@ public class Router implements Serializable {
     @Nullable
     private RouterFirmware routerFirmware;
 
+    private final LoadingCache<Pair<String, Integer>, Session> sessionsCache;
+
+    private final Context context;
+
     /**
      * Default constructor
      */
-    public Router() {
+    public Router(@Nullable final Context ctx) {
+        this(ctx, null);
     }
 
     /**
@@ -129,8 +153,8 @@ public class Router implements Serializable {
      *
      * @param router the router to copy
      */
-    public Router(@Nullable final Router router) {
-        this();
+    public Router(@Nullable final Context ctx, @Nullable final Router router) {
+        this.context = ctx;
         if (router != null) {
             this.id = router.id;
             this.name = router.name;
@@ -144,6 +168,77 @@ public class Router implements Serializable {
             this.strictHostKeyChecking = router.strictHostKeyChecking;
             this.routerFirmware = router.routerFirmware;
         }
+
+        //Init sessions cache
+        this.sessionsCache = CacheBuilder.newBuilder()
+                .maximumSize(2) //There is a maximum of two sessions open
+                .removalListener(new RemovalListener<Pair<String, Integer>, Session>() {
+                    @Override
+                    public void onRemoval(@NonNull RemovalNotification<Pair<String, Integer>, Session> notification) {
+                        final RemovalCause removalCause = notification.getCause();
+                        final Pair<String, Integer> pair = notification.getKey();
+                        Crashlytics.log(Log.INFO, TAG,
+                                "Removal Notification for " + pair +". Cause : " + removalCause);
+
+                        final Session session = notification.getValue();
+                        if (session == null) {
+                            return;
+                        }
+                        if (session.isConnected()) {
+                            session.disconnect();
+                        }
+                    }
+                })
+                .build(new CacheLoader<Pair<String, Integer>, Session>() {
+                    @Override
+                    public Session load(@NonNull Pair<String, Integer> key) throws Exception {
+
+                        final String ip = key.first;
+                        Integer port = key.second;
+                        if (port == null || port <= 0 || Strings.isNullOrEmpty(ip)) {
+                            return null;
+                        }
+
+                        final String privKey = \"fake-key\";
+                        final JSch jsch = new JSch();
+
+                        final String passwordPlain = getPasswordPlain();
+
+                        final Router.SSHAuthenticationMethod sshAuthenticationMethod = getSshAuthenticationMethod();
+
+                        final Session sshSession;
+                        switch (sshAuthenticationMethod) {
+                            case PUBLIC_PRIVATE_KEY:
+                                //noinspection ConstantConditions
+                                jsch.addIdentity(uuid + "_" + privKey + "_" + port,
+                                        !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
+                                        null,
+                                        !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
+                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                break;
+                            case PASSWORD:
+                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                sshSession.setPassword(passwordPlain);
+                                break;
+                            default:
+                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                break;
+                        }
+
+                        final boolean strictHostKeyChecking = isStrictHostKeyChecking();
+                        //Set known hosts file to preferences file
+                        //        jsch.setKnownHosts();
+
+                        final Properties config = new Properties();
+                        config.put(STRICT_HOST_KEY_CHECKING, strictHostKeyChecking ? YES : NO);
+
+                        sshSession.setConfig(config);
+
+                        sshSession.connect(CONNECT_TIMEOUT_MILLIS);
+
+                        return sshSession;
+                    }
+                });
     }
 
     /**
@@ -471,6 +566,54 @@ public class Router implements Serializable {
         }
     }
 
+    @NonNull
+    private Pair<String, Integer> getEffectiveIpAndPortTuple() {
+        final boolean usePrimaryAddrSolely = (context != null && !
+                context.getSharedPreferences(getUuid(), Context.MODE_PRIVATE)
+                        .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false));
+
+        String remoteIpAddress = getRemoteIpAddress();
+        int remotePort = getRemotePort();
+
+        if (context != null && !usePrimaryAddrSolely) {
+            final String currentNetworkSSID = Utils.getWifiName(context);
+            //Detect network and use the corresponding IP Address if required
+            final Collection<Router.LocalSSIDLookup> localSSIDLookupData = getLocalSSIDLookupData(context);
+            if (!localSSIDLookupData.isEmpty()) {
+                for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
+                    if (localSSIDLookup == null) {
+                        continue;
+                    }
+                    final String networkSsid = localSSIDLookup.getNetworkSsid();
+                    if (networkSsid == null || networkSsid.isEmpty()) {
+                        continue;
+                    }
+                    if (networkSsid.equals(currentNetworkSSID) ||
+                            ("\"" + networkSsid + "\"").equals(currentNetworkSSID)) {
+                        remoteIpAddress = localSSIDLookup.getReachableAddr();
+                        remotePort = localSSIDLookup.getPort();
+                        break;
+                    }
+                }
+            }
+        }
+        return Pair.create(remoteIpAddress, remotePort);
+    }
+
+    @Nullable
+    public Session getSSHSession() throws Exception {
+        return this.sessionsCache
+                .get(getEffectiveIpAndPortTuple());
+    }
+
+    public void destroyActiveSession() {
+        this.sessionsCache.invalidate(getEffectiveIpAndPortTuple());
+    }
+
+    public void destroyAllSessions() {
+        this.sessionsCache.invalidateAll();
+    }
+
     @Nullable
     public static String getEffectiveRemoteAddr(@Nullable final Router router,
                                                 @Nullable final Context ctx) {
@@ -682,7 +825,7 @@ public class Router implements Serializable {
          * @param defaultUsername the default username
          * @param defaultPassword the default password
          */
-        private RouterConnectionProtocol(@NonNull final String channel,
+        RouterConnectionProtocol(@NonNull final String channel,
                                          final int defaultPort,
                                          @Nullable final String defaultUsername,
                                          @Nullable final String defaultPassword) {

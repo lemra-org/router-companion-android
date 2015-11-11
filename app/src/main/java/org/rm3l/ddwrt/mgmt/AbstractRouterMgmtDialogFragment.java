@@ -119,7 +119,7 @@ public abstract class AbstractRouterMgmtDialogFragment
     protected final AtomicBoolean mActivityCreatedAndInitialized = new AtomicBoolean(false);
 
     private Router buildRouter(AlertDialog d) throws IOException {
-        final Router router = new Router();
+        final Router router = new Router(d.getContext());
         final String uuid = ((TextView) d.findViewById(R.id.router_add_uuid)).getText().toString();
         if (!isNullOrEmpty(uuid)) {
             router.setUuid(uuid);
