@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -872,27 +873,26 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         }
 
         public CycleItem prev() {
-            final Calendar startCal = Calendar.getInstance();
-            startCal.setTimeInMillis(start);
-            startCal.add(Calendar.MONTH, -1);
-
-            final Calendar endCal = Calendar.getInstance();
-            endCal.setTimeInMillis(end);
-            endCal.add(Calendar.MONTH, -1);
-
-            return new CycleItem(context, startCal.getTimeInMillis(), endCal.getTimeInMillis());
+            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, -1);
+            return new CycleItem(context, pair.first, pair.second);
         }
 
         public CycleItem next() {
+            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, 1);
+            return new CycleItem(context, pair.first, pair.second);
+        }
+
+        @NonNull
+        public Pair<Long, Long> slideCycleBy(final int field, final int interval) {
             final Calendar startCal = Calendar.getInstance();
             startCal.setTimeInMillis(start);
-            startCal.add(Calendar.MONTH, 1);
+            startCal.add(field, interval);
 
             final Calendar endCal = Calendar.getInstance();
             endCal.setTimeInMillis(end);
-            endCal.add(Calendar.MONTH, 1);
+            endCal.add(field, interval);
 
-            return new CycleItem(context, startCal.getTimeInMillis(), endCal.getTimeInMillis());
+            return Pair.create(startCal.getTimeInMillis(), endCal.getTimeInMillis());
         }
 
     }
