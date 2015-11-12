@@ -439,6 +439,27 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
     }
 
+    @Override
+    public void deleteWANTrafficDataByRouter(@NonNull String router) {
+        SQLiteDatabase database = null;
+        try {
+            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
+
+                database = dbHelper.getWritableDatabase();
+
+                Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete WAN Traffic Data for Router: " + router);
+                database.delete(TABLE_WAN_TRAFFIC, String.format(TABLE_WAN_TRAFFIC_ROUTER_UUID + "='%s'", router), null);
+
+            }
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+        } finally {
+            if (database != null && database.isOpen()) {
+                database.close();
+            }
+        }
+    }
+
 
     @NonNull
     private Router cursorToRouter(@NonNull Cursor cursor) {

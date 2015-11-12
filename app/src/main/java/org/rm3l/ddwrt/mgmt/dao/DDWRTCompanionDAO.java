@@ -65,4 +65,6 @@ public interface DDWRTCompanionDAO {
                                                                 @NonNull final String dateLower,
                                                                @NonNull final String dateHigher);
 
+    void deleteWANTrafficDataByRouter(@NonNull final String router);
+
 }

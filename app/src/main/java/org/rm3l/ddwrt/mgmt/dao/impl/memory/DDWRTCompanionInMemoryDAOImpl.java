@@ -179,4 +179,9 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
         //TODO
         return Collections.emptyList();
     }
+
+    @Override
+    public void deleteWANTrafficDataByRouter(@NonNull String router) {
+        //TODO
+    }
 }
