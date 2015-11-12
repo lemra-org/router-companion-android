@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
-import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
 
 /**
  * Created by rm3l on 09/05/15.

@@ -8,9 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +25,6 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-import com.google.common.primitives.Longs;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +34,7 @@ import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.WANTrafficData;
+import org.rm3l.ddwrt.resources.WANTrafficData.CycleItem;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -46,23 +44,19 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
-import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
-import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
-import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DAILY_TRAFF_DATA_SPLITTER;
-import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.DDWRT_MONTHLY_TRAFFIC_DATE_WRITER;
-import static org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile.MONTHLY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.DDWRT_MONTHLY_TRAFFIC_DATE_WRITER;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
+import static org.rm3l.ddwrt.utils.WANTrafficUtils.retrieveAndPersistMonthlyTrafficData;
 
 
 public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnMenuItemClickListener {
@@ -92,9 +86,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     private String mCurrentMonth;
     private String mCurrentMonthDisplayed;
 
-    private final Map<Integer, ArrayList<Double>> mCurrentTraffMonthlyData = new ConcurrentHashMap<>();
     private int mCurrentDay;
     private String mCurrentDayDisplayed;
+
     private String mCycle;
 
     private NVRAMInfo mNvramInfo;
@@ -117,35 +111,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             //Set menu background to white
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
-
-        final int wanCycleDay;
-        if (mParentFragmentPreferences != null) {
-            final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
-            wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
-        } else {
-            wanCycleDay = 1;
-        }
-        final Calendar calendar = Calendar.getInstance();
-        final long start;
-        final long end;
-        if (mCurrentDay < wanCycleDay) {
-            //Effective Period: [wanCycleDay-1M, wanCycleDay]
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-            end = calendar.getTimeInMillis();
-
-            calendar.add(Calendar.MONTH, -1);
-            calendar.add(Calendar.DATE, 1);
-            start = calendar.getTimeInMillis();
-        } else {
-            //Effective Period: [wanCycleDay, wanCycleDay + 1M]
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-            start = calendar.getTimeInMillis();
-
-            calendar.add(Calendar.MONTH, 1);
-            calendar.add(Calendar.DATE, -1);
-            end = calendar.getTimeInMillis();
-        }
-        mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
 
         tileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,21 +149,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final Calendar calendar = Calendar.getInstance();
                 mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mCurrentDayDisplayed = new SimpleDateFormat("MMM dd, yyyy",
-                        Locale.getDefault()).format(today);
+                        Locale.US).format(today);
                 dayMenuItem.setTitle(String.format("Today (%s)", mCurrentDayDisplayed));
 
                 try {
-                    if (mCycleItem == null) {
-                        //1st of each month
-                        calendar.set(Calendar.DAY_OF_MONTH, 1);
-                        final long start = calendar.getTimeInMillis();
-
-                        calendar.add(Calendar.MONTH, 1);
-                        calendar.add(Calendar.DATE, -1);
-                        final long end = calendar.getTimeInMillis();
-
-                        mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
-                    }
+                    mCycleItem = WANTrafficData
+                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
                     //Overwrite with effective period (for monthly)
                     monthMenuItem.setTitle(String.format("Month (%s)",
                             mCycleItem.getLabel()));
@@ -249,38 +205,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     }
                     nbRunsLoader++;
 
-                    mCurrentTraffMonthlyData.clear();
-
                     mLastSync = System.currentTimeMillis();
 
-                    final int wanCycleDay;
-                    if (mParentFragmentPreferences != null) {
-                        final int cycleDay = mParentFragmentPreferences.getInt(WAN_CYCLE_DAY_PREF, 1);
-                        wanCycleDay = (cycleDay < 1 ? 1 : (cycleDay > 31 ? 31 : cycleDay));
-                    } else {
-                        wanCycleDay = 1;
-                    }
-                    final Calendar calendar = Calendar.getInstance();
-                    final long start;
-                    final long end;
-                    if (mCurrentDay < wanCycleDay) {
-                        //Effective Period: [wanCycleDay-1M, wanCycleDay]
-                        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                        end = calendar.getTimeInMillis();
-
-                        calendar.add(Calendar.MONTH, -1);
-                        calendar.add(Calendar.DATE, 1);
-                        start = calendar.getTimeInMillis();
-                    } else {
-                        //Effective Period: [wanCycleDay, wanCycleDay + 1M]
-                        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                        start = calendar.getTimeInMillis();
-
-                        calendar.add(Calendar.MONTH, 1);
-                        calendar.add(Calendar.DATE, -1);
-                        end = calendar.getTimeInMillis();
-                    }
-                    mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+                    mCycleItem = WANTrafficData
+                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
 
                     final Date today = new Date();
                     mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today);
@@ -360,10 +288,12 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 HIDDEN_);
 
                     } else {
-                        WANMonthlyTrafficTile.retrieveAndPersistMonthlyTrafficData(mRouter, dao, nvramInfo);
+                        retrieveAndPersistMonthlyTrafficData(mRouter, dao, nvramInfo);
 
-                        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(start));
-                        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(new Date(end));
+                        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                                .format(new Date(mCycleItem.getStart()));
+                        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                                .format(new Date(mCycleItem.getEnd()));
 
                         final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
                                 dao.getWANTrafficDataByRouterBetweenDates(mRouter.getUuid(), cycleStart, cycleEnd);
@@ -476,6 +406,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
+        ///TODO
         return null;
     }
 
@@ -575,47 +506,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 lastSyncView.setReferenceTime(mLastSync);
                 lastSyncView.setPrefix("Last sync: ");
 
-//                final NVRAMInfo dataCopy = data;
-//                gridLayoutContainer.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        final String currentMonth = dataCopy.getProperty(CURRENT);
-//                        if (currentMonth == null) {
-//                            Utils.displayMessage(mParentFragmentActivity, "Internal Error. Please try again later.", Style.ALERT);
-//                            ReportingUtils.reportException(null, new IllegalStateException("currentMonth == null"));
-//                            return;
-//                        }
-//                        if (mCurrentTraffMonthlyData == null || mCurrentTraffMonthlyData.isEmpty()) {
-//                            Toast.makeText(WANTotalTrafficOverviewTile.this.mParentFragmentActivity,
-//                                    String.format("No traffic data for '%s'", currentMonth),
-//                                    Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
-//                            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-//                                    mRouter != null ? mRouter.getRemoteIpAddress() : DDWRTCompanionConstants.EMPTY_STRING);
-//                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, currentMonth);
-//                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED,
-//                                    ImmutableMap.copyOf(mCurrentTraffMonthlyData));
-//
-//                            //noinspection ConstantConditions
-////                            final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-////                                    String.format("Loading traffic data for '%s'", currentMonth), false, false);
-////                            alertDialog.show();
-////                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//
-//                            final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
-//                                    String.format("Loading traffic data for '%s'", currentMonth), "Please Wait...",
-//                                    true);
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    mParentFragmentActivity.startActivity(intent);
-//                                    alertDialog.cancel();
-//                                }
-//                            }, 1000);
-//                        }
-//                    }
-//                });
             }
 
             if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
@@ -669,7 +559,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 knownMenuItem = true;
                 break;
             case R.id.tile_overview_wan_total_traffic_options_change_cycle:
-                //TODO
                 final AlertDialog.Builder builder = new AlertDialog.Builder(mParentFragmentActivity);
                 final LayoutInflater dialogInflater = LayoutInflater.from(builder.getContext());
 
@@ -715,27 +604,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 final Calendar calendar = Calendar.getInstance();
                                 mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                                final long start;
-                                final long end;
-                                if (mCurrentDay < wanCycleDay) {
-                                    //Effective Period: [wanCycleDay-1M, wanCycleDay]
-                                    calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                                    end = calendar.getTimeInMillis();
-
-                                    calendar.add(Calendar.MONTH, -1);
-                                    calendar.add(Calendar.DATE, 1);
-                                    start = calendar.getTimeInMillis();
-                                } else {
-                                    //Effective Period: [wanCycleDay, wanCycleDay + 1M]
-                                    calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-                                    start = calendar.getTimeInMillis();
-
-                                    calendar.add(Calendar.MONTH, 1);
-                                    calendar.add(Calendar.DATE, -1);
-                                    end = calendar.getTimeInMillis();
-                                }
-
-                                mCycleItem = new CycleItem(mParentFragmentActivity, start, end);
+                                mCycleItem = WANTrafficData
+                                        .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
                                 
                                 //Update title
                                 ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
@@ -807,107 +677,5 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         }
 
         return knownMenuItem;
-    }
-
-    /**
-     * List item that reflects a specific data usage cycle.
-     */
-    public static class CycleItem implements Comparable<CycleItem> {
-        private Context context;
-        private CharSequence label;
-        private long start;
-        private long end;
-
-        CycleItem(CharSequence label) {
-            this.label = label;
-        }
-
-        public CycleItem(Context context, long start, long end) {
-            this.context = context;
-            this.label = formatDateRange(context, start, end);
-            this.start = start;
-            this.end = end;
-        }
-
-        public CharSequence getLabel() {
-            return label;
-        }
-
-        public void setLabel(CharSequence label) {
-            this.label = label;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public void setStart(long start) {
-            this.start = start;
-        }
-
-        public long getEnd() {
-            return end;
-        }
-
-        public void setEnd(long end) {
-            this.end = end;
-        }
-
-        @Override
-        public String toString() {
-            return label.toString();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof CycleItem) {
-                final CycleItem another = (CycleItem) o;
-                return start == another.start && end == another.end;
-            }
-            return false;
-        }
-
-        @Override
-        public int compareTo(@NonNull CycleItem another) {
-            return Longs.compare(start, another.start);
-        }
-
-        public CycleItem prev() {
-            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, -1);
-            return new CycleItem(context, pair.first, pair.second);
-        }
-
-        public CycleItem next() {
-            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, 1);
-            return new CycleItem(context, pair.first, pair.second);
-        }
-
-        @NonNull
-        public Pair<Long, Long> slideCycleBy(final int field, final int interval) {
-            final Calendar startCal = Calendar.getInstance();
-            startCal.setTimeInMillis(start);
-            startCal.add(field, interval);
-
-            final Calendar endCal = Calendar.getInstance();
-            endCal.setTimeInMillis(end);
-            endCal.add(field, interval);
-
-            return Pair.create(startCal.getTimeInMillis(), endCal.getTimeInMillis());
-        }
-
-    }
-
-    private static final StringBuilder sBuilder = new StringBuilder(50);
-    private static final java.util.Formatter sFormatter = new java.util.Formatter(
-            sBuilder, Locale.getDefault());
-
-    public static String formatDateRange(Context context, long start, long end) {
-        final int flags = FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH;
-
-        synchronized (sBuilder) {
-            sBuilder.setLength(0);
-            return DateUtils.formatDateRange(context, sFormatter, start, end, flags, null)
-                    .toString();
-        }
     }
 }
