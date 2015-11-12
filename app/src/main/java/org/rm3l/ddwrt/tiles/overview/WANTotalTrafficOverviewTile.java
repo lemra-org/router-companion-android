@@ -812,6 +812,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
      * List item that reflects a specific data usage cycle.
      */
     public static class CycleItem implements Comparable<CycleItem> {
+        private Context context;
         private CharSequence label;
         private long start;
         private long end;
@@ -821,6 +822,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         }
 
         public CycleItem(Context context, long start, long end) {
+            this.context = context;
             this.label = formatDateRange(context, start, end);
             this.start = start;
             this.end = end;
@@ -868,6 +870,31 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         public int compareTo(@NonNull CycleItem another) {
             return Longs.compare(start, another.start);
         }
+
+        public CycleItem prev() {
+            final Calendar startCal = Calendar.getInstance();
+            startCal.setTimeInMillis(start);
+            startCal.add(Calendar.MONTH, -1);
+
+            final Calendar endCal = Calendar.getInstance();
+            endCal.setTimeInMillis(end);
+            endCal.add(Calendar.MONTH, -1);
+
+            return new CycleItem(context, startCal.getTimeInMillis(), endCal.getTimeInMillis());
+        }
+
+        public CycleItem next() {
+            final Calendar startCal = Calendar.getInstance();
+            startCal.setTimeInMillis(start);
+            startCal.add(Calendar.MONTH, 1);
+
+            final Calendar endCal = Calendar.getInstance();
+            endCal.setTimeInMillis(end);
+            endCal.add(Calendar.MONTH, 1);
+
+            return new CycleItem(context, startCal.getTimeInMillis(), endCal.getTimeInMillis());
+        }
+
     }
 
     private static final StringBuilder sBuilder = new StringBuilder(50);
