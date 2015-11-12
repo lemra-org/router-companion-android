@@ -120,6 +120,11 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
         final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
+        final Date today = new Date();
+        mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today);
+        mCurrentMonthDisplayed = new SimpleDateFormat("MMM, yyyy", Locale.US).format(today);
+        mCurrentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        mCurrentDayDisplayed = new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(today);
 
         ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                 .setText(WAN_TOTAL_TRAFFIC + ": " +
