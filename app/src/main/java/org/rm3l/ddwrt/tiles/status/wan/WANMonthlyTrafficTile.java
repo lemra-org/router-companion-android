@@ -446,20 +446,17 @@ public class WANMonthlyTrafficTile
                     continue;
                 }
 
-                if (("0".equals(inTraff) && "0".equals(outTraff)) ||
-                        !dao.isWANTrafficDataPresent(routerUuid, sqliteFormattedDate)) {
-                    // Persist data in DB -
-                    // there is an "ON CONFLICT REPLACE" constraint that will make the DB update the record if needed
-                    final double inTraffDouble = Double.parseDouble(inTraff);
-                    final double outTraffDouble = Double.parseDouble(outTraff);
+                // Always try to persist data in DB -
+                // there is an "ON CONFLICT REPLACE" constraint that will make the DB update the record if needed
+                final double inTraffDouble = Double.parseDouble(inTraff);
+                final double outTraffDouble = Double.parseDouble(outTraff);
 
-                    final WANTrafficData wanTrafficData = new WANTrafficData(routerUuid,
-                            sqliteFormattedDate,
-                            inTraffDouble,
-                            outTraffDouble);
+                final WANTrafficData wanTrafficData = new WANTrafficData(routerUuid,
+                        sqliteFormattedDate,
+                        inTraffDouble,
+                        outTraffDouble);
 
-                    dao.insertWANTrafficData(wanTrafficData);
-                }
+                dao.insertWANTrafficData(wanTrafficData);
             }
         }
     }
