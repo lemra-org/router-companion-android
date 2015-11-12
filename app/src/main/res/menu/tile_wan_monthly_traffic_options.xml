@@ -60,4 +60,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Delete"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/tile_wan_monthly_traffic_change_cycle"
+        android:orderInCategory="4"
+        android:checkable="false"
+        android:title="Change monthly cycle..."
+        app:showAsAction="ifRoom" />
+
 </menu>

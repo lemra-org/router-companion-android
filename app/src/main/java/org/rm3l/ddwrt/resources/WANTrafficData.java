@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
 import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
+import static android.text.format.DateUtils.FORMAT_SHOW_YEAR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
 /**
@@ -118,18 +119,32 @@ public class WANTrafficData {
     public static class CycleItem implements Comparable<CycleItem> {
         private Context context;
         private CharSequence label;
+        private CharSequence labelWithYears;
         private long start;
         private long end;
 
         CycleItem(CharSequence label) {
             this.label = label;
+            this.labelWithYears = label;
         }
 
         public CycleItem(Context context, long start, long end) {
             this.context = context;
-            this.label = formatDateRange(context, start, end);
+            this.label = formatDateRange(context, FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH,
+                    start, end);
+            this.labelWithYears = formatDateRange(context, FORMAT_SHOW_YEAR | FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH,
+                    start, end);
             this.start = start;
             this.end = end;
+        }
+
+        public CharSequence getLabelWithYears() {
+            return labelWithYears;
+        }
+
+        public CycleItem setLabelWithYears(CharSequence labelWithYears) {
+            this.labelWithYears = labelWithYears;
+            return this;
         }
 
         public CharSequence getLabel() {
@@ -202,11 +217,9 @@ public class WANTrafficData {
 
     private static final StringBuilder sBuilder = new StringBuilder(50);
     private static final java.util.Formatter sFormatter = new java.util.Formatter(
-            sBuilder, Locale.getDefault());
+            sBuilder, Locale.US);
 
-    public static String formatDateRange(Context context, long start, long end) {
-        final int flags = FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH;
-
+    public static String formatDateRange(Context context, int flags, long start, long end) {
         synchronized (sBuilder) {
             sBuilder.setLength(0);
             return DateUtils.formatDateRange(context, sFormatter, start, end, flags, null)

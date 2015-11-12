@@ -1,11 +1,16 @@
 package org.rm3l.ddwrt.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
@@ -20,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 /**
  * Created by rm3l on 12/11/15.
@@ -35,7 +41,42 @@ public final class WANTrafficUtils {
     public static final Splitter DAILY_TRAFF_DATA_SPLITTER = Splitter.on(":").omitEmptyStrings();
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM-yyyy", Locale.US);
 
+    public static final String TOTAL_DL_CURRENT_MONTH = "TOTAL_DL_CURRENT_MONTH";
+    public static final String TOTAL_UL_CURRENT_MONTH = "TOTAL_UL_CURRENT_MONTH";
+    public static final String TOTAL_DL_CURRENT_MONTH_MB = "TOTAL_DL_CURRENT_MONTH_MB";
+    public static final String TOTAL_UL_CURRENT_MONTH_MB = "TOTAL_UL_CURRENT_MONTH_MB";
+    public static final String HIDDEN_ = "_HIDDEN_";
+
     private WANTrafficUtils() {}
+
+    @NonNull
+    public static NVRAMInfo getTrafficDataNvramInfoAndPersistIfNeeded(Context ctx,
+                                                                      Router router,
+                                                                      SharedPreferences globalPreferences,
+                                                                      DDWRTCompanionDAO dao) throws Exception {
+
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+        NVRAMInfo nvramInfoTmp = null;
+        try {
+            //noinspection ConstantConditions
+            nvramInfoTmp = NVRAMParser.parseNVRAMOutput(
+                    SSHUtils.getManualProperty(ctx, router, globalPreferences,
+                            "/usr/sbin/nvram show 2>/dev/null | grep traff[-_]"));
+        } finally {
+            if (nvramInfoTmp != null) {
+                nvramInfo.putAll(nvramInfoTmp);
+            }
+        }
+
+        if (nvramInfo.isEmpty()) {
+            throw new DDWRTNoDataException("No Data!");
+        }
+
+        retrieveAndPersistMonthlyTrafficData(router, dao, nvramInfo);
+
+        return nvramInfo;
+    }
 
     public static void retrieveAndPersistMonthlyTrafficData(@Nullable final Router router,
                                                             @Nullable final DDWRTCompanionDAO dao,
@@ -115,5 +156,59 @@ public final class WANTrafficUtils {
             return null;
         }
         return DDWRT_MONTHLY_TRAFFIC_DATE_WRITER.format(date);
+    }
+
+    @NonNull
+    public static NVRAMInfo computeWANTrafficUsageBetweenDates(@NonNull final DDWRTCompanionDAO dao,
+                                                               @NonNull final String router,
+                                                               final long start,
+                                                               final long end) {
+        final NVRAMInfo nvramInfo = new NVRAMInfo();
+
+        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                .format(new Date(start));
+        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                .format(new Date(end));
+
+        final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
+                dao.getWANTrafficDataByRouterBetweenDates(router, cycleStart, cycleEnd);
+        //Compute total in/out
+        long totalDownloadMBytes = 0l;
+        long totalUploadMBytes = 0l;
+        for (final WANTrafficData wanTrafficData : wanTrafficDataByRouterBetweenDates) {
+            if (wanTrafficData == null) {
+                continue;
+            }
+            totalDownloadMBytes += wanTrafficData.getTraffIn().doubleValue();
+            totalUploadMBytes += wanTrafficData.getTraffOut().doubleValue();
+        }
+
+        final String inHumanReadable = FileUtils
+                .byteCountToDisplaySize(totalDownloadMBytes * MB);
+        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
+                inHumanReadable);
+        if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
+                inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
+            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                    HIDDEN_);
+        } else {
+            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
+                    String.valueOf(totalDownloadMBytes));
+        }
+
+        final String outHumanReadable = FileUtils
+                .byteCountToDisplaySize(totalUploadMBytes * MB);
+        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
+                outHumanReadable);
+        if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
+                outHumanReadable.equals(totalUploadMBytes + " bytes")) {
+            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                    HIDDEN_);
+        } else {
+            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
+                    String.valueOf(totalUploadMBytes));
+        }
+
+        return nvramInfo;
     }
 }

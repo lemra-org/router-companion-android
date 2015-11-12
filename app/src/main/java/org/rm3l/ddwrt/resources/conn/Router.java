@@ -58,12 +58,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
-import static org.rm3l.ddwrt.utils.SSHUtils.CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
 import static org.rm3l.ddwrt.utils.SSHUtils.MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER;
 import static org.rm3l.ddwrt.utils.SSHUtils.NO;
@@ -180,6 +180,7 @@ public class Router implements Serializable {
         //Init sessions cache
         this.sessionsCache = CacheBuilder.newBuilder()
                 .maximumSize(MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER)
+                .expireAfterAccess(5l, TimeUnit.MINUTES)
                 .removalListener(new RemovalListener<Pair<String, Integer>, Session>() {
                     @Override
                     public void onRemoval(@NonNull RemovalNotification<Pair<String, Integer>, Session> notification) {
@@ -245,8 +246,8 @@ public class Router implements Serializable {
 
                         sshSession.setConfig(config);
 
-                        sshSession
-                                .setServerAliveInterval(CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS);
+//                        sshSession
+//                                .setServerAliveInterval(CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS);
 
                         sshSession
                                 .connect(CONNECT_TIMEOUT_MILLIS);
