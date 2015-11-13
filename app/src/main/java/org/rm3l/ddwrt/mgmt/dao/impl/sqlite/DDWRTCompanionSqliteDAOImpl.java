@@ -312,7 +312,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 }
                 database.setTransactionSuccessful();
                 
-                return 1;
+                return 1l;
             }
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
