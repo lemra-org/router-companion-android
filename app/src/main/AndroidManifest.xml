@@ -227,7 +227,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.vpn.client.EditOpenVPNClientSettingsActivity"
             android:label="@string/title_openvpncl_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize" 
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -283,7 +284,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:resource="@xml/actionswidget_info" />
         </receiver>
 
-        <activity android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity" >
+        <activity 
+            android:name=".widgets.home.actions.RouterActionsWidgetConfigureActivity" 
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -304,7 +307,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:name="android.appwidget.provider"
                 android:resource="@xml/wolwidget_info" />
         </receiver>
-        <activity android:name=".widgets.home.wol.WOLWidgetConfigureActivity" >
+        <activity 
+            android:name=".widgets.home.wol.WOLWidgetConfigureActivity" 
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -351,7 +356,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.services.wol.EditWOLDaemonSettingsActivity"
             android:label="@string/title_auto_wol_settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
@@ -384,7 +390,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:name=".tiles.status.wireless.EditWirelessSecuritySettingsActivity"
             android:label="Wireless Security Settings"
             android:parentActivityName=".main.DDWRTMainActivity"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.DDWRTMainActivity" />
