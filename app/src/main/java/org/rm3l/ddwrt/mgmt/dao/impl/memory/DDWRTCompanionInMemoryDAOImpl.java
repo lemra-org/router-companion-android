@@ -155,7 +155,7 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Long insertWANTrafficData(@NonNull WANTrafficData trafficData) {
+    public Long insertWANTrafficData(@NonNull WANTrafficData... trafficData) {
         //TODO
         return null;
     }
