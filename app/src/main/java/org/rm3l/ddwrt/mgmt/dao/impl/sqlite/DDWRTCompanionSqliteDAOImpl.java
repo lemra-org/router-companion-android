@@ -293,21 +293,36 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     }
 
     @Override
-    public Long insertWANTrafficData(@NonNull WANTrafficData trafficData) {
+    public Long insertWANTrafficData(@NonNull WANTrafficData... trafficData) {
+        /*
+         * Bulk insert, based upon 
+         * http://stackoverflow.com/questions/3860008/bulk-insertion-on-android-device/32288474
+         */
         SQLiteDatabase database = null;
         try {
             synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
                 database = dbHelper.getWritableDatabase();
-                return database.insertOrThrow(TABLE_WAN_TRAFFIC, null,
-                        getContentValuesFromWANTrafficData(trafficData));
-
+                database.beginTransaction();
+                for (final WANTrafficData trafficDataItem : trafficData) {
+                    if (trafficDataItem == null) {
+                        continue;
+                    }
+                    database.insert(TABLE_WAN_TRAFFIC, null,
+                        getContentValuesFromWANTrafficData(trafficDataItem));
+                }
+                database.setTransactionSuccessful();
+                
+                return 1;
             }
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
+            if (database != null) {
+                database.endTransaction();
+                if (database.isOpen()) {
+                    database.close();
+                }
             }
         }
     }
