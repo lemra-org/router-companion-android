@@ -111,6 +111,8 @@ public final class WANTrafficUtils {
                 continue;
             }
 
+            final List<WANTrafficData> wanTrafficDataList = new java.util.ArrayList<>();
+
             int dayNum = 0;
             for (final String dailyInOutTraffData : dailyTraffDataList) {
                 if (StringUtils.contains(dailyInOutTraffData, "[")) {
@@ -135,12 +137,15 @@ public final class WANTrafficUtils {
                 final double inTraffDouble = Double.parseDouble(inTraff);
                 final double outTraffDouble = Double.parseDouble(outTraff);
 
-                final WANTrafficData wanTrafficData = new WANTrafficData(routerUuid,
+                wanTrafficDataList.add(new WANTrafficData(routerUuid,
                         sqliteFormattedDate,
                         inTraffDouble,
-                        outTraffDouble);
-
-                dao.insertWANTrafficData(wanTrafficData);
+                        outTraffDouble));
+            }
+            if (!wanTrafficDataList.isEmpty()) {
+                dao.insertWANTrafficData(wanTrafficDataList
+                    .toArray(
+                        new WANTrafficData[wanTrafficDataList.size()]));
             }
         }
     }
