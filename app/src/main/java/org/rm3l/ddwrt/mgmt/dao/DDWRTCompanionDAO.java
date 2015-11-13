@@ -51,7 +51,7 @@ public interface DDWRTCompanionDAO {
     Router getRouter(int id);
 
     @Nullable
-    Long insertWANTrafficData(@NonNull final WANTrafficData trafficData);
+    Long insertWANTrafficData(@NonNull final WANTrafficData... trafficData);
 
     boolean isWANTrafficDataPresent(@NonNull final String router,
                                     @NonNull final String date);
