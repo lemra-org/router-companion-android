@@ -936,16 +936,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStart() {
+        initLoaders();
+        super.onStart();
+    }
 
     @Override
     public void onResume() {
-        initLoaders();
+        //initLoaders();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        stopLoaders();
+        //stopLoaders();
         super.onPause();
     }
 
