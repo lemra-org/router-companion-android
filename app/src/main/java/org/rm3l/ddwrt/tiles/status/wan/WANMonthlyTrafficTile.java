@@ -27,7 +27,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,14 +62,9 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Lists;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -91,17 +85,13 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.WANTrafficUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -110,13 +100,9 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
-import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
-import static org.rm3l.ddwrt.utils.WANTrafficUtils.DAILY_TRAFF_DATA_SPLITTER;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.HIDDEN_;
-import static org.rm3l.ddwrt.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
-import static org.rm3l.ddwrt.utils.WANTrafficUtils.SIMPLE_DATE_FORMAT;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.TOTAL_DL_CURRENT_MONTH_MB;
 import static org.rm3l.ddwrt.utils.WANTrafficUtils.TOTAL_UL_CURRENT_MONTH;
@@ -136,9 +122,9 @@ public class WANMonthlyTrafficTile
 
     public static final String RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG = "RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG";
 
-    protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
-
-    protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
+//    protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
+//
+//    protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
 
     public static final String WAN_MONTHLY_TRAFFIC_ACTION = "WAN_MONTHLY_TRAFFIC_ACTION";
 
@@ -357,8 +343,10 @@ public class WANMonthlyTrafficTile
                                                         .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
                                                         .apply();
 
-                                                mCurrentCycle.set(WANTrafficData
-                                                        .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
+                                                mCycleOfTheDay = WANTrafficData
+                                                        .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+
+                                                mCurrentCycle.set(mCycleOfTheDay);
 
                                                 //Update
                                                 final TextView monthYearDisplayed = (TextView) layout.findViewById(R.id.tile_status_wan_monthly_month_displayed);
@@ -505,89 +493,103 @@ public class WANMonthlyTrafficTile
 
                     mLastSync = System.currentTimeMillis();
 
+                    //Get TTRAFF_ENABLE
+                    final NVRAMInfo ttraffEnableNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                            mRouter,
+                            mGlobalPreferences,
+                            NVRAMInfo.TTRAFF_ENABLE);
+
                     mCycleOfTheDay = WANTrafficData
                             .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
 
                     mCurrentCycle.set(mCycleOfTheDay);
 
-                    final NVRAMInfo nvramInfo =
-                            getTrafficDataNvramInfoAndPersistIfNeeded
-                                    (mParentFragmentActivity, mRouter, mGlobalPreferences, dao);
+                    getTrafficDataNvramInfoAndPersistIfNeeded
+                            (mParentFragmentActivity, mRouter, mGlobalPreferences, dao);
 
-                    traffDataTableBuilder = ImmutableTable.builder();
+                    final NVRAMInfo nvramInfo = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao,
+                            mRouter.getUuid(), mCurrentCycle.get().getStart(), mCurrentCycle.get().getEnd());
 
-                    @SuppressWarnings("ConstantConditions")
-                    final Set<Map.Entry<Object, Object>> entries = nvramInfo.getData().entrySet();
-
-                    final SharedPreferences.Editor editor;
-                    if (mParentFragmentPreferences != null) {
-                        editor = mParentFragmentPreferences.edit();
-                    } else {
-                        editor = null;
+                    if (ttraffEnableNVRAMInfo != null) {
+                        nvramInfo.putAll(ttraffEnableNVRAMInfo);
                     }
-                    boolean updatePreferences = false;
-
-                    final Set<String> traffMonthsSet = new HashSet<>();
-
-                    for (final Map.Entry<Object, Object> entry : entries) {
-                        final Object key;
-                        final Object value;
-                        if (entry == null || (key = entry.getKey()) == null || (value = entry.getValue()) == null) {
-                            continue;
-                        }
-
-                        if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
-                            continue;
-                        }
-
-                        final String month = key.toString().replace("traff-", EMPTY_STRING);
-
-                        final String monthlyTraffData = value.toString();
-
-                        if (editor != null) {
-                            editor.putString(key.toString(), e(monthlyTraffData));
-                            traffMonthsSet.add(e(key.toString()));
-                            updatePreferences = true;
-                        }
-
-                        final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(monthlyTraffData);
-                        if (dailyTraffDataList == null || dailyTraffDataList.isEmpty()) {
-                            continue;
-                        }
-
-                        int dayNum = 1;
-                        for (final String dailyInOutTraffData : dailyTraffDataList) {
-                            if (StringUtils.contains(dailyInOutTraffData, "[")) {
-                                continue;
-                            }
-                            final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
-                            if (dailyInOutTraffDataList.size() < 2) {
-                                continue;
-                            }
-                            final String inTraff = dailyInOutTraffDataList.get(0);
-                            final String outTraff = dailyInOutTraffDataList.get(1);
-
-                            traffDataTableBuilder.put(month, dayNum++, Lists.newArrayList(
-                                    Double.parseDouble(inTraff), Double.parseDouble(outTraff)
-                            ));
-
-                        }
-                    }
-
-                    if (updatePreferences) {
-                        editor
-                                .remove(WAN_MONTHLY_TRAFFIC)
-                                .apply();
-
-                        editor
-                                .putStringSet(WAN_MONTHLY_TRAFFIC, traffMonthsSet)
-                                .apply();
-                        Utils.requestBackup(mParentFragmentActivity);
-                    }
-
-                    traffData = traffDataTableBuilder.build();
 
                     return nvramInfo;
+
+//                    traffDataTableBuilder = ImmutableTable.builder();
+
+//                    @SuppressWarnings("ConstantConditions")
+//                    final Set<Map.Entry<Object, Object>> entries = nvramInfo.getData().entrySet();
+//
+//                    final SharedPreferences.Editor editor;
+//                    if (mParentFragmentPreferences != null) {
+//                        editor = mParentFragmentPreferences.edit();
+//                    } else {
+//                        editor = null;
+//                    }
+////                    boolean updatePreferences = false;
+//
+//                    final Set<String> traffMonthsSet = new HashSet<>();
+
+//                    for (final Map.Entry<Object, Object> entry : entries) {
+//                        final Object key;
+//                        final Object value;
+//                        if (entry == null || (key = entry.getKey()) == null || (value = entry.getValue()) == null) {
+//                            continue;
+//                        }
+//
+//                        if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
+//                            continue;
+//                        }
+//
+//                        final String month = key.toString().replace("traff-", EMPTY_STRING);
+//
+//                        final String monthlyTraffData = value.toString();
+//
+//                        if (editor != null) {
+//                            editor.putString(key.toString(), e(monthlyTraffData));
+//                            traffMonthsSet.add(e(key.toString()));
+//                            updatePreferences = true;
+//                        }
+//
+//                        final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(monthlyTraffData);
+//                        if (dailyTraffDataList == null || dailyTraffDataList.isEmpty()) {
+//                            continue;
+//                        }
+//
+//                        int dayNum = 1;
+//                        for (final String dailyInOutTraffData : dailyTraffDataList) {
+//                            if (StringUtils.contains(dailyInOutTraffData, "[")) {
+//                                continue;
+//                            }
+//                            final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
+//                            if (dailyInOutTraffDataList.size() < 2) {
+//                                continue;
+//                            }
+//                            final String inTraff = dailyInOutTraffDataList.get(0);
+//                            final String outTraff = dailyInOutTraffDataList.get(1);
+//
+//                            traffDataTableBuilder.put(month, dayNum++, Lists.newArrayList(
+//                                    Double.parseDouble(inTraff), Double.parseDouble(outTraff)
+//                            ));
+//
+//                        }
+//                    }
+//
+//                    if (updatePreferences) {
+//                        editor
+//                                .remove(WAN_MONTHLY_TRAFFIC)
+//                                .apply();
+//
+//                        editor
+//                                .putStringSet(WAN_MONTHLY_TRAFFIC, traffMonthsSet)
+//                                .apply();
+//                        Utils.requestBackup(mParentFragmentActivity);
+//                    }
+//
+//                    traffData = traffDataTableBuilder.build();
+
+//                    return nvramInfo;
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
@@ -609,7 +611,6 @@ public class WANMonthlyTrafficTile
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        //TODO
         return null;
     }
 
@@ -620,7 +621,7 @@ public class WANMonthlyTrafficTile
     @Override
     public void onLoadFinished(Loader<NVRAMInfo> loader, NVRAMInfo data) {
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / traffData=" + traffData);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data + " / data=" + data);
 
             setLoadingViewVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_wan_monthly_traffic_header_loading_view)
@@ -634,7 +635,7 @@ public class WANMonthlyTrafficTile
                 if (data.getException() == null) {
                     if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
                         preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
-                    } else if (traffData == null || traffData.isEmpty()) {
+                    } else if (data == null || data.isEmpty()) {
                         preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
                     }
                 }
@@ -691,14 +692,14 @@ public class WANMonthlyTrafficTile
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
 
-                final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
-
-                final Date currentDate = new Date();
-                final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
-                        SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
-
-                //TODO Load last value from preferences
-                monthYearDisplayed.setText(currentMonthYear);
+//                final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
+//
+//                final Date currentDate = new Date();
+//                final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
+//                        SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
+//
+//                //TODO Load last value from preferences
+                monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
 
                 displayButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -706,19 +707,22 @@ public class WANMonthlyTrafficTile
 
                         final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
 
-                        final String monthFormatted = monthYearDisplayedText.toString();
-                        final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
-                                getTraffDataForMonth(monthFormatted);
+//                        final String monthFormatted = monthYearDisplayedText.toString();
+//                        final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
+//                                getTraffDataForMonth(monthFormatted);
 
-                        if (traffDataForMonth == null || traffDataForMonth.isEmpty()) {
+                        if (mCurrentCycle.get() == null) {
                             Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
                                     String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
                         } else {
+                            //FIXME Just pass mCurrentCycle to the intent
+
                             final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter != null ? mRouter.getRemoteIpAddress() : EMPTY_STRING);
-                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
-                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
+                            intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE, mCurrentCycle);
+//                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
+//                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
 
                             //noinspection ConstantConditions
 //                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
@@ -745,6 +749,8 @@ public class WANMonthlyTrafficTile
                 currentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        mCycleOfTheDay = WANTrafficData
+                                .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
                         mCurrentCycle.set(mCycleOfTheDay);
                         monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
                     }
@@ -821,7 +827,7 @@ public class WANMonthlyTrafficTile
                 setVisibility(ctrlViews, View.GONE);
 
             } else {
-                if (traffData == null || traffData.isEmpty()) {
+                if (data == null || data.isEmpty()) {
                     errorPlaceHolderView.setText("Error: No Data!");
                     errorPlaceHolderView.setVisibility(View.VISIBLE);
                     setVisibility(ctrlViews, View.GONE);
@@ -837,36 +843,36 @@ public class WANMonthlyTrafficTile
 
     }
 
-    @NonNull
-    private int[] getCurrentYearAndMonth(final Date currentDate, final String monthYearDisplayed) {
-        final int[] currentYearAndMonth = new int[2];
+//    @NonNull
+//    private int[] getCurrentYearAndMonth(final Date currentDate, final String monthYearDisplayed) {
+//        final int[] currentYearAndMonth = new int[2];
+//
+//        String monthDisplayed = null;
+//        String yearDisplayed = null;
+//        final List<String> monthYearTextViewSplit = Splitter.on("-").omitEmptyStrings().splitToList(monthYearDisplayed);
+//        if (monthYearTextViewSplit.size() >= 2) {
+//            monthDisplayed = monthYearTextViewSplit.get(0);
+//            yearDisplayed = monthYearTextViewSplit.get(1);
+//        }
+//
+//        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ?
+//                new SimpleDateFormat("yyyy", Locale.US).format(currentDate) : yearDisplayed);
+//        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ?
+//                new SimpleDateFormat("MM", Locale.US).format(currentDate) : monthDisplayed);
+//
+//        return currentYearAndMonth;
+//    }
 
-        String monthDisplayed = null;
-        String yearDisplayed = null;
-        final List<String> monthYearTextViewSplit = Splitter.on("-").omitEmptyStrings().splitToList(monthYearDisplayed);
-        if (monthYearTextViewSplit.size() >= 2) {
-            monthDisplayed = monthYearTextViewSplit.get(0);
-            yearDisplayed = monthYearTextViewSplit.get(1);
-        }
-
-        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ?
-                new SimpleDateFormat("yyyy", Locale.US).format(currentDate) : yearDisplayed);
-        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ?
-                new SimpleDateFormat("MM", Locale.US).format(currentDate) : monthDisplayed);
-
-        return currentYearAndMonth;
-    }
-
-    @Nullable
-    private ImmutableMap<Integer, ArrayList<Double>> getTraffDataForMonth(@NonNull final String monthFormatted) {
-        Crashlytics.log(Log.DEBUG, LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
-
-        if (traffData == null) {
-            return null;
-        }
-
-        return traffData.row(monthFormatted);
-    }
+//    @Nullable
+//    private ImmutableMap<Integer, ArrayList<Double>> getTraffDataForMonth(@NonNull final String monthFormatted) {
+//        Crashlytics.log(Log.DEBUG, LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
+//
+//        if (traffData == null) {
+//            return null;
+//        }
+//
+//        return traffData.row(monthFormatted);
+//    }
 
     @Override
     public void onHide(@Nullable Parcelable parcelable) {

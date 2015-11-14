@@ -88,6 +88,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
+    public static final String WAN_CYCLE = "WAN_CYCLE";
     public static final String WAN_MONTHLY_TRAFFIC = "WAN Monthly Traffic";
     public static final String MONTHLY_TRAFFIC_DATA_UNSORTED = "MONTHLY_TRAFFIC_DATA_UNSORTED";
     public static final String MONTH_DISPLAYED = "MONTH_DISPLAYED";

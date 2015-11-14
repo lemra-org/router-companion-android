@@ -164,10 +164,23 @@ public final class WANTrafficUtils {
     }
 
     @NonNull
+    public static List<WANTrafficData> getWANTrafficDataByRouterBetweenDates(@NonNull final DDWRTCompanionDAO dao,
+                                                                             @NonNull final String router,
+                                                                             final long start,
+                                                                             final long end) {
+        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                .format(new Date(start));
+        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
+                .format(new Date(end));
+        return dao.getWANTrafficDataByRouterBetweenDates(router, cycleStart, cycleEnd);
+    }
+
+    @NonNull
     public static NVRAMInfo computeWANTrafficUsageBetweenDates(@NonNull final DDWRTCompanionDAO dao,
                                                                @NonNull final String router,
                                                                final long start,
                                                                final long end) {
+
         final NVRAMInfo nvramInfo = new NVRAMInfo();
 
         final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER

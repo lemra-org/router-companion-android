@@ -117,7 +117,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
         mCycle = (mParentFragmentPreferences != null ?
                 mParentFragmentPreferences.getString(
-                        CYCLE, CYCLE_MONTH) : null);
+                        getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
         final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
         final Date today = new Date();
@@ -142,7 +142,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 final String cycle;
                 if (mParentFragmentPreferences != null) {
                     cycle = mParentFragmentPreferences.getString(
-                            CYCLE, CYCLE_MONTH);
+                            getFormattedPrefKey(CYCLE), CYCLE_MONTH);
                 } else {
                     cycle = CYCLE_MONTH;
                 }
@@ -214,7 +214,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
                     mCycle = (mParentFragmentPreferences != null ?
                             mParentFragmentPreferences.getString(
-                                CYCLE, CYCLE_MONTH) : null);
+                                    getFormattedPrefKey(CYCLE), CYCLE_MONTH) : null);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + WANTotalTrafficOverviewTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
@@ -620,7 +620,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 }
                                 mParentFragmentPreferences.edit()
                                         .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
-                                        .putString(CYCLE, CYCLE_MONTH)
+                                        .putString(getFormattedPrefKey(CYCLE), CYCLE_MONTH)
                                         .apply();
 
                                 final Calendar calendar = Calendar.getInstance();
@@ -697,7 +697,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         if (cycle != null) {
             if (mParentFragmentPreferences != null) {
                 mParentFragmentPreferences.edit()
-                        .putString(CYCLE, cycle)
+                        .putString(getFormattedPrefKey(CYCLE), cycle)
                         .apply();
             }
 
