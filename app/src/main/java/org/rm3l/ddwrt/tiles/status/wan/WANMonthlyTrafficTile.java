@@ -570,14 +570,11 @@ public class WANMonthlyTrafficTile
                             Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
                                     String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
                         } else {
-                            //FIXME Just pass mCurrentCycle to the intent
 
                             final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter != null ? mRouter.getRemoteIpAddress() : EMPTY_STRING);
                             intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE, mCurrentCycle);
-//                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
-//                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
 
                             final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
                                     String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",

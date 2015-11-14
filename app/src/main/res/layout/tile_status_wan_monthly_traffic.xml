@@ -140,6 +140,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textStyle="bold"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/tile_status_wan_monthly_month_displayed"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/theme_accent_1"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/tile_status_wan_monthly_month_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center" />
+
         </LinearLayout>
 
         <RelativeLayout
@@ -181,6 +198,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_display_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/breakdown"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:id="@+id/tile_status_wan_monthly_traffic_ul_container"
                 android:layout_alignParentRight="true"
@@ -213,45 +242,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </LinearLayout>
 
         </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <TextView
-                android:id="@+id/tile_status_wan_monthly_month_displayed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/theme_accent_1"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/one_space"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/tile_status_wan_monthly_traffic_graph_placeholder_display_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/breakdown"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:visibility="gone" />
-
-            <ProgressBar
-                android:id="@+id/tile_status_wan_monthly_month_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

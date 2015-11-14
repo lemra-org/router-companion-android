@@ -508,7 +508,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="traceroute_edit_text_hint">   Host to traceroute…</string>
     <string name="host_edit_text_hint">   Host…</string>
     <string name="clear">Clear</string>
-    <string name="wan_monthly_traffic">Traffic by Month (MB)</string>
+    <string name="wan_monthly_traffic">Traffic by Month</string>
     <string name="first_sign"><![CDATA[<<]]></string>
     <string name="previous_sign"><![CDATA[<]]></string>
     <string name="current_month">Current Month</string>
@@ -721,5 +721,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="data_usage_cycle_editor_subtitle">Date of each month:</string>
     <!-- Positive button title for data usage cycle editor, confirming that changes should be saved. [CHAR LIMIT=32] -->
     <string name="data_usage_cycle_editor_positive">Set</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
+    <string name="action_finish">Finish</string>
 
 </resources>
