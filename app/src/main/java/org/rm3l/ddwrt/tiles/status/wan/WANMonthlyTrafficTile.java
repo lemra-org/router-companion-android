@@ -122,10 +122,6 @@ public class WANMonthlyTrafficTile
 
     public static final String RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG = "RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG";
 
-//    protected ImmutableTable.Builder<String, Integer, ArrayList<Double>> traffDataTableBuilder;
-//
-//    protected ImmutableTable<String, Integer, ArrayList<Double>> traffData;
-
     public static final String WAN_MONTHLY_TRAFFIC_ACTION = "WAN_MONTHLY_TRAFFIC_ACTION";
 
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
@@ -178,19 +174,12 @@ public class WANMonthlyTrafficTile
 
                 final boolean isCurrentMonthYear = mCycleOfTheDay.equals(currentCycleItem);
 
-                //
-//                final String toDisplay = monthYearTextViewToDisplay.getText().toString();
-//                final boolean isCurrentMonthYear = SIMPLE_DATE_FORMAT.format(new Date()).equals(toDisplay);
-
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
                         .setEnabled(!isCurrentMonthYear);
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next)
                         .setEnabled(!isCurrentMonthYear);
-//                WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_display_button)
-//                        .setVisibility(isNullOrEmpty(toDisplay) ? View.GONE : View.VISIBLE);
 
                 //Display traffic data for this month
-//                final NVRAMInfo data = getTrafficDataForMonth(toDisplay);
                 if (data.isEmpty()) {
                     Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
                             String.format("No traffic data for '%s'. Please try again later.", currentCycleItem.getLabelWithYears()),
@@ -374,53 +363,6 @@ public class WANMonthlyTrafficTile
         });
     }
 
-//    @Nullable
-//    private NVRAMInfo getTrafficDataForMonth(@Nullable final String monthToDisplay) {
-//        if (monthToDisplay == null || traffData == null) {
-//            return null;
-//        }
-//        final ImmutableMap<Integer, ArrayList<Double>> row = traffData.row(monthToDisplay);
-//        if (row == null) {
-//            return  null;
-//        }
-//        final NVRAMInfo nvramInfo = new NVRAMInfo();
-//        final ImmutableCollection<ArrayList<Double>> values = row.values();
-//        long totalDownloadMBytes = 0l;
-//        long totalUploadMBytes = 0l;
-//        for (ArrayList<Double> val : values) {
-//            if (val == null || val.size() < 2) {
-//                continue;
-//            }
-//            totalDownloadMBytes += val.get(0);
-//            totalUploadMBytes += val.get(1);
-//        }
-//        final String inHumanReadable = FileUtils
-//                .byteCountToDisplaySize(totalDownloadMBytes * MB);
-//        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-//                inHumanReadable);
-//        if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
-//                inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
-//            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                    HIDDEN_);
-//        } else {
-//            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                    String.valueOf(totalDownloadMBytes));
-//        }
-//        final String outHumanReadable = FileUtils
-//                .byteCountToDisplaySize(totalUploadMBytes * MB);
-//        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-//                outHumanReadable);
-//        if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
-//                outHumanReadable.equals(totalUploadMBytes + " bytes")) {
-//            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                    HIDDEN_);
-//        } else {
-//            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                    String.valueOf(totalUploadMBytes));
-//        }
-//        return nvramInfo;
-//    }
-
     public void displayBackupDialog(final String displayName,
                                     @NonNull final BackupFileType backupFileType) {
         final Bundle token = new Bundle();
@@ -434,7 +376,6 @@ public class WANMonthlyTrafficTile
                 .token(token)
                 .show();
     }
-
 
     private static void setVisibility(@NonNull final View[] views, final int visibility) {
         for (final View view : views) {
@@ -516,81 +457,6 @@ public class WANMonthlyTrafficTile
 
                     return nvramInfo;
 
-//                    traffDataTableBuilder = ImmutableTable.builder();
-
-//                    @SuppressWarnings("ConstantConditions")
-//                    final Set<Map.Entry<Object, Object>> entries = nvramInfo.getData().entrySet();
-//
-//                    final SharedPreferences.Editor editor;
-//                    if (mParentFragmentPreferences != null) {
-//                        editor = mParentFragmentPreferences.edit();
-//                    } else {
-//                        editor = null;
-//                    }
-////                    boolean updatePreferences = false;
-//
-//                    final Set<String> traffMonthsSet = new HashSet<>();
-
-//                    for (final Map.Entry<Object, Object> entry : entries) {
-//                        final Object key;
-//                        final Object value;
-//                        if (entry == null || (key = entry.getKey()) == null || (value = entry.getValue()) == null) {
-//                            continue;
-//                        }
-//
-//                        if (!StringUtils.startsWithIgnoreCase(key.toString(), "traff-")) {
-//                            continue;
-//                        }
-//
-//                        final String month = key.toString().replace("traff-", EMPTY_STRING);
-//
-//                        final String monthlyTraffData = value.toString();
-//
-//                        if (editor != null) {
-//                            editor.putString(key.toString(), e(monthlyTraffData));
-//                            traffMonthsSet.add(e(key.toString()));
-//                            updatePreferences = true;
-//                        }
-//
-//                        final List<String> dailyTraffDataList = MONTHLY_TRAFF_DATA_SPLITTER.splitToList(monthlyTraffData);
-//                        if (dailyTraffDataList == null || dailyTraffDataList.isEmpty()) {
-//                            continue;
-//                        }
-//
-//                        int dayNum = 1;
-//                        for (final String dailyInOutTraffData : dailyTraffDataList) {
-//                            if (StringUtils.contains(dailyInOutTraffData, "[")) {
-//                                continue;
-//                            }
-//                            final List<String> dailyInOutTraffDataList = DAILY_TRAFF_DATA_SPLITTER.splitToList(dailyInOutTraffData);
-//                            if (dailyInOutTraffDataList.size() < 2) {
-//                                continue;
-//                            }
-//                            final String inTraff = dailyInOutTraffDataList.get(0);
-//                            final String outTraff = dailyInOutTraffDataList.get(1);
-//
-//                            traffDataTableBuilder.put(month, dayNum++, Lists.newArrayList(
-//                                    Double.parseDouble(inTraff), Double.parseDouble(outTraff)
-//                            ));
-//
-//                        }
-//                    }
-//
-//                    if (updatePreferences) {
-//                        editor
-//                                .remove(WAN_MONTHLY_TRAFFIC)
-//                                .apply();
-//
-//                        editor
-//                                .putStringSet(WAN_MONTHLY_TRAFFIC, traffMonthsSet)
-//                                .apply();
-//                        Utils.requestBackup(mParentFragmentActivity);
-//                    }
-//
-//                    traffData = traffDataTableBuilder.build();
-
-//                    return nvramInfo;
-
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
                     return new NVRAMInfo().setException(e);
@@ -635,7 +501,7 @@ public class WANMonthlyTrafficTile
                 if (data.getException() == null) {
                     if (!"1".equals(data.getProperty(NVRAMInfo.TTRAFF_ENABLE))) {
                         preliminaryCheckException = new DDWRTTraffDataDisabled("Traffic monitoring disabled!");
-                    } else if (data == null || data.isEmpty()) {
+                    } else if (data.isEmpty()) {
                         preliminaryCheckException = new DDWRTNoDataException("No Traffic Data!");
                     }
                 }
@@ -692,13 +558,6 @@ public class WANMonthlyTrafficTile
             if (exception == null) {
                 errorPlaceHolderView.setVisibility(View.GONE);
 
-//                final String currentMonthYearAlreadyDisplayed = monthYearDisplayed.getText().toString();
-//
-//                final Date currentDate = new Date();
-//                final String currentMonthYear = (isNullOrEmpty(currentMonthYearAlreadyDisplayed) ?
-//                        SIMPLE_DATE_FORMAT.format(currentDate) : currentMonthYearAlreadyDisplayed);
-//
-//                //TODO Load last value from preferences
                 monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
 
                 displayButton.setOnClickListener(new View.OnClickListener() {
@@ -706,10 +565,6 @@ public class WANMonthlyTrafficTile
                     public void onClick(View v) {
 
                         final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
-
-//                        final String monthFormatted = monthYearDisplayedText.toString();
-//                        final ImmutableMap<Integer, ArrayList<Double>> traffDataForMonth =
-//                                getTraffDataForMonth(monthFormatted);
 
                         if (mCurrentCycle.get() == null) {
                             Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
@@ -723,12 +578,6 @@ public class WANMonthlyTrafficTile
                             intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE, mCurrentCycle);
 //                            intent.putExtra(WANMonthlyTrafficActivity.MONTH_DISPLAYED, monthFormatted);
 //                            intent.putExtra(WANMonthlyTrafficActivity.MONTHLY_TRAFFIC_DATA_UNSORTED, traffDataForMonth);
-
-                            //noinspection ConstantConditions
-//                        final AlertDialog alertDialog = Utils.buildAlertDialog(mParentFragmentActivity, null,
-//                                String.format("Loading traffic data for '%s'", monthYearDisplayedText), false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
 
                             final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
                                     String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
@@ -752,51 +601,25 @@ public class WANMonthlyTrafficTile
                         mCycleOfTheDay = WANTrafficData
                                 .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
                         mCurrentCycle.set(mCycleOfTheDay);
-                        monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
+                        monthYearDisplayed.setText(mCycleOfTheDay.getLabelWithYears());
                     }
                 });
 
                 previousButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mCurrentCycle.set(mCurrentCycle.get().prev());
-                        monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
-
-//                        final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
-//                        if (currentYearMonth.length < 2) {
-//                            return;
-//                        }
-//
-//                        final int currentMonth = currentYearMonth[1];
-//                        final int currentYear = currentYearMonth[0];
-//
-//                        final int previousMonth = currentMonth - 1;
-//                        final String previousMonthYear = ((previousMonth <= 0) ? ("12-" + (currentYear - 1)) :
-//                                (((previousMonth <= 9) ? ("0" + previousMonth) : previousMonth) + "-" + currentYear));
-//
-//                        monthYearDisplayed.setText(previousMonthYear);
+                        final CycleItem cycleItem = mCurrentCycle.get();
+                        mCurrentCycle.set(cycleItem.prev());
+                        monthYearDisplayed.setText(cycleItem.getLabelWithYears());
                     }
                 });
 
                 nextButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        mCurrentCycle.set(mCurrentCycle.get().next());
-                        monthYearDisplayed.setText(mCurrentCycle.get().getLabelWithYears());
-
-//                        final int[] currentYearMonth = getCurrentYearAndMonth(currentDate, monthYearDisplayed.getText().toString());
-//                        if (currentYearMonth.length < 2) {
-//                            return;
-//                        }
-//
-//                        final int currentMonth = currentYearMonth[1];
-//                        final int currentYear = currentYearMonth[0];
-//                        final int nextMonth = currentMonth + 1;
-//                        final String nextMonthYear = ((nextMonth >= 13) ? ("01-" + (currentYear + 1)) :
-//                                (((nextMonth <= 9) ? ("0" + nextMonth) : nextMonth) + "-" + currentYear));
-//
-//                        monthYearDisplayed.setText(nextMonthYear);
+                        final CycleItem cycleItem = mCurrentCycle.get();
+                        mCurrentCycle.set(cycleItem.next());
+                        monthYearDisplayed.setText(cycleItem.getLabelWithYears());
                     }
                 });
 
@@ -842,37 +665,6 @@ public class WANMonthlyTrafficTile
         }
 
     }
-
-//    @NonNull
-//    private int[] getCurrentYearAndMonth(final Date currentDate, final String monthYearDisplayed) {
-//        final int[] currentYearAndMonth = new int[2];
-//
-//        String monthDisplayed = null;
-//        String yearDisplayed = null;
-//        final List<String> monthYearTextViewSplit = Splitter.on("-").omitEmptyStrings().splitToList(monthYearDisplayed);
-//        if (monthYearTextViewSplit.size() >= 2) {
-//            monthDisplayed = monthYearTextViewSplit.get(0);
-//            yearDisplayed = monthYearTextViewSplit.get(1);
-//        }
-//
-//        currentYearAndMonth[0] = Integer.parseInt(isNullOrEmpty(yearDisplayed) ?
-//                new SimpleDateFormat("yyyy", Locale.US).format(currentDate) : yearDisplayed);
-//        currentYearAndMonth[1] = Integer.parseInt(isNullOrEmpty(monthDisplayed) ?
-//                new SimpleDateFormat("MM", Locale.US).format(currentDate) : monthDisplayed);
-//
-//        return currentYearAndMonth;
-//    }
-
-//    @Nullable
-//    private ImmutableMap<Integer, ArrayList<Double>> getTraffDataForMonth(@NonNull final String monthFormatted) {
-//        Crashlytics.log(Log.DEBUG, LOG_TAG, "getTraffDataForMonth: " + monthFormatted);
-//
-//        if (traffData == null) {
-//            return null;
-//        }
-//
-//        return traffData.row(monthFormatted);
-//    }
 
     @Override
     public void onHide(@Nullable Parcelable parcelable) {
