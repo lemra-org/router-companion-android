@@ -202,7 +202,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                     if (cursor.getCount() > 0) {
                         cursor.moveToFirst();
                         while (!cursor.isAfterLast()) {
-                            Router router = cursorToRouter(cursor);
+                            final Router router = cursorToRouter(cursor);
                             routers.add(router);
                             cursor.moveToNext();
                         }
@@ -377,9 +377,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                         wanTrafficAllColumns,
                         String.format("%s = '%s' AND %s = '%s%'",
                                 TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
-                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE,
-                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC"),
-                        null, null, null, null);
+                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE, date),
+                        null, null, null,
+                        TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC");
 
                 //noinspection TryFinallyCanBeTryWithResources
                 try {
@@ -421,7 +421,7 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
                 final List<WANTrafficData> trafficData = new ArrayList<>();
                 final Cursor cursor = database.query(TABLE_WAN_TRAFFIC,
                         wanTrafficAllColumns,
-                        String.format("%s = '%s' AND ( %s BETWEEN '%s' AND '%s')",
+                        String.format("%s = '%s' AND ( %s BETWEEN '%s' AND '%s' )",
                                 TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
                                 TABLE_WAN_TRAFFIC_TRAFFIC_DATE, dateLower, dateHigher),
                         null, null, null,

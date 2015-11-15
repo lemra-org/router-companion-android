@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -31,6 +33,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
  * Created by rm3l on 12/11/15.
  */
 public final class WANTrafficUtils {
+
+    public static final String TAG = WANTrafficUtils.class.getSimpleName();
 
     public static final SimpleDateFormat DDWRT_MONTHLY_TRAFFIC_DATE_READER =
             new SimpleDateFormat("MM-yyyy/dd", Locale.US);
@@ -172,6 +176,8 @@ public final class WANTrafficUtils {
                 .format(new Date(start));
         final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
                 .format(new Date(end));
+        Crashlytics.log(Log.DEBUG, TAG, "<cycleStart,cycleEnd>=<" +
+                cycleStart + "," + cycleStart + ">");
         return dao.getWANTrafficDataByRouterBetweenDates(router, cycleStart, cycleEnd);
     }
 

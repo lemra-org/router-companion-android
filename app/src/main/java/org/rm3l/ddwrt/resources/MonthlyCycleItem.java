@@ -6,7 +6,6 @@ import android.support.v4.util.Pair;
 import android.text.format.DateUtils;
 
 import com.google.common.primitives.Longs;
-import com.google.gson.annotations.Expose;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -24,17 +23,19 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
     private static final java.util.Formatter sFormatter = new java.util.Formatter(
             sBuilder, Locale.US);
 
+    private transient Context context;
 
-    private Context context;
-    @Expose
-    private CharSequence label;
-    @Expose private CharSequence labelWithYears;
-    @Expose private long start;
-    @Expose private long end;
+    private String label;
+
+    private String labelWithYears;
+
+    private long start;
+
+    private long end;
 
     public MonthlyCycleItem() {}
 
-    MonthlyCycleItem(CharSequence label) {
+    MonthlyCycleItem(String label) {
         this.label = label;
         this.labelWithYears = label;
     }
@@ -62,7 +63,7 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
         return labelWithYears;
     }
 
-    public MonthlyCycleItem setLabelWithYears(CharSequence labelWithYears) {
+    public MonthlyCycleItem setLabelWithYears(String labelWithYears) {
         this.labelWithYears = labelWithYears;
         return this;
     }
@@ -71,7 +72,7 @@ public class MonthlyCycleItem implements Comparable<MonthlyCycleItem> {
         return label;
     }
 
-    public void setLabel(CharSequence label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 

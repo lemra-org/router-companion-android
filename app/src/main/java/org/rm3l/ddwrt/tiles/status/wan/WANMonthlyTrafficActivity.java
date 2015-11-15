@@ -39,17 +39,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import org.achartengine.ChartFactory;
@@ -61,11 +63,11 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.MonthlyCycleItem;
 import org.rm3l.ddwrt.resources.WANTrafficData;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -97,7 +99,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     private static final String LOG_TAG = WANMonthlyTrafficActivity.class.getSimpleName();
     private final String[] breakdownLines = new String[31];
     private Toolbar mToolbar;
-    private String mRouter;
+    private Router mRouter;
+    private String mRouterDisplay;
     private ShareActionProvider mShareActionProvider;
     private Menu optionsMenu;
     private File mFileToShare;
@@ -130,34 +133,48 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         setContentView(R.layout.tile_status_wan_monthly_traffic_chart);
 
+        dao = RouterManagementActivity.getDao(this);
+
         final Intent intent = getIntent();
-        mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final String routerUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         final String wanCycleStr = intent.getStringExtra(WAN_CYCLE);
 
-        if (isNullOrEmpty(mRouter) || wanCycleStr == null) {
-            Utils.reportException(this, new IllegalStateException("isNullOrEmpty(mRouter) || mCycleItem == null"));
+        if (isNullOrEmpty(routerUuid) ||
+                wanCycleStr == null ||
+                (mRouter = dao.getRouter(routerUuid)) == null) {
+            Utils.reportException(this, new IllegalStateException("isNullOrEmpty(routerUuid) || mCycleItem == null"));
             Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
                     .show();
             finish();
             return;
         }
 
+        final String mRouterName = mRouter.getName();
+        final boolean mRouterNameNullOrEmpty = isNullOrEmpty(mRouterName);
+        mRouterDisplay = "";
+        if (!mRouterNameNullOrEmpty) {
+            mRouterDisplay = (mRouterName + " (");
+        }
+        mRouterDisplay += mRouter.getRemoteIpAddress();
+        if (!mRouterNameNullOrEmpty) {
+            mRouterDisplay += ")";
+        }
+
         try {
-            mCycleItem = new GsonBuilder()
-                    .excludeFieldsWithoutExposeAnnotation()
-                    .create()
+            mCycleItem = new Gson()
                     .fromJson(wanCycleStr, MonthlyCycleItem.class);
         } catch (final JsonSyntaxException jse) {
+            Crashlytics.log(Log.ERROR, LOG_TAG,
+                    "JsonSyntaxException while trying to read wanCycleStr: " + wanCycleStr);
             jse.printStackTrace();
             Utils.reportException(this, jse);
-            Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Internal Error - please try again later.",
+                    Toast.LENGTH_SHORT)
                     .show();
             finish();
             return;
         }
         mCycleItem.setContext(this);
-
-        dao = RouterManagementActivity.getDao(this);
 
         if (themeLight) {
             final Resources resources = getResources();
@@ -173,7 +190,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouter + "': "
+            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouterDisplay + "': "
                 + mCycleItem.getLabelWithYears());
             setSupportActionBar(mToolbar);
         }
@@ -185,7 +202,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         }
 
         wanTrafficDataBreakdown = WANTrafficUtils.getWANTrafficDataByRouterBetweenDates(dao,
-                mRouter,
+                mRouter.getUuid(),
                 mCycleItem.getStart(),
                 mCycleItem.getEnd());
 
@@ -243,7 +260,11 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
             final int size = wanTrafficDataBreakdown.size();
             if (size == 0) {
-                throw new DDWRTNoDataException("No Data or an error occurred!");
+                Toast.makeText(this, "No Data or an error occurred!",
+                        Toast.LENGTH_SHORT)
+                        .show();
+                finish();
+                return;
             }
 
             final String[] days = new String[size];
@@ -505,7 +526,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         mFileToShare = new File(getCacheDir(),
                 Utils.getEscapedFileName(String.format("WAN Monthly Traffic for '%s' on Router '%s'",
-                        mCycleItem.getLabelWithYears(), nullToEmpty(mRouter))) + ".png");
+                        mCycleItem.getLabelWithYears(), nullToEmpty(mRouterDisplay))) + ".png");
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
@@ -576,7 +597,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("WAN Monthly Traffic for Router '%s': %s", mRouter, mCycleItem.getLabelWithYears()));
+                String.format("WAN Monthly Traffic for Router '%s': %s", mRouterDisplay, mCycleItem.getLabelWithYears()));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 Html.fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
                                 "%s",

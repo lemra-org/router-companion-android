@@ -64,7 +64,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -575,12 +575,9 @@ public class WANMonthlyTrafficTile
 
                             final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                                    mRouter != null ? mRouter.getRemoteIpAddress() : EMPTY_STRING);
+                                    mRouter != null ? mRouter.getUuid() : EMPTY_STRING);
                             intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE,
-                                    new GsonBuilder()
-                                            .excludeFieldsWithoutExposeAnnotation()
-                                            .create()
-                                            .toJson(cycleItem));
+                                    new Gson().toJson(cycleItem));
 
                             final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
                                     String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
@@ -611,18 +608,18 @@ public class WANMonthlyTrafficTile
                 previousButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final MonthlyCycleItem cycleItem = mCurrentCycle.get();
-                        mCurrentCycle.set(cycleItem.prev());
-                        monthYearDisplayed.setText(cycleItem.getLabelWithYears());
+                        final MonthlyCycleItem prevCycleItem = mCurrentCycle.get().prev();
+                        mCurrentCycle.set(prevCycleItem);
+                        monthYearDisplayed.setText(prevCycleItem.getLabelWithYears());
                     }
                 });
 
                 nextButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final MonthlyCycleItem cycleItem = mCurrentCycle.get();
-                        mCurrentCycle.set(cycleItem.next());
-                        monthYearDisplayed.setText(cycleItem.getLabelWithYears());
+                        final MonthlyCycleItem nextCycleItem = mCurrentCycle.get().next();
+                        mCurrentCycle.set(nextCycleItem);
+                        monthYearDisplayed.setText(nextCycleItem.getLabelWithYears());
                     }
                 });
 
