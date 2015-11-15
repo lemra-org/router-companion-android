@@ -47,6 +47,7 @@ import com.google.common.base.Strings;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.NumberPickerPreference;
 
 import java.util.Map;
 import java.util.Set;
@@ -193,6 +194,9 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
                         preference.setSummary(name);
                     }
                 }
+
+            } else if (preference instanceof NumberPickerPreference) {
+                preference.setSummary("Date of each month: " + stringValue);
 
             } else if (!(preference instanceof CheckBoxPreference ||
                 preference instanceof SwitchPreference)) {

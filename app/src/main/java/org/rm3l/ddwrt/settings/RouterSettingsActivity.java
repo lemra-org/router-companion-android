@@ -41,6 +41,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -140,6 +141,8 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
             bindPreferenceSummaryToValue(findPreference(OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF));
+
+            bindPreferenceSummaryToValue(findPreference(WAN_CYCLE_DAY_PREF));
         }
 
     }

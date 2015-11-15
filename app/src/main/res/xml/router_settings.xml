@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:number_picker_pref="http://schemas.android.com/apk/res-auto">
 
     <!--&lt;!&ndash; Theming &ndash;&gt;-->
     <!--<PreferenceCategory-->
@@ -68,6 +70,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Auto-Refresh Data" />
 
     </PreferenceCategory>
+
+
+    <!-- Monitoring -->
+    <PreferenceCategory
+        android:key="@string/pref_header_wan_monitoring"
+        android:title="Monitoring">
+
+        <org.rm3l.ddwrt.widgets.NumberPickerPreference
+            android:defaultValue="1"
+            android:key="wan_cycle_day"
+            android:title="WAN Monthly Cycle"
+            number_picker_pref:min="1"
+            number_picker_pref:max="31"
+            number_picker_pref:description="Date of each month:"/>
+
+    </PreferenceCategory>
+
 
     <!-- Notifications -->
     <PreferenceCategory
