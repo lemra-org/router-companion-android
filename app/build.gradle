@@ -363,7 +363,7 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     compile 'com.jcraft:jsch:0.1.51'
 //    FIXME Acra 4.7.0-RC1 is a release candidate
-    compile 'ch.acra:acra:4.7.0-RC.1'
+    compile 'ch.acra:acra:4.7.0-RC.2'
 //    compile 'ch.acra:acra:4.6.2'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:design:23.1.1'
