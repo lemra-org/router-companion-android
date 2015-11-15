@@ -196,7 +196,8 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
                 }
 
             } else if (preference instanceof NumberPickerPreference) {
-                preference.setSummary("Date of each month: " + stringValue);
+                final NumberPickerPreference numberPickerPreference = (NumberPickerPreference) preference;
+                preference.setSummary(numberPickerPreference.getMDescription() + stringValue);
 
             } else if (!(preference instanceof CheckBoxPreference ||
                 preference instanceof SwitchPreference)) {

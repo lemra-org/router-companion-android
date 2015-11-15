@@ -81,6 +81,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:defaultValue="1"
             android:key="wan_cycle_day"
             android:title="WAN Monthly Cycle"
+            android:persistent="true"
             number_picker_pref:min="1"
             number_picker_pref:max="31"
             number_picker_pref:description="Date of each month:"/>

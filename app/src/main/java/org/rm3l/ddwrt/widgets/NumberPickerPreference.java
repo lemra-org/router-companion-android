@@ -81,4 +81,18 @@ public class NumberPickerPreference extends DialogPreference {
         return a.getInt(index, DEFAULT_VAL);
     }
 
+    @Override
+    protected String getPersistedString(String defaultReturnValue) {
+        if(getSharedPreferences().contains(getKey())) {
+            final int val = getPersistedInt(DEFAULT_VAL);
+            return String.valueOf(val);
+        } else {
+            return defaultReturnValue;
+        }
+    }
+
+    public String getMDescription() {
+        return this.mDescription;
+    }
+
 }
