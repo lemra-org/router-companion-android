@@ -64,6 +64,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
+import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
@@ -78,8 +79,8 @@ import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.MonthlyCycleItem;
 import org.rm3l.ddwrt.resources.WANTrafficData;
-import org.rm3l.ddwrt.resources.WANTrafficData.CycleItem;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -132,10 +133,10 @@ public class WANMonthlyTrafficTile
 
     private final DDWRTCompanionDAO dao;
 
-    private final AtomicReference<CycleItem> mCurrentCycle;
+    private final AtomicReference<MonthlyCycleItem> mCurrentCycle;
 
     @NonNull
-    private CycleItem mCycleOfTheDay;
+    private MonthlyCycleItem mCycleOfTheDay;
 
     public WANMonthlyTrafficTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_wan_monthly_traffic, null);
@@ -164,7 +165,7 @@ public class WANMonthlyTrafficTile
             @Override
             public void afterTextChanged(Editable s) {
 
-                final CycleItem currentCycleItem = mCurrentCycle.get();
+                final MonthlyCycleItem currentCycleItem = mCurrentCycle.get();
                 if (currentCycleItem == null) {
                     return;
                 }
@@ -566,7 +567,8 @@ public class WANMonthlyTrafficTile
 
                         final CharSequence monthYearDisplayedText = monthYearDisplayed.getText();
 
-                        if (mCurrentCycle.get() == null) {
+                        final MonthlyCycleItem cycleItem = mCurrentCycle.get();
+                        if (cycleItem == null) {
                             Toast.makeText(WANMonthlyTrafficTile.this.mParentFragmentActivity,
                                     String.format("No traffic data for '%s'", monthYearDisplayedText), Toast.LENGTH_SHORT).show();
                         } else {
@@ -574,7 +576,11 @@ public class WANMonthlyTrafficTile
                             final Intent intent = new Intent(mParentFragmentActivity, WANMonthlyTrafficActivity.class);
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter != null ? mRouter.getRemoteIpAddress() : EMPTY_STRING);
-                            intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE, mCurrentCycle);
+                            intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE,
+                                    new GsonBuilder()
+                                            .excludeFieldsWithoutExposeAnnotation()
+                                            .create()
+                                            .toJson(cycleItem));
 
                             final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
                                     String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
@@ -605,7 +611,7 @@ public class WANMonthlyTrafficTile
                 previousButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final CycleItem cycleItem = mCurrentCycle.get();
+                        final MonthlyCycleItem cycleItem = mCurrentCycle.get();
                         mCurrentCycle.set(cycleItem.prev());
                         monthYearDisplayed.setText(cycleItem.getLabelWithYears());
                     }
@@ -614,7 +620,7 @@ public class WANMonthlyTrafficTile
                 nextButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final CycleItem cycleItem = mCurrentCycle.get();
+                        final MonthlyCycleItem cycleItem = mCurrentCycle.get();
                         mCurrentCycle.set(cycleItem.next());
                         monthYearDisplayed.setText(cycleItem.getLabelWithYears());
                     }

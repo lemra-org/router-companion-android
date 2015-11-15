@@ -181,15 +181,13 @@ public final class WANTrafficUtils {
                                                                final long start,
                                                                final long end) {
 
+        return computeWANTrafficUsageFromWANTrafficDataBreakdownBetweenDates(
+                getWANTrafficDataByRouterBetweenDates(dao, router, start, end)
+        );
+    }
+
+    public static NVRAMInfo computeWANTrafficUsageFromWANTrafficDataBreakdownBetweenDates(List<WANTrafficData> wanTrafficDataByRouterBetweenDates) {
         final NVRAMInfo nvramInfo = new NVRAMInfo();
-
-        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-                .format(new Date(start));
-        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-                .format(new Date(end));
-
-        final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
-                dao.getWANTrafficDataByRouterBetweenDates(router, cycleStart, cycleEnd);
         //Compute total in/out
         long totalDownloadMBytes = 0l;
         long totalUploadMBytes = 0l;

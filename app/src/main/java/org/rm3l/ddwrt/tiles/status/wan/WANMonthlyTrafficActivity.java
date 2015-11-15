@@ -39,18 +39,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -61,22 +61,23 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.MonthlyCycleItem;
+import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.WANTrafficUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -90,8 +91,6 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
     public static final String WAN_CYCLE = "WAN_CYCLE";
     public static final String WAN_MONTHLY_TRAFFIC = "WAN Monthly Traffic";
-    public static final String MONTHLY_TRAFFIC_DATA_UNSORTED = "MONTHLY_TRAFFIC_DATA_UNSORTED";
-    public static final String MONTH_DISPLAYED = "MONTH_DISPLAYED";
     public static final int COMPRESSION_QUALITY = 100;
     public static final int DEFAULT_BITMAP_WIDTH = 640;
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
@@ -99,11 +98,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
     private final String[] breakdownLines = new String[31];
     private Toolbar mToolbar;
     private String mRouter;
-    private String mMonthDisplayed;
     private ShareActionProvider mShareActionProvider;
     private Menu optionsMenu;
     private File mFileToShare;
-    private SortedMap<Integer, ArrayList<Double>> mTrafficDataForMonth;
     private Exception mException;
     private boolean themeLight;
     private long totalIn;
@@ -111,6 +108,12 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
     @Nullable
     private InterstitialAd mInterstitialAd;
+
+    private MonthlyCycleItem mCycleItem;
+
+    private DDWRTCompanionDAO dao;
+
+    private List<WANTrafficData> wanTrafficDataBreakdown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +130,35 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         setContentView(R.layout.tile_status_wan_monthly_traffic_chart);
 
+        final Intent intent = getIntent();
+        mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final String wanCycleStr = intent.getStringExtra(WAN_CYCLE);
+
+        if (isNullOrEmpty(mRouter) || wanCycleStr == null) {
+            Utils.reportException(this, new IllegalStateException("isNullOrEmpty(mRouter) || mCycleItem == null"));
+            Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+
+        try {
+            mCycleItem = new GsonBuilder()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create()
+                    .fromJson(wanCycleStr, MonthlyCycleItem.class);
+        } catch (final JsonSyntaxException jse) {
+            jse.printStackTrace();
+            Utils.reportException(this, jse);
+            Toast.makeText(this, "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+            return;
+        }
+        mCycleItem.setContext(this);
+
+        dao = RouterManagementActivity.getDao(this);
+
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
@@ -139,12 +171,10 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_adView));
 
-        final Intent intent = getIntent();
-        mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouter + "'");
+            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouter + "': "
+                + mCycleItem.getLabelWithYears());
             setSupportActionBar(mToolbar);
         }
 
@@ -154,22 +184,10 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
-        @SuppressWarnings("unchecked")
-        final HashMap<Integer, ArrayList<Double>> traffDataRaw = (HashMap<Integer, ArrayList<Double>>)
-                intent.getSerializableExtra(MONTHLY_TRAFFIC_DATA_UNSORTED);
-        if (traffDataRaw == null || traffDataRaw.isEmpty()) {
-            Toast.makeText(this, "Internal Error - No Traffic Data available!", Toast.LENGTH_SHORT).show();
-            Utils.reportException(null, new IllegalStateException("traffDataRaw NULL or empty"));
-            finish();
-            return;
-        }
-        mMonthDisplayed = intent.getStringExtra(MONTH_DISPLAYED);
-
-        if (mToolbar != null && !isNullOrEmpty(mMonthDisplayed)) {
-            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouter + "': " + mMonthDisplayed);
-        }
-
-        mTrafficDataForMonth = new TreeMap<>(traffDataRaw);
+        wanTrafficDataBreakdown = WANTrafficUtils.getWANTrafficDataByRouterBetweenDates(dao,
+                mRouter,
+                mCycleItem.getStart(),
+                mCycleItem.getEnd());
 
         doPaintBarChart();
     }
@@ -218,18 +236,22 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         final View loadingView = findViewById(R.id.tile_status_wan_monthly_traffic_chart_loading_view);
         loadingView.setVisibility(View.VISIBLE);
 
-        final LinearLayout chartPlaceholderView = (LinearLayout) findViewById(R.id.tile_status_wan_monthly_traffic_chart_placeholder);
+        final LinearLayout chartPlaceholderView =
+                (LinearLayout) findViewById(R.id.tile_status_wan_monthly_traffic_chart_placeholder);
 
         try {
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "renderTraffDateForMonth: " + mMonthDisplayed + " / dailyTraffMap=" + mTrafficDataForMonth);
 
-            final int size = mTrafficDataForMonth.size();
-            final int[] days = new int[size];
+            final int size = wanTrafficDataBreakdown.size();
+            if (size == 0) {
+                throw new DDWRTNoDataException("No Data or an error occurred!");
+            }
+
+            final String[] days = new String[size];
             final double[] inData = new double[size];
             final double[] outData = new double[size];
 
             double maxY = 0;
-            int maxX = 0;
+            int maxX = 31;
 
             // Creating an  XYSeries for Inbound
             final XYSeries inboundSeries = new XYSeries("Inbound");
@@ -239,35 +261,33 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             int i = 0;
             totalIn = 0;
             totalOut = 0;
-            for (final Map.Entry<Integer, ArrayList<Double>> dailyTraffMapEntry : mTrafficDataForMonth.entrySet()) {
-                final ArrayList<Double> dailyTraffMapEntryValue = dailyTraffMapEntry.getValue();
-                if (dailyTraffMapEntryValue == null || dailyTraffMapEntryValue.size() < 2) {
+
+            for (final WANTrafficData wanTrafficData : wanTrafficDataBreakdown) {
+                if (wanTrafficData == null) {
                     continue;
                 }
-                final Double in = dailyTraffMapEntryValue.get(0);
-                final Double out = dailyTraffMapEntryValue.get(1);
-                if (in == null || out == null) {
-                    continue;
-                }
-                // Adding data to In and Out Series
-                days[i] = dailyTraffMapEntry.getKey();
+                final Double in = wanTrafficData.getTraffIn().doubleValue();
+                final Double out = wanTrafficData.getTraffOut().doubleValue();
+
+                days[i] = wanTrafficData.getDate();
+
+                maxY = Math.max(maxY, Math.max(in, out));
 
                 inData[i] = in;
                 inboundSeries.add(i, inData[i]);
-                totalIn += in;
 
                 outData[i] = out;
                 outboundSeries.add(i, outData[i]);
-                totalOut += out;
 
-                maxX = Math.max(maxX, days[i]);
-                maxY = Math.max(maxY, Math.max(in, out));
+                totalIn += in;
+                totalOut += out;
 
                 final long inBytes = in.longValue() * MB;
                 final long outBytes = out.longValue() * MB;
 
-                breakdownLines[i] = String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
+                breakdownLines[i] = String.format("- Day %d (%s): Inbound = %d B (%s) / Outbound = %d B (%s)",
                         i + 1,
+                        wanTrafficData.getDate(),
                         inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
                         outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
 
@@ -277,6 +297,45 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                     break;
                 }
             }
+
+//            for (final Map.Entry<Integer, ArrayList<Double>> dailyTraffMapEntry : mTrafficDataForMonth.entrySet()) {
+//                final ArrayList<Double> dailyTraffMapEntryValue = dailyTraffMapEntry.getValue();
+//                if (dailyTraffMapEntryValue == null || dailyTraffMapEntryValue.size() < 2) {
+//                    continue;
+//                }
+//                final Double in = dailyTraffMapEntryValue.get(0);
+//                final Double out = dailyTraffMapEntryValue.get(1);
+//                if (in == null || out == null) {
+//                    continue;
+//                }
+//                // Adding data to In and Out Series
+//                days[i] = dailyTraffMapEntry.getKey();
+//
+//                inData[i] = in;
+//                inboundSeries.add(i, inData[i]);
+//                totalIn += in;
+//
+//                outData[i] = out;
+//                outboundSeries.add(i, outData[i]);
+//                totalOut += out;
+//
+////                maxX = Math.max(maxX, days[i]);
+//                maxY = Math.max(maxY, Math.max(in, out));
+//
+//                final long inBytes = in.longValue() * MB;
+//                final long outBytes = out.longValue() * MB;
+//
+//                breakdownLines[i] = String.format("- Day %d: Inbound = %d B (%s) / Outbound = %d B (%s)",
+//                        i + 1,
+//                        inBytes, byteCountToDisplaySize(inBytes).replace("bytes", "B"),
+//                        outBytes, byteCountToDisplaySize(outBytes).replace("bytes", "B"));
+//
+//                i++;
+//
+//                if (i >= 31) {
+//                    break;
+//                }
+//            }
 
             // Creating a dataset to hold each series
             final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
@@ -303,8 +362,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             // Creating a XYMultipleSeriesRenderer to customize the whole chart
             final XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
             multiRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
-            multiRenderer.setChartTitle(String.format("Month: %s / Total IN: %s / Total OUT: %s",
-                    mMonthDisplayed,
+            multiRenderer.setChartTitle(String.format("Monthly Cycle: %s / Total IN: %s / Total OUT: %s",
+                    mCycleItem.getLabelWithYears(),
                     byteCountToDisplaySize(totalIn * MB)
                             .replace("bytes", "B"),
                     byteCountToDisplaySize(totalOut * MB)
@@ -328,8 +387,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             }
 
             multiRenderer.setXLabels(0);
-            for (int d = 0; d < maxX; d++) {
-                multiRenderer.addXTextLabel(d, String.valueOf(d + 1));
+            for (int d = 0; d < days.length; d++) {
+                multiRenderer.addXTextLabel(d, days[d]);
             }
 
             //setting text size of the title
@@ -446,7 +505,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         mFileToShare = new File(getCacheDir(),
                 Utils.getEscapedFileName(String.format("WAN Monthly Traffic for '%s' on Router '%s'",
-                        nullToEmpty(mMonthDisplayed), nullToEmpty(mRouter))) + ".png");
+                        mCycleItem.getLabelWithYears(), nullToEmpty(mRouter))) + ".png");
         OutputStream outputStream = null;
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
@@ -517,7 +576,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("WAN Monthly Traffic for Router '%s': %s", mRouter, mMonthDisplayed));
+                String.format("WAN Monthly Traffic for Router '%s': %s", mRouter, mCycleItem.getLabelWithYears()));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 Html.fromHtml(String.format("Traffic Breakdown\n\n>>> Total Inbound: %d B (%s) / Total Outbound: %d B (%s) <<<\n\n%s" +
                                 "%s",

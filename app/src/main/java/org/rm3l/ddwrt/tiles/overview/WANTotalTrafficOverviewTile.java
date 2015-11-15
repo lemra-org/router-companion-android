@@ -33,8 +33,8 @@ import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.MonthlyCycleItem;
 import org.rm3l.ddwrt.resources.WANTrafficData;
-import org.rm3l.ddwrt.resources.WANTrafficData.CycleItem;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
@@ -93,7 +93,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
     private NVRAMInfo mNvramInfo;
 
-    private CycleItem mCycleItem;
+    private MonthlyCycleItem mCycleItem;
 
     private final DDWRTCompanionDAO dao;
     private String mPrevMonth;

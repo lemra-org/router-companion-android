@@ -4,17 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
-import android.text.format.DateUtils;
-
-import com.google.common.primitives.Longs;
 
 import java.util.Calendar;
-import java.util.Locale;
 
-import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
-import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
-import static android.text.format.DateUtils.FORMAT_SHOW_YEAR;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
 /**
@@ -80,7 +72,7 @@ public class WANTrafficData {
         return this;
     }
 
-    public static CycleItem getCurrentWANCycle(@Nullable final Context ctx,
+    public static MonthlyCycleItem getCurrentWANCycle(@Nullable final Context ctx,
                                                @Nullable final SharedPreferences routerPreferences) {
         final int today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         final int wanCycleDay;
@@ -110,120 +102,7 @@ public class WANTrafficData {
             calendar.add(Calendar.DATE, -1);
             end = calendar.getTimeInMillis();
         }
-        return new CycleItem(ctx, start, end);
+        return new MonthlyCycleItem(ctx, start, end);
     }
 
-    /**
-     * List item that reflects a specific data usage cycle.
-     */
-    public static class CycleItem implements Comparable<CycleItem> {
-        private Context context;
-        private CharSequence label;
-        private CharSequence labelWithYears;
-        private long start;
-        private long end;
-
-        CycleItem(CharSequence label) {
-            this.label = label;
-            this.labelWithYears = label;
-        }
-
-        public CycleItem(Context context, long start, long end) {
-            this.context = context;
-            this.label = formatDateRange(context, FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH,
-                    start, end);
-            this.labelWithYears = formatDateRange(context, FORMAT_SHOW_YEAR | FORMAT_SHOW_DATE | FORMAT_ABBREV_MONTH,
-                    start, end);
-            this.start = start;
-            this.end = end;
-        }
-
-        public CharSequence getLabelWithYears() {
-            return labelWithYears;
-        }
-
-        public CycleItem setLabelWithYears(CharSequence labelWithYears) {
-            this.labelWithYears = labelWithYears;
-            return this;
-        }
-
-        public CharSequence getLabel() {
-            return label;
-        }
-
-        public void setLabel(CharSequence label) {
-            this.label = label;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public void setStart(long start) {
-            this.start = start;
-        }
-
-        public long getEnd() {
-            return end;
-        }
-
-        public void setEnd(long end) {
-            this.end = end;
-        }
-
-        @Override
-        public String toString() {
-            return label.toString();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof CycleItem) {
-                final CycleItem another = (CycleItem) o;
-                return start == another.start && end == another.end;
-            }
-            return false;
-        }
-
-        @Override
-        public int compareTo(@NonNull CycleItem another) {
-            return Longs.compare(start, another.start);
-        }
-
-        public CycleItem prev() {
-            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, -1);
-            return new CycleItem(context, pair.first, pair.second);
-        }
-
-        public CycleItem next() {
-            final Pair<Long, Long> pair = slideCycleBy(Calendar.MONTH, 1);
-            return new CycleItem(context, pair.first, pair.second);
-        }
-
-        @NonNull
-        public Pair<Long, Long> slideCycleBy(final int field, final int interval) {
-            final Calendar startCal = Calendar.getInstance();
-            startCal.setTimeInMillis(start);
-            startCal.add(field, interval);
-
-            final Calendar endCal = Calendar.getInstance();
-            endCal.setTimeInMillis(end);
-            endCal.add(field, interval);
-
-            return Pair.create(startCal.getTimeInMillis(), endCal.getTimeInMillis());
-        }
-
-    }
-
-    private static final StringBuilder sBuilder = new StringBuilder(50);
-    private static final java.util.Formatter sFormatter = new java.util.Formatter(
-            sBuilder, Locale.US);
-
-    public static String formatDateRange(Context context, int flags, long start, long end) {
-        synchronized (sBuilder) {
-            sBuilder.setLength(0);
-            return DateUtils.formatDateRange(context, sFormatter, start, end, flags, null)
-                    .toString();
-        }
-    }
 }
