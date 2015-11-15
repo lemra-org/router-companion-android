@@ -124,6 +124,8 @@ public class WANMonthlyTrafficTile
     public static final String RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG = "RESTORE_WAN_MONTHLY_TRAFFIC_FRAGMENT_TAG";
 
     public static final String WAN_MONTHLY_TRAFFIC_ACTION = "WAN_MONTHLY_TRAFFIC_ACTION";
+    public static final String WAN_CYCLE_DISPLAYED = "wanCycleDisplayed";
+    private Gson mGson;
 
     private AtomicBoolean isToggleStateActionRunning = new AtomicBoolean(false);
     private AsyncTaskLoader<NVRAMInfo> mLoader;
@@ -143,6 +145,8 @@ public class WANMonthlyTrafficTile
 
         dao = RouterManagementActivity.getDao(mParentFragmentActivity);
         mIsThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+
+        mGson = new Gson();
 
         //Initialize w/ current cycle
         mCycleOfTheDay = WANTrafficData
@@ -444,7 +448,19 @@ public class WANMonthlyTrafficTile
                     mCycleOfTheDay = WANTrafficData
                             .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
 
-                    mCurrentCycle.set(mCycleOfTheDay);
+                    MonthlyCycleItem cycleItem = null;
+                    if (mParentFragmentPreferences != null) {
+                        final String wanCycleDisplayed =
+                                mParentFragmentPreferences.getString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED), null);
+                        if (!isNullOrEmpty(wanCycleDisplayed)) {
+                            try {
+                                cycleItem = mGson.fromJson(wanCycleDisplayed, MonthlyCycleItem.class);
+                            } catch (final Exception e) {
+                                //No worries
+                            }
+                        }
+                    }
+                    mCurrentCycle.set(cycleItem != null ? cycleItem : mCycleOfTheDay);
 
                     getTrafficDataNvramInfoAndPersistIfNeeded
                             (mParentFragmentActivity, mRouter, mGlobalPreferences, dao);
@@ -577,7 +593,7 @@ public class WANMonthlyTrafficTile
                             intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
                                     mRouter != null ? mRouter.getUuid() : EMPTY_STRING);
                             intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE,
-                                    new Gson().toJson(cycleItem));
+                                    mGson.toJson(cycleItem));
 
                             final ProgressDialog alertDialog = ProgressDialog.show(mParentFragmentActivity,
                                     String.format("Loading traffic data for '%s'", monthYearDisplayedText), "Please Wait...",
@@ -602,6 +618,16 @@ public class WANMonthlyTrafficTile
                                 .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
                         mCurrentCycle.set(mCycleOfTheDay);
                         monthYearDisplayed.setText(mCycleOfTheDay.getLabelWithYears());
+                        if (mParentFragmentPreferences != null) {
+                            try {
+                                mParentFragmentPreferences
+                                        .edit()
+                                        .remove(getFormattedPrefKey(WAN_CYCLE_DISPLAYED))
+                                        .apply();
+                            } catch (final Exception e) {
+                                //No worries
+                            }
+                        }
                     }
                 });
 
@@ -611,6 +637,17 @@ public class WANMonthlyTrafficTile
                         final MonthlyCycleItem prevCycleItem = mCurrentCycle.get().prev();
                         mCurrentCycle.set(prevCycleItem);
                         monthYearDisplayed.setText(prevCycleItem.getLabelWithYears());
+                        if (mParentFragmentPreferences != null) {
+                            try {
+                                mParentFragmentPreferences
+                                        .edit()
+                                        .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                                mGson.toJson(prevCycleItem))
+                                        .apply();
+                            } catch (final Exception e) {
+                                //No worries
+                            }
+                        }
                     }
                 });
 
@@ -620,6 +657,17 @@ public class WANMonthlyTrafficTile
                         final MonthlyCycleItem nextCycleItem = mCurrentCycle.get().next();
                         mCurrentCycle.set(nextCycleItem);
                         monthYearDisplayed.setText(nextCycleItem.getLabelWithYears());
+                        if (mParentFragmentPreferences != null) {
+                            try {
+                                mParentFragmentPreferences
+                                        .edit()
+                                        .putString(getFormattedPrefKey(WAN_CYCLE_DISPLAYED),
+                                                mGson.toJson(nextCycleItem))
+                                        .apply();
+                            } catch (final Exception e) {
+                                //No worries
+                            }
+                        }
                     }
                 });
 
@@ -691,9 +739,9 @@ public class WANMonthlyTrafficTile
                                             @Override
                                             public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
                                                 try {
-                                                    WANMonthlyTrafficTile.this.onRouterActionSuccess(routerAction, router, returnData);
                                                     //dao delete everything
                                                     dao.deleteWANTrafficDataByRouter(mRouter.getUuid());
+                                                    WANMonthlyTrafficTile.this.onRouterActionSuccess(routerAction, router, returnData);
                                                 }  finally {
                                                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                                                         @Override
