@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.tiles.overview;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.gson.Gson;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,7 @@ import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficActivity;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -51,6 +54,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -428,8 +432,19 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        ///TODO
-        return null;
+        if (mCycleItem == null) {
+            return null;
+        }
+        final Intent intent = new Intent(mParentFragmentActivity,
+                WANMonthlyTrafficActivity.class);
+        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                mRouter != null ? mRouter.getUuid() : EMPTY_STRING);
+        intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE,
+                new Gson().toJson(mCycleItem));
+        return new OnClickIntent(
+                String.format("Loading traffic data breakdown for current cycle: '%s'",
+                        mCycleItem.getLabelWithYears()),
+                intent, null);
     }
 
     @Override
