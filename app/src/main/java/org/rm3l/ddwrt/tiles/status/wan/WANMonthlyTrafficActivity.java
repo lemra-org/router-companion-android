@@ -87,6 +87,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 
 public class WANMonthlyTrafficActivity extends AppCompatActivity {
@@ -358,6 +359,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 //                }
 //            }
 
+            final Resources resources = getResources();
+
             // Creating a dataset to hold each series
             final XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
             // Adding inbound Series to the dataset
@@ -392,6 +395,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setXTitle("Days");
             multiRenderer.setYTitle("Traffic");
             multiRenderer.setZoomButtonsVisible(false);
+            multiRenderer.setLabelsColor(
+                    resources.getColor(themeLight ? R.color.black : R.color.theme_accent_1_light));
 
             //Add custom labels for the values we have here
             //setting no of values to display in y axis
@@ -407,9 +412,12 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
                         .replace("bytes", "B"));
             }
 
+            multiRenderer.setXLabelsAngle(70f);
             multiRenderer.setXLabels(0);
             for (int d = 0; d < days.length; d++) {
-                multiRenderer.addXTextLabel(d, days[d]);
+                //Add labels every 5 days
+                multiRenderer.addXTextLabel(d,
+                        (d > 0 && (d % 5 == 0)) ? days[d] : EMPTY_STRING);
             }
 
             //setting text size of the title
@@ -457,7 +465,7 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             //Setting background color of the graph to transparent
             multiRenderer.setBackgroundColor(Color.TRANSPARENT);
             //Setting margin color of the graph to transparent
-            multiRenderer.setMarginsColor(getResources().getColor(R.color.transparent_background));
+            multiRenderer.setMarginsColor(resources.getColor(R.color.transparent_background));
             multiRenderer.setApplyBackgroundColor(true);
 
             //setting the margin size for the graph in the order top, left, bottom, right
