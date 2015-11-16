@@ -239,6 +239,8 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     private boolean mIsThemeLight;
 
+    private BroadcastReceiver mMessageReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -259,6 +261,8 @@ public class DDWRTMainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        this.mMessageReceiver = new NetworkChangeReceiver();
 
         this.mRouterUuid = router.getUuid();
         this.mRouter = router;
@@ -825,15 +829,18 @@ public class DDWRTMainActivity extends AppCompatActivity
         Utils.displayRatingBarIfNeeded(this);
     }
 
-    private BroadcastReceiver mMessageReceiver = new NetworkChangeReceiver();
-
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(
-                mMessageReceiver,
-                new IntentFilter(
-                        ConnectivityManager.CONNECTIVITY_ACTION));
+        try {
+            registerReceiver(
+                    mMessageReceiver,
+                    new IntentFilter(
+                            ConnectivityManager.CONNECTIVITY_ACTION));
+        } catch (final Exception e) {
+            Utils.reportException(this, e);
+            e.printStackTrace();
+        }
     }
 
     @Override
