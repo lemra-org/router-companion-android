@@ -274,9 +274,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         sortIds.put(R.id.tile_status_wireless_clients_sort_not_seen_recently, 93);
     }
 
-    private Router mRouterCopy;
-    private String mTempRouterUuid;
-
     private final Object usageDataLock = new Object();
     @NonNull
     private final Map<String, BandwidthMonitoringIfaceData> bandwidthMonitoringIfaceDataPerDevice =
@@ -606,11 +603,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 });
 
 
-                //We are cloning the Router, with a new UUID, so as to have a different key into the SSH Sessions Cache
-                //This is because we are fetching in a quite real-time manner, and we don't want to block other async tasks.
-                mTempRouterUuid = UUID.randomUUID().toString();
-                mRouterCopy = new Router(mParentFragmentActivity, mRouter).setUuid(mTempRouterUuid);
-
                 final ClientDevices devices = new ClientDevices();
 
                 broadcastAddresses = Lists.newArrayList();
@@ -627,7 +619,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     //Get Broadcast Addresses (for WOL)
                     try {
-                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                        final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
                                 "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
                         if (wanAndLanBroadcast != null && wanAndLanBroadcast.length > 0) {
@@ -648,45 +640,48 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final Multimap<String, String> phyToWlIfaces = ArrayListMultimap.create();
                     try {
                         final String[] wirelessSsids = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                mRouterCopy,
+                                mRouter,
                                 mGlobalPreferences,
-                                "nvram show | grep 'ssid='");
-                        if (wirelessSsids == null || wirelessSsids.length == 0) {
-                            return null;
-                        }
+                                "/usr/sbin/nvram show | grep 'ssid='");
+//                        if (wirelessSsids == null || wirelessSsids.length == 0) {
+//                            //FIXME Should we abort right away???
+//                            return null;
+//                        }
 
-                        for (final String wirelessSsid : wirelessSsids) {
-                            if (wirelessSsid == null ||
-                                    wirelessSsid.startsWith("af_")) {
-                                //skip AnchorFree SSID
-                                continue;
-                            }
-                            final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
-                            final int size = strings.size();
-                            if (size == 1) {
-                                continue;
-                            }
+                        if (wirelessSsids != null) {
+                            for (final String wirelessSsid : wirelessSsids) {
+                                if (wirelessSsid == null ||
+                                        wirelessSsid.startsWith("af_")) {
+                                    //skip AnchorFree SSID
+                                    continue;
+                                }
+                                final List<String> strings = NVRAMParser.SPLITTER.splitToList(wirelessSsid);
+                                final int size = strings.size();
+                                if (size == 1) {
+                                    continue;
+                                }
 
-                            if (size >= 2) {
-                                final String wlIface = strings.get(0).replace("_ssid", "");
+                                if (size >= 2) {
+                                    final String wlIface = strings.get(0).replace("_ssid", "");
 //                                if (wlIface.contains(".")) {
 //                                    //Skip vifs as well, as they will be considered later on
 //                                    continue;
 //                                }
-                                final String nvramKey = \"fake-key\";
-                                final NVRAMInfo phyFromNVRAM = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
-                                        mRouterCopy, mGlobalPreferences,
-                                        nvramKey);
-                                if (phyFromNVRAM == null || phyFromNVRAM.getProperty(nvramKey) == null) {
-                                    continue;
-                                }
+                                    final String nvramKey = \"fake-key\";
+                                    final NVRAMInfo phyFromNVRAM = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                            mRouter, mGlobalPreferences,
+                                            nvramKey);
+                                    if (phyFromNVRAM == null || phyFromNVRAM.getProperty(nvramKey) == null) {
+                                        continue;
+                                    }
 
-                                final String phy = phyFromNVRAM.getProperty(nvramKey);
-                                if (phy.isEmpty()) {
-                                    continue;
-                                }
+                                    final String phy = phyFromNVRAM.getProperty(nvramKey);
+                                    if (phy.isEmpty()) {
+                                        continue;
+                                    }
 
-                                phyToWlIfaces.put(phy, wlIface);
+                                    phyToWlIfaces.put(phy, wlIface);
+                                }
                             }
                         }
                         Crashlytics.log(Log.DEBUG, LOG_TAG, "phyToWlIfaces: " + phyToWlIfaces);
@@ -704,13 +699,15 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     });
 
                     //Active clients
-                    activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                            "arp -a 2>/dev/null");
+                    activeClients = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                            "/sbin/arp -a 2>/dev/null");
                     if (activeClients != null) {
                         devices.setActiveClientsNum(activeClients.length);
                     }
 
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "activeClients: " + Arrays.toString(activeClients));
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "activeClients: " +
+                            (activeClients != null ?
+                                activeClients.length : "NULL"));
 
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -720,8 +717,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     });
                     //Active DHCP Leases
-                    activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                            "cat /tmp/dnsmasq.leases 2>/dev/null");
+                    activeDhcpLeases = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                            "/bin/cat /tmp/dnsmasq.leases 2>/dev/null");
                     if (activeDhcpLeases != null) {
                         devices.setActiveDhcpLeasesNum(activeDhcpLeases.length);
                     }
@@ -736,8 +733,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     });
                     //Active IP Connections
-                    activeIPConnections = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
-                            "cat /proc/net/ip_conntrack 2>/dev/null");
+                    activeIPConnections = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
+                            "/bin/cat /proc/net/ip_conntrack 2>/dev/null");
                     if (activeIPConnections != null) {
                         devices.setActiveIPConnections(activeIPConnections.length);
                     }
@@ -749,7 +746,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                    String gatewayAddress = EMPTY_STRING;
 //                    try {
 //                        final NVRAMInfo nvRamInfoFromRouter = SSHUtils
-//                                .getNVRamInfoFromRouter(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, WAN_GATEWAY);
+//                                .getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, WAN_GATEWAY);
 //                        if (nvRamInfoFromRouter != null) {
 //                            //noinspection ConstantConditions
 //                            gatewayAddress = nvRamInfoFromRouter.getProperty(WAN_GATEWAY, EMPTY_STRING).trim();
@@ -773,19 +770,19 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     try {
 
                         //Detect if Atheros or not
-                        final String[] manualProperty = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                        final String[] manualProperty = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "/usr/sbin/nvram get landevs 2>/dev/null");
                         final boolean useAtheros = (manualProperty == null || manualProperty.length == 0);
 
                         final String[] assocList;
                         if (useAtheros) {
-                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     "for phy in `/usr/sbin/nvram get lan_ifnames`; do " +
                                             "if [ ! -z \"$phy\" ]; then " +
-                                            "echo iface $phy ; " +
-                                            "( wl -i $phy assoclist 2>/dev/null || " +
-                                            " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                            "echo 'done';  " +
+                                            "/bin/echo iface $phy ; " +
+                                            "( /usr/sbin/wl -i $phy assoclist 2>/dev/null || " +
+                                            " /usr/sbin/wl_atheros -i $phy assoclist 2>/dev/null ) | /usr/bin/awk '{print $2}'; " +
+                                            "/bin/echo 'done';  " +
                                             "fi; " +
                                             "done; " +
                                             "for j in `/usr/sbin/nvram get lan_ifnames`; do " +
@@ -795,33 +792,33 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             "phy=$i ; " +
                                             "fi; " +
                                             "if [ ! -z \"$phy\" ]; then " +
-                                            "echo iface $i ; " +
-                                            "( wl -i $phy assoclist 2>/dev/null || " +
-                                            "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                            "echo 'done';  " +
+                                            "/bin/echo iface $i ; " +
+                                            "( /usr/sbin/wl -i $phy assoclist 2>/dev/null || " +
+                                            "/usr/sbin/wl_atheros -i $phy assoclist 2>/dev/null ) | /usr/bin/awk '{print $2}'; " +
+                                            "/bin/echo 'done';  " +
                                             "fi; " +
                                             "done; " +
                                             "done"
                             );
                         } else {
-                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            assocList = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     "for i in `/usr/sbin/nvram get landevs`; do " +
                                             "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
                                             "if [ ! -z \"$phy\" ]; then " +
-                                            "echo iface $i ; " +
-                                            "( wl -i $phy assoclist 2>/dev/null || " +
-                                            " wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                            "echo 'done';  " +
+                                            "/bin/echo iface $i ; " +
+                                            "( /usr/sbin/wl -i $phy assoclist 2>/dev/null || " +
+                                            " /usr/sbin/wl_atheros -i $phy assoclist 2>/dev/null ) | /usr/bin/awk '{print $2}'; " +
+                                            "/bin/echo 'done';  " +
                                             "fi; " +
                                             "done; " +
                                             "for j in `/usr/sbin/nvram get landevs`; do " +
                                             "for i in `/usr/sbin/nvram get ${j}_vifs`; do " +
                                             "phy=`/usr/sbin/nvram get ${i}_ifname 2>/dev/null`; " +
                                             "if [ ! -z \"$phy\" ]; then " +
-                                            "echo iface $i ; " +
-                                            "( wl -i $phy assoclist 2>/dev/null || " +
-                                            "wl_atheros -i $phy assoclist 2>/dev/null ) | awk '{print $2}'; " +
-                                            "echo 'done';  " +
+                                            "/bin/echo iface $i ; " +
+                                            "( /usr/sbin/wl -i $phy assoclist 2>/dev/null || " +
+                                            "/usr/sbin/wl_atheros -i $phy assoclist 2>/dev/null ) | /usr/bin/awk '{print $2}'; " +
+                                            "/bin/echo 'done';  " +
                                             "fi; " +
                                             "done; " +
                                             "done"
@@ -860,31 +857,31 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     } catch (final Exception e) {
                         //No worries
                         e.printStackTrace();
-                        Utils.reportException(null, e);
+                        Utils.reportException(mParentFragmentActivity, e);
                     }
 
-                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
-                            mGlobalPreferences, "grep dhcp-host /tmp/dnsmasq.conf | sed 's/.*=//' | awk -F , '{print \"" +
+                    final String[] output = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                            mGlobalPreferences, "/bin/grep dhcp-host /tmp/dnsmasq.conf | /bin/sed 's/.*=//' | /usr/bin/awk -F , '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$1,$3 ,$2}'",
-                            "awk '{print \"" +
+                            "/usr/bin/awk '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$2,$3,$4}' /tmp/dnsmasq.leases",
-                            "awk 'NR>1{print \"" +
+                            "/usr/bin/awk 'NR>1{print \"" +
                                     MAP_KEYWORD +
                                     "\",$4,$1,\"*\"}' /proc/net/arp",
-                            "arp -a | awk '{print \"" +
+                            "/sbin/arp -a | awk '{print \"" +
                                     MAP_KEYWORD +
                                     "\",$4,$2,$1}'",
-                            "echo done");
+                            "/bin/echo done");
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
 
-                    if (output == null || output.length == 0) {
-                        if (output == null) {
-                            return devices;
-                        }
-                    }
+//                    if (output == null || output.length == 0) {
+//                        if (output == null) {
+//                            return devices;
+//                        }
+//                    }
 
                     final Map<String, Collection<String>> wlAssocListMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                     wlAssocListMap.putAll(wirelessIfaceAssocList.asMap());
@@ -895,177 +892,179 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final Splitter splitter = Splitter.on(" ");
 
-                    final int outputLen = output.length;
-                    mParentFragmentActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setProgress(60);
-                            mProgressBarDesc.setText("Processing a total of " + outputLen + " connected hosts...");
-                        }
-                    });
-                    String ipAddress;
-                    final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
-                    int u = 1;
-                    for (final String stdoutLine : output) {
-                        if ("done".equals(stdoutLine)) {
-                            break;
-                        }
-                        final int v = u++;
-                        final List<String> as = splitter.splitToList(stdoutLine);
-                        if (as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
-                            final String macAddress = Strings.nullToEmpty(as.get(1)).toLowerCase();
-                            if (isNullOrEmpty(macAddress) ||
-                                    "00:00:00:00:00:00".equals(macAddress) ||
-                                    StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
-                                //Skip clients with incomplete ARP set-up
-                                continue;
+                    if (output != null) {
+                        final int outputLen = output.length;
+                        mParentFragmentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setProgress(60);
+                                mProgressBarDesc.setText("Processing a total of " + outputLen + " connected hosts...");
                             }
-
-                            ipAddress = as.get(2);
-                            if (ipAddress != null) {
-                                final Matcher matcher = betweenParenthesisPattern.matcher(ipAddress);
-                                if (matcher.find()) {
-                                    ipAddress = matcher.group(1);
+                        });
+                        String ipAddress;
+                        final Pattern betweenParenthesisPattern = Pattern.compile("\\((.*?)\\)");
+                        int u = 1;
+                        for (final String stdoutLine : output) {
+                            if ("done".equals(stdoutLine)) {
+                                break;
+                            }
+                            final int v = u++;
+                            final List<String> as = splitter.splitToList(stdoutLine);
+                            if (as.size() >= 4 && MAP_KEYWORD.equals(as.get(0))) {
+                                final String macAddress = Strings.nullToEmpty(as.get(1)).toLowerCase();
+                                if (isNullOrEmpty(macAddress) ||
+                                        "00:00:00:00:00:00".equals(macAddress) ||
+                                        StringUtils.containsIgnoreCase(macAddress, "incomplete")) {
+                                    //Skip clients with incomplete ARP set-up
+                                    continue;
                                 }
-                            }
+
+                                ipAddress = as.get(2);
+                                if (ipAddress != null) {
+                                    final Matcher matcher = betweenParenthesisPattern.matcher(ipAddress);
+                                    if (matcher.find()) {
+                                        ipAddress = matcher.group(1);
+                                    }
+                                }
 
 //                            if (StringUtils.equalsIgnoreCase(ipAddress, gatewayAddress)) {
 //                                //Skip Gateway
 //                                continue;
 //                            }
 
-                            final Device device = new Device(macAddress);
-                            device.setIpAddress(ipAddress);
+                                final Device device = new Device(macAddress);
+                                device.setIpAddress(ipAddress);
 
-                            device.setActiveIpConnections(getActiveIPConnectionsForClient(ipAddress));
+                                device.setActiveIpConnections(getActiveIPConnectionsForClient(ipAddress));
 
-                            boolean isOnWirelessNetwork = false;
-                            for (final String wlAssocListMacAddr : wlAssocListMacAddrs) {
-                                if (StringUtils.equalsIgnoreCase(macAddress, wlAssocListMacAddr)) {
-                                    isOnWirelessNetwork = true;
-                                    break;
+                                boolean isOnWirelessNetwork = false;
+                                for (final String wlAssocListMacAddr : wlAssocListMacAddrs) {
+                                    if (StringUtils.equalsIgnoreCase(macAddress, wlAssocListMacAddr)) {
+                                        isOnWirelessNetwork = true;
+                                        break;
+                                    }
                                 }
-                            }
-                            if (isOnWirelessNetwork) {
-                                final Device.WirelessConnectionInfo wirelessConnectionInfo = new Device.WirelessConnectionInfo();
-                                String iface = null;
-                                for (Map.Entry<String, Collection<String>> entry : wlAssocListMap.entrySet()) {
-                                    final String wlIface = entry.getKey();
-                                    final Collection<String> assocList = entry.getValue();
-                                    for (final String assoc : assocList) {
-                                        if (StringUtils.equalsIgnoreCase(macAddress, assoc)) {
-                                            iface = wlIface;
+                                if (isOnWirelessNetwork) {
+                                    final Device.WirelessConnectionInfo wirelessConnectionInfo = new Device.WirelessConnectionInfo();
+                                    String iface = null;
+                                    for (Map.Entry<String, Collection<String>> entry : wlAssocListMap.entrySet()) {
+                                        final String wlIface = entry.getKey();
+                                        final Collection<String> assocList = entry.getValue();
+                                        for (final String assoc : assocList) {
+                                            if (StringUtils.equalsIgnoreCase(macAddress, assoc)) {
+                                                iface = wlIface;
+                                                break;
+                                            }
+                                        }
+                                        if (!isNullOrEmpty(iface)) {
                                             break;
                                         }
                                     }
                                     if (!isNullOrEmpty(iface)) {
-                                        break;
-                                    }
-                                }
-                                if (!isNullOrEmpty(iface)) {
-                                    String realWlIface = null;
-                                    final Collection<String> stringCollection = phyToWlIfaces.get(iface);
-                                    if (!stringCollection.isEmpty()) {
-                                        realWlIface = stringCollection.iterator().next();
-                                    }
-
-                                    //Fetch SSID, SNR and RSSI
-                                    try {
-                                        String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
-                                                mGlobalPreferences,
-                                                String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", iface),
-                                                String.format("wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
-                                                        iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase()),
-                                                String.format("wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", iface, iface),
-                                                String.format("( wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
-                                                                "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
-                                                                "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
-                                                        iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
-                                        Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
-                                        if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
-                                            //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
-                                            if (!isNullOrEmpty(realWlIface)) {
-                                                ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy,
-                                                        mGlobalPreferences,
-                                                        String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", realWlIface),
-                                                        String.format("wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
-                                                                realWlIface, macAddress.toUpperCase(), realWlIface, macAddress.toUpperCase()),
-                                                        String.format("wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", realWlIface, realWlIface),
-                                                        String.format("( wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
-                                                                        "echo \" \"; wl -i `/usr/sbin/nvram get %s_ifname` noise || wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
-                                                                        "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
-                                                                realWlIface, macAddress.toUpperCase(), realWlIface, macAddress, realWlIface, realWlIface));
-                                            }
+                                        String realWlIface = null;
+                                        final Collection<String> stringCollection = phyToWlIfaces.get(iface);
+                                        if (!stringCollection.isEmpty()) {
+                                            realWlIface = stringCollection.iterator().next();
                                         }
-                                        Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
-                                        if (ssidAndrssiAndSNROutput != null) {
-                                            if (ssidAndrssiAndSNROutput.length >= 1) {
-                                                wirelessConnectionInfo.setSsid(ssidAndrssiAndSNROutput[0]);
-                                            }
-                                            if (ssidAndrssiAndSNROutput.length >= 2) {
-                                                wirelessConnectionInfo.setRssi(ssidAndrssiAndSNROutput[1]);
-                                            }
-                                            if (ssidAndrssiAndSNROutput.length >= 3) {
-                                                final String noiseStr = ssidAndrssiAndSNROutput[2];
-                                                try {
-                                                    final int signal = Integer.parseInt(wirelessConnectionInfo.getRssi());
-                                                    final int noise = Integer.parseInt(noiseStr);
-                                                    if (noise != 0) {
-                                                        final int snrAbs = 100 * Math.abs(signal / noise);
-                                                        wirelessConnectionInfo.setSnr(String.valueOf(snrAbs));
-                                                    }
-                                                } catch (final NumberFormatException e) {
-                                                    //No worries
-                                                    e.printStackTrace();
+
+                                        //Fetch SSID, SNR and RSSI
+                                        try {
+                                            String[] ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                                    mGlobalPreferences,
+                                                    String.format("/usr/sbin/nvram get %s_ssid || /bin/echo \"-\"", iface),
+                                                    String.format("/usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
+                                                            iface, macAddress.toUpperCase(), iface, macAddress.toUpperCase()),
+                                                    String.format("/usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", iface, iface),
+                                                    String.format("( /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
+                                                                    "/bin/echo \" \"; /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
+                                                                    "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
+                                                            iface, macAddress.toUpperCase(), iface, macAddress, iface, iface));
+                                            Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                            if (ssidAndrssiAndSNROutput == null || ssidAndrssiAndSNROutput.length == 0) {
+                                                //Try again. iface might represent the actual physical interface. We must try to fetch the wl one instead
+                                                if (!isNullOrEmpty(realWlIface)) {
+                                                    ssidAndrssiAndSNROutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                                            mGlobalPreferences,
+                                                            String.format("/usr/sbin/nvram get %s_ssid || echo \"-\"", realWlIface),
+                                                            String.format("/usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s",
+                                                                    realWlIface, macAddress.toUpperCase(), realWlIface, macAddress.toUpperCase()),
+                                                            String.format("/usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise", realWlIface, realWlIface),
+                                                            String.format("( /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` rssi %s || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` rssi %s ; " +
+                                                                            "/bin/echo \" \"; /usr/sbin/wl -i `/usr/sbin/nvram get %s_ifname` noise || /usr/sbin/wl_atheros -i `/usr/sbin/nvram get %s_ifname` noise ) | " +
+                                                                            "/usr/bin/tr -d '\\n' | /usr/bin/awk '{print $1-$2}'",
+                                                                    realWlIface, macAddress.toUpperCase(), realWlIface, macAddress, realWlIface, realWlIface));
                                                 }
                                             }
-                                            if (ssidAndrssiAndSNROutput.length >= 4) {
-                                                wirelessConnectionInfo.setSnrMargin(ssidAndrssiAndSNROutput[3]);
+                                            Crashlytics.log(Log.DEBUG, LOG_TAG, "ssidAndrssiAndSNROutput: " + Arrays.toString(ssidAndrssiAndSNROutput));
+                                            if (ssidAndrssiAndSNROutput != null) {
+                                                if (ssidAndrssiAndSNROutput.length >= 1) {
+                                                    wirelessConnectionInfo.setSsid(ssidAndrssiAndSNROutput[0]);
+                                                }
+                                                if (ssidAndrssiAndSNROutput.length >= 2) {
+                                                    wirelessConnectionInfo.setRssi(ssidAndrssiAndSNROutput[1]);
+                                                }
+                                                if (ssidAndrssiAndSNROutput.length >= 3) {
+                                                    final String noiseStr = ssidAndrssiAndSNROutput[2];
+                                                    try {
+                                                        final int signal = Integer.parseInt(wirelessConnectionInfo.getRssi());
+                                                        final int noise = Integer.parseInt(noiseStr);
+                                                        if (noise != 0) {
+                                                            final int snrAbs = 100 * Math.abs(signal / noise);
+                                                            wirelessConnectionInfo.setSnr(String.valueOf(snrAbs));
+                                                        }
+                                                    } catch (final NumberFormatException e) {
+                                                        //No worries
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                                if (ssidAndrssiAndSNROutput.length >= 4) {
+                                                    wirelessConnectionInfo.setSnrMargin(ssidAndrssiAndSNROutput[3]);
+                                                }
                                             }
+                                        } catch (final Exception e) {
+                                            //No worries
+                                            e.printStackTrace();
                                         }
-                                    } catch (final Exception e) {
-                                        //No worries
-                                        e.printStackTrace();
-                                    }
-                                    device.setWirelessConnectionInfo(wirelessConnectionInfo);
-                                } else {
-                                    Utils.reportException(null, new IllegalStateException("Found device in assocList, but with invalid iface name!"));
-                                }
-                            }
-
-                            if (activeClients != null) {
-                                for (final String activeClient : activeClients) {
-                                    if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
-                                        device.setActive(true);
-                                        break;
+                                        device.setWirelessConnectionInfo(wirelessConnectionInfo);
+                                    } else {
+                                        Utils.reportException(null, new IllegalStateException("Found device in assocList, but with invalid iface name!"));
                                     }
                                 }
-                            }
 
-                            final String systemName = as.get(3);
-                            if (!"*".equals(systemName)) {
-                                device.setSystemName(systemName);
-                            }
-
-                            //Alias from SharedPreferences
-                            if (mParentFragmentPreferences != null) {
-                                final String deviceAlias = mParentFragmentPreferences.getString(macAddress, null);
-                                if (!isNullOrEmpty(deviceAlias)) {
-                                    device.setAlias(deviceAlias);
+                                if (activeClients != null) {
+                                    for (final String activeClient : activeClients) {
+                                        if (StringUtils.containsIgnoreCase(activeClient, macAddress)) {
+                                            device.setActive(true);
+                                            break;
+                                        }
+                                    }
                                 }
-                            }
 
-                            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBarDesc.setText("Resolving MAC Addresses (" +
-                                            v + "/" + outputLen +
-                                            ")...");
+                                final String systemName = as.get(3);
+                                if (!"*".equals(systemName)) {
+                                    device.setSystemName(systemName);
                                 }
-                            });
-                            device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
 
-                            macToDeviceOutput.put(macAddress, device);
+                                //Alias from SharedPreferences
+                                if (mParentFragmentPreferences != null) {
+                                    final String deviceAlias = mParentFragmentPreferences.getString(macAddress, null);
+                                    if (!isNullOrEmpty(deviceAlias)) {
+                                        device.setAlias(deviceAlias);
+                                    }
+                                }
+
+                                mParentFragmentActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBarDesc.setText("Resolving MAC Addresses (" +
+                                                v + "/" + outputLen +
+                                                ")...");
+                                    }
+                                });
+                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+
+                                macToDeviceOutput.put(macAddress, device);
+                            }
                         }
                     }
 
@@ -1113,7 +1112,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                                 //Compute checksum of remote script, and see if usage DB exists remotely
                                 final String[] remoteMd5ChecksumAndUsageDBCheckOutput = SSHUtils
-                                        .getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                                        .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                                 "[ -f " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " ] && " +
                                                         "md5sum " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " | awk '{print $1}'",
                                                 "[ -f " + USAGE_DB + " ]; echo $?");
@@ -1125,7 +1124,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                             file.exists() &&
                                             !"0".equals(doesUsageDataExistRemotely.trim())) {
                                         //Usage Data File does not exist - restore what we have on file (if any)
-                                        SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
+                                        SSHUtils.scpTo(mParentFragmentActivity, mRouter, mGlobalPreferences, mUsageDbBackupPath, USAGE_DB);
                                     }
                                 }
                             }
@@ -1151,7 +1150,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         if (!remoteChecksum.equalsIgnoreCase(localChecksum)) {
                             Crashlytics.log(Log.INFO, LOG_TAG, "Local and remote Checksums for the per-client monitoring script are different " +
                                     "=> uploading the local one...");
-                            SSHUtils.scpTo(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                            SSHUtils.scpTo(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     wrtbwmonScriptPath.getAbsolutePath(),
                                     WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE);
                         }
@@ -1159,7 +1158,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         //Run Setup (does not matter if already done)
                         Crashlytics.log(Log.DEBUG, LOG_TAG, "[EXEC] Running per-IP bandwidth monitoring...");
 
-                        final String[] usageDbOutLines = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                        final String[] usageDbOutLines = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
 //                                "chmod 700 " + WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE,
                                 String.format("chmod 700 %s", WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE),
 //                                WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE + " setup 2>/dev/null",
@@ -1289,7 +1288,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final Collection<Device> deviceCollection = macToDevice.values();
 
                     try {
-                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mParentFragmentActivity, mRouterCopy, mGlobalPreferences,
+                        final String[] wanAccessIptablesChainDump = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "iptables -L " + DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN + " --line-numbers -n 2>/dev/null; echo $?");
                         if (wanAccessIptablesChainDump != null) {
                             int exitStatus = -1;
@@ -1339,7 +1338,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                 //Backup to new data file
                                 synchronized (usageDataLock) {
                                     if (SSHUtils
-                                            .scpFrom(mParentFragmentActivity, mRouterCopy, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath, false)) {
+                                            .scpFrom(mParentFragmentActivity, mRouter, mGlobalPreferences, USAGE_DB, mUsageDbBackupPath, false)) {
                                         Utils.requestBackup(mParentFragmentActivity);
                                     }
 
@@ -1367,8 +1366,6 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             mParentFragmentPreferences, mRouter, deviceCollection);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
-                    //FIXME Remove
-                    Crashlytics.log(Log.DEBUG, LOG_TAG, "[REMOVEME] devices: " + devices);
 
                     return devices;
 
@@ -2324,20 +2321,21 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         } finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
-            try {
-//                if (mProgressBar.getVisibility() != View.GONE) {
-//                    mProgressBar.setVisibility(View.GONE);
-//                }
-//                if (mProgressBarDesc.getVisibility() != View.GONE) {
-//                    mProgressBarDesc.setVisibility(View.GONE);
-//                }
-                //Destroy temporary SSH session
-                if (mRouterCopy != null) {
-                    SSHUtils.destroySessions(mRouterCopy);
-                }
-            } finally {
-                doneLoading(loader);
-            }
+            doneLoading(loader);
+//            try {
+////                if (mProgressBar.getVisibility() != View.GONE) {
+////                    mProgressBar.setVisibility(View.GONE);
+////                }
+////                if (mProgressBarDesc.getVisibility() != View.GONE) {
+////                    mProgressBarDesc.setVisibility(View.GONE);
+////                }
+//                //Destroy temporary SSH session
+////                if (mRouterCopy != null) {
+////                    SSHUtils.destroySessions(mRouterCopy);
+////                }
+//            } finally {
+//                doneLoading(loader);
+//            }
         }
     }
 
@@ -2346,7 +2344,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
             //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
-            doneWithLoaderInstance(this, loader, 1500l);
+            doneWithLoaderInstance(this, loader, 7000l);
         } else {
             //Use classical sync
             doneWithLoaderInstance(this, loader);
