@@ -427,7 +427,7 @@ public final class SSHUtils {
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
-            channelExec.setCommand(Joiner.on(" && ").skipNulls().join(cmdToExecute));
+            channelExec.setCommand(Joiner.on("; ").skipNulls().join(cmdToExecute));
             channelExec.setInputStream(null);
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
