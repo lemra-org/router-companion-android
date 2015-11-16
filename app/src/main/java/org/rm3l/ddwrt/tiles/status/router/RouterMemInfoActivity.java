@@ -125,11 +125,7 @@ public class RouterMemInfoActivity extends AppCompatActivity {
         }
 
         mMemInfoMultiLine = Joiner.on("\n").join(mMemInfo);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         ((TextView) findViewById(R.id.tile_status_router_meminfo)).setText(mMemInfoMultiLine);
     }
 

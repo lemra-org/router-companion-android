@@ -555,6 +555,9 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
                     }
                 });
 
+        //Fill form
+        fillForm();
+
     }
 
     private void showDetailedViewAt(final int position) {
@@ -598,9 +601,7 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void fillForm() {
         //Fill form with data loaded
         ((TextView) findViewById(R.id.wireless_security_settings_phy_iface))
                 .setText(mPhyIface + (isNullOrEmpty(mParentIface) ? "" : (" (virt. interface of " + mParentIface + ")")));
@@ -805,7 +806,6 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.wireless_security_settings_wep_passphrase_key4))
                     .setText(wepPassphraseKey4, EDITABLE);
         }
-
     }
 
     @Override

@@ -223,11 +223,11 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
                     }
                 });
 
+        fillForm();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void fillForm() {
         //Fill form with data loaded
         ((CheckBox) findViewById(R.id.openvpn_client_settings_status_flag))
                 .setChecked("1".equals(mNvramInfo.getProperty(OPENVPNCL_ENABLE)));

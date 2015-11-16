@@ -231,7 +231,7 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
             }
             final String routerName = router.getName();
             routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
-                    Router.getEffectiveRemoteAddr(router, this) + ")");
+                    router.getRemoteIpAddress() + ")");
         }
 
         mRoutersListAdapter = new ArrayAdapter<>(this,
@@ -256,6 +256,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
         mRoutersDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(
+                        getResources().getColor(themeLight ? R.color.black : R.color.white));
+
                 final int size = mRoutersListForPicker.size();
                 if (position < 0 || position > size) {
                     return;

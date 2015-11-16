@@ -126,11 +126,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
         }
 
         mCpuInfoMultiLine = Joiner.on("\n").join(mCpuInfo);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         ((TextView) findViewById(R.id.tile_status_router_cpuinfo)).setText(mCpuInfoMultiLine);
     }
 

@@ -262,7 +262,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                             PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
                                                     mRouter, mParentFragmentPreferences,
                                                     wanPublicIpCmdStatus,
-                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

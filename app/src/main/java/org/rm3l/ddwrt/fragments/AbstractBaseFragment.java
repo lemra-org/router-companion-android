@@ -124,7 +124,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     private static final String LOG_TAG = AbstractBaseFragment.class.getSimpleName();
     private static AbstractBaseFragment mNoDataFragment;
     protected final Handler mHandler = new Handler();
-    private final Map<Integer, Object> loaderIdsInUse = Maps.newHashMap();
+    private Map<Integer, Object> mLoaderIdsInUse;
     protected LinearLayout mLayout;
     protected Router router;
     protected boolean mLoaderStopped = true;
@@ -758,8 +758,10 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
 
+        this.mLoaderIdsInUse = Maps.newHashMap();
+
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
-        Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsInUse: " + loaderIdsInUse);
+        Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
         if (savedInstanceState != null) {
             final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
             Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
@@ -774,8 +776,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 }
             }
         }
-        this.loaderIdsInUse.clear();
-
 
         final FragmentActivity activity = getActivity();
 
@@ -818,6 +818,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         } else {
             this.fragmentTiles = tiles;
         }
+
+        initLoaders();
+
     }
 
     protected boolean canChildScrollUp() {
@@ -887,7 +890,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         loaderManager.initLoader(0, null, this);
         this.setLoaderStopped(false);
-        loaderIdsInUse.put(0, this);
+        mLoaderIdsInUse.put(0, this);
 
         if (this.fragmentTiles != null) {
             for (final DDWRTTile ddwrtTile : fragmentTiles) {
@@ -897,7 +900,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 final int nextLoaderId = Long.valueOf(Utils.getNextLoaderId()).intValue();
                 loaderManager.initLoader(nextLoaderId, null, ddwrtTile);
                 ddwrtTile.setLoaderStopped(false);
-                loaderIdsInUse.put(nextLoaderId, ddwrtTile);
+                mLoaderIdsInUse.put(nextLoaderId, ddwrtTile);
             }
         }
     }
@@ -914,7 +917,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         }
 
         final LoaderManager loaderManager = getLoaderManager();
-        for (final Map.Entry<Integer, Object> loaderIdInUse : loaderIdsInUse.entrySet()) {
+        for (final Map.Entry<Integer, Object> loaderIdInUse : mLoaderIdsInUse.entrySet()) {
             loaderManager.destroyLoader(loaderIdInUse.getKey());
             final Object value = loaderIdInUse.getValue();
             if (value == this) {
@@ -924,21 +927,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 ((DDWRTTile) value).setLoaderStopped(true);
             }
         }
-        loaderIdsInUse.clear();
+        mLoaderIdsInUse.clear();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //save the loader ids on file
         outState.putIntegerArrayList(STATE_LOADER_IDS,
-                Lists.newArrayList(loaderIdsInUse.keySet()));
+                Lists.newArrayList(mLoaderIdsInUse.keySet()));
 
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onStart() {
-        initLoaders();
+//        initLoaders();
         super.onStart();
     }
 
@@ -956,7 +959,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
     @Override
     public void onStop() {
-        stopLoaders();
+//        stopLoaders();
         super.onStop();
     }
 

@@ -141,11 +141,11 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
                     }
                 });
 
+        fillForm();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void fillForm() {
         //Fill form with data loaded
         ((CheckBox) findViewById(R.id.wol_daemon_settings_status_flag))
                 .setChecked("1".equals(mNvramInfo.getProperty(WOL_ENABLE)));
@@ -171,7 +171,6 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
                 .setText(Joiner.on("\n").skipNulls().join(
                         Splitter.on(" ").omitEmptyStrings().split(
                                 mNvramInfo.getProperty(WOL_MACS, DDWRTCompanionConstants.EMPTY_STRING))), EDITABLE);
-
     }
 
     @Override
