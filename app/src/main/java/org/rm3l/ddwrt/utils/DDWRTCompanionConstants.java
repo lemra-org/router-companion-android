@@ -145,6 +145,7 @@ public final class DDWRTCompanionConstants {
     public static final String[] CLOUDINARY_OPTS = new String[] {"w_270","h_150","e_blur"};
     public static final String IMAGE_CDN_URL_PREFIX = "http://res.cloudinary.com/rm3l/image/upload";
     public static final String LAST_KNOWN_VERSION = "lastKnownVersion";
+    public static final String BG_SERVICE_LAST_HANDLE = "bgServiceLastHandle";
 
     public static int MB = 1024 * 1024;
 

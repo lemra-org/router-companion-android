@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -32,7 +33,6 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -83,15 +83,13 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         PublicIPInfo.ICANHAZIP_HOST,
                         PublicIPInfo.ICANHAZIP_PORT));
 
-        Crashlytics.log(Log.DEBUG,  LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
-
         String wanIp = (nvramInfo != null ? nvramInfo.getProperty(WAN_IPADDR) : null);
 
         if (wanIp != null && !Patterns.IP_ADDRESS.matcher(wanIp).matches()) {
             wanIp = null;
         }
 
-        buildNotificationIfNeeded(mCtx, router, routerPreferences, wanPublicIpCmdStatus, wanIp);
+        buildNotificationIfNeeded(mCtx, router, routerPreferences, wanPublicIpCmdStatus, wanIp, null);
 
     }
 
@@ -99,7 +97,13 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                                                  @NonNull Router router,
                                                  SharedPreferences routerPreferences,
                                                  String[] wanPublicIpCmdStatus,
-                                                 String wanIp) {
+                                                 String wanIp,
+                                                 @Nullable final Exception exception) {
+
+        if (exception != null) {
+            exception.printStackTrace();
+            return;
+        }
 
         if (!mCtx.getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                 Context.MODE_PRIVATE).getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF,

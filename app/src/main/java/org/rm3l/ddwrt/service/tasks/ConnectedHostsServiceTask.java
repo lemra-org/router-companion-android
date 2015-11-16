@@ -366,7 +366,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
         mRouterPreferences.edit()
                 .remove(DDWRTTile.getFormattedPrefKey(WirelessClientsTile.class, CONNECTED_HOSTS))
-                .commit();
+                .apply();
 
         mRouterPreferences.edit()
                 .putStringSet(DDWRTTile.getFormattedPrefKey(WirelessClientsTile.class, CONNECTED_HOSTS),

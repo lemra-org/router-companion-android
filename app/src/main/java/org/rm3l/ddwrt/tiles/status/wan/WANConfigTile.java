@@ -299,7 +299,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                             PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
                                                     mRouter, mParentFragmentPreferences,
                                                     wanPublicIpCmdStatus,
-                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

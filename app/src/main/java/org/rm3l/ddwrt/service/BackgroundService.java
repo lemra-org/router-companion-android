@@ -3,6 +3,7 @@ package org.rm3l.ddwrt.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
@@ -51,6 +52,11 @@ public class BackgroundService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         try {
         // check the global background data setting
+            final SharedPreferences sharedPreferences = getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+            sharedPreferences.edit()
+                    .putLong(DDWRTCompanionConstants.BG_SERVICE_LAST_HANDLE, System.currentTimeMillis())
+                    .apply();
+
             final ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
             if (intent == null || cm == null || cm.getActiveNetworkInfo() == null) {
             /*
@@ -59,7 +65,7 @@ public class BackgroundService extends IntentService {
              * or because user settings (e.g., bandwidth caps) prevent your app
              * from having a network connection.
              */
-                stopSelf();
+//                stopSelf();
                 return;
             }
 
@@ -69,7 +75,7 @@ public class BackgroundService extends IntentService {
             tasks.add(new RouterWebInterfaceParametersUpdaterServiceTask(BackgroundService.this));
             //According to user preference
             final Set<String> notificationsChoiceSet =
-                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                    sharedPreferences
                             .getStringSet(DDWRTCompanionConstants.NOTIFICATIONS_CHOICE_PREF, new HashSet<String>());
             Crashlytics.log(Log.DEBUG,  TAG, "notificationsChoiceSet: " + notificationsChoiceSet);
             if (notificationsChoiceSet.contains(ConnectedHostsServiceTask.class.getSimpleName())) {

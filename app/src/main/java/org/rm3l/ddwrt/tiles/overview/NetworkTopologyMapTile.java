@@ -39,7 +39,6 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -241,7 +240,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                                     BuildConfig.VERSION_NAME,
                                                     PublicIPInfo.ICANHAZIP_HOST,
                                                     PublicIPInfo.ICANHAZIP_PORT));
-                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "wanPublicIpCmdStatus: " + Arrays.toString(wanPublicIpCmdStatus));
                                     if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
                                         nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     } else {
@@ -253,7 +251,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                             PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
                                                     mRouterCopy, mParentFragmentPreferences,
                                                     wanPublicIpCmdStatus,
-                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR));
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

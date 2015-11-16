@@ -45,6 +45,8 @@ public class BootReceiver extends WakefulBroadcastReceiver {
                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_BG_SERVICE_ENABLE, true);
         final long minutes = preferences.getLong(
                 DDWRTCompanionConstants.NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF, -1l);
+        final long bgServiceLastHandleMillis =
+                preferences.getLong(DDWRTCompanionConstants.BG_SERVICE_LAST_HANDLE, -1l);
 
         Crashlytics.log(Log.DEBUG,  LOG_TAG, "<bgServiceEnabled,minutes> = <" + bgServiceEnabled + "," + minutes + ">");
 

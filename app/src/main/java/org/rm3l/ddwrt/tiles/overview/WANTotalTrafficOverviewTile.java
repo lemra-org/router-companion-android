@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
@@ -97,7 +98,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
     private NVRAMInfo mNvramInfo;
 
-    private MonthlyCycleItem mCycleItem;
+    private AtomicReference<MonthlyCycleItem> mCycleItem;
 
     private final DDWRTCompanionDAO dao;
     private String mPrevMonth;
@@ -116,8 +117,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             tileMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
         }
 
-        mCycleItem = WANTrafficData
-                .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+        mCycleItem = new AtomicReference<>(WANTrafficData
+                .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
 
         mCycle = (mParentFragmentPreferences != null ?
                 mParentFragmentPreferences.getString(
@@ -133,7 +134,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
         ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                 .setText(WAN_TOTAL_TRAFFIC + ": " +
                         (isDayCycle ? mCurrentDayDisplayed :
-                                (mCycleItem != null ? mCycleItem.getLabel() : mCurrentMonthDisplayed)));
+                                (mCycleItem.get() != null ? mCycleItem.get().getLabel() : mCurrentMonthDisplayed)));
 
         tileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,11 +177,11 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 dayMenuItem.setTitle(String.format("Today (%s)", mCurrentDayDisplayed));
 
                 try {
-                    mCycleItem = WANTrafficData
-                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+                    mCycleItem.set(WANTrafficData
+                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
                     //Overwrite with effective period (for monthly)
                     monthMenuItem.setTitle(String.format("Month (%s)",
-                            mCycleItem.getLabel()));
+                            mCycleItem.get().getLabel()));
 
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -230,8 +231,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
                     mLastSync = System.currentTimeMillis();
 
-                    mCycleItem = WANTrafficData
-                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+                    mCycleItem.set(WANTrafficData
+                            .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
 
                     final Date today = new Date();
                     mCurrentMonth = DDWRT_TRAFF_DATA_SIMPLE_DATE_FORMAT.format(today);
@@ -313,8 +314,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     } else {
                         retrieveAndPersistMonthlyTrafficData(mRouter, dao, nvramInfo);
 
+                        final MonthlyCycleItem cycleItem = mCycleItem.get();
+
                         nvramInfo.putAll(WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
-                                mCycleItem.getStart(), mCycleItem.getEnd()));
+                                cycleItem.getStart(), cycleItem.getEnd()));
 
 //                        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
 //                                .format(new Date(mCycleItem.getStart()));
@@ -443,7 +446,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 new Gson().toJson(mCycleItem));
         return new OnClickIntent(
                 String.format("Loading traffic data breakdown for current cycle: '%s'",
-                        mCycleItem.getLabelWithYears()),
+                        mCycleItem.get().getLabelWithYears()),
                 intent, null);
     }
 
@@ -462,10 +465,11 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
             final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
 
+            final MonthlyCycleItem cycleItem = mCycleItem.get();
             ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                     .setText(WAN_TOTAL_TRAFFIC + ": " + 
                             (isDayCycle ? mCurrentDayDisplayed :
-                                    (mCycleItem != null ? mCycleItem.getLabel() : mCurrentMonthDisplayed)));
+                                    (cycleItem != null ? cycleItem.getLabel() : mCurrentMonthDisplayed)));
 
             final View menu = layout.findViewById(R.id.tile_overview_wan_total_traffic_menu);
 
@@ -641,18 +645,19 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                 final Calendar calendar = Calendar.getInstance();
                                 mCurrentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                                mCycleItem = WANTrafficData
-                                        .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
+                                mCycleItem.set(WANTrafficData
+                                        .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
                                 
                                 //Update title
+                                final MonthlyCycleItem cycleItem = mCycleItem.get();
                                 ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
-                                        .setText(WAN_TOTAL_TRAFFIC + ": " + mCycleItem.getLabel());
+                                        .setText(WAN_TOTAL_TRAFFIC + ": " + cycleItem.getLabel());
 
                                 //Update bandwidth data right away
                                 if (mNvramInfo != null) {
 
                                     mNvramInfo.putAll(WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
-                                            mCycleItem.getStart(), mCycleItem.getEnd()));
+                                            cycleItem.getStart(), cycleItem.getEnd()));
 
 //                                    final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
 //                                            .format(new Date(mCycleItem.getStart()));
@@ -730,7 +735,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
                     .setText(WAN_TOTAL_TRAFFIC + ": " +
                             (isDayCycle ? mCurrentDayDisplayed : (mCycleItem != null ?
-                                    mCycleItem.getLabel() : mCurrentMonthDisplayed)));
+                                    mCycleItem.get().getLabel() : mCurrentMonthDisplayed)));
 
             final TextView wanDLView = (TextView) this.layout.findViewById(R.id.tile_overview_wan_total_traffic_dl);
             wanDLView.setText(mNvramInfo.getProperty(

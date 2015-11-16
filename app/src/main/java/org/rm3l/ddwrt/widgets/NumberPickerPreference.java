@@ -49,7 +49,7 @@ public class NumberPickerPreference extends DialogPreference {
         mNumberPicker.setMinValue(mPickerMinVal);
         mNumberPicker.setValue(mCurrentValue);
         // do not allow wrap, otherwise input a value smaller than minVal will result in bug
-        mNumberPicker.setWrapSelectorWheel(false);
+        mNumberPicker.setWrapSelectorWheel(true);
 
         ((TextView) view.findViewById(R.id.number_picker_desc))
                 .setText(mDescription);
