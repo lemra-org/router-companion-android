@@ -2342,13 +2342,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     private void doneLoading(Loader<ClientDevices> loader) {
         if (mParentFragmentPreferences != null &&
                 mParentFragmentPreferences.getBoolean(getFormattedPrefKey(RT_GRAPHS), false)) {
-            //Reschedule next run right away (delay of 500ms), to have a pseudo realtime effect, regardless of the actual sync pref!
+            //Reschedule next run right away, to have a pseudo realtime effect, regardless of the actual sync pref!
             //TODO Check how much extra load that represents on the router
             doneWithLoaderInstance(this, loader, 7000l);
-        } else {
-            //Use classical sync
-            doneWithLoaderInstance(this, loader);
         }
+//        else {
+//            //Use classical sync
+//            doneWithLoaderInstance(this, loader);
+//        }
     }
 
     @NonNull

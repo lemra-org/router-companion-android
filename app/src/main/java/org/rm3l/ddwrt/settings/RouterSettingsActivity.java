@@ -40,7 +40,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECT
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
 /**
@@ -131,7 +130,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
-            bindPreferenceSummaryToValue(findPreference(SYNC_INTERVAL_MILLIS_PREF));
+//            bindPreferenceSummaryToValue(findPreference(SYNC_INTERVAL_MILLIS_PREF));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_ENABLE));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
