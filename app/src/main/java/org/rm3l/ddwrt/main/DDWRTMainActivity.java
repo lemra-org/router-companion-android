@@ -668,133 +668,136 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         final Resources resources = getResources();
 
-        try {
-            final ShowcaseView showcaseView = new ShowcaseView.Builder(this)
-                    .setStyle(scvTheme)
-                    .setTarget(new ViewTarget(mToolbar.getChildCount() > 0 ?
-                            mToolbar.getChildAt(0) : mToolbar))
-                    .setContentTitle("Tips (1/3)")
-                    .setContentText("Slide left to right to get quick access to your routers")
-                    .singleShot(1)
-                    .hideOnTouchOutside()
-                    .setShowcaseEventListener(new OnShowcaseEventListener() {
-                        @Override
-                        public void onShowcaseViewHide(ShowcaseView showcaseView) {
+        if (DDWRTCompanionConstants.SHOWCASEVIEW_ENABLED) {
+            try {
+                final ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+                        .setStyle(scvTheme)
+                        .setTarget(new ViewTarget(mToolbar.getChildCount() > 0 ?
+                                mToolbar.getChildAt(0) : mToolbar))
+                        .setContentTitle("Tips (1/3)")
+                        .setContentText("Slide left to right to get quick access to your routers")
+                        .singleShot(1)
+                        .hideOnTouchOutside()
+                        .setShowcaseEventListener(new OnShowcaseEventListener() {
+                            @Override
+                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                            try {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mDrawerResult.isDrawerOpen()) {
-                                            mDrawerResult.closeDrawer();
-                                        }
-                                    }
-                                });
-                                final ShowcaseView showcaseView1 = new ShowcaseView.Builder(DDWRTMainActivity.this)
-                                        .setStyle(scvTheme)
-                                        .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
-                                        .setContentTitle("Tips (2/3)")
-                                        .setContentText("Use the menu items to perform actions on the router or override the default settings.")
-                                        .singleShot(11)
-                                        .hideOnTouchOutside()
-                                        .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                            @Override
-                                            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-
+                            @Override
+                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                                try {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (mDrawerResult.isDrawerOpen()) {
+                                                mDrawerResult.closeDrawer();
                                             }
+                                        }
+                                    });
+                                    final ShowcaseView showcaseView1 = new ShowcaseView.Builder(DDWRTMainActivity.this)
+                                            .setStyle(scvTheme)
+                                            .setTarget(new ToolbarActionItemTarget(mToolbar, R.id.action_ddwrt_actions))
+                                            .setContentTitle("Tips (2/3)")
+                                            .setContentText("Use the menu items to perform actions on the router or override the default settings.")
+                                            .singleShot(11)
+                                            .hideOnTouchOutside()
+                                            .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                                @Override
+                                                public void onShowcaseViewHide(ShowcaseView showcaseView) {
 
-                                            @Override
-                                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-                                                try {
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (mDrawerResult.isDrawerOpen()) {
-                                                                mDrawerResult.closeDrawer();
-                                                            }
-                                                        }
-                                                    });
-                                                    final ShowcaseView showcaseView2 = new ShowcaseView.Builder(DDWRTMainActivity.this)
-                                                            .setStyle(scvTheme)
-                                                            .setContentTitle("Tips (3/3)")
-                                                            .setContentText("Pull to manually refresh data.")
-                                                            .singleShot(12)
-                                                            .hideOnTouchOutside()
-                                                            .setShowcaseEventListener(new OnShowcaseEventListener() {
-                                                                @Override
-                                                                public void onShowcaseViewHide(ShowcaseView showcaseView) {
-
-                                                                }
-
-                                                                @Override
-                                                                public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-
-                                                                }
-
-                                                                @Override
-                                                                public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
-                                                                }
-                                                            })
-                                                            .build();
-
-                                                    final Bitmap pullTopBottomScvBitmap = BitmapFactory.decodeResource(resources,
-                                                            R.drawable.pull_refresh_transparent);
-                                                    final BitmapDrawable pullTopBottomScvDrawable = new BitmapDrawable(resources,
-                                                            pullTopBottomScvBitmap);
-                                                    final ImageView pullTopBottomScvImageView = new ImageView(DDWRTMainActivity.this);
-                                                    pullTopBottomScvImageView.setLayoutParams(new
-                                                            ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                                                    pullTopBottomScvImageView.setImageDrawable(pullTopBottomScvDrawable);
-                                                    showcaseView2.addView(pullTopBottomScvImageView);
-                                                } catch (final Exception e) {
-                                                    e.printStackTrace();
-                                                    Utils.reportException(DDWRTMainActivity.this, e);
-                                                    //No worries
                                                 }
 
-                                            }
+                                                @Override
+                                                public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                                                    try {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if (mDrawerResult.isDrawerOpen()) {
+                                                                    mDrawerResult.closeDrawer();
+                                                                }
+                                                            }
+                                                        });
+                                                        final ShowcaseView showcaseView2 = new ShowcaseView.Builder(DDWRTMainActivity.this)
+                                                                .setStyle(scvTheme)
+                                                                .setContentTitle("Tips (3/3)")
+                                                                .setContentText("Pull to manually refresh data.")
+                                                                .singleShot(12)
+                                                                .hideOnTouchOutside()
+                                                                .setShowcaseEventListener(new OnShowcaseEventListener() {
+                                                                    @Override
+                                                                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
 
-                                            @Override
-                                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
+                                                                    }
 
-                                            }
-                                        })
-                                        .build();
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                Utils.reportException(DDWRTMainActivity.this, e);
-                                //No worries
+                                                                    @Override
+                                                                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                                                                    }
+                                                                })
+                                                                .build();
+
+                                                        final Bitmap pullTopBottomScvBitmap = BitmapFactory.decodeResource(resources,
+                                                                R.drawable.pull_refresh_transparent);
+                                                        final BitmapDrawable pullTopBottomScvDrawable = new BitmapDrawable(resources,
+                                                                pullTopBottomScvBitmap);
+                                                        final ImageView pullTopBottomScvImageView = new ImageView(DDWRTMainActivity.this);
+                                                        pullTopBottomScvImageView.setLayoutParams(new
+                                                                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                                        pullTopBottomScvImageView.setImageDrawable(pullTopBottomScvDrawable);
+                                                        showcaseView2.addView(pullTopBottomScvImageView);
+                                                    } catch (final Exception e) {
+                                                        e.printStackTrace();
+                                                        Utils.reportException(DDWRTMainActivity.this, e);
+                                                        //No worries
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+                                                }
+                                            })
+                                            .build();
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    Utils.reportException(DDWRTMainActivity.this, e);
+                                    //No worries
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onShowcaseViewShow(ShowcaseView showcaseView) {
+                            @Override
+                            public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
-                        }
-                    })
-                    .build();
+                            }
+                        })
+                        .build();
 
-            final Bitmap slideLeftRightScvBitmap = BitmapFactory.decodeResource(resources,
-                    R.drawable.slide_left_right_transparent);
-            final BitmapDrawable slideLeftRightScvDrawable = new BitmapDrawable(resources, slideLeftRightScvBitmap);
-            slideLeftRightScvDrawable.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
-            final ImageView slideLeftRightScvImageView = new ImageView(DDWRTMainActivity.this);
-            final ViewGroup.LayoutParams params = new
-                    ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            slideLeftRightScvImageView.setLayoutParams(params);
-            slideLeftRightScvImageView.setImageDrawable(slideLeftRightScvDrawable);
-            showcaseView.addView(slideLeftRightScvImageView);
+                final Bitmap slideLeftRightScvBitmap = BitmapFactory.decodeResource(resources,
+                        R.drawable.slide_left_right_transparent);
+                final BitmapDrawable slideLeftRightScvDrawable = new BitmapDrawable(resources, slideLeftRightScvBitmap);
+                slideLeftRightScvDrawable.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+                final ImageView slideLeftRightScvImageView = new ImageView(DDWRTMainActivity.this);
+                final ViewGroup.LayoutParams params = new
+                        ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                slideLeftRightScvImageView.setLayoutParams(params);
+                slideLeftRightScvImageView.setImageDrawable(slideLeftRightScvDrawable);
+                showcaseView.addView(slideLeftRightScvImageView);
 
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Utils.reportException(this, e);
-            //No worries
+            } catch (final Exception e) {
+                e.printStackTrace();
+                Utils.reportException(this, e);
+                //No worries
+            }
         }
+
 //        for (int i = 0 ; i < showcaseView.getChildCount(); i++) {
 //            final View childAt = showcaseView.getChildAt(i);
 //            if (childAt == null) {
