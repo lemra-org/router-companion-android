@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.COLUMN_ID;
@@ -69,13 +70,17 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
     private static final String LOG_TAG = DDWRTCompanionSqliteDAOImpl.class.getSimpleName();
-    @NonNull
-    private final DDWRTCompanionSqliteOpenHelper dbHelper;
     private final Context mContext;
+
+    private static DDWRTCompanionSqliteDAOImpl instance;
+    private static DDWRTCompanionSqliteOpenHelper dbHelper;
+    private SQLiteDatabase mDatabase;
+
+    private final AtomicInteger mOpenCounter;
+
     // Database fields
-//    private SQLiteDatabase database;
     @NonNull
-    private String[] allColumns = {
+    private static final String[] routersAllColumns = {
             COLUMN_ID,
             ROUTER_UUID,
             ROUTER_NAME,
@@ -89,206 +94,227 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             ROUTER_FIRMWARE};
 
     @NonNull
-    private String[] wanTrafficAllColumns = {
+    private static final String[] wanTrafficAllColumns = {
             TABLE_WAN_TRAFFIC_COLUMN_ID,
             TABLE_WAN_TRAFFIC_ROUTER_UUID,
             TABLE_WAN_TRAFFIC_TRAFFIC_DATE,
             TABLE_WAN_TRAFFIC_TRAFFIC_IN,
             TABLE_WAN_TRAFFIC_TRAFFIC_OUT};
 
-    public DDWRTCompanionSqliteDAOImpl(Context context) {
+    public static synchronized void initialize(Context context) {
+        if (instance == null) {
+            instance = new DDWRTCompanionSqliteDAOImpl(context);
+        }
+        if (dbHelper == null) {
+            dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
+        }
+    }
+
+    public static synchronized DDWRTCompanionSqliteDAOImpl getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException(DDWRTCompanionSqliteDAOImpl.class.getSimpleName() +
+                    " is not initialized, call initialize(..) method first.");
+        }
+
+        return instance;
+    }
+
+    private synchronized SQLiteDatabase openDatabase() {
+        if(mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            mDatabase = dbHelper.getWritableDatabase();
+        }
+        return mDatabase;
+    }
+
+    private synchronized void closeDatabase() {
+        if(mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            mDatabase.close();
+        }
+    }
+
+    DDWRTCompanionSqliteDAOImpl(Context context) {
         this.mContext = context;
-        dbHelper = new DDWRTCompanionSqliteOpenHelper(context);
+        this.mOpenCounter = new AtomicInteger();
     }
 
     public void destroy() {
-        dbHelper.close();
+        try {
+            closeDatabase();
+        } catch (final Exception e) {
+            Utils.reportException(mContext, e);
+            e.printStackTrace();
+        } finally {
+            dbHelper.close();
+        }
     }
 
     @Nullable
     public Router insertRouter(@NonNull Router router) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final String uuid = (isNullOrEmpty(router.getUuid()) ?
-                        UUID.randomUUID().toString() : router.getUuid());
-                final long insertId = database.insertOrThrow(TABLE_ROUTERS, null, getContentValuesFromRouter(uuid, router));
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
-                final Router newRouter = getRouter(uuid);
+            final String uuid = (isNullOrEmpty(router.getUuid()) ?
+                    UUID.randomUUID().toString() : router.getUuid());
+            final long insertId = instance.openDatabase().insertOrThrow(TABLE_ROUTERS, null,
+                    getContentValuesFromRouter(uuid, router));
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "insertRouter(" + uuid + " => " + insertId + ")");
+            final Router newRouter = getRouter(uuid);
 
-                //Report
-                final Map<String, Object> eventMap = new HashMap<>();
-                eventMap.put("Model", Utils.isDemoRouter(newRouter) ? DDWRTCompanionConstants.DEMO :
-                        Router.getRouterModel(mContext, newRouter));
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_ADDED, eventMap);
+            //Report
+            final Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("Model", Utils.isDemoRouter(newRouter) ? DDWRTCompanionConstants.DEMO :
+                    Router.getRouterModel(mContext, newRouter));
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_ADDED, eventMap);
 
-                return newRouter;
-            }
+            return newRouter;
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
+
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     @Nullable
     public Router updateRouter(@NonNull Router router) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final String uuid = router.getUuid();
-                final int update = database.update(TABLE_ROUTERS, getContentValuesFromRouter(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
-                final Router routerUpdated = getRouter(uuid);
+            final String uuid = router.getUuid();
+            final int update = instance.openDatabase()
+                    .update(TABLE_ROUTERS,
+                            getContentValuesFromRouter(uuid, router), String.format(ROUTER_UUID + "='%s'", uuid), null);
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "updateRouter(" + uuid + " => " + update + ")");
+            final Router routerUpdated = getRouter(uuid);
 
-                //Report
-                final Map<String, Object> eventMap = new HashMap<>();
-                eventMap.put("Model", Utils.isDemoRouter(routerUpdated) ? DDWRTCompanionConstants.DEMO :
-                        Router.getRouterModel(mContext, routerUpdated));
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_UPDATED, eventMap);
+            //Report
+            final Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("Model", Utils.isDemoRouter(routerUpdated) ? DDWRTCompanionConstants.DEMO :
+                    Router.getRouterModel(mContext, routerUpdated));
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_UPDATED, eventMap);
 
-                return routerUpdated;
-            }
+            return routerUpdated;
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     public void deleteRouter(String uuid) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
 
-                database = dbHelper.getWritableDatabase();
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete Router with uuid: " + uuid);
+            instance.openDatabase()
+                    .delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
 
-                Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete Router with uuid: " + uuid);
-                database.delete(TABLE_ROUTERS, String.format(ROUTER_UUID + "='%s'", uuid), null);
+            //Report
+            ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_DELETED, null);
 
-                //Report
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_DELETED, null);
-
-            }
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     @NonNull
     public List<Router> getAllRouters() {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final List<Router> routers = new ArrayList<>();
-                final Cursor cursor = database.query(TABLE_ROUTERS,
-                        allColumns, null, null, null, null, COLUMN_ID + " DESC");
+            final List<Router> routers = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ROUTERS,
+                            routersAllColumns, null, null, null, null, COLUMN_ID + " DESC");
 
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    if (cursor.getCount() > 0) {
-                        cursor.moveToFirst();
-                        while (!cursor.isAfterLast()) {
-                            final Router router = cursorToRouter(cursor);
-                            routers.add(router);
-                            cursor.moveToNext();
-                        }
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final Router router = cursorToRouter(cursor);
+                        routers.add(router);
+                        cursor.moveToNext();
                     }
-                } finally {
-                    // make sure to close the cursor
-                    cursor.close();
                 }
-
-                return routers;
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
             }
+
+            return routers;
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             throw e;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
 
     }
 
     @Nullable
     public Router getRouter(String uuid) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
 
-                final Cursor cursor = database.query(TABLE_ROUTERS,
-                        allColumns, String.format(ROUTER_UUID + "='%s'", uuid),
-                        null, null, null,
-                        COLUMN_ID + " DESC");
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ROUTERS,
+                            routersAllColumns, String.format(ROUTER_UUID + "='%s'", uuid),
+                            null, null, null,
+                            COLUMN_ID + " DESC");
 
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    if (cursor.getCount() > 0) {
-                        cursor.moveToFirst();
-                        return cursorToRouter(cursor);
-                    }
-                }  finally {
-                    cursor.close();
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    return cursorToRouter(cursor);
                 }
-
-                return null;
+            }  finally {
+                cursor.close();
             }
+
+            return null;
+
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     @Nullable
     @Override
     public Router getRouter(int id) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-
-                final Cursor cursor = database.query(TABLE_ROUTERS,
-                        allColumns, String.format(COLUMN_ID + "=%d", id), null, null, null, COLUMN_ID + " DESC");
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    if (cursor.getCount() > 0) {
-                        cursor.moveToFirst();
-                        return cursorToRouter(cursor);
-                    }
-
-                } finally {
-                    cursor.close();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ROUTERS,
+                            routersAllColumns,
+                            String.format(COLUMN_ID + "=%d", id), null, null, null, COLUMN_ID + " DESC");
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    return cursorToRouter(cursor);
                 }
 
-                return null;
+            } finally {
+                cursor.close();
             }
+
+            return null;
+
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
@@ -298,32 +324,30 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
          * Bulk insert, based upon 
          * http://stackoverflow.com/questions/3860008/bulk-insertion-on-android-device/32288474
          */
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         SQLiteDatabase database = null;
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                database.beginTransaction();
-                for (final WANTrafficData trafficDataItem : trafficData) {
-                    if (trafficDataItem == null) {
-                        continue;
-                    }
-                    database.insert(TABLE_WAN_TRAFFIC, null,
-                        getContentValuesFromWANTrafficData(trafficDataItem));
+            database = instance.openDatabase();
+            database.beginTransaction();
+            for (final WANTrafficData trafficDataItem : trafficData) {
+                if (trafficDataItem == null) {
+                    continue;
                 }
-                database.setTransactionSuccessful();
+                database.insert(TABLE_WAN_TRAFFIC, null,
+                    getContentValuesFromWANTrafficData(trafficDataItem));
+            }
+            database.setTransactionSuccessful();
                 
                 return 1l;
-            }
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
         } finally {
             if (database != null) {
                 database.endTransaction();
-                if (database.isOpen()) {
-                    database.close();
-                }
             }
+            instance.closeDatabase();
         }
     }
 
@@ -332,79 +356,77 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         if (isNullOrEmpty(router) || isNullOrEmpty(date)) {
             return false;
         }
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final Cursor cursor = database.query(TABLE_WAN_TRAFFIC,
-                        wanTrafficAllColumns,
-                        String.format("%s = '%s' AND %s = '%s'",
-                                TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
-                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE, date),
-                        null, null, null, null);
 
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    return cursor.getCount() > 0;
-                } finally {
-                    // make sure to close the cursor
-                    cursor.close();
-                }
+            final Cursor cursor = instance
+                    .openDatabase()
+                    .query(TABLE_WAN_TRAFFIC,
+                            wanTrafficAllColumns,
+                            String.format("%s = '%s' AND %s = '%s'",
+                                    TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
+                                    TABLE_WAN_TRAFFIC_TRAFFIC_DATE, date),
+                            null, null, null, null);
 
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                return cursor.getCount() > 0;
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
             }
+
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             throw e;
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     @NonNull
     @Override
     public List<WANTrafficData> getWANTrafficDataByRouterByDate(@NonNull String router, @NonNull String date) {
+
         if (isNullOrEmpty(router) || isNullOrEmpty(date)) {
             return Collections.emptyList();
         }
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final List<WANTrafficData> trafficData = new ArrayList<>();
-                final Cursor cursor = database.query(TABLE_WAN_TRAFFIC,
-                        wanTrafficAllColumns,
-                        String.format("%s = '%s' AND %s = '%s%'",
-                                TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
-                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE, date),
-                        null, null, null,
-                        TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC");
+            final List<WANTrafficData> trafficData = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_WAN_TRAFFIC,
+                            wanTrafficAllColumns,
+                            String.format("%s = '%s' AND %s = '%s%'",
+                                    TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
+                                    TABLE_WAN_TRAFFIC_TRAFFIC_DATE, date),
+                            null, null, null,
+                            TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC");
 
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    if (cursor.getCount() > 0) {
-                        cursor.moveToFirst();
-                        while (!cursor.isAfterLast()) {
-                            final WANTrafficData traff = cursorToWANTrafficData(cursor);
-                            trafficData.add(traff);
-                            cursor.moveToNext();
-                        }
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final WANTrafficData traff = cursorToWANTrafficData(cursor);
+                        trafficData.add(traff);
+                        cursor.moveToNext();
                     }
-                } finally {
-                    // make sure to close the cursor
-                    cursor.close();
                 }
-
-                return trafficData;
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
             }
+
+            return trafficData;
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             throw e;
+
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
@@ -414,64 +436,58 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         if (isNullOrEmpty(router) || isNullOrEmpty(dateLower) || isNullOrEmpty(dateHigher)) {
             return Collections.emptyList();
         }
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                database = dbHelper.getWritableDatabase();
-                final List<WANTrafficData> trafficData = new ArrayList<>();
-                final Cursor cursor = database.query(TABLE_WAN_TRAFFIC,
-                        wanTrafficAllColumns,
-                        String.format("%s = '%s' AND ( %s BETWEEN '%s' AND '%s' )",
-                                TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
-                                TABLE_WAN_TRAFFIC_TRAFFIC_DATE, dateLower, dateHigher),
-                        null, null, null,
-                        TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC");
+            final List<WANTrafficData> trafficData = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase().query(TABLE_WAN_TRAFFIC,
+                    wanTrafficAllColumns,
+                    String.format("%s = '%s' AND ( %s BETWEEN '%s' AND '%s' )",
+                            TABLE_WAN_TRAFFIC_ROUTER_UUID, router,
+                            TABLE_WAN_TRAFFIC_TRAFFIC_DATE, dateLower, dateHigher),
+                    null, null, null,
+                    TABLE_WAN_TRAFFIC_TRAFFIC_DATE + " ASC");
 
-                //noinspection TryFinallyCanBeTryWithResources
-                try {
-                    if (cursor.getCount() > 0) {
-                        cursor.moveToFirst();
-                        while (!cursor.isAfterLast()) {
-                            final WANTrafficData traff = cursorToWANTrafficData(cursor);
-                            trafficData.add(traff);
-                            cursor.moveToNext();
-                        }
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final WANTrafficData traff = cursorToWANTrafficData(cursor);
+                        trafficData.add(traff);
+                        cursor.moveToNext();
                     }
-                } finally {
-                    // make sure to close the cursor
-                    cursor.close();
                 }
-
-                return trafficData;
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
             }
+
+            return trafficData;
+
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             throw e;
+
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 
     @Override
     public void deleteWANTrafficDataByRouter(@NonNull String router) {
-        SQLiteDatabase database = null;
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
 
-                database = dbHelper.getWritableDatabase();
+            Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete WAN Traffic Data for Router: " + router);
+            instance.openDatabase()
+                    .delete(TABLE_WAN_TRAFFIC, String.format(TABLE_WAN_TRAFFIC_ROUTER_UUID + "='%s'", router), null);
 
-                Crashlytics.log(Log.DEBUG,  LOG_TAG, "Delete WAN Traffic Data for Router: " + router);
-                database.delete(TABLE_WAN_TRAFFIC, String.format(TABLE_WAN_TRAFFIC_ROUTER_UUID + "='%s'", router), null);
-
-            }
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
+
         } finally {
-            if (database != null && database.isOpen()) {
-                database.close();
-            }
+            instance.closeDatabase();
         }
     }
 

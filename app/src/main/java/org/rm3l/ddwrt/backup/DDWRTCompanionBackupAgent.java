@@ -108,9 +108,8 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
                         pathsToRoutersUsageDataFiles.toArray(new String[pathsToRoutersUsageDataFiles.size()]));
             }
 
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                super.onBackup(oldState, data, newState);
-            }
+            super.onBackup(oldState, data, newState);
+
         } catch (final Exception e) {
             e.printStackTrace();
             ReportingUtils.reportException(this, new DDWRTCompanionBackupException(e));
@@ -121,9 +120,7 @@ public class DDWRTCompanionBackupAgent extends BackupAgentHelper {
     public void onRestore(BackupDataInput data, int appVersionCode,
                           ParcelFileDescriptor newState) throws IOException {
         try {
-            synchronized (DDWRTCompanionSqliteOpenHelper.dbLock) {
-                super.onRestore(data, appVersionCode, newState);
-            }
+            super.onRestore(data, appVersionCode, newState);
         } catch (final Exception e) {
             e.printStackTrace();
             ReportingUtils.reportException(this, new DDWRTCompanionBackupRestoreException(e));

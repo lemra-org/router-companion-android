@@ -39,6 +39,7 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -86,6 +87,8 @@ public class DDWRTApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
+
         //initialize and create the image loader logic (for MaterialDrawer, used throughout the app)
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
@@ -124,7 +127,6 @@ public class DDWRTApplication extends Application {
 
         ACRA.getErrorReporter()
                 .putCustomData(TRACEPOT_DEVELOP_MODE, DEBUG ? "1" : "0");
-
 
         Fabric.with(this, new Crashlytics());
         Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);

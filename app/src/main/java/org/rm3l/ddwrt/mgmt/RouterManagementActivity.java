@@ -137,7 +137,7 @@ public class RouterManagementActivity
 
     @NonNull
     public static DDWRTCompanionDAO getDao(Context context) {
-        return new DDWRTCompanionSqliteDAOImpl(context);
+        return DDWRTCompanionSqliteDAOImpl.getInstance();
     }
 
     @Override

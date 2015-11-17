@@ -91,8 +91,6 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "routers.db";
 
-    public static final Object[] dbLock = new Object[0];
-
     /*
      TODO In case of DB upgrades, don't forget to increment (by 2) this field,
      update DATABASE_CREATE (for newer installs), and
