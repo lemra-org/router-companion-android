@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.MonthlyCycleItem;
@@ -40,7 +41,6 @@ import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficActivity;
 import org.rm3l.ddwrt.tiles.status.wan.WANMonthlyTrafficTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -55,7 +55,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
@@ -435,19 +435,37 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
     @Nullable
     @Override
     protected OnClickIntent getOnclickIntent() {
-        if (mCycleItem == null) {
+        if (mCycleItem == null || mParentFragmentPreferences == null) {
             return null;
         }
-        final Intent intent = new Intent(mParentFragmentActivity,
-                WANMonthlyTrafficActivity.class);
-        intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                mRouter != null ? mRouter.getUuid() : EMPTY_STRING);
-        intent.putExtra(WANMonthlyTrafficActivity.WAN_CYCLE,
-                new Gson().toJson(mCycleItem));
+        final MonthlyCycleItem cycleItem = mCycleItem.get();
+        if (cycleItem == null) {
+            return null;
+        }
+        mParentFragmentPreferences.edit()
+                .putString(
+                        getFormattedPrefKey(
+                                WANMonthlyTrafficTile.class,
+                                WANMonthlyTrafficTile.WAN_CYCLE_DISPLAYED),
+                        new Gson().toJson(cycleItem))
+                .apply();
+
+        //Open Router State tab
+        if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+            ((DDWRTMainActivity) mParentFragmentActivity)
+                    .selectItemInDrawer(5);
+            return null;
+        }
+
+        //TODO Set proper flags ???
+        final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+        intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+        intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 5);
         return new OnClickIntent(
                 String.format("Loading traffic data breakdown for current cycle: '%s'",
-                        mCycleItem.get().getLabelWithYears()),
+                        cycleItem.getLabelWithYears()),
                 intent, null);
+
     }
 
     @Override
