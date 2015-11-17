@@ -2404,9 +2404,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.tile_status_wireless_clients_realtime_graphs: {
+                final boolean rtGraphsEnabled = !item.isChecked();
+                if (rtGraphsEnabled) {
+                    //Restart loader
+                    if (mSupportLoaderManager != null && mCurrentLoader != null) {
+                        mSupportLoaderManager.restartLoader(
+                                mCurrentLoader.getId(),
+                                mFragmentArguments, this);
+                    }
+                }
                 if (mParentFragmentPreferences != null) {
                     mParentFragmentPreferences.edit()
-                            .putBoolean(getFormattedPrefKey(RT_GRAPHS), !item.isChecked())
+                            .putBoolean(getFormattedPrefKey(RT_GRAPHS), rtGraphsEnabled)
                             .apply();
                 }
                 return true;
