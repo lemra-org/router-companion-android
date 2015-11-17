@@ -177,12 +177,12 @@ public class WANMonthlyTrafficTile
                 final NVRAMInfo data = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
                         currentCycleItem.getStart(), currentCycleItem.getEnd());
 
-                final boolean isCurrentMonthYear = mCycleOfTheDay.equals(currentCycleItem);
+//                final boolean isCurrentMonthYear = mCycleOfTheDay.equals(currentCycleItem);
 
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_current)
-                        .setEnabled(!isCurrentMonthYear);
+                        .setEnabled(true);
                 WANMonthlyTrafficTile.this.layout.findViewById(R.id.tile_status_wan_monthly_traffic_graph_placeholder_next)
-                        .setEnabled(!isCurrentMonthYear);
+                        .setEnabled(true);
 
                 //Display traffic data for this month
                 if (data.isEmpty()) {
