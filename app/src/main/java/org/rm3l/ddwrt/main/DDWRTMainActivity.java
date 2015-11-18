@@ -68,7 +68,6 @@ import android.widget.Toast;
 
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.ToolbarActionItemTarget;
@@ -1636,10 +1635,10 @@ public class DDWRTMainActivity extends AppCompatActivity
             mDrawerResult.closeDrawer();
         }
 
-        ReportingUtils.reportContentViewEvent(new ContentViewEvent()
-                .putContentType("Navigation menu")
-                .putContentName("Nav. item selected")
-                .putContentId(mPosition + "@" + this.getClass().getSimpleName()));
+//        ReportingUtils.reportContentViewEvent(new ContentViewEvent()
+//                .putContentType("Navigation menu")
+//                .putContentName("Nav. item selected")
+//                .putContentId(mPosition + "@" + this.getClass().getSimpleName()));
 
 
 //        mDrawerLayout.closeDrawer(mDrawerList);
