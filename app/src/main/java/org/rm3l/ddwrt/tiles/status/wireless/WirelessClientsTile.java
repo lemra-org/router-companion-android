@@ -56,7 +56,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -2263,20 +2262,18 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 for (final Device dev : newDevices) {
                     final View view = currentDevicesViewsMap.get(dev);
                     if (view != null) {
-                        mProgressBarDesc.setText("RM >>> Add view for device: '" + dev.getName() + "' (" +
-                                dev.getMacAddress() + ") <<< ");
                         clientsContainer.addView(view);
                     }
                 }
 
-                final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
-                //Whether to display 'Show more' button
-                if (data.getDevicesCount() > MAX_CLIENTS_TO_SHOW_IN_TILE) {
-                    showMore.setVisibility(View.VISIBLE);
-                    showMore.setOnClickListener(this);
-                } else {
-                    showMore.setVisibility(View.GONE);
-                }
+//                final Button showMore = (Button) this.layout.findViewById(R.id.tile_status_wireless_clients_show_more);
+//                //Whether to display 'Show more' button
+//                if (data.getDevicesCount() > MAX_CLIENTS_TO_SHOW_IN_TILE) {
+//                    showMore.setVisibility(View.VISIBLE);
+//                    showMore.setOnClickListener(this);
+//                } else {
+//                    showMore.setVisibility(View.GONE);
+//                }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
@@ -2316,7 +2313,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
             }
 
             mProgressBarDesc.setText(null);
-            mProgressBar.setVisibility(View.INVISIBLE);
+            mProgressBarDesc.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
 
         } finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
