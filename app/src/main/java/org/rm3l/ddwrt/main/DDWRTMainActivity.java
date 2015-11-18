@@ -30,7 +30,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +45,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -165,11 +165,6 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final int MANAGE_ROUTERS = 234;
     public static final String DRAWER_OPEN_FIRST_LAUNCH_PREF = "drawer_open_first_launch";
 
-//    private Handler mDrawerActionHandler;
-
-//    DrawerLayout mDrawerLayout;
-//    ListView mDrawerList;
-//    ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
     @NonNull
     private DDWRTCompanionDAO dao;
@@ -178,8 +173,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     private Menu optionsMenu;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-//    private String[] mDDWRTNavigationMenuSections;
-    //    private PageSlidingTabStripFragment currentPageSlidingTabStripFragment;
+
     private int mPosition = 0;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
@@ -196,17 +190,12 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
     };
     private DDWRTTile.ActivityResultListener mCurrentActivityResultListener;
-//    private NavigationDrawerArrayAdapter mNavigationDrawerAdapter;
-//    private ArrayAdapter<String> mRoutersListAdapter;
-//    private ArrayList<Router> mRoutersListForPicker;
 
     private AccountHeader mDrawerHeaderResult;
     private Drawer mDrawerResult;
 
     @Nullable
     private InterstitialAd mInterstitialAd;
-//    private NavigationView mNavigationView;
-//    private GoogleApiClient mGoogleApiClient;
 
     private static final BiMap<Integer, Integer> navigationViewMenuItemsPositions = HashBiMap.create(11);
     static {
@@ -239,6 +228,8 @@ public class DDWRTMainActivity extends AppCompatActivity
     private boolean mIsThemeLight;
 
     private BroadcastReceiver mMessageReceiver;
+    private ViewPager mViewPager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -301,11 +292,11 @@ public class DDWRTMainActivity extends AppCompatActivity
 
         mIsThemeLight = ColorUtils.isThemeLight(this);
 
-//        mDrawerActionHandler = new Handler();
-
-        mInterstitialAd = AdUtils.requestNewInterstitial(this, R.string.interstitial_ad_unit_id_router_list_to_router_main);
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_router_list_to_router_main);
 
         setUpToolbar();
+        setUpViewPager();
         setUpNavDrawer();
 
         IProfile activeProfile = null;
@@ -462,10 +453,6 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 mInterstitialAd.show();
                             } else {
                                 //Reload UI
-//                            final AlertDialog alertDialog = Utils.
-//                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                            alertDialog.show();
-//                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
                                 final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
                                         "Switching Routers", "Please wait...", true);
                                 new Handler().postDelayed(new Runnable() {
@@ -480,11 +467,7 @@ public class DDWRTMainActivity extends AppCompatActivity
 
                         } else {
                             //Reload UI
-//                        final AlertDialog alertDialog = Utils.
-//                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-//                        alertDialog.show();
-//                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
+                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
                                     "Switching Routers", "Please wait...", true);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -797,18 +780,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
         }
 
-//        for (int i = 0 ; i < showcaseView.getChildCount(); i++) {
-//            final View childAt = showcaseView.getChildAt(i);
-//            if (childAt == null) {
-//                continue;
-//            }
-//        }
-
-//        mDrawerList.performItemClick(
-//                mDrawerList.getChildAt(position),
-//                position,
-//                mDrawerList.getAdapter().getItemId(position));
-
         //Recreate Default Preferences if they are no longer available
         final boolean putDefaultSortingStrategy = isNullOrEmpty(this.mCurrentSortingStrategy);
         final boolean putDefaultSyncInterval = (this.mCurrentSyncInterval < -1l);
@@ -857,45 +828,11 @@ public class DDWRTMainActivity extends AppCompatActivity
     }
 
     private void setUpNavDrawer() {
-
-//            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            // set a custom shadow that overlays the main content when the drawer
-            // opens
-//            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-//        mDDWRTNavigationMenuSections = resources.getStringArray(R.array.navigation_drawer_items_array);
-
-//        initNavigationDrawerAdapter();
-
-//            mDrawerLayout = (DrawerLayout)     findViewById(R.id.drawer_layout);
-
-            //noinspection ConstantConditions
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            mToolbar.setNavigationIcon(R.drawable.ic_menu_dark_24dp);
-//            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mDrawerLayout.openDrawer(GravityCompat.START);
-//                }
-//            });
-
-//            mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_drawer);
-//            mNavigationView.setNavigationItemSelectedListener(this);
-
-            //Init Header Avatar
-//            final ImageView navigationViewHeaderAvatar =
-//                    (ImageView) findViewById(R.id.left_drawer_router_avatar);
-//            final String routerModel = Router.getRouterModel(this, mRouter);
-//            Crashlytics.log(Log.DEBUG, TAG, "routerModel: " + routerModel);
-//            if (!(Strings.isNullOrEmpty(routerModel) || "-".equalsIgnoreCase(routerModel))) {
-//                Utils.downloadImageForRouter(this, routerModel, navigationViewHeaderAvatar);
-//            }
-
-            initDrawer();
-
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setUpToolbar() {
-//        mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         final Resources resources = getResources();
@@ -921,175 +858,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             }
         }
 
-        //Routers picker
-//        final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
-//        @SuppressWarnings("ConstantConditions")
-//        final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-//        final List<Router> allRouters = dao.getAllRouters();
-//        if (allRouters == null || allRouters.isEmpty()) {
-//            Utils.reportException(DDWRTMainActivity.this, new
-//                    IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
-//            routersPicker.setVisibility(View.GONE);
-//        } else {
-//            routersPicker.setVisibility(View.VISIBLE);
-//
-//            final int allRoutersSize = allRouters.size();
-////            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
-//            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-//            for (final Router router : allRouters) {
-//                //FIXME Uncomment once full support of other firmwares is implemented
-////                final RouterFirmware routerFirmware;
-////                if (router == null ||
-////                        (routerFirmware = router.getRouterFirmware()) == null ||
-////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-////                    continue;
-////                }
-//                //FIXME End
-//                mRoutersListForPicker.add(router);
-//            }
-//
-//            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-//            routersNamesArray[0] = "--- ADD NEW ---";
-//
-//            int i = 1;
-//            int currentItem = -1;
-//
-//            for (final Router router : mRoutersListForPicker) {
-//                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-//                    currentItem = i;
-//                }
-//                final String routerName = router.getName();
-//                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-//                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-//
-//                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-//                final String subTitle =
-//                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-//                                (effectiveRemoteAddr + ":" + effectivePort));
-//
-//                routersNamesArray[i++] = (title + "\n(" +
-//                        subTitle + ")");
-//            }
-//
-//            mRoutersListAdapter = new ArrayAdapter<>(this,
-//                    R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
-//            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//            routersPicker.setAdapter(mRoutersListAdapter);
-//            if (currentItem >= 0) {
-//                routersPicker.setSelection(currentItem);
-//            }
-//            final int currentItemPos = currentItem;
-//            routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                @Override
-//                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                    //Recreate UI with new Router selected
-//                    final int size = mRoutersListForPicker.size();
-//                    if (position < 0 || position > size) {
-//                        return;
-//                    }
-//                    if (position == 0) {
-//                        //Add New Button
-//                        openAddRouterForm();
-//                        if (currentItemPos >= 0) {
-//                            routersPicker.setSelection(currentItemPos);
-//                        }
-//                        return;
-//                    }
-//
-//                    final Router selectedRouter = mRoutersListForPicker.get(position - 1);
-//                    if (selectedRouter == null) {
-//                        return;
-//                    }
-//                    final String selectedRouterUuid = selectedRouter.getUuid();
-//                    final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
-//                    if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
-//                            || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
-//                        return;
-//                    }
-//
-//                    final Intent intent = getIntent();
-//                    intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
-//                    intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-//
-//                    if (BuildConfig.WITH_ADS &&
-//                            mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-//
-//                        mInterstitialAd.setAdListener(new AdListener() {
-//                            @Override
-//                            public void onAdClosed() {
-//                                finish();
-//                                startActivity(intent);
-//                            }
-//
-//                            @Override
-//                            public void onAdOpened() {
-//                                //Save preference
-//                                mGlobalPreferences.edit()
-//                                        .putLong(
-//                                                DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-//                                                System.currentTimeMillis())
-//                                        .apply();
-//                            }
-//                        });
-//
-//                        if (mInterstitialAd.isLoaded()) {
-//                            mInterstitialAd.show();
-//                        } else {
-//                            //Reload UI
-////                            final AlertDialog alertDialog = Utils.
-////                                    buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-////                            alertDialog.show();
-////                            ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                            final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-//                                    "Switching Routers", "Please wait...", true);
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    finish();
-//                                    startActivity(intent);
-//                                    alertDialog.cancel();
-//                                }
-//                            }, 2000);
-//                        }
-//
-//                    } else {
-//                        //Reload UI
-////                        final AlertDialog alertDialog = Utils.
-////                                buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-////                        alertDialog.show();
-////                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                        final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-//                                "Switching Routers", "Please wait...", true);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                finish();
-//                                startActivity(intent);
-//                                alertDialog.cancel();
-//                            }
-//                        }, 2000);
-//                    }
-//                }
-//
-//                @Override
-//                public void onNothingSelected(AdapterView<?> parent) {
-//
-//                }
-//            });
-//
-////            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
-////                @Override
-////                public boolean onLongClick(View v) {
-////                    //On long click open up Router Management activity by finishing this activity
-////                    finish();
-////                    return true;
-////                }
-////            });
-//
-//
-//        }
-
         mTitle = mDrawerTitle = getTitle();
         if (mToolbar != null) {
 
@@ -1106,18 +874,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
             setSupportActionBar(mToolbar);
 
-//            // Check if the version of Android is Lollipop or higher
-//            if (Build.VERSION.SDK_INT >= 21) {
-//
-//                // Set the status bar to dark-semi-transparentish
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-//                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//
-//                // Set paddingTop of toolbar to height of status bar.
-//                // Fixes statusbar covers toolbar issue
-//                mToolbar.setPadding(0, Utils.getStatusBarHeight(this), 0, 0);
-//            }
-
         }
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
@@ -1129,44 +885,6 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
 
     }
-
-//    private void initNavigationDrawerAdapter() {
-//        final Resources resources = getResources();
-//
-//        mNavigationDrawerAdapter = new NavigationDrawerArrayAdapter(this);
-//
-//        // Section 1: Status: { Status, Wireless, Clients, Monitoring}
-//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item1_header));
-//        String[] menuItems = resources.getStringArray(
-//                R.array.navigation_drawer_items_array_item1_items);
-//        for (final String item : menuItems) {
-//            mNavigationDrawerAdapter.addItem(item, false);
-//        }
-//
-//        //Section 2: Services: {OpenVPN, ...}
-//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item2_header));
-//        menuItems = resources.getStringArray(
-//                R.array.navigation_drawer_items_array_item2_items);
-//        for (final String item : menuItems) {
-//            mNavigationDrawerAdapter.addItem(item, false);
-//        }
-//
-//        //Section 3: Admin Area: {Commands, NVRAM, ...}
-//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item3_header));
-//        menuItems = resources.getStringArray(
-//                R.array.navigation_drawer_items_array_item3_items);
-//        for (final String item : menuItems) {
-//            mNavigationDrawerAdapter.addItem(item, false);
-//        }
-//
-//        //Section 4: Toolbox: {Network, System, ...}
-//        mNavigationDrawerAdapter.addHeader(resources.getString(R.string.navigation_drawer_items_array_item4_header));
-//        menuItems = resources.getStringArray(
-//                R.array.navigation_drawer_items_array_item4_items);
-//        for (final String item : menuItems) {
-//            mNavigationDrawerAdapter.addItem(item, false);
-//        }
-//    }
 
     private void openAddRouterForm() {
         final Fragment addRouter = getSupportFragmentManager().findFragmentByTag(ADD_ROUTER_FRAGMENT_TAG);
@@ -1188,43 +906,8 @@ public class DDWRTMainActivity extends AppCompatActivity
         addFragment.show(getSupportFragmentManager(), ADD_ROUTER_FRAGMENT_TAG);
     }
 
-    private void initDrawer() {
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-//        mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-//                mDrawerLayout, /* DrawerLayout object */
-//                mToolbar,
-////                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-//                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
-//                R.string.navigation_drawer_close /* "close drawer" description for accessibility */
-//        ) ;
-////        {
-////            public void onDrawerClosed(View view) {
-//////                if (actionBar != null)
-//////                    actionBar.setTitle(mTitle);
-//////                invalidateOptionsMenu(); // creates call to
-//////                // onPrepareOptionsMenu()
-////                super.onDrawerClosed(view);
-////            }
-////
-////            public void onDrawerOpened(View drawerView) {
-//////                if (actionBar != null)
-//////                    actionBar.setTitle(mDrawerTitle);
-//////                invalidateOptionsMenu(); // creates call to
-//////                // onPrepareOptionsMenu()
-////                super.onDrawerOpened(drawerView);
-////            }
-////        };
-//        mDrawerLayout.setDrawerListener(mDrawerToggle);
-//        mDrawerLayout.setStatusBarBackground(android.R.color.transparent);
-    }
-
     @Override
     public void onBackPressed() {
-//        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-//            mDrawerLayout.closeDrawers();
-//            return;
-//        }
         //handle the back press :D close the drawer first and if the drawer is closed close the activity
         if (mDrawerResult != null && mDrawerResult.isDrawerOpen()) {
             mDrawerResult.closeDrawer();
@@ -1327,26 +1010,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
-//            case android.R.id.home: {
-//                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-//                    mDrawerLayout.closeDrawer(mDrawerList);
-//                } else {
-//                    mDrawerLayout.openDrawer(mDrawerList);
-//                }
-//                return true;
-//            }
-//            case R.id.action_refresh:
-//                //Disabled for now
-//                Toast.makeText(this.getApplicationContext(), "[FIXME] Hold on. Refresh in progress...", Toast.LENGTH_SHORT).show();
-//                //FIXME Refresh all tiles currently visible
-//                setRefreshActionButtonState(true);
-////                if (this.mCurrentRefreshAsyncTask != null) {
-////                    this.mCurrentRefreshAsyncTask.cancel(true);
-////                }
-////                this.mCurrentRefreshAsyncTask = new RefreshAsyncTask();
-////                this.mCurrentRefreshAsyncTask.execute();
-//                return true;
 
             case R.id.help:
                 this.startActivity(new Intent(this, HelpActivity.class));
@@ -1507,8 +1170,6 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
 
         return true;
-//        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-
     }
 
     public void displayBackupDialog(final String displayName) {
@@ -1588,32 +1249,10 @@ public class DDWRTMainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void setRefreshActionButtonState(final boolean refreshing) {
-        if (optionsMenu != null) {
-            final MenuItem refreshItem = optionsMenu
-                    .findItem(R.id.action_refresh);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-//        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggles
-//        mDrawerToggle.onConfigurationChanged(newConfig);
+    private void setUpViewPager() {
+        mViewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
     }
 
     private void selectItem(int position) {
@@ -1624,26 +1263,33 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
         this.mPosition = position;
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content,
-                        PageSlidingTabStripFragment
-                                .newInstance(this, position, this.mRouterUuid))
-                .commit();
+        final PageSlidingTabStripFragment.FragmentTabsAdapter fragmentTabsAdapter =
+                new PageSlidingTabStripFragment.FragmentTabsAdapter(
+                        this,
+                        this.mPosition,
+                        getSupportFragmentManager(),
+                        getResources(),
+                        String.format("%s.%s",
+                                SortingStrategy.class.getPackage().getName(),
+                                getSharedPreferences(mRouterUuid, Context.MODE_PRIVATE)
+                                        .getString(DDWRTCompanionConstants.SORTING_STRATEGY_PREF,
+                                                SortingStrategy.DEFAULT)
+                        ),
+                        mRouterUuid);
+        mViewPager.setAdapter(fragmentTabsAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.content,
+//                        PageSlidingTabStripFragment
+//                                .newInstance(this, position, this.mRouterUuid))
+//                .commit();
 
         if (mDrawerResult.isDrawerOpen()) {
             mDrawerResult.closeDrawer();
         }
 
-//        ReportingUtils.reportContentViewEvent(new ContentViewEvent()
-//                .putContentType("Navigation menu")
-//                .putContentName("Nav. item selected")
-//                .putContentId(mPosition + "@" + this.getClass().getSimpleName()));
-
-
-//        mDrawerLayout.closeDrawer(mDrawerList);
-//        mDrawerLayout.closeDrawers();
-//        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     public Toolbar getToolbar() {
@@ -1873,57 +1519,6 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onRouterAdd(final DialogFragment dialog, final Router newRouter, final boolean error) {
         if (!error) {
-//            final List<Router> allRouters = dao.getAllRouters();
-//            final int allRoutersSize = allRouters.size();
-//            mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-//            for (final Router wrt : allRouters) {
-//                //FIXME Uncomment once other firmwares are fully supported
-////                final RouterFirmware routerFirmware;
-////                if (wrt == null ||
-////                        (routerFirmware = wrt.getRouterFirmware()) == null ||
-////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-////                    continue;
-////                }
-//                //FIXME End
-//                mRoutersListForPicker.add(wrt);
-//            }
-//
-//            final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-//            routersNamesArray[0] = "--- ADD NEW ---";
-//
-//            int i = 1;
-//            int currentItem = -1;
-//            for (final Router router : mRoutersListForPicker) {
-//                if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-//                    currentItem = i;
-//                }
-////                final String routerName = router.getName();
-////                routersNamesArray[i++] = ((isNullOrEmpty(routerName) ? "-" : routerName) + "\n(" +
-////                        router.getRemoteIpAddress() + ":" + router.getRemotePort() + ")");
-//                final String routerName = router.getName();
-//                final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-//                final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-//
-//                final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-//                final String subTitle =
-//                        (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-//                                (effectiveRemoteAddr + ":" + effectivePort));
-//
-//                routersNamesArray[i++] = (title + "\n(" +
-//                        subTitle + ")");
-//            }
-//
-//            mRoutersListAdapter = new ArrayAdapter<>(this,
-//                    R.layout.routers_picker_spinner_item, routersNamesArray);
-//            mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-////            final Spinner routersPicker = (Spinner) findViewById(R.id.left_drawer_routers_dropdown);
-//            final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-//            routersPicker.setAdapter(mRoutersListAdapter);
-//
-//            if (currentItem >= 0) {
-//                routersPicker.setSelection(currentItem);
-//            }
 
             final int newRouterId = newRouter.getId();
 
@@ -1962,20 +1557,9 @@ public class DDWRTMainActivity extends AppCompatActivity
             //Always add on top
             mDrawerHeaderResult.addProfile(newProfile, 0);
 
-//            if (mDrawerHeaderResult.getProfiles() != null) {
-//                //we know that there are 2 setting elements. set the new profile above them ;)
-//                mDrawerHeaderResult.addProfile(newProfile,
-//                        mDrawerHeaderResult.getProfiles().size() - 2);
-//            } else {
-//                mDrawerHeaderResult.addProfiles(newProfile);
-//            }
-
             if (mDrawerResult.isDrawerOpen()) {
                 mDrawerResult.closeDrawer();
             }
-
-            //Open Spinner right away
-//            routersPicker.performClick();
         }
     }
 
@@ -1989,65 +1573,12 @@ public class DDWRTMainActivity extends AppCompatActivity
         final Integer position = navigationViewMenuItemsPositions.get(menuItem.getItemId());
         if (position != null && position >= 0) {
             menuItem.setChecked(true);
-            // allow some time after closing the drawer before performing real navigation
-            // so the user can see what is happening
-//            mDrawerLayout.closeDrawer(GravityCompat.START);
-//            mDrawerActionHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    selectItem(position);
-//                }
-//            }, DRAWER_CLOSE_DELAY_MS);
-
-//            mDrawerLayout.closeDrawers();
-//            selectItem(position);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                final Float elevation = getResources().getDimension(R.dimen.elevation_toolbar);
-//                mToolbar.setElevation(elevation);
-//            }
         }
         return (position != null && position >= 0);
     }
 
-    // The click listener for ListView in the navigation drawer
-//    private class DrawerItemClickListener implements
-//            ListView.OnItemClickListener {
-//        @Override
-//        public void onItemClick(AdapterView<?> parent, View view, int position,
-//                                long id) {
-//            selectItemInDrawer(position);
-////            selectItem(position);
-////            mNavigationDrawerAdapter.setSelectedItem(position);
-////            mNavigationDrawerAdapter.notifyDataSetChanged();
-////            mDrawerLayout.invalidate();
-//        }
-//    }
-
     public void selectItemInDrawer(int position) {
         mDrawerResult.setSelection(position, true);
-
-//        final Integer menuItemId = navigationViewMenuItemsPositions.inverse().get(position);
-//        Crashlytics.log(Log.DEBUG, TAG, "selectItemInDrawer: <position,menuItemId>=<" + position + "," + menuItemId + ">");
-//        if (menuItemId != null) {
-////            for (final Map.Entry<Integer, Integer> menuItems : navigationViewMenuItemsPositions.entrySet()) {
-////                if (menuItems.getValue() == null || position != menuItems.getValue()) {
-////                    final MenuItem item = mNavigationView.getMenu().findItem(menuItems.getKey());
-////                    if (item == null) {
-////                        continue;
-////                    }
-////                    item.setChecked(false);
-////                }
-////            }
-////            final MenuItem menuItem = mNavigationView.getMenu().findItem(menuItemId);
-////            if (menuItem != null) {
-////                mNavigationView.setCheckedItem(menuItemId);
-//////                onNavigationItemSelected(menuItem);
-////            }
-////            selectItem(position);
-////        mNavigationDrawerAdapter.setSelectedItem(position);
-////        mNavigationDrawerAdapter.notifyDataSetChanged();
-////            mDrawerLayout.invalidate();
-//        }
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
@@ -2069,170 +1600,6 @@ public class DDWRTMainActivity extends AppCompatActivity
                     mToolbar.setSubtitle(isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
                             (effectiveRemoteAddr + ":" + effectivePort));
                 }
-
-//                final Spinner routersPicker = (Spinner) mToolbar.findViewById(R.id.toolbar_routers_list_spinner);
-//                final List<Router> allRouters = dao.getAllRouters();
-//                if (allRouters == null || allRouters.isEmpty()) {
-//                    Utils.reportException(DDWRTMainActivity.this, new
-//                            IllegalStateException("allRouters is empty, while trying to populate routers picker in main activity drawer"));
-//                    routersPicker.setVisibility(View.GONE);
-//                } else {
-//                    routersPicker.setVisibility(View.VISIBLE);
-//
-//                    final int allRoutersSize = allRouters.size();
-////            final ArrayList<String> routersNamesList = Lists.newArrayListWithCapacity(allRoutersSize);
-//                    mRoutersListForPicker = Lists.newArrayListWithCapacity(allRoutersSize);
-//                    for (final Router router : allRouters) {
-//                        //FIXME Uncomment once full support of other firmwares is implemented
-////                final RouterFirmware routerFirmware;
-////                if (router == null ||
-////                        (routerFirmware = router.getRouterFirmware()) == null ||
-////                        RouterFirmware.UNKNOWN.equals(routerFirmware)) {
-////                    continue;
-////                }
-//                        //FIXME End
-//                        mRoutersListForPicker.add(router);
-//                    }
-//
-//                    final String[] routersNamesArray = new String[mRoutersListForPicker.size() + 1];
-//                    routersNamesArray[0] = "--- ADD NEW ---";
-//
-//                    int i = 1;
-//                    int currentItem = -1;
-//
-//                    for (final Router router : mRoutersListForPicker) {
-//                        if (nullToEmpty(mRouterUuid).equals(router.getUuid())) {
-//                            currentItem = i;
-//                        }
-//                        final String routerName = router.getName();
-//                        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(router, DDWRTMainActivity.this);
-//                        final Integer effectivePort = Router.getEffectivePort(router, DDWRTMainActivity.this);
-//
-//                        final String title = (isNullOrEmpty(routerName) ? effectiveRemoteAddr : routerName);
-//                        final String subTitle =
-//                                (isNullOrEmpty(routerName) ? ("SSH Port: " + effectivePort) :
-//                                        (effectiveRemoteAddr + ":" + effectivePort));
-//
-//                        routersNamesArray[i++] = (title + "\n(" +
-//                                subTitle + ")");
-//                    }
-//
-//                    mRoutersListAdapter = new ArrayAdapter<>(DDWRTMainActivity.this,
-//                            R.layout.routers_picker_spinner_item, new ArrayList<>(Arrays.asList(routersNamesArray)));
-//                    mRoutersListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//                    routersPicker.setAdapter(mRoutersListAdapter);
-//                    if (currentItem >= 0) {
-//                        routersPicker.setSelection(currentItem);
-//                    }
-//                    final int currentItemPos = currentItem;
-//                    routersPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                        @Override
-//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                            //Recreate UI with new Router selected
-//                            final int size = mRoutersListForPicker.size();
-//                            if (position < 0 || position > size) {
-//                                return;
-//                            }
-//                            if (position == 0) {
-//                                //Add New Button
-//                                openAddRouterForm();
-//                                if (currentItemPos >= 0) {
-//                                    routersPicker.setSelection(currentItemPos);
-//                                }
-//                                return;
-//                            }
-//
-//                            final Router selectedRouter = mRoutersListForPicker.get(position - 1);
-//                            if (selectedRouter == null) {
-//                                return;
-//                            }
-//                            final String selectedRouterUuid = selectedRouter.getUuid();
-//                            final RouterFirmware selectedRouterFirmware = selectedRouter.getRouterFirmware();
-//                            if (StringUtils.equals(mRouterUuid, selectedRouterUuid)
-//                                    || selectedRouterFirmware == null || RouterFirmware.UNKNOWN.equals(selectedRouterFirmware)) {
-//                                return;
-//                            }
-//
-//                            final Intent intent = getIntent();
-//                            intent.putExtra(ROUTER_SELECTED, selectedRouterUuid);
-//                            intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
-//
-//                            if (BuildConfig.WITH_ADS &&
-//                                    mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
-//
-//                                mInterstitialAd.setAdListener(new AdListener() {
-//                                    @Override
-//                                    public void onAdClosed() {
-//                                        finish();
-//                                        startActivity(intent);
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdOpened() {
-//                                        //Save preference
-//                                        mGlobalPreferences.edit()
-//                                                .putLong(
-//                                                        DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
-//                                                        System.currentTimeMillis())
-//                                                .apply();
-//                                    }
-//                                });
-//
-//                                if (mInterstitialAd.isLoaded()) {
-//                                    mInterstitialAd.show();
-//                                } else {
-//                                    //Reload UI
-////                                    final AlertDialog alertDialog = Utils.
-////                                            buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-////                                    alertDialog.show();
-//                                    final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-//                                            "Switching Routers", "Please wait...", true);
-////                                    ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                                    new Handler().postDelayed(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            finish();
-//                                            startActivity(intent);
-//                                            alertDialog.cancel();
-//                                        }
-//                                    }, 2000);
-//                                }
-//
-//                            } else {
-//                                //Reload UI
-////                                final AlertDialog alertDialog = Utils.
-////                                        buildAlertDialog(DDWRTMainActivity.this, null, "Loading...", false, false);
-////                                alertDialog.show();
-////                                ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-//                                final ProgressDialog alertDialog = ProgressDialog.show(DDWRTMainActivity.this,
-//                                        "Switching Routers", "Please wait...", true);
-//                                new Handler().postDelayed(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        finish();
-//                                        startActivity(intent);
-//                                        alertDialog.cancel();
-//                                    }
-//                                }, 2000);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onNothingSelected(AdapterView<?> parent) {
-//
-//                        }
-//                    });
-//
-////            routersPicker.setOnLongClickListener(new View.OnLongClickListener() {
-////                @Override
-////                public boolean onLongClick(View v) {
-////                    //On long click open up Router Management activity by finishing this activity
-////                    finish();
-////                    return true;
-////                }
-////            });
-//                }
             }
         }
     }

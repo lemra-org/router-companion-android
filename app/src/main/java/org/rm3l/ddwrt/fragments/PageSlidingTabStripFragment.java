@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -112,6 +113,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
 
         mFragmentTabsAdapter = new FragmentTabsAdapter(
+                this,
                 getArguments().getInt(ARG_SECTION_NUMBER),
                 getChildFragmentManager(), getResources(),
                 String.format("%s.%s",
@@ -196,7 +198,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         super.onDestroy();
     }
 
-    private class FragmentTabsAdapter extends FragmentStatePagerAdapter {
+    public static class FragmentTabsAdapter extends FragmentStatePagerAdapter {
 
         @NonNull
         final AbstractBaseFragment[] tabs;
@@ -204,12 +206,23 @@ public class PageSlidingTabStripFragment extends Fragment {
         private final Resources resources;
         private final int parentSectionNumber;
 
-        public FragmentTabsAdapter(final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
+        public FragmentTabsAdapter(PageSlidingTabStripFragment pageSlidingTabStripFragment,
+                                   final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
                                    @Nullable final String routerUuid) {
             super(fm);
             this.parentSectionNumber = sectionNumber;
             this.resources = resources;
-            this.tabs = AbstractBaseFragment.getFragments(PageSlidingTabStripFragment.this, this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
+            this.tabs = AbstractBaseFragment.getFragments(pageSlidingTabStripFragment.getActivity(),
+                    this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
+        }
+
+        public FragmentTabsAdapter(final Activity activity, final int sectionNumber, FragmentManager fm, Resources resources, String sortingStrategy,
+                                   @Nullable final String routerUuid) {
+            super(fm);
+            this.parentSectionNumber = sectionNumber;
+            this.resources = resources;
+            this.tabs = AbstractBaseFragment.getFragments(activity,
+                    this.resources, this.parentSectionNumber, sortingStrategy, routerUuid);
         }
 
         @Override

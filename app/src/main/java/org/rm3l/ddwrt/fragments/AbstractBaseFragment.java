@@ -22,7 +22,7 @@
 
 package org.rm3l.ddwrt.fragments;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -34,7 +34,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -48,7 +47,6 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Predicate;
@@ -160,7 +158,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     @Nullable
-    public static AbstractBaseFragment newInstance(PageSlidingTabStripFragment parentFragment, @NonNull final Class<? extends AbstractBaseFragment> clazz,
+    public static AbstractBaseFragment newInstance(Activity activity, @NonNull final Class<? extends AbstractBaseFragment> clazz,
                                                    @NonNull final CharSequence parentSectionTitle, @NonNull final CharSequence tabTitle,
                                                    @Nullable final String router) {
         try {
@@ -168,11 +166,11 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     .setTabTitle(tabTitle)
                     .setParentSectionTitle(parentSectionTitle);
             fragment.mClazz = clazz;
-            fragment.parentFragment = parentFragment;
+//            fragment.parentFragment = parentFragment;
 
-            final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
-            if (parentFragmentOnPageChangeListener instanceof DDWRTMainActivity) {
-                fragment.ddwrtMainActivity = (DDWRTMainActivity) parentFragmentOnPageChangeListener;
+//            final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
+            if (activity instanceof DDWRTMainActivity) {
+                fragment.ddwrtMainActivity = (DDWRTMainActivity) activity;
                 fragment.toolbar = fragment.ddwrtMainActivity.getToolbar();
             }
 
@@ -196,7 +194,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     @NonNull
-    public static AbstractBaseFragment[] getFragments(@NonNull PageSlidingTabStripFragment parentFragment, @NonNull final Resources resources, int parentSectionNumber,
+    public static AbstractBaseFragment[] getFragments(@NonNull Activity activity, @NonNull final Resources resources, int parentSectionNumber,
                                                       String sortingStrategy,
                                                       @Nullable final String router) {
         Crashlytics.log(Log.DEBUG,  LOG_TAG, "getFragments(" + parentSectionNumber + ", " + sortingStrategy + ")");
@@ -221,24 +219,17 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final AbstractBaseFragment[] tabsToSort;
 
         RouterFirmware routerFirmwareForFragments;
-        final ViewPager.OnPageChangeListener parentFragmentOnPageChangeListener = parentFragment.getOnPageChangeListener();
-        if (parentFragmentOnPageChangeListener instanceof Context) {
-            final Router routerFromDao = RouterManagementActivity
-                    .getDao((Context) parentFragmentOnPageChangeListener).getRouter(router);
-            if (routerFromDao == null) {
+        final Router routerFromDao = RouterManagementActivity
+                .getDao(activity).getRouter(router);
+        if (routerFromDao == null) {
+            routerFirmwareForFragments = RouterFirmware.UNKNOWN;
+        } else {
+            final RouterFirmware routerFirmware = routerFromDao.getRouterFirmware();
+            if (routerFirmware == null) {
                 routerFirmwareForFragments = RouterFirmware.UNKNOWN;
             } else {
-                final RouterFirmware routerFirmware = routerFromDao.getRouterFirmware();
-                if (routerFirmware == null) {
-                    routerFirmwareForFragments = RouterFirmware.UNKNOWN;
-                } else {
-                    routerFirmwareForFragments = routerFirmware;
-                }
+                routerFirmwareForFragments = routerFirmware;
             }
-        } else {
-            routerFirmwareForFragments = RouterFirmware.UNKNOWN;
-            ReportingUtils.reportException(
-                    null, new IllegalArgumentException("parentFragmentOnPageChangeListener NOT instanceof Context"));
         }
 
         //FIXME Once full support of other firmwares is implemented
@@ -249,7 +240,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         //FIXME End
 
         if (mNoDataFragment == null) {
-            mNoDataFragment = AbstractBaseFragment.newInstance(parentFragment,
+            mNoDataFragment = AbstractBaseFragment.newInstance(
+                    activity,
                     NoDataFragment.class,
                     (resources.getString(R.string.unknown) + " (" + parentSectionNumber + ")"),
                     resources.getString(R.string.unknown), router);
@@ -259,10 +251,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 allTabs.get(routerFirmwareForFragments);
         if (tabDescriptionMultimap == null) {
             //Unknown
-            if (parentFragmentOnPageChangeListener instanceof Context) {
-                Toast.makeText((Context) parentFragmentOnPageChangeListener, "Router Firmware unknown or not supported!", Toast.LENGTH_SHORT)
-                        .show();
-            }
             ReportingUtils.reportException(
                     null, new IllegalArgumentException("Router Firmware unknown or not supported"));
             tabsToSort = new AbstractBaseFragment[0];
@@ -280,7 +268,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 tabsToSort = new AbstractBaseFragment[fragmentTabDescriptions.size()];
                 int i = 0;
                 for (final FragmentTabDescription<? extends AbstractBaseFragment> fragmentTabDescription : fragmentTabDescriptions) {
-                    tabsToSort[i++] =  AbstractBaseFragment.newInstance(parentFragment,
+                    tabsToSort[i++] =  AbstractBaseFragment.newInstance(
+                            activity,
                             fragmentTabDescription.getClazz(), "???",
                             resources.getString(fragmentTabDescription.getTitleRes()), router);
                 }
