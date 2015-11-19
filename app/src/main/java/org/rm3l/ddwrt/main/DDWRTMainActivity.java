@@ -153,6 +153,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
+    public static final String TAB_INDEX = "TAB_INDEX";
     public static final String SAVE_ITEM_SELECTED = "SAVE_ITEM_SELECTED";
     public static final String SAVE_ROUTER_SELECTED = "SAVE_ROUTER_SELECTED";
     public static final int ROUTER_SETTINGS_ACTIVITY_CODE = 1;
@@ -175,6 +176,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     private CharSequence mTitle;
 
     private int mPosition = 0;
+    private int mTabPosition = 0;
     private String mCurrentSortingStrategy;
     private long mCurrentSyncInterval;
     @NonNull
@@ -427,6 +429,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         final Intent intent = getIntent();
                         intent.putExtra(ROUTER_SELECTED, routerUuid);
                         intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+                        intent.putExtra(TAB_INDEX, mTabPosition);
 
                         if (BuildConfig.WITH_ADS &&
                                 mInterstitialAd != null && AdUtils.canDisplayInterstialAd(DDWRTMainActivity.this)) {
@@ -920,6 +923,7 @@ public class DDWRTMainActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(SAVE_ITEM_SELECTED, mPosition);
         savedInstanceState.putString(SAVE_ROUTER_SELECTED, mRouterUuid);
+        savedInstanceState.putInt(TAB_INDEX, mTabPosition);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -1237,6 +1241,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 finish();
                                 final Intent intent = getIntent();
                                 intent.putExtra(SAVE_ITEM_SELECTED, mPosition);
+                                intent.putExtra(TAB_INDEX, mTabPosition);
                                 startActivity(intent);
                                 alertDialog.cancel();
                             }
@@ -1255,13 +1260,19 @@ public class DDWRTMainActivity extends AppCompatActivity
         mTabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
     }
 
+
     private void selectItem(int position) {
+        selectItem(position, 0);
+    }
+
+    private void selectItem(int position, int tabPosition) {
 
         Crashlytics.log(Log.DEBUG,  TAG, "selectItem @" + position);
         if (position < 0) {
             return;
         }
         this.mPosition = position;
+        this.mTabPosition = tabPosition;
 
         final PageSlidingTabStripFragment.FragmentTabsAdapter fragmentTabsAdapter =
                 new PageSlidingTabStripFragment.FragmentTabsAdapter(
@@ -1276,7 +1287,33 @@ public class DDWRTMainActivity extends AppCompatActivity
                                                 SortingStrategy.DEFAULT)
                         ),
                         mRouterUuid);
+        final int mFragmentTabsAdapterCount = fragmentTabsAdapter.getCount();
+        mViewPager.setOffscreenPageLimit(mFragmentTabsAdapterCount);
         mViewPager.setAdapter(fragmentTabsAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                /*
+                 * Save page position
+                 */
+                mTabPosition = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        if (tabPosition >= 0 && tabPosition < mFragmentTabsAdapterCount) {
+            mViewPager.setCurrentItem(tabPosition);
+        }
+
         mTabLayout.setupWithViewPager(mViewPager);
 
 //        getSupportFragmentManager()

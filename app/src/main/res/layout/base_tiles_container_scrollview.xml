@@ -36,7 +36,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_marginTop="@dimen/main_activity_horizontal_margin"
         android:orientation="vertical">
 
-        <org.rm3l.ddwrt.widgets.NowLayout
+        <LinearLayout
             android:id="@+id/tiles_container_scrollview_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:orientation="vertical"
             android:visibility="gone" />
 
-        <org.rm3l.ddwrt.widgets.NowLayout
+        <LinearLayout
             android:id="@+id/tiles_container_scrollview_layout_dynamic_items"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

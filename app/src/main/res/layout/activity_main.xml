@@ -31,7 +31,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:elevation="2dp"
         app:paddingEnd="0dp"
         app:paddingStart="0dp">
@@ -53,9 +52,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             app:tabTextColor="@android:color/darker_gray"
             app:tabSelectedTextColor="@android:color/white"
             app:tabIndicatorColor="@color/win8_lime"
-            app:tabIndicatorHeight="6dp"
-            app:tabMode="fixed"
-            app:tabGravity="fill"/>
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="scrollable"/>
 
     </android.support.design.widget.AppBarLayout>
 

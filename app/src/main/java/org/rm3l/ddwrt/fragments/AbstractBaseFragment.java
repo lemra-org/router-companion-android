@@ -47,6 +47,7 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Predicate;
@@ -136,8 +137,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     @Nullable
     private Toolbar toolbar;
     private Class<? extends AbstractBaseFragment> mClazz;
-    @NonNull
-    private PageSlidingTabStripFragment parentFragment;
+//    @NonNull
+//    private PageSlidingTabStripFragment parentFragment;
 
     @Nullable
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -769,7 +770,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final FragmentActivity activity = getActivity();
 
         viewGroup = (ScrollView) activity.getLayoutInflater()
-                .inflate(R.layout.base_tiles_container_scrollview, new ScrollView(activity));
+                .inflate(R.layout.base_tiles_container_scrollview, null);
 
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
@@ -807,8 +808,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         } else {
             this.fragmentTiles = tiles;
         }
-
-        initLoaders();
 
     }
 
@@ -860,6 +859,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
 
         mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
+
+        initLoaders();
 
         return mSwipeRefreshLayout;
     }
@@ -929,30 +930,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     @Override
-    public void onStart() {
-//        initLoaders();
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        //initLoaders();
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        //stopLoaders();
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-//        stopLoaders();
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         stopLoaders();
         super.onDestroy();
@@ -1008,7 +985,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 if (!ddwrtTile.isEmbeddedWithinScrollView()) {
                     if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
                         viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                                .inflate(R.layout.base_tiles_container_linearlayout, new LinearLayout(fragmentActivity));
+                                .inflate(R.layout.base_tiles_container_linearlayout, null);
                         parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
                     }
                 }
@@ -1096,7 +1073,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         if (viewGroup == null || !atLeastOneTileAdded) {
 
             viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                    .inflate(R.layout.base_tiles_container_linearlayout, new LinearLayout(fragmentActivity));
+                    .inflate(R.layout.base_tiles_container_linearlayout, null);
 
             final TextView view = new TextView(fragmentActivity);
             view.setGravity(Gravity.CENTER);
@@ -1209,7 +1186,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     protected abstract List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState);
 
     public void startActivityForResult(Intent intent, DDWRTTile.ActivityResultListener listener) {
-        parentFragment.startActivityForResult(intent, listener);
+        if (ddwrtMainActivity == null) {
+            Utils.reportException(getContext(), new IllegalStateException("ddwrtMainActivity is NULL"));
+            Toast.makeText(getContext(), "Internal Error - please try again later.", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        ddwrtMainActivity.startActivityForResult(intent, listener);
     }
 
     @Override
