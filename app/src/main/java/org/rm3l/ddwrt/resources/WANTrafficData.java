@@ -85,24 +85,20 @@ public class WANTrafficData {
         final Calendar calendar = Calendar.getInstance();
         final long start;
         final long end;
-        if (today < wanCycleDay) {
-            //Effective Period: [wanCycleDay-1M, wanCycleDay]
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-            end = calendar.getTimeInMillis();
 
-            calendar.add(Calendar.MONTH, -1);
-            calendar.add(Calendar.DATE, 1);
-            start = calendar.getTimeInMillis();
-        } else {
-            //Effective Period: [wanCycleDay, wanCycleDay + 1M]
-            calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
-            start = calendar.getTimeInMillis();
+        calendar.set(Calendar.DAY_OF_MONTH, wanCycleDay);
+        start = calendar.getTimeInMillis();
 
-            calendar.add(Calendar.MONTH, 1);
-            calendar.add(Calendar.DATE, -1);
-            end = calendar.getTimeInMillis();
-        }
-        return new MonthlyCycleItem(ctx, start, end);
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
+        end = calendar.getTimeInMillis();
+
+        final MonthlyCycleItem cycleItem =
+                new MonthlyCycleItem(ctx, start, end);
+
+        return (today < wanCycleDay ?
+                cycleItem.prev() :
+                cycleItem);
     }
 
 }
