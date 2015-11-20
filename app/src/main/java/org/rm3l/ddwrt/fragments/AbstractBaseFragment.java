@@ -770,7 +770,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final FragmentActivity activity = getActivity();
 
         viewGroup = (ScrollView) activity.getLayoutInflater()
-                .inflate(R.layout.base_tiles_container_scrollview, null);
+                .inflate(R.layout.base_tiles_container_scrollview,
+                        new ScrollView(activity));
 
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
@@ -985,7 +986,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 if (!ddwrtTile.isEmbeddedWithinScrollView()) {
                     if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
                         viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                                .inflate(R.layout.base_tiles_container_linearlayout, null);
+                                .inflate(R.layout.base_tiles_container_linearlayout,
+                                        new LinearLayout(fragmentActivity));
                         parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
                     }
                 }
@@ -1021,6 +1023,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 cardView.setPreventCornerOverlap(true);
                 //Add padding in API v21+ as well to have the same measurements with previous versions.
                 cardView.setUseCompatPadding(true);
+                cardView.setCardElevation(5f);
 
                 final Integer tileBackgroundColor = ddwrtTile.getTileBackgroundColor();
                 if (tileBackgroundColor != null) {

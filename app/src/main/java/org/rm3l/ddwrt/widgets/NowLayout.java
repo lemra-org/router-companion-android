@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import org.rm3l.ddwrt.R;
 
+@Deprecated
 public class NowLayout extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 
     public NowLayout(Context context, AttributeSet attrs) {
