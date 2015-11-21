@@ -36,6 +36,8 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +46,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -139,6 +142,11 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     private Class<? extends AbstractBaseFragment> mClazz;
 //    @NonNull
 //    private PageSlidingTabStripFragment parentFragment;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
 
     @Nullable
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -750,6 +758,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         this.mLoaderIdsInUse = Maps.newHashMap();
 
+        final FragmentActivity activity = getActivity();
+
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
         Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
         if (savedInstanceState != null) {
@@ -766,12 +776,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 }
             }
         }
-
-        final FragmentActivity activity = getActivity();
-
-        viewGroup = (ScrollView) activity.getLayoutInflater()
-                .inflate(R.layout.base_tiles_container_scrollview,
-                        new ScrollView(activity));
 
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
@@ -813,7 +817,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     protected boolean canChildScrollUp() {
-        return ViewCompat.canScrollVertically(viewGroup, -1);
+        return ViewCompat.canScrollVertically(mRecyclerView, -1);
     }
 
     protected boolean isSwipeRefreshLayoutEnabled() {
@@ -841,12 +845,39 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     @NonNull
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mSwipeRefreshLayout = new SwipeRefreshLayout(getActivity()) {
+
+        final FragmentActivity activity = getActivity();
+
+        final View rootView =
+                inflater
+                        .inflate(R.layout.base_tiles_container_recyclerview,
+                                new FrameLayout(activity));
+
+        mRecyclerView = (RecyclerView) rootView
+                .findViewById(R.id.tiles_container_recyclerview);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        // allows for optimizations if all items are of the same size:
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(activity);
+        mLayoutManager.scrollToPosition(0);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new
+                AbstractBaseFragmentRecyclerViewAdapter
+                (activity, router, fragmentTiles);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mSwipeRefreshLayout = new SwipeRefreshLayout(activity) {
             @Override
             public boolean canChildScrollUp() {
                 return AbstractBaseFragment.this.canChildScrollUp();
             }
         };
+
         mSwipeRefreshLayout.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -857,7 +888,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
+//        mSwipeRefreshLayout.addView(this.getLayout(inflater, container, savedInstanceState));
+        mSwipeRefreshLayout.addView(rootView);
 
         mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
 
