@@ -199,7 +199,11 @@ public final class ImageUtils {
                 return;
             }
             final Picasso picasso = Picasso.with(context);
-            picasso.setIndicatorsEnabled(true);
+            if (BuildConfig.DEBUG) {
+                //For development, this enables the display of a colored ribbon which indicates
+                // the image source.
+                picasso.setIndicatorsEnabled(true);
+            }
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(url);
 
