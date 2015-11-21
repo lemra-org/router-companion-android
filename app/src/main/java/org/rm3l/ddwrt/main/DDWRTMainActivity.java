@@ -1258,8 +1258,19 @@ public class DDWRTMainActivity extends AppCompatActivity
     private void setUpViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);
         mTabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
-    }
+        mTabLayout.setSelectedTabIndicatorColor(
+                        ColorUtils
+                            .getColor(DDWRTMainActivity.class.getCanonicalName()));
 
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout) {
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                mTabPosition = position;
+            }
+        });
+    }
 
     private void selectItem(int position) {
         selectItem(position, 0);
@@ -1290,25 +1301,6 @@ public class DDWRTMainActivity extends AppCompatActivity
         final int mFragmentTabsAdapterCount = fragmentTabsAdapter.getCount();
         mViewPager.setOffscreenPageLimit(mFragmentTabsAdapterCount);
         mViewPager.setAdapter(fragmentTabsAdapter);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                /*
-                 * Save page position
-                 */
-                mTabPosition = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
         if (tabPosition >= 0 && tabPosition < mFragmentTabsAdapterCount) {
             mViewPager.setCurrentItem(tabPosition);

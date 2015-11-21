@@ -35,21 +35,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -97,7 +91,6 @@ import org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import org.rm3l.ddwrt.tiles.AvocarrotNativeAdTile;
 import org.rm3l.ddwrt.tiles.BannerAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -107,8 +100,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static android.widget.FrameLayout.LayoutParams;
 
 
 /**
@@ -851,7 +842,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         final View rootView =
                 inflater
                         .inflate(R.layout.base_tiles_container_recyclerview,
-                                new FrameLayout(activity));
+                                new RelativeLayout(activity));
 
         mRecyclerView = (RecyclerView) rootView
                 .findViewById(R.id.tiles_container_recyclerview);
@@ -866,9 +857,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new
-                AbstractBaseFragmentRecyclerViewAdapter
-                (activity, router, fragmentTiles);
+        mAdapter = new AbstractBaseFragmentRecyclerViewAdapter(activity, router, fragmentTiles);
         mRecyclerView.setAdapter(mAdapter);
 
         mSwipeRefreshLayout = new SwipeRefreshLayout(activity) {
@@ -976,168 +965,168 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onDestroyView();
     }
 
-    @NonNull
-    private ViewGroup getLayout(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-                .getDisplayMetrics());
-        params.setMargins(margin, margin, margin, margin);
-
-        boolean atLeastOneTileAdded = false;
-
-        final FragmentActivity fragmentActivity = getActivity();
-        final boolean isThemeLight = ColorUtils.isThemeLight(this.getActivity());
-        final Resources resources = fragmentActivity.getResources();
-
-        if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
-
-            final List<CardView> cards = new ArrayList<CardView>();
-
-            final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT);
-            cardViewLayoutParams.rightMargin = R.dimen.marginRight;
-            cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-            cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
-
-            boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
-
-//            final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
-
-            for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
-
-                final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
-                final Integer layoutId = ddwrtTile.getLayoutId();
-
-                atLeastOneTileAdded |= (viewGroupLayout != null);
-
-                if (layoutId == null || viewGroupLayout == null) {
-                    continue;
-                }
-
-                if (!ddwrtTile.isEmbeddedWithinScrollView()) {
-                    if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
-                        viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                                .inflate(R.layout.base_tiles_container_linearlayout,
-                                        new LinearLayout(fragmentActivity));
-                        parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
-                    }
-                }
-
-                //Set header background color
-//                final View hdrView = viewGroupLayout.findViewById(ddwrtTile.getTileHeaderViewId());
-//                if (hdrView != null) {
-//                    hdrView.setBackgroundColor(fragmentColor);
+//    @NonNull
+//    private ViewGroup getLayout(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+//        final LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+//                .getDisplayMetrics());
+//        params.setMargins(margin, margin, margin, margin);
+//
+//        boolean atLeastOneTileAdded = false;
+//
+//        final FragmentActivity fragmentActivity = getActivity();
+//        final boolean isThemeLight = ColorUtils.isThemeLight(this.getActivity());
+//        final Resources resources = fragmentActivity.getResources();
+//
+//        if (this.fragmentTiles != null && !this.fragmentTiles.isEmpty()) {
+//
+//            final List<CardView> cards = new ArrayList<CardView>();
+//
+//            final CardView.LayoutParams cardViewLayoutParams = new LayoutParams(
+//                    LayoutParams.MATCH_PARENT,
+//                    LayoutParams.WRAP_CONTENT);
+//            cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+//            cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+//            cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+//
+//            boolean parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = false;
+//
+////            final int fragmentColor = ColorUtils.getColor(this.getClass().getSimpleName());
+//
+//            for (final DDWRTTile ddwrtTile : this.fragmentTiles) {
+//
+//                final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
+//                final Integer layoutId = ddwrtTile.getLayoutId();
+//
+//                atLeastOneTileAdded |= (viewGroupLayout != null);
+//
+//                if (layoutId == null || viewGroupLayout == null) {
+//                    continue;
 //                }
-
-                final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
-                if (isThemeLight) {
-                    if (titleTextView != null) {
-                        titleTextView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
-                    }
-                }
-
-                //Detach this from Parent
-                final ViewParent parent = viewGroupLayout.getParent();
-                if (parent instanceof ViewGroup) {
-                    ((ViewGroup) parent).removeView(viewGroupLayout);
-                }
-
-                viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-                final CardView cardView = new CardView(fragmentActivity);
-
-                cardView.setContentPadding(15, 5, 15, 5);
-                cardView.setOnClickListener(ddwrtTile);
-                cardView.setLayoutParams(cardViewLayoutParams);
-//                cardView.setCardBackgroundColor(themeBackgroundColor);
-                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
-                cardView.setPreventCornerOverlap(true);
-                //Add padding in API v21+ as well to have the same measurements with previous versions.
-                cardView.setUseCompatPadding(true);
-                cardView.setCardElevation(5f);
-
-                final Integer tileBackgroundColor = ddwrtTile.getTileBackgroundColor();
-                if (tileBackgroundColor != null) {
-                    cardView.setCardBackgroundColor(tileBackgroundColor);
-                } else {
-                    if (isThemeLight) {
-                        //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
-                    } else {
-                        //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
-                    }
-                }
-
-                cardView.addView(viewGroupLayout);
-
-                cards.add(cardView);
-            }
-
-            atLeastOneTileAdded = (!cards.isEmpty());
-
-
-            final boolean disableNowLayoutAnim = (cards.size() <= 1);
-
-            if (atLeastOneTileAdded) {
-                //Drop Everything
-//                viewGroup.removeAllViews();
-
-                if (disableNowLayoutAnim) {
-                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
-                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
-                } else {
-                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
-                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim).setVisibility(View.GONE);
-                }
-                mLayout.setVisibility(View.VISIBLE);
-
-                for (final CardView card : cards) {
-//                    mTableLayout.removeView(row);
-                    mLayout.addView(card);
-                }
-
-            }
-
-            if (viewGroup instanceof ScrollView) {
-                ((ScrollView) viewGroup).setFillViewport(true);
-            }
-        }
-
-        if (viewGroup == null || !atLeastOneTileAdded) {
-
-            viewGroup = (LinearLayout) getActivity().getLayoutInflater()
-                    .inflate(R.layout.base_tiles_container_linearlayout, null);
-
-            final TextView view = new TextView(fragmentActivity);
-            view.setGravity(Gravity.CENTER);
-            view.setText(getResources().getString(R.string.no_data));
-
-            if (isThemeLight) {
-                //Light
-                view.setBackgroundColor(resources.getColor(R.color.cardview_light_background));
-            } else {
-                //Default is Dark
-                view.setBackgroundColor(resources.getColor(R.color.cardview_dark_background));
-            }
-
-//            view.setBackgroundResource(R.drawable.background_card);
-            view.setLayoutParams(params);
-
-//            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
-            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
-            viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
-            mLayout.setVisibility(View.VISIBLE);
-
-            mLayout.addView(view);
-        }
-
-        viewGroup.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-//        viewGroup.setLayoutParams(params);
-
-        return viewGroup;
-    }
+//
+//                if (!ddwrtTile.isEmbeddedWithinScrollView()) {
+//                    if (!parentViewGroupRedefinedIfNotEmbeddedWithinScrollView) {
+//                        viewGroup = (LinearLayout) getActivity().getLayoutInflater()
+//                                .inflate(R.layout.base_tiles_container_linearlayout,
+//                                        new LinearLayout(fragmentActivity));
+//                        parentViewGroupRedefinedIfNotEmbeddedWithinScrollView = true;
+//                    }
+//                }
+//
+//                //Set header background color
+////                final View hdrView = viewGroupLayout.findViewById(ddwrtTile.getTileHeaderViewId());
+////                if (hdrView != null) {
+////                    hdrView.setBackgroundColor(fragmentColor);
+////                }
+//
+//                final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
+//                if (isThemeLight) {
+//                    if (titleTextView != null) {
+//                        titleTextView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+//                    }
+//                }
+//
+//                //Detach this from Parent
+//                final ViewParent parent = viewGroupLayout.getParent();
+//                if (parent instanceof ViewGroup) {
+//                    ((ViewGroup) parent).removeView(viewGroupLayout);
+//                }
+//
+//                viewGroupLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+//
+//                final CardView cardView = new CardView(fragmentActivity);
+//
+//                cardView.setContentPadding(15, 5, 15, 5);
+//                cardView.setOnClickListener(ddwrtTile);
+//                cardView.setLayoutParams(cardViewLayoutParams);
+////                cardView.setCardBackgroundColor(themeBackgroundColor);
+//                //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+//                cardView.setPreventCornerOverlap(true);
+//                //Add padding in API v21+ as well to have the same measurements with previous versions.
+//                cardView.setUseCompatPadding(true);
+//                cardView.setCardElevation(5f);
+//
+//                final Integer tileBackgroundColor = ddwrtTile.getTileBackgroundColor();
+//                if (tileBackgroundColor != null) {
+//                    cardView.setCardBackgroundColor(tileBackgroundColor);
+//                } else {
+//                    if (isThemeLight) {
+//                        //Light
+//                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+//                    } else {
+//                        //Default is Dark
+//                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+//                    }
+//                }
+//
+//                cardView.addView(viewGroupLayout);
+//
+//                cards.add(cardView);
+//            }
+//
+//            atLeastOneTileAdded = (!cards.isEmpty());
+//
+//
+//            final boolean disableNowLayoutAnim = (cards.size() <= 1);
+//
+//            if (atLeastOneTileAdded) {
+//                //Drop Everything
+////                viewGroup.removeAllViews();
+//
+//                if (disableNowLayoutAnim) {
+//                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
+//                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
+//                } else {
+//                    mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+//                    viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim).setVisibility(View.GONE);
+//                }
+//                mLayout.setVisibility(View.VISIBLE);
+//
+//                for (final CardView card : cards) {
+////                    mTableLayout.removeView(row);
+//                    mLayout.addView(card);
+//                }
+//
+//            }
+//
+//            if (viewGroup instanceof ScrollView) {
+//                ((ScrollView) viewGroup).setFillViewport(true);
+//            }
+//        }
+//
+//        if (viewGroup == null || !atLeastOneTileAdded) {
+//
+//            viewGroup = (LinearLayout) getActivity().getLayoutInflater()
+//                    .inflate(R.layout.base_tiles_container_linearlayout, null);
+//
+//            final TextView view = new TextView(fragmentActivity);
+//            view.setGravity(Gravity.CENTER);
+//            view.setText(getResources().getString(R.string.no_data));
+//
+//            if (isThemeLight) {
+//                //Light
+//                view.setBackgroundColor(resources.getColor(R.color.cardview_light_background));
+//            } else {
+//                //Default is Dark
+//                view.setBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+//            }
+//
+////            view.setBackgroundResource(R.drawable.background_card);
+//            view.setLayoutParams(params);
+//
+////            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout);
+//            mLayout = (LinearLayout) viewGroup.findViewById(R.id.tiles_container_scrollview_layout_no_anim);
+//            viewGroup.findViewById(R.id.tiles_container_scrollview_layout).setVisibility(View.GONE);
+//            mLayout.setVisibility(View.VISIBLE);
+//
+//            mLayout.addView(view);
+//        }
+//
+//        viewGroup.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+////        viewGroup.setLayoutParams(params);
+//
+//        return viewGroup;
+//    }
 
     /**
      * Instantiate and return a new Loader for the given ID.
