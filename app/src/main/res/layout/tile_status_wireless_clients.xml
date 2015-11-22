@@ -213,12 +213,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginBottom="@dimen/net_traffic_multi_text_size"
             android:visibility="invisible" />
 
-        <GridLayout
+        <LinearLayout
             android:id="@+id/tile_status_wireless_clients_layout_list_container"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.74"
-            android:columnCount="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone" />
 

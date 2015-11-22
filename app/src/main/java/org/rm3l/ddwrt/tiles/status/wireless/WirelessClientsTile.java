@@ -58,7 +58,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -1454,7 +1453,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 mProgressBarDesc.setText("RM >>> Remove all views <<< ");
 
-                final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
+                final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
                 clientsContainer.removeAllViews();
 
                 final Resources resources = mParentFragmentActivity.getResources();
@@ -2398,7 +2397,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        final GridLayout clientsContainer = (GridLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
+        final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
         final int itemId = item.getItemId();
         switch (itemId) {
             case R.id.tile_status_wireless_clients_realtime_graphs: {
