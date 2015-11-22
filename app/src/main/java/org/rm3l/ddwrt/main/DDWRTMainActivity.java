@@ -578,7 +578,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                             return false;
                         }
                         if (identifier < 1000) {
-                            selectItem(identifier);
+                            selectItem(identifier, 0);
                         } else {
                             switch (identifier) {
                                 case 1001:
