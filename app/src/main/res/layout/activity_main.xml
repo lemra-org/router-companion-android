@@ -54,7 +54,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             app:tabIndicatorColor="@color/win8_lime"
             app:tabIndicatorHeight="3dp"
             app:tabGravity="center"
-            app:tabMode="fixed"/>
+            app:tabMode="scrollable"/>
 
     </android.support.design.widget.AppBarLayout>
 
