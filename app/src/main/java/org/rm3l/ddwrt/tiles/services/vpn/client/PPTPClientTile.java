@@ -103,6 +103,8 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
@@ -112,6 +114,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
@@ -135,6 +138,7 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
                                         PPTPD_CLIENT_SRVUSER,
                                         //Password
                                         PPTPD_CLIENT_SRVPASS);
+                        updateProgressBarViewSeparator(45);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -226,9 +230,11 @@ public class PPTPClientTile extends DDWRTTile<NVRAMInfo> {
 
                     }
 
+                    updateProgressBarViewSeparator(65);
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

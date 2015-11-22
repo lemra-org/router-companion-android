@@ -119,6 +119,7 @@ public class WirelessIfacesTile extends IfacesTile {
                 //Also set details
                 mWirelessIfaceTiles.clear();
 
+                updateProgressBarViewSeparator(25);
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -137,6 +138,7 @@ public class WirelessIfacesTile extends IfacesTile {
 
                     final int size = wirelessIfaceTiles.size();
 
+                    updateProgressBarViewSeparator(57);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -188,6 +190,7 @@ public class WirelessIfacesTile extends IfacesTile {
                         }
                     }
 
+                    updateProgressBarViewSeparator(95);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -103,12 +103,16 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     final Map<String, ProcMountPoint> mountPointMap = new HashMap<String, ProcMountPoint>();
                     final Map<String, List<ProcMountPoint>> mountTypes = new HashMap<String, List<ProcMountPoint>>();
+
+                    updateProgressBarViewSeparator(10);
 
                     final String[] catProcMounts;
                     if (Utils.isDemoRouter(mRouter)) {
@@ -123,6 +127,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         catProcMounts = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
                     }
+
+                    updateProgressBarViewSeparator(50);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
@@ -188,6 +194,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
+                    updateProgressBarViewSeparator(65);
+
                     for (final String itemToDf : itemsToDf) {
                         final String[] itemToDfResult;
                         if (Utils.isDemoRouter(mRouter)) {
@@ -224,6 +232,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                             }
                         }
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
                 } catch (@NonNull final Exception e) {

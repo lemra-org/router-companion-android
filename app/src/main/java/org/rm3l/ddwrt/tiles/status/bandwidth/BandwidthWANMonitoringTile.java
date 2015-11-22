@@ -115,10 +115,15 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
+
+                    updateProgressBarViewSeparator(10);
 
                     //Start by getting information about the WAN iface name
                     final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
+                    updateProgressBarViewSeparator(45);
                     if (nvRamInfoFromRouter == null) {
                         throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
                     }
@@ -131,6 +136,7 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     }
 
                     final String[] netDevWanIfaces = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
+                    updateProgressBarViewSeparator(60);
                     if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
                         return null;
                     }
@@ -198,6 +204,8 @@ public class BandwidthWANMonitoringTile extends DDWRTTile<None> {
                     }
 
                     nvRamInfoFromRouter.setProperty(wanIface + "_egress_MB", Double.toString(wanXmitMBytes));
+
+                    updateProgressBarViewSeparator(90);
 
                     return new None();
 

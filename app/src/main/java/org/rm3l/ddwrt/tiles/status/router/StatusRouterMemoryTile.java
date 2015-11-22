@@ -117,12 +117,15 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     memInfoContents = null;
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
+                    updateProgressBarViewSeparator(10);
                     final String[] otherCmds;
                     if (isDemoRouter(mRouter)) {
                         otherCmds = new String[2];
@@ -132,6 +135,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
                     }
+                    updateProgressBarViewSeparator(30);
                     if (otherCmds != null && otherCmds.length >= 2) {
                         //Total
                         String memTotal = null;
@@ -165,6 +169,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
                         }
 
+                        updateProgressBarViewSeparator(60);
                         //Now cache whole /proc/cpuinfo, for detailed activity
                         if (isDemoRouter(mRouter)) {
                             memInfoContents = new String[2];
@@ -174,6 +179,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                             memInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences, "cat /proc/meminfo");
                         }
+                        updateProgressBarViewSeparator(90);
 
                     }
 

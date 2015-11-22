@@ -96,8 +96,11 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
+                    updateProgressBarViewSeparator(10);
                     return getWANTotalTrafficNvramInfo(mParentFragmentActivity, mRouter, mGlobalPreferences);
 
 
@@ -109,7 +112,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         };
     }
 
-    public static NVRAMInfo getWANTotalTrafficNvramInfo(FragmentActivity mParentFragmentActivity, Router mRouter, SharedPreferences mGlobalPreferences)
+    public NVRAMInfo getWANTotalTrafficNvramInfo(FragmentActivity mParentFragmentActivity, Router mRouter, SharedPreferences mGlobalPreferences)
             throws Exception {
 
         //Start by getting information about the WAN iface name
@@ -121,6 +124,9 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             nvRamInfoFromRouter = SSHUtils
                     .getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, NVRAMInfo.WAN_IFACE);
         }
+
+        updateProgressBarViewSeparator(45);
+
         if (nvRamInfoFromRouter == null) {
             throw new IllegalStateException("Whoops. WAN Iface could not be determined.");
         }
@@ -141,6 +147,7 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
             netDevWanIfaces = SSHUtils
                     .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "cat /proc/net/dev | grep \"" + wanIface + "\"");
         }
+        updateProgressBarViewSeparator(75);
         if (netDevWanIfaces == null || netDevWanIfaces.length == 0) {
             return null;
         }
@@ -174,6 +181,8 @@ public class WANTrafficTile extends DDWRTTile<NVRAMInfo> {
         nvRamInfoFromRouter.setProperty(wanIface + "_xmit_colls", netDevWanIfaceList.get(13));
         nvRamInfoFromRouter.setProperty(wanIface + "_xmit_carrier", netDevWanIfaceList.get(14));
         nvRamInfoFromRouter.setProperty(wanIface + "_xmit_compressed", netDevWanIfaceList.get(15));
+
+        updateProgressBarViewSeparator(90);
 
         return nvRamInfoFromRouter;
     }

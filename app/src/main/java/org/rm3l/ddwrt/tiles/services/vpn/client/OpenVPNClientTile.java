@@ -161,6 +161,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
@@ -170,6 +171,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
@@ -320,12 +322,17 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                             editor.apply();
                         }
 
+                        updateProgressBarViewSeparator(55);
+
                         final String[] devDeviceLine = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                 "cat /tmp/openvpncl/openvpn.conf | grep \"dev \"");
+
                         String openvpnclIface = null;
                         if (devDeviceLine != null && devDeviceLine.length > 0) {
                             openvpnclIface = devDeviceLine[0].replace("dev ", "").trim();
                         }
+
+                        updateProgressBarViewSeparator(75);
 
                         if (!Strings.isNullOrEmpty(openvpnclIface)) {
                             nvramInfo.setProperty(OPENVPNCL__DEV, openvpnclIface);
@@ -378,6 +385,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

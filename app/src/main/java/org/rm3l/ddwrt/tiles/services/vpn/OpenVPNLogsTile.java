@@ -73,6 +73,8 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
@@ -81,6 +83,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                     String logsStr = "";
                     int openvpnclMgmtPort = -1;
                     try {
+                        updateProgressBarViewSeparator(10);
                         //Find OpenVPN Management Port
                         final String[] openvpnclConf = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, "cat /tmp/openvpncl/openvpn.conf | grep \"management \" 2>/dev/null");
@@ -100,6 +103,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                         }
                     } finally {
                         try {
+                            updateProgressBarViewSeparator(45);
                             //Telnet on Management Port to retrieve latest logs
                             if (openvpnclMgmtPort > 0) {
                                 logs = SSHUtils.execCommandOverTelnet(mParentFragmentActivity, mRouter, mGlobalPreferences, openvpnclMgmtPort,
@@ -110,6 +114,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                             }
                         } finally {
                             try {
+                                updateProgressBarViewSeparator(70);
                                 nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
                             } finally {
 
@@ -118,6 +123,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                                 }
 
                                 try {
+                                    updateProgressBarViewSeparator(80);
                                     //Get last log lines
                                     logs = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                             mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
@@ -133,6 +139,7 @@ public class OpenVPNLogsTile extends StatusSyslogTile {
                             }
                         }
                     }
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

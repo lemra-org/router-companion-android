@@ -127,12 +127,15 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(10);
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
@@ -149,6 +152,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                             NVRAMInfo.DIST_TYPE,
                                             NVRAMInfo.LAN_IPADDR);
                         }
+                        updateProgressBarViewSeparator(50);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -183,6 +187,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                             "echo \"`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f1` `cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f2` (`cat /tmp/loginprompt|grep Release|cut -d' ' -f2`) " +
                                                     "`cat /tmp/loginprompt|grep DD-WRT|cut -d' ' -f3` - SVN rev: `/sbin/softwarerevision`\"");
                         }
+                        updateProgressBarViewSeparator(75);
 
                         if (otherCmds != null) {
                             if (otherCmds.length >= 1) {
@@ -215,6 +220,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                             }
                         }
 
+                        updateProgressBarViewSeparator(80);
                         if (checkActualInternetConnectivity) {
                             try {
 
@@ -274,6 +280,7 @@ public class StatusRouterStateTile extends DDWRTTile<NVRAMInfo> {
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             }
                         }
+                        updateProgressBarViewSeparator(90);
                     }
 
                     if (nvramInfo.isEmpty()) {

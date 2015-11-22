@@ -103,12 +103,15 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(10);
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.NTP_ENABLE, "1")
@@ -125,6 +128,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                                             NVRAMInfo.TIME_ZONE,
                                             NVRAMInfo.DAYLIGHT_TIME);
                         }
+                        updateProgressBarViewSeparator(55);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -139,6 +143,7 @@ public class StatusTimeTile extends DDWRTTile<NVRAMInfo> {
                             currentDate = SSHUtils
                                     .getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "date");
                         }
+                        updateProgressBarViewSeparator(90);
                         if (currentDate != null && currentDate.length > 0) {
                             nvramInfo.setProperty(NVRAMInfo.CURRENT_DATE, currentDate[0]);
                         }

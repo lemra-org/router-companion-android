@@ -121,6 +121,8 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
             }
             nbRunsLoader++;
 
+            updateProgressBarViewSeparator(0);
+
             mParentFragmentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

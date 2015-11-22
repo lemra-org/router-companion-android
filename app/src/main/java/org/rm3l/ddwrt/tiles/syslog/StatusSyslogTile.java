@@ -168,7 +168,11 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
+
+                    updateProgressBarViewSeparator(10);
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 //                    if (DDWRTCompanionConstants.TEST_MODE) {
@@ -187,6 +191,7 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                         try {
                             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences, SYSLOGD_ENABLE);
                         } finally {
+                            updateProgressBarViewSeparator(50);
                             if (nvramInfoTmp != null) {
                                 nvramInfo.putAll(nvramInfoTmp);
                             }
@@ -198,12 +203,14 @@ public class StatusSyslogTile extends DDWRTTile<NVRAMInfo> {
                                         mGlobalPreferences, String.format("tail -n %d /tmp/var/log/messages %s",
                                                 MAX_LOG_LINES, isNullOrEmpty(mGrep) ? "" : " | grep -i -E \"" + mGrep + "\""));
                             } finally {
+                                updateProgressBarViewSeparator(70);
                                 if (logs != null) {
                                     nvramInfo.setProperty(SYSLOG, LOGS_JOINER.join(logs));
                                 }
                             }
                         }
                     }
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

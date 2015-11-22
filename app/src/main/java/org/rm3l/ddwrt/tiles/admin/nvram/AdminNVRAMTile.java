@@ -620,6 +620,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfoToDisplay.clear();
@@ -628,6 +630,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences);
                     } finally {
@@ -635,6 +638,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                             mNvramInfoDefaultSorting.putAll(nvramInfoTmp);
                         }
 
+                        updateProgressBarViewSeparator(35);
                         final String[] nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null");
                         if (nvramSize != null && nvramSize.length > 0) {
                             final List<String> nvramUsageList = StatusRouterSpaceUsageTile.NVRAM_SIZE_SPLITTER
@@ -648,6 +652,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                         }
 
                     }
+
+                    updateProgressBarViewSeparator(60);
 
                     if (mNvramInfoDefaultSorting.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
@@ -681,6 +687,8 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     } else {
                         mNvramInfoToDisplay = new HashMap<>(defaultNVRAMInfo);
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     return new None();
                 } catch (@NonNull final Exception e) {

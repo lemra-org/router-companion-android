@@ -97,6 +97,8 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
@@ -106,6 +108,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
@@ -132,6 +135,8 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");

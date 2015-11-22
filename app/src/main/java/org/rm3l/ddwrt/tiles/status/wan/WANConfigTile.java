@@ -158,12 +158,15 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(10);
                         if (isDemoRouter(mRouter)) {
                             final String[] possibleWanProtos = new String[] {
                                     "ppoe",
@@ -196,6 +199,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                     NVRAMInfo.WAN_GET_DNS,
                                     NVRAMInfo.WAN_DNS);
                         }
+                        updateProgressBarViewSeparator(50);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -214,6 +218,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                             mRouter, mGlobalPreferences,
                                             "cat /tmp/.wanuptime; echo; cat /proc/uptime");
                         }
+                        updateProgressBarViewSeparator(65);
                         if (uptimes != null && uptimes.length > 1) {
                             final String wanUptimeStr = uptimes[0];
 
@@ -249,6 +254,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                             }
                         }
 
+                        updateProgressBarViewSeparator(75);
                         if (checkActualInternetConnectivity) {
                             final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
                             try {
@@ -306,6 +312,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                         }
                                     }
                                 }
+                                updateProgressBarViewSeparator(80);
                             } catch (final Exception e) {
                                 e.printStackTrace();
                                 nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
@@ -332,6 +339,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                     if (revDnsCmdStatus != null && revDnsCmdStatus.length > 0) {
                                         nvramInfo.setProperty(REVERSE_DNS_PTR, revDnsCmdStatus[revDnsCmdStatus.length - 1]);
                                     }
+                                    updateProgressBarViewSeparator(85);
                                 } catch (final Exception e) {
                                     e.printStackTrace();
                                 }
@@ -339,6 +347,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                             }
                         }
                     }
+                    updateProgressBarViewSeparator(95);
 
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");

@@ -211,6 +211,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 mRouter + " / nbRunsLoader=" +
                 nbRunsLoader);
 
+        if (wakeOnLanTile != null) {
+            wakeOnLanTile.updateProgressBarViewSeparator(0);
+        }
+
         //Determine broadcast address at each run (because that might change if connected to another network)
         try {
             final WifiManager wifiManager = (WifiManager) mParentFragmentActivity.getSystemService(Context.WIFI_SERVICE);
@@ -230,6 +234,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
         }
 
         if (wakeOnLanTile != null) {
+            wakeOnLanTile.updateProgressBarViewSeparator(20);
             if (wakeOnLanTile.mRefreshing.getAndSet(true)) {
                 return new RouterData<ArrayList<Device>>() {
                 }.setException(new DDWRTTileAutoRefreshNotAllowedException());
@@ -253,6 +258,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
             //Get Broadcast Addresses (for WOL)
             try {
+                if (wakeOnLanTile != null) {
+                    wakeOnLanTile.updateProgressBarViewSeparator(30);
+                }
                 final String[] wanAndLanBroadcast = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                         "/sbin/ifconfig `/usr/sbin/nvram get wan_iface` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'",
                         "/sbin/ifconfig `/usr/sbin/nvram get lan_ifname` | grep Bcast | /usr/bin/awk -F'Bcast:' '{print $2}' | /usr/bin/awk -F'Mask:' '{print $1}'");
@@ -263,6 +271,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         }
                         broadcastAddresses.add(wanAndLanBcast.trim());
                     }
+                }
+                if (wakeOnLanTile != null) {
+                    wakeOnLanTile.updateProgressBarViewSeparator(40);
                 }
             } catch (final Exception e) {
                 //No worries
@@ -284,6 +295,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                             MAP_KEYWORD +
                             "\",$4,$2,$1}'",
                     "echo done");
+
+            if (wakeOnLanTile != null) {
+                wakeOnLanTile.updateProgressBarViewSeparator(60);
+            }
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "output: " + Arrays.toString(output));
 
@@ -368,6 +383,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 macToDevice.put(macAddr, dev);
             }
 
+            if (wakeOnLanTile != null) {
+                wakeOnLanTile.updateProgressBarViewSeparator(70);
+            }
+
             ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
                     mParentFragmentPreferences, mRouter, macToDevice.values());
 
@@ -428,6 +447,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 mCurrentDevicesList.add(device);
             }
 
+            if (wakeOnLanTile != null) {
+                wakeOnLanTile.updateProgressBarViewSeparator(80);
+            }
+
             //Hosts defined from Admin > WOL
             final NVRAMInfo nvRamInfoFromRouter = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter, mGlobalPreferences,
                     WOL_HOSTS,
@@ -474,6 +497,10 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     mDevices.add(dev);
                     mCurrentDevicesList.add(dev);
                 }
+            }
+
+            if (wakeOnLanTile != null) {
+                wakeOnLanTile.updateProgressBarViewSeparator(90);
             }
 
             return new RouterData<ArrayList<Device>>() {

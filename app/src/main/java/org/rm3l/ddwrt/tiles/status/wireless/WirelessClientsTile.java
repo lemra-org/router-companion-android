@@ -585,6 +585,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 }
                 nbRunsLoader++;
 
+                updateProgressBarViewSeparator(0);
+
                 mLastSync = System.currentTimeMillis();
 
                 mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -607,6 +609,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                 try {
 
+                    updateProgressBarViewSeparator(10);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -688,6 +691,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         e.printStackTrace();
                     }
 
+                    updateProgressBarViewSeparator(20);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -707,6 +711,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             (activeClients != null ?
                                 activeClients.length : "NULL"));
 
+                    updateProgressBarViewSeparator(30);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -723,6 +728,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "activeDhcpLeases: " + Arrays.toString(activeDhcpLeases));
 
+                    updateProgressBarViewSeparator(40);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -754,6 +760,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 //                        //No worries
 //                    }
 
+                    updateProgressBarViewSeparator(50);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -890,6 +897,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     final Splitter splitter = Splitter.on(" ");
 
+                    updateProgressBarViewSeparator(60);
                     if (output != null) {
                         final int outputLen = output.length;
                         mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -1089,6 +1097,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Before usageDataLock");
 
+                    updateProgressBarViewSeparator(70);
                     synchronized (usageDataLock) {
 
                         mParentFragmentActivity.runOnUiThread(new Runnable() {
@@ -1182,6 +1191,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                             final int z = 80;
                             int t = 1;
 
+                            updateProgressBarViewSeparator(z);
                             mParentFragmentActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -1274,6 +1284,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "AFTER usageDataLock");
 
+                    updateProgressBarViewSeparator(90);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1352,6 +1363,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         devices.addDevice(device);
                     }
 
+                    updateProgressBarViewSeparator(95);
                     mParentFragmentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

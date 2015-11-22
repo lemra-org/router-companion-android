@@ -437,14 +437,18 @@ public class WANMonthlyTrafficTile
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
+                    updateProgressBarViewSeparator(10);
                     //Get TTRAFF_ENABLE
                     final NVRAMInfo ttraffEnableNVRAMInfo = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
                             mRouter,
                             mGlobalPreferences,
                             NVRAMInfo.TTRAFF_ENABLE);
 
+                    updateProgressBarViewSeparator(20);
                     mCycleOfTheDay = WANTrafficData
                             .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences);
 
@@ -465,12 +469,15 @@ public class WANMonthlyTrafficTile
                     getTrafficDataNvramInfoAndPersistIfNeeded
                             (mParentFragmentActivity, mRouter, mGlobalPreferences, dao);
 
+                    updateProgressBarViewSeparator(55);
                     final NVRAMInfo nvramInfo = WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao,
                             mRouter.getUuid(), mCurrentCycle.get().getStart(), mCurrentCycle.get().getEnd());
 
                     if (ttraffEnableNVRAMInfo != null) {
                         nvramInfo.putAll(ttraffEnableNVRAMInfo);
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

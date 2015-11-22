@@ -145,6 +145,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     nbActiveClients.set(-1);
@@ -159,6 +161,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(20);
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
@@ -183,6 +186,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
                         }
+                        updateProgressBarViewSeparator(45);
                         //Active clients
                         if (isDemoRouter(mRouter)) {
                             nbActiveClients.set(new Random().nextInt(20));
@@ -194,6 +198,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             }
                         }
 
+                        updateProgressBarViewSeparator(60);
                         //Active DHCP Leases
                         if (isDemoRouter(mRouter)) {
                             nbDhcpLeases.set(new Random().nextInt(30));
@@ -205,6 +210,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             }
                         }
 
+                        updateProgressBarViewSeparator(85);
                         if (checkActualInternetConnectivity) {
                             try {
 

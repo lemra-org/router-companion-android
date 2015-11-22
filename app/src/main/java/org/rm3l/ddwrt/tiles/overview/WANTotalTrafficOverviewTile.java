@@ -229,6 +229,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mCycleItem.set(WANTrafficData
@@ -260,6 +262,8 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                         nvramInfo.setProperty(PREVIOUS, mPrevMonth);
                         nvramInfo.setProperty(CURRENT, mCurrentMonth);
                         nvramInfo.setProperty(NEXT, mNextMonth);
+
+                        updateProgressBarViewSeparator(50);
 
                         if (isDemoRouter(mRouter)) {
                             final boolean ttraffEnabled = new Random().nextBoolean();
@@ -316,52 +320,10 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
                         final MonthlyCycleItem cycleItem = mCycleItem.get();
 
+                        updateProgressBarViewSeparator(75);
+
                         nvramInfo.putAll(WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
                                 cycleItem.getStart(), cycleItem.getEnd()));
-
-//                        final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-//                                .format(new Date(mCycleItem.getStart()));
-//                        final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-//                                .format(new Date(mCycleItem.getEnd()));
-//
-//                        final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
-//                                dao.getWANTrafficDataByRouterBetweenDates(mRouter.getUuid(), cycleStart, cycleEnd);
-//                        //Compute total in/out
-//                        long totalDownloadMBytes = 0l;
-//                        long totalUploadMBytes = 0l;
-//                        for (final WANTrafficData wanTrafficData : wanTrafficDataByRouterBetweenDates) {
-//                            if (wanTrafficData == null) {
-//                                continue;
-//                            }
-//                            totalDownloadMBytes += wanTrafficData.getTraffIn().doubleValue();
-//                            totalUploadMBytes += wanTrafficData.getTraffOut().doubleValue();
-//                        }
-//
-//                        final String inHumanReadable = FileUtils
-//                                .byteCountToDisplaySize(totalDownloadMBytes * MB);
-//                        nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-//                                inHumanReadable);
-//                        if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
-//                                inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
-//                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                                    HIDDEN_);
-//                        } else {
-//                            nvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                                    String.valueOf(totalDownloadMBytes));
-//                        }
-//
-//                        final String outHumanReadable = FileUtils
-//                                .byteCountToDisplaySize(totalUploadMBytes * MB);
-//                        nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-//                                outHumanReadable);
-//                        if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
-//                                outHumanReadable.equals(totalUploadMBytes + " bytes")) {
-//                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                                    HIDDEN_);
-//                        } else {
-//                            nvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                                    String.valueOf(totalUploadMBytes));
-//                        }
 
                         //Compute date for current day
                         final String trafficForCurrentMonth = nvramInfo.getProperty(traffForCurrentMonthKey);
@@ -479,7 +441,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
             final View gridLayoutContainer = layout.findViewById(R.id.tile_overview_wan_total_traffic_gridLayout);
             gridLayoutContainer
                     .setVisibility(View.VISIBLE);
-
 
             final boolean isDayCycle = CYCLE_DAY.equals(mCycle);
 
@@ -653,7 +614,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
                                 //Update preferences
                                 if (mParentFragmentPreferences == null) {
-                                    return ;
+                                    return;
                                 }
                                 mParentFragmentPreferences.edit()
                                         .putInt(WAN_CYCLE_DAY_PREF, wanCycleDay)
@@ -665,7 +626,7 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
 
                                 mCycleItem.set(WANTrafficData
                                         .getCurrentWANCycle(mParentFragmentActivity, mParentFragmentPreferences));
-                                
+
                                 //Update title
                                 final MonthlyCycleItem cycleItem = mCycleItem.get();
                                 ((TextView) layout.findViewById(R.id.tile_overview_wan_total_traffic_title))
@@ -677,49 +638,6 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                                     mNvramInfo.putAll(WANTrafficUtils.computeWANTrafficUsageBetweenDates(dao, mRouter.getUuid(),
                                             cycleItem.getStart(), cycleItem.getEnd()));
 
-//                                    final String cycleStart = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-//                                            .format(new Date(mCycleItem.getStart()));
-//                                    final String cycleEnd = DDWRT_MONTHLY_TRAFFIC_DATE_WRITER
-//                                            .format(new Date(mCycleItem.getEnd()));
-//
-//                                    final List<WANTrafficData> wanTrafficDataByRouterBetweenDates =
-//                                            dao.getWANTrafficDataByRouterBetweenDates(mRouter.getUuid(), cycleStart, cycleEnd);
-//                                    //Compute total in/out
-//                                    long totalDownloadMBytes = 0l;
-//                                    long totalUploadMBytes = 0l;
-//                                    for (final WANTrafficData wanTrafficData : wanTrafficDataByRouterBetweenDates) {
-//                                        if (wanTrafficData == null) {
-//                                            continue;
-//                                        }
-//                                        totalDownloadMBytes += wanTrafficData.getTraffIn().doubleValue();
-//                                        totalUploadMBytes += wanTrafficData.getTraffOut().doubleValue();
-//                                    }
-//
-//                                    final String inHumanReadable = FileUtils
-//                                            .byteCountToDisplaySize(totalDownloadMBytes * MB);
-//                                    mNvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH,
-//                                            inHumanReadable);
-//                                    if (inHumanReadable.equals(totalDownloadMBytes + " MB") ||
-//                                            inHumanReadable.equals(totalDownloadMBytes + " bytes")) {
-//                                        mNvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                                                HIDDEN_);
-//                                    } else {
-//                                        mNvramInfo.setProperty(TOTAL_DL_CURRENT_MONTH_MB,
-//                                                String.valueOf(totalDownloadMBytes));
-//                                    }
-//
-//                                    final String outHumanReadable = FileUtils
-//                                            .byteCountToDisplaySize(totalUploadMBytes * MB);
-//                                    mNvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH,
-//                                            outHumanReadable);
-//                                    if (outHumanReadable.equals(totalUploadMBytes + " MB") ||
-//                                            outHumanReadable.equals(totalUploadMBytes + " bytes")) {
-//                                        mNvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                                                HIDDEN_);
-//                                    } else {
-//                                        mNvramInfo.setProperty(TOTAL_UL_CURRENT_MONTH_MB,
-//                                                String.valueOf(totalUploadMBytes));
-//                                    }
                                     updateWANOverviewTile(CYCLE_MONTH);
                                 }
                             }

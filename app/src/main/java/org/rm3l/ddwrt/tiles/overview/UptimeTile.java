@@ -99,12 +99,16 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(10);
+
                         if (isDemoRouter(mRouter)) {
                             final Random random = new Random();
                             final String days = Integer.toString(random.nextInt(60));
@@ -127,6 +131,7 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
 
                             final String[] uptimeOutput = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter, mGlobalPreferences,
                                     "uptime 2>/dev/null | awk -F'up ' '{print $2}' | awk -F'users' '{print $1}' | awk -F'load' '{print $1}'");
+                            updateProgressBarViewSeparator(60);
                             if (uptimeOutput != null && uptimeOutput.length > 0) {
                                 final String uptime = uptimeOutput[uptimeOutput.length - 1];
                                 final List<String> uptimeList = COMMA_SPLITTER.splitToList(uptime);

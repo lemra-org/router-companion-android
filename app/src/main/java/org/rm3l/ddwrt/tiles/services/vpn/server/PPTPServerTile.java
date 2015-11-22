@@ -103,6 +103,8 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
@@ -112,6 +114,7 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
@@ -137,6 +140,8 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
                                         PPTPD_ACCTPORT,
                                         //Radius Shared Key
                                         PPTPD_RADPASS);
+
+                        updateProgressBarViewSeparator(55);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -215,10 +220,12 @@ public class PPTPServerTile extends DDWRTTile<NVRAMInfo> {
 
                     }
 
+                    updateProgressBarViewSeparator(70);
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
 
+                    updateProgressBarViewSeparator(90);
                     return nvramInfo;
 
                 } catch (@NonNull final Exception e) {

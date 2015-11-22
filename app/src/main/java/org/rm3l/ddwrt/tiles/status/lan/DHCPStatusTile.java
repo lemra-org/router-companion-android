@@ -99,12 +99,15 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo = new NVRAMInfo();
 
                     NVRAMInfo nvramInfoTmp = null;
                     try {
+                        updateProgressBarViewSeparator(10);
                         if (Utils.isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.LAN_PROTO, "dhcp")
@@ -124,6 +127,7 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                                     NVRAMInfo.LAN_IPADDR,
                                     NVRAMInfo.LAN_NETMASK);
                         }
+                        updateProgressBarViewSeparator(45);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -185,6 +189,8 @@ public class DHCPStatusTile extends DDWRTTile<NVRAMInfo> {
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
 

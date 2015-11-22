@@ -35,12 +35,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1.0dip"
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8.0dip"
         android:layout_marginTop="8.0dip"
-        android:background="#ffcccccc" />
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
+
+    <!--<View-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="1.0dip"-->
+        <!--android:layout_marginBottom="8.0dip"-->
+        <!--android:layout_marginTop="8.0dip"-->
+        <!--android:background="#ffcccccc" />-->
 
     <!-- Error message placeholder -->
     <TextView

@@ -107,6 +107,8 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     mNvramInfo = null;
@@ -116,6 +118,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         nvramInfoTmp =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                         mGlobalPreferences,
@@ -124,6 +127,7 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                                         WOL_HOSTNAME,
                                         WOL_PASSWD,
                                         WOL_MACS);
+                        updateProgressBarViewSeparator(45);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -147,6 +151,8 @@ public class WakeOnLanDaemonTile extends DDWRTTile<NVRAMInfo>
                             editor.apply();
                         }
                     }
+
+                    updateProgressBarViewSeparator(85);
 
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");

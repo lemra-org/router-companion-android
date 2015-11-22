@@ -88,9 +88,13 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     final NVRAMInfo nvramInfo;
+
+                    updateProgressBarViewSeparator(30);
                     if (Utils.isDemoRouter(mRouter)) {
                         nvramInfo = new NVRAMInfo()
                                 .setProperty(NVRAMInfo.LAN_IPADDR, "172.17.17.1")
@@ -108,6 +112,7 @@ public class LANStateTile extends DDWRTTile<NVRAMInfo> {
                                 NVRAMInfo.LAN_NETMASK,
                                 NVRAMInfo.LOCAL_DNS);
                     }
+                    updateProgressBarViewSeparator(90);
                     return nvramInfo;
 
                 } catch (@NonNull final Exception e) {

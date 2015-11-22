@@ -94,31 +94,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </RelativeLayout>
 
-        <!--<LinearLayout-->
-            <!--android:id="@+id/tile_status_wan_monthly_traffic_hdr"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingTop="4.0dip">-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tile_status_wan_monthly_traffic_title"-->
-                <!--android:layout_width="0.0dip"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1.0"-->
-                <!--android:ellipsize="end"-->
-                <!--android:singleLine="true"-->
-                <!--android:text="@string/wan_monthly_traffic"-->
-                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-                <!--android:textStyle="bold" />-->
-
-        <!--</LinearLayout>-->
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.0dip"
+        <ProgressBar
+            android:id="@+id/tile_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8.0dip"
             android:layout_marginTop="8.0dip"
-            android:background="#ffcccccc" />
+            android:indeterminate="false"
+            android:indeterminateOnly="false" />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -118,6 +118,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     }
                     nbRunsLoader++;
 
+                    updateProgressBarViewSeparator(0);
+
                     mLastSync = System.currentTimeMillis();
 
                     cpuInfoContents = null;
@@ -127,6 +129,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     NVRAMInfo nvramInfoTmp = null;
 
                     try {
+                        updateProgressBarViewSeparator(10);
                         if (isDemoRouter(mRouter)) {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.CPU_CLOCK_FREQ, "100");
@@ -134,6 +137,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfoTmp = SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences, NVRAMInfo.CPU_CLOCK_FREQ);
                         }
+                        updateProgressBarViewSeparator(45);
                     } finally {
                         if (nvramInfoTmp != null) {
                             nvramInfo.putAll(nvramInfoTmp);
@@ -161,6 +165,8 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                                     GREP_MODEL_PROC_CPUINFO + "| uniq",
                                     GREP_MODEL_PROC_CPUINFO + "| wc -l");
                         }
+
+                        updateProgressBarViewSeparator(65);
 
                         if (otherCmds != null) {
 
@@ -193,6 +199,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             cpuInfoContents = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                     mGlobalPreferences, "cat /proc/cpuinfo");
                         }
+                        updateProgressBarViewSeparator(90);
                     }
 
                     if (nvramInfo.isEmpty()) {

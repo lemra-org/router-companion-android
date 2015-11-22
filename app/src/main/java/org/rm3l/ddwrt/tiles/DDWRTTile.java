@@ -38,6 +38,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.ContentViewEvent;
@@ -103,6 +104,9 @@ public abstract class DDWRTTile<T>
     protected final AtomicBoolean mRefreshing = new AtomicBoolean(false);
 
     private final AtomicReference<DDWRTTileRefreshListener> mRefreshListener = new AtomicReference<>();
+
+    private final AtomicReference<ProgressBar> mProgressBarViewSeparator
+            = new AtomicReference<>(null);
 
     @Nullable
     private InterstitialAd mTileClickInterstitialAd;
@@ -262,6 +266,7 @@ public abstract class DDWRTTile<T>
                             " - delay: %dms",
                     loader, schedNextRun, this.mLoaderStopped, nextRunMillis));
         } finally {
+            updateProgressBarViewSeparator(100);
             final DDWRTTileRefreshListener refreshListener = this.mRefreshListener.get();
             if (refreshListener != null) {
                 refreshListener.onTileRefreshed(this);
@@ -412,6 +417,40 @@ public abstract class DDWRTTile<T>
 
     @Nullable
     protected abstract OnClickIntent getOnclickIntent();
+
+    @Nullable
+    protected Integer getProgressBarViewSeparatorId() {
+        return R.id.tile_progress_bar;
+    }
+
+    protected void updateProgressBarViewSeparator(final int progressPercent) {
+        mParentFragmentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ProgressBar progressBarViewSeparator = mProgressBarViewSeparator.get();
+                    if (progressBarViewSeparator == null) {
+                        final Integer progressBarViewSeparatorId = getProgressBarViewSeparatorId();
+                        if (progressBarViewSeparatorId != null) {
+                            final View viewById = layout.findViewById(progressBarViewSeparatorId);
+                            if (viewById instanceof ProgressBar) {
+                                progressBarViewSeparator = (ProgressBar) viewById;
+                                progressBarViewSeparator.setMax(100);
+                            }
+                        }
+                        if (progressBarViewSeparator == null) {
+                            return;
+                        }
+                    }
+                    progressBarViewSeparator.setProgress(Math.min(100, progressPercent));
+                    mProgressBarViewSeparator.set(progressBarViewSeparator);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(mParentFragmentActivity, e);
+                }
+            }
+        });
+    }
 
     public interface ActivityResultListener {
         void onResultCode(int resultCode, Intent data);
