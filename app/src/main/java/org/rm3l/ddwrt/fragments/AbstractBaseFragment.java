@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -91,6 +92,7 @@ import org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import org.rm3l.ddwrt.tiles.AvocarrotNativeAdTile;
 import org.rm3l.ddwrt.tiles.BannerAdTile;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -134,10 +136,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 //    @NonNull
 //    private PageSlidingTabStripFragment parentFragment;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
+    private ViewGroup mRootViewGroup;
 
     @Nullable
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -808,11 +807,21 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     protected boolean canChildScrollUp() {
-        return ViewCompat.canScrollVertically(mRecyclerView, -1);
+        return (mRootViewGroup != null && ViewCompat.canScrollVertically(mRootViewGroup, -1));
     }
 
     protected boolean isSwipeRefreshLayoutEnabled() {
         return true;
+    }
+
+    @NonNull
+    protected RootViewType getRootViewType() {
+        return RootViewType.RECYCLER_VIEW;
+    }
+
+    enum RootViewType {
+        RECYCLER_VIEW,
+        LINEAR_LAYOUT
     }
 
     /**
@@ -844,21 +853,67 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         .inflate(R.layout.base_tiles_container_recyclerview,
                                 new RelativeLayout(activity));
 
-        mRecyclerView = (RecyclerView) rootView
+        final RootViewType rootViewType = getRootViewType();
+        final RecyclerView recyclerView = (RecyclerView) rootView
                 .findViewById(R.id.tiles_container_recyclerview);
+        final LinearLayout linearLayout = (LinearLayout) rootView
+                .findViewById(R.id.tiles_container_linearlayout);
+        switch (rootViewType) {
+            case LINEAR_LAYOUT:
+                mRootViewGroup = linearLayout;
+                recyclerView.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.VISIBLE);
+                linearLayout.removeAllViews();
+                if (fragmentTiles != null) {
+                    final boolean isThemeLight = ColorUtils.isThemeLight(activity);
+                    final Resources resources = activity.getResources();
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        // allows for optimizations if all items are of the same size:
-        mRecyclerView.setHasFixedSize(true);
+                    for (final DDWRTTile ddwrtTile : fragmentTiles) {
+                        if (ddwrtTile == null) {
+                            continue;
+                        }
+                        final ViewGroup viewGroupLayout = ddwrtTile.getViewGroupLayout();
+                        if (viewGroupLayout == null) {
+                            continue;
+                        }
 
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(activity);
-        mLayoutManager.scrollToPosition(0);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+                        final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
+                        if (isThemeLight) {
+                            if (titleTextView != null) {
+                                titleTextView.setTextColor(resources
+                                        .getColor(android.R.color.holo_blue_dark));
+                            }
+                        }
+                        viewGroupLayout.setBackgroundColor(resources
+                                .getColor(android.R.color.transparent));
 
-        mAdapter = new AbstractBaseFragmentRecyclerViewAdapter(activity, router, fragmentTiles);
-        mRecyclerView.setAdapter(mAdapter);
+                        linearLayout.addView(viewGroupLayout);
+                    }
+                }
+                break;
+            case RECYCLER_VIEW:
+                mRootViewGroup = recyclerView;
+            default:
+                linearLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+
+                // use this setting to improve performance if you know that changes
+                // in content do not change the layout size of the RecyclerView
+                // allows for optimizations if all items are of the same size:
+                recyclerView.setHasFixedSize(true);
+
+                // use a linear layout manager
+                final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(activity);
+                mLayoutManager.scrollToPosition(0);
+                recyclerView.setLayoutManager(mLayoutManager);
+
+                final RecyclerView.Adapter mAdapter =
+                        new AbstractBaseFragmentRecyclerViewAdapter(activity, router, fragmentTiles);
+
+                recyclerView.setAdapter(mAdapter);
+
+                break;
+        }
 
         mSwipeRefreshLayout = new SwipeRefreshLayout(activity) {
             @Override
