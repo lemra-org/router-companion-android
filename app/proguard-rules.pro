@@ -208,6 +208,10 @@
     *;
 }
 
+-keep public class org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity$* {
+    *;
+}
+
 -keep public class org.jsoup.** {
     public *;
 }
