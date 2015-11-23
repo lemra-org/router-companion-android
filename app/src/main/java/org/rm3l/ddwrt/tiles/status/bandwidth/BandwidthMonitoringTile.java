@@ -60,6 +60,7 @@ import org.rm3l.ddwrt.resources.RouterData;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -82,8 +83,6 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
     //TODO TESTS ONLY
     private static final boolean BW_MONIT_TEST = true;
     private static final String LOG_TAG = BandwidthMonitoringTile.class.getSimpleName();
-    private final Random randomColorGen = new Random();
-    private final Map<String, Integer> colorsCache = Maps.newHashMap();
     @NonNull
     private final BandwidthMonitoringIfaceData bandwidthMonitoringIfaceData = new BandwidthMonitoringIfaceData();
     private long mLastSync;
@@ -261,13 +260,8 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     final XYSeriesRenderer renderer = new XYSeriesRenderer();
                     renderer.setLineWidth(2);
 
-                    Integer ifaceColor = colorsCache.get(iface);
-                    if (ifaceColor == null) {
-                        //Generate a Random Color, excluding 'white' (because graph background is already white)
-                        ifaceColor = Color.argb(255,
-                                randomColorGen.nextInt(255), randomColorGen.nextInt(255), randomColorGen.nextInt(255));
-                        colorsCache.put(iface, ifaceColor);
-                    }
+                    final Integer ifaceColor = ColorUtils.getColor(iface);
+
                     renderer.setColor(ifaceColor);
                     // Include low and max value
                     renderer.setDisplayBoundingPoints(true);

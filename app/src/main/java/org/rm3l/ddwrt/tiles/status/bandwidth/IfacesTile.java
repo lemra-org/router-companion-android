@@ -123,19 +123,6 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
 
             updateProgressBarViewSeparator(0);
 
-            mParentFragmentActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (nbRunsLoader <= 1) {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        mProgressBarDesc.setVisibility(View.VISIBLE);
-                    } else {
-                        mProgressBar.setVisibility(View.GONE);
-                        mProgressBarDesc.setVisibility(View.GONE);
-                    }
-                }
-            });
-
             mLastSync = System.currentTimeMillis();
 
             final NVRAMInfo nvramInfo = new NVRAMInfo();
@@ -234,6 +221,9 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                     .setVisibility(View.GONE);
             layout.findViewById(R.id.tile_status_bandwidth_ifaces_togglebutton_container)
                     .setVisibility(View.VISIBLE);
+
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBarDesc.setVisibility(View.GONE);
 
             if (data == null) {
                 data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));

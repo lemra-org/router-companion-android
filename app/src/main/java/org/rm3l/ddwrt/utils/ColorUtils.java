@@ -26,15 +26,24 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.LruCache;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
@@ -48,29 +57,64 @@ public final class ColorUtils {
 
     private static final Random RANDOM_COLOR_GEN = new Random();
     private static final double COLOR_SIMILARITY_TOLERANCE = 77;
-    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(30) {
-        @Override
-        protected Integer create(final String key) {
-            final Map<String, Integer> currentItems = snapshot();
-            final Set<Integer> colorsToSkip = new HashSet<>();
 
-            //We want our new color not to be similar to white or black
-            colorsToSkip.add(Color.argb(255, 0, 0, 0));
-            colorsToSkip.add(Color.argb(255, 255, 255, 255));
+    private static final String TAG = ColorUtils.class.getSimpleName();
 
-            if (!currentItems.isEmpty()) {
-                colorsToSkip.addAll(currentItems.values());
-            }
+    public static final LoadingCache<String, Integer> colorsCache = CacheBuilder
+            .newBuilder()
+            .maximumSize(30)
+            .removalListener(new RemovalListener<String, Integer>() {
+                @Override
+                public void onRemoval(@NonNull RemovalNotification<String, Integer> notification) {
+                    Crashlytics.log(Log.DEBUG, TAG, "onRemoval(" + notification.getKey() + ") - cause: " +
+                            notification.getCause());
+                }
+            }).build(new CacheLoader<String, Integer>() {
+                @Override
+                public Integer load(@NonNull String key) throws Exception {
+                    final Map<String, Integer> currentItems = colorsCache.asMap();
+                    final Set<Integer> colorsToSkip = new HashSet<>();
 
-            return genColor(colorsToSkip);
-        }
-    };
+                    //We want our new color not to be similar to white or black
+                    colorsToSkip.add(Color.argb(255, 0, 0, 0));
+                    colorsToSkip.add(Color.argb(255, 255, 255, 255));
+
+                    if (!currentItems.isEmpty()) {
+                        colorsToSkip.addAll(currentItems.values());
+                    }
+
+                    return genColor(colorsToSkip);
+                }
+            });
+//
+//    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(30) {
+//        @Override
+//        protected Integer create(final String key) {
+//            final Map<String, Integer> currentItems = snapshot();
+//            final Set<Integer> colorsToSkip = new HashSet<>();
+//
+//            //We want our new color not to be similar to white or black
+//            colorsToSkip.add(Color.argb(255, 0, 0, 0));
+//            colorsToSkip.add(Color.argb(255, 255, 255, 255));
+//
+//            if (!currentItems.isEmpty()) {
+//                colorsToSkip.addAll(currentItems.values());
+//            }
+//
+//            return genColor(colorsToSkip);
+//        }
+//    };
 
     private ColorUtils() {
     }
 
     public static int getColor(@NonNull final String keyInCache) {
-        return colorsCache.get(keyInCache);
+        try {
+            return colorsCache.get(keyInCache);
+        } catch (final ExecutionException e) {
+            Utils.reportException(null, e);
+            return genColor(Collections.<Integer> emptyList());
+        }
     }
 
     public static int genColor(@NonNull final Collection<Integer> colorsToSkip) {

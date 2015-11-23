@@ -358,7 +358,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         }
                     }
 
-                    device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
+                    device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.getUnchecked(macAddress));
 
                     macToDeviceOutput.put(macAddress, device);
                 }
@@ -427,7 +427,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         deviceFromJson.setIsEditableForWol(true);
 
                         deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
-                                .mMacOuiVendorLookupCache.get(macAddress.toString()));
+                                .mMacOuiVendorLookupCache.getUnchecked(macAddress.toString()));
 
                         mDevices.add(deviceFromJson);
                         mCurrentDevicesList.add(deviceFromJson);
@@ -473,7 +473,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         final Device dev = new Device(mAddress);
                         dev.setWolPort(wolPort);
                         dev.setMacouiVendorDetails(WirelessClientsTile
-                                .mMacOuiVendorLookupCache.get(mAddress));
+                                .mMacOuiVendorLookupCache.getUnchecked(mAddress));
                         mDevices.add(dev);
                         mCurrentDevicesList.add(dev);
                     }
@@ -492,7 +492,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         dev.setAlias(strings.get(1));
                     }
                     dev.setMacouiVendorDetails(WirelessClientsTile
-                            .mMacOuiVendorLookupCache.get(dev.getMacAddress()));
+                            .mMacOuiVendorLookupCache.getUnchecked(dev.getMacAddress()));
 
                     mDevices.add(dev);
                     mCurrentDevicesList.add(dev);

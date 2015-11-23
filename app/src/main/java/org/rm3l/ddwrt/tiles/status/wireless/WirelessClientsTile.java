@@ -50,7 +50,6 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,6 +74,11 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.EvictingQueue;
@@ -188,65 +192,132 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String RT_GRAPHS = "rt_graphs";
     private static final String LOG_TAG = WirelessClientsTile.class.getSimpleName();
     private static final int MAX_CLIENTS_TO_SHOW_IN_TILE = 999;
-    public static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
 
-        @Override
-        protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
-            super.entryRemoved(evicted, key, oldValue, newValue);
-            Crashlytics.log(Log.DEBUG, LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
-        }
+    private static final int MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE = 20;
 
-        @Override
-        protected MACOUIVendor create(final String macAddr) {
-            if (isNullOrEmpty(macAddr)) {
-                return null;
-            }
-            //Get to MAC OUI Vendor Lookup API
-            try {
-                final String urlStr = String.format("%s/%s",
-                        MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
-                final URL url = new URL(urlStr);
-                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    final int statusCode = urlConnection.getResponseCode();
-                    if (statusCode == 200) {
-                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+    public static final LoadingCache<String, MACOUIVendor> mMacOuiVendorLookupCache = CacheBuilder
+            .newBuilder()
+            .softValues()
+            .maximumSize(MAC_OUI_VENDOR_LOOKUP_CACHE_SIZE)
+            .removalListener(new RemovalListener<String, MACOUIVendor>() {
+                @Override
+                public void onRemoval(@NonNull RemovalNotification<String, MACOUIVendor> notification) {
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "onRemoval(" + notification.getKey() + ") - cause: " +
+                            notification.getCause());
+                }
+            })
+            .build(new CacheLoader<String, MACOUIVendor>() {
+                @Override
+                public MACOUIVendor load(@Nullable String macAddr) throws Exception {
+                    if (isNullOrEmpty(macAddr)) {
+                        return null;
+                    }
+                    //Get to MAC OUI Vendor Lookup API
+                    try {
+                        final String urlStr = String.format("%s/%s",
+                                MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
+                        final URL url = new URL(urlStr);
+                        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         try {
-                            //Read the server response and attempt to parse it as JSON
-                            final Reader reader = new InputStreamReader(content);
-                            final GsonBuilder gsonBuilder = new GsonBuilder();
-                            final Gson gson = gsonBuilder.create();
-                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
-                            if (macouiVendors == null || macouiVendors.length == 0) {
-                                //Returning null so we can try again later
-                                return null;
+                            final int statusCode = urlConnection.getResponseCode();
+                            if (statusCode == 200) {
+                                final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+                                try {
+                                    //Read the server response and attempt to parse it as JSON
+                                    final Reader reader = new InputStreamReader(content);
+                                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                                    final Gson gson = gsonBuilder.create();
+                                    final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
+                                    if (macouiVendors == null || macouiVendors.length == 0) {
+                                        //Returning null so we can try again later
+                                        return null;
+                                    }
+                                    return macouiVendors[0];
+
+                                } finally {
+                                    Closeables.closeQuietly(content);
+                                }
+                            } else {
+                                Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                                if (statusCode == 204) {
+                                    //No Content found on the remote server - no need to retry later
+                                    return new MACOUIVendor();
+                                }
                             }
-                            return macouiVendors[0];
 
                         } finally {
-                            Closeables.closeQuietly(content);
+                            urlConnection.disconnect();
                         }
-                    } else {
-                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                        if (statusCode == 204) {
-                            //No Content found on the remote server - no need to retry later
-                            return new MACOUIVendor();
-                        }
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
                     }
 
-                } finally {
-                    urlConnection.disconnect();
+                    return null;
                 }
+            });
 
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    };
+//    public static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
+//
+//        @Override
+//        protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
+//            super.entryRemoved(evicted, key, oldValue, newValue);
+//            Crashlytics.log(Log.DEBUG, LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
+//        }
+//
+//        @Override
+//        protected MACOUIVendor create(final String macAddr) {
+//            if (isNullOrEmpty(macAddr)) {
+//                return null;
+//            }
+//            //Get to MAC OUI Vendor Lookup API
+//            try {
+//                final String urlStr = String.format("%s/%s",
+//                        MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
+//                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
+//                final URL url = new URL(urlStr);
+//                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                try {
+//                    final int statusCode = urlConnection.getResponseCode();
+//                    if (statusCode == 200) {
+//                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+//                        try {
+//                            //Read the server response and attempt to parse it as JSON
+//                            final Reader reader = new InputStreamReader(content);
+//                            final GsonBuilder gsonBuilder = new GsonBuilder();
+//                            final Gson gson = gsonBuilder.create();
+//                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
+//                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
+//                            if (macouiVendors == null || macouiVendors.length == 0) {
+//                                //Returning null so we can try again later
+//                                return null;
+//                            }
+//                            return macouiVendors[0];
+//
+//                        } finally {
+//                            Closeables.closeQuietly(content);
+//                        }
+//                    } else {
+//                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
+//                        if (statusCode == 204) {
+//                            //No Content found on the remote server - no need to retry later
+//                            return new MACOUIVendor();
+//                        }
+//                    }
+//
+//                } finally {
+//                    urlConnection.disconnect();
+//                }
+//
+//            } catch (final Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//    };
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
@@ -1067,7 +1138,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 ")...");
                                     }
                                 });
-                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.getUnchecked(macAddress));
 
                                 macToDeviceOutput.put(macAddress, device);
                             }

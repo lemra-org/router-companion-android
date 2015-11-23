@@ -29,11 +29,11 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
-import android.support.v4.util.LruCache;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +59,11 @@ import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
@@ -113,56 +118,68 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     public static final String OBSERVATION_DATE = "OBSERVATION_DATE";
     public static final Table<Integer, Integer, String> ICMP_TYPE_CODE_DESCRIPTION_TABLE = HashBasedTable.create();
     private static final String LOG_TAG = ActiveIPConnectionsDetailActivity.class.getSimpleName();
-    public static final LruCache<String, IPWhoisInfo> mIPWhoisInfoCache = new LruCache<String, IPWhoisInfo>(200) {
-        @Override
-        protected IPWhoisInfo create(String ipAddr) {
-            if (isNullOrEmpty(ipAddr)) {
-                return null;
-            }
-            //Get to MAC OUI Vendor Lookup API
-            try {
-                final String urlStr = String.format("%s/%s.json",
-                        IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
-                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
-                final URL url = new URL(urlStr);
-                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    final int statusCode = urlConnection.getResponseCode();
-                    if (statusCode == 200) {
-                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+
+    public static final LoadingCache<String, IPWhoisInfo> mIPWhoisInfoCache = CacheBuilder
+            .newBuilder()
+            .softValues()
+            .maximumSize(200)
+            .removalListener(new RemovalListener<String, IPWhoisInfo>() {
+                @Override
+                public void onRemoval(@NonNull RemovalNotification<String, IPWhoisInfo> notification) {
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "onRemoval(" + notification.getKey() + ") - cause: " +
+                            notification.getCause());
+                }
+            })
+            .build(new CacheLoader<String, IPWhoisInfo>() {
+                @Override
+                public IPWhoisInfo load(@NonNull String ipAddr) throws Exception {
+                    if (isNullOrEmpty(ipAddr)) {
+                        return null;
+                    }
+                    //Get to MAC OUI Vendor Lookup API
+                    try {
+                        final String urlStr = String.format("%s/%s.json",
+                                IPWhoisInfo.IP_WHOIS_INFO_API_PREFIX, ipAddr);
+                        Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
+                        final URL url = new URL(urlStr);
+                        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         try {
-                            //Read the server response and attempt to parse it as JSON
-                            final Reader reader = new InputStreamReader(content);
-                            final GsonBuilder gsonBuilder = new GsonBuilder();
-                            final Gson gson = gsonBuilder.create();
-                            final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
+                            final int statusCode = urlConnection.getResponseCode();
+                            if (statusCode == 200) {
+                                final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
+                                try {
+                                    //Read the server response and attempt to parse it as JSON
+                                    final Reader reader = new InputStreamReader(content);
+                                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                                    final Gson gson = gsonBuilder.create();
+                                    final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
+                                    Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
 
-                            return ipWhoisInfo;
+                                    return ipWhoisInfo;
 
+
+                                } finally {
+                                    Closeables.closeQuietly(content);
+                                }
+                            } else {
+                                Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
+                                if (statusCode == 204) {
+                                    //No Content found on the remote server - no need to retry later
+                                    return new IPWhoisInfo();
+                                }
+                            }
 
                         } finally {
-                            Closeables.closeQuietly(content);
+                            urlConnection.disconnect();
                         }
-                    } else {
-                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
-                        if (statusCode == 204) {
-                            //No Content found on the remote server - no need to retry later
-                            return new IPWhoisInfo();
-                        }
+
+                    } catch (final Exception e) {
+                        e.printStackTrace();
                     }
 
-                } finally {
-                    urlConnection.disconnect();
+                    return null;
                 }
-
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    };
+            });
 
     static {
         ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(0, 0, "Echo Reply");
@@ -462,7 +479,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 if (isNullOrEmpty(destinationAddressOriginalSide)) {
                                     dstIpWhoisResolved = "-";
                                 } else {
-                                    final IPWhoisInfo ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                                    final IPWhoisInfo ipWhoisInfo = mIPWhoisInfoCache.getUnchecked(destinationAddressOriginalSide);
                                     final String org;
                                     if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
                                         dstIpWhoisResolved = "-";

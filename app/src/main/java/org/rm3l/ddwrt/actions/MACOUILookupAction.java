@@ -51,7 +51,8 @@ public class MACOUILookupAction extends AbstractRouterAction<Void> {
             if (routerStreamActionListener != null) {
                 routerStreamActionListener.notifyRouterActionProgress(RouterAction.MAC_OUI_LOOKUP, router, 0, null);
             }
-            final MACOUIVendor macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache.get(mMacAddress);
+            final MACOUIVendor macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
+                    .getUnchecked(mMacAddress);
             if (macouiVendor == null || macouiVendor.isNone()) {
                 throw new IllegalArgumentException("Failed to fetch OUI info - check your input or connectivity!");
             }

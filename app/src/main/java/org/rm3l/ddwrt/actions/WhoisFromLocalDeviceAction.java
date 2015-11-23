@@ -51,7 +51,7 @@ public class WhoisFromLocalDeviceAction extends AbstractRouterAction<Void> {
             if (routerStreamActionListener != null) {
                 routerStreamActionListener.notifyRouterActionProgress(RouterAction.WHOIS, router, 0, null);
             }
-            final IPWhoisInfo ipWhoisInfo = ActiveIPConnectionsDetailActivity.mIPWhoisInfoCache.get(mHostOrIp);
+            final IPWhoisInfo ipWhoisInfo = ActiveIPConnectionsDetailActivity.mIPWhoisInfoCache.getUnchecked(mHostOrIp);
             if (ipWhoisInfo == null || ipWhoisInfo.isNone()) {
                 throw new IllegalArgumentException("Failed to fetch WHOIS info - check your input or connectivity!");
             }

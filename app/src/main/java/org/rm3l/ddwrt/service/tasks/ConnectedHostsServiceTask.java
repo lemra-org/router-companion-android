@@ -166,7 +166,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                     }
                 }
 
-                device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
+                device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.getUnchecked(macAddress));
 
                 macToDeviceOutput.put(macAddress, device);
             }
