@@ -212,6 +212,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="WPA Shared Key" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa_personal_wpa_shared_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -291,6 +292,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="WPA Shared Key" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa2_personal_wpa_shared_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -370,6 +372,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="WPA Shared Key" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa2_personal_mixed_wpa_shared_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -493,6 +496,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Shared Secret" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa_enterprise_radius_secret"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -615,6 +619,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Shared Secret" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_radius_secret"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -737,6 +742,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Shared Secret" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wpa2_enterprise_mixed_radius_secret"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -859,6 +865,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Radius Auth Shared Secret" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_radius_secret"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -956,6 +963,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/wireless_security_settings_wep_passphrase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -999,6 +1007,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key 1" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wep_passphrase_key1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1027,6 +1036,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key 2" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wep_passphrase_key2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1055,6 +1065,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key 3" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wep_passphrase_key3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -1083,6 +1094,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="Key 4" />
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wireless_security_settings_wep_passphrase_key4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

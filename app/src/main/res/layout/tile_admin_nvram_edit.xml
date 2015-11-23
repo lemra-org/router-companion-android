@@ -69,6 +69,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/value"/>
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/tile_admin_nvram_edit_value"
                 android:layout_weight="1"
                 android:layout_width="fill_parent"

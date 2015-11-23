@@ -114,6 +114,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Router Name" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -145,6 +146,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Enter '%PACKAGE_NAME%' for a demo" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_ip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -203,6 +205,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="SSH Port" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_port"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -227,6 +230,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Login" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -317,6 +321,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="Password" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/router_add_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

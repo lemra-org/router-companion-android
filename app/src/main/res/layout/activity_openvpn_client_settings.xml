@@ -196,6 +196,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/openvpncl_setting_ca_cert" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/openvpn_client_settings_ca_cert"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
@@ -220,6 +221,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/openvpncl_setting_public_client_cert" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/openvpn_client_settings_public_client_cert"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
@@ -244,6 +246,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/openvpncl_setting_private_client_key" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/openvpn_client_settings_private_client_key"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
@@ -463,6 +466,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_tls_auth_key" />
 
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key"
                         android:layout_width="fill_parent"
                         android:layout_height="0dip"
@@ -487,6 +491,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_additional_config" />
 
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_additional_config"
                         android:layout_width="fill_parent"
                         android:layout_height="0dip"
@@ -511,6 +516,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_policy_based_routing" />
 
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing"
                         android:layout_width="fill_parent"
                         android:layout_height="0dip"
@@ -535,6 +541,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_pkcs12_key" />
 
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key"
                         android:layout_width="fill_parent"
                         android:layout_height="0dip"
@@ -559,6 +566,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_static_key" />
 
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_static_key"
                         android:layout_width="fill_parent"
                         android:layout_height="0dip"

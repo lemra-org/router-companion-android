@@ -74,6 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Alternate IP Address or DNS name" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_local_ssid_lookup_ip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,6 +96,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="Alternate SSH Port" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/router_add_local_ssid_lookup_port"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

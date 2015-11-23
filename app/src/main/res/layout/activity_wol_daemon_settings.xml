@@ -120,6 +120,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="SecureOn Password" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wol_daemon_settings_secure_on_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -151,6 +152,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="MAC Addresses" />
 
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:id="@+id/wol_daemon_settings_mac_addresses"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
