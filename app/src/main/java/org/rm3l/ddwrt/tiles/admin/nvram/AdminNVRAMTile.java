@@ -149,31 +149,6 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.tile_admin_nvram_ListView);
 
-//        super.parentViewGroup.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                Log.v(LOG_TAG, "PARENT TOUCH");
-//                requestDisallowParentInterceptTouchEvent(mRecyclerView, false);
-//                return false;
-//            }
-//        });
-//
-//        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                Log.v(LOG_TAG,"CHILD TOUCH");
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    //  Disallow the touch request for parent scroll on touch of child view
-//                    requestDisallowParentInterceptTouchEvent(v, true);
-//                } else if (event.getAction() == MotionEvent.ACTION_UP ||
-//                        event.getAction() == MotionEvent.ACTION_CANCEL) {
-//                    // Re-allows parent events
-//                    requestDisallowParentInterceptTouchEvent(v, false);
-//                }
-//                return false;
-//            }
-//        });
-
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         // allows for optimizations if all items are of the same size:
