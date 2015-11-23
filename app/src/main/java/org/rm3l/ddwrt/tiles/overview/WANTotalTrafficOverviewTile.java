@@ -545,6 +545,9 @@ public class WANTotalTrafficOverviewTile extends DDWRTTile<NVRAMInfo> implements
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 gridLayoutContainer.setOnClickListener(null);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
             }
 
         }  finally {

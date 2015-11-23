@@ -796,13 +796,16 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
             }
 
-            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
         }
     }
 

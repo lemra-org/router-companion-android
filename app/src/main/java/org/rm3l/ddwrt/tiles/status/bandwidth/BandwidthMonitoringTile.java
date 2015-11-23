@@ -317,18 +317,20 @@ public class BandwidthMonitoringTile extends DDWRTTile<None> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
-            } else {
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
                 if (bandwidthMonitoringIfaceData.getData().isEmpty()) {
                     errorPlaceHolderView.setText("Error: No Data!");
                     errorPlaceHolderView.setVisibility(View.VISIBLE);
                 }
             }
 
-            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
         }
     }
 

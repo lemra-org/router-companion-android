@@ -323,13 +323,16 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
             }
 
-            doneWithLoaderInstance(this, loader);
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
         }
     }
 

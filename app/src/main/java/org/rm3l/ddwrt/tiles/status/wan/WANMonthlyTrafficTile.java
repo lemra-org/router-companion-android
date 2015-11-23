@@ -703,8 +703,9 @@ public class WANMonthlyTrafficTile
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 setVisibility(ctrlViews, View.GONE);
-
-            } else {
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
                 if (data == null || data.isEmpty()) {
                     errorPlaceHolderView.setText("Error: No Data!");
                     errorPlaceHolderView.setVisibility(View.VISIBLE);
@@ -712,11 +713,10 @@ public class WANMonthlyTrafficTile
                 }
             }
 
-            doneWithLoaderInstance(this, loader);
-
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
         }
 
     }

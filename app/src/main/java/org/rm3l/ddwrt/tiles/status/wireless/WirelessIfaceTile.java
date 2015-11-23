@@ -672,11 +672,12 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
 
 //        doneWithLoaderInstance(this, loader,
 //                R.id.tile_status_wireless_iface_togglebutton_title, R.id.tile_status_wireless_iface_togglebutton_separator);
-            doneWithLoaderInstance(this, loader);
+
 
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
         } finally {
             mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
         }
     }
 
@@ -723,6 +724,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                 }
             });
             errorPlaceHolderView.setVisibility(View.VISIBLE);
+            updateProgressBarWithError();
+        } else if (exception == null){
+            updateProgressBarWithSuccess();
         }
     }
 

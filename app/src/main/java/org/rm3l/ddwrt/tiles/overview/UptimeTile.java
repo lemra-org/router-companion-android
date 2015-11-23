@@ -337,14 +337,10 @@ public class UptimeTile extends DDWRTTile<NVRAMInfo> {
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
-                //Hide NTM
-//                mapContainerView.setVisibility(View.GONE);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
             }
-//            else {
-//                mapContainerView.setVisibility(View.VISIBLE);
-//            }
-
-//            mapContainerView.setOnClickListener(routerStateClickListener);
 
         }  finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");

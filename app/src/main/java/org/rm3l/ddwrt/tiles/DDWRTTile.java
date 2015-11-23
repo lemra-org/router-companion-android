@@ -34,6 +34,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -266,7 +267,6 @@ public abstract class DDWRTTile<T>
                             " - delay: %dms",
                     loader, schedNextRun, this.mLoaderStopped, nextRunMillis));
         } finally {
-            updateProgressBarViewSeparator(100);
             final DDWRTTileRefreshListener refreshListener = this.mRefreshListener.get();
             if (refreshListener != null) {
                 refreshListener.onTileRefreshed(this);
@@ -441,9 +441,82 @@ public abstract class DDWRTTile<T>
                         if (progressBarViewSeparator == null) {
                             return;
                         }
+                        mProgressBarViewSeparator.set(progressBarViewSeparator);
                     }
-                    progressBarViewSeparator.setProgress(Math.min(100, progressPercent));
-                    mProgressBarViewSeparator.set(progressBarViewSeparator);
+                    updateProgressBar(R.drawable.progressbar_drawable_info,
+                            Math.min(100, progressPercent));
+//                    progressBarViewSeparator.setProgressDrawable(
+//                            ContextCompat.getDrawable(mParentFragmentActivity,
+//                                    R.drawable.progressbar_drawable_info));
+//                    progressBarViewSeparator.setProgress(Math.min(100, progressPercent));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(mParentFragmentActivity, e);
+                }
+            }
+        });
+    }
+
+    public void updateProgressBarWithError() {
+        mParentFragmentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ProgressBar progressBarViewSeparator = mProgressBarViewSeparator.get();
+                    if (progressBarViewSeparator == null) {
+                        final Integer progressBarViewSeparatorId = getProgressBarViewSeparatorId();
+                        if (progressBarViewSeparatorId != null) {
+                            final View viewById = layout.findViewById(progressBarViewSeparatorId);
+                            if (viewById instanceof ProgressBar) {
+                                progressBarViewSeparator = (ProgressBar) viewById;
+                                progressBarViewSeparator.setMax(100);
+                            }
+                        }
+                        if (progressBarViewSeparator == null) {
+                            return;
+                        }
+                        mProgressBarViewSeparator.set(progressBarViewSeparator);
+                    }
+                    updateProgressBar(R.drawable.progressbar_drawable_error,
+                            progressBarViewSeparator.getProgress() + 1);
+
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(mParentFragmentActivity, e);
+                }
+            }
+        });
+    }
+
+    public void updateProgressBarWithSuccess() {
+        updateProgressBarViewSeparator(100);
+    }
+
+    private void updateProgressBar(final int drawableResId, final int progress) {
+        mParentFragmentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ProgressBar progressBarViewSeparator = mProgressBarViewSeparator.get();
+                    if (progressBarViewSeparator == null) {
+                        final Integer progressBarViewSeparatorId = getProgressBarViewSeparatorId();
+                        if (progressBarViewSeparatorId != null) {
+                            final View viewById = layout.findViewById(progressBarViewSeparatorId);
+                            if (viewById instanceof ProgressBar) {
+                                progressBarViewSeparator = (ProgressBar) viewById;
+                                progressBarViewSeparator.setMax(100);
+                            }
+                        }
+                        if (progressBarViewSeparator == null) {
+                            return;
+                        }
+                        mProgressBarViewSeparator.set(progressBarViewSeparator);
+                    }
+                    progressBarViewSeparator.setProgressDrawable(
+                            ContextCompat.getDrawable(mParentFragmentActivity,
+                                    drawableResId));
+                    progressBarViewSeparator.setProgress(progress);
+
                 } catch (final Exception e) {
                     e.printStackTrace();
                     Utils.reportException(mParentFragmentActivity, e);
