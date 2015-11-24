@@ -2393,6 +2393,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     }
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
             }
 
             final View tileMenu = layout.findViewById(R.id.tile_status_wireless_clients_menu);
@@ -2402,28 +2405,14 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 tileMenu.setVisibility(View.VISIBLE);
             }
 
-            mProgressBarDesc.setText(null);
-            mProgressBarDesc.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.GONE);
-
         } finally {
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
             mRefreshing.set(false);
+
+            mProgressBarDesc.setText(null);
+            mProgressBarDesc.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
             doneLoading(loader);
-//            try {
-////                if (mProgressBar.getVisibility() != View.GONE) {
-////                    mProgressBar.setVisibility(View.GONE);
-////                }
-////                if (mProgressBarDesc.getVisibility() != View.GONE) {
-////                    mProgressBarDesc.setVisibility(View.GONE);
-////                }
-//                //Destroy temporary SSH session
-////                if (mRouterCopy != null) {
-////                    SSHUtils.destroySessions(mRouterCopy);
-////                }
-//            } finally {
-//                doneLoading(loader);
-//            }
         }
     }
 
