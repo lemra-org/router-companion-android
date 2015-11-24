@@ -383,9 +383,11 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 .findViewById(R.id.tile_status_wireless_clients_loading_view_desc);
 
         if (isThemeLight) {
-            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.black));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(mParentFragmentActivity, R.color.black));
         } else {
-            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(mParentFragmentActivity, R.color.white));
         }
         mProgressBarDesc.setText("Loading...");
 
@@ -1540,7 +1542,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 clientsContainer.removeAllViews();
 
                 final Resources resources = mParentFragmentActivity.getResources();
-                clientsContainer.setBackgroundColor(resources.getColor(android.R.color.transparent));
+                clientsContainer.setBackgroundColor(
+                        ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
 
                 //Number of Active Clients
                 final int numActiveClients = data.getActiveClientsNum();
@@ -1694,10 +1697,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
 
                     if (isThemeLight) {
                         //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_light_background));
                     } else {
                         //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity, R.color.cardview_dark_background));
                     }
 
                     //Highlight CardView
@@ -1933,7 +1938,8 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                     final Device.WANAccessState wanAccessState = device.getWanAccessState();
                     final boolean isDeviceWanAccessEnabled = (wanAccessState == Device.WANAccessState.WAN_ACCESS_ENABLED);
                     if (isDeviceWanAccessEnabled) {
-                        deviceNameView.setTextColor(resources.getColor(R.color.ddwrt_green));
+                        deviceNameView.setTextColor(
+                                ContextCompat.getColor(mParentFragmentActivity, R.color.ddwrt_green));
                     }
                     final TextView deviceWanAccessStateView = (TextView) cardView.findViewById(R.id.tile_status_wireless_client_device_details_wan_access);
                     if (wanAccessState == null || isNullOrEmpty(wanAccessState.toString())) {
@@ -1956,7 +1962,9 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         if (isThemeLight) {
                             //Set text color to blue
                             ((TextView) thisDevice)
-                                    .setTextColor(resources.getColor(R.color.blue));
+                                    .setTextColor(
+                                            ContextCompat.getColor(mParentFragmentActivity,
+                                                    R.color.blue));
                         }
                         thisDevice.setVisibility(View.VISIBLE);
                     }

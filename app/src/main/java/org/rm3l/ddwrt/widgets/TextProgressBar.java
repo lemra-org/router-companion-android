@@ -66,7 +66,7 @@ public class TextProgressBar extends ProgressBar {
 
     private void setAttrs(AttributeSet attrs) {
         if (attrs != null) {
-            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.TextProgressBar, 0, 0);
+            final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.TextProgressBar, 0, 0);
             setText(a.getString(R.styleable.TextProgressBar_text));
             setTextColor(a.getColor(R.styleable.TextProgressBar_textColor, Color.WHITE));
             setTextSize(a.getDimension(R.styleable.TextProgressBar_textSize, 15));

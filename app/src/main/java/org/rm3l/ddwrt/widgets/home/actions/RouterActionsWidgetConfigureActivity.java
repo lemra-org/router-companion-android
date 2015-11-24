@@ -4,11 +4,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -153,9 +153,9 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
                 (AdView) findViewById(R.id.widget_configure_adView));
 
         if (themeLight) {
-            final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.actions_widget_configure_toolbar);
@@ -257,7 +257,8 @@ public class RouterActionsWidgetConfigureActivity extends AppCompatActivity impl
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) parent.getChildAt(0)).setTextColor(
-                        getResources().getColor(themeLight ? R.color.black : R.color.white));
+                        ContextCompat.getColor(RouterActionsWidgetConfigureActivity.this,
+                                themeLight ? R.color.black : R.color.white));
 
                 final int size = mRoutersListForPicker.size();
                 if (position < 0 || position > size) {

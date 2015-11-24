@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SwitchCompat;
@@ -249,7 +250,8 @@ public class WirelessIfacesTile extends IfacesTile {
             container.removeAllViews();
 
             final Resources resources = mParentFragmentActivity.getResources();
-            container.setBackgroundColor(resources.getColor(android.R.color.transparent));
+            container.setBackgroundColor(
+                    ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
 
             final boolean isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
@@ -342,10 +344,14 @@ public class WirelessIfacesTile extends IfacesTile {
 
                     if (isThemeLight) {
                         //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.cardview_light_background));
                     } else {
                         //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.cardview_dark_background));
                     }
                 }
                 if (tileViewGroupLayout != null) {

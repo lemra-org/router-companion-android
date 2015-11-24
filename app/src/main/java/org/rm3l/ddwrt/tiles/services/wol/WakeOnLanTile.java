@@ -17,6 +17,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -743,7 +744,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 clientsContainer.removeAllViews();
 
                 final Resources resources = mParentFragmentActivity.getResources();
-                clientsContainer.setBackgroundColor(resources.getColor(android.R.color.transparent));
+                clientsContainer.setBackgroundColor(
+                        ContextCompat.getColor(mParentFragmentActivity, android.R.color.transparent));
 
                 final CardView.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -806,10 +808,14 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
                     if (isThemeLight) {
                         //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.cardview_light_background));
                     } else {
                         //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.cardview_dark_background));
                     }
 
                     //Highlight CardView
@@ -847,7 +853,9 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         if (isThemeLight) {
                             //Set text color to blue
                             ((TextView) thisDevice)
-                                    .setTextColor(resources.getColor(R.color.blue));
+                                    .setTextColor(
+                                            ContextCompat.getColor(mParentFragmentActivity,
+                                                    R.color.blue));
                         }
                         thisDevice.setVisibility(View.VISIBLE);
                     }

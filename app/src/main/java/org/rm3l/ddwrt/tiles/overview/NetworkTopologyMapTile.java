@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -474,7 +475,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 }
 
                 publicIpView
-                        .setTextColor(resources.getColor(wanPathColor));
+                        .setTextColor(ContextCompat.getColor(mParentFragmentActivity, wanPathColor));
 
                 final int[] wanPathElements = new int[]{
                         R.id.tile_network_map_wan_path_vertical,
@@ -486,7 +487,8 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                     if (wanPathElementView == null) {
                         continue;
                     }
-                    wanPathElementView.setBackgroundColor(resources.getColor(wanPathColor));
+                    wanPathElementView.setBackgroundColor(
+                            ContextCompat.getColor(mParentFragmentActivity, wanPathColor));
                 }
 
                 //Update last sync

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 
 import com.google.android.gms.ads.AdView;
@@ -37,7 +38,8 @@ public class BannerAdTile extends DDWRTTile<Void> {
     @Override
     @Nullable
     public Integer getTileBackgroundColor() {
-        return mParentFragmentActivity.getResources().getColor(android.R.color.transparent);
+        return ContextCompat.getColor(
+                mParentFragmentActivity, android.R.color.transparent);
     }
 
     @Override

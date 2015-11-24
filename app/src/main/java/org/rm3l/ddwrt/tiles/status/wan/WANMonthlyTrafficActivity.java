@@ -32,6 +32,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -180,7 +181,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this,
+                                    android.R.color.white));
 
         }
 
@@ -396,7 +399,8 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             multiRenderer.setYTitle("Traffic");
             multiRenderer.setZoomButtonsVisible(false);
             multiRenderer.setLabelsColor(
-                    resources.getColor(themeLight ? R.color.black : R.color.theme_accent_1_light));
+                    ContextCompat.getColor(this,
+                            themeLight ? R.color.black : R.color.theme_accent_1_light));
 
             //Add custom labels for the values we have here
             //setting no of values to display in y axis
@@ -465,7 +469,9 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
             //Setting background color of the graph to transparent
             multiRenderer.setBackgroundColor(Color.TRANSPARENT);
             //Setting margin color of the graph to transparent
-            multiRenderer.setMarginsColor(resources.getColor(R.color.transparent_background));
+            multiRenderer.setMarginsColor(
+                    ContextCompat.getColor(this,
+                            R.color.transparent_background));
             multiRenderer.setApplyBackgroundColor(true);
 
             //setting the margin size for the graph in the order top, left, bottom, right

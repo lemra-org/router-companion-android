@@ -22,13 +22,13 @@
 package org.rm3l.ddwrt.tiles.status.wireless;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -116,9 +116,9 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         setContentView(R.layout.active_ip_connections_detail_pie_chart);
 
         if (themeLight) {
-            final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this, android.R.color.white));
 
         }
 
@@ -186,7 +186,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
                     new CategorySeries("Connections Count (by " + mByFilter.getDisplayName() + ")");
 
             int j = 1;
-            final List<Integer> colorsMap = new ArrayList<>();
+            final List<Integer> colorsList = new ArrayList<>();
             for (final Map.Entry<String, Integer> entry : mConnectionsCountMap.entrySet()) {
                 if (j > limit) {
                     break;
@@ -194,7 +194,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
                 final String ip = entry.getKey();
                 final String name = mLocalIpToHostname.get(ip);
-                colorsMap.add(ColorUtils.getColor(ip));
+                colorsList.add(ColorUtils.getColor(ip));
                 distributionSeries.add(
                         isNullOrEmpty(name) ? ip : (name + " (" + ip + ")"),
                         entry.getValue());
@@ -206,8 +206,8 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
             final DefaultRenderer defaultRenderer = new DefaultRenderer();
             for (int i = 0; i < limit; i++) {
                 final SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
-                if (i < colorsMap.size()) {
-                    seriesRenderer.setColor(colorsMap.get(i));
+                if (i < colorsList.size()) {
+                    seriesRenderer.setColor(colorsList.get(i));
                 }
 //                seriesRenderer.setDisplayChartValues(true);
                 defaultRenderer.addSeriesRenderer(seriesRenderer);
@@ -247,11 +247,10 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
             defaultRenderer.setInScroll(false);
             //setting text style
             defaultRenderer.setTextTypeface("sans_serif", Typeface.NORMAL);
-            final Resources resources = getResources();
 
-            defaultRenderer.setLabelsColor(themeLight ?
-                    resources.getColor(R.color.black) :
-                    resources.getColor(R.color.white));
+            defaultRenderer.setLabelsColor(
+                    ContextCompat.getColor(this,
+                            themeLight ? R.color.black : R.color.white));
 
             //Setting background color of the graph to transparent
             defaultRenderer.setBackgroundColor(Color.TRANSPARENT);

@@ -24,6 +24,7 @@ package org.rm3l.ddwrt.main;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,12 +90,13 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
         ViewHolder holder = null;
         View view = convertView;
 
+        final Context context = getContext();
         if (view == null) {
             int layout = R.layout.navigation_drawer_menu_row;
             if (item.isHeader)
                 layout = R.layout.navigation_drawer_menu_row_header;
 
-            view = LayoutInflater.from(getContext()).inflate(layout, null);
+            view = LayoutInflater.from(context).inflate(layout, null);
 
             TextView text1 = (TextView) view.findViewById(R.id.menurow_title);
             view.setTag(new ViewHolder(text1));
@@ -114,9 +116,11 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<NavigationDrawerM
 
         if (holder != null && holder.textHolder != null) {
             if (position == mSelectedItem) {
-                holder.textHolder.setTextColor(mResources.getColor(R.color.GreenYellow));
+                holder.textHolder.setTextColor(
+                        ContextCompat.getColor(context, R.color.GreenYellow));
             } else {
-                holder.textHolder.setTextColor(mResources.getColor(R.color.white));
+                holder.textHolder.setTextColor(
+                        ContextCompat.getColor(context, R.color.white));
             }
         }
 

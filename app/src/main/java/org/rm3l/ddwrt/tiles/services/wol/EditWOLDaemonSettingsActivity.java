@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -93,7 +94,8 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         mToolbar = (Toolbar) findViewById(R.id.wol_daemon_settings_toolbar);

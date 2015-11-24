@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -81,9 +82,11 @@ public class IfacesTile extends DDWRTTile<NVRAMInfo> {
                 .findViewById(R.id.tile_status_bandwidth_ifaces_loading_view_desc);
 
         if (isThemeLight) {
-            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.black));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(mParentFragmentActivity, R.color.black));
         } else {
-            mProgressBarDesc.setTextColor(mParentFragmentActivity.getResources().getColor(R.color.white));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(mParentFragmentActivity, R.color.white));
         }
         mProgressBarDesc.setText("Loading...");
     }

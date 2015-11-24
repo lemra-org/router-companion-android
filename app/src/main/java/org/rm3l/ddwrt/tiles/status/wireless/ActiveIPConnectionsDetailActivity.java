@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -298,9 +299,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         setContentView(R.layout.tile_status_active_ip_connections);
 
         if (themeLight) {
-            final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.tile_status_active_ip_connections_view_adView));
@@ -314,9 +315,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         mProgressBarDesc = (TextView) findViewById(R.id.tile_status_active_ip_connections_list_container_loading_desc);
         if (themeLight) {
-            mProgressBarDesc.setTextColor(getResources().getColor(R.color.black));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(this, R.color.black));
         } else {
-            mProgressBarDesc.setTextColor(getResources().getColor(R.color.white));
+            mProgressBarDesc.setTextColor(
+                    ContextCompat.getColor(this, R.color.white));
         }
         mProgressBarDesc.setText("Loading...\n\n");
 
@@ -537,10 +540,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                     if (isThemeLight) {
                         //Light
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
+                                        R.color.cardview_light_background));
                     } else {
                         //Default is Dark
-                        cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(ActiveIPConnectionsDetailActivity.this,
+                                        R.color.cardview_dark_background));
                     }
 
                     //Highlight CardView

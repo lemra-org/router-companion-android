@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -88,9 +89,13 @@ public class RouterMemInfoActivity extends AppCompatActivity {
         if (themeLight) {
             final Resources resources = getResources();
             getWindow().getDecorView()
-                    .setBackgroundColor(resources.getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this,
+                                    android.R.color.white));
             ((TextView) findViewById(R.id.tile_status_router_meminfo))
-                    .setTextColor(resources.getColor(R.color.black));
+                    .setTextColor(
+                            ContextCompat.getColor(this,
+                                    R.color.black));
         }
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_router_meminfo_view_toolbar);

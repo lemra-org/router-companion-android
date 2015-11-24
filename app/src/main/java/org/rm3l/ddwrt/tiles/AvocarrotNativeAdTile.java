@@ -59,12 +59,6 @@ public class AvocarrotNativeAdTile extends DDWRTTile<Void> {
         return R.id.tile_native_ad_headline;
     }
 
-//    @Override
-//    @Nullable
-//    public Integer getTileBackgroundColor() {
-//        return mParentFragmentActivity.getResources().getColor(android.R.color.transparent);
-//    }
-
     @Nullable
     @Override
     protected Loader<Void> getLoader(int id, Bundle args) {

@@ -39,6 +39,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -208,8 +209,8 @@ public class RouterManagementActivity
             mToolbar.setTitle("Routers");
             mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
             mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
-            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 

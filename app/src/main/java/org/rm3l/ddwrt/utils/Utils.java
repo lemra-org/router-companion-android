@@ -42,6 +42,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -441,14 +442,6 @@ public final class Utils {
     @Nullable
     public static View getLineView(@Nullable Context ctx) {
 
-        /*
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.0dip"
-            android:layout_marginBottom="8.0dip"
-            android:layout_marginTop="8.0dip"
-            android:background="#ffcccccc" />
-         */
         if (ctx == null) {
             return null;
         }
@@ -465,7 +458,8 @@ public final class Utils {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 (int) height
         ));
-        lineView.setBackgroundColor(resources.getColor(R.color.line_view_color));
+        lineView.setBackgroundColor(
+                ContextCompat.getColor(ctx, R.color.line_view_color));
         return lineView;
     }
 

@@ -48,6 +48,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -845,7 +846,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                 switch (routerFirmware) {
                     case OPENWRT:
                         //Change background color
-                        final int colorForOpenWrt = resources.getColor(R.color.win8_orange);
+                        final int colorForOpenWrt = ContextCompat
+                                .getColor(this, R.color.win8_orange);
                         mToolbar.setBackgroundColor(colorForOpenWrt);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             final Window window = getWindow();
@@ -873,8 +875,8 @@ public class DDWRTMainActivity extends AppCompatActivity
                     (effectiveRemoteAddr + ":" + effectivePort));
             mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
             mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
-            mToolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
 
         }

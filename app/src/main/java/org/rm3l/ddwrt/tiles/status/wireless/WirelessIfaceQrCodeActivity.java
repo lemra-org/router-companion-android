@@ -180,7 +180,8 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
 
         if (themeLight) {
             getWindow().getDecorView()
-                    .setBackgroundColor(getResources().getColor(android.R.color.white));
+                    .setBackgroundColor(
+                            ContextCompat.getColor(this, android.R.color.white));
         }
 
         mInterstitialAd = AdUtils.requestNewInterstitial(this,

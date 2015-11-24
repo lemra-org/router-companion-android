@@ -35,6 +35,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -147,7 +148,7 @@ public class PageSlidingTabStripFragment extends Fragment {
                 switch (routerFirmware) {
                     case OPENWRT:
                         //Change background color
-                        colorForOpenWrt = getResources().getColor(R.color.win8_orange);
+                        colorForOpenWrt = ContextCompat.getColor(getContext(), R.color.win8_orange);
                         mSlidingTabLayout.setBackgroundColor(colorForOpenWrt);
                         break;
                     default:
@@ -180,7 +181,8 @@ public class PageSlidingTabStripFragment extends Fragment {
             }
             mSlidingTabLayout.setSelectedIndicatorColors(selectedIndicatorColors);
         } else {
-            mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.tab_selected_strip));
+            mSlidingTabLayout.setSelectedIndicatorColors(
+                    ContextCompat.getColor(getContext(), R.color.tab_selected_strip));
         }
 
 //        mSlidingTabLayout.setDistributeEvenly(true);

@@ -39,6 +39,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -204,10 +205,12 @@ public class RouterListRecycleViewAdapter extends
         final CardView cardView = (CardView) v.findViewById(R.id.router_item_cardview);
         if (currentTheme == ColorUtils.LIGHT_THEME) {
             //Light
-            cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+            cardView.setCardBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_light_background));
         } else {
             //Default is Dark
-            cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+            cardView.setCardBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_dark_background));
         }
 
         return new ViewHolder(this.context, v);
