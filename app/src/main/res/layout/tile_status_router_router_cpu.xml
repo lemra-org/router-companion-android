@@ -113,8 +113,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:singleLine="true"
             android:text="Tap anywhere in this tile to show more info"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="italic"
-            android:visibility="gone" />
+            android:textStyle="italic"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
