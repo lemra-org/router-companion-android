@@ -493,7 +493,7 @@ public abstract class DDWRTTile<T>
                 if (viewById instanceof ProgressBar) {
                     progressBarViewSeparator = (ProgressBar) viewById;
                     progressBarViewSeparator.setMax(100);
-                    progressBarViewSeparator.setScaleY(0.25f);
+                    progressBarViewSeparator.setScaleY(0.10f);
                 }
             }
             if (progressBarViewSeparator == null) {
