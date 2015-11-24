@@ -3,6 +3,7 @@ package org.rm3l.ddwrt.fragments;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -65,12 +66,12 @@ public class AbstractBaseFragmentRecyclerViewAdapter
         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
         if (isThemeLight) {
             if (titleTextView != null) {
-                titleTextView.setTextColor(resources
-                        .getColor(android.R.color.holo_blue_dark));
+                titleTextView.setTextColor(ContextCompat.getColor(mContext,
+                        android.R.color.holo_blue_dark));
             }
         }
-        viewGroupLayout.setBackgroundColor(resources
-                .getColor(android.R.color.transparent));
+        viewGroupLayout.setBackgroundColor(ContextCompat
+                .getColor(mContext, android.R.color.transparent));
 
         holder.cardView.removeAllViews();
         holder.cardView.addView(viewGroupLayout);
@@ -90,10 +91,12 @@ public class AbstractBaseFragmentRecyclerViewAdapter
         } else {
             if (isThemeLight) {
                 //Light
-                holder.cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_light_background));
+                holder.cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(mContext, R.color.cardview_light_background));
             } else {
                 //Default is Dark
-                holder.cardView.setCardBackgroundColor(resources.getColor(R.color.cardview_dark_background));
+                holder.cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(mContext, R.color.cardview_dark_background));
             }
         }
     }

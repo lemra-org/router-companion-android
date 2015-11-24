@@ -32,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -866,7 +867,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 linearLayout.removeAllViews();
                 if (fragmentTiles != null) {
                     final boolean isThemeLight = ColorUtils.isThemeLight(activity);
-                    final Resources resources = activity.getResources();
 
                     for (final DDWRTTile ddwrtTile : fragmentTiles) {
                         if (ddwrtTile == null) {
@@ -880,12 +880,12 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
                         if (isThemeLight) {
                             if (titleTextView != null) {
-                                titleTextView.setTextColor(resources
-                                        .getColor(android.R.color.holo_blue_dark));
+                                titleTextView.setTextColor(ContextCompat.getColor(activity,
+                                        android.R.color.holo_blue_dark));
                             }
                         }
-                        viewGroupLayout.setBackgroundColor(resources
-                                .getColor(android.R.color.transparent));
+                        viewGroupLayout.setBackgroundColor(ContextCompat
+                                .getColor(activity, android.R.color.transparent));
 
                         linearLayout.addView(viewGroupLayout);
                     }
