@@ -3,9 +3,9 @@
     <item android:id="@android:id/background">
         <shape>
             <gradient
-                android:startColor="@color/gray"
-                android:centerColor="@color/gray"
-                android:endColor="@color/gray"/>
+                android:startColor="@color/LightGrey"
+                android:centerColor="@color/LightGrey"
+                android:endColor="@color/LightGrey"/>
         </shape>
     </item>
 
