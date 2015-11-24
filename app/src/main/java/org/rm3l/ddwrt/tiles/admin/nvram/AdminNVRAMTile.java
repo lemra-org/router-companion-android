@@ -26,6 +26,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -155,13 +157,24 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(mParentFragmentActivity);
+        mLayoutManager = new LinearLayoutManager(mParentFragmentActivity,
+                LinearLayoutManager.VERTICAL, false);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
         mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, router, mNvramInfoDefaultSorting);
         mRecyclerView.setAdapter(mAdapter);
+
+        final Display display = mParentFragmentActivity
+                .getWindowManager()
+                .getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Log.d(LOG_TAG, "<width,height> = <" + width + "," + height + ">");
+        mRecyclerView.setMinimumHeight(size.y);
 
         //Create Options Menu
         final ImageButton tileMenu = (ImageButton) layout.findViewById(R.id.tile_admin_nvram_menu);

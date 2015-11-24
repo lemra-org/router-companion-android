@@ -29,7 +29,7 @@ import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.admin.nvram.AdminNVRAMTile;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -45,7 +45,8 @@ public class AdminNVRAMFragment extends AbstractBaseFragment {
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
         if (tiles == null) {
-            tiles = Arrays.<DDWRTTile>asList(new AdminNVRAMTile(this, savedInstanceState, this.router));
+            tiles = Collections.<DDWRTTile>
+                    singletonList(new AdminNVRAMTile(this, savedInstanceState, this.router));
         }
         return tiles;
     }
