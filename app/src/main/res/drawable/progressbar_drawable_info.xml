@@ -14,7 +14,7 @@
         <clip>
             <shape>
                 <solid
-                    android:color="@color/primaryColor" />
+                    android:color="@color/win8_teal" />
             </shape>
         </clip>
     </item>
