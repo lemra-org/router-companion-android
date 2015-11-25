@@ -23,6 +23,8 @@ package org.rm3l.ddwrt.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
 
 public final class AndroidHelper {
 
@@ -36,5 +38,21 @@ public final class AndroidHelper {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    // A method to find height of the status bar
+    public static Integer getStatusBarHeight(@Nullable final Context ctx) {
+        if (ctx == null) {
+            return null;
+        }
+        int result = 0;
+
+        final Resources resources = ctx.getResources();
+        final int resourceId =
+                resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }
