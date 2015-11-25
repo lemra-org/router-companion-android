@@ -828,6 +828,10 @@ public class Router implements Serializable {
         }
     }
 
+    public static final int RouterConnectionProtocol_SSH = 22;
+    public static final int RouterConnectionProtocol_HTTP = 80;
+    public static final int RouterConnectionProtocol_HTTPS = 443;
+
     /**
      * RouterConnectionProtocol enum
      */
@@ -900,11 +904,20 @@ public class Router implements Serializable {
         }
     }
 
+    public static final int SSHAuthenticationMethod_NONE = 1;
+    public static final int SSHAuthenticationMethod_PASSWORD = 2;
+    public static final int SSHAuthenticationMethod_PUBLIC_PRIVATE_KEY = \"fake-key\";
+
     public enum SSHAuthenticationMethod {
         NONE,
         PASSWORD,
         PUBLIC_PRIVATE_KEY;
     }
+
+    public static final int RouterFirmware_DDWRT = 1;
+    public static final int RouterFirmware_OPENWRT = 2;
+    public static final int RouterFirmware_DEMO = 3;
+    public static final int RouterFirmware_UNKNOWN = 4;
 
     public enum RouterFirmware {
         DDWRT("DD-WRT"),

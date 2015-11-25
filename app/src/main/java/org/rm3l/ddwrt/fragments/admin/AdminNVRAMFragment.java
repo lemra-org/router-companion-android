@@ -53,8 +53,8 @@ public class AdminNVRAMFragment extends AbstractBaseFragment {
     }
 
     @NonNull
-    protected RootViewType getRootViewType() {
-        return RootViewType.LINEAR_LAYOUT;
+    protected int getRootViewType() {
+        return RootViewType_LINEAR_LAYOUT;
     }
 
     @Override

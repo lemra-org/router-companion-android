@@ -1173,6 +1173,11 @@ public class RouterManagementActivity
         doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, null);
     }
 
+    public static final int RoutersListRefreshCause_INSERTED = 1;
+    public static final int RoutersListRefreshCause_REMOVED = 2;
+    public static final int RoutersListRefreshCause_DATA_SET_CHANGED = 3;
+    public static final int RoutersListRefreshCause_UPDATED = 4;
+
     public enum RoutersListRefreshCause {
         INSERTED, REMOVED, DATA_SET_CHANGED, UPDATED
     }

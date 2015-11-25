@@ -41,7 +41,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
-import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction.BackupFileType;
 import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction;
 import org.rm3l.ddwrt.actions.RestoreWANMonthlyTrafficFromBackupAction.AgreementToRestoreWANTraffDataFromBackup;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -155,7 +154,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                     public void onClick(DialogInterface dialogInterface, int i) {
                         displayBackupDialog(String.format("'%s' (%s)",
                                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
-                                BackupFileType.RAW);
+                                BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -168,10 +167,10 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
     }
 
     public void displayBackupDialog(final String displayName,
-                                    @NonNull final BackupFileType backupFileType) {
+                                    int backupFileType) {
         final Bundle token = new Bundle();
         token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.BACKUP_WAN_TRAFF.name());
-        token.putSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
+        token.putInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
 
         new UndoBarController.UndoBar(getActivity())
                 .message(String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
@@ -474,8 +473,9 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case BACKUP_WAN_TRAFF:
-                        final BackupFileType fileType =
-                                (BackupFileType) token.getSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE);
+                        final int fileType =
+                                token.getInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE,
+                                        BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW);
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(mCtx,
                                         null, "Backing up WAN Traffic Data - please hold on...", false, false);

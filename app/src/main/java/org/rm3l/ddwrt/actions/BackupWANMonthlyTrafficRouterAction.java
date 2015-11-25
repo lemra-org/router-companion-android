@@ -41,10 +41,8 @@ import static org.rm3l.ddwrt.utils.WANTrafficUtils.MONTHLY_TRAFF_DATA_SPLITTER;
  */
 public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<String> {
 
-    public enum BackupFileType {
-        RAW,
-        CSV
-    }
+    public static final int BackupFileType_RAW = 1;
+    public static final int BackupFileType_CSV = 2;
 
     @NonNull
     private final Context mContext;
@@ -53,9 +51,9 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
 
     private Date mBackupDate = null;
 
-    private final BackupFileType mBackupFileType;
+    private final int mBackupFileType;
 
-    public BackupWANMonthlyTrafficRouterAction(@NonNull final BackupFileType backupFileType,
+    public BackupWANMonthlyTrafficRouterAction(@NonNull final int backupFileType,
                                                @NonNull Context context, @Nullable RouterActionListener listener,
                                                @NonNull final SharedPreferences globalSharedPreferences) {
         super(listener, RouterAction.BACKUP_WAN_TRAFF, globalSharedPreferences);
@@ -188,7 +186,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                             + "__.bak";
 
             switch (mBackupFileType) {
-                case CSV:
+                case BackupFileType_CSV:
                     escapedFileName += ".csv";
                     break;
                 default:
@@ -200,7 +198,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                     escapedFileName);
 
             switch (mBackupFileType) {
-                case CSV:
+                case BackupFileType_CSV:
                     Files.write("Year,Month,Day,Inbound,Inbound (Readable),Outbound,Outbound (Readable)\n", mLocalBackupFilePath,
                             CHARSET);
                     final ImmutableSet<Table.Cell<Long, Integer, Multimap<Integer, Long>>> cells = traffDataTable.cellSet();
@@ -233,7 +231,7 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                     }
                     break;
 
-                case RAW:
+                case BackupFileType_RAW:
                 default:
                     Files.write("TRAFF-DATA\n", mLocalBackupFilePath, CHARSET);
                     //noinspection ConstantConditions
@@ -245,7 +243,6 @@ public class BackupWANMonthlyTrafficRouterAction extends AbstractRouterAction<St
                             mLocalBackupFilePath, CHARSET);
                     break;
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();

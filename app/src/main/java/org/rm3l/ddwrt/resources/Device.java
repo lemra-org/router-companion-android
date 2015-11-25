@@ -343,6 +343,10 @@ public class Device implements Comparable<Device> {
         this.deviceNameForNotification = deviceNameForNotification;
     }
 
+    public static final int WANAccessState_WAN_ACCESS_UNKNOWN = 1;
+    public static final int WANAccessState_WAN_ACCESS_ENABLED = 2;
+    public static final int WANAccessState_WAN_ACCESS_DISABLED = 3;
+
     public enum WANAccessState {
         WAN_ACCESS_UNKNOWN("Unknown"),
 

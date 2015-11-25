@@ -77,6 +77,9 @@ public class TogglePhysicalInterfaceStateRouterAction extends AbstractRouterActi
         return new RouterActionResult<>(null, exception);
     }
 
+    public static final int PhysicalInterfaceState_UP = 1;
+    public static final int PhysicalInterfaceState_DOWN = 2;
+
     public enum PhysicalInterfaceState {
         UP,
         DOWN

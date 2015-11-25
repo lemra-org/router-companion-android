@@ -1172,6 +1172,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
         return output;
     }
 
+    public static final int IfaceStatsType_RX_BYTES = 1;
+    public static final int IfaceStatsType_TX_BYTES = 2;
+
     public enum IfaceStatsType {
         RX_BYTES("rx_bytes"),
         TX_BYTES("tx_bytes");
@@ -1186,6 +1189,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             return metric;
         }
     }
+
+    public static final int WirelessEncryptionTypeForQrCode_WPA = 1;
+    public static final int WirelessEncryptionTypeForQrCode_WEP = 2;
+    public static final int WirelessEncryptionTypeForQrCode_NONE = 3;
+
 
     public enum WirelessEncryptionTypeForQrCode {
         WPA("WPA"),
@@ -1203,6 +1211,9 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
             return encType;
         }
     }
+
+    public static final int TemperatureUnit_CELSIUS = 1;
+    public static final int TemperatureUnit_FAHRENHEIT = 2;
 
     public enum TemperatureUnit {
         CELSIUS("C"),

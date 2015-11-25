@@ -143,6 +143,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     @Nullable
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
+    public static final int RootViewType_RECYCLER_VIEW = 1;
+    public static final int RootViewType_LINEAR_LAYOUT = 2;
+
     private static final Map<RouterFirmware,
             ArrayListMultimap<Integer, FragmentTabDescription<? extends AbstractBaseFragment>>>
             allTabs = new HashMap<>();
@@ -817,13 +820,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     @NonNull
-    protected RootViewType getRootViewType() {
-        return RootViewType.RECYCLER_VIEW;
-    }
-
-    public enum RootViewType {
-        RECYCLER_VIEW,
-        LINEAR_LAYOUT
+    protected int getRootViewType() {
+        return RootViewType_RECYCLER_VIEW;
     }
 
     /**
@@ -855,13 +853,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         .inflate(R.layout.base_tiles_container_recyclerview,
                                 new RelativeLayout(activity));
 
-        final RootViewType rootViewType = getRootViewType();
+        final int rootViewType = getRootViewType();
         final RecyclerView recyclerView = (RecyclerView) rootView
                 .findViewById(R.id.tiles_container_recyclerview);
         final LinearLayout linearLayout = (LinearLayout) rootView
                 .findViewById(R.id.tiles_container_linearlayout);
         switch (rootViewType) {
-            case LINEAR_LAYOUT:
+            case RootViewType_LINEAR_LAYOUT:
                 mRootViewGroup = linearLayout;
                 recyclerView.setVisibility(View.GONE);
                 linearLayout.setVisibility(View.VISIBLE);
@@ -916,7 +914,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     }
                 }
                 break;
-            case RECYCLER_VIEW:
+            case RootViewType_RECYCLER_VIEW:
                 mRootViewGroup = recyclerView;
             default:
                 linearLayout.setVisibility(View.GONE);

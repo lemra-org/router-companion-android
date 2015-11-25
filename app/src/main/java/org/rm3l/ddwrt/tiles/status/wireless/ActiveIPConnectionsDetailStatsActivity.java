@@ -409,6 +409,9 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public static final int ByFilter_SOURCE = 1;
+    public static final int ByFilter_DESTINATION = 2;
+
     public enum ByFilter {
         SOURCE("source"),
         DESTINATION("destination");

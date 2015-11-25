@@ -70,7 +70,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
-import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction.BackupFileType;
 import org.rm3l.ddwrt.actions.EraseWANMonthlyTrafficRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -255,7 +254,8 @@ public class WANMonthlyTrafficTile
                         switch (itemId) {
                             case R.id.tile_wan_monthly_traffic_backup_raw:
                                 //Allowed for all
-                                displayBackupDialog(displayName, BackupFileType.RAW);
+                                displayBackupDialog(displayName,
+                                        BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW);
                                 return true;
                             case R.id.tile_wan_monthly_traffic_backup_csv:
                                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
@@ -264,7 +264,8 @@ public class WANMonthlyTrafficTile
                                             "Backup WAN Traffic Data as CSV");
                                     return true;
                                 }
-                                displayBackupDialog(displayName, BackupFileType.CSV);
+                                displayBackupDialog(displayName,
+                                        BackupWANMonthlyTrafficRouterAction.BackupFileType_CSV);
                                 return true;
                             case R.id.tile_wan_monthly_traffic_restore:
                                 if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
@@ -369,10 +370,10 @@ public class WANMonthlyTrafficTile
     }
 
     public void displayBackupDialog(final String displayName,
-                                    @NonNull final BackupFileType backupFileType) {
+                                    final int backupFileType) {
         final Bundle token = new Bundle();
         token.putString(WAN_MONTHLY_TRAFFIC_ACTION, RouterAction.BACKUP_WAN_TRAFF.name());
-        token.putSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
+        token.putInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE, backupFileType);
 
         new UndoBarController.UndoBar(mParentFragmentActivity)
                 .message(String.format("Backup of WAN Traffic Data (as %s) is going to start on %s...",
@@ -786,8 +787,9 @@ public class WANMonthlyTrafficTile
                     }
                         return;
                     case BACKUP_WAN_TRAFF:
-                        final BackupFileType fileType =
-                                (BackupFileType) token.getSerializable(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE);
+                        final int fileType =
+                                token.getInt(WAN_MONTHLY_TRAFFIC_BACKUP_FILETYPE,
+                                        BackupWANMonthlyTrafficRouterAction.BackupFileType_RAW);
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(mParentFragmentActivity,
                                         null, "Backing up WAN Traffic Data - please hold on...", false, false);

@@ -13,6 +13,9 @@ import org.rm3l.ddwrt.utils.SSHUtils;
  */
 public class DHCPClientRouterAction extends AbstractRouterAction<Void> {
 
+    public static final int DHCPClientAction_RELEASE = 1;
+    public static final int DHCPClientAction_RENEW = 2;
+
     public enum DHCPClientAction {
         RELEASE,
         RENEW
