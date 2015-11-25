@@ -27,7 +27,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
@@ -38,7 +37,6 @@ import com.squareup.picasso.Picasso;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteDAOImpl;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -136,31 +134,7 @@ public class DDWRTApplication extends Application {
         if (isFirstLaunch(this)) {
             final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
             //Report specific exception: this is to help me analyze whom this app is used by, and provide better device support!
-//            final FirstLaunch firstLaunchReport;
-//            if (StringUtils.startsWithIgnoreCase(FLAVOR, "google")) {
-//                if (GOOGLE_INSTALLER_PACKAGE_NAMES.contains(
-//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-//                    firstLaunchReport = new GoogleFirstLaunch();
-//                } else {
-//                    firstLaunchReport = new GoogleUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-//                }
-//            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "amazon")) {
-//                if (AMAZON_INSTALLER_PACKAGE_NAMES.contains(
-//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-//                    firstLaunchReport = new AmazonFirstLaunch();
-//                } else {
-//                    firstLaunchReport = new AmazonUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-//                }
-//            } else if (StringUtils.startsWithIgnoreCase(FLAVOR, "fdroid")) {
-//                if (FDROID_INSTALLER_PACKAGE_NAMES.contains(
-//                        nullToEmpty(appOriginInstallerPackageName).toLowerCase())) {
-//                    firstLaunchReport = new FDroidFirstLaunch();
-//                } else {
-//                    firstLaunchReport = new FDroidUnknownOriginFirstLaunch(appOriginInstallerPackageName);
-//                }
-//            } else {
-//                firstLaunchReport = new FirstLaunch(FLAVOR);
-//            }
+
             final Map<String, Object> eventMap = new HashMap<>();
             final String lastKnownVersionStr =
                     getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
@@ -190,45 +164,4 @@ public class DDWRTApplication extends Application {
 
     }
 
-    private class FirstLaunch extends DDWRTCompanionException {
-        private FirstLaunch(@Nullable String detailMessage) {
-            super("[Build Flavor: " + FLAVOR + "]: " + detailMessage);
-        }
-    }
-
-    private final class GoogleFirstLaunch extends FirstLaunch {
-        private GoogleFirstLaunch() {
-            super("google");
-        }
-    }
-
-    private final class GoogleUnknownOriginFirstLaunch extends FirstLaunch {
-        private GoogleUnknownOriginFirstLaunch(@Nullable final String installer) {
-            super("google: " + installer);
-        }
-    }
-
-    private final class AmazonFirstLaunch extends FirstLaunch {
-        private AmazonFirstLaunch() {
-            super("amazon");
-        }
-    }
-
-    private final class AmazonUnknownOriginFirstLaunch extends FirstLaunch {
-        private AmazonUnknownOriginFirstLaunch(@Nullable final String installer) {
-            super("amazon: " + installer);
-        }
-    }
-
-    private final class FDroidFirstLaunch extends FirstLaunch {
-        private FDroidFirstLaunch() {
-            super("fdroid");
-        }
-    }
-
-    private final class FDroidUnknownOriginFirstLaunch extends FirstLaunch {
-        private FDroidUnknownOriginFirstLaunch(@Nullable final String installer) {
-            super("fdroid: " + installer);
-        }
-    }
 }
