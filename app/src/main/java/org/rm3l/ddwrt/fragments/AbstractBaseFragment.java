@@ -36,6 +36,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -820,7 +821,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         return RootViewType.RECYCLER_VIEW;
     }
 
-    enum RootViewType {
+    public enum RootViewType {
         RECYCLER_VIEW,
         LINEAR_LAYOUT
     }
@@ -877,6 +878,28 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                             continue;
                         }
 
+                        final CardView cardView = new CardView(activity);
+
+                        cardView.setLayoutParams(new ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT)
+                        );
+
+                        //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
+                        cardView.setPreventCornerOverlap(true);
+                        //Add padding in API v21+ as well to have the same measurements with previous versions.
+                        cardView.setUseCompatPadding(true);
+
+                        //Highlight CardView
+//                cardView.setCardElevation(10f);
+
+                        cardView.setCardBackgroundColor(
+                                ContextCompat.getColor(activity,
+                                        isThemeLight ?
+                                                R.color.cardview_light_background :
+                                                R.color.cardview_dark_background));
+
+
                         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
                         if (isThemeLight) {
                             if (titleTextView != null) {
@@ -887,7 +910,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                         viewGroupLayout.setBackgroundColor(ContextCompat
                                 .getColor(activity, android.R.color.transparent));
 
-                        linearLayout.addView(viewGroupLayout);
+                        cardView.addView(viewGroupLayout);
+
+                        linearLayout.addView(cardView);
                     }
                 }
                 break;

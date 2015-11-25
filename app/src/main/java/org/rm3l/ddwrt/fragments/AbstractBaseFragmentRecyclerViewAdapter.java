@@ -1,7 +1,6 @@
 package org.rm3l.ddwrt.fragments;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -61,7 +60,6 @@ public class AbstractBaseFragmentRecyclerViewAdapter
             return;
         }
         final boolean isThemeLight = ColorUtils.isThemeLight(mContext);
-        final Resources resources = mContext.getResources();
 
         final TextView titleTextView = (TextView) viewGroupLayout.findViewById(ddwrtTile.getTileTitleViewId());
         if (isThemeLight) {

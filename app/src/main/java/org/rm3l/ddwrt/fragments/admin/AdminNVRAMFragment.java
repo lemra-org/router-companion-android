@@ -23,6 +23,7 @@
 package org.rm3l.ddwrt.fragments.admin;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
@@ -49,6 +50,11 @@ public class AdminNVRAMFragment extends AbstractBaseFragment {
                     singletonList(new AdminNVRAMTile(this, savedInstanceState, this.router));
         }
         return tiles;
+    }
+
+    @NonNull
+    protected RootViewType getRootViewType() {
+        return RootViewType.LINEAR_LAYOUT;
     }
 
     @Override
