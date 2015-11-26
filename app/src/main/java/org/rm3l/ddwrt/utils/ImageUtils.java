@@ -1,10 +1,12 @@
 package org.rm3l.ddwrt.utils;
 
+import android.app.Notification;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
@@ -17,6 +19,7 @@ import com.squareup.picasso.Transformation;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 
 import java.net.URLEncoder;
@@ -223,6 +226,35 @@ public final class ImageUtils {
         } catch (final Exception e) {
             e.printStackTrace();
             reportException(null, new DownloadImageException(e));
+        }
+    }
+
+    public static void updateNotificationIconWithRouterAvatar(@NonNull Context mCtx, @Nullable Router router, int notifyID, Notification notification) {
+        // Get RemoteView and id's needed
+        final RemoteViews contentView = notification.contentView;
+        final int iconId = android.R.id.icon;
+
+        try {
+            final Picasso picasso = Picasso.with(mCtx);
+            if (BuildConfig.DEBUG) {
+                //For development, this enables the display of a colored ribbon which indicates
+                // the image source.
+                picasso.setIndicatorsEnabled(true);
+            }
+            picasso.setLoggingEnabled(BuildConfig.DEBUG);
+            final RequestCreator requestCreator = picasso.load(
+                    Router.getRouterAvatarUrl(
+                            Router.getRouterModel(mCtx, router),
+                            DDWRTMainActivity.opts)
+            );
+            requestCreator
+                    .into(contentView,
+                            iconId,
+                            notifyID,
+                            notification);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Utils.reportException(mCtx, e);
         }
     }
 

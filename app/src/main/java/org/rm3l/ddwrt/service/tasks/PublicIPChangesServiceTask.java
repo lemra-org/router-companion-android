@@ -40,6 +40,7 @@ import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.WAN_IPADDR;
+import static org.rm3l.ddwrt.utils.ImageUtils.updateNotificationIconWithRouterAvatar;
 
 /**
  * Created by rm3l on 08/09/15.
@@ -260,7 +261,9 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
 
                         // Because the ID remains unchanged, the existing notification is
                         // updated.
-                        mNotificationManager.notify(notifyID, mBuilder.build());
+                        final Notification notification = mBuilder.build();
+                        mNotificationManager.notify(notifyID, notification);
+                        updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification);
 
                         editor.putBoolean(IS_FIRST_TIME_PREF_PREFIX + notifyID, false);
                     }

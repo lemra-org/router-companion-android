@@ -215,7 +215,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         navigationViewMenuItemsPositions.put(R.id.activity_main_nav_drawer_toolbox_network, 14);
     }
 
-    private static final String[] opts = new String[]
+    public static final String[] opts = new String[]
             {
                     "w_300",
                     "h_300",

@@ -66,6 +66,7 @@ import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.DEVICE_NA
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.IP_ADDRESS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAC_ADDRESS;
 import static org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile.MAP_KEYWORD;
+import static org.rm3l.ddwrt.utils.ImageUtils.updateNotificationIconWithRouterAvatar;
 
 /**
  * Created by rm3l on 05/07/15.
@@ -534,8 +535,13 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
                 // Because the ID remains unchanged, the existing notification is
                 // updated.
-                mNotificationManager.notify(notifyID, mBuilder.build());
+                final Notification notification = mBuilder.build();
+                mNotificationManager.notify(notifyID, notification);
+                updateNotificationIconWithRouterAvatar(mCtx, router, notifyID, notification);
+
+
             }
         }
     }
+
 }
