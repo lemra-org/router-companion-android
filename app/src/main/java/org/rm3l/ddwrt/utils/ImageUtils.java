@@ -202,11 +202,7 @@ public final class ImageUtils {
                 return;
             }
             final Picasso picasso = Picasso.with(context);
-            if (BuildConfig.DEBUG) {
-                //For development, this enables the display of a colored ribbon which indicates
-                // the image source.
-                picasso.setIndicatorsEnabled(true);
-            }
+            picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(url);
 
@@ -230,17 +226,14 @@ public final class ImageUtils {
     }
 
     public static void updateNotificationIconWithRouterAvatar(@NonNull Context mCtx, @Nullable Router router, int notifyID, Notification notification) {
-        // Get RemoteView and id's needed
-        final RemoteViews contentView = notification.contentView;
-        final int iconId = android.R.id.icon;
 
         try {
+            // Get RemoteView and id's needed
+            final RemoteViews contentView = notification.contentView;
+            final int iconId = android.R.id.icon;
+
             final Picasso picasso = Picasso.with(mCtx);
-            if (BuildConfig.DEBUG) {
-                //For development, this enables the display of a colored ribbon which indicates
-                // the image source.
-                picasso.setIndicatorsEnabled(true);
-            }
+            picasso.setIndicatorsEnabled(false);
             picasso.setLoggingEnabled(BuildConfig.DEBUG);
             final RequestCreator requestCreator = picasso.load(
                     Router.getRouterAvatarUrl(
