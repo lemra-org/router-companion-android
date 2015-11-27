@@ -978,19 +978,27 @@ public abstract class AbstractRouterMgmtDialogFragment
                 final Throwable rootCause = Throwables.getRootCause(e);
                 displayMessage(getString(R.string.router_add_connection_unsuccessful) +
                         ": " + (rootCause != null ? rootCause.getMessage() : e.getMessage()), Style.ALERT);
-                if (rootCause != null &&
-                        (rootCause instanceof IOException) &&
-                        StringUtils.containsIgnoreCase(rootCause.getMessage(), "End of IO Stream Read")) {
+                if (StringUtils.containsIgnoreCase(
+                        e.getMessage(),
+                        "End of IO Stream Read")
+                        ||
+                            (rootCause != null &&
+//                          (rootCause instanceof IOException) &&
+                            StringUtils.containsIgnoreCase(
+                                    rootCause.getMessage(),
+                                    "End of IO Stream Read"))) {
                     //Common issue with some routers
                     Utils.buildAlertDialog(getActivity(),
                             "SSH Error: End of IO Stream Read",
-                            "Some firmware builds (like DD-WRT r21061) reportedly have non-working SSH server versions (e.g., 'dropbear_2013.56'). \n" +
+                            "Some firmware builds (like DD-WRT r21061) reportedly have non-working SSH server versions " +
+                                    "(e.g., 'dropbear_2013.56'). \n" +
                                     "This might be the cause of this error. \n" +
-                                    "Make sure you can manually SSH into the router from a computer, using the same credentials you provided to the app. \n" +
-                                    "If the error persists, we recommend you upgrade or downgrade your router to a build " +
+                                    "Make sure you can manually SSH into the router from a computer, " +
+                                    "using the same credentials you provided to the app. \n" +
+                                    "If the error persists, we recommend you upgrade or downgrade " +
+                                    "your router to a build " +
                                     "with a working SSH server, then try again.\n\n" +
-                                    "Please reach out to us at apps@rm3l.org for assistance.\n" +
-                                    "Sorry for the inconvenience.",
+                                    "Please reach out to us at apps@rm3l.org for assistance.",
                             true, true).show();
                 }
                 ReportingUtils.reportException(
