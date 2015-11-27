@@ -53,8 +53,12 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
     public static final String LAST_WAN_IP = "lastWanIp";
     public static final String IS_FIRST_TIME_PREF_PREFIX = "isFirstTime_";
 
+    private final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
+
     public PublicIPChangesServiceTask(@NonNull Context ctx) {
         super(ctx);
+        this.routerModelUpdaterServiceTask =
+                new RouterModelUpdaterServiceTask(ctx);
     }
 
     @Override
@@ -90,7 +94,15 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
             wanIp = null;
         }
 
-        buildNotificationIfNeeded(mCtx, router, routerPreferences, wanPublicIpCmdStatus, wanIp, null);
+        try {
+            routerModelUpdaterServiceTask
+                    .runBackgroundServiceTask(router);
+        } catch (final Exception e) {
+            Utils.reportException(mCtx, e);
+            //No worries
+        } finally {
+            buildNotificationIfNeeded(mCtx, router, routerPreferences, wanPublicIpCmdStatus, wanIp, null);
+        }
 
     }
 

@@ -75,8 +75,12 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
 
     private static final String TAG = ConnectedHostsServiceTask.class.getSimpleName();
 
+    private final RouterModelUpdaterServiceTask routerModelUpdaterServiceTask;
+
     public ConnectedHostsServiceTask(@NonNull Context context) {
         super(context);
+        this.routerModelUpdaterServiceTask =
+                new RouterModelUpdaterServiceTask(context);
     }
 
     @Override
@@ -192,8 +196,16 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
             macToDevice.put(macAddr, dev);
         }
 
-        generateConnectedHostsNotification(mCtx, routerPreferences,
-                router, macToDevice.values());
+        try {
+            routerModelUpdaterServiceTask
+                    .runBackgroundServiceTask(router);
+        } catch (final Exception e) {
+            Utils.reportException(mCtx, e);
+            //No worries
+        } finally {
+            generateConnectedHostsNotification(mCtx, routerPreferences,
+                    router, macToDevice.values());
+        }
     }
 
     public static void generateConnectedHostsNotification(@NonNull Context mCtx,

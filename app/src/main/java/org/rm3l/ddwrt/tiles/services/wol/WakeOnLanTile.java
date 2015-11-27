@@ -388,8 +388,19 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                 wakeOnLanTile.updateProgressBarViewSeparator(70);
             }
 
-            ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
-                    mParentFragmentPreferences, mRouter, macToDevice.values());
+            if (wakeOnLanTile != null) {
+                try {
+                    wakeOnLanTile
+                            .routerModelUpdaterServiceTask
+                            .runBackgroundServiceTask(mRouter);
+                } catch (final Exception e) {
+                    Utils.reportException(mParentFragmentActivity, e);
+                    //No worries
+                } finally {
+                    ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
+                            mParentFragmentPreferences, mRouter, macToDevice.values());
+                }
+            }
 
             //Load user-defined hosts
             if (mParentFragmentPreferences != null) {

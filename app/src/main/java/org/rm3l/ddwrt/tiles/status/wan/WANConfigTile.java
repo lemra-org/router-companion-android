@@ -302,10 +302,18 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                         if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                    mRouter, mParentFragmentPreferences,
-                                                    wanPublicIpCmdStatus,
-                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+                                            try {
+                                                routerModelUpdaterServiceTask
+                                                        .runBackgroundServiceTask(mRouter);
+                                            } catch (final Exception e) {
+                                                Utils.reportException(mParentFragmentActivity, e);
+                                                //No worries
+                                            } finally {
+                                                PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                        mRouter, mParentFragmentPreferences,
+                                                        wanPublicIpCmdStatus,
+                                                        nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
+                                            }
 
                                         } else {
                                             nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);

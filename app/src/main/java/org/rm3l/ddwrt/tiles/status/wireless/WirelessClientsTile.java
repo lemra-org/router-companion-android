@@ -1445,8 +1445,16 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         }
                     });
 
-                    ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
-                            mParentFragmentPreferences, mRouter, deviceCollection);
+                    try {
+                        routerModelUpdaterServiceTask
+                                .runBackgroundServiceTask(mRouter);
+                    } catch (final Exception e) {
+                        Utils.reportException(mParentFragmentActivity, e);
+                        //No worries
+                    } finally {
+                        ConnectedHostsServiceTask.generateConnectedHostsNotification(mParentFragmentActivity,
+                                mParentFragmentPreferences, mRouter, deviceCollection);
+                    }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Discovered a total of " + devices.getDevicesCount() + " device(s)!");
 
