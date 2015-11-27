@@ -419,7 +419,7 @@ public class ConnectedHostsServiceTask extends AbstractBackgroundServiceTask {
                 final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                         mCtx)
                         .setSmallIcon(R.drawable.ic_connected_hosts_notification)
-//                        .setLargeIcon(largeIcon)
+                        .setLargeIcon(largeIcon)
                         .setAutoCancel(true)
                         .setGroup(WirelessClientsTile.class.getSimpleName())
                         .setGroupSummary(true)
