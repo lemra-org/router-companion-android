@@ -213,6 +213,8 @@ public class RouterListRecycleViewAdapter extends
                     .getColor(context, R.color.cardview_dark_background));
         }
 
+//        return new ViewHolder(this.context,
+//                RippleViewCreator.addRippleToView(v));
         return new ViewHolder(this.context, v);
     }
 
