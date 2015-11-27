@@ -627,6 +627,12 @@ public class Router implements Serializable {
                 session.connect(CONNECT_TIMEOUT_MILLIS);
             }
             return session;
+        } catch (final Exception e) {
+            /*
+             * Invalidate record right away so it can be retried again later
+             */
+            this.sessionsCache.invalidate(effectiveIpAndPortTuple);
+            throw e;
         } finally {
             lock.unlock();
         }
