@@ -39,6 +39,7 @@ public final class ReportingUtils {
     public static final String EVENT_FEEDBACK = "Feedback clicked";
     public static final String EVENT_RATING_INVITATON = "Rating bar";
     public static final String EVENT_IMAGE_DOWNLOAD = "Image download";
+    public static final String EVENT_ROUTER_OPENED = "Router opened";
 
     private ReportingUtils() {}
 

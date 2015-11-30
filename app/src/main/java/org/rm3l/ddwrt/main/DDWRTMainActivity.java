@@ -255,6 +255,12 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
+        //Report
+        final Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("Model", Utils.isDemoRouter(router) ? DDWRTCompanionConstants.DEMO :
+                Router.getRouterModel(this, router));
+        ReportingUtils.reportEvent(ReportingUtils.EVENT_ROUTER_OPENED, eventMap);
+
         this.mMessageReceiver = new NetworkChangeReceiver();
 
         this.mRouterUuid = router.getUuid();
