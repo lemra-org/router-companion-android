@@ -757,20 +757,20 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
         Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
-        if (savedInstanceState != null) {
-            final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
-            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
-            if (loaderIdsSaved != null) {
-                //Destroy existing IDs, if any, as new loaders will get created in onResume()
-                final LoaderManager loaderManager = getLoaderManager();
-                for (final Integer loaderId : loaderIdsSaved) {
-                    if (loaderId == null) {
-                        continue;
-                    }
-                    loaderManager.destroyLoader(loaderId);
-                }
-            }
-        }
+//        if (savedInstanceState != null) {
+//            final ArrayList<Integer> loaderIdsSaved = savedInstanceState.getIntegerArrayList(STATE_LOADER_IDS);
+//            Crashlytics.log(Log.DEBUG,  LOG_TAG, "onCreate() loaderIdsSaved: " + loaderIdsSaved);
+//            if (loaderIdsSaved != null) {
+//                //Destroy existing IDs, if any, as new loaders will get created in onResume()
+//                final LoaderManager loaderManager = getLoaderManager();
+//                for (final Integer loaderId : loaderIdsSaved) {
+//                    if (loaderId == null) {
+//                        continue;
+//                    }
+//                    loaderManager.destroyLoader(loaderId);
+//                }
+//            }
+//        }
 
         final List<DDWRTTile> tiles = this.getTiles(savedInstanceState);
         if (BuildConfig.WITH_ADS) {
@@ -1019,7 +1019,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         }
         mLoaderIdsInUse.clear();
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //save the loader ids on file
