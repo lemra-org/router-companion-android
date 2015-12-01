@@ -54,6 +54,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- "Normal Permission" -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- Protection level: normal -->
+    <!-- Required up to Android 4.2 / 4.3-->
+    <uses-permission
+        android:name="android.permission.VIBRATE"
+        android:maxSdkVersion="18"/>
+
     <!-- For Samsung SDK -->
     <uses-permission
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
