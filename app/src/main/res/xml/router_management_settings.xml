@@ -76,7 +76,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.background.service.enable"
@@ -112,7 +112,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:showSilent="true"
             android:defaultValue="content://settings/system/notification_sound"/>
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:defaultValue="true"
             android:key="notifications.vibrate"
             android:summaryOff="Disabled."
@@ -130,7 +130,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <!--android:summaryOn="On"-->
             <!--android:title="Debug Mode" />-->
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:defaultValue="true"
             android:key="acra.enable"
             android:summaryOff="@string/pref_acra_disabled"

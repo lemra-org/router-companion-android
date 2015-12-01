@@ -95,7 +95,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_notifications"
         android:title="Notifications">
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:disableDependentsState="false"
             android:defaultValue="true"
             android:key="notifications.enable"
@@ -103,7 +103,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:summaryOn="Enabled for this router."
             android:title="Receive Notifications" />
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:dependency="notifications.enable"
             android:defaultValue="true"
             android:key="notifications.connectedHosts.activeOnly"
@@ -118,7 +118,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:key="@string/pref_header_ntm"
         android:title="Network Map">
 
-        <SwitchPreference
+        <org.rm3l.ddwrt.widgets.MySwitchPreference
             android:defaultValue="true"
             android:key="ntm.check.internet.connectivity"
             android:summaryOff="Disabled for this router."
