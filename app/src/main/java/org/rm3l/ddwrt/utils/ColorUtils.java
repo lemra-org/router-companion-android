@@ -86,24 +86,6 @@ public final class ColorUtils {
                     return genColor(colorsToSkip);
                 }
             });
-//
-//    private static final LruCache<String, Integer> colorsCache = new LruCache<String, Integer>(30) {
-//        @Override
-//        protected Integer create(final String key) {
-//            final Map<String, Integer> currentItems = snapshot();
-//            final Set<Integer> colorsToSkip = new HashSet<>();
-//
-//            //We want our new color not to be similar to white or black
-//            colorsToSkip.add(Color.argb(255, 0, 0, 0));
-//            colorsToSkip.add(Color.argb(255, 255, 255, 255));
-//
-//            if (!currentItems.isEmpty()) {
-//                colorsToSkip.addAll(currentItems.values());
-//            }
-//
-//            return genColor(colorsToSkip);
-//        }
-//    };
 
     private ColorUtils() {
     }

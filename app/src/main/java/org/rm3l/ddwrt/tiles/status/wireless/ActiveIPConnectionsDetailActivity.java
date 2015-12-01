@@ -75,6 +75,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.IPConntrack;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
@@ -135,7 +136,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 @Override
                 public IPWhoisInfo load(@NonNull String ipAddr) throws Exception {
                     if (isNullOrEmpty(ipAddr)) {
-                        return null;
+                        throw new IllegalArgumentException("IP Addr is invalid");
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
@@ -156,8 +157,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                     final IPWhoisInfo ipWhoisInfo = gson.fromJson(reader, IPWhoisInfo.class);
                                     Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + ipWhoisInfo);
 
-                                    return ipWhoisInfo;
+                                    if (ipWhoisInfo == null) {
+                                        throw new DDWRTCompanionException();
+                                    }
 
+                                    return ipWhoisInfo;
 
                                 } finally {
                                     Closeables.closeQuietly(content);
@@ -178,7 +182,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    return null;
+                    throw new DDWRTCompanionException();
                 }
             });
 
@@ -482,7 +486,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                 if (isNullOrEmpty(destinationAddressOriginalSide)) {
                                     dstIpWhoisResolved = "-";
                                 } else {
-                                    final IPWhoisInfo ipWhoisInfo = mIPWhoisInfoCache.getUnchecked(destinationAddressOriginalSide);
+                                    IPWhoisInfo ipWhoisInfo = null;
+                                    try {
+                                        ipWhoisInfo = mIPWhoisInfoCache.get(destinationAddressOriginalSide);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        Utils.reportException(null, e);
+                                    }
                                     final String org;
                                     if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
                                         dstIpWhoisResolved = "-";

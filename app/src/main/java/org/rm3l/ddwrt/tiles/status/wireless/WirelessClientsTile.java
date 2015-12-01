@@ -113,6 +113,7 @@ import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
@@ -210,7 +211,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                 @Override
                 public MACOUIVendor load(@Nullable String macAddr) throws Exception {
                     if (isNullOrEmpty(macAddr)) {
-                        return null;
+                        throw new IllegalArgumentException();
                     }
                     //Get to MAC OUI Vendor Lookup API
                     try {
@@ -232,7 +233,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                     Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
                                     if (macouiVendors == null || macouiVendors.length == 0) {
                                         //Returning null so we can try again later
-                                        return null;
+                                        throw new DDWRTCompanionException();
                                     }
                                     return macouiVendors[0];
 
@@ -255,69 +256,10 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                         e.printStackTrace();
                     }
 
-                    return null;
+                    throw new DDWRTCompanionException();
                 }
             });
 
-//    public static final LruCache<String, MACOUIVendor> mMacOuiVendorLookupCache = new LruCache<String, MACOUIVendor>(MAX_CLIENTS_TO_SHOW_IN_TILE) {
-//
-//        @Override
-//        protected void entryRemoved(boolean evicted, String key, MACOUIVendor oldValue, MACOUIVendor newValue) {
-//            super.entryRemoved(evicted, key, oldValue, newValue);
-//            Crashlytics.log(Log.DEBUG, LOG_TAG, "entryRemoved(" + evicted + ", " + key + ")");
-//        }
-//
-//        @Override
-//        protected MACOUIVendor create(final String macAddr) {
-//            if (isNullOrEmpty(macAddr)) {
-//                return null;
-//            }
-//            //Get to MAC OUI Vendor Lookup API
-//            try {
-//                final String urlStr = String.format("%s/%s",
-//                        MACOUIVendor.MAC_VENDOR_LOOKUP_API_PREFIX, macAddr.toUpperCase());
-//                Crashlytics.log(Log.DEBUG, LOG_TAG, "--> GET " + urlStr);
-//                final URL url = new URL(urlStr);
-//                final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//                try {
-//                    final int statusCode = urlConnection.getResponseCode();
-//                    if (statusCode == 200) {
-//                        final InputStream content = new BufferedInputStream(urlConnection.getInputStream());
-//                        try {
-//                            //Read the server response and attempt to parse it as JSON
-//                            final Reader reader = new InputStreamReader(content);
-//                            final GsonBuilder gsonBuilder = new GsonBuilder();
-//                            final Gson gson = gsonBuilder.create();
-//                            final MACOUIVendor[] macouiVendors = gson.fromJson(reader, MACOUIVendor[].class);
-//                            Crashlytics.log(Log.DEBUG, LOG_TAG, "--> Result of GET " + urlStr + ": " + Arrays.toString(macouiVendors));
-//                            if (macouiVendors == null || macouiVendors.length == 0) {
-//                                //Returning null so we can try again later
-//                                return null;
-//                            }
-//                            return macouiVendors[0];
-//
-//                        } finally {
-//                            Closeables.closeQuietly(content);
-//                        }
-//                    } else {
-//                        Crashlytics.log(Log.ERROR, LOG_TAG, "<--- Server responded with status code: " + statusCode);
-//                        if (statusCode == 204) {
-//                            //No Content found on the remote server - no need to retry later
-//                            return new MACOUIVendor();
-//                        }
-//                    }
-//
-//                } finally {
-//                    urlConnection.disconnect();
-//                }
-//
-//            } catch (final Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            return null;
-//        }
-//    };
     private static final String PER_IP_MONITORING_IP_TABLES_CHAIN = "DDWRTCompanion";
     public static final String USAGE_DB = "/tmp/." + PER_IP_MONITORING_IP_TABLES_CHAIN + "_usage.db";
     public static final String USAGE_DB_OUT = USAGE_DB + ".out";
@@ -1140,7 +1082,12 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
                                                 ")...");
                                     }
                                 });
-                                device.setMacouiVendorDetails(mMacOuiVendorLookupCache.getUnchecked(macAddress));
+                                try {
+                                    device.setMacouiVendorDetails(mMacOuiVendorLookupCache.get(macAddress));
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    Utils.reportException(mParentFragmentActivity, e);
+                                }
 
                                 macToDeviceOutput.put(macAddress, device);
                             }

@@ -359,7 +359,12 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                         }
                     }
 
-                    device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.getUnchecked(macAddress));
+                    try {
+                        device.setMacouiVendorDetails(WirelessClientsTile.mMacOuiVendorLookupCache.get(macAddress));
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        Utils.reportException(mParentFragmentActivity, e);
+                    }
 
                     macToDeviceOutput.put(macAddress, device);
                 }
@@ -438,8 +443,13 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
 
                         deviceFromJson.setIsEditableForWol(true);
 
-                        deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
-                                .mMacOuiVendorLookupCache.getUnchecked(macAddress.toString()));
+                        try {
+                            deviceFromJson.setMacouiVendorDetails(WirelessClientsTile
+                                    .mMacOuiVendorLookupCache.get(macAddress.toString()));
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            Utils.reportException(mParentFragmentActivity, e);
+                        }
 
                         mDevices.add(deviceFromJson);
                         mCurrentDevicesList.add(deviceFromJson);
@@ -484,8 +494,13 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     for (final String mAddress : macAddresses) {
                         final Device dev = new Device(mAddress);
                         dev.setWolPort(wolPort);
-                        dev.setMacouiVendorDetails(WirelessClientsTile
-                                .mMacOuiVendorLookupCache.getUnchecked(mAddress));
+                        try {
+                            dev.setMacouiVendorDetails(WirelessClientsTile
+                                    .mMacOuiVendorLookupCache.get(mAddress));
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            Utils.reportException(mParentFragmentActivity, e);
+                        }
                         mDevices.add(dev);
                         mCurrentDevicesList.add(dev);
                     }
@@ -503,8 +518,13 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                     if (strings.size() >= 2) {
                         dev.setAlias(strings.get(1));
                     }
-                    dev.setMacouiVendorDetails(WirelessClientsTile
-                            .mMacOuiVendorLookupCache.getUnchecked(dev.getMacAddress()));
+                    try {
+                        dev.setMacouiVendorDetails(WirelessClientsTile
+                                .mMacOuiVendorLookupCache.get(dev.getMacAddress()));
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                        Utils.reportException(mParentFragmentActivity, e);
+                    }
 
                     mDevices.add(dev);
                     mCurrentDevicesList.add(dev);

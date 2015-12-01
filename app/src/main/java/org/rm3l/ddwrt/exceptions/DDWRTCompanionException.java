@@ -29,7 +29,7 @@ import android.support.annotation.Nullable;
  *
  * @author <a href="mailto:apps+ddwrt@rm3l.org">Armel S.</a>
  */
-public abstract class DDWRTCompanionException extends RuntimeException {
+public class DDWRTCompanionException extends RuntimeException {
 
     public DDWRTCompanionException() {
         super();
