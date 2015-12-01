@@ -819,7 +819,7 @@ public class Router implements Serializable {
                 .getString(NVRAMInfo.MODEL, null);
     }
 
-    public static String getRouterAvatarUrl(@NonNull final String routerModel,
+    public static String getRouterAvatarUrl(@Nullable final String routerModel,
                                             @Nullable final String[] opts) throws UnsupportedEncodingException {
         return String.format("%s/%s/%s.jpg", DDWRTCompanionConstants.IMAGE_CDN_URL_PREFIX,
                 Joiner

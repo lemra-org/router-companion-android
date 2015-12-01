@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.utils;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -225,7 +226,10 @@ public final class ImageUtils {
         }
     }
 
-    public static void updateNotificationIconWithRouterAvatar(@NonNull Context mCtx, @Nullable Router router, int notifyID, Notification notification) {
+    public static void updateNotificationIconWithRouterAvatar(@NonNull Context mCtx,
+                                                              @Nullable Router router,
+                                                              final int notifyID,
+                                                              final Notification notification) {
 
         try {
             // Get RemoteView and id's needed
@@ -240,11 +244,22 @@ public final class ImageUtils {
                             Router.getRouterModel(mCtx, router),
                             DDWRTMainActivity.opts)
             );
-            requestCreator
-                    .into(contentView,
-                            iconId,
-                            notifyID,
-                            notification);
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    requestCreator
+                            .into(contentView,
+                                    iconId,
+                                    notifyID,
+                                    notification);
+                }
+            };
+            if (mCtx instanceof Activity) {
+                ((Activity) mCtx)
+                        .runOnUiThread(runnable);
+            } else {
+                runnable.run();
+            }
         } catch (final Exception e) {
             e.printStackTrace();
             Utils.reportException(mCtx, e);
