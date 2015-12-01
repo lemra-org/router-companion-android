@@ -62,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
@@ -141,11 +142,54 @@ public class Router implements Serializable {
     @Nullable
     private RouterFirmware routerFirmware;
 
-    private final LoadingCache<Pair<String, Integer>, Session> sessionsCache;
+    private final LoadingCache<RouterForSessionCache, Session> sessionsCache;
 
     private final Striped<Lock> sessionsStripes;
 
     private final Context context;
+
+    public static class RouterForSessionCache {
+        @NonNull
+        private final Router router;
+        private final String ipAddr;
+        private final Integer port;
+        private final String login;
+
+        public RouterForSessionCache(@NonNull final Router router) {
+            this.router = router;
+            final Pair<String, Integer> effectiveIpAndPortTuple =
+                    router.getEffectiveIpAndPortTuple();
+            this.ipAddr = effectiveIpAndPortTuple.first;
+            this.port = effectiveIpAndPortTuple.second;
+            this.login = router.getUsernamePlain();
+        }
+
+        @NonNull
+        public Router getRouter() {
+            return router;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            final RouterForSessionCache that = (RouterForSessionCache) o;
+
+            if (ipAddr != null ? !ipAddr.equals(that.ipAddr) : that.ipAddr != null) return false;
+            if (port != null ? !port.equals(that.port) : that.port != null) return false;
+            return !(login != null ? !login.equals(that.login) : that.login != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = ipAddr != null ? ipAddr.hashCode() : 0;
+            result = 31 * result + (port != null ? port.hashCode() : 0);
+            result = 31 * result + (login != null ? login.hashCode() : 0);
+            return result;
+        }
+    }
 
     /**
      * Default constructor
@@ -180,15 +224,15 @@ public class Router implements Serializable {
         //Init sessions cache
         this.sessionsCache = CacheBuilder.newBuilder()
                 .maximumSize(MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER)
-                .expireAfterAccess(5l, TimeUnit.MINUTES)
-                .removalListener(new RemovalListener<Pair<String, Integer>, Session>() {
+                .expireAfterAccess(30, TimeUnit.MINUTES)
+                .removalListener(new RemovalListener<RouterForSessionCache, Session>() {
                     @Override
-                    public void onRemoval(@NonNull RemovalNotification<Pair<String, Integer>, Session> notification) {
+                    public void onRemoval(@NonNull RemovalNotification<RouterForSessionCache, Session> notification) {
                         final RemovalCause removalCause = notification.getCause();
-                        final Pair<String, Integer> pair = notification.getKey();
-                        if (pair != null) {
+                        final RouterForSessionCache routerForSessionCache = notification.getKey();
+                        if (routerForSessionCache != null) {
                             Crashlytics.log(Log.INFO, TAG,
-                                    "Removal Notification for <" + pair.first + "," + pair.second +
+                                    "Removal Notification for <" + routerForSessionCache.router +
                                             ">. Cause : " + removalCause);
                         }
 
@@ -201,43 +245,46 @@ public class Router implements Serializable {
                         }
                     }
                 })
-                .build(new CacheLoader<Pair<String, Integer>, Session>() {
+                .build(new CacheLoader<RouterForSessionCache, Session>() {
                     @Override
-                    public Session load(@NonNull Pair<String, Integer> key) throws Exception {
+                    public Session load(@NonNull RouterForSessionCache key) throws Exception {
 
-                        final String ip = key.first;
-                        Integer port = key.second;
+                        final String ip = key.ipAddr;
+                        Integer port = key.port;
                         if (port == null || port <= 0 || Strings.isNullOrEmpty(ip)) {
-                            return null;
+                            throw new IllegalArgumentException("port is NULL");
                         }
+
+                        final String login = key.login;
 
                         final String privKey = \"fake-key\";
                         final JSch jsch = new JSch();
 
-                        final String passwordPlain = getPasswordPlain();
+                        final String passwordPlain = key.router.getPasswordPlain();
 
-                        final Router.SSHAuthenticationMethod sshAuthenticationMethod = getSshAuthenticationMethod();
+                        final Router.SSHAuthenticationMethod sshAuthenticationMethod =
+                                key.router.getSshAuthenticationMethod();
 
                         final Session sshSession;
                         switch (sshAuthenticationMethod) {
                             case PUBLIC_PRIVATE_KEY:
                                 //noinspection ConstantConditions
-                                jsch.addIdentity(uuid + "_" + privKey + "_" + port,
+                                jsch.addIdentity(key.router.getUuid() + "_" + login + "_" + port + "_" + ip,
                                         !isNullOrEmpty(privKey) ? privKey.getBytes() : null,
                                         null,
                                         !isNullOrEmpty(passwordPlain) ? passwordPlain.getBytes() : null);
-                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                sshSession = jsch.getSession(login, ip, port);
                                 break;
                             case PASSWORD:
-                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                sshSession = jsch.getSession(login, ip, port);
                                 sshSession.setPassword(passwordPlain);
                                 break;
                             default:
-                                sshSession = jsch.getSession(getUsernamePlain(), ip, port);
+                                sshSession = jsch.getSession(login, ip, port);
                                 break;
                         }
 
-                        final boolean strictHostKeyChecking = isStrictHostKeyChecking();
+                        final boolean strictHostKeyChecking = key.router.isStrictHostKeyChecking();
                         //Set known hosts file to preferences file
                         //        jsch.setKnownHosts();
 
@@ -584,45 +631,24 @@ public class Router implements Serializable {
 
     @NonNull
     private Pair<String, Integer> getEffectiveIpAndPortTuple() {
-        final boolean usePrimaryAddrSolely = (context != null && !
-                context.getSharedPreferences(getUuid(), Context.MODE_PRIVATE)
-                        .getBoolean(Router.USE_LOCAL_SSID_LOOKUP, false));
-
-        String remoteIpAddress = getRemoteIpAddress();
-        int remotePort = getRemotePort();
-
-        if (context != null && !usePrimaryAddrSolely) {
-            final String currentNetworkSSID = Utils.getWifiName(context);
-            //Detect network and use the corresponding IP Address if required
-            final Collection<Router.LocalSSIDLookup> localSSIDLookupData = getLocalSSIDLookupData(context);
-            if (!localSSIDLookupData.isEmpty()) {
-                for (final Router.LocalSSIDLookup localSSIDLookup : localSSIDLookupData) {
-                    if (localSSIDLookup == null) {
-                        continue;
-                    }
-                    final String networkSsid = localSSIDLookup.getNetworkSsid();
-                    if (networkSsid == null || networkSsid.isEmpty()) {
-                        continue;
-                    }
-                    if (networkSsid.equals(currentNetworkSSID) ||
-                            ("\"" + networkSsid + "\"").equals(currentNetworkSSID)) {
-                        remoteIpAddress = localSSIDLookup.getReachableAddr();
-                        remotePort = localSSIDLookup.getPort();
-                        break;
-                    }
-                }
-            }
+        final LocalSSIDLookup ssidLookup = getEffectiveLocalSSIDLookup(this, context);
+        String ip = remoteIpAddress;
+        Integer port = remotePort;
+        if (ssidLookup != null) {
+            ip = ssidLookup.getReachableAddr();
+            port = ssidLookup.getPort();
         }
-        return Pair.create(remoteIpAddress, remotePort);
+        return Pair.create(ip, port);
     }
 
     @Nullable
     public Session getSSHSession() throws Exception {
-        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
-        final Lock lock = this.sessionsStripes.get(effectiveIpAndPortTuple);
+        final RouterForSessionCache routerForSessionCache = new RouterForSessionCache(this);
+//        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
+        final Lock lock = this.sessionsStripes.get(routerForSessionCache);
         try {
             lock.lock();
-            final Session session = this.sessionsCache.get(effectiveIpAndPortTuple);
+            final Session session = this.sessionsCache.get(routerForSessionCache);
             if (session != null && !session.isConnected()) {
                 session.connect(CONNECT_TIMEOUT_MILLIS);
             }
@@ -631,7 +657,7 @@ public class Router implements Serializable {
             /*
              * Invalidate record right away so it can be retried again later
              */
-            this.sessionsCache.invalidate(effectiveIpAndPortTuple);
+            this.sessionsCache.invalidate(routerForSessionCache);
             throw e;
         } finally {
             lock.unlock();
@@ -639,11 +665,12 @@ public class Router implements Serializable {
     }
 
     public void destroyActiveSession() {
-        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
-        final Lock lock = this.sessionsStripes.get(effectiveIpAndPortTuple);
+        final RouterForSessionCache routerForSessionCache = new RouterForSessionCache(this);
+//        final Pair<String, Integer> effectiveIpAndPortTuple = getEffectiveIpAndPortTuple();
+        final Lock lock = this.sessionsStripes.get(routerForSessionCache);
         try {
             lock.lock();
-            this.sessionsCache.invalidate(effectiveIpAndPortTuple);
+            this.sessionsCache.invalidate(routerForSessionCache);
         } finally {
             lock.unlock();
         }
@@ -799,7 +826,7 @@ public class Router implements Serializable {
                         .on(",")
                         .skipNulls().join(opts != null ?
                         opts : DDWRTCompanionConstants.CLOUDINARY_OPTS),
-                URLEncoder.encode(routerModel.toLowerCase().replaceAll("\\s+", ""),
+                URLEncoder.encode(nullToEmpty(routerModel).toLowerCase().replaceAll("\\s+", ""),
                         Charsets.UTF_8.name()));
     }
 
