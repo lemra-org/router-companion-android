@@ -80,6 +80,9 @@ public final class DDWRTCompanionConstants {
     public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String THEMING_PREF = "theming";
+
+    public static final String STORAGE_LOCATION_PREF = "storage.location";
+
     public static final String DATA_USAGE_NETWORK_PREF = "data_usage_network";
     public static final String DATA_SYNC_BACKUP_PREF = "data.sync.backup";
     public static final String EMPTY_STRING = "";

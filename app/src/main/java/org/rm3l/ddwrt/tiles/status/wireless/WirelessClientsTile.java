@@ -112,6 +112,7 @@ import org.rm3l.ddwrt.actions.EnableWANAccessRouterAction;
 import org.rm3l.ddwrt.actions.ResetBandwidthMonitoringCountersRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.RouterActions;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
@@ -170,14 +171,15 @@ import static org.rm3l.ddwrt.main.DDWRTMainActivity.ROUTER_ACTION;
 import static org.rm3l.ddwrt.tiles.status.bandwidth.BandwidthMonitoringTile.BandwidthMonitoringIfaceData;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DDWRTCOMPANION_WANACCESS_IPTABLES_CHAIN;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.STORAGE_LOCATION_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_NAME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WRTBWMON_DDWRTCOMPANION_SCRIPT_FILE_PATH_REMOTE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFile;
 
-/**
- *
- */
-public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements PopupMenu.OnMenuItemClickListener {
+public class WirelessClientsTile
+        extends DDWRTTile<ClientDevices>
+        implements PopupMenu.OnMenuItemClickListener ,
+        UndoBarController.AdvancedUndoListener {
 
     public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
     public static final String WIRELESS_DEVICES_ONLY = "wirelessDevicesOnly";
@@ -271,6 +273,7 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public static final String IP_ADDRESS = "ipAddress";
     public static final String DEVICE_NAME_FOR_NOTIFICATION = "deviceNameForNotification";
     public static final Ordering<String> CASE_INSENSITIVE_STRING_ORDERING = Ordering.from(String.CASE_INSENSITIVE_ORDER);
+    public static final String WIRELESS_CLIENTS_TILE_ACTION = "WirelessClientsTileAction";
 
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
@@ -2434,7 +2437,47 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
     public boolean onMenuItemClick(MenuItem item) {
         final LinearLayout clientsContainer = (LinearLayout) this.layout.findViewById(R.id.tile_status_wireless_clients_layout_list_container);
         final int itemId = item.getItemId();
+        final String displayName = mRouter.getDisplayName();
         switch (itemId) {
+            case R.id.tile_status_wireless_clients_aliases_export: {
+                new AlertDialog.Builder(mParentFragmentActivity)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle(String.format("Backup aliases for '%s' (%s)",
+                                displayName, mRouter.getRemoteIpAddress()))
+                        .setMessage(String.format(
+                                        "Click the \"Export\" button to export the " +
+                                                "aliases you defined for " +
+                                        "'%s' (%s).\n\n" +
+                                        "You will be able to share the file once the operation is done.",
+                                displayName, mRouter.getRemoteIpAddress()))
+                        .setCancelable(true)
+                        .setPositiveButton("Export!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                final Bundle token = new Bundle();
+                                token.putInt(WIRELESS_CLIENTS_TILE_ACTION, RouterActions.EXPORT_ALIASES);
+
+                                new UndoBarController.UndoBar(mParentFragmentActivity)
+                                        .message(String.format("Going to start exporting aliases for '%s' (%s)...",
+                                                displayName, mRouter.getRemoteIpAddress()))
+                                        .listener(WirelessClientsTile.this)
+                                        .token(token)
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+                return true;
+            }
+            case R.id.tile_status_wireless_clients_aliases_import: {
+                //FIXME
+                Toast.makeText(mParentFragmentActivity, "Import aliases - TODO", Toast.LENGTH_SHORT).show();
+                return true;
+            }
             case R.id.tile_status_wireless_clients_realtime_graphs: {
                 final boolean rtGraphsEnabled = !item.isChecked();
                 if (rtGraphsEnabled) {
@@ -2653,6 +2696,72 @@ public class WirelessClientsTile extends DDWRTTile<ClientDevices> implements Pop
         return false;
     }
 
+    @Override
+    public void onHide(@Nullable Parcelable parcelable) {
+        if (parcelable instanceof Bundle) {
+            final Bundle token = (Bundle) parcelable;
+            final int action = token.getInt(WIRELESS_CLIENTS_TILE_ACTION);
+
+            switch (action) {
+                case RouterActions.EXPORT_ALIASES:
+                    //Load all aliases from preferences
+                    if (mParentFragmentPreferences == null) {
+                        break;
+                    }
+                    final Map<String, ?> allRouterPrefs = mParentFragmentPreferences.getAll();
+                    if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
+                        return;
+                    }
+
+                    final Map<String, String> aliases = new HashMap<>();
+                    for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
+                        final String key = entry.getKey();
+                        final Object value = entry.getValue();
+                        if (isNullOrEmpty(key) || value == null) {
+                            continue;
+                        }
+                        //Check whether key is a MAC-Address
+                        if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                            continue;
+                        }
+                        //This is a MAC Address - collect it right away!
+                        aliases.put(key, nullToEmpty(value.toString()));
+                    }
+
+                    //Storage location
+                    final String storageLocation = mParentFragmentPreferences
+                            .getString(STORAGE_LOCATION_PREF, "internal");
+                    switch (storageLocation) {
+                        case "internal":
+                            //TODO
+                            break;
+                        case "sd-card":
+                            //TODO
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    break;
+                default:
+                    //Ignored
+                    break;
+            }
+
+
+        }
+    }
+
+    @Override
+    public void onClear(@NonNull Parcelable[] token) {
+
+    }
+
+    @Override
+    public void onUndo(@Nullable Parcelable token) {
+
+    }
 
     private class MenuActionItemClickListener implements UndoBarController.AdvancedUndoListener, RouterActionListener {
 

@@ -51,6 +51,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="Sync Data" />
 
+        <ListPreference
+            android:title="Storage Location"
+            android:key="storage.location"
+            android:defaultValue="internal"
+            android:entries="@array/storage_location_array"
+            android:entryValues="@array/storage_location_values" />
+
         <!--<CheckBoxPreference-->
             <!--android:defaultValue="true"-->
             <!--android:key="data.sync.backup"-->

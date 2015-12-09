@@ -189,4 +189,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/reset_counters"
         app:showAsAction="never" />
 
+    <!-- Aliases -->
+    <item
+        android:orderInCategory="6"
+        android:title="Aliases"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/tile_status_wireless_clients_aliases_import"
+                android:checkable="false"
+                android:checked="false"
+                android:icon="@drawable/ic_action_action_backup"
+                android:orderInCategory="1"
+                android:title="Import"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/tile_status_wireless_clients_aliases_export"
+                android:checkable="false"
+                android:checked="false"
+                android:icon="@drawable/ic_action_action_restore"
+                android:orderInCategory="2"
+                android:title="Export"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
 </menu>

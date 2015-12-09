@@ -85,6 +85,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 import fr.nicolaspomepuy.discreetapprate.AppRate;
@@ -120,6 +121,9 @@ public final class Utils {
             (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
             (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c',
             (byte) 'd', (byte) 'e', (byte) 'f'};
+
+    public static final Pattern MAC_ADDRESS =
+            Pattern.compile("([\\da-fA-F]{2}(?:\\:|-|$)){6}");
 
     private Utils() {
     }

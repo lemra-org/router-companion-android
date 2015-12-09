@@ -22,4 +22,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <resources>
 
+    <string-array name="storage_location_array">
+        <item>Internal Storage</item>
+        <item>SD Card</item>
+    </string-array>
+    <string-array name="storage_location_values">
+        <item>internal</item>
+        <item>sd</item>
+    </string-array>
+
 </resources>
