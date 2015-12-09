@@ -21,11 +21,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Theming -->
+    <!-- General -->
     <PreferenceCategory
-        android:key="@string/pref_header_theming"
-        android:title="Theming">
+        android:key="general"
+        android:title="General">
 
+        <!-- Theming -->
         <org.rm3l.ddwrt.widgets.LongListPreference
             android:defaultValue="30"
             android:entries="@array/pref_theme_titles"
@@ -35,11 +36,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:positiveButtonText="@null"
             android:title="@string/pref_title_theme" />
 
+        <!-- Storage Location -->
+        <ListPreference
+            android:title="Storage Location"
+            android:key="storage.location"
+            android:defaultValue="internal"
+            android:entries="@array/storage_location_array"
+            android:entryValues="@array/storage_location_values" />
+
     </PreferenceCategory>
 
-    <!-- General -->
     <PreferenceCategory
-        android:key="@string/pref_header_general"
+        android:key="data_usage_ctrl"
         android:title="Data Usage Control">
 
         <org.rm3l.ddwrt.widgets.LongListPreference
@@ -50,13 +58,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="Sync Data" />
-
-        <ListPreference
-            android:title="Storage Location"
-            android:key="storage.location"
-            android:defaultValue="internal"
-            android:entries="@array/storage_location_array"
-            android:entryValues="@array/storage_location_values" />
 
         <!--<CheckBoxPreference-->
             <!--android:defaultValue="true"-->
