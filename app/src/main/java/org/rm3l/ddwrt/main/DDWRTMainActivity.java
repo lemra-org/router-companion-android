@@ -101,6 +101,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.BackupRouterAction;
+import org.rm3l.ddwrt.actions.ImportAliasesDialogFragment;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
@@ -173,13 +174,14 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final String ADD_ROUTER_FRAGMENT_TAG = "add_router";
     private static final int LISTENED_REQUEST_CODE = 77;
     public static final String RESTORE_ROUTER_FRAGMENT_TAG = "RESTORE_ROUTER_FRAGMENT_TAG";
+    public static final String IMPORT_ALIASES_FRAGMENT_TAG = "IMPORT_ALIASES_FRAGMENT_TAG";
     public static final int ADD_NEW_ROUTER = 123;
     public static final int MANAGE_ROUTERS = 234;
     public static final String DRAWER_OPEN_FIRST_LAUNCH_PREF = "drawer_open_first_launch";
 
-    public static final String WIRELESS_CLIENTS_TILE_ACTION = "WirelessClientsTileAction";
-    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES";
-    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES";
+    public static final String MAIN_ACTIVITY_ACTION = "WirelessClientsTileAction";
+    public static final String MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES = "MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES";
+    public static final String MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES = "MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES";
 
     private Toolbar mToolbar;
     @NonNull
@@ -1192,9 +1194,9 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.action_ddwrt_actions_aliases_export: {
                 final Bundle token = new Bundle();
-                token.putInt(WIRELESS_CLIENTS_TILE_ACTION, RouterActions.EXPORT_ALIASES);
-                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
-                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
+                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
+                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
+                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
 
                 SnackbarUtils.buildSnackbar(this,
                         findViewById(android.R.id.content),
@@ -1208,8 +1210,13 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             }
             case R.id.action_ddwrt_actions_aliases_import: {
-                //FIXME TODO
-                Toast.makeText(this, "[TODO] Import aliases", Toast.LENGTH_SHORT).show();
+                final Fragment importAliasesFragment = getSupportFragmentManager()
+                        .findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
+                if (importAliasesFragment instanceof DialogFragment) {
+                    ((DialogFragment) importAliasesFragment).dismiss();
+                }
+                final DialogFragment importAliases = ImportAliasesDialogFragment.newInstance(mRouterUuid);
+                importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
                 return true;
             }
             default:
@@ -1673,14 +1680,14 @@ public class DDWRTMainActivity extends AppCompatActivity
     public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
 
         final Integer action = bundle != null ?
-                bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION) : null;
+                bundle.getInt(MAIN_ACTIVITY_ACTION) : null;
 
         if (action == null) {
             return;
         }
 
-        final int maxRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES);
-        int nbRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES);
+        final int maxRetries = bundle.getInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES);
+        int nbRetries = bundle.getInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES);
 
         switch (action) {
             case RouterActions.IMPORT_ALIASES:
@@ -1731,7 +1738,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
                                 return;
                             }
-                            bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
+                            bundle.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
                             SnackbarUtils
                                     .buildSnackbar(this,
                                             findViewById(android.R.id.content),
@@ -1769,7 +1776,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                         Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
                         return;
                     }
-                    bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
+                    bundle.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
                     SnackbarUtils
                             .buildSnackbar(this,
                                     findViewById(android.R.id.content),

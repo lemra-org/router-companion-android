@@ -830,6 +830,20 @@ public class Router implements Serializable {
                         Charsets.UTF_8.name()));
     }
 
+    @Nullable
+    public SharedPreferences getPreferences(@Nullable final Context ctx) {
+        return getPreferences(this, ctx);
+    }
+
+    @Nullable
+    public static SharedPreferences getPreferences(@Nullable final Router router,
+                                                   @Nullable final Context ctx) {
+        if (router == null || ctx == null) {
+            return null;
+        }
+        return ctx.getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
+    }
+
     public static class LocalSSIDLookup {
 
         private String networkSsid;
