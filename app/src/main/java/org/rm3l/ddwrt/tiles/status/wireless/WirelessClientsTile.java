@@ -2815,11 +2815,11 @@ public class WirelessClientsTile
 
                 final File outputFile = new File(containerDir,
                         Utils.getEscapedFileName(
-                                String.format("Aliases_for_%s_%s_%s.json",
+                                String.format("Aliases_for_%s_%s_%s",
                                         mRouter.getDisplayName(),
                                         mRouter.getRemoteIpAddress(),
-                                        mRouter.getUuid())));
-                if (!(outputFile.mkdirs() || outputFile.isDirectory())) {
+                                        mRouter.getUuid())) + ".json");
+                if (!(containerDir.mkdirs() || containerDir.isDirectory())) {
                     Crashlytics.log(Log.ERROR, LOG_TAG,
                             "Directory " + containerDir.getAbsolutePath() + " not created");
                     if (nbRetries >= maxRetries) {
