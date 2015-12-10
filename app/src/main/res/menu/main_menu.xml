@@ -86,6 +86,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visible="false"
                 app:showAsAction="ifRoom" />
 
+            <!-- Aliases -->
+            <item
+                android:orderInCategory="5"
+                android:title="Manage Aliases"
+                app:showAsAction="ifRoom">
+                <menu>
+                    <item
+                        android:id="@+id/action_ddwrt_actions_aliases_import"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:icon="@drawable/ic_action_action_backup"
+                        android:orderInCategory="1"
+                        android:title="Import"
+                        app:showAsAction="never" />
+                    <item
+                        android:id="@+id/action_ddwrt_actions_aliases_export"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:icon="@drawable/ic_action_action_restore"
+                        android:orderInCategory="2"
+                        android:title="Export"
+                        app:showAsAction="never" />
+                </menu>
+            </item>
+
             <!-- HIDDEN FOR NOW -->
             <item
                 android:id="@+id/action_ddwrt_actions_open_webinterface"

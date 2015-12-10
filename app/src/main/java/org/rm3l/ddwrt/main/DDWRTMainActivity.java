@@ -40,11 +40,13 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -94,6 +96,7 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
@@ -103,6 +106,7 @@ import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
+import org.rm3l.ddwrt.actions.RouterActions;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
@@ -120,9 +124,13 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -133,12 +141,14 @@ import java.util.Map;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.conn.Router.RouterFirmware;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.STORAGE_LOCATION_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
@@ -151,7 +161,7 @@ public class DDWRTMainActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
         RouterMgmtDialogListener,
-        RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener {
+        RouterRestoreDialogListener, NavigationView.OnNavigationItemSelectedListener, SnackbarCallback {
 
     public static final String TAG = DDWRTMainActivity.class.getSimpleName();
     public static final String TAB_INDEX = "TAB_INDEX";
@@ -166,6 +176,10 @@ public class DDWRTMainActivity extends AppCompatActivity
     public static final int ADD_NEW_ROUTER = 123;
     public static final int MANAGE_ROUTERS = 234;
     public static final String DRAWER_OPEN_FIRST_LAUNCH_PREF = "drawer_open_first_launch";
+
+    public static final String WIRELESS_CLIENTS_TILE_ACTION = "WirelessClientsTileAction";
+    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES";
+    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES";
 
     private Toolbar mToolbar;
     @NonNull
@@ -1176,6 +1190,28 @@ public class DDWRTMainActivity extends AppCompatActivity
                 }
                 //TODO
                 return true;
+            case R.id.action_ddwrt_actions_aliases_export: {
+                final Bundle token = new Bundle();
+                token.putInt(WIRELESS_CLIENTS_TILE_ACTION, RouterActions.EXPORT_ALIASES);
+                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
+                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
+
+                SnackbarUtils.buildSnackbar(this,
+                        findViewById(android.R.id.content),
+                        String.format("Going to start exporting aliases for '%s' (%s)...",
+                                displayName, mRouter.getRemoteIpAddress()),
+                        "Undo",
+                        Snackbar.LENGTH_SHORT,
+                        DDWRTMainActivity.this,
+                        token,
+                        true);
+                return true;
+            }
+            case R.id.action_ddwrt_actions_aliases_import: {
+                //FIXME TODO
+                Toast.makeText(this, "[TODO] Import aliases", Toast.LENGTH_SHORT).show();
+                return true;
+            }
             default:
                 break;
 
@@ -1616,6 +1652,203 @@ public class DDWRTMainActivity extends AppCompatActivity
 
     public void selectItemInDrawer(int position) {
         mDrawerResult.setSelection(position, true);
+    }
+
+    @Override
+    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+        final Integer action = bundle != null ?
+                bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION) : null;
+
+        if (action == null) {
+            return;
+        }
+
+        final int maxRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES);
+        int nbRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES);
+
+        switch (action) {
+            case RouterActions.IMPORT_ALIASES:
+                //TODO
+                Toast.makeText(this, "[TODO] Import aliases", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            case RouterActions.EXPORT_ALIASES:
+                //Load all aliases from preferences
+                if (mPreferences == null) {
+                    break;
+                }
+                final Map<String, ?> allRouterPrefs = mPreferences.getAll();
+                if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
+                    return;
+                }
+
+                final Map<String, String> aliases = new HashMap<>();
+                for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
+                    final String key = entry.getKey();
+                    final Object value = entry.getValue();
+                    if (isNullOrEmpty(key) || value == null) {
+                        continue;
+                    }
+                    //Check whether key is a MAC-Address
+                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                        continue;
+                    }
+                    //This is a MAC Address - collect it right away!
+                    aliases.put(key, nullToEmpty(value.toString()));
+                }
+
+                //Storage location
+                final String storageLocation = mGlobalPreferences
+                        .getString(STORAGE_LOCATION_PREF, "internal");
+
+                final File containerDir;
+                final CharSequence applicationName = Utils.getApplicationName(this);
+                final String outputFileName =
+                        (applicationName != null ? applicationName.toString() : "DD-WRT Companion");
+                switch (storageLocation) {
+                    case "sdcard":
+                    case "sd-card":
+                    case "sd":
+                        if (!StorageUtils.isExternalStorageWritable()) {
+                            //Not writable - display an additional Snackbar inviting user to retry
+                            if (nbRetries >= maxRetries) {
+                                Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
+                                return;
+                            }
+                            bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
+                            SnackbarUtils
+                                    .buildSnackbar(this,
+                                            findViewById(android.R.id.content),
+                                            "SD Card not available at this time",
+                                            "Retry",
+                                            Snackbar.LENGTH_LONG,
+                                            this,
+                                            bundle,
+                                            true);
+                            return;
+                        }
+                        //Store in the primary (top-level or root) external storage directory
+                        containerDir = new File(Environment
+                                .getExternalStorageDirectory(),
+                                outputFileName);
+
+                        break;
+                    case "internal":
+                    default:
+                        containerDir = getFilesDir();
+//                                this.getDir(outputFileName, Context.MODE_PRIVATE);
+                        break;
+                }
+
+                final File outputFile = new File(containerDir,
+                        Utils.getEscapedFileName(
+                                String.format("Aliases_for_%s_%s_%s",
+                                        mRouter.getDisplayName(),
+                                        mRouter.getRemoteIpAddress(),
+                                        mRouter.getUuid())) + ".json");
+                if (!(containerDir.mkdirs() || containerDir.isDirectory())) {
+                    Crashlytics.log(Log.ERROR, TAG,
+                            "Directory " + containerDir.getAbsolutePath() + " not created");
+                    if (nbRetries >= maxRetries) {
+                        Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
+                        return;
+                    }
+                    bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
+                    SnackbarUtils
+                            .buildSnackbar(this,
+                                    findViewById(android.R.id.content),
+                                    "Failed to create folder '" +
+                                            containerDir.getAbsolutePath() + "'",
+                                    "Retry",
+                                    Snackbar.LENGTH_LONG,
+                                    this,
+                                    bundle,
+                                    true);
+                    return;
+                }
+
+                final Date backupDate = new Date();
+                final String aliasesStr = new JSONObject(aliases)
+                        .toString(2);
+
+                FileOutputStream fileOutputStream = null;
+                try {
+                    fileOutputStream = new FileOutputStream(outputFile);
+                    fileOutputStream.write(aliasesStr.getBytes());
+                } finally {
+                    if (fileOutputStream != null) {
+                        fileOutputStream.close();
+                    }
+                }
+
+                Utils.displayMessage(this,
+                        String.format("Action 'Export Aliases' executed successfully on host '%s'. " +
+                                        "Path: '%s'",
+                                mRouter.getRemoteIpAddress(),
+                                outputFile.getAbsolutePath()),
+                        Style.CONFIRM);
+
+                try {
+                    //Now allow user to share file if needed
+                    final Uri uriForFile = FileProvider.getUriForFile(
+                            this,
+                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                            outputFile);
+                    this.grantUriPermission(
+                            this.getPackageName(),
+                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    final Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                            String.format("Aliases Backup for Router '%s' (%s)",
+                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                    shareIntent.setType("text/html");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                            ("Backup Date: " + backupDate + "\n\n" +
+                                    aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
+                                    Utils.getShareIntentFooter()));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+//                                            shareIntent.setType("*/*");
+                    this.startActivity(Intent.createChooser(shareIntent,
+                            this.getResources().getText(R.string.share_backup)));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(this, e);
+                    //No worries
+                }
+
+                break;
+            default:
+                //Ignored
+                break;
+        }
+    }
+
+    @Override
+    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
