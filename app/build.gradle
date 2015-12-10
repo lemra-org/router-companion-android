@@ -375,7 +375,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.3.2'
     compile 'commons-codec:commons-codec:1.10'
     compile 'com.jcraft:jsch:0.1.51'
-    compile 'ch.acra:acra:4.7.0-RC.2'
+    compile 'ch.acra:acra:4.7.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
