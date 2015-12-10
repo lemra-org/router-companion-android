@@ -32,19 +32,24 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
@@ -105,6 +110,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DisableWANAccessRouterAction;
@@ -138,11 +144,15 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.NVRAMParser;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.NetworkTrafficView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -178,8 +188,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.getClientsUsageDataFi
 
 public class WirelessClientsTile
         extends DDWRTTile<ClientDevices>
-        implements PopupMenu.OnMenuItemClickListener ,
-        UndoBarController.AdvancedUndoListener {
+        implements PopupMenu.OnMenuItemClickListener, SnackbarCallback {
 
     public static final String HIDE_INACTIVE_HOSTS = "hideInactiveHosts";
     public static final String WIRELESS_DEVICES_ONLY = "wirelessDevicesOnly";
@@ -2454,15 +2463,19 @@ public class WirelessClientsTile
                         .setPositiveButton("Export!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
+
                                 final Bundle token = new Bundle();
                                 token.putInt(WIRELESS_CLIENTS_TILE_ACTION, RouterActions.EXPORT_ALIASES);
 
-                                new UndoBarController.UndoBar(mParentFragmentActivity)
-                                        .message(String.format("Going to start exporting aliases for '%s' (%s)...",
-                                                displayName, mRouter.getRemoteIpAddress()))
-                                        .listener(WirelessClientsTile.this)
-                                        .token(token)
-                                        .show();
+                                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                                        layout,
+                                        String.format("Going to start exporting aliases for '%s' (%s)...",
+                                                displayName, mRouter.getRemoteIpAddress()),
+                                        "Undo",
+                                        Snackbar.LENGTH_SHORT,
+                                        WirelessClientsTile.this,
+                                        token,
+                                        true);
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -2474,8 +2487,8 @@ public class WirelessClientsTile
                 return true;
             }
             case R.id.tile_status_wireless_clients_aliases_import: {
-                //FIXME
-                Toast.makeText(mParentFragmentActivity, "Import aliases - TODO", Toast.LENGTH_SHORT).show();
+                //FIXME TODO
+                Toast.makeText(mParentFragmentActivity, "[TODO] Import aliases", Toast.LENGTH_SHORT).show();
                 return true;
             }
             case R.id.tile_status_wireless_clients_realtime_graphs: {
@@ -2697,69 +2710,179 @@ public class WirelessClientsTile
     }
 
     @Override
-    public void onHide(@Nullable Parcelable parcelable) {
-        if (parcelable instanceof Bundle) {
-            final Bundle token = (Bundle) parcelable;
-            final int action = token.getInt(WIRELESS_CLIENTS_TILE_ACTION);
+    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-            switch (action) {
-                case RouterActions.EXPORT_ALIASES:
-                    //Load all aliases from preferences
-                    if (mParentFragmentPreferences == null) {
-                        break;
-                    }
-                    final Map<String, ?> allRouterPrefs = mParentFragmentPreferences.getAll();
-                    if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
-                        return;
-                    }
+    }
 
-                    final Map<String, String> aliases = new HashMap<>();
-                    for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
-                        final String key = entry.getKey();
-                        final Object value = entry.getValue();
-                        if (isNullOrEmpty(key) || value == null) {
-                            continue;
-                        }
-                        //Check whether key is a MAC-Address
-                        if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
-                            continue;
-                        }
-                        //This is a MAC Address - collect it right away!
-                        aliases.put(key, nullToEmpty(value.toString()));
-                    }
+    @Override
+    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
 
-                    //Storage location
-                    final String storageLocation = mParentFragmentPreferences
-                            .getString(STORAGE_LOCATION_PREF, "internal");
-                    switch (storageLocation) {
-                        case "internal":
-                            //TODO
-                            break;
-                        case "sd-card":
-                            //TODO
-                            break;
-                        default:
-                            break;
-                    }
+    }
 
+    @Override
+    public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
 
-                    break;
-                default:
-                    //Ignored
-                    break;
-            }
+    }
 
+    @Override
+    public void onDismissEventTimeout(final int event, @Nullable final Bundle bundle) throws Exception {
 
+        final Integer action = bundle != null ?
+                bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION) : null;
+
+        if (action == null) {
+            return;
         }
+
+        switch (action) {
+            case RouterActions.IMPORT_ALIASES:
+                //TODO
+                Toast.makeText(mParentFragmentActivity, "[TODO] Import aliases", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            case RouterActions.EXPORT_ALIASES:
+                //Load all aliases from preferences
+                if (mParentFragmentPreferences == null) {
+                    break;
+                }
+                final Map<String, ?> allRouterPrefs = mParentFragmentPreferences.getAll();
+                if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
+                    return;
+                }
+
+                final Map<String, String> aliases = new HashMap<>();
+                for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
+                    final String key = entry.getKey();
+                    final Object value = entry.getValue();
+                    if (isNullOrEmpty(key) || value == null) {
+                        continue;
+                    }
+                    //Check whether key is a MAC-Address
+                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                        continue;
+                    }
+                    //This is a MAC Address - collect it right away!
+                    aliases.put(key, nullToEmpty(value.toString()));
+                }
+
+                //Storage location
+                final String storageLocation = mParentFragmentPreferences
+                        .getString(STORAGE_LOCATION_PREF, "internal");
+
+                final File containerDir;
+                final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
+                final String outputFileName =
+                        (applicationName != null ? applicationName.toString() : "DD-WRT Companion");
+                switch (storageLocation) {
+                    case "sd-card":
+                        if (!StorageUtils.isExternalStorageWritable()) {
+                            //Not writable - display an additional Snackbar inviting user to retry
+                            SnackbarUtils
+                                    .buildSnackbar(mParentFragmentActivity,
+                                            layout,
+                                            "SD Card not available at this time",
+                                            "Retry",
+                                            Snackbar.LENGTH_LONG,
+                                            this,
+                                            bundle,
+                                            true);
+                            return;
+                        }
+                        //Store in the primary (top-level or root) external storage directory
+                        containerDir = new File(Environment
+                                .getExternalStorageDirectory(),
+                                outputFileName);
+
+                        break;
+                    case "internal":
+                    default:
+                        containerDir =
+                                mParentFragmentActivity.getDir(outputFileName, Context.MODE_WORLD_READABLE);
+                        break;
+                }
+
+                final File outputFile = new File(containerDir,
+                        Utils.getEscapedFileName(
+                                String.format("Aliases_for_%s_%s_%s.json",
+                                        mRouter.getDisplayName(),
+                                        mRouter.getRemoteIpAddress(),
+                                        mRouter.getUuid())));
+                if (!outputFile.mkdirs()) {
+                    Crashlytics.log(Log.ERROR, LOG_TAG, "Directory not created");
+                    SnackbarUtils
+                            .buildSnackbar(mParentFragmentActivity,
+                                    layout,
+                                    "Failed to create folder '" +
+                                            containerDir.getAbsolutePath() + "'",
+                                    "Retry",
+                                    Snackbar.LENGTH_LONG,
+                                    this,
+                                    bundle,
+                                    true);
+                    return;
+                }
+
+                final Date backupDate = new Date();
+                final String aliasesStr = new JSONObject(aliases)
+                        .toString(2);
+
+                FileOutputStream fileOutputStream = null;
+                try {
+                    fileOutputStream = new FileOutputStream(outputFile);
+                    fileOutputStream.write(aliasesStr.getBytes());
+                } finally {
+                    if (fileOutputStream != null) {
+                        fileOutputStream.close();
+                    }
+                }
+
+                Utils.displayMessage(mParentFragmentActivity,
+                        String.format("Action 'Export Aliases' executed successfully on host '%s'. " +
+                                        "Path: '%s'",
+                                mRouter.getRemoteIpAddress(),
+                                outputFile.getAbsolutePath()),
+                        Style.CONFIRM);
+
+                //Now allow user to share file if needed
+                final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
+                        DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                        outputFile);
+                mParentFragmentActivity.grantUriPermission(
+                        mParentFragmentActivity.getPackageName(),
+                        uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                final Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                        String.format("Aliases Backup for Router '%s' (%s)",
+                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                shareIntent.setType("text/html");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                        ("Backup Date: " + backupDate + "\n\n" +
+                                aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
+                                Utils.getShareIntentFooter()));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+//                                            shareIntent.setType("*/*");
+                mParentFragmentActivity.startActivity(Intent.createChooser(shareIntent,
+                        mParentFragmentActivity.getResources().getText(R.string.share_backup)));
+
+
+
+                break;
+            default:
+                //Ignored
+                break;
+        }
+
     }
 
     @Override
-    public void onClear(@NonNull Parcelable[] token) {
+    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
 
     }
 
     @Override
-    public void onUndo(@Nullable Parcelable token) {
+    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
 
     }
 
