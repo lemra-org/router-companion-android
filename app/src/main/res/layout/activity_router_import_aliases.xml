@@ -63,7 +63,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Backup File"/>
+                android:text="Aliases File (JSON format)"/>
 
             <Button
                 android:id="@+id/router_import_aliases_select_button"
@@ -72,7 +72,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:hint="Select Backup File to restore"/>
+                android:hint="Select Aliases File to import"/>
 
             <TextView
                 android:id="@+id/router_import_aliases_path"
@@ -84,6 +84,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/router_import_aliases_clear_aliases"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:checked="false"
                 android:textOff="OFF"
                 android:textOn="ON"
