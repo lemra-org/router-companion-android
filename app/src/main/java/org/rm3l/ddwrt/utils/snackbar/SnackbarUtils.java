@@ -1,10 +1,12 @@
 package org.rm3l.ddwrt.utils.snackbar;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
@@ -36,9 +38,13 @@ public final class SnackbarUtils {
             return null;
         }
 
-        final Snackbar snackbar = Snackbar.make(view,
-                Strings.nullToEmpty(title),
-                duration);
+        final Snackbar snackbar = Snackbar
+                .make(
+                        view,
+                        Strings.nullToEmpty(title),
+                        duration)
+                .setActionTextColor(Color.RED);
+
         if (!Strings.isNullOrEmpty(actionText)) {
             snackbar.setAction(actionText, null);
         }
@@ -92,6 +98,12 @@ public final class SnackbarUtils {
                 }
             }
         });
+
+        final View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(Color.DKGRAY);
+        final TextView textView = (TextView)
+                snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
 
         if (show) {
             snackbar.show();
