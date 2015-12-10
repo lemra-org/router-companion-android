@@ -43,11 +43,14 @@ public final class SnackbarUtils {
                         view,
                         Strings.nullToEmpty(title),
                         duration)
+                .setAction(actionText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Do nothing here
+                    }
+                })
                 .setActionTextColor(Color.RED);
 
-        if (!Strings.isNullOrEmpty(actionText)) {
-            snackbar.setAction(actionText, null);
-        }
         snackbar.setCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar snackbar, int event) {
@@ -78,6 +81,7 @@ public final class SnackbarUtils {
                         }
                     }
                 } catch (final Exception e) {
+                    e.printStackTrace();
                     Utils.reportException(ctx, e);
                     Toast.makeText(ctx, "Internal Error! Please try again later.", Toast.LENGTH_SHORT)
                             .show();
