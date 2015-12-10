@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
+<paths>
     <cache-path name="shares" path="." />
+    <files-path name="my_files" path="." />
+    <files-path name="my_folders" path="" />
+    <external-path name="ext_files" path="." />
 </paths>

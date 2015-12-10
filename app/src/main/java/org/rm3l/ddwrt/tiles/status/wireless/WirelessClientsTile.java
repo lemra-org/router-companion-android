@@ -2861,30 +2861,35 @@ public class WirelessClientsTile
                                 outputFile.getAbsolutePath()),
                         Style.CONFIRM);
 
-                //Now allow user to share file if needed
-                final Uri uriForFile = FileProvider.getUriForFile(mParentFragmentActivity,
-                        DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
-                        outputFile);
-                mParentFragmentActivity.grantUriPermission(
-                        mParentFragmentActivity.getPackageName(),
-                        uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    //Now allow user to share file if needed
+                    final Uri uriForFile = FileProvider.getUriForFile(
+                            mParentFragmentActivity,
+                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                            outputFile);
+                    mParentFragmentActivity.grantUriPermission(
+                            mParentFragmentActivity.getPackageName(),
+                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                final Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                        String.format("Aliases Backup for Router '%s' (%s)",
-                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
-                shareIntent.setType("text/html");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
-                        ("Backup Date: " + backupDate + "\n\n" +
-                                aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
-                                Utils.getShareIntentFooter()));
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                    final Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                            String.format("Aliases Backup for Router '%s' (%s)",
+                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                    shareIntent.setType("text/html");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                            ("Backup Date: " + backupDate + "\n\n" +
+                                    aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
+                                    Utils.getShareIntentFooter()));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
 //                                            shareIntent.setType("*/*");
-                mParentFragmentActivity.startActivity(Intent.createChooser(shareIntent,
-                        mParentFragmentActivity.getResources().getText(R.string.share_backup)));
-
-
+                    mParentFragmentActivity.startActivity(Intent.createChooser(shareIntent,
+                            mParentFragmentActivity.getResources().getText(R.string.share_backup)));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(mParentFragmentActivity, e);
+                    //No worries
+                }
 
                 break;
             default:
