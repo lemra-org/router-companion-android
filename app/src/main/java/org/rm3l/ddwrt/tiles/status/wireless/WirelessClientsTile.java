@@ -283,6 +283,8 @@ public class WirelessClientsTile
     public static final String DEVICE_NAME_FOR_NOTIFICATION = "deviceNameForNotification";
     public static final Ordering<String> CASE_INSENSITIVE_STRING_ORDERING = Ordering.from(String.CASE_INSENSITIVE_ORDER);
     public static final String WIRELESS_CLIENTS_TILE_ACTION = "WirelessClientsTileAction";
+    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES";
+    public static final String WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES = "WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES";
 
     static {
         sortIds.put(R.id.tile_status_wireless_clients_sort_a_z, 72);
@@ -2466,6 +2468,8 @@ public class WirelessClientsTile
 
                                 final Bundle token = new Bundle();
                                 token.putInt(WIRELESS_CLIENTS_TILE_ACTION, RouterActions.EXPORT_ALIASES);
+                                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
+                                token.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
 
                                 SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                                         layout,
@@ -2734,6 +2738,9 @@ public class WirelessClientsTile
             return;
         }
 
+        final int maxRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_MAX_RETRIES);
+        int nbRetries = bundle.getInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES);
+
         switch (action) {
             case RouterActions.IMPORT_ALIASES:
                 //TODO
@@ -2777,6 +2784,11 @@ public class WirelessClientsTile
                     case "sd-card":
                         if (!StorageUtils.isExternalStorageWritable()) {
                             //Not writable - display an additional Snackbar inviting user to retry
+                            if (nbRetries >= maxRetries) {
+                                Utils.displayMessage(mParentFragmentActivity, "Unsuccessful operation.", Style.ALERT);
+                                return;
+                            }
+                            bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
                             SnackbarUtils
                                     .buildSnackbar(mParentFragmentActivity,
                                             layout,
@@ -2807,8 +2819,14 @@ public class WirelessClientsTile
                                         mRouter.getDisplayName(),
                                         mRouter.getRemoteIpAddress(),
                                         mRouter.getUuid())));
-                if (!outputFile.mkdirs()) {
-                    Crashlytics.log(Log.ERROR, LOG_TAG, "Directory not created");
+                if (!(outputFile.mkdirs() || outputFile.isDirectory())) {
+                    Crashlytics.log(Log.ERROR, LOG_TAG,
+                            "Directory " + containerDir.getAbsolutePath() + " not created");
+                    if (nbRetries >= maxRetries) {
+                        Utils.displayMessage(mParentFragmentActivity, "Unsuccessful operation.", Style.ALERT);
+                        return;
+                    }
+                    bundle.putInt(WIRELESS_CLIENTS_TILE_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
                     SnackbarUtils
                             .buildSnackbar(mParentFragmentActivity,
                                     layout,
