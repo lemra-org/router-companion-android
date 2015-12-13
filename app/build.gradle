@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 /*
  * DD-WRT Companion is a mobile app that lets you connect to,
  * monitor and manage your DD-WRT routers on the go.
@@ -32,11 +23,24 @@ buildscript {
 /**
  * Gradle build file
  */
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'tracepot'
+apply plugin: 'com.github.triplet.play'
+
+final homePath = System.properties['user.home']
 
 //Prompt for keystore file and password (same for private key and store file)
 // Will take care of prompting via console or via a dialog form (if no console available, which
@@ -53,31 +57,40 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleAmazonFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleSamsungFreeWithAdsRelease')) {
-        def password = ''
-        def storeFile = null
+
+        def password = ""
+        def storeFile = ""
 
         //Attempt to read keystore.properties file, if any first
-        File propsFile = rootProject.file('keystore.properties')
-        def configName = 'release'
+        final propsFile = new File(homePath.toString() + "/.droid/", "keystore.properties")
+        final configName = 'release'
+
         if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
-            Properties props = new Properties()
+            printf("Using properties file located at " + propsFile.absolutePath)
+            final props = new Properties()
             props.load(new FileInputStream(propsFile))
-            storeFile = rootProject.file(props['keystore'])
+            storeFile = new File(props['keystore'].toString())
 //            password = props['storePassword']
 //            android.signingConfigs[configName].keyAlias = props['keyAlias']
             password = props['keyPassword']
 
         } else if (System.console() == null) {
             new SwingBuilder().edt {
-                dialog(modal: true, title: 'Enter signing configuration', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                dialog(modal: true,
+                        title: 'Enter signing configuration',
+                        alwaysOnTop: true,
+                        resizable: false,
+                        locationRelativeTo: null,
+                        pack: true,
+                        show: true) {
                     vbox { // Put everything below each other
                         label(text: "Please select keystore file:")
-                        def javax.swing.JFileChooser fileInput = fileChooser()
+                        final javax.swing.JFileChooser fileInput = fileChooser()
                         label(text: "Please enter passphrase:")
-                        def javax.swing.JPasswordField input = passwordField()
+                        final javax.swing.JPasswordField input = passwordField()
                         button(defaultButton: true, text: 'OK', actionPerformed: {
                             storeFile = fileInput.selectedFile
-                            password = new String(input.password)
+                            password = input.password
                             dispose()
                         })
                     }
@@ -87,7 +100,6 @@ gradle.taskGraph.whenReady { taskGraph ->
             storeFile = System.console().readLine("\nPlease enter path to keystore file: ")
             storeFile = new File(storeFile)
             password = System.console().readPassword("\nPlease enter signing config password: ")
-            password = new String(password)
         }
 
         if (storeFile == null || !storeFile.exists()) {
@@ -136,7 +148,7 @@ android {
     signingConfigs {
         release {
             keyAlias 'DDWRTCompanionAndroidKey'
-            //User will be prompted for the parameters below, if 'assemble*Release' tasks
+            //User will be prompted for the parameters below, for 'assemble*Release' tasks
             keyPassword ''
             storeFile file('/dev/null')
             storePassword ''
@@ -173,6 +185,7 @@ android {
     defaultConfig {
         //FIXME Change applicationId for lite version
         applicationId "org.rm3l.ddwrt"
+        testApplicationId "org.rm3l.ddwrt.tests"
         minSdkVersion 15
         targetSdkVersion 23
         // Enabling multidex support.
@@ -207,6 +220,7 @@ android {
     }
     lintOptions {
         abortOnError false
+        disable 'TypographyEllipsis'
     }
     /**
      * Flavors: this is because apps uploaded to Play Store will certainly be banned if
@@ -346,6 +360,14 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+/*
+play {
+    serviceAccountEmail = '294046724212-r3bef6kl46pb9gk0h1pl5rcjmpfrdpjl@developer.gserviceaccount.com'
+    pk12File = file("${homePath}/src/583631bdd16d.p12")
+    track = 'beta'
+}
+ */
+
 //Dependencies
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
@@ -356,7 +378,12 @@ dependencies {
     }
     //    FIXME Acra 4.7.0-RC1 is a release candidate
     //    compile 'ch.acra:acra:4.6.2'
-    compile('com.mikepenz:materialdrawer:4.4.0@aar') {
+    compile('com.mikepenz:materialdrawer:4.5.8@aar') {
+        transitive = true
+    }
+
+    compile('com.afollestad.material-dialogs:core:0.8.5.1@aar') {
+        //exclude group: 'com.android.support'  // uncomment to force our local support lib version
         transitive = true
     }
 
@@ -366,6 +393,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }
+
+    compile 'net.i2p.android.ext:floatingactionbutton:1.10.0'
+    compile 'com.jakewharton.timber:timber:4.1.0'
 
     compile 'org.achartengine:achartengine:1.2.0'
     compile 'org.sufficientlysecure:donations:2.3'

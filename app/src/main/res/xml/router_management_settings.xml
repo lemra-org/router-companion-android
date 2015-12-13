@@ -37,12 +37,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="@string/pref_title_theme" />
 
         <!-- Storage Location -->
-        <ListPreference
-            android:title="Storage Location"
-            android:key="storage.location"
-            android:defaultValue="internal"
-            android:entries="@array/storage_location_array"
-            android:entryValues="@array/storage_location_values" />
+        <!--<ListPreference-->
+            <!--android:title="Storage Location"-->
+            <!--android:key="storage.location"-->
+            <!--android:defaultValue="internal"-->
+            <!--android:entries="@array/storage_location_array"-->
+            <!--android:entryValues="@array/storage_location_values" />-->
 
     </PreferenceCategory>
 

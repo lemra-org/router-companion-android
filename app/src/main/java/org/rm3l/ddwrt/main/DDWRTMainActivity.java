@@ -40,7 +40,6 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -109,6 +108,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterActions;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
+import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
 import org.rm3l.ddwrt.help.HelpActivity;
@@ -149,7 +149,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFER
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_THEME;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTERS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.STORAGE_LOCATION_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
@@ -1686,9 +1685,6 @@ public class DDWRTMainActivity extends AppCompatActivity
             return;
         }
 
-        final int maxRetries = bundle.getInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES);
-        int nbRetries = bundle.getInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES);
-
         switch (action) {
             case RouterActions.IMPORT_ALIASES:
                 //TODO
@@ -1720,75 +1716,21 @@ public class DDWRTMainActivity extends AppCompatActivity
                     aliases.put(key, nullToEmpty(value.toString()));
                 }
 
-                //Storage location
-                final String storageLocation = mGlobalPreferences
-                        .getString(STORAGE_LOCATION_PREF, "internal");
-
-                final File containerDir;
-                final CharSequence applicationName = Utils.getApplicationName(this);
-                final String outputFileName =
-                        (applicationName != null ? applicationName.toString() : "DD-WRT Companion");
-                switch (storageLocation) {
-                    case "sdcard":
-                    case "sd-card":
-                    case "sd":
-                        if (!StorageUtils.isExternalStorageWritable()) {
-                            //Not writable - display an additional Snackbar inviting user to retry
-                            if (nbRetries >= maxRetries) {
-                                Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
-                                return;
-                            }
-                            bundle.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
-                            SnackbarUtils
-                                    .buildSnackbar(this,
-                                            findViewById(android.R.id.content),
-                                            "SD Card not available at this time",
-                                            "Retry",
-                                            Snackbar.LENGTH_LONG,
-                                            this,
-                                            bundle,
-                                            true);
-                            return;
-                        }
-                        //Store in the primary (top-level or root) external storage directory
-                        containerDir = new File(Environment
-                                .getExternalStorageDirectory(),
-                                outputFileName);
-
-                        break;
-                    case "internal":
-                    default:
-                        containerDir = getFilesDir();
-//                                this.getDir(outputFileName, Context.MODE_PRIVATE);
-                        break;
+                final File exportDirectory = StorageUtils.getExportDirectory(this);
+                if (exportDirectory == null) {
+                    throw new StorageException("Could not retrieve or create export directory!");
                 }
 
-                final File outputFile = new File(containerDir,
+                final File aliasesDir = new File(exportDirectory, "alias");
+
+                StorageUtils.createDirectoryOrRaiseException(aliasesDir);
+
+                final File outputFile = new File(aliasesDir,
                         Utils.getEscapedFileName(
                                 String.format("Aliases_for_%s_%s_%s",
                                         mRouter.getDisplayName(),
                                         mRouter.getRemoteIpAddress(),
                                         mRouter.getUuid())) + ".json");
-                if (!(containerDir.mkdirs() || containerDir.isDirectory())) {
-                    Crashlytics.log(Log.ERROR, TAG,
-                            "Directory " + containerDir.getAbsolutePath() + " not created");
-                    if (nbRetries >= maxRetries) {
-                        Utils.displayMessage(this, "Unsuccessful operation.", Style.ALERT);
-                        return;
-                    }
-                    bundle.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, nbRetries+1);
-                    SnackbarUtils
-                            .buildSnackbar(this,
-                                    findViewById(android.R.id.content),
-                                    "Failed to create folder '" +
-                                            containerDir.getAbsolutePath() + "'",
-                                    "Retry",
-                                    Snackbar.LENGTH_LONG,
-                                    this,
-                                    bundle,
-                                    true);
-                    return;
-                }
 
                 final Date backupDate = new Date();
                 final String aliasesStr = new JSONObject(aliases)
