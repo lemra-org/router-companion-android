@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.support.v4.content.ContextCompat;
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Predicate;
@@ -83,6 +84,11 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
+        }
+        
+        if (mIsThemeLight) {
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
         }
 
         setContentView(R.layout.activity_manage_router_aliases);
@@ -191,7 +197,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             return;
         }
         if (view.getId() == R.id.router_alias_add) {
-            //TODO
+            //TODO Open Dialog - PS: Might be great to allow to see MAC OUI Vendor
             Toast.makeText(ManageRouterAliasesActivity.this, "[TODO] onClick(router_alias_add)",
                     Toast.LENGTH_SHORT).show();
         }
@@ -206,14 +212,11 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             public void run() {
                 try {
                     ((ManageRouterAliasesActivity.RouterAliasesListRecyclerViewAdapter)
-                            ManageRouterAliasesActivity.this
-                            .mAdapter)
-                            .setAliasesColl(FluentIterable
-                                    .from(
-                                            Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
+                            ManageRouterAliasesActivity.this.mAdapter)
+                                .setAliasesColl(FluentIterable
+                                    .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
                                     .toList());
-                    ManageRouterAliasesActivity.this
-                            .mAdapter.notifyDataSetChanged();
+                    ManageRouterAliasesActivity.this.mAdapter.notifyDataSetChanged();
                 } finally {
                     mSwipeRefreshLayout.setRefreshing(false);
                     mSwipeRefreshLayout.setEnabled(true);
@@ -227,20 +230,17 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             implements Filterable {
 
         private final Context context;
-
         private final Filter mFilter;
-
         private List<Pair<String, String>> aliasesColl;
-
         private final Router mRouter;
-
         private final SharedPreferences mPreferences;
 
         public RouterAliasesListRecyclerViewAdapter(final Context context,
                                                     final Router mRouter) {
             this.context = context;
             this.mRouter = mRouter;
-            this.mPreferences = this.context.getSharedPreferences(this.mRouter.getUuid(), Context.MODE_PRIVATE);
+            this.mPreferences = this.context
+                    .getSharedPreferences(this.mRouter.getUuid(), Context.MODE_PRIVATE);
             this.aliasesColl = FluentIterable
                     .from(Router.getAliases(this.context, this.mRouter))
                     .toList();
