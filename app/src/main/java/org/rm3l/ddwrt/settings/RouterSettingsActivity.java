@@ -99,13 +99,11 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 
     @Nullable
     @Override
-    protected String getToolbarTitle() {
-        if (mRouter == null) {
-            return "Router Settings";
-        }
-        final String mRouterName = mRouter.getName();
-        return String.format("Settings for '%s'",
-                isNullOrEmpty(mRouterName) ? mRouter.getRemoteIpAddress() : mRouterName);
+    protected String getToolbarSubtitle() {
+        return String.format("%s (%s:%d)",
+                mRouter.getDisplayName(),
+                mRouter.getRemoteIpAddress(),
+                mRouter.getRemotePort());
     }
 
     @Override

@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -52,12 +51,6 @@ public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActiv
     @Override
     protected PreferenceFragment getPreferenceFragment() {
         return new RouterManagementSettingsFragment();
-    }
-
-    @Nullable
-    @Override
-    protected String getToolbarTitle() {
-        return "Settings";
     }
 
     @Override
