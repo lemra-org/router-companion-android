@@ -22,6 +22,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
@@ -225,6 +227,22 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
                 }
             }
         }, 1000);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            //TODO Add other menu options down here
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     static class RouterAliasesListRecyclerViewAdapter
