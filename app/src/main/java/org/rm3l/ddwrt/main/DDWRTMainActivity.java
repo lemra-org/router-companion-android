@@ -45,7 +45,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -100,7 +99,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.BackupRouterAction;
-import org.rm3l.ddwrt.actions.ImportAliasesDialogFragment;
+import org.rm3l.ddwrt.actions.ManageRouterAliasesActivity;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDialogFragment;
@@ -128,7 +127,6 @@ import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
-import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1191,33 +1189,39 @@ public class DDWRTMainActivity extends AppCompatActivity
                 }
                 //TODO
                 return true;
-            case R.id.action_ddwrt_actions_aliases_export: {
-                final Bundle token = new Bundle();
-                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
-                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
-                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
-
-                SnackbarUtils.buildSnackbar(this,
-                        findViewById(android.R.id.content),
-                        String.format("Going to start exporting aliases for '%s' (%s)...",
-                                displayName, mRouter.getRemoteIpAddress()),
-                        "Undo",
-                        Snackbar.LENGTH_SHORT,
-                        DDWRTMainActivity.this,
-                        token,
-                        true);
+            case R.id.action_ddwrt_actions_manage_aliases: {
+                final Intent manageAliasIntent = new Intent(this, ManageRouterAliasesActivity.class);
+                manageAliasIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+                this.startActivity(manageAliasIntent);
                 return true;
             }
-            case R.id.action_ddwrt_actions_aliases_import: {
-                final Fragment importAliasesFragment = getSupportFragmentManager()
-                        .findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
-                if (importAliasesFragment instanceof DialogFragment) {
-                    ((DialogFragment) importAliasesFragment).dismiss();
-                }
-                final DialogFragment importAliases = ImportAliasesDialogFragment.newInstance(mRouterUuid);
-                importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
-                return true;
-            }
+//            case R.id.action_ddwrt_actions_aliases_export: {
+//                final Bundle token = new Bundle();
+//                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
+//                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
+//                token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
+//
+//                SnackbarUtils.buildSnackbar(this,
+//                        findViewById(android.R.id.content),
+//                        String.format("Going to start exporting aliases for '%s' (%s)...",
+//                                displayName, mRouter.getRemoteIpAddress()),
+//                        "Undo",
+//                        Snackbar.LENGTH_SHORT,
+//                        DDWRTMainActivity.this,
+//                        token,
+//                        true);
+//                return true;
+//            }
+//            case R.id.action_ddwrt_actions_aliases_import: {
+//                final Fragment importAliasesFragment = getSupportFragmentManager()
+//                        .findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
+//                if (importAliasesFragment instanceof DialogFragment) {
+//                    ((DialogFragment) importAliasesFragment).dismiss();
+//                }
+//                final DialogFragment importAliases = ImportAliasesDialogFragment.newInstance(mRouterUuid);
+//                importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
+//                return true;
+//            }
             default:
                 break;
 

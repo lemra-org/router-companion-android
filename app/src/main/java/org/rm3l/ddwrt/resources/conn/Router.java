@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -983,5 +984,40 @@ public class Router implements Serializable {
         public String getDisplayName() {
             return displayName;
         }
+    }
+
+    @NonNull
+    public Set<Pair<String, String>> getAliases(@Nullable final Context context) {
+        return getAliases(context, this);
+    }
+
+    @NonNull
+    public static Set<Pair<String, String>> getAliases(
+            @Nullable final Context context,
+            @Nullable final Router router) {
+        final Set<Pair<String, String>> aliases = new HashSet<>();
+        final SharedPreferences preferences = getPreferences(router, context);
+        if (preferences != null) {
+            final Map<String, ?> preferencesAll = preferences.getAll();
+            if (preferencesAll != null) {
+                for (final Map.Entry<String, ?> entry :
+                        preferencesAll.entrySet()) {
+                    final String key = entry.getKey();
+                    final Object value = entry.getValue();
+                    if (isNullOrEmpty(key) || value == null) {
+                        continue;
+                    }
+                    //Check whether key is a MAC-Address
+                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                        continue;
+                    }
+                    //This is a MAC Address - collect it right away!
+                    aliases.add(
+                            Pair.create(key.toLowerCase(),
+                                    nullToEmpty(value.toString())));
+                }
+            }
+        }
+        return aliases;
     }
 }
