@@ -38,10 +38,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.resources.MACOUIVendor;
+import org.rm3l.ddwrt.resources.RecyclerViewRefreshCause;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -49,6 +53,7 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
@@ -76,6 +81,24 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
 
     private FloatingActionButton addNewButton;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private Menu optionsMenu;
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            final RouterAliasesListRecyclerViewAdapter adapter =
+                    (RouterAliasesListRecyclerViewAdapter) mAdapter;
+            final String query = intent.getStringExtra(SearchManager.QUERY);
+            if (query == null) {
+                adapter.setAliasesColl(FluentIterable.from(
+                        Router.getAliases(this, mRouter))
+                .toList());
+                adapter.notifyDataSetChanged();
+                return;
+            }
+            adapter.getFilter().filter(query);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +133,8 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             finish();
             return;
         }
+
+        handleIntent(getIntent());
 
         mRouterPreferences = getSharedPreferences(routerSelected, Context.MODE_PRIVATE);
 
@@ -211,28 +236,59 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
 
     @Override
     public void onRefresh() {
+        doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED, null);
+    }
+
+    private void doRefreshRoutersListWithSpinner(@NonNull final RecyclerViewRefreshCause cause, final Integer position) {
         mSwipeRefreshLayout.setEnabled(false);
-        mSwipeRefreshLayout.setRefreshing(true);
+        setRefreshActionButtonState(true);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
-                    ((ManageRouterAliasesActivity.RouterAliasesListRecyclerViewAdapter)
-                            ManageRouterAliasesActivity.this.mAdapter)
-                                .setAliasesColl(FluentIterable
-                                    .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
-                                    .toList());
-                    ManageRouterAliasesActivity.this.mAdapter.notifyDataSetChanged();
+                    final ImmutableList<Pair<String, String>> allAliases = FluentIterable
+                        .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
+                            .toList();
+                    ((RouterAliasesListRecyclerViewAdapter) ManageRouterAliasesActivity.this.mAdapter)
+                            .setAliasesColl(allAliases);
+                    switch (cause) {
+                        case DATA_SET_CHANGED:
+                            ManageRouterAliasesActivity.this.mAdapter.notifyDataSetChanged();
+                            break;
+                        case INSERTED:
+                            ManageRouterAliasesActivity.this.mAdapter.notifyItemInserted(position);
+                            break;
+                        case REMOVED:
+                            ManageRouterAliasesActivity.this.mAdapter.notifyItemRemoved(position);
+                        case UPDATED:
+                            ManageRouterAliasesActivity.this.mAdapter.notifyItemChanged(position);
+                    }
                 } finally {
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    setRefreshActionButtonState(false);
                     mSwipeRefreshLayout.setEnabled(true);
                 }
             }
         }, 1000);
     }
 
+    public void setRefreshActionButtonState(final boolean refreshing) {
+        mSwipeRefreshLayout.setRefreshing(refreshing);
+        if (optionsMenu != null) {
+            final MenuItem refreshItem = optionsMenu.findItem(R.id.router_aliases_list_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.optionsMenu = menu;
+
         getMenuInflater().inflate(R.menu.menu_manage_router_aliases, menu);
 
         //Search
@@ -403,7 +459,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             if (position < 0 || position >= aliasesColl.size()) {
                 Utils.reportException(null, new IllegalStateException());
                 Toast.makeText(context,
@@ -413,22 +469,36 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             }
             final Pair<String, String> aliasPairAt =
                     aliasesColl.get(position);
-            holder.macAddress.setText(aliasPairAt.first);
+            final String mac = aliasPairAt.first;
+            holder.macAddress.setText(mac);
             holder.alias.setText(aliasPairAt.second);
+            final MACOUIVendor macouiVendor;
+            try {
+                macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache.get(mac);
+                if (macouiVendor != null) {
+                    holder.oui.setText(macouiVendor.getCompany());
+                } else {
+                    holder.oui.setVisibility(View.GONE);
+                }
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                //No worries
+                holder.oui.setVisibility(View.GONE);
+            }
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new AlertDialog.Builder(context)
                             .setIcon(R.drawable.ic_action_alert_warning)
                             .setTitle(String.format("Drop Alias for '%s'?",
-                                    aliasPairAt.first))
+                                    mac))
                             .setMessage("Are you sure you wish to continue? ")
                             .setCancelable(true)
                             .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     mPreferences.edit()
-                                            .remove(aliasPairAt.first)
+                                            .remove(mac)
                                             .apply();
                                     setAliasesColl(FluentIterable.from(mRouter.getAliases(context))
                                         .toList());
@@ -471,6 +541,7 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             final TextView macAddress;
             @NonNull
             final TextView alias;
+            final TextView oui;
 
             @NonNull
             final ImageButton removeButton;
@@ -496,6 +567,8 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
                 this.removeButton =
                         (ImageButton) this.itemView.findViewById(
                                 R.id.router_alias_remove_btn);
+                this.oui = (TextView)
+                        this.itemView.findViewById(R.id.router_alias_oui);
             }
         }
 
