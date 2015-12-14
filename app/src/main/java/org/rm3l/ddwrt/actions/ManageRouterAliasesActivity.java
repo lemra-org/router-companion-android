@@ -114,8 +114,10 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
         mToolbar = (Toolbar) findViewById(R.id.manageRouterAliasesToolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("Manage Aliases");
-            mToolbar.setSubtitle(String.format("%s (%s)",
-                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    mRouter.getDisplayName(), 
+                    mRouter.getRemoteIpAddress(),
+                    mRouter.getRemotePort()));
             mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
             mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
             mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
