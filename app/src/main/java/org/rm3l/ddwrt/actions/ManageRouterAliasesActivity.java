@@ -1,6 +1,7 @@
 package org.rm3l.ddwrt.actions;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,20 +18,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.support.v4.content.ContextCompat;
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Predicate;
@@ -55,7 +57,7 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 /**
  * Created by rm3l on 13/12/15.
  */
-public class ManageRouterAliasesActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ManageRouterAliasesActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
 
     private static final String LOG_TAG = ManageRouterAliasesActivity
             .class.getSimpleName();
@@ -228,6 +230,43 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             }
         }, 1000);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_manage_router_aliases, menu);
+
+        //Search
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        final SearchView searchView = (SearchView) menu
+                .findItem(R.id.router_aliases_list_refresh_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(this);
+
+        // Get the search close button image view
+        final ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        if (closeButton != null) {
+            // Set on click listener
+            closeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Reset views
+                    final RouterAliasesListRecyclerViewAdapter adapter =
+                            (RouterAliasesListRecyclerViewAdapter) mAdapter;
+                    adapter.setAliasesColl(FluentIterable
+                        .from(Router.getAliases(ManageRouterAliasesActivity.this, mRouter))
+                        .toList());
+                    adapter.notifyDataSetChanged();
+                    //Hide it now
+                    searchView.setIconified(true);
+                }
+            });
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
     
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -243,6 +282,29 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        final RouterAliasesListRecyclerViewAdapter adapter =
+                (RouterAliasesListRecyclerViewAdapter) mAdapter;
+        if (TextUtils.isEmpty(s)) {
+            adapter.setAliasesColl(
+                    FluentIterable.from(
+                            Router.getAliases(this, mRouter)
+                    )
+                    .toList()
+            );
+            adapter.notifyDataSetChanged();
+        } else {
+            adapter.getFilter().filter(s);
+        }
+        return true;
     }
 
     static class RouterAliasesListRecyclerViewAdapter
