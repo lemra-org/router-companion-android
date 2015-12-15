@@ -93,7 +93,12 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 /**
  * Created by rm3l on 13/12/15.
  */
-public class ManageRouterAliasesActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener, SnackbarCallback {
+public class ManageRouterAliasesActivity 
+    extends AppCompatActivity 
+    implements View.OnClickListener, 
+        SwipeRefreshLayout.OnRefreshListener, 
+        SearchView.OnQueryTextListener, 
+        SnackbarCallback {
 
     private static final String LOG_TAG = ManageRouterAliasesActivity
             .class.getSimpleName();
@@ -106,11 +111,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
     private Toolbar mToolbar;
     private SharedPreferences mRouterPreferences;
 
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
 
     private FloatingActionButton addNewButton;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -683,7 +686,8 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
                     .inflate(R.layout.router_aliases_list_layout, parent, false);
             // set the view's size, margins, paddings and layout parameters
             // ...
-            final long currentTheme = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+            final long currentTheme = context
+                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                     .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
             final CardView cardView = (CardView) v.findViewById(R.id.router_alias_item_cardview);
             if (currentTheme == ColorUtils.LIGHT_THEME) {
