@@ -40,7 +40,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
             
             <TextView
                 android:layout_width="wrap_content"
@@ -60,7 +61,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:hint="00:aa:bb:cc:dd:ee:ff"
+                android:hint="aa:bb:cc:dd:ee:ff"
                 android:isScrollContainer="true"
                 android:drawableBottom="@android:color/holo_blue_dark"
                 android:imeOptions="flagNoExtractUi"

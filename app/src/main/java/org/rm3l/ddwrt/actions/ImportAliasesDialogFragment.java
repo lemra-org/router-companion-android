@@ -76,7 +76,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
     private static final int READ_REQUEST_CODE = 52;
 
     private Router mRouter;
-    private RouterRestoreDialogListener mListener = null;
+    private ManageRouterAliasesActivity mListener = null;
     private InputStream mSelectedBackupInputStream = null;
     private SharedPreferences mRouterPreferences;
     File tempFile = null;
@@ -85,12 +85,14 @@ public class ImportAliasesDialogFragment extends DialogFragment {
     private Cursor mUriCursor = null;
 
     public static ImportAliasesDialogFragment newInstance(@NonNull final String routerUuid) {
-        final ImportAliasesDialogFragment importAliasesDialogFragment = new ImportAliasesDialogFragment();
+        final ImportAliasesDialogFragment importAliasesDialogFragment =
+                new ImportAliasesDialogFragment();
 
         final Bundle args = new Bundle();
         args.putString(ROUTER_SELECTED, routerUuid);
 
         importAliasesDialogFragment.setArguments(args);
+
         return importAliasesDialogFragment;
     }
 
@@ -322,7 +324,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (RouterRestoreDialogListener) activity;
+            mListener = (ManageRouterAliasesActivity) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             ReportingUtils.reportException(getContext(), e);
@@ -404,7 +406,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
                                 SnackbarUtils.buildSnackbar(getContext(),
                                         d.findViewById(android.R.id.content),
-                                        String.format("Going to start exporting aliases for '%s' (%s)...",
+                                        String.format("Going to start importing aliases for '%s' (%s)...",
                                                 mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                                         "Undo",
                                         Snackbar.LENGTH_SHORT,
@@ -460,7 +462,6 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                                     try {
                                                         final String fileToString = FileUtils.readFileToString(tempFile);
 
-                                                        //TODO Save into preferences after deserialization to JSON
                                                         final JSONObject jsonObject = new JSONObject(fileToString);
 
                                                         final Iterator<String> keys = jsonObject.keys();
@@ -524,6 +525,12 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                                     String.format("Action 'Import Aliases' executed successfully on host '%s'",
                                                             mRouter.getRemoteIpAddress()),
                                                     Style.CONFIRM);
+
+                                                    d.cancel();
+
+                                                    if (mListener != null) {
+                                                        mListener.onRefresh();
+                                                    }
 
                                                 } catch (final Exception e) {
                                                     displayMessage("Error - please try again later", Style.ALERT);

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 /**
@@ -83,7 +84,9 @@ public final class SnackbarUtils {
                 } catch (final Exception e) {
                     e.printStackTrace();
                     Utils.reportException(ctx, e);
-                    Toast.makeText(ctx, "Internal Error! Please try again later.", Toast.LENGTH_SHORT)
+                    Toast.makeText(ctx, "Internal Error (" + Strings.nullToEmpty(
+                            ExceptionUtils.getRootCauseMessage(e)) +
+                            "). Please try again later.", Toast.LENGTH_SHORT)
                             .show();
                 }
             }

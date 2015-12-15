@@ -33,6 +33,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,7 +77,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -144,14 +145,12 @@ public class ManageRouterAliasesActivity
         if (mIsThemeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
-        }
-        
-        if (mIsThemeLight) {
-            getWindow().getDecorView()
-                    .setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
         }
 
         setContentView(R.layout.activity_manage_router_aliases);
@@ -279,7 +278,8 @@ public class ManageRouterAliasesActivity
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            onRefresh();
+                            doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                                    null);
                         }
                     });
         }
@@ -391,7 +391,8 @@ public class ManageRouterAliasesActivity
                 if (importAliasesFragment instanceof DialogFragment) {
                     ((DialogFragment) importAliasesFragment).dismiss();
                 }
-                final DialogFragment importAliases = ImportAliasesDialogFragment.newInstance(mRouter.getUuid());
+                final DialogFragment importAliases = ImportAliasesDialogFragment
+                        .newInstance(mRouter.getUuid());
                 importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
                 return true;
 
@@ -430,7 +431,8 @@ public class ManageRouterAliasesActivity
                                     editor.remove(alias.first);
                                 }
                                 editor.apply();
-                                onRefresh();
+                                doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                                        null);
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -439,6 +441,11 @@ public class ManageRouterAliasesActivity
                                 //Cancelled - nothing more to do!
                             }
                         }).create().show();
+                return true;
+
+            case R.id.router_aliases_list_refresh:
+                doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                        null);
                 return true;
             default:
                 break;
@@ -633,8 +640,12 @@ public class ManageRouterAliasesActivity
                 @Override
                 protected FilterResults performFiltering(final CharSequence constraint) {
                     final FilterResults oReturn = new FilterResults();
-                    final Set<Pair<String, String>> aliases = RouterAliasesListRecyclerViewAdapter.this.mRouter
-                            .getAliases(RouterAliasesListRecyclerViewAdapter.this.context);
+                    final List<Pair<String, String>> aliases =
+                            FluentIterable
+                                    .from(RouterAliasesListRecyclerViewAdapter.this.mRouter
+                                        .getAliases(RouterAliasesListRecyclerViewAdapter.this.context))
+                                    .toList();
+
                     if (aliases.isEmpty()) {
                         return oReturn;
                     }
@@ -656,7 +667,7 @@ public class ManageRouterAliasesActivity
                                         return containsIgnoreCase(macAddr, constraint)
                                                 || containsIgnoreCase(alias, constraint);
                                     }
-                                }).toSet();
+                                }).toList();
                     }
 
                     return oReturn;
@@ -722,7 +733,8 @@ public class ManageRouterAliasesActivity
             holder.alias.setText(aliasStr);
             final MACOUIVendor macouiVendor;
             try {
-                macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache.get(mac);
+                macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
+                        .getIfPresent(mac);
                 if (macouiVendor != null) {
                     holder.oui.setText(macouiVendor.getCompany());
                 } else {
@@ -733,32 +745,35 @@ public class ManageRouterAliasesActivity
                 //No worries
                 holder.oui.setVisibility(View.GONE);
             }
+
+            final AlertDialog removeAliasEntryDialog = new AlertDialog.Builder(context)
+                    .setIcon(R.drawable.ic_action_alert_warning)
+                    .setTitle(String.format("Drop Alias for '%s'?",
+                            mac))
+                    .setMessage("Are you sure you wish to continue? ")
+                    .setCancelable(true)
+                    .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mPreferences.edit()
+                                    .remove(mac)
+                                    .apply();
+                            setAliasesColl(FluentIterable.from(mRouter.getAliases(context))
+                                    .toList());
+                            notifyItemRemoved(position);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Cancelled - nothing more to do!
+                        }
+                    }).create();
+
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new AlertDialog.Builder(context)
-                            .setIcon(R.drawable.ic_action_alert_warning)
-                            .setTitle(String.format("Drop Alias for '%s'?",
-                                    mac))
-                            .setMessage("Are you sure you wish to continue? ")
-                            .setCancelable(true)
-                            .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mPreferences.edit()
-                                            .remove(mac)
-                                            .apply();
-                                    setAliasesColl(FluentIterable.from(mRouter.getAliases(context))
-                                        .toList());
-                                    notifyItemRemoved(position);
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Cancelled - nothing more to do!
-                                }
-                            }).create().show();
+                    removeAliasEntryDialog.show();
                 }
             });
 
@@ -773,12 +788,83 @@ public class ManageRouterAliasesActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (context != null) {
-                                        context.onRefresh();
+                                        context.doRefreshRoutersListWithSpinner(
+                                                RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                                                null);
                                     }
                                 }
                             });
                 }
             });
+
+
+
+            holder.containerView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    showRouterAliasPopupMenu(v, mac, aliasStr, removeAliasEntryDialog);
+                    return true;
+                }
+            });
+
+            final boolean isThemeLight = ColorUtils.isThemeLight(this.context);
+
+            if (isThemeLight) {
+                //Set menu background to white
+                holder.aliasMenu
+                        .setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            }
+
+            holder.aliasMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showRouterAliasPopupMenu(v,
+                            mac,
+                            aliasStr,
+                            removeAliasEntryDialog);
+                }
+            });
+
+        }
+
+        private void showRouterAliasPopupMenu(final View v,
+                                              final String mac,
+                                              final String aliasStr,
+                                              final AlertDialog removeAliasEntryDialog) {
+            final PopupMenu popup = new PopupMenu(context, v);
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.menu_router_alias_edit:
+                            displayRouterAliasDialog(
+                                    context,
+                                    mac,
+                                    aliasStr,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (context != null) {
+                                                context.doRefreshRoutersListWithSpinner(
+                                                        RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                                                        null);
+                                            }
+                                        }
+                                    });
+                            return true;
+                        case R.id.menu_router_alias_remove:
+                            removeAliasEntryDialog.show();
+                            return true;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
+            final MenuInflater inflater = popup.getMenuInflater();
+            final Menu menu = popup.getMenu();
+            inflater.inflate(R.menu.menu_manage_router_alias, menu);
+            popup.show();
         }
 
         @Override
@@ -804,6 +890,9 @@ public class ManageRouterAliasesActivity
             @NonNull
             final ImageButton removeButton;
 
+            @NonNull
+            final ImageButton aliasMenu;
+
             final View containerView;
 
             private final Context mContext;
@@ -827,6 +916,11 @@ public class ManageRouterAliasesActivity
                                 R.id.router_alias_remove_btn);
                 this.oui = (TextView)
                         this.itemView.findViewById(R.id.router_alias_oui);
+
+                this.aliasMenu =
+                        (ImageButton) this.itemView.findViewById(
+                                R.id.router_alias_menu);
+
             }
         }
 
@@ -987,6 +1081,8 @@ public class ManageRouterAliasesActivity
                         if (onClickListener != null) {
                             onClickListener.onClick(d, view.getId());
                         }
+
+                        d.dismiss();
 
                     }
                 });

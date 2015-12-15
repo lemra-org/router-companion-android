@@ -28,7 +28,7 @@ public final class StorageUtils {
 
     /* Checks if external storage is available to at least read */
     public static boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
+        final String state = Environment.getExternalStorageState();
         return (Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
@@ -50,14 +50,29 @@ public final class StorageUtils {
             containerDir = ctx.getFilesDir();
 //                    this.getDir(outputFileName, Context.MODE_PRIVATE);
         }
-        if (!(containerDir.mkdirs() || containerDir.isDirectory())) {
-            final String absolutePath = containerDir.getAbsolutePath();
-            Crashlytics.log(Log.ERROR, TAG,
-                    "Directory " + absolutePath + " not created");
-            throw new StorageException("Failed to create directory " +
-                    absolutePath);
-        }
+
+        createDirectoryOrRaiseException(containerDir);
+
         return containerDir;
+    }
+
+    public static void createDirectoryOrRaiseException(@NonNull final  File dir) {
+        final String absolutePath = dir.getAbsolutePath();
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                Crashlytics.log(Log.ERROR, TAG,
+                        "Failed to create " + absolutePath + " directory");
+                throw new StorageException("Failed to create directory " +
+                        absolutePath);
+            }
+        } else {
+            if (!dir.isDirectory()) {
+                Crashlytics.log(Log.ERROR, TAG,
+                        "'" + absolutePath + "' is not a directory");
+                throw new StorageException("Failed to create directory " +
+                        absolutePath);
+            }
+        }
     }
 
     @Nullable
@@ -68,20 +83,9 @@ public final class StorageUtils {
         }
         final File exportDir = new File(appDirectory, "export");
 
-        if (!(exportDir.mkdirs() || exportDir.isDirectory())) {
-            final String absolutePath = exportDir.getAbsolutePath();
-            Crashlytics.log(Log.ERROR, TAG,
-                    "Directory " + absolutePath + " not created");
-            throw new StorageException("Failed to create directory " +
-                    absolutePath);
-        }
+        createDirectoryOrRaiseException(exportDir);
+
         return exportDir;
     }
 
-    public static void createDirectoryOrRaiseException(@NonNull final File dir) {
-        if (!(dir.mkdirs() || dir.isDirectory())) {
-            throw new StorageException("Directory not created: " +
-                    dir.getAbsolutePath());
-        }
-    }
 }
