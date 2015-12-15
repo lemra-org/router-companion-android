@@ -68,7 +68,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:id="@+id/router_alias_oui"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="?android:textAppearanceSmall"
+                    android:textSize="?android:attr/textAppearanceSmall"
                     android:textStyle="italic"/>
 
             </LinearLayout>
