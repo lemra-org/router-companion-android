@@ -1,16 +1,24 @@
 package org.rm3l.ddwrt.actions;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -20,12 +28,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
@@ -40,7 +52,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 
+import org.json.JSONObject;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.MACOUIVendor;
 import org.rm3l.ddwrt.resources.RecyclerViewRefreshCause;
@@ -49,23 +63,42 @@ import org.rm3l.ddwrt.tiles.status.wireless.WirelessClientsTile;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static de.keyboardsurfer.android.widget.crouton.Style.ALERT;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.rm3l.ddwrt.main.DDWRTMainActivity.IMPORT_ALIASES_FRAGMENT_TAG;
+import static org.rm3l.ddwrt.main.DDWRTMainActivity.MAIN_ACTIVITY_ACTION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * Created by rm3l on 13/12/15.
  */
-public class ManageRouterAliasesActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
+public class ManageRouterAliasesActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener, SnackbarCallback {
 
     private static final String LOG_TAG = ManageRouterAliasesActivity
             .class.getSimpleName();
+
+    private static final String ADD_OR_EDIT_ROUTER_ALIAS_FRAGMENT = "ADD_OR_EDIT_ROUTER_ALIAS_FRAGMENT";
 
     private boolean mIsThemeLight;
     private Router mRouter;
@@ -222,15 +255,30 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
         });
     }
 
+    private static void displayRouterAliasDialog(final ManageRouterAliasesActivity activity,
+                                                 final String macAddress,
+                                          final String currentAlias,
+                                          final DialogInterface.OnClickListener onClickListener) {
+        final AddOrUpdateRouterAliasDialogFragment fragment = AddOrUpdateRouterAliasDialogFragment
+                .newInstance(activity.mRouter, macAddress, currentAlias, onClickListener);
+        fragment.show(activity.getSupportFragmentManager(), ADD_OR_EDIT_ROUTER_ALIAS_FRAGMENT);
+
+    }
+
     @Override
     public void onClick(View view) {
         if (view == null) {
             return;
         }
         if (view.getId() == R.id.router_alias_add) {
-            //TODO Open Dialog - PS: Might be great to allow to see MAC OUI Vendor
-            Toast.makeText(ManageRouterAliasesActivity.this, "[TODO] onClick(router_alias_add)",
-                    Toast.LENGTH_SHORT).show();
+            displayRouterAliasDialog(this,
+                    null, null,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onRefresh();
+                        }
+                    });
         }
     }
 
@@ -333,7 +381,62 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            //TODO Add other menu options down here
+
+            case R.id.router_aliases_import:
+                final Fragment importAliasesFragment = getSupportFragmentManager()
+                        .findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
+                if (importAliasesFragment instanceof DialogFragment) {
+                    ((DialogFragment) importAliasesFragment).dismiss();
+                }
+                final DialogFragment importAliases = ImportAliasesDialogFragment.newInstance(mRouter.getUuid());
+                importAliases.show(getSupportFragmentManager(), IMPORT_ALIASES_FRAGMENT_TAG);
+                return true;
+
+            case R.id.router_aliases_export_all:
+                final Bundle token = new Bundle();
+                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
+
+                SnackbarUtils.buildSnackbar(this,
+                        findViewById(android.R.id.content),
+                        String.format("Going to start exporting aliases for '%s' (%s)...",
+                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
+                        "Undo",
+                        Snackbar.LENGTH_SHORT,
+                        ManageRouterAliasesActivity.this,
+                        token,
+                        true);
+                return true;
+
+            case R.id.router_aliases_clear_all:
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Drop all aliases?")
+                        .setMessage("Are you sure you wish to continue? ")
+                        .setCancelable(true)
+                        .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                final SharedPreferences.Editor editor = mRouterPreferences.edit();
+                                //Iterate over all possible aliases
+                                final Set<Pair<String, String>> aliases =
+                                        Router.getAliases(ManageRouterAliasesActivity.this, mRouter);
+                                for (final Pair<String, String> alias : aliases) {
+                                    if (alias == null) {
+                                        continue;
+                                    }
+                                    editor.remove(alias.first);
+                                }
+                                editor.apply();
+                                onRefresh();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+                return true;
             default:
                 break;
         }
@@ -363,19 +466,159 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
         return true;
     }
 
+    @Override
+    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+        final Integer action = bundle != null ?
+                bundle.getInt(MAIN_ACTIVITY_ACTION) : null;
+
+        if (action == null) {
+            return;
+        }
+
+        switch (action) {
+            case RouterActions.IMPORT_ALIASES:
+                //TODO
+                Toast.makeText(this, "[TODO] Import aliases", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+
+            case RouterActions.EXPORT_ALIASES:
+                //Load all aliases from preferences
+                if (mRouterPreferences == null) {
+                    break;
+                }
+                final Map<String, ?> allRouterPrefs = mRouterPreferences.getAll();
+                if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
+                    return;
+                }
+
+                final Map<String, String> aliases = new HashMap<>();
+                for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
+                    final String key = entry.getKey();
+                    final Object value = entry.getValue();
+                    if (isNullOrEmpty(key) || value == null) {
+                        continue;
+                    }
+                    //Check whether key is a MAC-Address
+                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                        continue;
+                    }
+                    //This is a MAC Address - collect it right away!
+                    aliases.put(key, nullToEmpty(value.toString()));
+                }
+
+                final File exportDirectory = StorageUtils.getExportDirectory(this);
+                if (exportDirectory == null) {
+                    throw new StorageException("Could not retrieve or create export directory!");
+                }
+
+                final File aliasesDir = new File(exportDirectory, "alias");
+
+                StorageUtils.createDirectoryOrRaiseException(aliasesDir);
+
+                final File outputFile = new File(aliasesDir,
+                        Utils.getEscapedFileName(
+                                String.format("Aliases_for_%s_%s_%s",
+                                        mRouter.getDisplayName(),
+                                        mRouter.getRemoteIpAddress(),
+                                        mRouter.getUuid())) + ".json");
+
+                final Date backupDate = new Date();
+                final String aliasesStr = new JSONObject(aliases)
+                        .toString(2);
+
+                FileOutputStream fileOutputStream = null;
+                try {
+                    fileOutputStream = new FileOutputStream(outputFile);
+                    fileOutputStream.write(aliasesStr.getBytes());
+                } finally {
+                    if (fileOutputStream != null) {
+                        fileOutputStream.close();
+                    }
+                }
+
+                Utils.displayMessage(this,
+                        String.format("Action 'Export Aliases' executed successfully on host '%s'. " +
+                                        "Path: '%s'",
+                                mRouter.getRemoteIpAddress(),
+                                outputFile.getAbsolutePath()),
+                        Style.CONFIRM);
+
+                try {
+                    //Now allow user to share file if needed
+                    final Uri uriForFile = FileProvider.getUriForFile(
+                            this,
+                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                            outputFile);
+                    this.grantUriPermission(
+                            this.getPackageName(),
+                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    final Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                            String.format("Aliases Backup for Router '%s' (%s)",
+                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                    shareIntent.setType("text/html");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                            ("Backup Date: " + backupDate + "\n\n" +
+                                    aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
+                                    Utils.getShareIntentFooter()));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+//                                            shareIntent.setType("*/*");
+                    this.startActivity(Intent.createChooser(shareIntent,
+                            this.getResources().getText(R.string.share_backup)));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    Utils.reportException(this, e);
+                    //No worries
+                }
+
+                break;
+            default:
+                //Ignored
+                break;
+        }
+    }
+
+    @Override
+    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
+    @Override
+    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+    }
+
     static class RouterAliasesListRecyclerViewAdapter
             extends RecyclerView.Adapter<RouterAliasesListRecyclerViewAdapter.ViewHolder>
             implements Filterable {
 
-        private final Context context;
+        private final ManageRouterAliasesActivity context;
         private final Filter mFilter;
         private List<Pair<String, String>> aliasesColl;
         private final Router mRouter;
         private final SharedPreferences mPreferences;
 
-        public RouterAliasesListRecyclerViewAdapter(final Context context,
+        public RouterAliasesListRecyclerViewAdapter(final ManageRouterAliasesActivity activity,
                                                     final Router mRouter) {
-            this.context = context;
+            this.context = activity;
             this.mRouter = mRouter;
             this.mPreferences = this.context
                     .getSharedPreferences(this.mRouter.getUuid(), Context.MODE_PRIVATE);
@@ -470,8 +713,9 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             final Pair<String, String> aliasPairAt =
                     aliasesColl.get(position);
             final String mac = aliasPairAt.first;
+            final String aliasStr = aliasPairAt.second;
             holder.macAddress.setText(mac);
-            holder.alias.setText(aliasPairAt.second);
+            holder.alias.setText(aliasStr);
             final MACOUIVendor macouiVendor;
             try {
                 macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache.get(mac);
@@ -517,8 +761,18 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
             holder.containerView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO Allow to update alias
-                    Toast.makeText(context, "[TODO] onClick =? update alias", Toast.LENGTH_SHORT).show();
+                    displayRouterAliasDialog(
+                            context,
+                            mac,
+                            aliasStr,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (context != null) {
+                                        context.onRefresh();
+                                    }
+                                }
+                            });
                 }
             });
         }
@@ -571,6 +825,172 @@ public class ManageRouterAliasesActivity extends AppCompatActivity implements Vi
                         this.itemView.findViewById(R.id.router_alias_oui);
             }
         }
+
+    }
+
+    public static class AddOrUpdateRouterAliasDialogFragment
+            extends DialogFragment {
+
+        public static final String MAC_ADDRESS = "macAddress";
+        public static final String ALIAS = "alias";
+
+        private CharSequence mMacAddr;
+        private CharSequence mAlias;
+        private SharedPreferences routerPreferences;
+        private DialogInterface.OnClickListener onClickListener;
+
+        @NonNull
+        public static AddOrUpdateRouterAliasDialogFragment
+        newInstance(@NonNull final Router router,
+                    CharSequence mMacAddr,
+                    CharSequence mAlias,
+                    final DialogInterface.OnClickListener onClickListener){
+            final AddOrUpdateRouterAliasDialogFragment addOrUpdateRouterAliasDialogFragment = new AddOrUpdateRouterAliasDialogFragment();
+            final Bundle args = new Bundle();
+            args.putCharSequence(MAC_ADDRESS, mMacAddr);
+            args.putCharSequence(ALIAS, mAlias);
+            args.putString(RouterManagementActivity.ROUTER_SELECTED, router.getUuid());
+
+            addOrUpdateRouterAliasDialogFragment.setArguments(args);
+            addOrUpdateRouterAliasDialogFragment.onClickListener = onClickListener;
+
+            return addOrUpdateRouterAliasDialogFragment;
+
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            final FragmentActivity fragmentActivity = getActivity();
+
+            final long currentTheme = fragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
+            if (currentTheme == ColorUtils.LIGHT_THEME) {
+                //Light
+                fragmentActivity.setTheme(R.style.AppThemeLight);
+            } else {
+                //Default is Dark
+                fragmentActivity.setTheme(R.style.AppThemeDark);
+            }
+
+            final Bundle arguments = getArguments();
+            this.mMacAddr = arguments.getCharSequence(MAC_ADDRESS);
+            this.mAlias = arguments.getCharSequence(ALIAS);
+
+            final String routerUuid = arguments.getString(RouterManagementActivity.ROUTER_SELECTED);
+            if (isNullOrEmpty(routerUuid)) {
+                Toast.makeText(fragmentActivity, "Invalid Router", Toast.LENGTH_SHORT).show();
+                dismiss();
+                return;
+            }
+            routerPreferences = fragmentActivity
+                    .getSharedPreferences(routerUuid, Context.MODE_PRIVATE);
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final FragmentActivity activity = getActivity();
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            // Get the layout inflater
+            final LayoutInflater inflater = activity.getLayoutInflater();
+
+            final View view = inflater.inflate(R.layout.add_or_edit_router_alias, null);
+            final boolean isNewAlias = isEmpty(this.mMacAddr);
+            builder
+                    .setTitle((isNewAlias ? "Set" : "Update") +
+                            " Device Alias")
+                    .setMessage("Note that the Alias you define here is stored locally only, not on the router.")
+                    .setIcon(android.R.drawable.stat_sys_warning)
+                    .setView(view)
+                    // Add action buttons
+                    .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            //Do nothing here because we override this button later to change the close behaviour.
+                            //However, we still need this because on older versions of Android unless we
+                            //pass a handler the button doesn't get instantiated
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            getDialog().cancel();
+                        }
+                    });
+
+            return builder.create();
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+
+            final AlertDialog d = (AlertDialog) getDialog();
+            if (d != null) {
+                final EditText mMacAddrView = (EditText) d.findViewById(R.id.add_or_edit_router_alias_mac);
+                mMacAddrView.setText(this.mMacAddr, TextView.BufferType.EDITABLE);
+
+                final EditText mAliasView = (EditText) d.findViewById(R.id.add_or_edit_router_alias_value);
+                mAliasView.setText(this.mAlias, TextView.BufferType.EDITABLE);
+
+                d.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Validate data
+                        final EditText macEditText = (EditText) d.findViewById(R.id.add_or_edit_router_alias_mac);
+                        final Editable macValue = macEditText.getText();
+
+                        final String macValueToPersist = nullToEmpty(macValue.toString()).toLowerCase();
+
+                        if (isEmpty(macValueToPersist)) {
+                            //Crouton
+                            Crouton.makeText(getActivity(), "MAC Address is required", ALERT,
+                                    (ViewGroup) (d.findViewById(R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                            macEditText.requestFocus();
+                            //Open Keyboard
+                            final InputMethodManager imm = (InputMethodManager) getActivity()
+                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                // only will trigger it if no physical keyboard is open
+                                imm.showSoftInput(macEditText, 0);
+                            }
+                            return;
+                        }
+                        if (!Utils.MAC_ADDRESS.matcher(macValueToPersist).matches()) {
+                            Crouton.makeText(getActivity(), "MAC Address format required", ALERT,
+                                    (ViewGroup) (d.findViewById(R.id.add_or_edit_router_alias_notification_viewgroup))).show();
+                            macEditText.requestFocus();
+                            //Open Keyboard
+                            final InputMethodManager imm = (InputMethodManager) getActivity()
+                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                // only will trigger it if no physical keyboard is open
+                                imm.showSoftInput(macEditText, 0);
+                            }
+                            return;
+                        }
+                        final EditText aliasEditText = (EditText)
+                                d.findViewById(R.id.add_or_edit_router_alias_value);
+
+                        routerPreferences.edit()
+                                .putString(macValueToPersist,
+                                        nullToEmpty(aliasEditText.getText().toString()))
+                                .apply();
+
+                        if (onClickListener != null) {
+                            onClickListener.onClick(d, view.getId());
+                        }
+
+                    }
+                });
+
+
+            }
+        }
+
 
     }
 
