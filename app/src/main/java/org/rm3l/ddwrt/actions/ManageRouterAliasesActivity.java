@@ -728,7 +728,7 @@ public class ManageRouterAliasesActivity
                 } else {
                     holder.oui.setVisibility(View.GONE);
                 }
-            } catch (ExecutionException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 //No worries
                 holder.oui.setVisibility(View.GONE);
