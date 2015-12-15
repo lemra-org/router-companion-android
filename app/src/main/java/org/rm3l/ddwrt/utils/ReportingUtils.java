@@ -1,6 +1,7 @@
 package org.rm3l.ddwrt.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,8 +17,9 @@ import org.rm3l.ddwrt.BuildConfig;
 
 import java.util.Map;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ACRA_USER_EMAIL;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 
 /**
@@ -46,14 +48,21 @@ public final class ReportingUtils {
     public static void reportException(
             @Nullable final Context context,
             @NonNull final Throwable error) {
-        //ACRA Notification
-        ACRA.getErrorReporter().handleSilentException(error);
 
-        //Crashlytics Notification
-        if (context != null) {
-            final String acraEmailAddr = context
-                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                    .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+        if (context == null) {
+            return;
+        }
+
+        final SharedPreferences sharedPreferences = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(ACRA_ENABLE, true)) {
+
+            //ACRA Notification
+            ACRA.getErrorReporter().handleSilentException(error);
+
+            //Crashlytics Notification
+            final String acraEmailAddr = sharedPreferences
+                        .getString(ACRA_USER_EMAIL, null);
             if (!isNullOrEmpty(acraEmailAddr)) {
                 Crashlytics.setUserEmail(acraEmailAddr);
             }
