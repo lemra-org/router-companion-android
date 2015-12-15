@@ -389,7 +389,6 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
                         final FragmentActivity activity = getActivity();
 
-                        // Now check actual connection to router ...
                         final AlertDialog alertDialog = Utils.
                                 buildAlertDialog(activity, null,
                                         String.format("Importing Aliases from '%s' - please hold on...",
@@ -526,8 +525,6 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                                             mRouter.getRemoteIpAddress()),
                                                     Style.CONFIRM);
 
-                                                    d.cancel();
-
                                                     if (mListener != null) {
                                                         mListener.onRefresh();
                                                     }
@@ -536,6 +533,8 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                                                     displayMessage("Error - please try again later", Style.ALERT);
                                                     e.printStackTrace();
                                                     Utils.reportException(context, e);
+                                                } finally {
+                                                    d.cancel();
                                                 }
                                             }
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -562,42 +563,79 @@ public class ManageRouterAliasesActivity
                     }
                 }
 
-                Utils.displayMessage(this,
-                        String.format("Action 'Export Aliases' executed successfully on host '%s'. " +
-                                        "Path: '%s'",
-                                mRouter.getRemoteIpAddress(),
+                SnackbarUtils.buildSnackbar(this,
+                        findViewById(android.R.id.content),
+                        Color.DKGRAY,
+                        String.format("File '%s' created!",
                                 outputFile.getAbsolutePath()),
-                        Style.CONFIRM);
+                        Color.GREEN,
+                        "Share", Color.BLUE,
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                try {
-                    //Now allow user to share file if needed
-                    final Uri uriForFile = FileProvider.getUriForFile(
-                            this,
-                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
-                            outputFile);
-                    this.grantUriPermission(
-                            this.getPackageName(),
-                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            }
 
-                    final Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                            String.format("Aliases Backup for Router '%s' (%s)",
-                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
-                    shareIntent.setType("text/html");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
-                            ("Backup Date: " + backupDate + "\n\n" +
-                                    aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
-                                    Utils.getShareIntentFooter()));
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Share button clicked - share file
+                                try {
+                                    //Now allow user to share file if needed
+                                    final Uri uriForFile = FileProvider.getUriForFile(
+                                            ManageRouterAliasesActivity.this,
+                                            DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY,
+                                            outputFile);
+                                    ManageRouterAliasesActivity.this.grantUriPermission(
+                                            ManageRouterAliasesActivity.this.getPackageName(),
+                                            uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                    final Intent shareIntent = new Intent();
+                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                    shareIntent.putExtra(Intent.EXTRA_SUBJECT,
+                                            String.format("Aliases Backup for Router '%s' (%s)",
+                                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                                    shareIntent.setType("text/html");
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
+                                            ("Backup Date: " + backupDate + "\n\n" +
+                                                    aliasesStr + "\n\n\n").replaceAll("\n", "<br/>") +
+                                                    Utils.getShareIntentFooter()));
+                                    shareIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
 //                                            shareIntent.setType("*/*");
-                    this.startActivity(Intent.createChooser(shareIntent,
-                            this.getResources().getText(R.string.share_backup)));
-                } catch (final Exception e) {
-                    e.printStackTrace();
-                    Utils.reportException(this, e);
-                    //No worries
-                }
+                                    ManageRouterAliasesActivity.this.startActivity(Intent.createChooser(shareIntent,
+                                            ManageRouterAliasesActivity.this.getResources().getText(R.string.share_backup)));
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    Utils.reportException(ManageRouterAliasesActivity.this, e);
+                                    //No worries, but notify user
+                                    Utils.displayMessage(ManageRouterAliasesActivity.this,
+                                            "Internal Error - please try again later or share file manually!",
+                                            Style.ALERT);
+                                }
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
 
                 break;
             default:
@@ -738,12 +776,12 @@ public class ManageRouterAliasesActivity
                 if (macouiVendor != null) {
                     holder.oui.setText(macouiVendor.getCompany());
                 } else {
-                    holder.oui.setVisibility(View.GONE);
+                    holder.oui.setVisibility(View.INVISIBLE);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 //No worries
-                holder.oui.setVisibility(View.GONE);
+                holder.oui.setVisibility(View.INVISIBLE);
             }
 
             final AlertDialog removeAliasEntryDialog = new AlertDialog.Builder(context)
@@ -809,7 +847,7 @@ public class ManageRouterAliasesActivity
 
             final boolean isThemeLight = ColorUtils.isThemeLight(this.context);
 
-            if (isThemeLight) {
+            if (!isThemeLight) {
                 //Set menu background to white
                 holder.aliasMenu
                         .setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);

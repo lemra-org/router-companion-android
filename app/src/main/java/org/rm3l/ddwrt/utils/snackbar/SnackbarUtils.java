@@ -3,6 +3,7 @@ package org.rm3l.ddwrt.utils.snackbar;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -24,8 +25,11 @@ public final class SnackbarUtils {
     public static Snackbar buildSnackbar(
             @Nullable final Context ctx,
             @Nullable final View view,
+            @ColorInt final int bgColor,
             @Nullable final String title,
+            @ColorInt final int titleColor,
             @Nullable final String actionText,
+            @ColorInt final int actionTextColor,
             @Snackbar.Duration final int duration,
             @Nullable final SnackbarCallback callback,
             @Nullable final Bundle bundle,
@@ -50,7 +54,7 @@ public final class SnackbarUtils {
                         //Do nothing here
                     }
                 })
-                .setActionTextColor(Color.RED);
+                .setActionTextColor(actionTextColor);
 
         snackbar.setCallback(new Snackbar.Callback() {
             @Override
@@ -107,16 +111,33 @@ public final class SnackbarUtils {
         });
 
         final View snackbarView = snackbar.getView();
-        snackbarView.setBackgroundColor(Color.DKGRAY);
+        snackbarView.setBackgroundColor(bgColor);
         final TextView textView = (TextView)
                 snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.YELLOW);
+        textView.setTextColor(titleColor);
 
         if (show) {
             snackbar.show();
         }
 
         return snackbar;
+    }
+
+    public static Snackbar buildSnackbar(
+            @Nullable final Context ctx,
+            @Nullable final View view,
+            @Nullable final String title,
+            @Nullable final String actionText,
+            @Snackbar.Duration final int duration,
+            @Nullable final SnackbarCallback callback,
+            @Nullable final Bundle bundle,
+            final boolean show) {
+
+        return buildSnackbar(ctx,
+                view, Color.DKGRAY,
+                title, Color.YELLOW,
+                actionText, Color.RED,
+                duration, callback, bundle, show);
 
     }
 }
