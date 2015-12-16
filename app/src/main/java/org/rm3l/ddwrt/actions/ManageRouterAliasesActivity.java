@@ -386,6 +386,18 @@ public class ManageRouterAliasesActivity
                 onBackPressed();
                 return true;
 
+            case R.id.router_aliases_add:
+                displayRouterAliasDialog(this,
+                        null, null,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                doRefreshRoutersListWithSpinner(RecyclerViewRefreshCause.DATA_SET_CHANGED,
+                                        null);
+                            }
+                        });
+                return true;
+
             case R.id.router_aliases_import:
                 final Fragment importAliasesFragment = getSupportFragmentManager()
                         .findFragmentByTag(IMPORT_ALIASES_FRAGMENT_TAG);
@@ -569,8 +581,8 @@ public class ManageRouterAliasesActivity
                         String.format("File '%s' created!",
                                 outputFile.getAbsolutePath()),
                         Color.GREEN,
-                        "Share", Color.BLUE,
-                        Snackbar.LENGTH_LONG,
+                        "Share", Color.WHITE,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {
@@ -586,6 +598,13 @@ public class ManageRouterAliasesActivity
                             public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
                                 //Share button clicked - share file
                                 try {
+                                    if (!outputFile.exists()) {
+                                        Utils.displayMessage(ManageRouterAliasesActivity.this,
+                                                String.format("File '%s' no longer exists",
+                                                        outputFile.getAbsolutePath()),
+                                                Style.ALERT);
+                                        return;
+                                    }
                                     //Now allow user to share file if needed
                                     final Uri uriForFile = FileProvider.getUriForFile(
                                             ManageRouterAliasesActivity.this,
@@ -702,8 +721,27 @@ public class ManageRouterAliasesActivity
                                         }
                                         final String macAddr = input.first;
                                         final String alias = input.second;
-                                        return containsIgnoreCase(macAddr, constraint)
+
+                                        final boolean containsIgnoreCase = containsIgnoreCase(macAddr, constraint)
                                                 || containsIgnoreCase(alias, constraint);
+
+                                        if (containsIgnoreCase) {
+                                            return true;
+                                        }
+
+                                        //Otherwise check OUI
+                                        MACOUIVendor macouiVendor = null;
+                                        try {
+                                            macouiVendor =
+                                                    WirelessClientsTile.mMacOuiVendorLookupCache
+                                                            .getIfPresent(macAddr);
+                                        } catch (final Exception e) {
+                                            //No worries
+                                        }
+
+                                        return (macouiVendor != null
+                                                && containsIgnoreCase(macouiVendor.getCompany(),
+                                                        constraint));
                                     }
                                 }).toList();
                     }

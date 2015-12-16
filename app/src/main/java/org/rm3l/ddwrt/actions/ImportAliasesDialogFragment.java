@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,7 +21,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -389,169 +387,157 @@ public class ImportAliasesDialogFragment extends DialogFragment {
 
                         final FragmentActivity activity = getActivity();
 
-                        final AlertDialog alertDialog = Utils.
-                                buildAlertDialog(activity, null,
-                                        String.format("Importing Aliases from '%s' - please hold on...",
-                                                ((TextView) d.findViewById(R.id.router_import_aliases_path)).getText()),
-                                        false, false);
-                        alertDialog.show();
-                        ((TextView) alertDialog.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
+                        final Bundle token = new Bundle();
+                        token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.IMPORT_ALIASES);
 
-                                final Bundle token = new Bundle();
-                                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.IMPORT_ALIASES);
+                        SnackbarUtils.buildSnackbar(getContext(),
+                                activity.findViewById(android.R.id.content),
+                                String.format("Going to start importing aliases for '%s' (%s)...",
+                                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
+                                "Undo",
+                                Snackbar.LENGTH_SHORT,
+                                new SnackbarCallback() {
+                                    @Override
+                                    public void onShowEvent(@Nullable Bundle bundle) throws Exception {
 
-                                SnackbarUtils.buildSnackbar(getContext(),
-                                        d.findViewById(android.R.id.content),
-                                        String.format("Going to start importing aliases for '%s' (%s)...",
-                                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
-                                        "Undo",
-                                        Snackbar.LENGTH_SHORT,
-                                        new SnackbarCallback() {
-                                            @Override
-                                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+                                        //Save file choosen
+                                        final Context context = getContext();
+                                        try {
+                                            tempFile = File.createTempFile("aliases_to_import_" + mRouter.getUuid(), ".json",
+                                                    context.getCacheDir());
 
-                                                //Save file choosen
-                                                final Context context = getContext();
-                                                try {
-                                                    tempFile = File.createTempFile("aliases_to_import_" + mRouter.getUuid(), ".json",
-                                                            context.getCacheDir());
+                                            FileUtils.copyInputStreamToFile(mSelectedBackupInputStream, tempFile);
 
-                                                    FileUtils.copyInputStreamToFile(mSelectedBackupInputStream, tempFile);
+                                            if (mUriCursor != null) {
+                                                mUriCursor.close();
+                                            }
 
-                                                    if (mUriCursor != null) {
-                                                        mUriCursor.close();
+                                            dismiss();
+                                        } catch (final Exception e) {
+                                            Utils.reportException(context, e);
+                                            displayMessage("Error - please try again later",
+                                                    Style.ALERT);
+                                        } finally {
+                                            mUriCursor = null;
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                                    }
+
+                                    @Override
+                                    public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+
+                                    }
+
+                                    @Override
+                                    public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+                                        //Proceed with action
+                                        final Context context = getContext();
+                                        try {
+                                            if (tempFile == null) {
+                                                Utils.reportException(context,
+                                                        new IllegalStateException("tempFile is null"));
+                                                displayMessage("Internal Error - please try again later", Style.ALERT);
+                                                return;
+                                            }
+
+                                            final Map<String, String> aliasesToPersist = new HashMap<>();
+
+                                            try {
+                                                final String fileToString = FileUtils.readFileToString(tempFile);
+
+                                                final JSONObject jsonObject = new JSONObject(fileToString);
+
+                                                final Iterator<String> keys = jsonObject.keys();
+                                                while (keys.hasNext()) {
+                                                    final String key = keys.next();
+                                                    final String value = jsonObject.getString(key);
+                                                    if (isNullOrEmpty(key)) {
+                                                        continue;
                                                     }
-
-                                                    alertDialog.cancel();
-                                                    dismiss();
-                                                } catch (final Exception e) {
-                                                    Utils.reportException(context, e);
-                                                } finally {
-                                                    mUriCursor = null;
+                                                    //Check whether key is a MAC-Address
+                                                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                                                        continue;
+                                                    }
+                                                    //This is a MAC Address - collect it right away!
+                                                    aliasesToPersist.put(key, nullToEmpty(value));
                                                 }
+
+                                            } catch (final Exception e) {
+                                                Utils.reportException(context,
+                                                        e);
+                                                displayMessage("Error - please check the file you provided; it must be a valid JSON file",
+                                                        Style.ALERT);
+                                                return;
                                             }
 
-                                            @Override
-                                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
-                                            }
-
-                                            @Override
-                                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
-
-                                            }
-
-                                            @Override
-                                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
-                                                //Proceed with action
-                                                final Context context = getContext();
-                                                try {
-                                                    if (tempFile == null) {
-                                                        Utils.reportException(context,
-                                                                new IllegalStateException("tempFile is null"));
-                                                        displayMessage("Internal Error - please try again later", Style.ALERT);
-                                                        return;
-                                                    }
-
-                                                    final Map<String, String> aliasesToPersist = new HashMap<>();
-
-                                                    try {
-                                                        final String fileToString = FileUtils.readFileToString(tempFile);
-
-                                                        final JSONObject jsonObject = new JSONObject(fileToString);
-
-                                                        final Iterator<String> keys = jsonObject.keys();
-                                                        while (keys.hasNext()) {
-                                                            final String key = keys.next();
-                                                            final String value = jsonObject.getString(key);
-                                                            if (isNullOrEmpty(key)) {
-                                                                continue;
-                                                            }
-                                                            //Check whether key is a MAC-Address
-                                                            if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
-                                                                continue;
-                                                            }
-                                                            //This is a MAC Address - collect it right away!
-                                                            aliasesToPersist.put(key, nullToEmpty(value));
-                                                        }
-
-                                                    } catch (final Exception e) {
-                                                        Utils.reportException(context,
-                                                                e);
-                                                        displayMessage("Error - please check the file you provided; it must be a valid JSON file",
-                                                                Style.ALERT);
-                                                        return;
-                                                    }
-
-                                                    //Check whether 'Clear' switch button is checked
-                                                    final boolean isClearChecked =
-                                                            ((SwitchCompat) d.findViewById(R.id.router_import_aliases_clear_aliases))
-                                                            .isChecked();
-                                                    if (isClearChecked) {
-                                                        final Map<String, ?> allRouterPrefs = mRouterPreferences.getAll();
-                                                        if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
-                                                            return;
-                                                        }
-
-                                                        final SharedPreferences.Editor editor = mRouterPreferences.edit();
-                                                        for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
-                                                            final String key = entry.getKey();
-                                                            final Object value = entry.getValue();
-                                                            if (isNullOrEmpty(key) || value == null) {
-                                                                continue;
-                                                            }
-                                                            //Check whether key is a MAC-Address
-                                                            if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
-                                                                continue;
-                                                            }
-                                                            //This is a MAC Address - collect it right away!
-                                                            editor.remove(key);
-                                                        }
-                                                        editor.apply();
-                                                    }
-
-                                                    //Now inject new aliases
-                                                    final SharedPreferences.Editor editor = mRouterPreferences.edit();
-                                                    for (final Map.Entry<String, String> aliasEntry : aliasesToPersist.entrySet()) {
-                                                        editor.putString(aliasEntry.getKey(), aliasEntry.getValue());
-                                                    }
-                                                    editor.apply();
-
-                                                    Utils.displayMessage(activity,
-                                                    String.format("Action 'Import Aliases' executed successfully on host '%s'",
-                                                            mRouter.getRemoteIpAddress()),
-                                                    Style.CONFIRM);
-
-                                                    if (mListener != null) {
-                                                        mListener.onRefresh();
-                                                    }
-
-                                                } catch (final Exception e) {
-                                                    displayMessage("Error - please try again later", Style.ALERT);
-                                                    e.printStackTrace();
-                                                    Utils.reportException(context, e);
-                                                } finally {
-                                                    d.cancel();
+                                            //Check whether 'Clear' switch button is checked
+                                            final boolean isClearChecked =
+                                                    ((SwitchCompat) d.findViewById(R.id.router_import_aliases_clear_aliases))
+                                                    .isChecked();
+                                            if (isClearChecked) {
+                                                final Map<String, ?> allRouterPrefs = mRouterPreferences.getAll();
+                                                if (allRouterPrefs == null || allRouterPrefs.isEmpty()) {
+                                                    return;
                                                 }
+
+                                                final SharedPreferences.Editor editor = mRouterPreferences.edit();
+                                                for (final Map.Entry<String, ?> entry : allRouterPrefs.entrySet()) {
+                                                    final String key = entry.getKey();
+                                                    final Object value = entry.getValue();
+                                                    if (isNullOrEmpty(key) || value == null) {
+                                                        continue;
+                                                    }
+                                                    //Check whether key is a MAC-Address
+                                                    if (!Utils.MAC_ADDRESS.matcher(key).matches()) {
+                                                        continue;
+                                                    }
+                                                    //This is a MAC Address - collect it right away!
+                                                    editor.remove(key);
+                                                }
+                                                editor.apply();
                                             }
 
-                                            @Override
-                                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+                                            //Now inject new aliases
+                                            final SharedPreferences.Editor editor = mRouterPreferences.edit();
+                                            for (final Map.Entry<String, String> aliasEntry : aliasesToPersist.entrySet()) {
+                                                editor.putString(aliasEntry.getKey(), aliasEntry.getValue());
+                                            }
+                                            editor.apply();
 
+                                            Utils.displayMessage(activity,
+                                            String.format("Action 'Import Aliases' executed successfully on host '%s'",
+                                                    mRouter.getRemoteIpAddress()),
+                                            Style.CONFIRM);
+
+                                            if (mListener != null) {
+                                                mListener.onRefresh();
                                             }
 
-                                            @Override
-                                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+                                        } catch (final Exception e) {
+                                            displayMessage("Error - please try again later", Style.ALERT);
+                                            e.printStackTrace();
+                                            Utils.reportException(context, e);
+                                        } finally {
+                                            d.cancel();
+                                        }
+                                    }
 
-                                            }
-                                        },
-                                        token,
-                                        true);
-                            }
-                        }, 2000);
+                                    @Override
+                                    public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                                    }
+
+                                    @Override
+                                    public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                                    }
+                                },
+                                token,
+                                true);
                     }
                     ///else dialog stays open. 'Cancel' button can still close it.
                 }

@@ -43,9 +43,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
@@ -73,8 +78,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_gravity="bottom|end"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="end|bottom"/>
+            app:layout_anchorGravity="end|bottom|right"
+            app:layout_anchor="@id/routerAliasesListView"
+            app:layout_behavior="org.rm3l.ddwrt.widgets.ScrollAwareFABBehavior"/>
 
-    </FrameLayout>
+    <!--</FrameLayout>-->
+    </android.support.design.widget.CoordinatorLayout>
 
 </LinearLayout>

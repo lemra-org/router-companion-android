@@ -54,11 +54,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -86,6 +88,21 @@ public class Router implements Serializable {
     public static final String USE_LOCAL_SSID_LOOKUP = "useLocalSSIDLookup";
     public static final String LOCAL_SSID_LOOKUPS = "localSSIDLookups";
     public static final String FALLBACK_TO_PRIMARY_ADDR = "fallbackToPrimaryAddr";
+    public static final Comparator<Pair<String, String>> ALIASES_PAIR_COMPARATOR = new Comparator<Pair<String, String>>() {
+        @Override
+        public int compare(Pair<String, String> lhs, Pair<String, String> rhs) {
+            if (lhs.first == null) {
+                if (rhs.first == null) {
+                    return 0;
+                }
+                return -1;
+            }
+            if (rhs.first == null) {
+                return 1;
+            }
+            return lhs.first.compareToIgnoreCase(rhs.first);
+        }
+    };
     /**
      * the router UUID
      */
@@ -995,7 +1012,8 @@ public class Router implements Serializable {
     public static Set<Pair<String, String>> getAliases(
             @Nullable final Context context,
             @Nullable final Router router) {
-        final Set<Pair<String, String>> aliases = new HashSet<>();
+        final TreeSet<Pair<String, String>> aliases =
+                new TreeSet<>(ALIASES_PAIR_COMPARATOR);
         final SharedPreferences preferences = getPreferences(router, context);
         if (preferences != null) {
             final Map<String, ?> preferencesAll = preferences.getAll();
