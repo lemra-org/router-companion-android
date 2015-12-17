@@ -576,7 +576,7 @@ public class ManageRouterAliasesActivity
                                 outputFile.getAbsolutePath()),
                         Color.GREEN,
                         "Share", Color.WHITE,
-                        Snackbar.LENGTH_INDEFINITE,
+                        Snackbar.LENGTH_LONG,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {
