@@ -428,7 +428,7 @@ public class ManageRouterAliasesActivity
                 new AlertDialog.Builder(this)
                         .setIcon(R.drawable.ic_action_alert_warning)
                         .setTitle("Drop all aliases?")
-                        .setMessage("Are you sure you wish to continue? ")
+                        .setMessage("You'll lose all your local aliases for this router!")
                         .setCancelable(true)
                         .setPositiveButton("Proceed!", new DialogInterface.OnClickListener() {
                             @Override
@@ -514,12 +514,6 @@ public class ManageRouterAliasesActivity
         }
 
         switch (action) {
-            case RouterActions.IMPORT_ALIASES:
-                //TODO
-                Toast.makeText(this, "[TODO] Import aliases", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-
             case RouterActions.EXPORT_ALIASES:
                 //Load all aliases from preferences
                 if (mRouterPreferences == null) {
@@ -873,8 +867,6 @@ public class ManageRouterAliasesActivity
                 }
             });
 
-
-
             holder.containerView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -996,10 +988,8 @@ public class ManageRouterAliasesActivity
                 this.aliasMenu =
                         (ImageButton) this.itemView.findViewById(
                                 R.id.router_alias_menu);
-
             }
         }
-
     }
 
     public static class AddOrUpdateRouterAliasDialogFragment
@@ -1019,7 +1009,8 @@ public class ManageRouterAliasesActivity
                     CharSequence mMacAddr,
                     CharSequence mAlias,
                     final DialogInterface.OnClickListener onClickListener){
-            final AddOrUpdateRouterAliasDialogFragment addOrUpdateRouterAliasDialogFragment = new AddOrUpdateRouterAliasDialogFragment();
+            final AddOrUpdateRouterAliasDialogFragment addOrUpdateRouterAliasDialogFragment = 
+                new AddOrUpdateRouterAliasDialogFragment();
             final Bundle args = new Bundle();
             args.putCharSequence(MAC_ADDRESS, mMacAddr);
             args.putCharSequence(ALIAS, mAlias);
@@ -1038,7 +1029,8 @@ public class ManageRouterAliasesActivity
 
             final FragmentActivity fragmentActivity = getActivity();
 
-            final long currentTheme = fragmentActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+            final long currentTheme = fragmentActivity
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                     .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
             if (currentTheme == ColorUtils.LIGHT_THEME) {
                 //Light
@@ -1081,7 +1073,8 @@ public class ManageRouterAliasesActivity
                     .setIcon(android.R.drawable.stat_sys_warning)
                     .setView(view)
                     // Add action buttons
-                    .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(isNewAlias ? "Set Alias" : "Update Alias", 
+                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             //Do nothing here because we override this button later to change the close behaviour.
