@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -45,6 +46,7 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -801,20 +803,46 @@ public class ManageRouterAliasesActivity
             final String aliasStr = aliasPairAt.second;
             holder.macAddress.setText(mac);
             holder.alias.setText(aliasStr);
-            final MACOUIVendor macouiVendor;
-            try {
-                macouiVendor = WirelessClientsTile.mMacOuiVendorLookupCache
-                        .getIfPresent(mac);
-                if (macouiVendor != null) {
-                    holder.oui.setText(macouiVendor.getCompany());
-                } else {
-                    holder.oui.setVisibility(View.INVISIBLE);
+
+            //Update OUI in a background thread - as this is likely to infer network call
+            new AsyncTask<String, Void, Void>() {
+                @Override
+                protected Void doInBackground(String... params) {
+                    try {
+                        final MACOUIVendor macouiVendor =
+                                WirelessClientsTile.mMacOuiVendorLookupCache
+                                    .get(mac);
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (macouiVendor != null) {
+                                    holder.oui.setText(macouiVendor.getCompany());
+                                    holder.oui.setVisibility(View.VISIBLE);
+                                } else {
+                                    holder.oui.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+
+                    } catch (final Exception e) {
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.oui.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                    } finally {
+                        //Hide loading wheel
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.ouiLoadingSpinner.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                    return null;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                //No worries
-                holder.oui.setVisibility(View.INVISIBLE);
-            }
+            }.execute(mac);
 
             final AlertDialog removeAliasEntryDialog = new AlertDialog.Builder(context)
                     .setIcon(R.drawable.ic_action_alert_warning)
@@ -954,6 +982,7 @@ public class ManageRouterAliasesActivity
             @NonNull
             final TextView alias;
             final TextView oui;
+            final ProgressBar ouiLoadingSpinner;
 
             @NonNull
             final ImageButton removeButton;
@@ -984,6 +1013,8 @@ public class ManageRouterAliasesActivity
                                 R.id.router_alias_remove_btn);
                 this.oui = (TextView)
                         this.itemView.findViewById(R.id.router_alias_oui);
+                this.ouiLoadingSpinner = (ProgressBar)
+                        this.itemView.findViewById(R.id.router_alias_oui_loading);
 
                 this.aliasMenu =
                         (ImageButton) this.itemView.findViewById(
