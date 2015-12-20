@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -323,6 +324,16 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             final Exception exception = data.getException();
 
 //            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
+
+            final FloatingActionButton speedtestFab =
+                    (FloatingActionButton) layout.findViewById(R.id.tile_network_map_speedtest);
+
+            speedtestFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mParentFragmentActivity, "[TODO] Open Speed Test Activity", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             final TextView devicesCountTextView
                     = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
