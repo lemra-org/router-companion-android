@@ -57,11 +57,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.RecyclerView
+            <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
                 android:id="@+id/routerAliasesListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"/>
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:text="No local alias found. Click the '+' button below to add one. Aliases allow you to give a name to a given device (MAC Address), so you can easily identify if throughout the app. \nNote that you can also export/import aliases from the menu." />
 
         </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -83,6 +83,7 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +122,7 @@ public class RouterManagementActivity
     FloatingActionButton addNewButton;
     private long mCurrentTheme;
     private DDWRTCompanionDAO dao;
-    private RecyclerView mRecyclerView;
+    private RecyclerViewEmptySupport mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Menu optionsMenu;
@@ -227,7 +228,7 @@ public class RouterManagementActivity
 
         this.dao = getDao(this);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.routersListView);
+        mRecyclerView = (RecyclerViewEmptySupport) findViewById(R.id.routersListView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -238,6 +239,8 @@ public class RouterManagementActivity
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
 
         // specify an adapter (see also next example)
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());

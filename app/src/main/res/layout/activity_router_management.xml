@@ -52,11 +52,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.RecyclerView
+            <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
                 android:id="@+id/routersListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"/>
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:text="No Router to manage. Click the '+' button below to add a new one." />
 
         </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -72,6 +72,7 @@ import org.rm3l.ddwrt.utils.StorageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -115,7 +116,7 @@ public class ManageRouterAliasesActivity
     private Toolbar mToolbar;
     private SharedPreferences mRouterPreferences;
 
-    private RecyclerView mRecyclerView;
+    private RecyclerViewEmptySupport mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -198,7 +199,7 @@ public class ManageRouterAliasesActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.routerAliasesListView);
+        mRecyclerView = (RecyclerViewEmptySupport) findViewById(R.id.routerAliasesListView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -209,6 +210,8 @@ public class ManageRouterAliasesActivity
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
 
         // specify an adapter (see also next example)
         mAdapter = new RouterAliasesListRecyclerViewAdapter(this, mRouter);
