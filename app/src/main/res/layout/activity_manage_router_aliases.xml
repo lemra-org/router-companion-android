@@ -68,7 +68,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:visibility="gone"
                 android:layout_gravity="center"
                 android:text="No local alias found. Click the '+' button below to add one. Aliases allow you to give a name to a given device (MAC Address), so you can easily identify if throughout the app. \nNote that you can also export/import aliases from the menu." />
 
