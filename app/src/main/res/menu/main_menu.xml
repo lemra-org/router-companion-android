@@ -95,6 +95,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:title="Manage Aliases"
                 app:showAsAction="ifRoom" />
 
+            <!-- Speed Test -->
+            <item
+                android:id="@+id/action_ddwrt_actions_speedtest"
+                android:checkable="false"
+                android:checked="false"
+                android:orderInCategory="6"
+                android:icon="@mipmap/ic_speedtest"
+                android:title="Speed Test"
+                app:showAsAction="ifRoom" />
+
             <!--<item-->
                 <!--android:orderInCategory="5"-->
                 <!--android:title="Manage Aliases"-->

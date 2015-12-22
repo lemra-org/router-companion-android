@@ -300,4 +300,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <color name="material_drawer_dark_selected_text">@color/material_drawer_primary</color>
     <color name="material_drawer_dark_header_selection_text">#FFF</color>
 
+    <color name="jetstream_speed_test_background">#7f0b01e8</color>
+
 </resources>

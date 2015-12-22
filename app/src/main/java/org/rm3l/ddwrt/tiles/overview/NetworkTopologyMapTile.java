@@ -331,6 +331,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             speedtestFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //FIXME
                     Toast.makeText(mParentFragmentActivity, "[TODO] Open Speed Test Activity", Toast.LENGTH_SHORT).show();
                 }
             });

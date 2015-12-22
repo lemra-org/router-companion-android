@@ -1189,12 +1189,18 @@ public class DDWRTMainActivity extends AppCompatActivity
                 }
                 //TODO
                 return true;
+            case R.id.action_ddwrt_actions_speedtest: {
+                //TODO
+                Toast.makeText(this, "[TODO] Open Speed Test Activity",
+                        Toast.LENGTH_SHORT).show();
+            }
+                return true;
             case R.id.action_ddwrt_actions_manage_aliases: {
                 final Intent manageAliasIntent = new Intent(this, ManageRouterAliasesActivity.class);
                 manageAliasIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
                 this.startActivity(manageAliasIntent);
-                return true;
             }
+                return true;
 //            case R.id.action_ddwrt_actions_aliases_export: {
 //                final Bundle token = new Bundle();
 //                token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
