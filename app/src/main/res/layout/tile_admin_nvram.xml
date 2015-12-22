@@ -143,13 +143,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
+            <org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport
                 android:id="@+id/tile_admin_nvram_ListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:listSelector="@android:color/transparent"
                 android:overScrollMode="ifContentScrolls"
                 android:scrollbars="none" />
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="No NVRAM Data." />
 
             <ProgressBar
                 android:id="@+id/tile_admin_nvram_loading_view"

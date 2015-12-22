@@ -97,6 +97,7 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -854,14 +855,18 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                                 new RelativeLayout(activity));
 
         final int rootViewType = getRootViewType();
-        final RecyclerView recyclerView = (RecyclerView) rootView
+        final RecyclerViewEmptySupport recyclerView = (RecyclerViewEmptySupport) rootView
                 .findViewById(R.id.tiles_container_recyclerview);
         final LinearLayout linearLayout = (LinearLayout) rootView
                 .findViewById(R.id.tiles_container_linearlayout);
+        final View recyclerViewEmptyView = rootView.findViewById(R.id.empty_view);
         switch (rootViewType) {
             case RootViewType_LINEAR_LAYOUT:
                 mRootViewGroup = linearLayout;
                 recyclerView.setVisibility(View.GONE);
+                if (recyclerViewEmptyView != null) {
+                    recyclerViewEmptyView.setVisibility(View.GONE);
+                }
                 linearLayout.setVisibility(View.VISIBLE);
                 linearLayout.removeAllViews();
                 if (fragmentTiles != null) {
@@ -929,6 +934,16 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(activity);
                 mLayoutManager.scrollToPosition(0);
                 recyclerView.setLayoutManager(mLayoutManager);
+
+                if (recyclerViewEmptyView instanceof TextView) {
+                    final TextView emptyView = (TextView) recyclerViewEmptyView;
+                    if (ColorUtils.isThemeLight(activity)) {
+                        emptyView.setTextColor(ContextCompat.getColor(activity, R.color.black));
+                    } else {
+                        emptyView.setTextColor(ContextCompat.getColor(activity, R.color.white));
+                    }
+                }
+                recyclerView.setEmptyView(recyclerViewEmptyView);
 
                 final RecyclerView.Adapter mAdapter =
                         new AbstractBaseFragmentRecyclerViewAdapter(activity, router, fragmentTiles);

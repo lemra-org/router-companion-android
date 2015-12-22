@@ -211,7 +211,13 @@ public class ManageRouterAliasesActivity
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
+        final TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        if (mIsThemeLight) {
+            emptyView.setTextColor(ContextCompat.getColor(this, R.color.black));
+        } else {
+            emptyView.setTextColor(ContextCompat.getColor(this, R.color.white));
+        }
+        mRecyclerView.setEmptyView(emptyView);
 
         // specify an adapter (see also next example)
         mAdapter = new RouterAliasesListRecyclerViewAdapter(this, mRouter);

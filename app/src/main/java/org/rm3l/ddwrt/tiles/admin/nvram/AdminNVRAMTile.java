@@ -33,6 +33,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
@@ -74,6 +75,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -131,7 +133,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
     public static final Joiner.MapJoiner PROPERTIES_JOINER_TO_FILE = Joiner.on('\n').withKeyValueSeparator("=");
     private static final String LOG_TAG = AdminNVRAMTile.class.getSimpleName();
     private static final String LAST_SEARCH = "lastSearch";
-    private final RecyclerView mRecyclerView;
+    private final RecyclerViewEmptySupport mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
     private final RecyclerView.LayoutManager mLayoutManager;
 
@@ -149,7 +151,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         sortIds.put(R.id.tile_admin_nvram_sort_desc, 13);
 
         this.mNvramInfoDefaultSorting = new NVRAMInfo();
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.tile_admin_nvram_ListView);
+        mRecyclerView = (RecyclerViewEmptySupport) layout.findViewById(R.id.tile_admin_nvram_ListView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -161,6 +163,14 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 LinearLayoutManager.VERTICAL, false);
         mLayoutManager.scrollToPosition(0);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        final TextView emptyView = (TextView) layout.findViewById(R.id.empty_view);
+        if (ColorUtils.isThemeLight(mParentFragmentActivity)) {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.black));
+        } else {
+            emptyView.setTextColor(ContextCompat.getColor(mParentFragmentActivity, R.color.white));
+        }
+        mRecyclerView.setEmptyView(emptyView);
 
         // specify an adapter (see also next example)
         mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, router, mNvramInfoDefaultSorting);
