@@ -107,6 +107,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.RouterActions;
 import org.rm3l.ddwrt.actions.RouterRestoreDialogListener;
+import org.rm3l.ddwrt.actions.activity.SpeedTestActivity;
 import org.rm3l.ddwrt.exceptions.StorageException;
 import org.rm3l.ddwrt.fragments.PageSlidingTabStripFragment;
 import org.rm3l.ddwrt.help.ChangelogActivity;
@@ -1190,9 +1191,9 @@ public class DDWRTMainActivity extends AppCompatActivity
                 //TODO
                 return true;
             case R.id.action_ddwrt_actions_speedtest: {
-                //TODO
-                Toast.makeText(this, "[TODO] Open Speed Test Activity",
-                        Toast.LENGTH_SHORT).show();
+                final Intent speedTestIntent = new Intent(this, SpeedTestActivity.class);
+                speedTestIntent.putExtra(ROUTER_SELECTED, this.mRouterUuid);
+                this.startActivity(speedTestIntent);
             }
                 return true;
             case R.id.action_ddwrt_actions_manage_aliases: {

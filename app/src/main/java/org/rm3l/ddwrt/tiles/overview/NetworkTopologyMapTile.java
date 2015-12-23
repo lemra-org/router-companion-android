@@ -28,6 +28,7 @@ import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.actions.activity.SpeedTestActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -331,8 +332,10 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             speedtestFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //FIXME
-                    Toast.makeText(mParentFragmentActivity, "[TODO] Open Speed Test Activity", Toast.LENGTH_SHORT).show();
+                    final Intent speedTestIntent = new Intent(mParentFragmentActivity,
+                            SpeedTestActivity.class);
+                    speedTestIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                    mParentFragmentActivity.startActivity(speedTestIntent);
                 }
             });
 
