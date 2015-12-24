@@ -521,7 +521,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="action_finish">Finish</string>
     <string name="internet_speed">Internet (WAN) Speed</string>
     <string name="lan_speed">LAN Speed</string>
-    <string name="internet_dl_speed">WAN (Internet) Download Speed</string>
-    <string name="internet_ul_speed">WAN (Internet) Upload Speed</string>
+    <string name="internet_dl_speed">DL Speed</string>
+    <string name="internet_ul_speed">UL Speed</string>
 
 </resources>

@@ -46,17 +46,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Messages Placeholder..."
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:textColor="#ffffff"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:gravity="center"/>
+    <!-- Not needed - will be replaced with a Snackbar (or Crounton?) -->
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+        <!--android:text="Messages Placeholder..."-->
+        <!--android:layout_marginStart="10dp"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:textColor="#ffffff"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:gravity="center"/>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -86,7 +86,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_gravity="center_horizontal">
 
                     <LinearLayout
@@ -94,8 +93,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true">
 
@@ -103,21 +100,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/internet_dl_speed"
-                            android:textColor="#ffffff" />
+                            android:text="@string/internet_dl_speed" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginEnd="10dp">
+                            android:layout_height="wrap_content">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:id="@+id/speedtest_internet_dl_speed"
-                                android:textColor="#ffffff"
                                 android:layout_centerInParent="true"/>
 
                             <ProgressBar
@@ -143,8 +136,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true">
 
@@ -152,22 +143,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/internet_ul_speed"
-                            android:textColor="#ffffff" />
+                            android:text="@string/internet_ul_speed" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_height="wrap_content">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:id="@+id/speedtest_internet_ul_speed"
-                                android:layout_centerInParent="true"
-                                android:textColor="#ffffff" />
+                                android:layout_centerInParent="true" />
 
                             <ProgressBar
                                 style="?android:attr/progressBarStyleSmall"
@@ -209,8 +196,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true">
@@ -219,8 +204,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/lan_speed"
-                            android:textColor="#ffffff" />
+                            android:text="@string/lan_speed" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -230,7 +214,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:id="@+id/speedtest_wifi_speed"
-                                android:textColor="#ffffff"
                                 android:layout_centerInParent="true"/>
                             <ProgressBar
                                 style="?android:attr/progressBarStyleSmall"
