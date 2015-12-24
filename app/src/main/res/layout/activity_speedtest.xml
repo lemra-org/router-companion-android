@@ -83,7 +83,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginTop="15dp"
                     android:layout_gravity="center_horizontal"/>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -95,7 +95,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp">
+                        android:layout_marginLeft="10dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -134,14 +136,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="2dp"
                         android:layout_height="135dp"
                         android:background="#ffcccccc"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_centerInParent="true"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp">
+                        android:layout_marginLeft="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -175,8 +180,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     </LinearLayout>
 
-
-                </LinearLayout>
+                </RelativeLayout>
 
                 <!-- Router -->
                 <ImageView
@@ -187,67 +191,65 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:contentDescription="Router"
                     android:layout_gravity="center_horizontal" />
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal">
-
-                <View
-                    android:id="@+id/speedtest_router_lan_path_vertical"
-                    android:layout_width="2dp"
-                    android:layout_height="100dp"
-                    android:background="#ffcccccc"
-                    android:layout_marginRight="60dp"
-                    android:layout_marginEnd="60dp"
-                    android:layout_gravity="center_horizontal"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
+                    android:orientation="horizontal"
                     android:layout_gravity="center_horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/lan_speed"
-                        android:textColor="#ffffff" />
+                    <View
+                        android:id="@+id/speedtest_router_lan_path_vertical"
+                        android:layout_width="2dp"
+                        android:layout_height="100dp"
+                        android:background="#ffcccccc"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_centerInParent="true"/>
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="10dp"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginStart="10dp">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:id="@+id/speedtest_wifi_speed"
-                            android:textColor="#ffffff"
-                            android:layout_centerInParent="true"/>
-                        <ProgressBar
-                            style="?android:attr/progressBarStyleSmall"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/lan_speed"
+                            android:textColor="#ffffff" />
+
+                        <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/speedtest_pb_wifi"
-                            android:layout_centerInParent="true"/>
-                    </RelativeLayout>
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:id="@+id/speedtest_wifi_speed"
+                                android:textColor="#ffffff"
+                                android:layout_centerInParent="true"/>
+                            <ProgressBar
+                                style="?android:attr/progressBarStyleSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/speedtest_pb_wifi"
+                                android:layout_centerInParent="true"/>
+                        </RelativeLayout>
 
-                </LinearLayout>
+                    </LinearLayout>
 
-            </LinearLayout>
+                </RelativeLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_action_devices"
-                android:contentDescription="Devices" />
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_action_devices"
+                    android:contentDescription="Devices" />
 
             </LinearLayout>
 
