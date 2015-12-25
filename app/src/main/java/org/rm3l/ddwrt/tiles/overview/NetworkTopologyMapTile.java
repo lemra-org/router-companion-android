@@ -18,6 +18,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -323,6 +324,12 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
             final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_network_map_error);
 
             final Exception exception = data.getException();
+
+            Router.doFetchAndSetRoutrAvatarInImageView(
+                    mParentFragmentActivity,
+                    mRouter,
+                    (ImageView)
+                            layout.findViewById(R.id.tile_network_map_router_imageView));
 
 //            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
 

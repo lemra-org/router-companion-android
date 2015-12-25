@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
@@ -44,6 +45,7 @@ import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
+import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -1037,5 +1039,40 @@ public class Router implements Serializable {
             }
         }
         return aliases;
+    }
+
+    public static void doFetchAndSetRoutrAvatarInImageView(final Context context,
+                                                           final Router mRouter,
+                                                           final ImageView routerImageView) {
+        final String routerModelStr = getRouterModel(context, mRouter);
+
+        if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(mRouter)) {
+            routerImageView.setImageResource(
+                    Utils.isDemoRouter(mRouter) ?
+                            R.drawable.demo_router : R.drawable.router);
+        } else {
+            //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
+            final String[] opts = new String[]
+                    {
+                            "w_300",
+                            "h_300",
+                            "q_100",
+                            "c_thumb",
+                            "g_center",
+                            "r_20",
+                            "e_improve",
+                            "e_make_transparent",
+                            "e_trim"
+                    };
+
+            //Download image in the background
+            Utils.downloadImageForRouter(context,
+                    routerModelStr,
+                    routerImageView,
+                    null,
+                    null,
+                    R.drawable.router,
+                    opts);
+        }
     }
 }

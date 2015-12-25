@@ -46,17 +46,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <!-- Not needed - will be replaced with a Snackbar (or Crounton?) -->
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-        <!--android:text="Messages Placeholder..."-->
-        <!--android:layout_marginStart="10dp"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:textColor="#ffffff"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:gravity="center"/>-->
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/router_speedtest_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textStyle="bold"
+        android:visibility="gone"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -66,18 +68,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <ScrollView
             android:id="@+id/speedtest_scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center">
 
                 <ImageView
                     android:id="@+id/speedtest_wan_imageView"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="67dp"
+                    android:layout_height="67dp"
                     android:src="@drawable/internet"
                     android:contentDescription="Internet"
                     android:layout_marginTop="15dp"
@@ -92,7 +95,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_gravity="center_horizontal"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true">
 
@@ -126,8 +128,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     <View
                         android:id="@+id/speedtest_internet_line"
-                        android:layout_width="2dp"
-                        android:layout_height="135dp"
+                        android:layout_width="3dp"
+                        android:layout_height="100dp"
                         android:background="#ffcccccc"
                         android:layout_gravity="center_horizontal"
                         android:layout_centerInParent="true"/>
@@ -135,8 +137,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_alignParentRight="true"
+                        android:orientation="vertical"
                         android:layout_alignParentEnd="true">
 
                         <TextView
@@ -172,8 +174,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <!-- Router -->
                 <ImageView
                     android:id="@+id/speedtest_router_imageView"
-                    android:layout_width="120dp"
-                    android:layout_height="71dp"
+                    android:layout_width="116dp"
+                    android:layout_height="67dp"
                     android:src="@drawable/router"
                     android:contentDescription="Router"
                     android:layout_gravity="center_horizontal" />
@@ -181,12 +183,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_gravity="center_horizontal">
 
                     <View
                         android:id="@+id/speedtest_router_lan_path_vertical"
-                        android:layout_width="2dp"
+                        android:layout_width="3dp"
                         android:layout_height="100dp"
                         android:background="#ffcccccc"
                         android:layout_gravity="center_horizontal"
@@ -204,7 +205,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/lan_speed" />
+                            android:text="@string/link_speed" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -228,10 +229,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 </RelativeLayout>
 
                 <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_action_devices"
+                    android:src="@drawable/ic_action_device_devices2"
                     android:contentDescription="Devices" />
 
             </LinearLayout>
@@ -239,5 +240,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <!-- Notice -->
+    <TextView
+        android:id="@+id/router_speedtest_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:singleLine="false"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone"/>
 
 </LinearLayout>
