@@ -110,7 +110,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        Router.doFetchAndSetRoutrAvatarInImageView(this, mRouter,
+        Router.doFetchAndSetRouterAvatarInImageView(this, mRouter,
                 (ImageView) findViewById(R.id.speedtest_router_imageView));
 
 
@@ -130,32 +130,50 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                 final TextView noticeTextView =
                         (TextView) findViewById(R.id.router_speedtest_notice);
                 try {
-                    noticeTextView.setVisibility(View.VISIBLE);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noticeTextView.setVisibility(View.VISIBLE);
+                        }
+                    });
 
                     //FIXME Steps must be non-blocking for the other ones
 
-                    noticeTextView.setText("Testing Internet (WAN) Download (DL) Speed...");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noticeTextView
+                                    .setText("Testing Internet (WAN) Download (DL) Speed...");
+                        }
+                    });
+                    //TODO Run actual tests and display notice info
+                    //Do not block thread
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noticeTextView
+                                    .setText("Testing Internet (WAN) Upload (UL) Speed...");
+                        }
+                    });
                     //TODO Run actual tests and display notice info
 
-                    //FIXME Just for testing
-                    Thread.sleep(5000l);
 
-                    noticeTextView.setText("Testing Internet (WAN) Upload (DL) Speed...");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            noticeTextView
+                                    .setText("Testing Link Speed between this device and the Router...");
+                        }
+                    });
                     //TODO Run actual tests and display notice info
 
-                    //FIXME Just for testing
-                    Thread.sleep(5000l);
-
-
-                    noticeTextView.setText("Testing Link Speed (between this device and the Router)...");
-                    //TODO Run actual tests and display notice info
-
-                    //FIXME Just for testing
-                    Thread.sleep(5000l);
 
                 } catch (final Exception e) {
+                    e.printStackTrace();
                     Utils.reportException(SpeedTestActivity.this,
                             new IllegalStateException(e));
+                    //No worries
                 } finally {
                     setRefreshActionButtonState(false);
                     mSwipeRefreshLayout.setEnabled(true);

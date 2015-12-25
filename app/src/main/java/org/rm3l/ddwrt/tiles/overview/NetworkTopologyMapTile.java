@@ -325,7 +325,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
             final Exception exception = data.getException();
 
-            Router.doFetchAndSetRoutrAvatarInImageView(
+            Router.doFetchAndSetRouterAvatarInImageView(
                     mParentFragmentActivity,
                     mRouter,
                     (ImageView)

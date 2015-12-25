@@ -1041,9 +1041,9 @@ public class Router implements Serializable {
         return aliases;
     }
 
-    public static void doFetchAndSetRoutrAvatarInImageView(final Context context,
-                                                           final Router mRouter,
-                                                           final ImageView routerImageView) {
+    public static void doFetchAndSetRouterAvatarInImageView(final Context context,
+                                                            final Router mRouter,
+                                                            final ImageView routerImageView) {
         final String routerModelStr = getRouterModel(context, mRouter);
 
         if (Strings.isNullOrEmpty(routerModelStr) || Utils.isDemoRouter(mRouter)) {
@@ -1075,4 +1075,10 @@ public class Router implements Serializable {
                     opts);
         }
     }
+
+    public void doFetchAndSetAvatarInImageView(final Context context,
+                                               final ImageView routerImageView) {
+        doFetchAndSetRouterAvatarInImageView(context, this, routerImageView);
+    }
+
 }
