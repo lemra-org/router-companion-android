@@ -1,6 +1,12 @@
 package org.rm3l.ddwrt.actions.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -19,8 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
-import com.google.common.base.Strings;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
@@ -29,6 +35,8 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * TODO
@@ -47,6 +55,8 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private Menu optionsMenu;
+
+    private BroadcastReceiver mMessageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +80,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
         final String routerSelected =
                 intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        if (Strings.isNullOrEmpty(routerSelected) ||
+        if (isNullOrEmpty(routerSelected) ||
                 (mRouter = RouterManagementActivity.getDao(this)
                         .getRouter(routerSelected)) == null) {
             Toast.makeText(
@@ -80,16 +90,16 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
             return;
         }
 
+        this.mMessageReceiver = new NetworkChangeReceiver();
+
         AdUtils.buildAndDisplayAdViewIfNeeded(this,
                 (AdView) findViewById(R.id.router_speedtest_adView));
 
         mToolbar = (Toolbar) findViewById(R.id.routerSpeedTestToolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("Speed Test");
-            mToolbar.setSubtitle(String.format("%s (%s:%d)",
-                    mRouter.getDisplayName(),
-                    mRouter.getRemoteIpAddress(),
-                    mRouter.getRemotePort()));
+            updateToolbarTitleAndSubTitle();
+
             mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
             mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
             mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
@@ -117,6 +127,42 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            registerReceiver(
+                    mMessageReceiver,
+                    new IntentFilter(
+                            ConnectivityManager.CONNECTIVITY_ACTION));
+        } catch (final Exception e) {
+            Utils.reportException(this, e);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        } finally {
+            super.onStop();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            unregisterReceiver(mMessageReceiver);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        } finally {
+            super.onDestroy();
+        }
+    }
+
+    @Override
     public void onRefresh() {
         doPerformSpeedTest();
     }
@@ -124,48 +170,30 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     private void doPerformSpeedTest() {
         mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
+
+        final TextView errorPlaceholder= (TextView) findViewById(R.id.router_speedtest_error);
+        errorPlaceholder.setVisibility(View.GONE);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 final TextView noticeTextView =
                         (TextView) findViewById(R.id.router_speedtest_notice);
                 try {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noticeTextView.setVisibility(View.VISIBLE);
-                        }
-                    });
+                    noticeTextView.setVisibility(View.VISIBLE);
+                    noticeTextView
+                            .setText("1/3 - Testing Internet (WAN) Download (DL) Speed...");
 
-                    //FIXME Steps must be non-blocking for the other ones
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noticeTextView
-                                    .setText("Testing Internet (WAN) Download (DL) Speed...");
-                        }
-                    });
                     //TODO Run actual tests and display notice info
                     //Do not block thread
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noticeTextView
-                                    .setText("Testing Internet (WAN) Upload (UL) Speed...");
-                        }
-                    });
+                    noticeTextView
+                            .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
                     //TODO Run actual tests and display notice info
 
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            noticeTextView
-                                    .setText("Testing Link Speed between this device and the Router...");
-                        }
-                    });
+                    noticeTextView
+                            .setText("3/3 - Testing Link Speed between this device and the Router...");
                     //TODO Run actual tests and display notice info
 
 
@@ -173,6 +201,19 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                     e.printStackTrace();
                     Utils.reportException(SpeedTestActivity.this,
                             new IllegalStateException(e));
+                    final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+                    errorPlaceholder.setText(String.format("Error%s",
+                            isNullOrEmpty(rootCauseMessage) ? "" :
+                                    (": " + rootCauseMessage)));
+                    if (!isNullOrEmpty(rootCauseMessage)) {
+                        errorPlaceholder.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(SpeedTestActivity.this,
+                                        rootCauseMessage, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     //No worries
                 } finally {
                     setRefreshActionButtonState(false);
@@ -261,5 +302,30 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     @Override
     public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
 
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+
+            final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if (info != null && info.isConnected()) {
+                updateToolbarTitleAndSubTitle();
+            }
+        }
+    }
+
+    private void updateToolbarTitleAndSubTitle() {
+        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, SpeedTestActivity.this);
+        final Integer effectivePort = Router.getEffectivePort(mRouter, SpeedTestActivity.this);
+
+        if (mToolbar != null) {
+            mToolbar.setSubtitle(
+                    String.format("%s (%s:%d)",
+                            mRouter.getDisplayName(),
+                            effectiveRemoteAddr,
+                            effectivePort));
+        }
     }
 }

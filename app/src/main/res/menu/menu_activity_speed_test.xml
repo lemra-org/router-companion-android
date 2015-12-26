@@ -33,7 +33,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/menuitem_refresh"
         app:showAsAction="ifRoom"/>
 
-    <!-- Disabled and hidden for now -->
+    <!-- Disabled for now -->
     <item
         android:id="@+id/router_speedtest_share"
         android:icon="@android:drawable/ic_menu_share"
@@ -41,7 +41,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/share"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="ifRoom"
-        android:visible="false"
         android:enabled="false"/>
 
 </menu>

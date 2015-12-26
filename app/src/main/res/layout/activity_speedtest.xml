@@ -79,8 +79,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <ImageView
                     android:id="@+id/speedtest_wan_imageView"
-                    android:layout_width="67dp"
-                    android:layout_height="67dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:src="@drawable/internet"
                     android:contentDescription="Internet"
                     android:layout_marginTop="15dp"
@@ -95,16 +95,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp">
+                        android:layout_alignParentTop="true"
+                        android:layout_toLeftOf="@+id/speedtest_internet_line"
+                        android:layout_toStartOf="@+id/speedtest_internet_line"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/internet_dl_speed" />
+                            android:text="@string/internet_dl_speed"
+                            android:gravity="end|right" />
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -139,17 +141,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
                         android:orientation="vertical"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginEnd="10dp">
+                        android:layout_alignParentTop="true"
+                        android:layout_toRightOf="@+id/speedtest_internet_line"
+                        android:layout_toEndOf="@+id/speedtest_internet_line"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="@string/internet_ul_speed" />
+                            android:text="@string/internet_ul_speed"/>
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -202,10 +205,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginEnd="10dp">
+                        android:layout_alignParentTop="true"
+                        android:layout_toRightOf="@+id/speedtest_router_lan_path_vertical"
+                        android:layout_toEndOf="@+id/speedtest_router_lan_path_vertical"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
