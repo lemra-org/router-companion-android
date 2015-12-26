@@ -32,6 +32,7 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -182,6 +183,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
         final TextView noticeTextView =
                 (TextView) findViewById(R.id.router_speedtest_notice);
+        noticeTextView.setText(DDWRTCompanionConstants.EMPTY_STRING);
         noticeTextView.setVisibility(View.VISIBLE);
 
         mHandler.postDelayed(new Runnable() {
@@ -218,13 +220,13 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                     //TODO Run actual tests and display notice info
                     //Do not block thread
 
-                    noticeTextView
-                            .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
+//                    noticeTextView
+//                            .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
                     //TODO Run actual tests and display notice info
 
 
-                    noticeTextView
-                            .setText("3/3 - Testing Link Speed between this device and the Router...");
+//                    noticeTextView
+//                            .setText("3/3 - Testing Link Speed between this device and the Router...");
                     //TODO Run actual tests and display notice info
 
 

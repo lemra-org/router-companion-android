@@ -26,8 +26,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     tools:context=".actions.activity.SpeedTestActivity"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/routerSpeedTestToolbar"
@@ -47,45 +46,41 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <!-- Error message placeholder -->
+        <TextView
+            android:id="@+id/router_speedtest_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:layout_margin="15dp"
+            android:text="@string/error_placeholder"
+            android:textColor="@color/ddwrt_purple"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
-            <!-- Error message placeholder -->
-            <TextView
-                android:id="@+id/router_speedtest_error"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:singleLine="true"
-                android:layout_margin="15dp"
-                android:text="@string/error_placeholder"
-                android:textColor="@color/ddwrt_purple"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:visibility="gone"/>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <ScrollView
                 android:id="@+id/speedtest_scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/router_speedtest_error"
                 android:layout_centerInParent="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_gravity="center"
-                    android:padding="5dp">
+                    android:layout_gravity="center">
 
                     <ImageView
                         android:id="@+id/speedtest_wan_imageView"
@@ -116,7 +111,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/internet_dl_speed"
-                                android:gravity="end|right" />
+                                android:gravity="end" />
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -259,25 +254,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </ScrollView>
 
-            <!-- Notice -->
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/router_speedtest_notice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:singleLine="false"
-                android:maxLines="2"
-                android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/white"
-                android:layout_below="@+id/speedtest_scrollView"
-                android:layout_alignParentBottom="true"
-                android:background="@color/jetstream_speed_test_background"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-        </RelativeLayout>
+        <!-- Notice -->
+        <TextView
+            android:id="@+id/router_speedtest_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="false"
+            android:maxLines="2"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white"
+            android:background="@color/jetstream_speed_test_background"
+            android:layout_gravity="center_horizontal|bottom"
+            android:visibility="gone"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </FrameLayout>
 
 </LinearLayout>
