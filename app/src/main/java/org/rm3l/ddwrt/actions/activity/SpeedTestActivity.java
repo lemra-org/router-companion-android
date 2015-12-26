@@ -46,6 +46,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
     private static final String LOG_TAG = SpeedTestActivity
             .class.getSimpleName();
+    private Handler mHandler;
 
     private boolean mIsThemeLight;
     private Router mRouter;
@@ -92,6 +93,8 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
         this.mMessageReceiver = new NetworkChangeReceiver();
 
+        this.mHandler = new Handler();
+
         AdUtils.buildAndDisplayAdViewIfNeeded(this,
                 (AdView) findViewById(R.id.router_speedtest_adView));
 
@@ -123,7 +126,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         Router.doFetchAndSetRouterAvatarInImageView(this, mRouter,
                 (ImageView) findViewById(R.id.speedtest_router_imageView));
 
-
+        doPerformSpeedTest();
     }
 
     @Override
@@ -168,21 +171,49 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     }
 
     private void doPerformSpeedTest() {
+        if (!mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
         mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
 
         final TextView errorPlaceholder= (TextView) findViewById(R.id.router_speedtest_error);
         errorPlaceholder.setVisibility(View.GONE);
 
-        new Handler().postDelayed(new Runnable() {
+        final TextView noticeTextView =
+                (TextView) findViewById(R.id.router_speedtest_notice);
+        noticeTextView.setVisibility(View.VISIBLE);
+
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                final TextView noticeTextView =
-                        (TextView) findViewById(R.id.router_speedtest_notice);
                 try {
-                    noticeTextView.setVisibility(View.VISIBLE);
                     noticeTextView
                             .setText("1/3 - Testing Internet (WAN) Download (DL) Speed...");
+
+                    //FIXME Just for testing
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            noticeTextView
+                                    .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    noticeTextView
+                                            .setText("3/3 - Testing Link Speed between this device and the Router...");
+                                    mHandler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setRefreshActionButtonState(false);
+                                            mSwipeRefreshLayout.setEnabled(true);
+                                            noticeTextView.setVisibility(View.GONE);
+                                        }
+                                    }, 5789);
+                                }
+                            }, 7000l);
+                        }
+                    }, 5000l);
 
                     //TODO Run actual tests and display notice info
                     //Do not block thread
@@ -216,9 +247,9 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                     }
                     //No worries
                 } finally {
-                    setRefreshActionButtonState(false);
-                    mSwipeRefreshLayout.setEnabled(true);
-                    noticeTextView.setVisibility(View.GONE);
+//                    setRefreshActionButtonState(false);
+//                    mSwipeRefreshLayout.setEnabled(true);
+//                    noticeTextView.setVisibility(View.GONE);
                 }
             }
         }, 1000);
