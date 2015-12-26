@@ -302,4 +302,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <color name="jetstream_speed_test_background">#7f0b01e8</color>
 
+    <color name="network_link_color">#ffcccccc</color>
+
 </resources>

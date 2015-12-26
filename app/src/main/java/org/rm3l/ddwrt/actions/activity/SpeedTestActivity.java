@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -178,44 +178,96 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
 
-        final TextView errorPlaceholder= (TextView) findViewById(R.id.router_speedtest_error);
+        final TextView errorPlaceholder =
+                (TextView) findViewById(R.id.router_speedtest_error);
         errorPlaceholder.setVisibility(View.GONE);
 
         final TextView noticeTextView =
                 (TextView) findViewById(R.id.router_speedtest_notice);
-        noticeTextView.setText(DDWRTCompanionConstants.EMPTY_STRING);
-        noticeTextView.setVisibility(View.VISIBLE);
+
+        final View internetRouterLink = findViewById(R.id.speedtest_internet_line);
+        final View routerLanLink = findViewById(R.id.speedtest_router_lan_path_vertical);
+
+        final int defaultColorForPaths = ContextCompat.getColor(SpeedTestActivity.this,
+                R.color.network_link_color);
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
+                    //FIXME Shouldn't we select best server (smallest ping) from a list of servers (cf. SpeedTest XML API???)
                     noticeTextView
-                            .setText("1/3 - Testing Internet (WAN) Download (DL) Speed...");
+                            .setText("1/4 - Measuring Internet Latency...");
+                    noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
+                            android.R.anim.slide_in_left));
+                    noticeTextView.setVisibility(View.VISIBLE);
 
-                    //FIXME Just for testing
+                    final int latencyColor = ColorUtils.getColor("net_latency");
+                    internetRouterLink.setBackgroundColor(latencyColor);
+                    //Display animation: RTT
+                    //TODO Perform actual measurements
+
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            noticeTextView
-                                    .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
+                            //Reset color
+                            internetRouterLink.setBackgroundColor(defaultColorForPaths);
+
+                            //2
+                            noticeTextView.setText("2/4 - Testing Internet (WAN) Download (DL) Speed...");
+                            final int wanDLColor = ColorUtils.getColor("net_dl");
+                            internetRouterLink.setBackgroundColor(wanDLColor);
+                            //Display animation: DL: WAN -> Router
+                            //TODO Perform actual measurements
+
                             mHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    //Reset color
+                                    internetRouterLink.setBackgroundColor(defaultColorForPaths);
+
+                                    //3
                                     noticeTextView
-                                            .setText("3/3 - Testing Link Speed between this device and the Router...");
+                                            .setText("3/4 - Testing Internet (WAN) Upload (UL) Speed...");
+                                    final int wanULColor = ColorUtils.getColor("net_ul");
+                                    internetRouterLink.setBackgroundColor(wanULColor);
+                                    //Display animation: UL: Router -> WAN
+                                    //TODO Perform actual measurements
+
                                     mHandler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            setRefreshActionButtonState(false);
-                                            mSwipeRefreshLayout.setEnabled(true);
-                                            noticeTextView.setVisibility(View.GONE);
+                                            //Reset color
+                                            internetRouterLink.setBackgroundColor(defaultColorForPaths);
+
+                                            //4
+                                            noticeTextView
+                                                    .setText("4/4 - Testing Link Speed between this device and the Router...");
+                                            final int lanColor = ColorUtils.getColor("net_lan");
+                                            routerLanLink.setBackgroundColor(lanColor);
+                                            //Display animation: UL: Router -> WAN
+                                            //TODO Perform actual measurements
+
+
+                                            mHandler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    routerLanLink.setBackgroundColor(defaultColorForPaths);
+
+                                                    noticeTextView.startAnimation(AnimationUtils.loadAnimation(
+                                                            SpeedTestActivity.this,
+                                                            android.R.anim.slide_out_right));
+                                                    noticeTextView.setVisibility(View.GONE);
+                                                    setRefreshActionButtonState(false);
+                                                    mSwipeRefreshLayout.setEnabled(true);
+                                                }
+                                            }, 5789);
                                         }
-                                    }, 5789);
+                                    }, 7000);
                                 }
-                            }, 7000l);
+                            }, 5000);
                         }
-                    }, 5000l);
+                    }, 3000);
 
                     //TODO Run actual tests and display notice info
                     //Do not block thread

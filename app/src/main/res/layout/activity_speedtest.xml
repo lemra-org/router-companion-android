@@ -74,7 +74,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/speedtest_scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                android:layout_centerInParent="true"
+                android:fillViewport="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,13 +105,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_toLeftOf="@+id/speedtest_internet_line"
                             android:layout_toStartOf="@+id/speedtest_internet_line"
                             android:layout_marginRight="10dp"
-                            android:layout_marginEnd="10dp">
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginTop="10dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/internet_dl_speed"
+                                android:text="@string/latency"
+                                android:textStyle="bold"
                                 android:gravity="end" />
 
                             <RelativeLayout
@@ -121,14 +124,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
-                                    android:id="@+id/speedtest_internet_dl_speed"
+                                    android:id="@+id/speedtest_internet_latency"
                                     android:layout_centerInParent="true"/>
 
                                 <ProgressBar
                                     style="?android:attr/progressBarStyleSmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/speedtest_dl_pb_internet"
+                                    android:id="@+id/speedtest_latency_pb_internet"
                                     android:layout_centerInParent="true"/>
 
                             </RelativeLayout>
@@ -138,8 +141,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         <View
                             android:id="@+id/speedtest_internet_line"
                             android:layout_width="3dp"
-                            android:layout_height="100dp"
-                            android:background="#ffcccccc"
+                            android:layout_height="125dp"
+                            android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
                             android:layout_centerInParent="true"/>
 
@@ -151,13 +154,43 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_toRightOf="@+id/speedtest_internet_line"
                             android:layout_toEndOf="@+id/speedtest_internet_line"
                             android:layout_marginStart="10dp"
-                            android:layout_marginLeft="10dp">
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/internet_ul_speed"/>
+                                android:text="@string/internet_dl_speed"/>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/speedtest_internet_dl_speed"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold"/>
+
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/speedtest_dl_pb_internet"
+                                    android:layout_centerInParent="true"/>
+
+                            </RelativeLayout>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/internet_ul_speed"
+                                android:layout_marginTop="15dp"/>
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -168,7 +201,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
                                     android:id="@+id/speedtest_internet_ul_speed"
-                                    android:layout_centerInParent="true" />
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold" />
 
                                 <ProgressBar
                                     style="?android:attr/progressBarStyleSmall"
@@ -201,7 +235,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:id="@+id/speedtest_router_lan_path_vertical"
                             android:layout_width="3dp"
                             android:layout_height="100dp"
-                            android:background="#ffcccccc"
+                            android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
                             android:layout_centerInParent="true"/>
 
@@ -230,7 +264,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
                                     android:id="@+id/speedtest_wifi_speed"
-                                    android:layout_centerInParent="true"/>
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold"/>
+
                                 <ProgressBar
                                     style="?android:attr/progressBarStyleSmall"
                                     android:layout_width="wrap_content"
@@ -251,7 +287,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:contentDescription="Devices" />
 
                 </LinearLayout>
-
             </ScrollView>
 
         </android.support.v4.widget.SwipeRefreshLayout>
