@@ -53,16 +53,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <!-- Error message placeholder -->
         <TextView
             android:id="@+id/router_speedtest_error"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|top"
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:layout_margin="15dp"
+            android:layout_marginBottom="15dp"
             android:text="@string/error_placeholder"
-            android:textColor="@color/ddwrt_purple"
+            android:textColor="@color/white"
             android:textStyle="bold"
+            android:background="@color/DarkRed"
             android:visibility="gone"/>
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -73,7 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <ScrollView
                 android:id="@+id/speedtest_scrollView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:fillViewport="true">
 
@@ -81,7 +82,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_gravity="center">
+                    android:paddingTop="20dp"
+                    android:gravity="center">
 
                     <ImageView
                         android:id="@+id/speedtest_wan_imageView"
@@ -89,7 +91,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="65dp"
                         android:src="@drawable/internet"
                         android:contentDescription="Internet"
-                        android:layout_marginTop="15dp"
                         android:layout_gravity="center_horizontal"/>
 
                     <RelativeLayout
@@ -111,9 +112,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/speedtest_latency_title"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/latency"
-                                android:textStyle="bold"
                                 android:gravity="end" />
 
                             <RelativeLayout
@@ -141,7 +142,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         <View
                             android:id="@+id/speedtest_internet_line"
                             android:layout_width="3dp"
-                            android:layout_height="125dp"
+                            android:layout_height="150dp"
                             android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
                             android:layout_centerInParent="true"/>
@@ -160,6 +161,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/speedtest_wan_dl_title"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/internet_dl_speed"/>
 
@@ -190,6 +192,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/internet_ul_speed"
+                                android:id="@+id/speedtest_wan_ul_title"
                                 android:layout_marginTop="15dp"/>
 
                             <RelativeLayout
@@ -248,12 +251,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_toRightOf="@+id/speedtest_router_lan_path_vertical"
                             android:layout_toEndOf="@+id/speedtest_router_lan_path_vertical"
                             android:layout_marginStart="10dp"
-                            android:layout_marginLeft="10dp">
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="20dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:id="@+id/speedtest_lan_title"
                                 android:text="@string/link_speed" />
 
                             <RelativeLayout

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -47,6 +48,10 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
     private static final String LOG_TAG = SpeedTestActivity
             .class.getSimpleName();
+    public static final String NET_LATENCY = "net_latency";
+    public static final String NET_DL = "net_dl";
+    public static final String NET_UL = "net_ul";
+    public static final String NET_LAN = "net_lan";
     private Handler mHandler;
 
     private boolean mIsThemeLight;
@@ -59,6 +64,13 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     private Menu optionsMenu;
 
     private BroadcastReceiver mMessageReceiver;
+
+    private TextView mSpeedtestLatencyTitle;
+    private TextView mSpeedtestWanDlTitle;
+    private TextView mSpeedtestWanUlTitle;
+    private TextView mSpeedtestLanTitle;
+
+    private TextView[] mTitleTextViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +139,17 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         Router.doFetchAndSetRouterAvatarInImageView(this, mRouter,
                 (ImageView) findViewById(R.id.speedtest_router_imageView));
 
+        mSpeedtestLatencyTitle = (TextView) findViewById(R.id.speedtest_latency_title);
+        mSpeedtestWanDlTitle = (TextView) findViewById(R.id.speedtest_wan_dl_title);
+        mSpeedtestWanUlTitle = (TextView) findViewById(R.id.speedtest_wan_ul_title);
+        mSpeedtestLanTitle = (TextView) findViewById(R.id.speedtest_lan_title);
+
+        mTitleTextViews = new TextView[] {
+                mSpeedtestLatencyTitle,
+                mSpeedtestWanDlTitle,
+                mSpeedtestWanUlTitle,
+                mSpeedtestLanTitle};
+
         doPerformSpeedTest();
     }
 
@@ -171,6 +194,30 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         doPerformSpeedTest();
     }
 
+    private void highlightTitleTextView(int viewIdx) {
+        if (viewIdx < 0 || viewIdx >= mTitleTextViews.length) {
+            return;
+        }
+        for (int i = 0; i < mTitleTextViews.length; i++) {
+            final TextView textView = mTitleTextViews[i];
+            textView.setTypeface(null,
+                    i == viewIdx ? Typeface.BOLD : Typeface.NORMAL);
+        }
+    }
+
+    private void highlightTitleTextView(@NonNull final TextView tv) {
+        for (final TextView textView : mTitleTextViews) {
+            textView.setTypeface(null,
+                    tv == textView ? Typeface.BOLD : Typeface.NORMAL);
+        }
+    }
+
+    private void resetAllTitleViews() {
+        for (final TextView textView : mTitleTextViews) {
+            textView.setTypeface(null, Typeface.NORMAL);
+        }
+    }
+
     private void doPerformSpeedTest() {
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(true);
@@ -195,15 +242,18 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
             @Override
             public void run() {
                 try {
-                    //FIXME Shouldn't we select best server (smallest ping) from a list of servers (cf. SpeedTest XML API???)
+                    //FIXME Using a static server for now,
+                    // but shouldn't we select best server (smallest ping) from a list of servers
+                    // (cf. SpeedTest XML API???)
                     noticeTextView
                             .setText("1/4 - Measuring Internet Latency...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
                             android.R.anim.slide_in_left));
                     noticeTextView.setVisibility(View.VISIBLE);
 
-                    final int latencyColor = ColorUtils.getColor("net_latency");
+                    final int latencyColor = ColorUtils.getColor(NET_LATENCY);
                     internetRouterLink.setBackgroundColor(latencyColor);
+                    highlightTitleTextView(mSpeedtestLatencyTitle);
                     //Display animation: RTT
                     //TODO Perform actual measurements
 
@@ -215,8 +265,9 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
                             //2
                             noticeTextView.setText("2/4 - Testing Internet (WAN) Download (DL) Speed...");
-                            final int wanDLColor = ColorUtils.getColor("net_dl");
+                            final int wanDLColor = ColorUtils.getColor(NET_DL);
                             internetRouterLink.setBackgroundColor(wanDLColor);
+                            highlightTitleTextView(mSpeedtestWanDlTitle);
                             //Display animation: DL: WAN -> Router
                             //TODO Perform actual measurements
 
@@ -229,8 +280,9 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                                     //3
                                     noticeTextView
                                             .setText("3/4 - Testing Internet (WAN) Upload (UL) Speed...");
-                                    final int wanULColor = ColorUtils.getColor("net_ul");
+                                    final int wanULColor = ColorUtils.getColor(NET_UL);
                                     internetRouterLink.setBackgroundColor(wanULColor);
+                                    highlightTitleTextView(mSpeedtestWanUlTitle);
                                     //Display animation: UL: Router -> WAN
                                     //TODO Perform actual measurements
 
@@ -243,8 +295,9 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                                             //4
                                             noticeTextView
                                                     .setText("4/4 - Testing Link Speed between this device and the Router...");
-                                            final int lanColor = ColorUtils.getColor("net_lan");
+                                            final int lanColor = ColorUtils.getColor(NET_LAN);
                                             routerLanLink.setBackgroundColor(lanColor);
+                                            highlightTitleTextView(mSpeedtestLanTitle);
                                             //Display animation: UL: Router -> WAN
                                             //TODO Perform actual measurements
 
@@ -258,6 +311,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                                                             SpeedTestActivity.this,
                                                             android.R.anim.slide_out_right));
                                                     noticeTextView.setVisibility(View.GONE);
+                                                    resetAllTitleViews();
                                                     setRefreshActionButtonState(false);
                                                     mSwipeRefreshLayout.setEnabled(true);
                                                 }
