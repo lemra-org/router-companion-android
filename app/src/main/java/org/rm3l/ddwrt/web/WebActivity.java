@@ -116,6 +116,10 @@ public abstract class WebActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                //Fixes issue https://fabric.io/lemra-inc2/android/apps/org.rm3l.ddwrt/issues/568283d6f5d3a7f76bb8f2dc
+                if (url == null) {
+                    return false;
+                }
                 if (Uri.parse(url).getHost().endsWith("rm3l.org")) {
                     // This is my web site, so do not override; let my WebView load the page
                     return false;
