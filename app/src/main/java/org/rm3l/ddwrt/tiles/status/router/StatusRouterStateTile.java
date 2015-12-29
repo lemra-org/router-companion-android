@@ -61,7 +61,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-import static org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
+import static org.rm3l.ddwrt.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;

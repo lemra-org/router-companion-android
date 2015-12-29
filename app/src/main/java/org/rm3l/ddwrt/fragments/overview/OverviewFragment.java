@@ -5,9 +5,9 @@ import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile;
-import org.rm3l.ddwrt.tiles.overview.UptimeTile;
-import org.rm3l.ddwrt.tiles.overview.WANTotalTrafficOverviewTile;
+import org.rm3l.ddwrt.tiles.dashboard.bandwidth.WANTotalTrafficOverviewTile;
+import org.rm3l.ddwrt.tiles.dashboard.network.NetworkTopologyMapTile;
+import org.rm3l.ddwrt.tiles.dashboard.system.UptimeTile;
 
 import java.util.Arrays;
 import java.util.List;

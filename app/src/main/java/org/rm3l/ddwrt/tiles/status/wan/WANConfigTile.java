@@ -74,7 +74,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-import static org.rm3l.ddwrt.tiles.overview.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
+import static org.rm3l.ddwrt.tiles.dashboard.network.NetworkTopologyMapTile.INTERNET_CONNECTIVITY_PUBLIC_IP;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOK;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.UNKNOWN;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;

@@ -1,4 +1,4 @@
-package org.rm3l.ddwrt.tiles.overview;
+package org.rm3l.ddwrt.tiles.dashboard.network;
 
 import android.content.Context;
 import android.content.Intent;

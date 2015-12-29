@@ -519,7 +519,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .withShowDrawerOnFirstLaunch(false)
                 .withCloseOnClick(true)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Overview")
+                        new PrimaryDrawerItem().withName("Dashboard")
                                 .withIcon(mIsThemeLight ?
                                         R.drawable.ic_action_dashboard : R.drawable.ic_action_dashboard_dark)
                                 .withIdentifier(1),

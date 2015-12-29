@@ -494,7 +494,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="learn_more">Learn More</string>
     <string name="ad">Ad</string>
     <string name="app_rate">Like DD-WRT Companion? Would you mind rating it?</string>
-    <string name="ntm">Network Topology Map</string>
+    <string name="ntm">Network Topology</string>
     <string name="overview">Overview</string>
     <string name="overview_ntm">Network Map</string>
     <string name="show_wireless_hosts_only">Wireless Devices Only</string>
@@ -528,5 +528,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="wifi_speed">WiFi Speed</string>
     <string name="wifi_efficiency">WiFi Efficiency</string>
     <string name="latency">WAN Latency</string>
+
+    <string name="dashboard">Dashboard</string>
+    <string name="dashboard_network">Network</string>
+    <string name="dashboard_bandwidth">Bandwidth</string>
+    <string name="dashboard_system">System</string>
+
 
 </resources>
