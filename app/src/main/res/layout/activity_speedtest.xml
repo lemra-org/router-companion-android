@@ -59,7 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="5dp"
             android:text="@string/error_placeholder"
             android:textColor="@color/white"
             android:textStyle="bold"
@@ -82,7 +82,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="20dp"
                     android:gravity="center">
 
                     <ImageView
@@ -142,7 +141,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         <View
                             android:id="@+id/speedtest_internet_line"
                             android:layout_width="3dp"
-                            android:layout_height="150dp"
+                            android:layout_height="130dp"
                             android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
                             android:layout_centerInParent="true"/>
@@ -237,7 +236,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         <View
                             android:id="@+id/speedtest_router_lan_path_vertical"
                             android:layout_width="3dp"
-                            android:layout_height="100dp"
+                            android:layout_height="130dp"
                             android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
                             android:layout_centerInParent="true"/>
@@ -252,14 +251,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_toEndOf="@+id/speedtest_router_lan_path_vertical"
                             android:layout_marginStart="10dp"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginTop="20dp">
+                            android:layout_marginTop="10dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:id="@+id/speedtest_lan_title"
-                                android:text="@string/link_speed" />
+                                android:text="@string/wifi_speed" />
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -278,6 +277,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_height="wrap_content"
                                     android:id="@+id/speedtest_pb_wifi"
                                     android:layout_centerInParent="true"/>
+                            </RelativeLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/wifi_efficiency"
+                                android:id="@+id/speedtest_wifi_efficiency_title"
+                                android:layout_marginTop="15dp"/>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/speedtest_wifi_efficiency"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold" />
+
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/speedtest_pb_wifi_efficiency"
+                                    android:layout_centerInParent="true"/>
+
                             </RelativeLayout>
 
                         </LinearLayout>

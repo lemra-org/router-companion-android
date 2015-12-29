@@ -51,7 +51,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     public static final String NET_LATENCY = "net_latency";
     public static final String NET_DL = "net_dl";
     public static final String NET_UL = "net_ul";
-    public static final String NET_LAN = "net_lan";
+    public static final String NET_WIFI = "net_wifi";
     private Handler mHandler;
 
     private boolean mIsThemeLight;
@@ -68,7 +68,8 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     private TextView mSpeedtestLatencyTitle;
     private TextView mSpeedtestWanDlTitle;
     private TextView mSpeedtestWanUlTitle;
-    private TextView mSpeedtestLanTitle;
+    private TextView mSpeedtestWifiSpeedTitle;
+    private TextView mSpeedtestWifiEfficiencyTitle;
 
     private TextView[] mTitleTextViews;
 
@@ -142,13 +143,15 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         mSpeedtestLatencyTitle = (TextView) findViewById(R.id.speedtest_latency_title);
         mSpeedtestWanDlTitle = (TextView) findViewById(R.id.speedtest_wan_dl_title);
         mSpeedtestWanUlTitle = (TextView) findViewById(R.id.speedtest_wan_ul_title);
-        mSpeedtestLanTitle = (TextView) findViewById(R.id.speedtest_lan_title);
+        mSpeedtestWifiSpeedTitle = (TextView) findViewById(R.id.speedtest_lan_title);
+        mSpeedtestWifiEfficiencyTitle = (TextView) findViewById(R.id.speedtest_wifi_efficiency_title);
 
         mTitleTextViews = new TextView[] {
                 mSpeedtestLatencyTitle,
                 mSpeedtestWanDlTitle,
                 mSpeedtestWanUlTitle,
-                mSpeedtestLanTitle};
+                mSpeedtestWifiSpeedTitle,
+                mSpeedtestWifiEfficiencyTitle};
 
         doPerformSpeedTest();
     }
@@ -205,10 +208,19 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         }
     }
 
-    private void highlightTitleTextView(@NonNull final TextView tv) {
-        for (final TextView textView : mTitleTextViews) {
-            textView.setTypeface(null,
-                    tv == textView ? Typeface.BOLD : Typeface.NORMAL);
+    private void highlightTitleTextView(@NonNull final TextView... tvs) {
+        if (tvs == null) {
+            //Reset everything
+            for (final TextView textView : mTitleTextViews) {
+                textView.setTypeface(null, Typeface.NORMAL);
+            }
+        } else {
+            for (final TextView textView : mTitleTextViews) {
+                for (final TextView tv : tvs) {
+                    textView.setTypeface(null,
+                            tv == textView ? Typeface.BOLD : Typeface.NORMAL);
+                }
+            }
         }
     }
 
@@ -246,7 +258,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                     // but shouldn't we select best server (smallest ping) from a list of servers
                     // (cf. SpeedTest XML API???)
                     noticeTextView
-                            .setText("1/4 - Measuring Internet Latency...");
+                            .setText("1/4 - Measuring Internet (WAN) Latency...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
                             android.R.anim.slide_in_left));
                     noticeTextView.setVisibility(View.VISIBLE);
@@ -264,7 +276,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                             internetRouterLink.setBackgroundColor(defaultColorForPaths);
 
                             //2
-                            noticeTextView.setText("2/4 - Testing Internet (WAN) Download (DL) Speed...");
+                            noticeTextView.setText("2/4 - Testing Internet (WAN) Download Speed...");
                             final int wanDLColor = ColorUtils.getColor(NET_DL);
                             internetRouterLink.setBackgroundColor(wanDLColor);
                             highlightTitleTextView(mSpeedtestWanDlTitle);
@@ -279,7 +291,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
                                     //3
                                     noticeTextView
-                                            .setText("3/4 - Testing Internet (WAN) Upload (UL) Speed...");
+                                            .setText("3/4 - Testing Internet (WAN) Upload Speed...");
                                     final int wanULColor = ColorUtils.getColor(NET_UL);
                                     internetRouterLink.setBackgroundColor(wanULColor);
                                     highlightTitleTextView(mSpeedtestWanUlTitle);
@@ -294,17 +306,18 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
                                             //4
                                             noticeTextView
-                                                    .setText("4/4 - Testing Link Speed between this device and the Router...");
-                                            final int lanColor = ColorUtils.getColor(NET_LAN);
+                                                    .setText("4/4 - Measuring WiFi Speed and Efficiency...");
+                                            final int lanColor = ColorUtils.getColor(NET_WIFI);
                                             routerLanLink.setBackgroundColor(lanColor);
-                                            highlightTitleTextView(mSpeedtestLanTitle);
+                                            highlightTitleTextView(mSpeedtestWifiSpeedTitle,
+                                                    mSpeedtestWifiEfficiencyTitle);
                                             //Display animation: UL: Router -> WAN
                                             //TODO Perform actual measurements
-
 
                                             mHandler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
+
                                                     routerLanLink.setBackgroundColor(defaultColorForPaths);
 
                                                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(
