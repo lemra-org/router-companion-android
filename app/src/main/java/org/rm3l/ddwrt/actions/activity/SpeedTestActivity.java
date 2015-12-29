@@ -304,6 +304,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                                             //Reset color
                                             internetRouterLink.setBackgroundColor(defaultColorForPaths);
 
+                                            //FIXME Perform this test only if device is connected to a local network provided by the Router
                                             //4
                                             noticeTextView
                                                     .setText("4/4 - Measuring WiFi Speed and Efficiency...");
