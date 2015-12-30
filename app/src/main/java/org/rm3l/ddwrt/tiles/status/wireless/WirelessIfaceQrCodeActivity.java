@@ -204,10 +204,11 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         mSsid = intent.getStringExtra(SSID);
         mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
 
-        mTitle = String.format("QR Code for '%s'", mSsid);
+        mTitle = "WiFi QR Code";
 
         if (mToolbar != null) {
             mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(mSsid);
             setSupportActionBar(mToolbar);
         }
 
