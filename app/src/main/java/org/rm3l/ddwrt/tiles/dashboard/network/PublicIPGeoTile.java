@@ -174,7 +174,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
             layout.findViewById(R.id.tile_public_ip_geo_loading_view)
                     .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_public_ip_geo_gridLayout)
+            layout.findViewById(R.id.tile_public_ip_geo_container)
                     .setVisibility(View.VISIBLE);
 
             if (data == null) {

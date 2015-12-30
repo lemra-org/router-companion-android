@@ -61,81 +61,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <GridLayout
-            android:id="@+id/tile_public_ip_geo_gridLayout"
+        <LinearLayout
+            android:id="@+id/tile_public_ip_geo_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:columnCount="3"
-            android:layout_marginBottom="20dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <!--&lt;!&ndash; Active Clients &ndash;&gt;-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="# Active Clients"-->
-                <!--android:textStyle="bold" />-->
+            <org.osmdroid.views.MapView
+                android:id="@+id/tile_public_ip_geo_map"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text="@string/one_space" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tile_public_ip_geo_active_clients"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:ellipsize="end"-->
-                <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
-                <!--android:text="@string/loading" />-->
-
-            <!--&lt;!&ndash; Active DHCP Leases &ndash;&gt;-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="# Active DHCP Leases"-->
-                <!--android:textStyle="bold" />-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_marginLeft="8.0dip"-->
-                <!--android:layout_marginRight="8.0dip"-->
-                <!--android:text="@string/one_space" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/tile_public_ip_geo_active_dhcp_leases"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="start"-->
-                <!--android:ellipsize="end"-->
-                <!--android:gravity="start"-->
-                <!--android:singleLine="false"-->
-                <!--android:text="@string/loading" />-->
-
-            <LinearLayout
-                android:id="@+id/tile_public_ip_geo_container"
-                android:layout_columnSpan="3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <org.osmdroid.views.MapView
-                    android:id="@+id/tile_public_ip_geo_map"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" />
-
-            </LinearLayout>
-
-        </GridLayout>
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/tile_public_ip_geo_loading_view"
