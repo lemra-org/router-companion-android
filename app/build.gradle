@@ -423,4 +423,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.amlcurran.showcaseview:library:5.3.0'
 //    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
+
+    compile 'org.osmdroid:osmdroid-android:5.0.1@aar'
 }

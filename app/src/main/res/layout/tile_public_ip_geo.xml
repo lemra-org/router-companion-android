@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+DD-WRT Companion is a mobile app that lets you connect to,
+monitor and manage your DD-WRT routers on the go.
+
+Copyright (C) 2014  Armel Soro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:baselineAligned="false"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tile_public_ip_geo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Public IP Geolocation"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/tile_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.0dip"
+        android:layout_marginTop="8.0dip"
+        android:indeterminate="false"
+        android:indeterminateOnly="false" />
+
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/tile_public_ip_geo_error"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/ddwrt_purple"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <GridLayout
+            android:id="@+id/tile_public_ip_geo_gridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:columnCount="3"
+            android:layout_marginBottom="20dp">
+
+            <!--&lt;!&ndash; Active Clients &ndash;&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="# Active Clients"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text="@string/one_space" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/tile_public_ip_geo_active_clients"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="start"-->
+                <!--android:ellipsize="end"-->
+                <!--android:gravity="start"-->
+                <!--android:singleLine="false"-->
+                <!--android:text="@string/loading" />-->
+
+            <!--&lt;!&ndash; Active DHCP Leases &ndash;&gt;-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="# Active DHCP Leases"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:layout_marginLeft="8.0dip"-->
+                <!--android:layout_marginRight="8.0dip"-->
+                <!--android:text="@string/one_space" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/tile_public_ip_geo_active_dhcp_leases"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="start"-->
+                <!--android:ellipsize="end"-->
+                <!--android:gravity="start"-->
+                <!--android:singleLine="false"-->
+                <!--android:text="@string/loading" />-->
+
+            <LinearLayout
+                android:id="@+id/tile_public_ip_geo_container"
+                android:layout_columnSpan="3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/tile_public_ip_geo_map"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+
+            </LinearLayout>
+
+        </GridLayout>
+
+        <ProgressBar
+            android:id="@+id/tile_public_ip_geo_loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="false" />
+
+        <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:id="@+id/tile_last_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textStyle="italic"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_alignParentBottom="true"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:singleLine="false"
+            android:layout_below="@+id/tile_public_ip_geo_gridLayout"
+            android:text="Last sync: "/>
+
+    </RelativeLayout>
+
+</LinearLayout>
