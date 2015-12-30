@@ -100,7 +100,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -261,7 +260,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
         ICMP_TYPE_CODE_DESCRIPTION_TABLE.put(40, 0, "Photuris, Security failures");
     }
 
-    private final Map<IPConntrack, CardView> ipConntrackMap = Maps.newHashMap();
+    private Map<IPConntrack, CardView> ipConntrackMap;
     private HashMap<String, String> mLocalIpToHostname;
     private ShareActionProvider mShareActionProvider;
     private String mRouterRemoteIp;
@@ -272,8 +271,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private String mObservationDate;
     private String mConnectedHost;
     private Menu mMenu;
-    private Multimap<String, String> mSourceIpToDestinationIp = ArrayListMultimap.create();
-    private Multimap<String, String> mDestinationIpToSourceIp = ArrayListMultimap.create();
+    private Multimap<String, String> mSourceIpToDestinationIp;
+    private Multimap<String, String> mDestinationIpToSourceIp;
+    private Map<String, String> mDestinationIpToCountry;
     private ProgressBar mProgressBar;
     private TextView mProgressBarDesc;
     private AtomicInteger mCurrentProgress = new AtomicInteger(0);
@@ -293,6 +293,11 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        mDestinationIpToCountry = new HashMap<>();
+        mSourceIpToDestinationIp = ArrayListMultimap.create();
+        mDestinationIpToSourceIp = ArrayListMultimap.create();
+        ipConntrackMap = Maps.newHashMap();
 
         final boolean themeLight = ColorUtils.isThemeLight(this);
         if (themeLight) {
@@ -495,6 +500,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         Utils.reportException(null, e);
+                                    }
+                                    if (ipWhoisInfo != null && !isNullOrEmpty(ipWhoisInfo.getCountry())) {
+                                        mDestinationIpToCountry.put(destinationAddressOriginalSide, ipWhoisInfo.getCountry());
                                     }
                                     final String org;
                                     if (ipWhoisInfo == null || (org = ipWhoisInfo.getOrganization()) == null || org.isEmpty()) {
@@ -976,24 +984,16 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         final HashMap<String, Integer> connectionsCountByDestinationIpCountry = new HashMap<>();
-                        //First attempt to resolve all destinations first
-                        final Set<String> destinationIps = mDestinationIpToSourceIp.keySet();
-                        for (final String dest : destinationIps) {
-                            try {
-                                final IPWhoisInfo whoisInfo = mIPWhoisInfoCache.getIfPresent(dest);
-                                final String country;
-                                if (whoisInfo == null || (country = whoisInfo.getCountry()) == null || country.isEmpty()) {
-                                    continue;
-                                }
-                                Integer count = connectionsCountByDestinationIpCountry.get(country);
-                                if (count == null) {
-                                    count = 0;
-                                }
-                                connectionsCountByDestinationIpCountry.put(country, count + 1);
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                //No worries
+                        final Collection<String> countries = mDestinationIpToCountry.values();
+                        for (final String country : countries) {
+                            if (isNullOrEmpty(country)) {
+                                continue;
                             }
+                            Integer count = connectionsCountByDestinationIpCountry.get(country);
+                            if (count == null) {
+                                count = 0;
+                            }
+                            connectionsCountByDestinationIpCountry.put(country, count + 1);
                         }
 
                         final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
