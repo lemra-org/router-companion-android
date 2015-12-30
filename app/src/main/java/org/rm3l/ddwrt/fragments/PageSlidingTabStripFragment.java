@@ -138,7 +138,7 @@ public class PageSlidingTabStripFragment extends Fragment {
         final int mFragmentTabsAdapterCount = mFragmentTabsAdapter.getCount();
         mPager.setOffscreenPageLimit(mFragmentTabsAdapterCount - 1);
         mPager.setAdapter(mFragmentTabsAdapter);
-        mPager.setOnPageChangeListener(mOnPageChangeListener);
+        mPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.tabs);
         int colorForOpenWrt = -1;

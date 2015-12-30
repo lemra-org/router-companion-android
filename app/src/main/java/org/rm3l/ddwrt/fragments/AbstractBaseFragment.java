@@ -44,6 +44,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -913,12 +914,15 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                             continue;
                         }
 
-                        final CardView cardView = new CardView(activity);
+                        final FrameLayout.LayoutParams cardViewLayoutParams = new FrameLayout.LayoutParams(
+                                FrameLayout.LayoutParams.MATCH_PARENT,
+                                FrameLayout.LayoutParams.WRAP_CONTENT);
+                        cardViewLayoutParams.rightMargin = R.dimen.marginRight;
+                        cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
+                        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
 
-                        cardView.setLayoutParams(new ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT)
-                        );
+                        final CardView cardView = new CardView(activity);
+                        cardView.setLayoutParams(cardViewLayoutParams);
 
                         //Add padding to CardView on v20 and before to prevent intersections between the Card content and rounded corners.
                         cardView.setPreventCornerOverlap(true);
