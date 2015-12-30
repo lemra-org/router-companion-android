@@ -255,6 +255,11 @@ public class RouterListRecycleViewAdapter extends
             //Set menu background to white
             holder.routerMenu.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
             holder.routerOpenButton.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
+            holder.routerAvatarImage.setBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_dark_background));
+        } else {
+            holder.routerAvatarImage.setBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_light_background));
         }
 
         holder.routerOpenButton.setOnClickListener(new View.OnClickListener() {

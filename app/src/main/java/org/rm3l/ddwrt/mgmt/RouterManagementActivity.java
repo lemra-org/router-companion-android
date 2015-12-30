@@ -56,7 +56,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
@@ -252,9 +251,9 @@ public class RouterManagementActivity
         mAdapter = new RouterListRecycleViewAdapter(this, this.dao.getAllRouters());
         mRecyclerView.setAdapter(mAdapter);
 
-        final RecyclerView.ItemDecoration itemDecoration =
-                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(itemDecoration);
+//        final RecyclerView.ItemDecoration itemDecoration =
+//                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+//        mRecyclerView.addItemDecoration(itemDecoration);
 
         /*
          * onClickDetection is done in this Activity's onItemTouchListener
