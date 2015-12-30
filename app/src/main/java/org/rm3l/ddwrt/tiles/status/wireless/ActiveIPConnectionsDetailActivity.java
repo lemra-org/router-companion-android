@@ -73,6 +73,7 @@ import com.google.common.collect.Table;
 import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Callback;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
@@ -82,6 +83,7 @@ import org.rm3l.ddwrt.resources.IPWhoisInfo;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.BufferedInputStream;
@@ -98,6 +100,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -716,6 +719,51 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         }
                     });
 
+                    final ImageView destCountryFlag = (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
+                    try {
+                        final IPWhoisInfo whoisInfo = mIPWhoisInfoCache.getIfPresent(destinationAddressOriginalSide);
+                        final String countryCode = whoisInfo.getCountry_code();
+                        if (whoisInfo == null) {
+                            destCountryFlag.setVisibility(View.GONE);
+                        } else {
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_country))
+                                    .setText(String.format("%s (%s)", whoisInfo.getCountry(), countryCode));
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_region))
+                                    .setText(whoisInfo.getRegion());
+                            ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_city))
+                                    .setText(whoisInfo.getCity());
+
+                            if (isNullOrEmpty(countryCode)) {
+                                destCountryFlag.setVisibility(View.GONE);
+                            }  else {
+                                ImageUtils.downloadImageFromUrl(ActiveIPConnectionsDetailActivity.this,
+                                        String.format("%s/%s.png",
+                                                DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
+                                                countryCode),
+                                        destCountryFlag,
+                                        null,
+                                        null,
+                                        new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                destCountryFlag.setVisibility(View.VISIBLE);
+                                            }
+
+                                            @Override
+                                            public void onError() {
+                                                destCountryFlag.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+
+                        }
+                    } catch (final Exception e) {
+                        Crashlytics.logException(e);
+                        destCountryFlag.setVisibility(View.GONE);
+                        //No worries
+                    }
+
+
                     containerLayout.addView(cardView);
 
                     final TextView srcIpHostname = (TextView) cardView.findViewById(R.id.activity_ip_connections_source_ip_hostname);
@@ -909,7 +957,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                         destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
                         destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
                         destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
-                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_IP);
                         destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIp);
                         startActivity(destStatsIntent);
                         alertDialog2.cancel();
@@ -918,6 +966,49 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             }
 
                 return true;
+
+            case R.id.tile_status_active_ip_connections_stats_by_destination_country: {
+                final AlertDialog alertDialog2 = Utils.buildAlertDialog(this, null,
+                        "Loading Pie Chart (distribution by Destination IP Country)...", false, false);
+                alertDialog2.show();
+                ((TextView) alertDialog2.findViewById(android.R.id.message)).setGravity(Gravity.CENTER_HORIZONTAL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final HashMap<String, Integer> connectionsCountByDestinationIpCountry = new HashMap<>();
+                        //First attempt to resolve all destinations first
+                        final Set<String> destinationIps = mDestinationIpToSourceIp.keySet();
+                        for (final String dest : destinationIps) {
+                            try {
+                                final IPWhoisInfo whoisInfo = mIPWhoisInfoCache.getIfPresent(dest);
+                                final String country;
+                                if (whoisInfo == null || (country = whoisInfo.getCountry()) == null || country.isEmpty()) {
+                                    continue;
+                                }
+                                Integer count = connectionsCountByDestinationIpCountry.get(country);
+                                if (count == null) {
+                                    count = 0;
+                                }
+                                connectionsCountByDestinationIpCountry.put(country, count + 1);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                //No worries
+                            }
+                        }
+
+                        final Intent destStatsIntent = new Intent(ActiveIPConnectionsDetailActivity.this,
+                                ActiveIPConnectionsDetailStatsActivity.class);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE, mObservationDate);
+                        destStatsIntent.putExtra(RouterManagementActivity.ROUTER_SELECTED, mRouterRemoteIp);
+                        destStatsIntent.putExtra(IP_TO_HOSTNAME_RESOLVER, mLocalIpToHostname);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.BY, ActiveIPConnectionsDetailStatsActivity.ByFilter.DESTINATION_COUNTRY);
+                        destStatsIntent.putExtra(ActiveIPConnectionsDetailStatsActivity.CONNECTIONS_COUNT_MAP, connectionsCountByDestinationIpCountry);
+                        startActivity(destStatsIntent);
+                        alertDialog2.cancel();
+                    }
+                }, 1000l);
+            }
+            return true;
 
             default:
                 break;
