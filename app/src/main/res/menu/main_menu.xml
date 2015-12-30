@@ -95,47 +95,55 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:title="Manage Aliases"
                 app:showAsAction="ifRoom" />
 
-            <!-- Speed Test -->
             <item
-                android:id="@+id/action_ddwrt_actions_speedtest"
-                android:checkable="false"
-                android:checked="false"
-                android:orderInCategory="6"
-                android:icon="@mipmap/ic_speedtest"
-                android:title="Speed Test"
-                app:showAsAction="ifRoom" />
+                    android:checkable="false"
+                    android:checked="false"
+                    android:orderInCategory="6"
+                    android:title="Utilities"
+                    app:showAsAction="ifRoom">
+                <menu>
+                    <!-- Speed Test -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_speedtest"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:orderInCategory="1"
+                        android:icon="@mipmap/ic_speedtest"
+                        android:title="Speed Test"
+                        app:showAsAction="never" />
+                        
+                    <!-- Clear ARP Cache -->
+                    <!-- TODO: Action cmd: 'ip -s -s neigh flush all' (cf. http://linux-audit.com/how-to-clear-the-arp-cache-on-linux/) -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_clear_arp_cache"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:orderInCategory="2"
+                        android:title="Clear ARP Cache"
+                        app:showAsAction="never" />
+                        
+                    <!-- Clear DNS Cache -->
+                    <!-- TODO: Action is 'killall -1 dnsmasq' or 'killall -HUP dnsmasq' (cf. https://ariejan.net/2007/07/07/clear-dns-cache-on-your-router/) -->
+                    <item
+                        android:id="@+id/action_ddwrt_actions_clear_dns_cache"
+                        android:checkable="false"
+                        android:checked="false"
+                        android:orderInCategory="3"
+                        android:title="Clear DNS Cache"
+                        app:showAsAction="never" />
+                        
+                </menu>
+            </item>
 
-            <!--<item-->
-                <!--android:orderInCategory="5"-->
-                <!--android:title="Manage Aliases"-->
-                <!--app:showAsAction="ifRoom">-->
-                <!--<menu>-->
-                    <!--<item-->
-                        <!--android:id="@+id/action_ddwrt_actions_aliases_import"-->
-                        <!--android:checkable="false"-->
-                        <!--android:checked="false"-->
-                        <!--android:icon="@drawable/ic_action_action_backup"-->
-                        <!--android:orderInCategory="1"-->
-                        <!--android:title="Import"-->
-                        <!--app:showAsAction="never" />-->
-                    <!--<item-->
-                        <!--android:id="@+id/action_ddwrt_actions_aliases_export"-->
-                        <!--android:checkable="false"-->
-                        <!--android:checked="false"-->
-                        <!--android:icon="@drawable/ic_action_action_restore"-->
-                        <!--android:orderInCategory="2"-->
-                        <!--android:title="Export"-->
-                        <!--app:showAsAction="never" />-->
-                <!--</menu>-->
-            <!--</item>-->
-
-            <!-- HIDDEN FOR NOW -->
+            <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
+            Remind to detect whether to use WAN or LAN IP Address (based on the current network we are connected to)
+            -->
             <item
                 android:id="@+id/action_ddwrt_actions_open_webinterface"
                 android:alphabeticShortcut="W"
                 android:icon="@drawable/ic_action_open_in_browser"
                 android:orderInCategory="99"
-                android:visible="false"
+                android:visible="true"
                 android:title="Open Web Interface"
                 app:showAsAction="ifRoom" />
 
