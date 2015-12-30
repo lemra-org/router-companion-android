@@ -173,6 +173,10 @@ public final class DDWRTCompanionConstants {
      */
     public static final boolean SHOWCASEVIEW_ENABLED = false;
 
+    public static final String GEO_IP_API_SERVER = "http://api.petabyet.com/geoip/";
+
+    public static final String COUNTRY_API_SERVER_FLAG = "http://www.geognos.com/api/en/countries/flag";
+
     private DDWRTCompanionConstants() {
     }
 

@@ -48,7 +48,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <item
                 android:id="@+id/tile_status_active_ip_connections_stats_by_destination_ip"
                 android:orderInCategory="2"
-                android:title="@string/by_destination"
+                android:title="By Destination IP"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/tile_status_active_ip_connections_stats_by_destination_country"
+                android:orderInCategory="3"
+                android:title="By Destination IP Country"
                 app:showAsAction="never" />
         </menu>
 

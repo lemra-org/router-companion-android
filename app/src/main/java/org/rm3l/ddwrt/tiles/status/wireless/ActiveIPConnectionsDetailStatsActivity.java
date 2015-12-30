@@ -410,11 +410,13 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
     }
 
     public static final int ByFilter_SOURCE = 1;
-    public static final int ByFilter_DESTINATION = 2;
+    public static final int ByFilter_DESTINATION_IP = 2;
+    public static final int ByFilter_DESTINATION_COUNTRY = 3;
 
     public enum ByFilter {
         SOURCE("source"),
-        DESTINATION("destination");
+        DESTINATION_IP("destination ip"),
+        DESTINATION_COUNTRY("destination country");
 
         private final String displayName;
 
