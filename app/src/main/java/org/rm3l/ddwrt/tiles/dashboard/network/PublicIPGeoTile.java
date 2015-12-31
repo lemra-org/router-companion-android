@@ -100,13 +100,19 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         updateProgressBarViewSeparator(40);
 
                         if (isDemoRouter(mRouter)) {
-                            final long nbRunsLoaderModulo = (nbRunsLoader % 5);
-                            if (nbRunsLoaderModulo == 0) {
-                                //nbRunsLoader = 5k
-                                mWanPublicIP = ("52.64." +
-                                        (1 + new Random().nextInt(252))
-                                        + "." +
-                                        (1 + new Random().nextInt(252)));
+                            final int c = 1 + new Random().nextInt(252);
+                            final int d = 1 + new Random().nextInt(252);
+                            final long modulo = nbRunsLoader % 5;
+                            if (modulo == 0) {
+                                mWanPublicIP = ("52.64." + c + "." + d);
+                            } else if (modulo == 1) {
+                                mWanPublicIP = ("8.8." + c + "." + d);
+                            } else if (modulo == 2) {
+                                mWanPublicIP = ("78.87." + c + "." + d);
+                            } else if (modulo == 3) {
+                                mWanPublicIP = ("34.56." + c + "." + d);
+                            } else if (modulo == 4) {
+                                mWanPublicIP = ("67.78." + c + "." + d);
                             } else {
                                 mWanPublicIP = null;
                             }

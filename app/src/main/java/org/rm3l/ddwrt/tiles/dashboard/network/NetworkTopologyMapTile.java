@@ -162,7 +162,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             nvramInfoTmp = new NVRAMInfo()
                                     .setProperty(NVRAMInfo.ROUTER_NAME, "Demo Router (Test Data)")
                                     .setProperty(NVRAMInfo.WAN_IPADDR, "1.2.3.4")
-                                    .setProperty(NVRAMInfo.LAN_IPADDR, "255.255.255.255")
+                                    .setProperty(NVRAMInfo.LAN_IPADDR, "192.168.78.254")
                                     .setProperty(NVRAMInfo.OPENVPNCL_ENABLE,
                                             Integer.toString(new Random().nextInt(2)))
                                     .setProperty(NVRAMInfo.OPENVPNCL_REMOTEIP, "my.remote.vpn.servi.ce")
@@ -215,7 +215,7 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                                 if (nbRunsLoaderModulo == 0) {
                                     //nbRunsLoader = 5k
                                     nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
-                                            "52.64." +
+                                            "52." + (1 + new Random().nextInt(252)) + "." +
                                                     (1 + new Random().nextInt(252))
                                                     + "." +
                                                     (1 + new Random().nextInt(252)));
