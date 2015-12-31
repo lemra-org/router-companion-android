@@ -39,7 +39,6 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.service.tasks.PublicIPChangesServiceTask;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
-import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -68,8 +67,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
 
     private Router mRouterCopy;
     private String mTempRouterUuid;
-
-    private boolean checkActualInternetConnectivity = true;
 
     private long mLastSync;
 
@@ -135,11 +132,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 try {
 
                     isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-
-                    if (mParentFragmentPreferences != null) {
-                        checkActualInternetConnectivity = mParentFragmentPreferences
-                                .getBoolean(DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF, true);
-                    }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " + NetworkTopologyMapTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
@@ -215,71 +207,70 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                         }
 
                         updateProgressBarViewSeparator(85);
-                        if (checkActualInternetConnectivity) {
-                            try {
 
-                                if (isDemoRouter(mRouter)) {
-                                    final long nbRunsLoaderModulo = (nbRunsLoader % 5);
-                                    if (nbRunsLoaderModulo == 0) {
-                                        //nbRunsLoader = 5k
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
-                                                "52.64." +
-                                                        (1 + new Random().nextInt(252))
-                                                        + "." +
-                                                        (1 + new Random().nextInt(252)));
-                                    } else if (nbRunsLoaderModulo == 1) {
-                                        //nbRunsLoader = 5k + 1
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                    } else if (nbRunsLoaderModulo == 2) {
-                                        //nbRunsLoader = 5k + 2
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
-                                    }
-                                } else {
-                                    //Check actual connections to the outside from the router
-                                    final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
-                                    final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
-                                            mRouterCopy, mGlobalPreferences,
+                        try {
+
+                            if (isDemoRouter(mRouter)) {
+                                final long nbRunsLoaderModulo = (nbRunsLoader % 5);
+                                if (nbRunsLoaderModulo == 0) {
+                                    //nbRunsLoader = 5k
+                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP,
+                                            "52.64." +
+                                                    (1 + new Random().nextInt(252))
+                                                    + "." +
+                                                    (1 + new Random().nextInt(252)));
+                                } else if (nbRunsLoaderModulo == 1) {
+                                    //nbRunsLoader = 5k + 1
+                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                } else if (nbRunsLoaderModulo == 2) {
+                                    //nbRunsLoader = 5k + 2
+                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
+                                }
+                            } else {
+                                //Check actual connections to the outside from the router
+                                final CharSequence applicationName = Utils.getApplicationName(mParentFragmentActivity);
+                                final String[] wanPublicIpCmdStatus = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                        mRouterCopy, mGlobalPreferences,
 //                                        "echo -e \"GET / HTTP/1.1\\r\\nHost:icanhazip.com\\r\\nUser-Agent:DD-WRT Companion/3.3.0\\r\\n\" | nc icanhazip.com 80"
-                                            String.format("echo -e \"" +
-                                                            "GET / HTTP/1.1\\r\\n" +
-                                                            "Host:%s\\r\\n" +
-                                                            "User-Agent:%s/%s\\r\\n\" " +
-                                                            "| /usr/bin/nc %s %d",
-                                                    PublicIPInfo.ICANHAZIP_HOST,
-                                                    applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
-                                                    BuildConfig.VERSION_NAME,
-                                                    PublicIPInfo.ICANHAZIP_HOST,
-                                                    PublicIPInfo.ICANHAZIP_PORT));
-                                    if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
-                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
-                                    } else {
-                                        final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
-                                                .trim();
-                                        if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
-                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
+                                        String.format("echo -e \"" +
+                                                        "GET / HTTP/1.1\\r\\n" +
+                                                        "Host:%s\\r\\n" +
+                                                        "User-Agent:%s/%s\\r\\n\" " +
+                                                        "| /usr/bin/nc %s %d",
+                                                PublicIPInfo.ICANHAZIP_HOST,
+                                                applicationName != null ? applicationName : BuildConfig.APPLICATION_ID,
+                                                BuildConfig.VERSION_NAME,
+                                                PublicIPInfo.ICANHAZIP_HOST,
+                                                PublicIPInfo.ICANHAZIP_PORT));
+                                if (wanPublicIpCmdStatus == null || wanPublicIpCmdStatus.length == 0) {
+                                    nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                } else {
+                                    final String wanPublicIp = wanPublicIpCmdStatus[wanPublicIpCmdStatus.length - 1]
+                                            .trim();
+                                    if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, wanPublicIp);
 
-                                            try {
-                                                routerModelUpdaterServiceTask
-                                                        .runBackgroundServiceTask(mRouter);
-                                            } catch (final Exception e) {
-                                                Utils.reportException(mParentFragmentActivity, e);
-                                                //No worries
-                                            } finally {
-                                                PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
-                                                        mRouterCopy, mParentFragmentPreferences,
-                                                        wanPublicIpCmdStatus,
-                                                        nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
-                                            }
-
-                                        } else {
-                                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
+                                        try {
+                                            routerModelUpdaterServiceTask
+                                                    .runBackgroundServiceTask(mRouter);
+                                        } catch (final Exception e) {
+                                            Utils.reportException(mParentFragmentActivity, e);
+                                            //No worries
+                                        } finally {
+                                            PublicIPChangesServiceTask.buildNotificationIfNeeded(mParentFragmentActivity,
+                                                    mRouterCopy, mParentFragmentPreferences,
+                                                    wanPublicIpCmdStatus,
+                                                    nvramInfo.getProperty(NVRAMInfo.WAN_IPADDR), null);
                                         }
+
+                                    } else {
+                                        nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, NOK);
                                     }
                                 }
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                                nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                             }
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                            nvramInfo.setProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, UNKNOWN);
                         }
                     }
 
@@ -429,80 +420,68 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 final Resources resources = mParentFragmentActivity.getResources();
 
                 final int wanPathColor;
-                if (checkActualInternetConnectivity) {
-                    final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
-                    final String statusToastMsg;
+                final String publicIp = data.getProperty(INTERNET_CONNECTIVITY_PUBLIC_IP, null);
+                final String statusToastMsg;
 
-                    if (publicIp == null || UNKNOWN.equals(publicIp)) {
-                        wanPathColor = R.color.line_view_color;
-                        publicIpView
-                                .setVisibility(View.GONE);
-                        statusWarningView
-                                .setVisibility(View.GONE);
-                        statusUnknownView
-                                .setVisibility(View.VISIBLE);
-                        statusToastMsg = "Couldn't test connectivity to the Internet!";
-
-                    } else if (NOK.equals(publicIp)) {
-                        wanPathColor = R.color.win8_orange;
-                        publicIpView
-                                .setVisibility(View.GONE);
-                        statusWarningView
-                                .setVisibility(View.VISIBLE);
-                        statusUnknownView
-                                .setVisibility(View.GONE);
-                        statusToastMsg = ("Your router seems not to be able to reach the Internet. " +
-                                "No public IP Address was found on the Internet.");
-
-                    } else {
-                        //Valid IP Address
-                        wanPathColor = R.color.android_green;
-                        final String publicIpViewText = ("Public IP:\n" + publicIp);
-                        final Spannable publicIpViewTextSpannable = new SpannableString(publicIpViewText);
-                        publicIpViewTextSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-                                "Public IP:\n".length(), publicIpViewText.length(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        publicIpView.setText(publicIpViewTextSpannable);
-                        publicIpView
-                                .setVisibility(View.VISIBLE);
-                        statusWarningView
-                                .setVisibility(View.GONE);
-                        statusUnknownView
-                                .setVisibility(View.GONE);
-                        statusToastMsg = ("Your router seems to be able to reach the Internet. " +
-                                "Public IP Address on the Internet is: " + publicIp);
-
-                        if (Objects.equal(publicIp, data.getProperty(NVRAMInfo.WAN_IPADDR))) {
-                            wanIpView.setVisibility(View.INVISIBLE);
-                        }
-                    }
-
-                    final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Utils.displayMessage(mParentFragmentActivity,
-                                    statusToastMsg,
-                                    new Style.Builder()
-                                            .setBackgroundColorValue(wanPathColor)
-                                            .build());
-                        }
-                    };
-                    publicIpView.setOnClickListener(statusViewOnClickListener);
-                    statusWarningView.setOnClickListener(statusViewOnClickListener);
-                    statusUnknownView.setOnClickListener(statusViewOnClickListener);
-                    wanPathHorizontalView.setOnClickListener(statusViewOnClickListener);
-
-                } else {
+                if (publicIp == null || UNKNOWN.equals(publicIp)) {
+                    wanPathColor = R.color.line_view_color;
                     publicIpView
                             .setVisibility(View.GONE);
                     statusWarningView
                             .setVisibility(View.GONE);
                     statusUnknownView
-                            .setVisibility(View.GONE);
-                    wanPathColor = R.color.line_view_color;
+                            .setVisibility(View.VISIBLE);
+                    statusToastMsg = "Couldn't test connectivity to the Internet!";
 
-                    wanPathHorizontalView.setOnClickListener(null);
+                } else if (NOK.equals(publicIp)) {
+                    wanPathColor = R.color.win8_orange;
+                    publicIpView
+                            .setVisibility(View.GONE);
+                    statusWarningView
+                            .setVisibility(View.VISIBLE);
+                    statusUnknownView
+                            .setVisibility(View.GONE);
+                    statusToastMsg = ("Your router seems not to be able to reach the Internet. " +
+                            "No public IP Address was found on the Internet.");
+
+                } else {
+                    //Valid IP Address
+                    wanPathColor = R.color.android_green;
+                    final String publicIpViewText = ("Public IP:\n" + publicIp);
+                    final Spannable publicIpViewTextSpannable = new SpannableString(publicIpViewText);
+                    publicIpViewTextSpannable.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                            "Public IP:\n".length(), publicIpViewText.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    publicIpView.setText(publicIpViewTextSpannable);
+                    publicIpView
+                            .setVisibility(View.VISIBLE);
+                    statusWarningView
+                            .setVisibility(View.GONE);
+                    statusUnknownView
+                            .setVisibility(View.GONE);
+                    statusToastMsg = ("Your router seems to be able to reach the Internet. " +
+                            "Public IP Address on the Internet is: " + publicIp);
+
+                    if (Objects.equal(publicIp, data.getProperty(NVRAMInfo.WAN_IPADDR))) {
+                        wanIpView.setVisibility(View.INVISIBLE);
+                    }
                 }
+
+                final View.OnClickListener statusViewOnClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Utils.displayMessage(mParentFragmentActivity,
+                                statusToastMsg,
+                                new Style.Builder()
+                                        .setBackgroundColorValue(wanPathColor)
+                                        .build());
+                    }
+                };
+                publicIpView.setOnClickListener(statusViewOnClickListener);
+                statusWarningView.setOnClickListener(statusViewOnClickListener);
+                statusUnknownView.setOnClickListener(statusViewOnClickListener);
+                wanPathHorizontalView.setOnClickListener(statusViewOnClickListener);
+
 
                 publicIpView
                         .setTextColor(ContextCompat.getColor(mParentFragmentActivity, wanPathColor));

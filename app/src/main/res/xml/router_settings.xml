@@ -114,18 +114,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </PreferenceCategory>
 
     <!-- Network Map -->
-    <PreferenceCategory
-        android:key="@string/pref_header_ntm"
-        android:title="Network Map">
+    <!--<PreferenceCategory-->
+        <!--android:key="@string/pref_header_ntm"-->
+        <!--android:title="Network Map">-->
 
-        <org.rm3l.ddwrt.widgets.MySwitchPreference
-            android:defaultValue="true"
-            android:key="ntm.check.internet.connectivity"
-            android:summaryOff="Disabled for this router."
-            android:summaryOn="Enabled. We will check that this router can effectively reach the Internet."
-            android:title="Check actual Internet connection" />
+        <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="ntm.check.internet.connectivity"-->
+            <!--android:summaryOff="Disabled for this router."-->
+            <!--android:summaryOn="Enabled. We will check that this router can effectively reach the Internet."-->
+            <!--android:title="Check actual Internet connection" />-->
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
             <!--<CheckBoxPreference-->
                 <!--android:disableDependentsState="false"-->

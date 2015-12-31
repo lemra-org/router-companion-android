@@ -38,7 +38,6 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
@@ -135,7 +134,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_DISPLAY_ITEMS));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_SYNC_INTERVAL_MINUTES_PREF));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY));
-            bindPreferenceSummaryToValue(findPreference(OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF));
+//            bindPreferenceSummaryToValue(findPreference(OVERVIEW_NTM_CHECK_ACTUAL_INTERNET_CONNECTIVITY_PREF));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_WAN_CONNECTIVITY_SYNC_INTERVAL_MINUTES_PREF));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF));
 
