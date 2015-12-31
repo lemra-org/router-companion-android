@@ -37,7 +37,7 @@ public class ClearDNSCacheRouterAction extends AbstractRouterAction<Void> {
     public ClearDNSCacheRouterAction(@NonNull Context context,
                                      @Nullable RouterActionListener listener,
                                      @NonNull final SharedPreferences globalSharedPreferences) {
-        super(listener, RouterAction.CLEAR_ARP_CACHE, globalSharedPreferences);
+        super(listener, RouterAction.CLEAR_DNS_CACHE, globalSharedPreferences);
         this.mContext = context;
     }
 
