@@ -208,17 +208,25 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         }
     }
 
-    private void highlightTitleTextView(@NonNull final TextView... tvs) {
+    private void highlightTitleTextView(@Nullable final TextView... tvs) {
         if (tvs == null) {
             //Reset everything
             for (final TextView textView : mTitleTextViews) {
                 textView.setTypeface(null, Typeface.NORMAL);
             }
         } else {
+            for (final TextView tv : tvs) {
+                for (final TextView textView : mTitleTextViews) {
+                    if (tv == textView) {
+                        textView.setTypeface(null, Typeface.BOLD);
+                    }
+                }
+            }
             for (final TextView textView : mTitleTextViews) {
                 for (final TextView tv : tvs) {
-                    textView.setTypeface(null,
-                            tv == textView ? Typeface.BOLD : Typeface.NORMAL);
+                    if (tv != textView) {
+                        textView.setTypeface(null, Typeface.NORMAL);
+                    }
                 }
             }
         }
