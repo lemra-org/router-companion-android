@@ -227,49 +227,6 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                final MapView map = (MapView)
-                        layout.findViewById(R.id.tile_public_ip_geo_map);
-                map.setTileSource(TileSourceFactory.MAPNIK);
-
-                map.setBuiltInZoomControls(true);
-                map.setMultiTouchControls(false);
-
-                final long dataUsageCtrl = mParentFragmentActivity
-                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                        .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
-                //If Only on WiFi flag, act accordingly
-                map.setUseDataConnection(dataUsageCtrl != 333);
-
-                final IMapController mapController = map.getController();
-                mapController.setZoom(9);
-                final GeoPoint publicIpPoint = new GeoPoint(latitude, longitude);
-                mapController.setCenter(publicIpPoint);
-
-                final OverlayItem overlayItem = new OverlayItem(
-                        mIPWhoisInfoWithGeo.getIp(),
-                        String.format("- Prefix: %s\n" +
-                                "- Country: %s (%s)\n" +
-                                "- Region: %s\n" +
-                                "- City: %s\n" +
-                                "- Organization: %s\n" +
-                                "- ASN: %s\n" +
-                                "- Latitude: %s\n" +
-                                "- Longitude: %s",
-                                nullToEmpty(mIPWhoisInfoWithGeo.getPrefix()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry_code()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getRegion()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCity()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getOrganization()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getAsn()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getLatitude()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getLongitude())),
-                        publicIpPoint);
-                final MyOwnItemizedOverlay overlay =
-                        new MyOwnItemizedOverlay(mParentFragmentActivity,
-                                Collections.singletonList(overlayItem));
-                map.getOverlays().add(overlay);
-
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView)
                         layout.findViewById(R.id.tile_last_sync);
@@ -294,7 +251,51 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 });
                 errorPlaceHolderView.setVisibility(View.VISIBLE);
                 updateProgressBarWithError();
-            } else if (exception == null){
+            } else if (exception == null) {
+
+                final MapView map = (MapView)
+                        layout.findViewById(R.id.tile_public_ip_geo_map);
+                map.setTileSource(TileSourceFactory.MAPNIK);
+
+                map.setBuiltInZoomControls(true);
+                map.setMultiTouchControls(false);
+
+                final long dataUsageCtrl = mParentFragmentActivity
+                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+                        .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
+                //If Only on WiFi flag, act accordingly
+                map.setUseDataConnection(dataUsageCtrl != 333);
+
+                final IMapController mapController = map.getController();
+                mapController.setZoom(9);
+                final GeoPoint publicIpPoint = new GeoPoint(latitude, longitude);
+                mapController.setCenter(publicIpPoint);
+
+                final OverlayItem overlayItem = new OverlayItem(
+                        mIPWhoisInfoWithGeo.getIp(),
+                        String.format("- Prefix: %s\n" +
+                                        "- Country: %s (%s)\n" +
+                                        "- Region: %s\n" +
+                                        "- City: %s\n" +
+                                        "- Organization: %s\n" +
+                                        "- ASN: %s\n" +
+                                        "- Latitude: %s\n" +
+                                        "- Longitude: %s",
+                                nullToEmpty(mIPWhoisInfoWithGeo.getPrefix()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry_code()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getRegion()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getCity()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getOrganization()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getAsn()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getLatitude()),
+                                nullToEmpty(mIPWhoisInfoWithGeo.getLongitude())),
+                        publicIpPoint);
+                final MyOwnItemizedOverlay overlay =
+                        new MyOwnItemizedOverlay(mParentFragmentActivity,
+                                Collections.singletonList(overlayItem));
+                map.getOverlays().add(overlay);
+
                 updateProgressBarWithSuccess();
             }
 
