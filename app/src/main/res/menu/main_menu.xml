@@ -113,7 +113,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         app:showAsAction="never" />
                         
                     <!-- Clear ARP Cache -->
-                    <!-- TODO: Action cmd: 'ip -s -s neigh flush all' (cf. http://linux-audit.com/how-to-clear-the-arp-cache-on-linux/) -->
+                    <!-- Action cmd: 'ip -s -s neigh flush all' (cf. http://linux-audit.com/how-to-clear-the-arp-cache-on-linux/) -->
                     <item
                         android:id="@+id/action_ddwrt_actions_clear_arp_cache"
                         android:checkable="false"
@@ -123,7 +123,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         app:showAsAction="never" />
                         
                     <!-- Clear DNS Cache -->
-                    <!-- TODO: Action is 'killall -1 dnsmasq' or 'killall -HUP dnsmasq' (cf. https://ariejan.net/2007/07/07/clear-dns-cache-on-your-router/) -->
+                    <!-- Action is 'killall -1 dnsmasq' or 'killall -HUP dnsmasq' (cf. https://ariejan.net/2007/07/07/clear-dns-cache-on-your-router/) -->
                     <item
                         android:id="@+id/action_ddwrt_actions_clear_dns_cache"
                         android:checkable="false"
@@ -143,7 +143,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:alphabeticShortcut="W"
                 android:icon="@drawable/ic_action_open_in_browser"
                 android:orderInCategory="99"
-                android:visible="true"
+                android:visible="false"
                 android:title="Open Web Interface"
                 app:showAsAction="ifRoom" />
 

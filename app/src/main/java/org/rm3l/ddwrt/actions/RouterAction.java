@@ -46,7 +46,9 @@ public enum RouterAction {
     TOGGLE_WL_RADIO("Toggle Wireless Radio"),
     DHCP_RELEASE("DHCP Release"),
     DHCP_RENEW("DHCP Renew"),
-    TOGGLE_PHY_IFACE_STATE("Toggle Physical Interface State");
+    TOGGLE_PHY_IFACE_STATE("Toggle Physical Interface State"),
+    CLEAR_ARP_CACHE("Clear ARP Cache"),
+    CLEAR_DNS_CACHE("Clear DNS Cache");
 
     private final String displayName;
 
