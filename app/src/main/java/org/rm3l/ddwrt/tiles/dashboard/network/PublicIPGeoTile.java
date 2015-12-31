@@ -32,6 +32,7 @@ import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
@@ -39,7 +40,9 @@ import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
 import java.util.Collections;
 import java.util.Random;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
@@ -104,6 +107,8 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                                         (1 + new Random().nextInt(252))
                                         + "." +
                                         (1 + new Random().nextInt(252)));
+                            } else {
+                                mWanPublicIP = null;
                             }
                         } else {
                             //Check actual connections to the outside from the router
@@ -128,7 +133,11 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                                         .trim();
                                 if (Patterns.IP_ADDRESS.matcher(wanPublicIp).matches()) {
                                     mWanPublicIP = wanPublicIp;
+                                } else {
+                                    mWanPublicIP = null;
                                 }
+                            } else {
+                                mWanPublicIP = null;
                             }
                         }
 
@@ -137,6 +146,8 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                             mIPWhoisInfoWithGeo =
                                     ActiveIPConnectionsDetailActivity.mIPWhoisInfoCache
                                             .get(mWanPublicIP);
+                        } else {
+                            mIPWhoisInfoWithGeo = null;
                         }
 
                         return new None();
@@ -181,42 +192,53 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 data = (None) new None().setException(new DDWRTNoDataException("No Data!"));
             }
 
-            if (mIPWhoisInfoWithGeo == null) {
-                data = (None) new None().setException(new
-                        DDWRTNoDataException("Failed to retrieved Public IP Address geolocation data!"));
-            }
+            Exception exception = data.getException();
 
             Double latitude = null;
             Double longitude = null;
-            try {
-                latitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLatitude());
-                longitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLongitude());
-            } catch (final NumberFormatException nfe) {
-                Crashlytics.logException(nfe);
-                nfe.printStackTrace();
-                data = (None) new None().setException(new
-                        DDWRTNoDataException("Invalid coordinates - please try again later!"));
-            }
-
-            if (latitude == null || longitude == null) {
-                Crashlytics.logException(new IllegalStateException("latitude == null || longitude == null"));
-                data = (None) new None().setException(new
-                        DDWRTNoDataException("Invalid coordinates - please try again later!"));
+            if (exception == null) {
+                if (mIPWhoisInfoWithGeo == null) {
+                    data = (None) new None().setException(new
+                            DDWRTNoDataException("Failed to retrieved Public IP Address geolocation data!"));
+                } else {
+                    try {
+                        latitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLatitude());
+                        longitude = Double.parseDouble(mIPWhoisInfoWithGeo.getLongitude());
+                    } catch (final NumberFormatException nfe) {
+                        Crashlytics.logException(nfe);
+                        nfe.printStackTrace();
+                        //No worries
+                    }
+                    if (latitude == null || longitude == null) {
+                        Crashlytics.logException(new IllegalStateException("latitude == null || longitude == null"));
+                        data = (None) new None().setException(new
+                                DDWRTNoDataException("Invalid coordinates - please try again later!"));
+                    }
+                }
+                exception = data.getException();
             }
 
             final TextView errorPlaceHolderView = (TextView) this.layout
                     .findViewById(R.id.tile_public_ip_geo_error);
-
-            final Exception exception = data.getException();
-
-            final MapView map = (MapView) layout.findViewById(R.id.tile_public_ip_geo_map);
-            map.setTileSource(TileSourceFactory.MAPNIK);
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
+
+                final MapView map = (MapView)
+                        layout.findViewById(R.id.tile_public_ip_geo_map);
+                map.setTileSource(TileSourceFactory.MAPNIK);
+
+                map.setBuiltInZoomControls(true);
+                map.setMultiTouchControls(false);
+
+                final long dataUsageCtrl = mParentFragmentActivity
+                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+                        .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
+                //If Only on WiFi flag, act accordingly
+                map.setUseDataConnection(dataUsageCtrl != 333);
 
                 final IMapController mapController = map.getController();
                 mapController.setZoom(9);
