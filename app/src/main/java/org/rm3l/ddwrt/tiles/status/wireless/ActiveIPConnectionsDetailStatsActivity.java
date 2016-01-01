@@ -21,13 +21,18 @@
  */
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -36,6 +41,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +49,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
@@ -60,6 +67,8 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -78,6 +87,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
 public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = ActiveIPConnectionsDetailStatsActivity.class.getSimpleName();
 
     public static final String BY = "BY";
 
@@ -290,6 +301,71 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
         this.optionsMenu = menu;
 
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(this, findViewById(android.R.id.content),
+                        "Storage access is required to share stats about active IP connections.",
+                        "OK",
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(ActiveIPConnectionsDetailStatsActivity.this,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
         /* Getting the actionprovider associated with the menu item whose id is share */
         final MenuItem shareMenuItem = menu.findItem(R.id.active_ip_connections_pie_chart_share);
         shareMenuItem.setEnabled(mException == null);
@@ -312,32 +388,70 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         final Canvas canvas = new Canvas(bitmapToExport);
         viewToShare.draw(canvas);
 
-        mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
-                        mByFilter, nullToEmpty(mRouter), mObservationDate)) + ".png");
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-            bitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
-                    .show();
-        } finally {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
+
+            mFileToShare = new File(getCacheDir(),
+                    Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
+                            mByFilter, nullToEmpty(mRouter), mObservationDate)) + ".png");
+            OutputStream outputStream = null;
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
+                outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+                bitmapToExport.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, outputStream);
+                outputStream.flush();
             } catch (IOException e) {
                 e.printStackTrace();
-                //No Worries
+                Crouton.makeText(this, getString(R.string.internal_error_please_try_again), Style.ALERT)
+                        .show();
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //No Worries
+                }
             }
+
+            setShareFile(mFileToShare);
         }
 
-        setShareFile(mFileToShare);
-
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case DDWRTCompanionConstants.Permissions.STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
+                    Utils.displayMessage(this,
+                            "Sharing of IP Connections Stats will be unavailable",
+                            Style.INFO);
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu
+                                .findItem(R.id.active_ip_connections_pie_chart_share);
+                        menuItem.setEnabled(false);
+                        menuItem.setVisible(false);
+                    }
+                }
+                return;
+            }
+            default:
+                break;
+        }
     }
 
     @Override

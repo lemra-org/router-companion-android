@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ApplicationErrorReport;
@@ -30,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
@@ -38,9 +40,12 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
@@ -72,6 +77,8 @@ import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
 import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -334,6 +341,35 @@ public final class Utils {
             return;
         }
 
+        if (!canUseDataConnection(ctx)) {
+            throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
+                    ("Data Sync on Mobile Networks disabled!");
+        }
+
+//        final long dataUsageCtrl = ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+//                .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
+//        if (dataUsageCtrl == 333) {
+//            //Only On Wi-Fi
+//            final ConnectivityManager connMgr = (ConnectivityManager) ctx.
+//                    getSystemService(Context.CONNECTIVITY_SERVICE);
+//            final NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//            final boolean isWifiConn = wifiNetworkInfo.isConnected();
+//            final NetworkInfo mobileNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//            final boolean isMobileConn = mobileNetworkInfo.isConnected();
+//            Crashlytics.log(Log.DEBUG, TAG, "Wifi connected: " + isWifiConn);
+//            Crashlytics.log(Log.DEBUG, TAG, "Mobile connected: " + isMobileConn);
+//            if (isMobileConn && !isWifiConn) {
+//                throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
+//                        ("Data Sync on Mobile Networks disabled!");
+//            }
+//        }
+        Crashlytics.log(Log.DEBUG, TAG, "Data Sync Allowed By Usage Preference!");
+    }
+
+    public static boolean canUseDataConnection(@Nullable final Context ctx) {
+        if (ctx == null) {
+            return true;
+        }
         final long dataUsageCtrl = ctx.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
                 .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
         if (dataUsageCtrl == 333) {
@@ -346,12 +382,9 @@ public final class Utils {
             final boolean isMobileConn = mobileNetworkInfo.isConnected();
             Crashlytics.log(Log.DEBUG, TAG, "Wifi connected: " + isWifiConn);
             Crashlytics.log(Log.DEBUG, TAG, "Mobile connected: " + isMobileConn);
-            if (isMobileConn && !isWifiConn) {
-                throw new DDWRTDataSyncOnMobileNetworkNotAllowedException
-                        ("Data Sync on Mobile Networks disabled!");
-            }
+            return !(isMobileConn && !isWifiConn);
         }
-        Crashlytics.log(Log.DEBUG, TAG, "Data Sync Allowed By Usage Preference!");
+        return true;
     }
 
     /**
@@ -711,6 +744,78 @@ public final class Utils {
             result = resources.getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    public static void requestAppPermissions(@NonNull final Activity activity) {
+        //Permission requests
+
+        // WRITE_EXTERNAL_STORAGE (includes READ_EXTERNAL_STORAGE)
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        activity,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            activity,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(activity, activity.findViewById(android.R.id.content),
+                        "Storage access is needed to reduce data usage and enable sharing.",
+                        "OK",
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(activity,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+//                        Toast.makeText(activity,
+//                                "Sharing is backed by your devices storage.",
+//                                Toast.LENGTH_LONG).show();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
     }
 
 }

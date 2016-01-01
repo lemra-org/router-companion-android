@@ -40,9 +40,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <!-- /!\ "Dangerous Permission" -->
-    <!-- Saving router usage DB -->
+    <!-- Saving router usage DB and sharing -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--
+    Any app that declares the WRITE_EXTERNAL_STORAGE permission is
+    implicitly granted the READ_EXTERNAL_STORAGE permission.
+    -->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
 
     <!-- "Normal Permission" -->
     <!-- For background service notifications -->

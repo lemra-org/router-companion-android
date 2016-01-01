@@ -21,10 +21,15 @@
  */
 package org.rm3l.ddwrt.tiles.status.router;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -33,11 +38,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Joiner;
 
 import org.rm3l.ddwrt.R;
@@ -46,6 +53,8 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -60,6 +69,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class RouterCpuInfoActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = RouterCpuInfoActivity.class.getSimpleName();
+
     public static final String CPU_INFO_OUTPUT = "CPU_INFO_OUTPUT";
 
     private ShareActionProvider mShareActionProvider;
@@ -70,6 +81,7 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private Router mRouter;
+    private Menu optionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +151,73 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_router_cpuinfo_options, menu);
 
+        this.optionsMenu = menu;
+
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(this, findViewById(android.R.id.content),
+                        "Storage access is required to share Router CPU Data.",
+                        "OK",
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(RouterCpuInfoActivity.this,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
         final MenuItem shareMenuItem = menu.findItem(R.id.tile_status_router_cpuinfo_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat
                 .getActionProvider(shareMenuItem);
@@ -147,38 +226,79 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
             MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
         }
 
-        mFileToShare = new File(getCacheDir(),
-                Utils.getEscapedFileName(String.format("CPU_Info__%s", nullToEmpty(mRouterUuid))) + ".txt");
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
 
-        Exception exception = null;
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-            //noinspection ConstantConditions
-            outputStream.write(mCpuInfoMultiLine.getBytes());
-        } catch (IOException e) {
-            exception = e;
-            e.printStackTrace();
-        } finally {
+            // permission was granted, yay! Do the
+            // contacts-related task you need to do.
+            mFileToShare = new File(getCacheDir(),
+                    Utils.getEscapedFileName(String.format("CPU_Info__%s", nullToEmpty(mRouterUuid))) + ".txt");
+
+            Exception exception = null;
+            OutputStream outputStream = null;
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
+                outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+                //noinspection ConstantConditions
+                outputStream.write(mCpuInfoMultiLine.getBytes());
             } catch (IOException e) {
+                exception = e;
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (exception != null) {
-            Crouton.makeText(this,
-                    "Error while trying to share CPU Info - please try again later",
-                    Style.ALERT).show();
-            return true;
-        }
 
-        setShareFile(mFileToShare);
+            if (exception != null) {
+                Crouton.makeText(this,
+                        "Error while trying to share CPU Info - please try again later",
+                        Style.ALERT).show();
+                return true;
+            }
+
+            setShareFile(mFileToShare);
+        }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case DDWRTCompanionConstants.Permissions.STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
+                    Utils.displayMessage(this,
+                            "Sharing of Router CPU Data will be unavailable",
+                            Style.INFO);
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu
+                                .findItem(R.id.tile_status_router_cpuinfo_share);
+                        menuItem.setEnabled(false);
+                        menuItem.setVisible(false);
+                    }
+                }
+                return;
+            }
+            default:
+                break;
+        }
     }
 
     @Override

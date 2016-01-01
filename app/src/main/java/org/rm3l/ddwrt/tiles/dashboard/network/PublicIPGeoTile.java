@@ -1,11 +1,16 @@
 package org.rm3l.ddwrt.tiles.dashboard.network;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.Patterns;
@@ -35,14 +40,14 @@ import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
 
 import java.util.Collections;
 import java.util.Random;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
@@ -60,6 +65,69 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                            @NonNull Bundle arguments,
                            @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_public_ip_geo, null);
+
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            mParentFragmentActivity,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(mParentFragmentActivity, layout,
+                        "Storage access is required to cache map tiles.",
+                        "OK",
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(mParentFragmentActivity,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(mParentFragmentActivity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
 
     }
 
@@ -266,11 +334,9 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 map.setBuiltInZoomControls(true);
                 map.setMultiTouchControls(false);
 
-                final long dataUsageCtrl = mParentFragmentActivity
-                        .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
-                        .getLong(DDWRTCompanionConstants.DATA_USAGE_NETWORK_PREF, 444);
-                //If Only on WiFi flag, act accordingly
-                map.setUseDataConnection(dataUsageCtrl != 333);
+                //Act according to user-defined data usage control setting
+                map.setUseDataConnection(
+                        Utils.canUseDataConnection(mParentFragmentActivity));
 
                 final IMapController mapController = map.getController();
                 mapController.setZoom(9);

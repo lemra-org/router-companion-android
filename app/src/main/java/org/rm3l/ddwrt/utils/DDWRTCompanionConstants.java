@@ -177,6 +177,13 @@ public final class DDWRTCompanionConstants {
 
     public static final String COUNTRY_API_SERVER_FLAG = "http://www.geognos.com/api/en/countries/flag";
 
+    public static class Permissions {
+        public static final int INTERNET = 1;
+        public static final int NETSTATE = 2;
+        public static final int WIFI = 3;
+        public static final int STORAGE = 4;
+    }
+
     private DDWRTCompanionConstants() {
     }
 

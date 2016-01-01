@@ -21,15 +21,20 @@
  */
 package org.rm3l.ddwrt.tiles.status.wireless;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -85,6 +90,8 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -270,7 +277,7 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     private String mTitle;
     private String mObservationDate;
     private String mConnectedHost;
-    private Menu mMenu;
+    private Menu optionsMenu;
     private Multimap<String, String> mSourceIpToDestinationIp;
     private Multimap<String, String> mDestinationIpToSourceIp;
     private Map<String, String> mDestinationIpToCountry;
@@ -539,9 +546,9 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> ipToHostResolvedMap) {
                 int i = 0;
 
-                if (mMenu != null) {
-                    mMenu.findItem(R.id.tile_status_active_ip_connections_stats).setVisible(true);
-                    mMenu.findItem(R.id.tile_status_active_ip_connections_search).setVisible(true);
+                if (optionsMenu != null) {
+                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_stats).setVisible(true);
+                    optionsMenu.findItem(R.id.tile_status_active_ip_connections_search).setVisible(true);
                 }
 
                 mProgressBarDesc.setText("Building Views...\n\n");
@@ -828,7 +835,72 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tile_status_active_ip_connections_options, menu);
 
-        this.mMenu = menu;
+        this.optionsMenu = menu;
+
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(this, findViewById(android.R.id.content),
+                        "Storage access is required to share data about active IP connections.",
+                        "OK",
+                        Snackbar.LENGTH_LONG,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(ActiveIPConnectionsDetailActivity.this,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
 
         //Hide 'Stats by Source' menu item (because it is the same source)
         menu.findItem(R.id.tile_status_active_ip_connections_stats_by_source_ip)
@@ -870,39 +942,77 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
             MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
         }
 
-        mFileToShare = new File(getCacheDir(),
-                getEscapedFileName(String.format("%s on Router %s on %s",
-                        mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate)) + ".txt");
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
 
-        Exception exception = null;
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
-            //noinspection ConstantConditions
-            outputStream.write(mActiveIPConnectionsMultiLine.getBytes());
-        } catch (IOException e) {
-            exception = e;
-            e.printStackTrace();
-        } finally {
+            mFileToShare = new File(getCacheDir(),
+                    getEscapedFileName(String.format("%s on Router %s on %s",
+                            mTitle, nullToEmpty(mRouterRemoteIp), mObservationDate)) + ".txt");
+
+            Exception exception = null;
+            OutputStream outputStream = null;
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
+                outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
+                //noinspection ConstantConditions
+                outputStream.write(mActiveIPConnectionsMultiLine.getBytes());
             } catch (IOException e) {
+                exception = e;
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (exception != null) {
-            Crouton.makeText(this,
-                    "Error while trying to share Active IP Connections - please try again later",
-                    Style.ALERT).show();
-            return true;
-        }
+            if (exception != null) {
+                Crouton.makeText(this,
+                        "Error while trying to share Active IP Connections - please try again later",
+                        Style.ALERT).show();
+                return true;
+            }
 
-        setShareFile(mFileToShare);
+            setShareFile(mFileToShare);
+        }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case DDWRTCompanionConstants.Permissions.STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
+                    Utils.displayMessage(this,
+                            "Sharing of IP Connections Data will be unavailable",
+                            Style.INFO);
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu
+                                .findItem(R.id.tile_status_active_ip_connections_share);
+                        menuItem.setEnabled(false);
+                        menuItem.setVisible(false);
+                    }
+                }
+                return;
+            }
+            default:
+                break;
+        }
     }
 
     @Override

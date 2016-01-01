@@ -30,6 +30,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -272,6 +273,8 @@ public class DDWRTMainActivity extends AppCompatActivity
             finish();
             return;
         }
+
+//        Utils.requestAppPermissions(this);
 
         //Report
         final Map<String, Object> eventMap = new HashMap<>();
@@ -1903,5 +1906,32 @@ public class DDWRTMainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
 
+        switch (requestCode) {
+            case DDWRTCompanionConstants.Permissions.STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Crashlytics.log(Log.DEBUG, TAG, "Yay! Permission granted for #" + requestCode);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Crashlytics.log(Log.WARN, TAG, "Boo! Permission denied for #" + requestCode);
+                    Utils.displayMessage(this,
+                            "Data caching will be unavailable",
+                            Style.INFO);
+                }
+                return;
+            }
+            //TODO Add other codes down here
+            default:
+                break;
+        }
+
+    }
 }

@@ -320,6 +320,8 @@ public class RouterManagementActivity
             }
         });
 
+//        Utils.requestAppPermissions(this);
+
         //No need to restart the background service each time - this is correctly handled by Android
 //        BootReceiver.doStartBackgroundServiceIfNeeded(this);
 
