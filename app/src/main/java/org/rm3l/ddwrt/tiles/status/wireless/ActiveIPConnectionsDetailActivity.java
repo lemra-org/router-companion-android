@@ -736,11 +736,13 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
                     final ImageView destCountryFlag = (ImageView) cardView.findViewById(R.id.activity_ip_connections_destination_country_flag);
                     try {
-                        final IPWhoisInfo whoisInfo = mIPWhoisInfoCache.getIfPresent(destinationAddressOriginalSide);
-                        final String countryCode = whoisInfo.getCountry_code();
-                        if (whoisInfo == null) {
+                        final IPWhoisInfo whoisInfo;
+                        if (destinationAddressOriginalSide == null ||
+                                (whoisInfo = mIPWhoisInfoCache
+                                        .getIfPresent(destinationAddressOriginalSide)) == null) {
                             destCountryFlag.setVisibility(View.GONE);
                         } else {
+                            final String countryCode = whoisInfo.getCountry_code();
                             ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_country))
                                     .setText(String.format("%s (%s)", whoisInfo.getCountry(), countryCode));
                             ((TextView) cardView.findViewById(R.id.activity_ip_connections_details_destination_whois_region))
