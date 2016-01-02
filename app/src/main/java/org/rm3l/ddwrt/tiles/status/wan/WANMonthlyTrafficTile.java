@@ -698,11 +698,12 @@ public class WANMonthlyTrafficTile
                                 @Override
                                 public void run() {
                                     mParentFragmentActivity.startActivity(intent);
+                                    mParentFragmentActivity.overridePendingTransition(
+                                            R.anim.zoom_enter, R.anim.zoom_exit);
                                     alertDialog.cancel();
                                 }
                             }, 1000);
                         }
-
                     }
                 });
 

@@ -372,6 +372,8 @@ public abstract class DDWRTTile<T>
                         public void run() {
                             ((AbstractBaseFragment) mParentFragment)
                                     .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
+                            mParentFragmentActivity.overridePendingTransition(
+                                    R.anim.right_in, R.anim.left_out);
                             alertDialog.cancel();
                         }
                     }, 2500);
@@ -393,6 +395,8 @@ public abstract class DDWRTTile<T>
                     public void run() {
                         ((AbstractBaseFragment) mParentFragment)
                                 .startActivityForResult(onClickIntent, onClickIntentAndListener.getListener());
+                        mParentFragmentActivity.overridePendingTransition(
+                                R.anim.right_in, R.anim.left_out);
                         alertDialog.cancel();
                     }
                 }, 2500);
