@@ -420,7 +420,6 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
 
             case R.id.router_speedtest_refresh:
                 SnackbarUtils.buildSnackbar(this,
-                        findViewById(android.R.id.content),
                         "Going to start Speed Test...",
                         "Undo",
                         Snackbar.LENGTH_SHORT,

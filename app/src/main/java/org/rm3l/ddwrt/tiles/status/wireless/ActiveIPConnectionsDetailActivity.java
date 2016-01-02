@@ -851,10 +851,10 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(this, findViewById(android.R.id.content),
+                SnackbarUtils.buildSnackbar(this,
                         "Storage access is required to share data about active IP connections.",
                         "OK",
-                        Snackbar.LENGTH_LONG,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {

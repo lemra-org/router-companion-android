@@ -78,10 +78,10 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity, layout,
-                        "Storage access is required to cache map tiles.",
+                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                        "Storage access is required to cache and display map tiles.",
                         "OK",
-                        Snackbar.LENGTH_LONG,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {

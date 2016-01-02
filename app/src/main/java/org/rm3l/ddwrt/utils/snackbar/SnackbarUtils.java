@@ -1,5 +1,6 @@
 package org.rm3l.ddwrt.utils.snackbar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -139,5 +140,56 @@ public final class SnackbarUtils {
                 actionText, Color.RED,
                 duration, callback, bundle, show);
 
+    }
+
+    public static Snackbar buildSnackbar(
+            @Nullable final Activity activity,
+            @Nullable final String title,
+            @Nullable final String actionText,
+            @Snackbar.Duration final int duration,
+            @Nullable final SnackbarCallback callback,
+            @Nullable final Bundle bundle,
+            final boolean show) {
+
+        if (activity == null) {
+            return null;
+        }
+
+        return buildSnackbar(activity,
+                activity.findViewById(android.R.id.content),
+                title,
+                actionText,
+                duration, callback, bundle, show);
+
+    }
+
+    public static Snackbar buildSnackbar(
+            @Nullable final Activity activity,
+            @ColorInt final int bgColor,
+            @Nullable final String title,
+            @ColorInt final int titleColor,
+            @Nullable final String actionText,
+            @ColorInt final int actionTextColor,
+            @Snackbar.Duration final int duration,
+            @Nullable final SnackbarCallback callback,
+            @Nullable final Bundle bundle,
+            final boolean show) {
+
+        if (activity == null) {
+            return null;
+        }
+
+        return buildSnackbar(
+                activity,
+                activity.findViewById(android.R.id.content),
+                bgColor,
+                title,
+                titleColor,
+                actionText,
+                actionTextColor,
+                duration,
+                callback,
+                bundle,
+                show);
     }
 }

@@ -763,10 +763,10 @@ public final class Utils {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(activity, activity.findViewById(android.R.id.content),
+                SnackbarUtils.buildSnackbar(activity,
                         "Storage access is needed to reduce data usage and enable sharing.",
                         "OK",
-                        Snackbar.LENGTH_LONG,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {
@@ -803,9 +803,6 @@ public final class Utils {
                         },
                         null,
                         true);
-//                        Toast.makeText(activity,
-//                                "Sharing is backed by your devices storage.",
-//                                Toast.LENGTH_LONG).show();
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(activity,

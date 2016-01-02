@@ -412,11 +412,10 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity, layout,
-                        "We store NVRAM data to a temporary file, so you can easily share it. " +
-                        "This file is deleted right away after sharing or when you leave this window.",
+                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
+                        "Storage access permission is needed, so you can easily share NVRAM data. ",
                         "OK",
-                        Snackbar.LENGTH_LONG,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {
