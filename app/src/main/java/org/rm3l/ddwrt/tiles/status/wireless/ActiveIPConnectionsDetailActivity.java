@@ -362,9 +362,14 @@ public class ActiveIPConnectionsDetailActivity extends AppCompatActivity {
 
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.tile_status_active_ip_connections_view_toolbar);
         if (mToolbar != null) {
-            mTitle = "Active IP Connections" + (isNullOrEmpty(mConnectedHost) ? "" :
-                    (" for " + mConnectedHost));
+            mTitle = "Active IP Connections";
             mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(isNullOrEmpty(mConnectedHost) ? "" : mConnectedHost);
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+
             setSupportActionBar(mToolbar);
         }
 

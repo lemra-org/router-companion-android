@@ -110,18 +110,6 @@ public class RouterMemInfoActivity extends AppCompatActivity {
                                     R.color.black));
         }
 
-        mToolbar = (Toolbar) findViewById(R.id.tile_status_router_meminfo_view_toolbar);
-        if (mToolbar != null) {
-            mToolbar.setTitle("Memory Information");
-            setSupportActionBar(mToolbar);
-        }
-
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
         final Intent intent = getIntent();
         mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
 
@@ -132,6 +120,26 @@ public class RouterMemInfoActivity extends AppCompatActivity {
             Utils.reportException(null, new IllegalStateException("Router not found"));
             finish();
             return;
+        }
+
+        mToolbar = (Toolbar) findViewById(R.id.tile_status_router_meminfo_view_toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("Memory Information");
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    mRouter.getDisplayName(),
+                    mRouter.getRemoteIpAddress(),
+                    mRouter.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+            setSupportActionBar(mToolbar);
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         final String[] mMemInfo = intent.getStringArrayExtra(MEM_INFO_OUTPUT);

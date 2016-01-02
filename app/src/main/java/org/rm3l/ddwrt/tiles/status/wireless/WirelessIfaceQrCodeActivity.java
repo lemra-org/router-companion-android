@@ -50,6 +50,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
@@ -63,6 +64,8 @@ import com.google.zxing.common.BitMatrix;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -191,9 +194,32 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         mInterstitialAd = AdUtils.requestNewInterstitial(this,
                 R.string.interstitial_ad_unit_id_wireless_network_generate_qr_code);
 
+        final Intent intent = getIntent();
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mSsid = intent.getStringExtra(SSID);
+        mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
+
+        mTitle = ("WiFi QR Code: " + mSsid);
+
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wireless_iface_qrcode_window_toolbar);
         if (mToolbar != null) {
             mToolbar.setTitle(mTitle);
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    router.getDisplayName(),
+                    router.getRemoteIpAddress(),
+                    router.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -201,19 +227,6 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-        }
-
-        final Intent intent = getIntent();
-        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        mSsid = intent.getStringExtra(SSID);
-        mWifiQrCodeString = intent.getStringExtra(WIFI_QR_CODE);
-
-        mTitle = "WiFi QR Code";
-
-        if (mToolbar != null) {
-            mToolbar.setTitle(mTitle);
-            mToolbar.setSubtitle(mSsid);
-            setSupportActionBar(mToolbar);
         }
 
         final ImageView qrCodeImageView = (ImageView) findViewById(R.id.tile_status_wireless_iface_qrcode_image);

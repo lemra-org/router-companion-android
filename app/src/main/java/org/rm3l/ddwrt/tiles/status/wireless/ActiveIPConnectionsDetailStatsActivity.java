@@ -63,6 +63,8 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -99,7 +101,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
     public static final int DEFAULT_BITMAP_HEIGHT = 480;
     private static final int MAX_ITEMS_IN_PIE_CHART = 10;
     private boolean themeLight;
-    private String mRouter;
+    private String mRouterUuid;
     private Toolbar mToolbar;
     private ByFilter mByFilter;
     private Map<String, Integer> mConnectionsCountMap;
@@ -136,7 +138,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         AdUtils.buildAndDisplayAdViewIfNeeded(this, (AdView) findViewById(R.id.active_ip_connections_detail_pie_chart_view_adView));
 
         final Intent intent = getIntent();
-        mRouter = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        mRouterUuid = intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
         mObservationDate = intent.getStringExtra(ActiveIPConnectionsDetailActivity.OBSERVATION_DATE);
 
         //noinspection unchecked
@@ -164,9 +166,25 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
         mByFilter = (ByFilter) intent.getSerializableExtra(BY);
 
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.active_ip_connections_detail_pie_chart_view_toolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("IP Connections Pie Chart");
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    router.getDisplayName(),
+                    router.getRemoteIpAddress(),
+                    router.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -394,7 +412,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
 
             mFileToShare = new File(getCacheDir(),
                     Utils.getEscapedFileName(String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
-                            mByFilter, nullToEmpty(mRouter), mObservationDate)) + ".png");
+                            mByFilter, nullToEmpty(mRouterUuid), mObservationDate)) + ".png");
             OutputStream outputStream = null;
             try {
                 outputStream = new BufferedOutputStream(new FileOutputStream(mFileToShare, false));
@@ -500,7 +518,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("Active IP Connections Chart By %s on Router '%s' (on %s)",
-                        mByFilter.getDisplayName(), nullToEmpty(mRouter), mObservationDate));
+                        mByFilter.getDisplayName(), nullToEmpty(mRouterUuid), mObservationDate));
 
         final String fullConnectionCountMap = Joiner.on("\n").withKeyValueSeparator(": ").useForNull("???").join(mConnectionsCountMap);
 

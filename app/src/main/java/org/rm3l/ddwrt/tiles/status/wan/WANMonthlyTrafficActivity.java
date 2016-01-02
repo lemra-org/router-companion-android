@@ -200,8 +200,16 @@ public class WANMonthlyTrafficActivity extends AppCompatActivity {
 
         mToolbar = (Toolbar) findViewById(R.id.tile_status_wan_monthly_traffic_chart_view_toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + " on '" + mRouterDisplay + "': "
+            mToolbar.setTitle(WAN_MONTHLY_TRAFFIC + ": "
                 + mCycleItem.getLabelWithYears());
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    mRouter.getDisplayName(),
+                    mRouter.getRemoteIpAddress(),
+                    mRouter.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 

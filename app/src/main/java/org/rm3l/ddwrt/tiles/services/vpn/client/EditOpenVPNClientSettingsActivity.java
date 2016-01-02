@@ -48,7 +48,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 
 import java.util.HashSet;
@@ -166,9 +169,34 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
                             ContextCompat.getColor(this, android.R.color.white));
         }
 
+        final Intent intent = getIntent();
+
+        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
+        if (isNullOrEmpty(mRouterUuid)) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.openvpn_client_settings_toolbar);
         if (mToolbar != null) {
             mToolbar.setTitle("OpenVPN Client Settings");
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    router.getDisplayName(),
+                    router.getRemoteIpAddress(),
+                    router.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -178,18 +206,12 @@ public class EditOpenVPNClientSettingsActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
         }
 
-        final Intent intent = getIntent();
         mNvramInfo = (NVRAMInfo) intent.getSerializableExtra(OpenVPNClientTile.OPENVPNCL_NVRAMINFO);
 
         if (mNvramInfo == null) {
             Toast.makeText(this, "Could not load OpenVPN Client settings", Toast.LENGTH_SHORT).show();
             finish();
-        }
-
-        mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
-        if (isNullOrEmpty(mRouterUuid)) {
-            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
-            finish();
+            return;
         }
 
         //Preferences saved globally, to be shared across different routers

@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
@@ -85,6 +86,14 @@ public abstract class WebActivity extends AppCompatActivity {
             } else {
                 mToolbar.setTitle(this.getTitleStr());
             }
+            final CharSequence subTitle = this.getSubTitle();
+            if (!TextUtils.isEmpty(subTitle)) {
+                mToolbar.setSubtitle(subTitle);
+            }
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 
@@ -140,6 +149,10 @@ public abstract class WebActivity extends AppCompatActivity {
     protected abstract CharSequence getTitleStr();
 
     protected abstract int getTitleResId();
+
+    protected CharSequence getSubTitle() {
+        return null;
+    }
 
     @NonNull
     protected abstract String getUrl();

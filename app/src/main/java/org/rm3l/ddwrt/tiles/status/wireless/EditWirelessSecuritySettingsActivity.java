@@ -37,7 +37,10 @@ import com.google.common.collect.HashBiMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
+import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
+import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
@@ -134,17 +137,20 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         if (mNvramInfo == null || mNvramInfo.getData() == null) {
             Toast.makeText(this, "Could not load Wireless Security settings", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         if (!mNvramInfo.getData().containsKey(WirelessIfaceTile.IFACE)) {
             Toast.makeText(this, "Could not load physical iface", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         mRouterUuid = intent.getStringExtra(ROUTER_SELECTED);
         if (isNullOrEmpty(mRouterUuid)) {
             Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         mPhyIface = mNvramInfo.getProperty(WirelessIfaceTile.IFACE,
@@ -158,10 +164,26 @@ public class EditWirelessSecuritySettingsActivity extends AppCompatActivity {
         mHwAddr = mNvramInfo.getProperty(HWADDR,
                 DDWRTCompanionConstants.EMPTY_VALUE_TO_DISPLAY);
 
+        final DDWRTCompanionDAO dao = RouterManagementActivity.getDao(this);
+        final Router router;
+        if ((router = dao.getRouter(mRouterUuid)) == null) {
+            Toast.makeText(this, "Internal Error: Router could not be determined", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.wireless_security_settings_toolbar);
         if (mToolbar != null) {
             mToolbar.setTitle(String.format(
                     "Wireless Security: %s", mPhyIface));
+            mToolbar.setSubtitle(String.format("%s (%s:%d)",
+                    router.getDisplayName(),
+                    router.getRemoteIpAddress(),
+                    router.getRemotePort()));
+            mToolbar.setTitleTextAppearance(getApplicationContext(), R.style.ToolbarTitle);
+            mToolbar.setSubtitleTextAppearance(getApplicationContext(), R.style.ToolbarSubtitle);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+            mToolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
             setSupportActionBar(mToolbar);
         }
 
