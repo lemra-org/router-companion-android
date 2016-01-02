@@ -1212,7 +1212,6 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             case R.id.action_ddwrt_actions_clear_arp_cache: {
                 SnackbarUtils.buildSnackbar(this,
-                        findViewById(android.R.id.content),
                         String.format("ARP Cache will be flushed on '%s' (%s)...",
                                 mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                         "Undo",
@@ -1258,7 +1257,6 @@ public class DDWRTMainActivity extends AppCompatActivity
 
             case R.id.action_ddwrt_actions_clear_dns_cache: {
                 SnackbarUtils.buildSnackbar(this,
-                        findViewById(android.R.id.content),
                         String.format("DNS Cache will be flushed on '%s' (%s)...",
                                 mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                         "Undo",

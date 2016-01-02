@@ -174,8 +174,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                         token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_MAX_RETRIES, 3);
                         token.putInt(MAIN_ACTIVITY_ACTION_EXPORT_ALIASES_NB_RETRIES, 0);
 
-                        SnackbarUtils.buildSnackbar(getContext(),
-                                activity.findViewById(android.R.id.content),
+                        SnackbarUtils.buildSnackbar(activity,
                                 String.format("Going to start exporting aliases for '%s' (%s)...",
                                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                                 "Undo",
@@ -390,8 +389,7 @@ public class ImportAliasesDialogFragment extends DialogFragment {
                         final Bundle token = new Bundle();
                         token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.IMPORT_ALIASES);
 
-                        SnackbarUtils.buildSnackbar(getContext(),
-                                activity.findViewById(android.R.id.content),
+                        SnackbarUtils.buildSnackbar(activity,
                                 String.format("Going to start importing aliases for '%s' (%s)...",
                                         mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                                 "Undo",

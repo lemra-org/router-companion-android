@@ -425,7 +425,6 @@ public class ManageRouterAliasesActivity
                 token.putInt(MAIN_ACTIVITY_ACTION, RouterActions.EXPORT_ALIASES);
 
                 SnackbarUtils.buildSnackbar(this,
-                        findViewById(android.R.id.content),
                         String.format("Going to start exporting aliases for '%s' (%s)...",
                                 mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
                         "Undo",
