@@ -38,6 +38,9 @@ import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -216,18 +219,17 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
             }
         } else {
             for (final TextView tv : tvs) {
-                for (final TextView textView : mTitleTextViews) {
-                    if (tv == textView) {
-                        textView.setTypeface(null, Typeface.BOLD);
-                    }
+                if (tv == null) {
+                    continue;
                 }
+                tv.setTypeface(null, Typeface.BOLD);
             }
+            final List<TextView> textViewList = Arrays.asList(tvs);
             for (final TextView textView : mTitleTextViews) {
-                for (final TextView tv : tvs) {
-                    if (tv != textView) {
-                        textView.setTypeface(null, Typeface.NORMAL);
-                    }
+                if (textViewList.contains(textView)) {
+                    continue;
                 }
+                textView.setTypeface(null, Typeface.NORMAL);
             }
         }
     }
