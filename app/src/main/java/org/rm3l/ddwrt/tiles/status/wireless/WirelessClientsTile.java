@@ -559,10 +559,10 @@ public class WirelessClientsTile
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                SnackbarUtils.buildSnackbar(mParentFragmentActivity, layout,
+                SnackbarUtils.buildSnackbar(mParentFragmentActivity,
                         "Storage access is optional, but needed to cache clients bandwidth data and reduce data usage",
                         "OK",
-                        Snackbar.LENGTH_LONG,
+                        Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
                             @Override
                             public void onShowEvent(@Nullable Bundle bundle) throws Exception {
@@ -2237,7 +2237,11 @@ public class WirelessClientsTile
                         @Override
                         public void onClick(View v) {
                             final PopupMenu popup = new PopupMenu(mParentFragmentActivity, v);
-                            popup.setOnMenuItemClickListener(new DeviceOnMenuItemClickListener(deviceNameView, device));
+                            popup.setOnMenuItemClickListener(
+                                    new DeviceOnMenuItemClickListener(
+                                            deviceNameView,
+                                            deviceAliasView,
+                                            device));
                             final MenuInflater inflater = popup.getMenuInflater();
 
                             final Menu menu = popup.getMenu();
@@ -2832,10 +2836,15 @@ public class WirelessClientsTile
         @NonNull
         private final TextView deviceNameView;
         @NonNull
+        private final TextView deviceAliasView;
+        @NonNull
         private final Device device;
 
-        private DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView, @NonNull final Device device) {
+        private DeviceOnMenuItemClickListener(@NonNull TextView deviceNameView,
+                                              @NonNull final TextView deviceAliasView,
+                                              @NonNull final Device device) {
             this.deviceNameView = deviceNameView;
+            this.deviceAliasView = deviceAliasView;
             this.device = device;
         }
 
@@ -2960,6 +2969,7 @@ public class WirelessClientsTile
                                             //Update device name immediately
                                             device.setAlias(newAlias);
                                             deviceNameView.setText(device.getName());
+                                            deviceAliasView.setText(newAlias);
                                             Utils.displayMessage(mParentFragmentActivity, "Alias set! Changes will appear upon next sync.", Style.CONFIRM);
                                         } catch (final Exception e) {
                                             Utils.reportException(null, new
