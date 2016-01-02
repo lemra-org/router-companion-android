@@ -425,6 +425,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:value=".main.DDWRTMainActivity" />
         </activity>
 
+        <activity
+            android:name=".tiles.dashboard.network.IPGeoActivity"
+            android:label="Speed Test"
+            android:parentActivityName=".main.DDWRTMainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.DDWRTMainActivity" />
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bf40a9722838d1959a1a770881926ee96e4b94f1" />

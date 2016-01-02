@@ -25,15 +25,35 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:baselineAligned="false"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tile_public_ip_geo_title"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/tile_status_wan_config_hdr"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="Public IP Geolocation"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold" />
+        android:paddingTop="4.0dip">
+
+        <TextView
+            android:id="@+id/tile_public_ip_geo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Public IP Geolocation"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/tile_public_ip_geo_title_zoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="Zoom"
+            android:src="@drawable/ic_action_navigation_fullscreen"/>
+
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/tile_progress_bar"
@@ -97,7 +117,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="end"
             android:singleLine="false"
-            android:layout_below="@+id/tile_public_ip_geo_gridLayout"
+            android:layout_below="@+id/tile_public_ip_geo_container"
             android:text="Last sync: "/>
 
     </RelativeLayout>

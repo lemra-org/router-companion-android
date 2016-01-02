@@ -2,6 +2,7 @@ package org.rm3l.ddwrt.tiles.dashboard.network;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ import org.rm3l.ddwrt.widgets.map.MyOwnItemizedOverlay;
 import java.util.Collections;
 import java.util.Random;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
@@ -128,6 +131,24 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 // result of the request.
             }
         }
+
+        final ImageButton zoomMapButton = (ImageButton)
+                layout.findViewById(R.id.tile_public_ip_geo_title_zoom);
+        zoomMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Open IPGeoActivity with zoom effect
+                if (isNullOrEmpty(mWanPublicIP)) {
+                    Toast.makeText(mParentFragmentActivity,
+                            "WAN Public IP Unknown at this time", Toast.LENGTH_LONG).show();
+                }
+                final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
+                intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, mWanPublicIP);
+                mParentFragmentActivity.startActivity(intent);
+                mParentFragmentActivity.overridePendingTransition(
+                        R.anim.zoom_enter, R.anim.zoom_exit);
+            }
+        });
 
     }
 
@@ -339,7 +360,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         Utils.canUseDataConnection(mParentFragmentActivity));
 
                 final IMapController mapController = map.getController();
-                mapController.setZoom(15);
+                mapController.setZoom(11);
                 if (latitude != null && longitude != null) {
                     final GeoPoint publicIpPoint = new GeoPoint(latitude, longitude);
                     mapController.setCenter(publicIpPoint);
