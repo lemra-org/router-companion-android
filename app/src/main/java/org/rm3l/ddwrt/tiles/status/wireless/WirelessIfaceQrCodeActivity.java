@@ -404,7 +404,10 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
-
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+                        menuItem.setEnabled(true);
+                    }
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -415,7 +418,6 @@ public class WirelessIfaceQrCodeActivity extends AppCompatActivity {
                     if (optionsMenu != null) {
                         final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
                         menuItem.setEnabled(false);
-                        menuItem.setVisible(false);
                     }
                 }
                 return;

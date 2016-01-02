@@ -432,7 +432,11 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
-
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu
+                                .findItem(R.id.active_ip_connections_pie_chart_share);
+                        menuItem.setEnabled(true);
+                    }
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -444,7 +448,6 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
                         final MenuItem menuItem = optionsMenu
                                 .findItem(R.id.active_ip_connections_pie_chart_share);
                         menuItem.setEnabled(false);
-                        menuItem.setVisible(false);
                     }
                 }
                 return;
