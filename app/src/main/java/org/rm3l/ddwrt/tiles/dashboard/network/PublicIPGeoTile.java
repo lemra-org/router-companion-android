@@ -339,34 +339,36 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         Utils.canUseDataConnection(mParentFragmentActivity));
 
                 final IMapController mapController = map.getController();
-                mapController.setZoom(9);
-                final GeoPoint publicIpPoint = new GeoPoint(latitude, longitude);
-                mapController.setCenter(publicIpPoint);
+                mapController.setZoom(15);
+                if (latitude != null && longitude != null) {
+                    final GeoPoint publicIpPoint = new GeoPoint(latitude, longitude);
+                    mapController.setCenter(publicIpPoint);
 
-                final OverlayItem overlayItem = new OverlayItem(
-                        mIPWhoisInfoWithGeo.getIp(),
-                        String.format("- Prefix: %s\n" +
-                                        "- Country: %s (%s)\n" +
-                                        "- Region: %s\n" +
-                                        "- City: %s\n" +
-                                        "- Organization: %s\n" +
-                                        "- ASN: %s\n" +
-                                        "- Latitude: %s\n" +
-                                        "- Longitude: %s",
-                                nullToEmpty(mIPWhoisInfoWithGeo.getPrefix()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCountry_code()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getRegion()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getCity()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getOrganization()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getAsn()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getLatitude()),
-                                nullToEmpty(mIPWhoisInfoWithGeo.getLongitude())),
-                        publicIpPoint);
-                final MyOwnItemizedOverlay overlay =
-                        new MyOwnItemizedOverlay(mParentFragmentActivity,
-                                Collections.singletonList(overlayItem));
-                map.getOverlays().add(overlay);
+                    final OverlayItem overlayItem = new OverlayItem(
+                            mIPWhoisInfoWithGeo.getIp(),
+                            String.format("- Prefix: %s\n" +
+                                            "- Country: %s (%s)\n" +
+                                            "- Region: %s\n" +
+                                            "- City: %s\n" +
+                                            "- Organization: %s\n" +
+                                            "- ASN: %s\n" +
+                                            "- Latitude: %s\n" +
+                                            "- Longitude: %s",
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getPrefix()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getCountry()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getCountry_code()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getRegion()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getCity()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getOrganization()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getAsn()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getLatitude()),
+                                    nullToEmpty(mIPWhoisInfoWithGeo.getLongitude())),
+                            publicIpPoint);
+                    final MyOwnItemizedOverlay overlay =
+                            new MyOwnItemizedOverlay(mParentFragmentActivity,
+                                    Collections.singletonList(overlayItem));
+                    map.getOverlays().add(overlay);
+                }
 
                 updateProgressBarWithSuccess();
             }
