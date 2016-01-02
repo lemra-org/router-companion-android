@@ -154,7 +154,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
     @Override
     public int getTileHeaderViewId() {
-        return -1;
+        return R.id.tile_public_ip_geo_title_hdr;
     }
 
     @Override
