@@ -32,6 +32,7 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
@@ -113,8 +114,11 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     final String[] otherCmds;
                     if (isDemoRouter(mRouter)) {
                         otherCmds = new String[2];
-                        otherCmds[0] = "13004 kB";
-                        otherCmds[1] = "844 kB";
+                        final int memTotal = 4096;
+                        final int memFree =
+                                new Random().nextInt(memTotal / 5); //Assume at most 1/5th of the memtotal remains;
+                        otherCmds[0] = (memTotal + " kB"); //MemTotal
+                        otherCmds[1] = (memFree + " kB"); //MemFree
                     } else {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences,
@@ -239,15 +243,25 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                 final ArcProgress arcProgress = (ArcProgress)
                         layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
                 if (memUsagePercent != null) {
-                    arcProgress.setProgress(memUsagePercent.intValue());
-                }
+                    final int usage = memUsagePercent.intValue();
 
-                if (isThemeLight) {
-                    arcProgress.setBackgroundColor(
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.white));
-                } else {
-                    arcProgress.setBackgroundColor(
-                            ContextCompat.getColor(mParentFragmentActivity, R.color.black));
+                    //Update colors as per the usage
+                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed)
+                    if (usage >= 95) {
+                        //Red
+                        arcProgress.setFinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.win8_red));
+                    }
+                    else if (usage >= 80) {
+                        //Orange
+                        arcProgress.setFinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                    R.color.win8_orange));
+                    }
+
+                    arcProgress.setProgress(usage);
+
                 }
 
                 //Update last sync

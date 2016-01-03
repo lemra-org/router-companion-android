@@ -78,8 +78,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:id="@+id/tile_dashboard_mem_arcprogress"
                 android:background="@android:color/transparent"
                 android:layout_centerInParent="true"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                custom:arc_unfinished_color="@color/arcprogress_unfinished"
+                custom:arc_finished_color="@color/arcprogress_finished"
                 custom:arc_max="100"
                 custom:arc_progress="0"
                 custom:arc_bottom_text="MEMORY"/>
@@ -104,7 +106,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:ellipsize="end"
                 android:gravity="end"
                 android:singleLine="false"
-                android:layout_below="@+id/tile_dashboard_mem_arcprogress"
                 android:text="Last sync: "/>
 
         </RelativeLayout>
