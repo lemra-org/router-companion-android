@@ -117,7 +117,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:ellipsize="end"
             android:gravity="end"
             android:singleLine="false"
-            android:layout_below="@+id/tile_public_ip_geo_container"
             android:text="Last sync: "/>
 
     </RelativeLayout>
