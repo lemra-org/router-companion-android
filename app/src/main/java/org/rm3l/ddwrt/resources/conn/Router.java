@@ -23,12 +23,14 @@
 package org.rm3l.ddwrt.resources.conn;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
@@ -46,6 +48,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ReportingUtils;
@@ -68,6 +71,7 @@ import java.util.concurrent.locks.Lock;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
 import static org.rm3l.ddwrt.resources.Encrypted.d;
 import static org.rm3l.ddwrt.resources.Encrypted.e;
 import static org.rm3l.ddwrt.utils.SSHUtils.CONNECT_TIMEOUT_MILLIS;
@@ -418,6 +422,14 @@ public class Router implements Serializable {
     @NonNull
     public String getDisplayName() {
         return (isNullOrEmpty(name) ? "-" : name);
+    }
+
+    @NonNull
+    public String getCanonicalHumanReadableName() {
+        return String.format("%s (%s:%d)",
+                getDisplayName(),
+                getRemoteIpAddress(),
+                getRemotePort());
     }
 
     /**
@@ -1079,6 +1091,37 @@ public class Router implements Serializable {
     public void doFetchAndSetAvatarInImageView(final Context context,
                                                final ImageView routerImageView) {
         doFetchAndSetRouterAvatarInImageView(context, this, routerImageView);
+    }
+
+    public void addHomeScreenShortcut(@Nullable final Context ctx) {
+        if (ctx == null) {
+            Toast.makeText(ctx, "Internal Error - please try again later",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final String canonicalHumanReadableName = getCanonicalHumanReadableName();
+
+        //Add home-screen shortcut to this router
+        final Intent shortcutIntent = new Intent(context, DDWRTMainActivity.class);
+//                    shortcutIntent.setClassName("com.example.androidapp", "SampleIntent");
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        shortcutIntent.putExtra(ROUTER_SELECTED, getUuid());
+
+        final Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
+        addIntent.putExtra("duplicate", false);  // Just create once
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                Intent.ShortcutIconResource.fromContext(context, R.drawable.router));
+
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        context.sendBroadcast(addIntent);
+
+        Toast.makeText(context,
+                "Home Launcher Shortcut added for " + canonicalHumanReadableName,
+                Toast.LENGTH_SHORT).show();
     }
 
 }

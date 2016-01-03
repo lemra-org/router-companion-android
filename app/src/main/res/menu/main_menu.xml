@@ -212,4 +212,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/menuitem_about"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/main_add_shortcut"
+        android:orderInCategory="222"
+        android:title="Add Shortcut"
+        app:showAsAction="never" />
+
 </menu>

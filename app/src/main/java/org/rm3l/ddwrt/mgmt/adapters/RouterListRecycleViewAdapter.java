@@ -726,6 +726,10 @@ public class RouterListRecycleViewAdapter extends
                     openDuplicateRouterForm(mRouter);
                 }
                 return true;
+                case R.id.menu_router_list_add_shortcut: {
+                    mRouter.addHomeScreenShortcut(context);
+                }
+                return true;
                 default:
                     return false;
             }

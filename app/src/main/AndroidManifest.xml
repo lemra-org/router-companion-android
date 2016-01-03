@@ -65,6 +65,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY"/>
     <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
 
+    <!-- Protection level: normal -->
+    <!-- This is to create home screen launchers to routers -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+
     <!--<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>-->
 
     <!--

@@ -1081,6 +1081,11 @@ public class DDWRTMainActivity extends AppCompatActivity
             case R.id.action_ddwrt_actions_open_webinterface:
                 //TODO Open Dialog allowing user to set port (defaulting to what we loaded from the Router)
                 return true;
+            case R.id.main_add_shortcut: {
+                mRouter.addHomeScreenShortcut(this);
+            }
+                return true;
+
             case R.id.action_ddwrt_actions_reboot_router:
 
                 new AlertDialog.Builder(this)
