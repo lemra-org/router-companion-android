@@ -207,7 +207,7 @@ public class IPGeoActivity extends AppCompatActivity {
                     final double latitude =
                             Double.parseDouble(ipWhoisInfo.getLatitude());
                     final double longitude =
-                            Double.parseDouble(ipWhoisInfo.getLatitude());
+                            Double.parseDouble(ipWhoisInfo.getLongitude());
 
                     runOnUiThread(new Runnable() {
                         @Override
