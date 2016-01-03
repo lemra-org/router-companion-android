@@ -427,4 +427,6 @@ dependencies {
 //    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
 
     compile 'org.osmdroid:osmdroid-android:5.0.1@aar'
+
+    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
 }
