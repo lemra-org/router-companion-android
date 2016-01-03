@@ -376,7 +376,7 @@ public abstract class DDWRTTile<T>
                                     R.anim.right_in, R.anim.left_out);
                             alertDialog.cancel();
                         }
-                    }, 2500);
+                    }, 1000);
                 }
 
             } else {
@@ -399,7 +399,7 @@ public abstract class DDWRTTile<T>
                                 R.anim.right_in, R.anim.left_out);
                         alertDialog.cancel();
                     }
-                }, 2500);
+                }, 1000);
             }
         }
     }
