@@ -135,6 +135,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 </menu>
             </item>
 
+            <item
+                android:id="@+id/main_add_shortcut"
+                android:orderInCategory="90"
+                android:title="Add Shortcut"
+                app:showAsAction="never" />
+
             <!-- TODO Store http port (or WAN port) in router preferences. If available, pick it from there. Otherwise, ask user to provide the right port.
             Remind to detect whether to use WAN or LAN IP Address (based on the current network we are connected to)
             -->
@@ -212,10 +218,5 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="@string/menuitem_about"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/main_add_shortcut"
-        android:orderInCategory="222"
-        android:title="Add Shortcut"
-        app:showAsAction="never" />
 
 </menu>
