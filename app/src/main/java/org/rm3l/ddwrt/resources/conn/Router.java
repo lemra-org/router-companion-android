@@ -426,6 +426,9 @@ public class Router implements Serializable {
 
     @NonNull
     public String getCanonicalHumanReadableName() {
+        if (Utils.isDemoRouter(this)) {
+            return ("(DEMO) " + getDisplayName());
+        }
         return String.format("%s (%s:%d)",
                 getDisplayName(),
                 getRemoteIpAddress(),
@@ -1114,7 +1117,9 @@ public class Router implements Serializable {
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
         addIntent.putExtra("duplicate", false);  // Just create once
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(context, R.drawable.router));
+                Intent.ShortcutIconResource.fromContext(context,
+                        Utils.isDemoRouter(this) ?
+                                R.drawable.demo_router : R.drawable.router));
 
         addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
         context.sendBroadcast(addIntent);
