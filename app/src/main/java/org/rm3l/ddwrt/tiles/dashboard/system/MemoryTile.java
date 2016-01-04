@@ -116,7 +116,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                         otherCmds = new String[2];
                         final int memTotal = 4096;
                         final int memFree =
-                                new Random().nextInt(memTotal / 5); //Assume at most 1/5th of the memtotal remains;
+                                new Random().nextInt(memTotal + 1); //Assume at most 1/5th of the memtotal remains;
                         otherCmds[0] = (memTotal + " kB"); //MemTotal
                         otherCmds[1] = (memFree + " kB"); //MemFree
                     } else {
@@ -243,10 +243,19 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                 final ArcProgress arcProgress = (ArcProgress)
                         layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
                 if (isThemeLight) {
-                    arcProgress.setTextColor(ContextCompat
-                            .getColor(mParentFragmentActivity,
-                                R.color.black));
+                    //Text: blue
+                    //Finished stroke color: white
+                    //Unfinished stroke color: white
+                    arcProgress.setFinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.arcprogress_unfinished));
+                    arcProgress.setUnfinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.arcprogress_finished));
                 } else {
+                    //Text: white
+                    //Finished stroke color: white
+                    //Unfinished stroke color: blue
                     arcProgress.setTextColor(ContextCompat
                             .getColor(mParentFragmentActivity,
                                 R.color.white));
@@ -256,14 +265,13 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     final int usage = memUsagePercent.intValue();
 
                     //Update colors as per the usage
-                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed)
+                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
                     if (usage >= 95) {
                         //Red
                         arcProgress.setFinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
                                         R.color.win8_red));
-                    }
-                    else if (usage >= 80) {
+                    } else if (usage >= 80) {
                         //Orange
                         arcProgress.setFinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
