@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.resources.conn;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -46,16 +48,14 @@ import com.google.common.util.concurrent.Striped;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Transformation;
 import com.squareup.picasso.Target;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
 import org.rm3l.ddwrt.tiles.services.wol.WakeOnLanTile;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
@@ -114,6 +114,20 @@ public class Router implements Serializable {
             return lhs.first.compareToIgnoreCase(rhs.first);
         }
     };
+
+    public static final String[] mAvatarDownloadOpts = new String[]
+            {
+                    "w_300",
+                    "h_300",
+                    "q_100",
+                    "c_thumb",
+                    "g_center",
+                    "r_20",
+                    "e_improve",
+                    "e_make_transparent",
+                    "e_trim"
+            };
+
     /**
      * the router UUID
      */
@@ -1072,18 +1086,6 @@ public class Router implements Serializable {
                             R.drawable.demo_router : R.drawable.router);
         } else {
             //final String[] opts = new String[] {"w_65","h_45", "e_sharpen"};
-            final String[] opts = new String[]
-                    {
-                            "w_300",
-                            "h_300",
-                            "q_100",
-                            "c_thumb",
-                            "g_center",
-                            "r_20",
-                            "e_improve",
-                            "e_make_transparent",
-                            "e_trim"
-                    };
 
             //Download image in the background
             Utils.downloadImageForRouter(context,
@@ -1092,7 +1094,7 @@ public class Router implements Serializable {
                     null,
                     null,
                     R.drawable.router,
-                    opts);
+                    mAvatarDownloadOpts);
         }
     }
 
@@ -1117,7 +1119,7 @@ public class Router implements Serializable {
 
         //Add home-screen shortcut to this router
         final Intent shortcutIntent = new Intent(contextForshortcut, DDWRTMainActivity.class);
-//                    shortcutIntent.setClassName("com.example.androidapp", "SampleIntent");
+//                    mShortcutIntent.setClassName("com.example.androidapp", "SampleIntent");
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         shortcutIntent.putExtra(ROUTER_SELECTED, getUuid());
@@ -1141,65 +1143,94 @@ public class Router implements Serializable {
         if (!demoRouter) {
             //Leverage Picasso to fetch router icon, if available
             try {
-            //FIXME Code duplication
-                final String[] opts = new String[]
-                        {
-                                "w_300",
-                                "h_300",
-                                "q_100",
-                                "c_thumb",
-                                "g_center",
-                                "r_20",
-                                "e_improve",
-                                "e_make_transparent",
-                                "e_trim"
-                        };
-                        
+
                 ImageUtils.downloadImageFromUrl(contextForshortcut,
-                    getRouterAvatarUrl(getRouterModel(contextForshortcut, this), opts),
-                    new Target() {
-                        @Override
-                        public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {
-                            //Callback invoked right before your request is submitted.
-                        }
-                        
-                        @Override
-                        public void onBitmapFailed(android.graphics.drawable.Drawable errorDrawable) {
-                            //Callback indicating the image could not be successfully loaded.
-                            //TODO No worries, but we can report the exception
-                            //FIXME REMOVEME
-                            Toast.makeText(contextForshortcut,
-                                "onBitmapFailed ",
-                                Toast.LENGTH_SHORT).show();
-                        }
-                        
-                        @Override
-                        public void onBitmapLoaded(android.graphics.Bitmap bitmap, Picasso.LoadedFrom from) {
-                            //Callback when an image has been successfully loaded.
-                            //Update home launcher shortcut with actual icon
-                            addIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-                            contextForshortcut.sendBroadcast(addIntent);
-                            
-                            //Now update icon from bitmap
-                            //TODO? Might be needed to call the following lines:
-                            //int size = (int) getResources().getDimension(android.R.dimen.app_icon_size);
-                            //addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap(b, size, size, false));
-                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-            
-                            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-                            contextForshortcut.sendBroadcast(addIntent);
-                        }
-                        
-                    },
+                    getRouterAvatarUrl(getRouterModel(contextForshortcut, this),
+                    mAvatarDownloadOpts),
+                    this.new RouterShortcutAvatarDownloader(contextForshortcut, addIntent),
                     null, null, null);
+
             } catch (final Exception e) {
                 //No worries
-                //FIXME REMOVEME
-                Toast.makeText(contextForshortcut,
-                "Exception " + e.getMessage(),
-                Toast.LENGTH_SHORT).show();
+                Utils.reportException(contextForshortcut, e);
             }
         }
     }
 
+    private class RouterShortcutAvatarDownloader
+            implements Target {
+
+        @Nullable
+        private final Context mApplicationContext;
+
+        @Nullable
+        private final Intent mShortcutIntent;
+
+        final int mIconSize;
+
+        private RouterShortcutAvatarDownloader(@Nullable final Context applicationContext,
+                                               @Nullable final Intent shortcutIntent) {
+            this.mApplicationContext = applicationContext;
+            this.mShortcutIntent = shortcutIntent;
+            if (this.mApplicationContext != null) {
+                this.mIconSize = (int) this.mApplicationContext.
+                        getResources().getDimension(android.R.dimen.app_icon_size);
+            } else {
+                this.mIconSize = -1;
+            }
+        }
+
+        private String getRouterUuid() {
+            return uuid;
+        }
+
+        @Override
+        public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {
+            //Callback invoked right before your request is submitted.
+        }
+
+        @Override
+        public void onBitmapFailed(android.graphics.drawable.Drawable errorDrawable) {
+            //Callback indicating the image could not be successfully loaded.
+            //No worries
+        }
+
+        @Override
+        public void onBitmapLoaded(android.graphics.Bitmap bitmap, Picasso.LoadedFrom from) {
+            //Callback when an image has been successfully loaded.
+            if (mApplicationContext == null || mShortcutIntent == null) {
+                return;
+            }
+
+            //Update home launcher shortcut with actual icon: uninstall then install with new icon
+            mShortcutIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+            mApplicationContext.sendBroadcast(mShortcutIntent);
+
+            //Now update icon from bitmap
+            //Might be needed to call the following lines:
+            if (this.mIconSize > 0) {
+                mShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
+                        Bitmap.createScaledBitmap(bitmap, this.mIconSize, this.mIconSize, false));
+            } else {
+                mShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+            }
+
+            mShortcutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            mApplicationContext.sendBroadcast(mShortcutIntent);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            final RouterShortcutAvatarDownloader that = (RouterShortcutAvatarDownloader) o;
+            return Objects.equal(this.getRouterUuid(), that.getRouterUuid());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getRouterUuid());
+        }
+    }
 }
