@@ -243,9 +243,13 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                 final ArcProgress arcProgress = (ArcProgress)
                         layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
                 if (isThemeLight) {
-                    arcProgress.setTextColor(R.color.black);
+                    arcProgress.setTextColor(ContextCompat
+                            .getColor(mParentFragmentActivity,
+                                R.color.black));
                 } else {
-                    arcProgress.setTextColor(R.color.white);
+                    arcProgress.setTextColor(ContextCompat
+                            .getColor(mParentFragmentActivity,
+                                R.color.white));
                 }
 
                 if (memUsagePercent != null) {
