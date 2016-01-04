@@ -46,6 +46,11 @@ import com.google.common.util.concurrent.Striped;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
+import com.squareup.picasso.Target;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.main.DDWRTMainActivity;
@@ -1108,6 +1113,7 @@ public class Router implements Serializable {
             appContext : ctx);
 
         final String canonicalHumanReadableName = getCanonicalHumanReadableName();
+        final boolean demoRouter = Utils.isDemoRouter(this);
 
         //Add home-screen shortcut to this router
         final Intent shortcutIntent = new Intent(contextForshortcut, DDWRTMainActivity.class);
@@ -1122,7 +1128,7 @@ public class Router implements Serializable {
         addIntent.putExtra("duplicate", false);  // Just create once
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
                 Intent.ShortcutIconResource.fromContext(contextForshortcut,
-                        Utils.isDemoRouter(this) ?
+                        demoRouter ?
                                 R.drawable.demo_router : R.drawable.router));
 
         addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
@@ -1131,6 +1137,69 @@ public class Router implements Serializable {
         Toast.makeText(contextForshortcut,
                 "Home Launcher Shortcut added for " + canonicalHumanReadableName,
                 Toast.LENGTH_SHORT).show();
+                
+        if (!demoRouter) {
+            //Leverage Picasso to fetch router icon, if available
+            try {
+            //FIXME Code duplication
+                final String[] opts = new String[]
+                        {
+                                "w_300",
+                                "h_300",
+                                "q_100",
+                                "c_thumb",
+                                "g_center",
+                                "r_20",
+                                "e_improve",
+                                "e_make_transparent",
+                                "e_trim"
+                        };
+                        
+                ImageUtils.downloadImageFromUrl(contextForshortcut,
+                    getRouterAvatarUrl(getRouterModel(contextForshortcut, this), opts),
+                    new Target() {
+                        @Override
+                        public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {
+                            //Callback invoked right before your request is submitted.
+                        }
+                        
+                        @Override
+                        public void onBitmapFailed(android.graphics.drawable.Drawable errorDrawable) {
+                            //Callback indicating the image could not be successfully loaded.
+                            //TODO No worries, but we can report the exception
+                            //FIXME REMOVEME
+                            Toast.makeText(contextForshortcut,
+                                "onBitmapFailed ",
+                                Toast.LENGTH_SHORT).show();
+                        }
+                        
+                        @Override
+                        public void onBitmapLoaded(android.graphics.Bitmap bitmap, Picasso.LoadedFrom from) {
+                            //Callback when an image has been successfully loaded.
+                            //Update home launcher shortcut with actual icon
+                            addIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+                            contextForshortcut.sendBroadcast(addIntent);
+                            
+                            //Now update icon from bitmap
+                            //TODO? Might be needed to call the following lines:
+                            //int size = (int) getResources().getDimension(android.R.dimen.app_icon_size);
+                            //addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, Bitmap.createScaledBitmap(b, size, size, false));
+                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+            
+                            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                            contextForshortcut.sendBroadcast(addIntent);
+                        }
+                        
+                    },
+                    null, null, null);
+            } catch (final Exception e) {
+                //No worries
+                //FIXME REMOVEME
+                Toast.makeText(contextForshortcut,
+                "Exception " + e.getMessage(),
+                Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
