@@ -16,6 +16,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
+import com.squareup.picasso.Target;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -219,6 +220,40 @@ public final class ImageUtils {
             }
 
             requestCreator.into(imageView, callback);
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            reportException(null, new DownloadImageException(e));
+        }
+    }
+    
+    public static void downloadImageFromUrl(@Nullable Context context, @NonNull final String url,
+                                            @Nullable final Target target,
+                                            @Nullable final List<Transformation> transformations,
+                                            @Nullable final Integer placeHolderDrawable,
+                                            @Nullable final Integer errorPlaceHolderDrawable) {
+
+        try {
+            if (context == null || target == null) {
+                return;
+            }
+            final Picasso picasso = Picasso.with(context);
+            picasso.setIndicatorsEnabled(false);
+            picasso.setLoggingEnabled(BuildConfig.DEBUG);
+            final RequestCreator requestCreator = picasso.load(url);
+
+            requestCreator.placeholder(placeHolderDrawable != null ?
+                    placeHolderDrawable : R.drawable.progress_animation);
+
+            if (transformations !=null) {
+                requestCreator.transform(transformations);
+            }
+
+            if (errorPlaceHolderDrawable != null) {
+                requestCreator.error(errorPlaceHolderDrawable);
+            }
+
+            requestCreator.into(target);
 
         } catch (final Exception e) {
             e.printStackTrace();
