@@ -50,12 +50,14 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
     private boolean isThemeLight;
 
     private long mLastSync;
+    
+    private final ArcProgress mArcProgress;
 
     public MemoryTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_dashboard_mem, null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-        layout.findViewById(R.id.tile_dashboard_mem_arcprogress)
-                .setOnClickListener(new View.OnClickListener() {
+        this.mArcProgress = (ArcProgress) layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
+        this.mArcProgress.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -202,8 +204,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
 
             layout.findViewById(R.id.tile_dashboard_mem_loading_view)
                     .setVisibility(View.GONE);
-            layout.findViewById(R.id.tile_dashboard_mem_arcprogress)
-                    .setVisibility(View.VISIBLE);
+            mArcProgress.setVisibility(View.VISIBLE);
 
             if (data == null) {
                 data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -240,23 +241,21 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                final ArcProgress arcProgress = (ArcProgress)
-                        layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
                 if (isThemeLight) {
                     //Text: blue
                     //Finished stroke color: white
                     //Unfinished stroke color: white
-                    arcProgress.setFinishedStrokeColor(
+                    mArcProgress.setFinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
                                         R.color.arcprogress_unfinished));
-                    arcProgress.setUnfinishedStrokeColor(
+                    mArcProgress.setUnfinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
                                         R.color.arcprogress_finished));
                 } else {
                     //Text: white
                     //Finished stroke color: white
                     //Unfinished stroke color: blue
-                    arcProgress.setTextColor(ContextCompat
+                    mArcProgress.setTextColor(ContextCompat
                             .getColor(mParentFragmentActivity,
                                 R.color.white));
                 }
@@ -268,17 +267,17 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
                     if (usage >= 95) {
                         //Red
-                        arcProgress.setFinishedStrokeColor(
+                        mArcProgress.setFinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
                                         R.color.win8_red));
                     } else if (usage >= 80) {
                         //Orange
-                        arcProgress.setFinishedStrokeColor(
+                        mArcProgress.setFinishedStrokeColor(
                                 ContextCompat.getColor(mParentFragmentActivity,
                                     R.color.win8_orange));
                     }
 
-                    arcProgress.setProgress(usage);
+                    mArcProgress.setProgress(usage);
 
                 }
 
