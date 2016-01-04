@@ -550,17 +550,34 @@ public class WirelessClientsTile
         //Permission requests
         final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+        //Android >= 6.0 now requires to request the COARSE_LOCATION permission to read HW Mac Addresses
+        final int accessCoarseLocationPermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED
+                || accessCoarseLocationPermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat
+            final boolean storageRequestRationale = ActivityCompat
                     .shouldShowRequestPermissionRationale(
                             mParentFragmentActivity,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            final boolean locationRequestRationale = ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            mParentFragmentActivity,
+                            Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (storageRequestRationale
+                    || locationRequestRationale) {
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
+                final StringBuilder explanation = new StringBuilder();
+                if (storageRequestRationale) {
+                    explanation.append("Storage access helps in caching bandwidth data.");
+                }
+                if (locationRequestRationale) {
+                    explanation.append("Coarse location is used to detect device MAC address.");
+                }
                 SnackbarUtils.buildSnackbar(mParentFragmentActivity,
-                        "Storage access is optional, but needed to cache clients bandwidth data and reduce data usage",
+                        explanation.toString(),
                         "OK",
                         Snackbar.LENGTH_INDEFINITE,
                         new SnackbarCallback() {
@@ -578,7 +595,9 @@ public class WirelessClientsTile
                             public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
                                 //Request permission
                                 ActivityCompat.requestPermissions(mParentFragmentActivity,
-                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        new String[]{
+                                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                Manifest.permission.ACCESS_COARSE_LOCATION},
                                         DDWRTCompanionConstants.Permissions.STORAGE);
                             }
 
@@ -602,8 +621,10 @@ public class WirelessClientsTile
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(mParentFragmentActivity,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        DDWRTCompanionConstants.Permissions.STORAGE);
+                        new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.ACCESS_COARSE_LOCATION},
+                        DDWRTCompanionConstants.Permissions.STORAGE_LOCATION);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
