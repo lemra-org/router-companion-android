@@ -1102,11 +1102,15 @@ public class Router implements Serializable {
                     Toast.LENGTH_SHORT).show();
             return;
         }
+        
+        final Context appContext = ctx.getApplicationContext();
+        final Context contextForshortcut = (appContext != null ? 
+            appContext : ctx);
 
         final String canonicalHumanReadableName = getCanonicalHumanReadableName();
 
         //Add home-screen shortcut to this router
-        final Intent shortcutIntent = new Intent(context, DDWRTMainActivity.class);
+        final Intent shortcutIntent = new Intent(contextForshortcut, DDWRTMainActivity.class);
 //                    shortcutIntent.setClassName("com.example.androidapp", "SampleIntent");
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1117,14 +1121,14 @@ public class Router implements Serializable {
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, canonicalHumanReadableName);
         addIntent.putExtra("duplicate", false);  // Just create once
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                Intent.ShortcutIconResource.fromContext(context,
+                Intent.ShortcutIconResource.fromContext(contextForshortcut,
                         Utils.isDemoRouter(this) ?
                                 R.drawable.demo_router : R.drawable.router));
 
         addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        context.sendBroadcast(addIntent);
+        contextForshortcut.sendBroadcast(addIntent);
 
-        Toast.makeText(context,
+        Toast.makeText(contextForshortcut,
                 "Home Launcher Shortcut added for " + canonicalHumanReadableName,
                 Toast.LENGTH_SHORT).show();
     }
