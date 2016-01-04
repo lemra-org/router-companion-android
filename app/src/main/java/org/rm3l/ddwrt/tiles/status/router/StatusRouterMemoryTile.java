@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -47,10 +49,13 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.dashboard.system.MemoryTile;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.List;
+import java.util.Random;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -63,13 +68,21 @@ import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
     private static final String LOG_TAG = StatusRouterMemoryTile.class.getSimpleName();
+    private final boolean isThemeLight;
 
     private String[] memInfoContents;
     private long mLastSync;
 
+
+    private final ArcProgress mArcProgress;
+
     public StatusRouterMemoryTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem,
                 null);
+        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
+        this.mArcProgress = (ArcProgress) layout.findViewById(R.id.tile_status_router_router_mem_arcprogress);
+
+
     }
 
     @NonNull
@@ -129,8 +142,11 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     final String[] otherCmds;
                     if (isDemoRouter(mRouter)) {
                         otherCmds = new String[2];
-                        otherCmds[0] = "13004 kB";
-                        otherCmds[1] = "844 kB";
+                        final int memTotal = 4096;
+                        final int memFree =
+                                new Random().nextInt(memTotal + 1);
+                        otherCmds[0] = (memTotal + " kB"); //MemTotal
+                        otherCmds[1] = (memFree + " kB"); //MemFree
                     } else {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
@@ -161,11 +177,17 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                         String memUsed = null;
                         if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
                             //noinspection ConstantConditions
-                            memUsed = Long.toString(
-                                    Long.parseLong(memTotal.replaceAll(" kB", "")) - Long.parseLong(memFree.replaceAll(" kB", "")))
-                                    + " kB";
+                            final long memTotalLong = Long.parseLong(memTotal.replaceAll(" kB", "").trim());
+                            final long memFreeLong = Long.parseLong(memFree.replaceAll(" kB", "").trim());
+                            final long memUsedLong = memTotalLong - memFreeLong;
+                            memUsed = (Long.toString(memUsedLong) + " kB");
 
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
+                            if (memTotalLong > 0L) {
+                                nvramInfo.setProperty(MemoryTile.MEMORY_USED_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memUsedLong / memTotalLong)));
+                            }
 
                         }
 
@@ -257,7 +279,27 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
             final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_error);
 
-            final Exception exception = data.getException();
+            Exception exception = data.getException();
+
+            Long memUsagePercent = null;
+            if (exception == null) {
+                try {
+                    final String memUsagePercentStr = data.getProperty(MemoryTile.MEMORY_USED_PERCENT);
+                    if (!isNullOrEmpty(memUsagePercentStr)) {
+                        memUsagePercent = Long.parseLong(memUsagePercentStr);
+                    }
+                } catch (final NumberFormatException nfe) {
+                    Crashlytics.logException(nfe);
+                    nfe.printStackTrace();
+                    //No worries
+                }
+                if (memUsagePercent == null) {
+                    Crashlytics.logException(new IllegalStateException("memUsagePercent == null"));
+                    data = new NVRAMInfo().setException(new
+                            DDWRTNoDataException("Invalid memory usage - please try again later!"));
+                }
+                exception = data.getException();
+            }
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -269,13 +311,53 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                 final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
                 memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL));
 
-                //Model
+                //Free
                 final TextView memFreeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
                 memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "-"));
 
-                //Cores Count
+                //Used
                 final TextView memUsedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
                 memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "-"));
+
+                if (isThemeLight) {
+                    //Text: blue
+                    //Finished stroke color: white
+                    //Unfinished stroke color: white
+                    mArcProgress.setFinishedStrokeColor(
+                            ContextCompat.getColor(mParentFragmentActivity,
+                                    R.color.arcprogress_unfinished));
+                    mArcProgress.setUnfinishedStrokeColor(
+                            ContextCompat.getColor(mParentFragmentActivity,
+                                    R.color.arcprogress_finished));
+                } else {
+                    //Text: white
+                    //Finished stroke color: white
+                    //Unfinished stroke color: blue
+                    mArcProgress.setTextColor(ContextCompat
+                            .getColor(mParentFragmentActivity,
+                                    R.color.white));
+                }
+
+                if (memUsagePercent != null) {
+                    final int usage = memUsagePercent.intValue();
+
+                    //Update colors as per the usage
+                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
+                    if (usage >= 95) {
+                        //Red
+                        mArcProgress.setFinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.win8_red));
+                    } else if (usage >= 80) {
+                        //Orange
+                        mArcProgress.setFinishedStrokeColor(
+                                ContextCompat.getColor(mParentFragmentActivity,
+                                        R.color.win8_orange));
+                    }
+
+                    mArcProgress.setProgress(usage);
+
+                }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);

@@ -118,7 +118,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                         otherCmds = new String[2];
                         final int memTotal = 4096;
                         final int memFree =
-                                new Random().nextInt(memTotal + 1); //Assume at most 1/5th of the memtotal remains;
+                                new Random().nextInt(memTotal + 1);
                         otherCmds[0] = (memTotal + " kB"); //MemTotal
                         otherCmds[1] = (memFree + " kB"); //MemFree
                     } else {

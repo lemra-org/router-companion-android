@@ -182,6 +182,7 @@ public final class DDWRTCompanionConstants {
         public static final int NETSTATE = 2;
         public static final int WIFI = 3;
         public static final int STORAGE = 4;
+        public static final int STORAGE_LOCATION = 5;
     }
 
     private DDWRTCompanionConstants() {
