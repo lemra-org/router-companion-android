@@ -407,6 +407,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
@@ -432,6 +434,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
@@ -457,6 +461,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
@@ -482,6 +488,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
@@ -507,6 +515,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
@@ -532,6 +542,8 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     if (propertyUtilization >= 0) {
                         pb.setProgress(propertyUtilization);
                         pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
                     } else {
                         pb.setVisibility(View.GONE);
                         pbText.setVisibility(View.GONE);
