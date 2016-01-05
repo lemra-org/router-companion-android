@@ -35,14 +35,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tile_dashboard_mem_title"
+            android:id="@+id/tile_dashboard_mem_cpu_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="Memory Usage"
+            android:text="Memory &amp; CPU Usage"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -58,7 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
-            android:id="@+id/tile_dashboard_mem_error"
+            android:id="@+id/tile_dashboard_mem_cpu_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -75,19 +73,33 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="160dp">
 
             <com.github.lzyzsd.circleprogress.ArcProgress
-                android:id="@+id/tile_dashboard_mem_arcprogress"
+                android:id="@+id/tile_dashboard_mem_cpu_cpu_arcprogress"
                 android:background="@android:color/transparent"
-                android:layout_centerInParent="true"
-                android:layout_width="125dp"
-                android:layout_height="125dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 custom:arc_unfinished_color="@color/arcprogress_unfinished"
                 custom:arc_finished_color="@color/arcprogress_finished"
                 custom:arc_max="100"
                 custom:arc_progress="0"
-                custom:arc_bottom_text="MEMORY"/>
+                custom:arc_bottom_text="CPU"/>
+
+            <com.github.lzyzsd.circleprogress.ArcProgress
+                android:id="@+id/tile_dashboard_mem_cpu_mem_arcprogress"
+                android:background="@android:color/transparent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                custom:arc_unfinished_color="@color/arcprogress_unfinished"
+                custom:arc_finished_color="@color/arcprogress_finished"
+                custom:arc_max="100"
+                custom:arc_progress="0"
+                custom:arc_bottom_text="MEM"/>
 
             <ProgressBar
-                android:id="@+id/tile_dashboard_mem_loading_view"
+                android:id="@+id/tile_dashboard_mem_cpu_loading_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

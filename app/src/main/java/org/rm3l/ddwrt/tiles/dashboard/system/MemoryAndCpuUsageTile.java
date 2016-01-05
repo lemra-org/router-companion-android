@@ -42,37 +42,41 @@ import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 /**
  * Created by rm3l on 03/01/16.
  */
-public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
+public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
 
-    private static final String LOG_TAG = MemoryTile.class.getSimpleName();
+    private static final String LOG_TAG = MemoryAndCpuUsageTile.class.getSimpleName();
 
     private boolean isThemeLight;
 
     private long mLastSync;
     
-    private final ArcProgress mArcProgress;
+    private final ArcProgress mMemArcProgress;
+    private final ArcProgress mCpuArcProgress;
 
-    public MemoryTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
-        super(parentFragment, arguments, router, R.layout.tile_dashboard_mem, null);
+    public MemoryAndCpuUsageTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
+        super(parentFragment, arguments, router, R.layout.tile_dashboard_mem_cpu, null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-        this.mArcProgress = (ArcProgress) layout.findViewById(R.id.tile_dashboard_mem_arcprogress);
-        this.mArcProgress.setOnClickListener(new View.OnClickListener() {
+        this.mMemArcProgress = (ArcProgress) layout.findViewById(R.id.tile_dashboard_mem_cpu_mem_arcprogress);
+        this.mCpuArcProgress = (ArcProgress) layout.findViewById(R.id.tile_dashboard_mem_cpu_cpu_arcprogress);
+        final View.OnClickListener clickListener = new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
-                        //Open Router State tab
-                        if (mParentFragmentActivity instanceof DDWRTMainActivity) {
-                            ((DDWRTMainActivity) mParentFragmentActivity)
-                                    .selectItemInDrawer(2);
-                        } else {
-                            //TODO Set proper flags ???
-                            final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
-                            intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                            intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
-                            mParentFragmentActivity.startActivity(intent);
-                        }
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                //Open Router State tab
+                if (mParentFragmentActivity instanceof DDWRTMainActivity) {
+                    ((DDWRTMainActivity) mParentFragmentActivity)
+                            .selectItemInDrawer(2);
+                } else {
+                    //TODO Set proper flags ???
+                    final Intent intent = new Intent(mParentFragmentActivity, DDWRTMainActivity.class);
+                    intent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                    intent.putExtra(DDWRTMainActivity.SAVE_ITEM_SELECTED, 2);
+                    mParentFragmentActivity.startActivity(intent);
+                }
+            }
+        };
+        this.mMemArcProgress.setOnClickListener(clickListener);
+        this.mCpuArcProgress.setOnClickListener(clickListener);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
 
     @Override
     public int getTileTitleViewId() {
-        return R.id.tile_dashboard_mem_title;
+        return R.id.tile_dashboard_mem_cpu_title;
     }
 
     @Nullable
@@ -114,12 +118,13 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     updateProgressBarViewSeparator(10);
                     final String[] otherCmds;
                     if (isDemoRouter(mRouter)) {
-                        otherCmds = new String[2];
+                        otherCmds = new String[3];
                         final int memTotal = 4096;
                         final int memFree =
                                 new Random().nextInt(memTotal + 1);
                         otherCmds[0] = (memTotal + " kB"); //MemTotal
                         otherCmds[1] = (memFree + " kB"); //MemFree
+                        otherCmds[2] = Integer.toString(new Random().nextInt(100)); //CPU Usage
                     } else {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences,
@@ -165,9 +170,9 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                                                 Math.min(100, 100 * memUsedLong / memTotalLong)));
                             }
                         }
-
-                        updateProgressBarViewSeparator(90);
                     }
+
+                    updateProgressBarViewSeparator(90);
 
                     if (nvramInfo.isEmpty()) {
                         throw new DDWRTNoDataException("No Data!");
@@ -201,9 +206,10 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            layout.findViewById(R.id.tile_dashboard_mem_loading_view)
+            layout.findViewById(R.id.tile_dashboard_mem_cpu_loading_view)
                     .setVisibility(View.GONE);
-            mArcProgress.setVisibility(View.VISIBLE);
+            mMemArcProgress.setVisibility(View.VISIBLE);
+            mCpuArcProgress.setVisibility(View.VISIBLE);
 
             if (data == null) {
                 data = new NVRAMInfo().setException(new DDWRTNoDataException("No Data!"));
@@ -232,7 +238,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
             }
 
             final TextView errorPlaceHolderView = (TextView) this.layout
-                    .findViewById(R.id.tile_dashboard_mem_error);
+                    .findViewById(R.id.tile_dashboard_mem_cpu_error);
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
@@ -244,40 +250,54 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
                     //Text: blue
                     //Finished stroke color: white
                     //Unfinished stroke color: white
-                    mArcProgress.setFinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                        R.color.arcprogress_unfinished));
-                    mArcProgress.setUnfinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                        R.color.arcprogress_finished));
+                    final int finishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                            R.color.arcprogress_unfinished);
+                    mMemArcProgress.setFinishedStrokeColor(
+                            finishedStrokeColor);
+                    mCpuArcProgress.setFinishedStrokeColor(finishedStrokeColor);
+                    final int unfinishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                            R.color.arcprogress_finished);
+                    mMemArcProgress.setUnfinishedStrokeColor(
+                            unfinishedStrokeColor);
+                    mCpuArcProgress.setUnfinishedStrokeColor(unfinishedStrokeColor);
                 } else {
                     //Text: white
                     //Finished stroke color: white
                     //Unfinished stroke color: blue
-                    mArcProgress.setTextColor(ContextCompat
+                    final int textColor = ContextCompat
                             .getColor(mParentFragmentActivity,
-                                R.color.white));
+                                    R.color.white);
+                    mMemArcProgress.setTextColor(textColor);
+                    mCpuArcProgress.setTextColor(textColor);
                 }
+
+                //Red
+                final int redFinishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                        R.color.win8_red);
+                //Orange
+                final int orangeFinishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                        R.color.win8_orange);
 
                 if (memUsagePercent != null) {
                     final int usage = memUsagePercent.intValue();
 
                     //Update colors as per the usage
                     //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
-                    if (usage >= 95) {
-                        //Red
-                        mArcProgress.setFinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                        R.color.win8_red));
-                    } else if (usage >= 80) {
-                        //Orange
-                        mArcProgress.setFinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                    R.color.win8_orange));
+                    if (usage >= 80) {
+                        final int finishedStrokeColor;
+                        if (usage >= 95) {
+                            //Red
+                            mMemArcProgress.setFinishedStrokeColor(
+                                    redFinishedStrokeColor);
+                        } else {
+                            //Orange
+                            mMemArcProgress.setFinishedStrokeColor(
+                                    orangeFinishedStrokeColor);
+                        }
+
                     }
 
-                    mArcProgress.setProgress(usage);
-
+                    mMemArcProgress.setProgress(usage);
                 }
 
                 //Update last sync
