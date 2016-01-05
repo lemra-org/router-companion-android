@@ -45,7 +45,6 @@ import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
 
     private static final String LOG_TAG = MemoryTile.class.getSimpleName();
-    public static final String MEMORY_USED_PERCENT = (NVRAMInfo.MEMORY_USED + "_percent");
 
     private boolean isThemeLight;
 
@@ -161,7 +160,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
 
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
                             if (memTotalLong > 0L) {
-                                nvramInfo.setProperty(MEMORY_USED_PERCENT,
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_USED_PERCENT,
                                         Long.toString(
                                                 Math.min(100, 100 * memUsedLong / memTotalLong)));
                             }
@@ -215,7 +214,7 @@ public class MemoryTile extends DDWRTTile<NVRAMInfo>  {
             Long memUsagePercent = null;
             if (exception == null) {
                 try {
-                    final String memUsagePercentStr = data.getProperty(MEMORY_USED_PERCENT);
+                    final String memUsagePercentStr = data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT);
                     if (!isNullOrEmpty(memUsagePercentStr)) {
                         memUsagePercent = Long.parseLong(memUsagePercentStr);
                     }

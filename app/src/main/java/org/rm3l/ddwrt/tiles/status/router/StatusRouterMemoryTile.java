@@ -29,16 +29,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 
@@ -49,7 +48,6 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
-import org.rm3l.ddwrt.tiles.dashboard.system.MemoryTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -60,6 +58,7 @@ import java.util.Random;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
 /**
@@ -73,16 +72,10 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
     private String[] memInfoContents;
     private long mLastSync;
 
-
-    private final ArcProgress mArcProgress;
-
     public StatusRouterMemoryTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_status_router_router_mem,
                 null);
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
-        this.mArcProgress = (ArcProgress) layout.findViewById(R.id.tile_status_router_router_mem_arcprogress);
-
-
     }
 
     @NonNull
@@ -141,57 +134,155 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     updateProgressBarViewSeparator(10);
                     final String[] otherCmds;
                     if (isDemoRouter(mRouter)) {
-                        otherCmds = new String[2];
-                        final int memTotal = 4096;
+                        otherCmds = new String[6];
+                        final int memTotal = 40096;
+                        final Random random = new Random();
                         final int memFree =
-                                new Random().nextInt(memTotal + 1);
-                        otherCmds[0] = (memTotal + " kB"); //MemTotal
-                        otherCmds[1] = (memFree + " kB"); //MemFree
+                                random.nextInt(memTotal + 1);
+                        otherCmds[0] = Integer.toString(memTotal); //MemTotal
+                        otherCmds[1] = Integer.toString(memFree); //MemFree
+
+                        final int memUsed = memTotal - memFree;
+                        otherCmds[2] = Integer.toString(random.nextInt(memUsed + 1)); //Buffers
+                        otherCmds[3] = Integer.toString(random.nextInt(memUsed + 1)); //Cached
+                        otherCmds[4] = Integer.toString(random.nextInt(memUsed + 1)); //Active
+                        otherCmds[5] = Integer.toString(random.nextInt(memUsed + 1)); //Inactive
+
                     } else {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
-                                mGlobalPreferences, getGrepProcMemInfo("MemTotal"), getGrepProcMemInfo("MemFree"));
+                                mGlobalPreferences,
+                                getGrepProcMemInfo("MemTotal"),
+                                getGrepProcMemInfo("MemFree"),
+                                getGrepProcMemInfo("Buffers"),
+                                getGrepProcMemInfo("Cached"),
+                                getGrepProcMemInfo("Active"),
+                                getGrepProcMemInfo("Inactive"));
                     }
                     updateProgressBarViewSeparator(30);
-                    if (otherCmds != null && otherCmds.length >= 2) {
+                    if (otherCmds != null && otherCmds.length >= 6) {
                         //Total
                         String memTotal = null;
                         List<String> strings = Splitter.on("MemTotal:").omitEmptyStrings()
                                 .trimResults().splitToList(otherCmds[0].trim());
+                        long memTotalLong = 0;
                         if (strings != null && strings.size() >= 1) {
-                            memTotal = strings.get(0);
-                            nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL, memTotal);
-
+                            memTotal = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memTotalLong = Long.parseLong(memTotal);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_TOTAL,
+                                    memTotal);
                         }
 
                         //Free
                         String memFree = null;
                         strings = Splitter.on("MemFree:").omitEmptyStrings().trimResults()
                                 .splitToList(otherCmds[1].trim());
+                        long memFreeLong = 0;
                         if (strings != null && strings.size() >= 1) {
-                            memFree = strings.get(0);
-                            nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
+                            memFree = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memFreeLong = Long.parseLong(memFree);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE,
+                                    Long.toString(memFreeLong));
 
+                            //Compute utlization
+                            if (memTotalLong > 0L) {
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memFreeLong / memTotalLong)));
+                            }
                         }
 
                         //Mem used
                         String memUsed = null;
+                        long memUsedLong = 0;
                         if (!(isNullOrEmpty(memTotal) || isNullOrEmpty(memFree))) {
                             //noinspection ConstantConditions
-                            final long memTotalLong = Long.parseLong(memTotal.replaceAll(" kB", "").trim());
-                            final long memFreeLong = Long.parseLong(memFree.replaceAll(" kB", "").trim());
-                            final long memUsedLong = memTotalLong - memFreeLong;
-                            memUsed = (Long.toString(memUsedLong) + " kB");
+                            memUsedLong = memTotalLong - memFreeLong;
+                            memUsed = Long.toString(memUsedLong);
 
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_USED, memUsed);
                             if (memTotalLong > 0L) {
-                                nvramInfo.setProperty(MemoryTile.MEMORY_USED_PERCENT,
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_USED_PERCENT,
                                         Long.toString(
                                                 Math.min(100, 100 * memUsedLong / memTotalLong)));
                             }
 
                         }
 
+                        //Buffers
+                        String memBuffers = null;
+                        strings = Splitter.on("Buffers:").omitEmptyStrings().trimResults()
+                                .splitToList(otherCmds[2].trim());
+                        long memBuffersLong = 0;
+                        if (strings != null && strings.size() >= 1) {
+                            memBuffers = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memBuffersLong = Long.parseLong(memBuffers);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_BUFFERS,
+                                    memBuffers);
+
+                            //Compute utilization
+                            if (memUsedLong > 0L) {
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_BUFFERS_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memBuffersLong / memUsedLong)));
+                            }
+                        }
+
+                        //Cached
+                        String memCached = null;
+                        strings = Splitter.on("Cached:").omitEmptyStrings().trimResults()
+                                .splitToList(otherCmds[3].trim());
+                        long memCachedLong = 0;
+                        if (strings != null && strings.size() >= 1) {
+                            memCached = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memCachedLong = Long.parseLong(memCached);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_CACHED,
+                                    memCached);
+                            //Compute utilization
+                            if (memUsedLong > 0L) {
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_CACHED_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memCachedLong / memUsedLong)));
+                            }
+                        }
+
+                        //Active
+                        String memActive = null;
+                        strings = Splitter.on("Active:").omitEmptyStrings().trimResults()
+                                .splitToList(otherCmds[4].trim());
+                        long memActiveLong = 0;
+                        if (strings != null && strings.size() >= 1) {
+                            memActive = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memActiveLong = Long.parseLong(memActive);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_ACTIVE,
+                                    memActive);
+                            //Compute utilization
+                            if (memUsedLong > 0L) {
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_ACTIVE_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memActiveLong / memUsedLong)));
+                            }
+                        }
+
+                        //Inactive
+                        String memInactive = null;
+                        strings = Splitter.on("Inactive:").omitEmptyStrings().trimResults()
+                                .splitToList(otherCmds[5].trim());
+                        long memInactiveLong = 0;
+                        if (strings != null && strings.size() >= 1) {
+                            memInactive = nullToEmpty(strings.get(0)).replaceAll(" kB", "").trim();
+                            memInactiveLong = Long.parseLong(memInactive);
+                            nvramInfo.setProperty(NVRAMInfo.MEMORY_INACTIVE,
+                                    memInactive);
+                            //Compute utilization
+                            if (memUsedLong > 0L) {
+                                nvramInfo.setProperty(NVRAMInfo.MEMORY_INACTIVE_PERCENT,
+                                        Long.toString(
+                                                Math.min(100, 100 * memInactiveLong / memUsedLong)));
+                            }
+                        }
+
                         updateProgressBarViewSeparator(60);
+
                         //Now cache whole /proc/cpuinfo, for detailed activity
                         if (isDemoRouter(mRouter)) {
                             memInfoContents = new String[2];
@@ -281,82 +372,174 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
             Exception exception = data.getException();
 
-            Long memUsagePercent = null;
-            if (exception == null) {
-                try {
-                    final String memUsagePercentStr = data.getProperty(MemoryTile.MEMORY_USED_PERCENT);
-                    if (!isNullOrEmpty(memUsagePercentStr)) {
-                        memUsagePercent = Long.parseLong(memUsagePercentStr);
-                    }
-                } catch (final NumberFormatException nfe) {
-                    Crashlytics.logException(nfe);
-                    nfe.printStackTrace();
-                    //No worries
-                }
-                if (memUsagePercent == null) {
-                    Crashlytics.logException(new IllegalStateException("memUsagePercent == null"));
-                    data = new NVRAMInfo().setException(new
-                            DDWRTNoDataException("Invalid memory usage - please try again later!"));
-                }
-                exception = data.getException();
-            }
-
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
                 if (exception == null) {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
+                String property;
+                int propertyUtilization;
+                ProgressBar pb;
+                TextView pbText;
+
                 //Total
                 final TextView memTotalView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_total);
-                memTotalView.setText(data.getProperty(NVRAMInfo.MEMORY_TOTAL));
+                property = data.getProperty(NVRAMInfo.MEMORY_TOTAL);
+                final String memTotalKb = property != null ? (property + " kB") : "-";
+                memTotalView.setText(memTotalKb);
+
+                ((TextView) layout.findViewById(R.id.tile_status_router_router_mem_total_available))
+                        .setText(memTotalKb);
 
                 //Free
                 final TextView memFreeView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_free);
-                memFreeView.setText(data.getProperty(NVRAMInfo.MEMORY_FREE, "-"));
+                property = data.getProperty(NVRAMInfo.MEMORY_FREE);
+                final String memFreeKb = property != null ? (property + " kB") : "-";
+                memFreeView.setText(memFreeKb + " / " + memTotalKb);
 
-                //Used
-                final TextView memUsedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_mem_used);
-                memUsedView.setText(data.getProperty(NVRAMInfo.MEMORY_USED, "-"));
-
-                if (isThemeLight) {
-                    //Text: blue
-                    //Finished stroke color: white
-                    //Unfinished stroke color: white
-                    mArcProgress.setFinishedStrokeColor(
-                            ContextCompat.getColor(mParentFragmentActivity,
-                                    R.color.arcprogress_unfinished));
-                    mArcProgress.setUnfinishedStrokeColor(
-                            ContextCompat.getColor(mParentFragmentActivity,
-                                    R.color.arcprogress_finished));
-                } else {
-                    //Text: white
-                    //Finished stroke color: white
-                    //Unfinished stroke color: blue
-                    mArcProgress.setTextColor(ContextCompat
-                            .getColor(mParentFragmentActivity,
-                                    R.color.white));
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_free_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_free_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_FREE_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
                 }
 
-                if (memUsagePercent != null) {
-                    final int usage = memUsagePercent.intValue();
-
-                    //Update colors as per the usage
-                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
-                    if (usage >= 95) {
-                        //Red
-                        mArcProgress.setFinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                        R.color.win8_red));
-                    } else if (usage >= 80) {
-                        //Orange
-                        mArcProgress.setFinishedStrokeColor(
-                                ContextCompat.getColor(mParentFragmentActivity,
-                                        R.color.win8_orange));
+                //Used
+                final TextView memUsedView = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_mem_used);
+                property = data.getProperty(NVRAMInfo.MEMORY_USED);
+                final String memUsedKb = property != null ? (property + " kB") : "-";
+                memUsedView.setText(memUsedKb + " / " + memTotalKb);
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_used_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_used_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
                     }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
 
-                    mArcProgress.setProgress(usage);
+                //Buffers
+                final TextView memBuffersView = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_mem_buffers);
+                property = data.getProperty(NVRAMInfo.MEMORY_BUFFERS);
+                final String memBuffersKb = property != null ? (property + " kB") : "-";
+                memBuffersView.setText(memBuffersKb + " / " + memUsedKb);
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_buffers_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_buffers_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_BUFFERS_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
 
+                //Cached
+                final TextView memCachedView = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_mem_cached);
+                property = data.getProperty(NVRAMInfo.MEMORY_CACHED);
+                final String memCachedKb = property != null ? (property + " kB") : "-";
+                memCachedView.setText(memCachedKb + " / " + memUsedKb);
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_cached_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_cached_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_CACHED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
+
+                //Active
+                final TextView memActiveView = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_mem_active);
+                property = data.getProperty(NVRAMInfo.MEMORY_ACTIVE);
+                final String memActiveKb = property != null ? (property + " kB") : "-";
+                memActiveView.setText(memActiveKb + " / " + memUsedKb);
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_active_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_active_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_ACTIVE_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
+
+                //Inactive
+                final TextView memInactiveView = (TextView)
+                        this.layout.findViewById(R.id.tile_status_router_router_mem_inactive);
+                property = data.getProperty(NVRAMInfo.MEMORY_INACTIVE);
+                final String memInactiveKb = property != null ? (property + " kB") : "-";
+                memInactiveView.setText(memInactiveKb + " / " + memUsedKb);
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_mem_inactive_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_mem_inactive_usage_text);
+                try {
+                    propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.MEMORY_INACTIVE_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
                 }
 
                 //Update last sync
