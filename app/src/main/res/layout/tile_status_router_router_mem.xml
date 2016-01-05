@@ -199,7 +199,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_free_usage_text"
                                 android:layout_width="wrap_content"
@@ -246,7 +246,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_used_usage_text"
                                 android:layout_width="wrap_content"
@@ -293,7 +293,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_buffers_usage_text"
                                 android:layout_width="wrap_content"
@@ -340,7 +340,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_cached_usage_text"
                                 android:layout_width="wrap_content"
@@ -387,7 +387,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_active_usage_text"
                                 android:layout_width="wrap_content"
@@ -434,7 +434,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:indeterminateOnly="false"
                                 android:progress="0"
                                 android:max="100"
-                                android:scaleY="3.f"/>
+                                android:scaleY="2.0"/>
                             <TextView
                                 android:id="@+id/tile_status_router_router_mem_inactive_usage_text"
                                 android:layout_width="wrap_content"
