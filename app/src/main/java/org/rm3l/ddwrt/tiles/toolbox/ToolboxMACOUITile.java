@@ -49,4 +49,9 @@ public class ToolboxMACOUITile extends AbstractToolboxTile {
     protected AbstractRouterAction<?> getRouterAction(String textToFind) {
         return new MACOUILookupAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
     }
+
+    @Override
+    protected boolean isGeoLocateButtonEnabled() {
+        return false;
+    }
 }

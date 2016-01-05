@@ -131,6 +131,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:enabled="false"
                 android:text="@string/cancel" />
 
+            <!-- For tiles that need to geolocate an IP address -->
+            <Button
+                android:id="@+id/tile_toolbox_abstract_geolocate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:enabled="true"
+                android:visibility="gone"
+                android:text="Geolocate IP" />
+
             <Button
                 android:id="@+id/tile_toolbox_abstract_submit_button"
                 android:layout_width="wrap_content"

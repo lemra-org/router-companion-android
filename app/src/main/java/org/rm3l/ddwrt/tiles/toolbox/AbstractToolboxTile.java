@@ -22,6 +22,7 @@
 package org.rm3l.ddwrt.tiles.toolbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,6 +53,7 @@ import org.rm3l.ddwrt.actions.RouterStreamActionListener;
 import org.rm3l.ddwrt.resources.None;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.dashboard.network.IPGeoActivity;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.HashSet;
@@ -88,6 +90,9 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         final Button button = (Button) layout.findViewById(R.id.tile_toolbox_abstract_submit_button);
         button.setText(this.getSubmitButtonText());
 
+        final Button geolocateButton = (Button)
+                layout.findViewById(R.id.tile_toolbox_abstract_geolocate_button);
+
         final Button cancelButton = (Button) layout.findViewById(R.id.tile_toolbox_abstract_cancel_button);
 
         final View progressBar = layout.findViewById(R.id.tile_toolbox_ping_abstract_loading_view);
@@ -109,6 +114,26 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
 
         final TextView errorView = (TextView) layout.findViewById(R.id.tile_toolbox_abstract_error);
 
+        geolocateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String textToFind = editText.getText().toString();
+                if (isNullOrEmpty(textToFind)
+                        || !(Patterns.IP_ADDRESS.matcher(textToFind).matches()
+                                || Patterns.DOMAIN_NAME.matcher(textToFind).matches())) {
+                    Toast.makeText(mParentFragmentActivity,
+                            "Invalid host: '" + textToFind + "'", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                final Intent intent = new Intent(mParentFragmentActivity, IPGeoActivity.class);
+                intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, textToFind);
+                mParentFragmentActivity.startActivity(intent);
+                mParentFragmentActivity.overridePendingTransition(
+                        R.anim.right_in, R.anim.left_out);
+            }
+        });
+
         this.mRouterActionListener = new RouterStreamActionListener() {
             @Override
             public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, final Object returnData) {
@@ -117,6 +142,11 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     public void run() {
                         progressBar.setVisibility(View.GONE);
                         button.setEnabled(true);
+                        if (isGeoLocateButtonEnabled()) {
+                            geolocateButton.setVisibility(View.VISIBLE);
+                        } else {
+                            geolocateButton.setVisibility(View.GONE);
+                        }
                         cancelButton.setEnabled(false);
                     }
                 });
@@ -153,6 +183,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                         errorView.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                         button.setEnabled(true);
+                        geolocateButton.setVisibility(View.GONE);
                         cancelButton.setEnabled(false);
                     }
                 });
@@ -262,6 +293,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                     //Run ping command
                     progressBar.setVisibility(View.VISIBLE);
                     button.setEnabled(false);
+                    geolocateButton.setVisibility(View.GONE);
 
                     mCurrentRouterActionTask = getRouterAction(textToFind);
                     mCurrentRouterActionTask.execute(mRouter);
@@ -322,6 +354,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 //Run command
                 progressBar.setVisibility(View.VISIBLE);
                 button.setEnabled(false);
+                geolocateButton.setVisibility(View.GONE);
 
                 Utils.hideSoftKeyboard(mParentFragmentActivity);
                 mCurrentRouterActionTask = getRouterAction(textToFind);
@@ -334,6 +367,7 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                geolocateButton.setVisibility(View.GONE);
                 if (mCurrentRouterActionTask == null) {
                     return;
                 }
@@ -348,6 +382,10 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 }
             }
         });
+    }
+
+    protected boolean isGeoLocateButtonEnabled() {
+        return true;
     }
 
     public boolean canChildScrollUp() {

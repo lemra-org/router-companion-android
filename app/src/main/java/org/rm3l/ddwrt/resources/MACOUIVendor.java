@@ -217,16 +217,16 @@ public class MACOUIVendor {
 
     public String toCommandOutputString() {
         return "\n" +
-                "startHex: " + startHex + "\n\n" +
-                "endHex: " + endHex + "\n\n" +
-                "startDec: " + startDec + "\n\n" +
-                "endDec: " + endDec + "\n\n" +
-                "company: " + company + "\n\n" +
-                "addressL1: " + addressL1 + "\n\n" +
-                "addressL2: " + addressL2 + "\n\n" +
-                "addressL3: " + addressL3 + "\n\n" +
-                "country: " + country + "\n\n" +
-                "type: " + type ;
+                "- startHex: " + startHex + "\n" +
+                "- endHex: " + endHex + "\n" +
+                "- startDec: " + startDec + "\n" +
+                "- endDec: " + endDec + "\n" +
+                "- company: " + company + "\n" +
+                "- addressL1: " + addressL1 + "\n" +
+                "- addressL2: " + addressL2 + "\n" +
+                "- addressL3: " + addressL3 + "\n" +
+                "- country: " + country + "\n" +
+                "- type: " + type ;
     }
 
     @Override

@@ -251,16 +251,16 @@ public class IPWhoisInfo {
 
     public String toCommandOutputString() {
         return "\n" +
-                "IP: " + ip + "\n\n" +
-                "Prefix: " + prefix + "\n\n" +
-                "Country Code: " + country_code + "\n\n" +
-                "ASN: " + asn + "\n\n" +
-                "City: " + city + "\n\n" +
-                "Country: " + country + "\n\n" +
-                "Region: " + region + "\n\n" +
-                "Hostname: " + hostname + "\n\n" +
-                "Longitude: " + longitude + "\n\n" +
-                "Latitude: " + latitude + "\n\n" +
-                "Organization: " + organization;
+                "- IP: " + ip + "\n" +
+                "- Prefix: " + prefix + "\n" +
+                "- Country Code: " + country_code + "\n" +
+                "- ASN: " + asn + "\n" +
+                "- City: " + city + "\n" +
+                "- Country: " + country + "\n" +
+                "- Region: " + region + "\n" +
+                "- Hostname: " + hostname + "\n" +
+                "- Longitude: " + longitude + "\n" +
+                "- Latitude: " + latitude + "\n" +
+                "- Organization: " + organization;
     }
 }
