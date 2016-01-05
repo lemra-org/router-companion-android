@@ -43,56 +43,68 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:orientation="vertical"
             android:layout_marginTop="10dp">
             
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:text="MAC Address"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="4dp"-->
+                <!--android:layout_marginRight="4dp"-->
+                <!--android:textAppearance="?android:textAppearanceMedium"-->
+                <!--android:text="MAC Address"/>-->
 
-            <EditText
-                android:selectAllOnFocus="true"
-                android:id="@+id/add_or_edit_router_alias_mac"
-                android:layout_weight="1"
-                android:layout_width="fill_parent"
-                android:layout_height="0dip"
-                android:layout_marginBottom="16dp"
+            <android.support.design.widget.TextInputLayout
                 android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:hint="aa:bb:cc:dd:ee:ff"
-                android:isScrollContainer="true"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textMultiLine" >
-                <requestFocus/>
-            </EditText>
+                android:layout_marginStart="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:id="@+id/add_or_edit_router_alias_mac"
+                    android:layout_weight="1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dip"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:hint="MAC Address, e.g., aa:bb:cc:dd:ee:ff"
+                    android:isScrollContainer="true"
+                    android:drawableBottom="@android:color/holo_blue_dark"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textMultiLine" >
+                    <requestFocus/>
+                </EditText>
+            </android.support.design.widget.TextInputLayout>
 
-            <TextView
-                android:id="@+id/add_or_edit_router_alias_value_textview"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:text="Alias"/>
+            <!--<TextView-->
+                <!--android:id="@+id/add_or_edit_router_alias_value_textview"-->
+                <!--android:layout_marginLeft="4dp"-->
+                <!--android:layout_marginRight="4dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAppearance="?android:textAppearanceMedium"-->
+                <!--android:text="Alias"/>-->
 
-            <EditText
-                android:selectAllOnFocus="true"
-                android:id="@+id/add_or_edit_router_alias_value"
-                android:layout_weight="1"
-                android:layout_width="fill_parent"
-                android:layout_height="0dip"
-                android:layout_marginBottom="16dp"
+            <android.support.design.widget.TextInputLayout
                 android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:hint="e.g., rPi @home"
-                android:isScrollContainer="true"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textMultiLine"/>
+                android:layout_marginStart="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:id="@+id/add_or_edit_router_alias_value"
+                    android:layout_weight="1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dip"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:hint="Local Alias, e.g., Julie's Phone"
+                    android:isScrollContainer="true"
+                    android:drawableBottom="@android:color/holo_blue_dark"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textMultiLine"/>
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 

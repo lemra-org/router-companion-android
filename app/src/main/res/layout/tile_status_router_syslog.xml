@@ -141,20 +141,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:weightSum="1">
 
             <!-- Filter -->
-            <EditText
-                android:id="@+id/tile_status_router_syslog_filter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
-                android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
-                android:drawableStart="@drawable/abs__ic_search_api_holo_light"
-                android:hint="@string/syslog_filter_hint"
-                android:imeOptions="actionSearch"
-                android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
-                android:textColor="@android:color/holo_blue_dark" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/tile_status_router_syslog_filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.02"
+                    android:drawableBottom="@android:color/holo_blue_dark"
+                    android:drawableEnd="@drawable/abs__ic_clear_search_api_holo_light"
+                    android:drawableLeft="@drawable/abs__ic_search_api_holo_light"
+                    android:drawableRight="@drawable/abs__ic_clear_search_api_holo_light"
+                    android:drawableStart="@drawable/abs__ic_search_api_holo_light"
+                    android:hint="@string/syslog_filter_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="textCapSentences|textAutoCorrect|textAutoComplete"
+                    android:textColor="@android:color/holo_blue_dark" />
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 

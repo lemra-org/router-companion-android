@@ -68,23 +68,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="@string/value"/>
 
-            <EditText
-                android:selectAllOnFocus="true"
-                android:id="@+id/tile_admin_nvram_edit_value"
-                android:layout_weight="1"
-                android:layout_width="fill_parent"
-                android:layout_height="0dip"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:hint="@string/nvram_var_value"
-                android:isScrollContainer="true"
-                android:drawableBottom="@android:color/holo_blue_dark"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textMultiLine" >
-                <requestFocus/>
-            </EditText>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:id="@+id/tile_admin_nvram_edit_value"
+                    android:layout_weight="1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dip"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="4dp"
+                    android:hint="@string/nvram_var_value"
+                    android:isScrollContainer="true"
+                    android:drawableBottom="@android:color/holo_blue_dark"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textMultiLine" >
+                    <requestFocus/>
+                </EditText>
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 

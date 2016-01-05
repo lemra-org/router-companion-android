@@ -187,39 +187,56 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:prompt="@string/openvpn_client_settings_hash_algorithm" />
 
                 <!-- CA Cert -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="4dp"-->
+                    <!--android:layout_marginStart="4dp"-->
+                    <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                    <!--android:text="@string/openvpncl_setting_ca_cert" />-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/openvpn_client_settings_ca_cert_input_layout"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/openvpncl_setting_ca_cert" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <EditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/openvpn_client_settings_ca_cert"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dip"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:hint="@string/openvpncl_setting_ca_cert_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textMultiLine"
-                    android:isScrollContainer="true" />
+                    <EditText
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/openvpn_client_settings_ca_cert"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dip"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:drawableBottom="@android:color/holo_blue_dark"
+                        android:hint="@string/openvpncl_setting_ca_cert_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textMultiLine"
+                        android:isScrollContainer="true" />
+
+                </android.support.design.widget.TextInputLayout>
 
                 <!-- Public Client Cert -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="4dp"-->
+                    <!--android:layout_marginStart="4dp"-->
+                    <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                    <!--android:text="@string/openvpncl_setting_public_client_cert" />-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/openvpn_client_settings_public_client_cert_input_layout"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/openvpncl_setting_public_client_cert" />
-
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                 <EditText
                     android:selectAllOnFocus="true"
                     android:id="@+id/openvpn_client_settings_public_client_cert"
@@ -235,31 +252,40 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="textMultiLine"
                     android:isScrollContainer="true" />
+                </android.support.design.widget.TextInputLayout>
 
                 <!-- Private Client Key -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="4dp"-->
+                    <!--android:layout_marginStart="4dp"-->
+                    <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                    <!--android:text="@string/openvpncl_setting_private_client_key" />-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/openvpn_client_settings_private_client_key_input_layout"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:text="@string/openvpncl_setting_private_client_key" />
-
-                <EditText
-                    android:selectAllOnFocus="true"
-                    android:id="@+id/openvpn_client_settings_private_client_key"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dip"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="1"
-                    android:drawableBottom="@android:color/holo_blue_dark"
-                    android:hint="@string/openvpncl_setting_private_client_key_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textMultiLine"
-                    android:isScrollContainer="true" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/openvpn_client_settings_private_client_key"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dip"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:drawableBottom="@android:color/holo_blue_dark"
+                        android:hint="@string/openvpncl_setting_private_client_key_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="textMultiLine"
+                        android:isScrollContainer="true" />
+                </android.support.design.widget.TextInputLayout>
 
                 <!-- Advanced Options (to display or not) -->
                 <CheckBox
@@ -457,89 +483,120 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/openvpncl_setting_nscerttype" />
 
                     <!-- TLS Auth Key -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginStart="4dp"-->
+                        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                        <!--android:text="@string/openvpncl_setting_tls_auth_key" />-->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key_input_layout"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/openvpncl_setting_tls_auth_key" />
-
-                    <EditText
-                        android:selectAllOnFocus="true"
-                        android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:drawableBottom="@android:color/holo_blue_dark"
-                        android:hint="@string/openvpncl_setting_tls_auth_key_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="textMultiLine"
-                        android:isScrollContainer="true" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:selectAllOnFocus="true"
+                            android:id="@+id/openvpn_client_settings_advanced_options_tls_auth_key"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dip"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:drawableBottom="@android:color/holo_blue_dark"
+                            android:hint="@string/openvpncl_setting_tls_auth_key_hint"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="textMultiLine"
+                            android:isScrollContainer="true" />
+                    </android.support.design.widget.TextInputLayout>
 
                     <!-- Additional Config -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginStart="4dp"-->
+                        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                        <!--android:text="@string/openvpncl_setting_additional_config" />-->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/openvpn_client_settings_advanced_options_additional_config_input_layout"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/openvpncl_setting_additional_config" />
-
-                    <EditText
-                        android:selectAllOnFocus="true"
-                        android:id="@+id/openvpn_client_settings_advanced_options_additional_config"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:drawableBottom="@android:color/holo_blue_dark"
-                        android:hint="@string/openvpncl_setting_additional_config_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="textMultiLine"
-                        android:isScrollContainer="true" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:selectAllOnFocus="true"
+                            android:id="@+id/openvpn_client_settings_advanced_options_additional_config"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dip"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:drawableBottom="@android:color/holo_blue_dark"
+                            android:hint="@string/openvpncl_setting_additional_config_hint"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="textMultiLine"
+                            android:isScrollContainer="true" />
+                    </android.support.design.widget.TextInputLayout>
 
                     <!-- Policy based Routing -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginStart="4dp"-->
+                        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                        <!--android:text="@string/openvpncl_setting_policy_based_routing" />-->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing_input_layout"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/openvpncl_setting_policy_based_routing" />
-
-                    <EditText
-                        android:selectAllOnFocus="true"
-                        android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:drawableBottom="@android:color/holo_blue_dark"
-                        android:hint="@string/openvpn_client_settings_advanced_options_policy_based_routing_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="textMultiLine"
-                        android:isScrollContainer="true" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:selectAllOnFocus="true"
+                            android:id="@+id/openvpn_client_settings_advanced_options_policy_based_routing"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dip"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:drawableBottom="@android:color/holo_blue_dark"
+                            android:hint="@string/openvpn_client_settings_advanced_options_policy_based_routing_hint"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="textMultiLine"
+                            android:isScrollContainer="true" />
+                    </android.support.design.widget.TextInputLayout>
 
                     <!-- PKCS12 Key -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginStart="4dp"-->
+                        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                        <!--android:text="@string/openvpncl_setting_pkcs12_key" />-->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key_input_layout"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/openvpncl_setting_pkcs12_key" />
-
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
                     <EditText
                         android:selectAllOnFocus="true"
                         android:id="@+id/openvpn_client_settings_advanced_options_pkcs12_key"
@@ -555,31 +612,40 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textMultiLine"
                         android:isScrollContainer="true" />
+                    </android.support.design.widget.TextInputLayout>
 
                     <!-- Static Key -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="4dp"-->
+                        <!--android:layout_marginStart="4dp"-->
+                        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                        <!--android:text="@string/openvpncl_setting_static_key" />-->
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/openvpn_client_settings_advanced_options_static_key_input_layout"
                         android:layout_marginLeft="4dp"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/openvpncl_setting_static_key" />
-
-                    <EditText
-                        android:selectAllOnFocus="true"
-                        android:id="@+id/openvpn_client_settings_advanced_options_static_key"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:drawableBottom="@android:color/holo_blue_dark"
-                        android:hint="@string/openvpncl_setting_static_key_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:inputType="textMultiLine"
-                        android:isScrollContainer="true" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:selectAllOnFocus="true"
+                            android:id="@+id/openvpn_client_settings_advanced_options_static_key"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dip"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:drawableBottom="@android:color/holo_blue_dark"
+                            android:hint="@string/openvpncl_setting_static_key_hint"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="textMultiLine"
+                            android:isScrollContainer="true" />
+                    </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>
 

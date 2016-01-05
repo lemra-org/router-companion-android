@@ -43,6 +43,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -826,6 +827,8 @@ public abstract class AbstractRouterMgmtDialogFragment
 
     private boolean validateForm(@NonNull AlertDialog d) {
         final EditText ipAddrView = (EditText) d.findViewById(R.id.router_add_ip);
+        final TextInputLayout ipAddrInputLayout =
+                (TextInputLayout) d.findViewById(R.id.router_add_ip_input_layout);
 
         final Editable ipAddrViewText = ipAddrView.getText();
 
@@ -838,16 +841,20 @@ public abstract class AbstractRouterMgmtDialogFragment
 
         if (!(Patterns.IP_ADDRESS.matcher(ipAddrViewText).matches()
                 || Patterns.DOMAIN_NAME.matcher(ipAddrViewText).matches())) {
-            displayMessage(getString(R.string.router_add_dns_or_ip_invalid) + ":" + ipAddrViewText,
-                    ALERT);
+//            displayMessage(getString(R.string.router_add_dns_or_ip_invalid) + ":" + ipAddrViewText,
+//                    ALERT);
+            ipAddrInputLayout.setError(getString(R.string.router_add_dns_or_ip_invalid));
             Utils.scrollToView(contentScrollView, ipAddrView);
             ipAddrView.requestFocus();
             openKeyboard(ipAddrView);
             return false;
         }
+        ipAddrInputLayout.setErrorEnabled(false);
 
         boolean validPort;
         final EditText portView = (EditText) d.findViewById(R.id.router_add_port);
+        final TextInputLayout portInputLayout =
+                (TextInputLayout) d.findViewById(R.id.router_add_port_input_layout);
         try {
             final String portStr = portView.getText().toString();
             validPort = (!isNullOrEmpty(portStr) && (Integer.parseInt(portStr) > 0));
@@ -856,22 +863,28 @@ public abstract class AbstractRouterMgmtDialogFragment
             validPort = false;
         }
         if (!validPort) {
-            displayMessage(getString(R.string.router_add_port_invalid) + ":" + portView.getText(), ALERT);
+//            displayMessage(getString(R.string.router_add_port_invalid) + ":" + portView.getText(), ALERT);
+            portInputLayout.setError(getString(R.string.router_add_port_invalid));
             Utils.scrollToView(contentScrollView, portView);
 
             portView.requestFocus();
             openKeyboard(portView);
             return false;
         }
+        portInputLayout.setErrorEnabled(false);
 
         final EditText sshUsernameView = (EditText) d.findViewById(R.id.router_add_username);
+        final TextInputLayout sshLoginInputLayout =
+                (TextInputLayout) d.findViewById(R.id.router_add_username_input_layout);
         if (isNullOrEmpty(sshUsernameView.getText().toString())) {
-            displayMessage(getString(R.string.router_add_username_invalid), ALERT);
+//            displayMessage(getString(R.string.router_add_username_invalid), ALERT);
+            sshLoginInputLayout.setError(getString(R.string.router_add_username_invalid));
             Utils.scrollToView(contentScrollView, sshUsernameView);
             sshUsernameView.requestFocus();
             openKeyboard(sshUsernameView);
             return false;
         }
+        sshLoginInputLayout.setErrorEnabled(false);
 
         final int checkedAuthMethodRadioButtonId = ((RadioGroup) d.findViewById(R.id.router_add_ssh_auth_method)).getCheckedRadioButtonId();
         if (checkedAuthMethodRadioButtonId == R.id.router_add_ssh_auth_method_password) {
