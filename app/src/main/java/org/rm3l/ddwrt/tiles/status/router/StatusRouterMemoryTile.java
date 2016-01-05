@@ -80,7 +80,7 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
 
     @NonNull
     public static String getGrepProcMemInfo(@NonNull final String item) {
-        return "grep \"" + item + "\" /proc/meminfo ";
+        return "grep \"^" + item + "\" /proc/meminfo ";
     }
 
     @Override
