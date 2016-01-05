@@ -151,12 +151,12 @@ public class StatusRouterMemoryTile extends DDWRTTile<NVRAMInfo> {
                     } else {
                         otherCmds = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
                                 mGlobalPreferences,
-                                getGrepProcMemInfo("MemTotal"),
-                                getGrepProcMemInfo("MemFree"),
-                                getGrepProcMemInfo("Buffers"),
-                                getGrepProcMemInfo("Cached"),
-                                getGrepProcMemInfo("Active"),
-                                getGrepProcMemInfo("Inactive"));
+                                getGrepProcMemInfo("MemTotal:"),
+                                getGrepProcMemInfo("MemFree:"),
+                                getGrepProcMemInfo("Buffers:"),
+                                getGrepProcMemInfo("Cached:"),
+                                getGrepProcMemInfo("Active:"),
+                                getGrepProcMemInfo("Inactive:"));
                     }
                     updateProgressBarViewSeparator(30);
                     if (otherCmds != null && otherCmds.length >= 6) {
