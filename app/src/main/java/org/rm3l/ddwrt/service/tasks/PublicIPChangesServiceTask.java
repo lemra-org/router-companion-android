@@ -234,8 +234,13 @@ public class PublicIPChangesServiceTask extends AbstractBackgroundServiceTask {
                         if (!sharedPreferences
                                 .getBoolean(DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE, true)) {
                             mBuilder
-                                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                                    .setDefaults(Notification.DEFAULT_LIGHTS)
                                     .setVibrate(DDWRTCompanionConstants.NO_VIBRATION_PATTERN);
+    //                    if (ringtoneUri != null) {
+    //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+    //                    } else {
+    //                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+    //                    }
                         }
 
                         final boolean isFirstTimeForNotification = routerPreferences
