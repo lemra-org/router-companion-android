@@ -119,28 +119,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <GridLayout
+            <LinearLayout
                 android:id="@+id/tile_status_router_router_cpu_grid_layout"
-                android:layout_width="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <!-- Model -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/router_cpu_cpu_model"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAppearance="?android:textAppearanceMedium"/>
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_model"
                     android:layout_width="wrap_content"
@@ -156,16 +150,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/router_cpu_cpu_cores"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
-
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAppearance="?android:textAppearanceMedium"/>
                 <TextView
                     android:id="@+id/tile_status_router_router_cpu_cores"
                     android:layout_width="wrap_content"
@@ -176,32 +163,138 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:singleLine="false"
                     android:text="@string/loading" />
 
-                <!-- Load Avg -->
+                <!-- Load Average -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/router_cpu_load_avg"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textAppearance="?android:textAppearanceMedium"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8.0dip"
-                    android:layout_marginRight="8.0dip"
-                    android:text="@string/one_space" />
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tile_status_router_router_cpu_load_avg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp">
+                        <ProgressBar
+                            android:id="@+id/tile_status_router_router_cpu_load_usage"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:indeterminate="false"
+                            android:indeterminateOnly="false"
+                            android:progress="0"
+                            android:max="100"
+                            android:scaleY="4.0"/>
+                        <TextView
+                            android:id="@+id/tile_status_router_router_cpu_load_avg_usage_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="-"
+                            android:textAppearance="?android:textAppearanceSmall"/>
+                    </FrameLayout>
 
-                <TextView
-                    android:id="@+id/tile_status_router_router_cpu_load_avg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:text="@string/loading" />
+                </LinearLayout>
 
-            </GridLayout>
+            </LinearLayout>
+
+            <!--<GridLayout-->
+                <!--android:id="@+id/tile_status_router_router_cpu_grid_layout"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:columnCount="3"-->
+                <!--android:visibility="gone">-->
+
+                <!--&lt;!&ndash; Model &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/router_cpu_cpu_model"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="8.0dip"-->
+                    <!--android:layout_marginRight="8.0dip"-->
+                    <!--android:text="@string/one_space" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tile_status_router_router_cpu_model"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:ellipsize="end"-->
+                    <!--android:gravity="start"-->
+                    <!--android:singleLine="false"-->
+                    <!--android:text="@string/loading" />-->
+
+                <!--&lt;!&ndash; Cores &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/router_cpu_cpu_cores"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="8.0dip"-->
+                    <!--android:layout_marginRight="8.0dip"-->
+                    <!--android:text="@string/one_space" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tile_status_router_router_cpu_cores"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:ellipsize="end"-->
+                    <!--android:gravity="start"-->
+                    <!--android:singleLine="false"-->
+                    <!--android:text="@string/loading" />-->
+
+                <!--&lt;!&ndash; Load Avg &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/router_cpu_load_avg"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="8.0dip"-->
+                    <!--android:layout_marginRight="8.0dip"-->
+                    <!--android:text="@string/one_space" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tile_status_router_router_cpu_load_avg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="start"-->
+                    <!--android:ellipsize="end"-->
+                    <!--android:gravity="start"-->
+                    <!--android:singleLine="false"-->
+                    <!--android:text="@string/loading" />-->
+
+            <!--</GridLayout>-->
 
             <ProgressBar
                 android:id="@+id/tile_status_router_router_cpu_loading_view"
@@ -210,7 +303,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_centerInParent="true" />
 
             <com.github.curioustechizen.ago.RelativeTimeTextView
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="15dp"
                 android:id="@+id/tile_last_sync"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

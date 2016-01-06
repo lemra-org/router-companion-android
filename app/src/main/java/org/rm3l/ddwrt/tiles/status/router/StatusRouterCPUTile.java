@@ -32,6 +32,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -173,7 +174,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             if (otherCmds.length >= 1) {
                                 //Load Avg
                                 nvramInfo.setProperty(NVRAMInfo.LOAD_AVERAGE,
-                                        StringUtils.trimToNull(otherCmds[0]));
+                                        StringUtils.trimToEmpty(otherCmds[0]));
                             }
                             if (otherCmds.length >= 2) {
                                 //Model
@@ -185,7 +186,34 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                             }
                             if (otherCmds.length >= 3) {
                                 //Nb Cores
-                                nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, otherCmds[2]);
+                                final String nbCoresStr = otherCmds[2];
+                                nvramInfo.setProperty(NVRAMInfo.CPU_CORES_COUNT, nbCoresStr);
+
+                                //Compute usage as well
+                                final String loadAvg = otherCmds[0];
+                                if (loadAvg != null) {
+                                    final List<String> stringList = Splitter.on(",").omitEmptyStrings().trimResults()
+                                            .splitToList(loadAvg);
+                                    if (stringList.size() >= 3) {
+                                        try {
+                                            final float loadAvgTotal = Float.parseFloat(stringList.get(0)) +
+                                                    Float.parseFloat(stringList.get(1)) +
+                                                    Float.parseFloat(stringList.get(2));
+                                            final int coresCount = Integer.parseInt(nbCoresStr);
+
+                                            if (coresCount > 0) {
+                                                nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT,
+                                                        Integer.toString(
+                                                                Math.min(100, Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
+                                            }
+
+                                        } catch (final NumberFormatException e) {
+                                            e.printStackTrace();
+                                            Crashlytics.logException(e);
+                                        }
+                                    }
+                                }
+
                             }
                         }
 
@@ -284,7 +312,7 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                     errorPlaceHolderView.setVisibility(View.GONE);
                 }
 
-                //Model
+                //Clock Frequency
                 final TextView cpuSpeedView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_speed);
                 final String property = data.getProperty(NVRAMInfo.CPU_CLOCK_FREQ);
                 cpuSpeedView.setText(Strings.isNullOrEmpty(property) ? null : (property + " MHz"));
@@ -300,6 +328,28 @@ public class StatusRouterCPUTile extends DDWRTTile<NVRAMInfo> {
                 //Load Avg
                 final TextView loadAvgView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_cpu_load_avg);
                 loadAvgView.setText(data.getProperty(NVRAMInfo.LOAD_AVERAGE, "-"));
+
+                //Load Avg Usage
+                final ProgressBar pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_cpu_load_usage);
+                final TextView pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_cpu_load_avg_usage_text);
+                try {
+                    final int propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.CPU_USED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);

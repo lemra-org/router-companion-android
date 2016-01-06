@@ -36,6 +36,7 @@ import java.util.Random;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.mgmt.RouterManagementActivity.ROUTER_SELECTED;
+import static org.rm3l.ddwrt.tiles.status.router.StatusRouterCPUTile.GREP_MODEL_PROC_CPUINFO;
 import static org.rm3l.ddwrt.tiles.status.router.StatusRouterMemoryTile.getGrepProcMemInfo;
 import static org.rm3l.ddwrt.utils.Utils.isDemoRouter;
 
@@ -144,6 +145,8 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
 
                         }
 
+                        updateProgressBarViewSeparator(35);
+
                         //Free
                         String memFree = null;
                         strings = Splitter.on("MemFree:").omitEmptyStrings().trimResults()
@@ -152,6 +155,8 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                             memFree = strings.get(0);
                             nvramInfo.setProperty(NVRAMInfo.MEMORY_FREE, strings.get(0));
                         }
+
+                        updateProgressBarViewSeparator(40);
 
                         //Mem used
                         String memUsed = null;
@@ -171,6 +176,46 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                             }
                         }
                     }
+                    updateProgressBarViewSeparator(50);
+
+                    final String[] cpuUsageData;
+                    if (isDemoRouter(mRouter)) {
+                        cpuUsageData = new String[2];
+                        cpuUsageData[0] = " 0.14, 0.24, 0.28";
+                        cpuUsageData[1] = "1";
+                    } else {
+                        cpuUsageData = SSHUtils.getManualProperty(mParentFragmentActivity, mRouter,
+                                mGlobalPreferences,
+                                "uptime | awk -F'average:' '{ print $2}'",
+                                GREP_MODEL_PROC_CPUINFO + "| wc -l");
+                    }
+
+                    if (cpuUsageData != null && cpuUsageData.length >= 2) {
+                        final String loadAvg = cpuUsageData[0];
+                        if (loadAvg != null) {
+                            final List<String> stringList = Splitter.on(",").omitEmptyStrings().trimResults()
+                                    .splitToList(loadAvg);
+                            if (stringList.size() >= 3) {
+                                try {
+                                    final float loadAvgTotal = Float.parseFloat(stringList.get(0)) +
+                                            Float.parseFloat(stringList.get(1)) +
+                                            Float.parseFloat(stringList.get(2));
+                                    final int coresCount = Integer.parseInt(cpuUsageData[1]);
+
+                                    if (coresCount > 0) {
+                                        nvramInfo.setProperty(NVRAMInfo.CPU_USED_PERCENT,
+                                                Integer.toString(
+                                                        Math.min(100, Double.valueOf(loadAvgTotal / coresCount * 33.3).intValue())));
+                                    }
+
+                                } catch (final NumberFormatException e) {
+                                    e.printStackTrace();
+                                    Crashlytics.logException(e);
+                                }
+                            }
+                        }
+                    }
+
 
                     updateProgressBarViewSeparator(90);
 
@@ -217,26 +262,6 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
 
             Exception exception = data.getException();
 
-            Long memUsagePercent = null;
-            if (exception == null) {
-                try {
-                    final String memUsagePercentStr = data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT);
-                    if (!isNullOrEmpty(memUsagePercentStr)) {
-                        memUsagePercent = Long.parseLong(memUsagePercentStr);
-                    }
-                } catch (final NumberFormatException nfe) {
-                    Crashlytics.logException(nfe);
-                    nfe.printStackTrace();
-                    //No worries
-                }
-                if (memUsagePercent == null) {
-                    Crashlytics.logException(new IllegalStateException("memUsagePercent == null"));
-                    data = new NVRAMInfo().setException(new
-                            DDWRTNoDataException("Invalid memory usage - please try again later!"));
-                }
-                exception = data.getException();
-            }
-
             final TextView errorPlaceHolderView = (TextView) this.layout
                     .findViewById(R.id.tile_dashboard_mem_cpu_error);
 
@@ -272,32 +297,52 @@ public class MemoryAndCpuUsageTile extends DDWRTTile<NVRAMInfo>  {
                 }
 
                 //Red
-                final int redFinishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                final int red = ContextCompat.getColor(mParentFragmentActivity,
                         R.color.win8_red);
                 //Orange
-                final int orangeFinishedStrokeColor = ContextCompat.getColor(mParentFragmentActivity,
+                final int orange = ContextCompat.getColor(mParentFragmentActivity,
                         R.color.win8_orange);
 
-                if (memUsagePercent != null) {
-                    final int usage = memUsagePercent.intValue();
+                try {
+                    final String memUsedStr = data.getProperty(NVRAMInfo.MEMORY_USED_PERCENT);
+                    final int memUsed = Integer.parseInt(memUsedStr);
 
                     //Update colors as per the usage
                     //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
-                    if (usage >= 80) {
-                        final int finishedStrokeColor;
-                        if (usage >= 95) {
-                            //Red
-                            mMemArcProgress.setFinishedStrokeColor(
-                                    redFinishedStrokeColor);
-                        } else {
-                            //Orange
-                            mMemArcProgress.setFinishedStrokeColor(
-                                    orangeFinishedStrokeColor);
-                        }
-
+                    if (memUsed >= 95) {
+                        //Red
+                        mMemArcProgress.setFinishedStrokeColor(
+                                red);
+                    } else if (memUsed >= 80) {
+                        //Orange
+                        mMemArcProgress.setFinishedStrokeColor(
+                                orange);
                     }
+                    mMemArcProgress.setProgress(memUsed);
 
-                    mMemArcProgress.setProgress(usage);
+                } catch (final NumberFormatException e) {
+                    mMemArcProgress.setVisibility(View.GONE);
+                }
+
+                try {
+                    final String cpuUsedStr = data.getProperty(NVRAMInfo.CPU_USED_PERCENT);
+                    final int cpuUsed = Integer.parseInt(cpuUsedStr);
+
+                    //Update colors as per the usage
+                    //TODO Make these thresholds user-configurable (and perhaps display notifications if needed - cf. g service task)
+                    if (cpuUsed >= 95) {
+                        //Red
+                        mCpuArcProgress.setFinishedStrokeColor(
+                                red);
+                    } else if (cpuUsed >= 80) {
+                        //Orange
+                        mCpuArcProgress.setFinishedStrokeColor(
+                                orange);
+                    }
+                    mCpuArcProgress.setProgress(cpuUsed);
+
+                } catch (final NumberFormatException e) {
+                    mCpuArcProgress.setVisibility(View.GONE);
                 }
 
                 //Update last sync

@@ -64,6 +64,10 @@ public class NVRAMInfo extends RouterData<Properties> implements Serializable {
     public static final String MEMORY_ACTIVE_PERCENT = MEMORY_ACTIVE + "_percent";
     public static final String MEMORY_INACTIVE = "memory_inactive";
     public static final String MEMORY_INACTIVE_PERCENT = MEMORY_INACTIVE + "_percent";
+    public static final String NVRAM_USED_PERCENT = "nvram_used_percent";
+    public static final String CPU_USED_PERCENT = "cpu_used_percent";
+    public static final String STORAGE_JFFS2_USED_PERCENT = "storage_jffs2_used_percent";
+    public static final String STORAGE_CIFS_USED_PERCENT = "storage_cifs_used_percent";
     public static final String WAN_PROTO = "wan_proto";
     public static final String WAN_HWADDR = "wan_hwaddr";
     public static final String WAN_LEASE = "wan_lease";

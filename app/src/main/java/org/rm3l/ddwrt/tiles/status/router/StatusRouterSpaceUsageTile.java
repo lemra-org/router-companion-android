@@ -31,12 +31,14 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.R;
@@ -54,6 +56,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.rm3l.ddwrt.tiles.dashboard.system.StorageUsageTile.SPACE_SPLITTER;
 
 /**
  *
@@ -128,7 +132,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                                 mGlobalPreferences, "/usr/sbin/nvram show 2>&1 1>/dev/null", "/bin/cat /proc/mounts");
                     }
 
-                    updateProgressBarViewSeparator(50);
+                    updateProgressBarViewSeparator(20);
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "catProcMounts: " + Arrays.toString(catProcMounts));
                     String cifsMountPoint = null;
@@ -194,7 +198,7 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
-                    updateProgressBarViewSeparator(65);
+                    updateProgressBarViewSeparator(30);
 
                     for (final String itemToDf : itemsToDf) {
                         final String[] itemToDfResult;
@@ -233,6 +237,129 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         }
                     }
 
+                    //Compute space as well
+
+                    final String[] nvramSize;
+                    if (Utils.isDemoRouter(mRouter)) {
+                        nvramSize = new String[1];
+                        nvramSize[0] = "size: 21157 bytes (44379 left)";
+                    } else {
+                        nvramSize = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                mRouter,
+                                mGlobalPreferences,
+                                "/usr/sbin/nvram show 2>&1 1>/dev/null | grep \"size: \"");
+                    }
+
+                    updateProgressBarViewSeparator(40);
+                    final String[] jffs2Size;
+                    if (Utils.isDemoRouter(mRouter)) {
+                        jffs2Size = new String[1];
+                        jffs2Size[0] = (nbRunsLoader % 3 == 0 ?
+                                "" :
+                                "/dev/mtdblock/5      jffs2          100123M      40000M     120000   30% /jffs");
+                    } else {
+                        jffs2Size = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                mRouter,
+                                mGlobalPreferences,
+                                "/bin/df -T | grep \"jffs2\"");
+                    }
+
+                    updateProgressBarViewSeparator(50);
+                    final String[] cifsSize;
+                    if (Utils.isDemoRouter(mRouter)) {
+                        cifsSize = new String[1];
+                        cifsSize[0] = (nbRunsLoader % 3 == 0 ?
+                                "" :
+                                "/dev/mtdblock/5      cifs          93800      2400     91300   50% /cifs");
+                    } else {
+                        cifsSize = SSHUtils.getManualProperty(mParentFragmentActivity,
+                                mRouter,
+                                mGlobalPreferences,
+                                "/bin/df -T | grep \"cifs\"");
+                    }
+
+                    updateProgressBarViewSeparator(60);
+
+                    if (nvramSize != null && nvramSize.length >= 1) {
+                        final String nvramSizeStr = nvramSize[0];
+                        if (nvramSizeStr != null && nvramSizeStr.startsWith("size:")) {
+                            final List<String> stringList = SPACE_SPLITTER.splitToList(nvramSizeStr);
+                            if (stringList.size() >= 5) {
+                                final String nvramTotalBytes = stringList.get(1);
+                                final String nvramLeftBytes = stringList.get(3).replace("(","");
+                                try {
+                                    final long nvramTotalBytesLong = Long.parseLong(nvramTotalBytes);
+                                    final long nvramLeftBytesLong = Long.parseLong(nvramLeftBytes);
+                                    final long nvramUsedBytesLong = nvramTotalBytesLong - nvramLeftBytesLong;
+                                    nvramInfo.setProperty(NVRAMInfo.NVRAM_USED_PERCENT,
+                                            Long.toString(
+                                                    Math.min(100, 100 * nvramUsedBytesLong / nvramTotalBytesLong)
+                                            ));
+                                } catch (final NumberFormatException e) {
+                                    e.printStackTrace();
+                                    Crashlytics.logException(e);
+                                }
+                            }
+                        }
+                    }
+                    updateProgressBarViewSeparator(70);
+
+                    if (jffs2Size != null && jffs2Size.length >= 1) {
+                        //We may have more than one mountpoint - so sum everything up
+                        long totalUsed = 0;
+                        long totalSize = 0;
+                        for (int i = 0; i < jffs2Size.length; i++) {
+                            final String jffs2SizeStr = jffs2Size[i];
+                            if (!Strings.isNullOrEmpty(jffs2SizeStr)) {
+                                final List<String> stringList = SPACE_SPLITTER.splitToList(jffs2SizeStr);
+                                if (stringList.size() >= 7) {
+                                    try {
+                                        totalSize += Long.parseLong(stringList.get(2));
+                                        totalUsed += Long.parseLong(stringList.get(3));
+                                    } catch (final NumberFormatException e) {
+                                        e.printStackTrace();
+                                        Crashlytics.logException(e);
+                                    }
+                                }
+                            }
+                            updateProgressBarViewSeparator(Math.min(80, 70 + 5 + i));
+                        }
+                        if (totalSize > 0) {
+                            nvramInfo.setProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT,
+                                    Long.toString(
+                                            Math.min(100, 100 * totalUsed / totalSize)
+                                    ));
+                        }
+                    }
+                    updateProgressBarViewSeparator(80);
+
+                    if (cifsSize != null && cifsSize.length >= 1) {
+                        //We may have more than one mountpoint - so sum everything up
+                        long totalUsed = 0;
+                        long totalSize = 0;
+                        for (int i = 0; i < cifsSize.length; i++) {
+                            final String cifsSizeStr = cifsSize[i];
+                            if (!Strings.isNullOrEmpty(cifsSizeStr)) {
+                                final List<String> stringList = SPACE_SPLITTER.splitToList(cifsSizeStr);
+                                if (stringList.size() >= 7) {
+                                    try {
+                                        totalSize += Long.parseLong(stringList.get(2));
+                                        totalUsed += Long.parseLong(stringList.get(3));
+                                    } catch (final NumberFormatException e) {
+                                        e.printStackTrace();
+                                        Crashlytics.logException(e);
+                                    }
+                                }
+                            }
+                            updateProgressBarViewSeparator(Math.min(87, 80 + i));
+                        }
+                        if (totalSize > 0) {
+                            nvramInfo.setProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT,
+                                    Long.toString(
+                                            Math.min(100, 100 * totalUsed / totalSize)
+                                    ));
+                        }
+                    }
                     updateProgressBarViewSeparator(90);
 
                     return nvramInfo;
@@ -311,13 +438,77 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                 final TextView nvramSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_nvram);
                 nvramSpaceView.setText(data.getProperty("nvram_space", "-"));
 
-                //NVRAM
+                //CIFS
                 final TextView cifsSpaceView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_cifs);
                 cifsSpaceView.setText(data.getProperty("cifs_space", "-"));
 
-                //NVRAM
+                //JFFS
                 final TextView jffsView = (TextView) this.layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2);
                 jffsView.setText(data.getProperty("jffs_space", "-"));
+
+                //Update usages as well
+                ProgressBar pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage);
+                TextView pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_nvram_usage_text);
+                try {
+                    final int propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.NVRAM_USED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
+
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_cifs_usage_text);
+                try {
+                    final int propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.STORAGE_CIFS_USED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
+
+                pb = (ProgressBar)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage);
+                pbText = (TextView)
+                        layout.findViewById(R.id.tile_status_router_router_space_usage_jffs2_usage_text);
+                try {
+                    final int propertyUtilization = Integer.parseInt(data.getProperty(NVRAMInfo.STORAGE_JFFS2_USED_PERCENT));
+                    if (propertyUtilization >= 0) {
+                        pb.setProgress(propertyUtilization);
+                        pbText.setText(propertyUtilization + "%");
+                        pb.setVisibility(View.VISIBLE);
+                        pbText.setVisibility(View.VISIBLE);
+                    } else {
+                        pb.setVisibility(View.GONE);
+                        pbText.setVisibility(View.GONE);
+                    }
+                } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
+                    pb.setVisibility(View.GONE);
+                    pbText.setVisibility(View.GONE);
+                }
 
                 //Update last sync
                 final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
