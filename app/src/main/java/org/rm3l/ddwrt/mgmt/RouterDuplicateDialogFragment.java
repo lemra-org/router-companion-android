@@ -34,9 +34,9 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SYNC_INTERVAL_MILLIS_PREF;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_MILLIS;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
 
 public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
 
@@ -59,7 +59,7 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
                 final SharedPreferences sharedPreferences = this.getActivity()
                         .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putLong(SYNC_INTERVAL_MILLIS_PREF, TILE_REFRESH_MILLIS);
+                editor.putLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, TILE_REFRESH_SECONDS);
                 editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
                 editor.apply();
             }

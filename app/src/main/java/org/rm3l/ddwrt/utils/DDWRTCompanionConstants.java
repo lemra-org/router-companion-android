@@ -38,7 +38,8 @@ public final class DDWRTCompanionConstants {
 
     public static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
 
-    public static final long TILE_REFRESH_MILLIS = 3600 * 1000l;
+    //Defaut ato-refresh interval: 5 minutes
+    public static final long TILE_REFRESH_SECONDS = 5 * 60l;
 
     public static final String AD_FREE_APP_APPLICATION_ID = BuildConfig.APPLICATION_ID
             .replaceAll(".free", "");
@@ -77,7 +78,7 @@ public final class DDWRTCompanionConstants {
 
     public static final String WAN_CYCLE_DAY_PREF = "wan_cycle_day";
 
-    public static final String SYNC_INTERVAL_MILLIS_PREF = "syncIntervalMillis";
+    public static final String AUTO_REFRESH_INTERVAL_SECONDS_PREF = "routerDataPullIntervalSeconds";
     public static final String SORTING_STRATEGY_PREF = "sortingStrategy";
     public static final String THEMING_PREF = "theming";
 

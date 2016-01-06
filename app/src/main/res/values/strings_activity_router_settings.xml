@@ -57,23 +57,31 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>Never. I will refresh manually</item>
         <item>Every 10 seconds</item>
         <item>Every 30 seconds</item>
+        <item>Every 1 minute</item>
         <item>Every 90 seconds</item>
         <item>Every 5 minutes</item>
         <item>Every 15 minutes</item>
         <item>Every 30 minutes</item>
-        <item>Hourly</item>
+        <item>Every 1 hour</item>
+        <item>Every 3 hours</item>
+        <item>Every 6 hours</item>
+        <item>Every 18 hours</item>
         <item>Daily</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
         <item>-1</item>
-        <item>10000</item>
-        <item>30000</item>
-        <item>90000</item>
-        <item>300000</item>
-        <item>900000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>86400000</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>90</item>
+        <item>300</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>64800</item>
+        <item>86400</item>
     </string-array>
 
     <string-array name="pref_notifications_sync_frequency_titles">

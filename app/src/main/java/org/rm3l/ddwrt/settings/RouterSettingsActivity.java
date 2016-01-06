@@ -36,6 +36,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
@@ -127,7 +128,7 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
-//            bindPreferenceSummaryToValue(findPreference(SYNC_INTERVAL_MILLIS_PREF));
+            bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_INTERVAL_SECONDS_PREF));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_ENABLE));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));
