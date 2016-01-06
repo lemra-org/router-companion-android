@@ -187,7 +187,7 @@ public class StorageUsageTile extends DDWRTTile<NVRAMInfo>  {
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            layout.findViewById(R.id.tile_dashboard_mem_cpu_loading_view)
+            layout.findViewById(R.id.tile_dashboard_storage_loading_view)
                     .setVisibility(View.GONE);
 //            mArcProgress.setVisibility(View.VISIBLE);
 
