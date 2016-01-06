@@ -284,8 +284,8 @@ public abstract class DDWRTTile<T>
         doneWithLoaderInstance(tile, loader,
                 this.mParentFragmentPreferences != null ?
                         this.mParentFragmentPreferences.
-                                getLong(DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1l) :
-                        -1l,
+                                getLong(DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1) * 1000 :
+                        -1,
                 additionalButtonsToMakeVisible);
 
         //No auto-refresh, now that user can refresh data manually
