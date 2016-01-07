@@ -84,6 +84,33 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>86400</item>
     </string-array>
 
+    <string-array name="routerSpeedTestMaxFileSize_titles">
+        <item>128 KB</item>
+        <item>256 KB</item>
+        <item>512 KB</item>
+        <item>1 MB</item>
+        <item>2 MB</item>
+        <item>4 MB</item>
+        <item>8 MB</item>
+        <item>16 MB</item>
+        <item>32 MB</item>
+        <item>64 MB</item>
+        <item>128 MB</item>
+    </string-array>
+    <string-array name="routerSpeedTestMaxFileSize_values">
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
+        <item>16384</item>
+        <item>32768</item>
+        <item>65536</item>
+        <item>131072</item>
+    </string-array>
+
     <string-array name="pref_notifications_sync_frequency_titles">
         <item>Every 5 minutes</item>
         <item>Every 15 minutes</item>

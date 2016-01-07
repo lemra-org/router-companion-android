@@ -56,7 +56,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </PreferenceCategory>
 
     <!-- Data & Sync -->
-    <!-- Meaningless now that we have the ability to refresh manually -->
     <PreferenceCategory
         android:key="@string/pref_header_data_sync"
         android:title="Data &amp; Sync">
@@ -89,6 +88,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </PreferenceCategory>
 
+    <!-- Speed Test -->
+    <PreferenceCategory
+        android:key="@string/pref_header_data_sync"
+        android:title="Speed Test">
+
+        <org.rm3l.ddwrt.widgets.LongListPreference
+            android:defaultValue="131072"
+            android:entries="@array/routerSpeedTestMaxFileSize_titles"
+            android:entryValues="@array/routerSpeedTestMaxFileSize_values"
+            android:key="routerSpeedTestMaxFileSizeKB"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Max. size of sample data" />
+
+        <EditTextPreference
+            android:defaultValue="8"
+            android:key="routerSpeedTestDurationThresholdSeconds"
+            android:title="Data transfer duration threshold (in seconds)"
+            android:summary="Test continues with next sample data size until transfer duration exceeds this"/>
+
+    </PreferenceCategory>
 
     <!-- Notifications -->
     <PreferenceCategory

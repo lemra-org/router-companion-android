@@ -39,6 +39,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.SORTING_STRATEGY_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
 
@@ -140,6 +142,9 @@ public class RouterSettingsActivity extends AbstractDDWRTSettingsActivity {
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_OPENVPNCLIENT_SYNC_INTERVAL_MINUTES_PREF));
 
             bindPreferenceSummaryToValue(findPreference(WAN_CYCLE_DAY_PREF));
+
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB));
+            bindPreferenceSummaryToValue(findPreference(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS));
         }
 
     }
