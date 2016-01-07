@@ -785,9 +785,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
 
-        this.mLoaderIdsInUse = Maps.newHashMap();
-
-        final FragmentActivity activity = getActivity();
+        this.mLoaderIdsInUse = Maps.newConcurrentMap();
 
         this.router = RouterManagementActivity.getDao(this.getActivity()).getRouter(getArguments().getString(ROUTER_CONNECTION_INFO));
         Crashlytics.log(Log.DEBUG, LOG_TAG, "onCreate() loaderIdsInUse: " + mLoaderIdsInUse);
