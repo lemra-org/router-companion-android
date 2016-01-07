@@ -120,25 +120,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--<LinearLayout-->
-                <!--android:id="@+id/tile_status_router_router_mem_grid_layout"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:visibility="gone">-->
-
-                <!--<com.github.lzyzsd.circleprogress.ArcProgress-->
-                    <!--android:id="@+id/tile_status_router_router_mem_arcprogress"-->
-                    <!--android:background="@android:color/transparent"-->
-                    <!--android:layout_weight="0.5"-->
-                    <!--android:layout_width="100dp"-->
-                    <!--android:layout_height="100dp"-->
-                    <!--custom:arc_unfinished_color="@color/arcprogress_unfinished"-->
-                    <!--custom:arc_finished_color="@color/arcprogress_finished"-->
-                    <!--custom:arc_max="100"-->
-                    <!--custom:arc_progress="0"-->
-                    <!--custom:arc_bottom_text="Usage"/>-->
-
                 <LinearLayout
                     android:id="@+id/tile_status_router_router_mem_content"
                     android:layout_marginLeft="10dp"
@@ -179,18 +160,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_free"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
+                            android:layout_weight="1"
                             android:text="@string/loading" />
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_free_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -226,18 +209,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_used"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
+                            android:layout_weight="1"
                             android:text="@string/loading" />
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_used_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -273,18 +258,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_buffers"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
+                            android:layout_weight="1"
                             android:text="@string/loading" />
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_buffers_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -320,18 +307,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_cached"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
+                            android:layout_weight="1"
                             android:text="@string/loading" />
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_cached_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -367,18 +356,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_active"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
-                            android:text="@string/loading" />
+                            android:text="@string/loading"
+                            android:layout_weight="1"/>
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_active_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -414,18 +405,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/tile_status_router_router_mem_inactive"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
                             android:ellipsize="end"
                             android:gravity="start"
                             android:singleLine="false"
-                            android:text="@string/loading" />
+                            android:text="@string/loading"
+                            android:layout_weight="1"/>
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp">
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1">
                             <ProgressBar
                                 android:id="@+id/tile_status_router_router_mem_inactive_usage"
                                 style="?android:attr/progressBarStyleHorizontal"
@@ -447,72 +440,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     </LinearLayout>
 
-                </LinearLayout>
-
-            <!--</LinearLayout>-->
-
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<GridLayout-->
-                <!--android:id="@+id/tile_status_router_router_mem_grid_layout"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:columnCount="3"-->
-                <!--android:visibility="gone">-->
-
-                <!--&lt;!&ndash; Free &ndash;&gt;-->
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="@string/router_mem_free"-->
-                    <!--android:textStyle="bold" />-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:layout_marginLeft="8.0dip"-->
-                    <!--android:layout_marginRight="8.0dip"-->
-                    <!--android:text="@string/one_space" />-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/tile_status_router_router_mem_free"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="start"-->
-                    <!--android:ellipsize="end"-->
-                    <!--android:gravity="start"-->
-                    <!--android:singleLine="false"-->
-                    <!--android:text="@string/loading" />-->
-
-                <!--&lt;!&ndash; Used &ndash;&gt;-->
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="@string/router_mem_used"-->
-                    <!--android:textStyle="bold" />-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:layout_marginLeft="8.0dip"-->
-                    <!--android:layout_marginRight="8.0dip"-->
-                    <!--android:text="@string/one_space" />-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/tile_status_router_router_mem_used"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="start"-->
-                    <!--android:ellipsize="end"-->
-                    <!--android:gravity="start"-->
-                    <!--android:singleLine="false"-->
-                    <!--android:text="@string/loading" />-->
-
-            <!--</GridLayout>-->
+            </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/tile_status_router_router_mem_loading_view"
