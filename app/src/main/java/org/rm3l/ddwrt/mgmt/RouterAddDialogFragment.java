@@ -77,7 +77,10 @@ public class RouterAddDialogFragment extends AbstractRouterMgmtDialogFragment {
                 editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
                 editor.apply();
             }
-            Crouton.makeText(getActivity(), "Item added", Style.CONFIRM).show();
+//            Crouton.makeText(getActivity(), "Item added", Style.CONFIRM).show();
+        } else {
+            Crouton.makeText(getActivity(), "Error while trying to add item - please try again later.",
+                    Style.ALERT).show();
         }
     }
 

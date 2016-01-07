@@ -698,13 +698,13 @@ public class RouterListRecycleViewAdapter extends
                                         openAddRouterForm();
                                     }
 
-                                    if (context instanceof Activity) {
-                                        Crouton.makeText((Activity) context,
-                                                "Record deleted", Style.CONFIRM).show();
-                                    } else {
-                                        Toast.makeText(context, "Record deleted", Toast.LENGTH_SHORT)
-                                                .show();
-                                    }
+//                                    if (context instanceof Activity) {
+//                                        Crouton.makeText((Activity) context,
+//                                                "Record deleted", Style.CONFIRM).show();
+//                                    } else {
+//                                        Toast.makeText(context, "Record deleted", Toast.LENGTH_SHORT)
+//                                                .show();
+//                                    }
 
                                     //Request Backup
                                     Utils.requestBackup(context);

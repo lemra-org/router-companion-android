@@ -26,10 +26,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.prefs.sort.SortingStrategy;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.Utils;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -56,14 +58,22 @@ public class RouterDuplicateDialogFragment extends RouterUpdateDialogFragment {
         if (!error) {
             if (router != null) {
                 //Add default preferences values
-                final SharedPreferences sharedPreferences = this.getActivity()
+                final FragmentActivity activity = this.getActivity();
+
+                final SharedPreferences sharedPreferences = activity
                         .getSharedPreferences(router.getUuid(), Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putLong(AUTO_REFRESH_INTERVAL_SECONDS_PREF, TILE_REFRESH_SECONDS);
                 editor.putString(SORTING_STRATEGY_PREF, SortingStrategy.DEFAULT);
                 editor.apply();
+
+                //Request Backup
+                Utils.requestBackup(activity);
             }
-            Crouton.makeText(getActivity(), "Item copied as new", Style.CONFIRM).show();
+//            Crouton.makeText(getActivity(), "Item copied as new", Style.CONFIRM).show();
+        } else {
+            Crouton.makeText(getActivity(), "Error while trying to copy item - please try again later.",
+                    Style.ALERT).show();
         }
     }
 

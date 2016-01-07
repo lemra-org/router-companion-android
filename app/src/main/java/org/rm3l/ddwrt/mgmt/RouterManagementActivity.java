@@ -873,8 +873,10 @@ public class RouterManagementActivity
     @Override
     public void onRouterUpdated(DialogFragment dialog, int position, Router router, boolean error) {
         if (!error) {
+            //Refresh everything, as the order actually should remain the same
             //Always added to the top
-            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
+//            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.UPDATED, position);
+            doRefreshRoutersListWithSpinner(RoutersListRefreshCause.DATA_SET_CHANGED, position);
             mLayoutManager.scrollToPosition(position);
             //Request Backup
             Utils.requestBackup(this);

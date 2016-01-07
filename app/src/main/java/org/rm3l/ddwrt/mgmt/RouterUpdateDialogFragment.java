@@ -74,11 +74,17 @@ public class RouterUpdateDialogFragment extends AbstractRouterMgmtDialogFragment
     @Override
     protected void onPositiveButtonActionSuccess(@NonNull RouterMgmtDialogListener mListener, @Nullable Router router, boolean error) {
         final int position = (router != null ? router.getId() : -1);
-        if (position >= 0) {
-            mListener.onRouterUpdated(this, position, router, error);
-        }
-        if (!error) {
-            Crouton.makeText(getActivity(), "Item updated", Style.CONFIRM).show();
+
+        mListener.onRouterUpdated(this, position, router, error);
+
+        final FragmentActivity activity = getActivity();
+
+        if (error) {
+            Crouton.makeText(activity, "Error while trying to update item - please try again later.",
+                    Style.ALERT).show();
+        } else {
+            //Request Backup
+            Utils.requestBackup(activity);
         }
     }
 
