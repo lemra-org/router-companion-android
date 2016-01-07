@@ -1011,8 +1011,6 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
 
         mSwipeRefreshLayout.setEnabled(isSwipeRefreshLayoutEnabled());
 
-        initLoaders();
-
         return mSwipeRefreshLayout;
     }
 
@@ -1070,6 +1068,19 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         }
         mLoaderIdsInUse.clear();
     }
+    
+    @Override
+    public void onResume() {
+        initLoaders();
+        super.onResume();
+    }
+    
+    @Override
+    public void onPause() {
+        stopLoaders();
+        super.onPause();
+    }
+    
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //save the loader ids on file
@@ -1079,11 +1090,13 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         super.onSaveInstanceState(outState);
     }
 
+    /*
     @Override
     public void onDestroy() {
         stopLoaders();
         super.onDestroy();
     }
+    */
 
     @Override
     public void onDestroyView() {
