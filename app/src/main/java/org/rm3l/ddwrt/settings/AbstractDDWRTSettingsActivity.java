@@ -104,8 +104,10 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         if (toolbar != null) {
+            final String toolbarTitle = getToolbarTitle();
+            toolbar.setTitle(Strings.isNullOrEmpty(toolbarTitle) ?
+                    SETTINGS : toolbarTitle);
             final String subTitle = this.getToolbarSubtitle();
-            toolbar.setTitle(SETTINGS);
             toolbar.setSubtitle(Strings.nullToEmpty(subTitle));
             toolbar.setTitleTextAppearance(getApplicationContext(),
                     R.style.ToolbarTitle);
@@ -152,6 +154,11 @@ public abstract class AbstractDDWRTSettingsActivity extends AppCompatActivity {
     @Nullable
     protected String getToolbarSubtitle() {
         return null;
+    }
+
+    @NonNull
+    protected String getToolbarTitle() {
+        return SETTINGS;
     }
 
     private static class PrefChangeListener implements Preference.OnPreferenceChangeListener {

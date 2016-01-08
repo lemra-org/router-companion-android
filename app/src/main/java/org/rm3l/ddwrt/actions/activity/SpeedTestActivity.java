@@ -32,6 +32,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.settings.RouterSpeedTestSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -428,6 +429,15 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                         this,
                         null,
                         true);
+                return true;
+
+            case R.id.router_speedtest_settings:
+                //Open Settings activity
+                final Intent settingsActivity = new Intent(this,
+                        RouterSpeedTestSettingsActivity.class);
+                settingsActivity.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                        mRouter.getUuid());
+                this.startActivity(settingsActivity);
                 return true;
 
             default:
