@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
+import com.squareup.picasso.Callback;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
@@ -35,6 +37,8 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.settings.RouterSpeedTestSettingsActivity;
 import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.ImageUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -43,12 +47,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION;
 
 /**
  * TODO
  * Created by rm3l on 20/12/15.
  */
-public class SpeedTestActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, SnackbarCallback {
+public class SpeedTestActivity extends AppCompatActivity
+        implements SwipeRefreshLayout.OnRefreshListener, SnackbarCallback {
 
     private static final String LOG_TAG = SpeedTestActivity
             .class.getSimpleName();
@@ -76,6 +84,14 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
     private TextView mSpeedtestWifiEfficiencyTitle;
 
     private TextView[] mTitleTextViews;
+
+    private View mServerContainer;
+    private ImageView mServerCountryFlag;
+    private TextView mServerLabel;
+
+    private boolean mWithCurrentConnectionTesting;
+
+    private SharedPreferences mRouterPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +124,8 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
             finish();
             return;
         }
+
+        mRouterPreferences = getSharedPreferences(routerSelected, Context.MODE_PRIVATE);
 
         this.mMessageReceiver = new NetworkChangeReceiver();
 
@@ -157,7 +175,19 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                 mSpeedtestWifiSpeedTitle,
                 mSpeedtestWifiEfficiencyTitle};
 
+        mServerContainer = findViewById(R.id.speedtest_server_container);
+        mServerCountryFlag =
+                (ImageView) findViewById(R.id.speedtest_server_country_flag);
+        mServerLabel =
+                (TextView) findViewById(R.id.speedtest_server);
+
         doPerformSpeedTest();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        refreshSpeedTestParameters();
     }
 
     @Override
@@ -241,12 +271,88 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
         }
     }
 
+    private void refreshServerLocationFlag(final String countryCode) {
+        ImageUtils.downloadImageFromUrl(this,
+                String.format("%s/%s.png",
+                        DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
+                        countryCode),
+                mServerCountryFlag,
+                null,
+                null,
+                new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mServerCountryFlag.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mServerCountryFlag.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void refreshSpeedTestParameters() {
+        final String serverSetting = mRouterPreferences.getString(
+                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
+        final String routerText;
+        switch (serverSetting) {
+            case ROUTER_SPEED_TEST_SERVER_AUTO:
+                routerText = "Auto-detected";
+                break;
+            case "DE":
+                routerText = "Frankfurt (Germany)";
+                break;
+            case "US":
+                routerText = "California (USA)";
+                break;
+            case "BR":
+                routerText = "Sao Paulo (Brazil)";
+                break;
+            case "KR":
+                routerText = "Seoul (South Korea)";
+                break;
+            case "JP":
+                routerText = "Tokyo (Japan)";
+                break;
+            case "AU":
+                routerText = "Sydney (Australia)";
+                break;
+            default:
+                routerText = serverSetting;
+                break;
+        }
+        mServerLabel.setText(routerText);
+        if (!ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
+            //Load flag in the background
+            refreshServerLocationFlag(serverSetting);
+        } else {
+            mServerCountryFlag.setVisibility(View.GONE);
+        }
+
+        mWithCurrentConnectionTesting =
+                mRouterPreferences.getBoolean(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION, true);
+
+        final View devices = findViewById(R.id.speedtest_connection_devices);
+        final View connectionLink = findViewById(R.id.speedtest_connection_link);
+
+        if (mWithCurrentConnectionTesting) {
+            connectionLink.setVisibility(View.VISIBLE);
+            devices.setVisibility(View.VISIBLE);
+        } else {
+            connectionLink.setVisibility(View.GONE);
+            devices.setVisibility(View.GONE);
+        }
+    }
+
     private void doPerformSpeedTest() {
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
         mSwipeRefreshLayout.setEnabled(false);
         setRefreshActionButtonState(true);
+
+        refreshSpeedTestParameters();
 
         final TextView errorPlaceholder =
                 (TextView) findViewById(R.id.router_speedtest_error);
@@ -318,7 +424,7 @@ public class SpeedTestActivity extends AppCompatActivity implements SwipeRefresh
                                             //FIXME Perform this test only if device is connected to a local network provided by the Router
                                             //4
                                             noticeTextView
-                                                    .setText("4/4 - Measuring WiFi Speed and Efficiency...");
+                                                    .setText("4/4 - Measuring Connection Speed...");
                                             final int lanColor = ColorUtils.getColor(NET_WIFI);
                                             routerLanLink.setBackgroundColor(lanColor);
                                             highlightTitleTextView(mSpeedtestWifiSpeedTitle,

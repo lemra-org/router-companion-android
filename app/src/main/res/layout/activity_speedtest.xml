@@ -66,6 +66,48 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:background="@color/DarkRed"
             android:visibility="gone"/>
 
+        <LinearLayout
+            android:id="@+id/speedtest_server_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="start"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="true"
+                android:text="Test Server"
+                android:textStyle="bold"
+                android:textAppearance="?android:textAppearanceMedium"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/speedtest_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:text="Auto-detected"/>
+
+                <ImageView
+                    android:id="@+id/speedtest_server_country_flag"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="visible"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
@@ -229,6 +271,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="center_horizontal" />
 
                     <RelativeLayout
+                        android:id="@+id/speedtest_connection_link"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal">
@@ -285,11 +328,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/wifi_efficiency"
                                 android:id="@+id/speedtest_wifi_efficiency_title"
-                                android:layout_marginTop="15dp"/>
+                                android:layout_marginTop="15dp"
+                                android:visibility="gone"/>
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -313,6 +358,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     </RelativeLayout>
 
                     <ImageView
+                        android:id="@+id/speedtest_connection_devices"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_gravity="center_horizontal"

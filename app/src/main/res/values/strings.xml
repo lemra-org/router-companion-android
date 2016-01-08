@@ -524,9 +524,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="internet_dl_speed">WAN Download Speed</string>
     <string name="internet_ul_speed">WAN Upload Speed</string>
     <!-- Wifi Speed: xxx Mbps (Efficiency: yyy% = 100 * WiFi_DL_Speed/WAN_DL_Speed)-->
-    <string name="link_speed">WiFi Speed</string>
-    <string name="wifi_speed">WiFi Speed</string>
-    <string name="wifi_efficiency">WiFi Efficiency</string>
+    <string name="link_speed">Connection Speed</string>
+    <string name="wifi_speed">Connection Speed</string>
+    <string name="wifi_efficiency">Connection Efficiency</string>
     <string name="latency">WAN Latency</string>
 
     <string name="dashboard">Dashboard</string>

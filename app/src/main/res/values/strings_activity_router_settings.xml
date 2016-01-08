@@ -186,4 +186,23 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string name="speed_test_router_settings">Speed Test Settings</string>
 
+    <string-array name="speedtest_servers_titles">
+        <item>Auto</item>
+        <item>Frankfurt (Germany)</item>
+        <item>California (USA)</item>
+        <item>Sao Paulo (Brazil)</item>
+        <item>Seoul (South Korea)</item>
+        <item>Tokyo (Japan)</item>
+        <item>Sydney (Australia)</item>
+    </string-array>
+    <string-array name="speedtest_servers_values">
+        <item>_auto_</item>
+        <item>DE</item>
+        <item>US</item>
+        <item>BR</item>
+        <item>KR</item>
+        <item>JP</item>
+        <item>AU</item>
+    </string-array>
+
 </resources>
