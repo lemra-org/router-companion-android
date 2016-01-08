@@ -184,4 +184,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>PublicIPChangesServiceTask</item>
     </string-array>
 
+    <string name="speed_test_router_settings">Speed Test Settings</string>
+
 </resources>

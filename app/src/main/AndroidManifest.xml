@@ -432,6 +432,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </activity>
 
         <activity
+            android:name=".settings.RouterSpeedTestSettingsActivity"
+            android:label="@string/speed_test_router_settings"
+            android:parentActivityName=".actions.activity.SpeedTestActivity"
+            android:windowSoftInputMode="adjustResize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".actions.activity.SpeedTestActivity" />
+        </activity>
+
+        <activity
             android:name=".tiles.dashboard.network.IPGeoActivity"
             android:label="Speed Test"
             android:parentActivityName=".main.DDWRTMainActivity"
