@@ -247,7 +247,14 @@ public class SpeedTestActivity extends AppCompatActivity
 
         mCancelFab = (FloatingActionButton)
                 findViewById(R.id.speedtest_cancel);
-        //TODO Set onClickListener for cancel button - should cancel the task
+        mCancelFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSpeedTestAsyncTask != null && !mSpeedTestAsyncTask.isCancelled()) {
+                    mSpeedTestAsyncTask.cancel(true);
+                }
+            }
+        });
 
         doPerformSpeedTest();
     }
@@ -363,9 +370,15 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private void refreshSpeedTestParameters(final String serverSetting) {
         final String routerText;
+        boolean doUpdateServerTextLabel = true;
         switch (serverSetting) {
             case ROUTER_SPEED_TEST_SERVER_AUTO:
                 routerText = "Auto-detected";
+                final String serverLabelStr = mServerLabel.getText().toString();
+                if (!(isNullOrEmpty(serverLabelStr)
+                    || routerText.equals(serverLabelStr))) {
+                    doUpdateServerTextLabel = false;
+                }
                 break;
             case "DE":
                 routerText = "Frankfurt (Germany)";
@@ -389,7 +402,9 @@ public class SpeedTestActivity extends AppCompatActivity
                 routerText = serverSetting;
                 break;
         }
-        mServerLabel.setText(routerText);
+        if (doUpdateServerTextLabel) {
+            mServerLabel.setText(routerText);
+        }
         if (!ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
             //Load flag in the background
             refreshServerLocationFlag(serverSetting);
@@ -440,6 +455,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mCancelFab.setVisibility(View.VISIBLE);
                             resetEverything(false);
                             findViewById(R.id.speedtest_latency_pb_internet)
                                     .setVisibility(View.VISIBLE);
