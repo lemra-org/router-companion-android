@@ -28,13 +28,22 @@ import android.support.annotation.Nullable;
 
 public class PingFromRouterAction extends ExecStreamableCommandRouterAction {
 
-    private static final int MAX_PING_PACKETS_TO_SEND = 5;
+    public static final int MAX_PING_PACKETS_TO_SEND = 5;
+    public static final String PING_CMD_TO_FORMAT = "/bin/ping -c %d %s 2>&1";
 
     public PingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
                                 @NonNull final SharedPreferences globalSharedPreferences,
                                 @NonNull final String hostToPing) {
+        this(context, listener, globalSharedPreferences, hostToPing, MAX_PING_PACKETS_TO_SEND);
+    }
+
+    public PingFromRouterAction(@NonNull Context context, @Nullable RouterStreamActionListener listener,
+                                @NonNull final SharedPreferences globalSharedPreferences,
+                                @NonNull final String hostToPing,
+                                @Nullable  final Integer packetsCount) {
         super(RouterAction.PING, context, listener, globalSharedPreferences,
-                String.format("/bin/ping -c %d %s 2>&1", MAX_PING_PACKETS_TO_SEND, hostToPing));
+                String.format(PING_CMD_TO_FORMAT, (packetsCount == null || packetsCount <=0) ?
+                        MAX_PING_PACKETS_TO_SEND : packetsCount, hostToPing));
     }
 
 }

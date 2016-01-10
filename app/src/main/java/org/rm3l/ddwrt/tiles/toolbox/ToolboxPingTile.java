@@ -25,6 +25,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.EditText;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
@@ -35,6 +39,8 @@ public class ToolboxPingTile extends AbstractToolboxTile {
 
     public ToolboxPingTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router);
+        layout.findViewById(R.id.tile_toolbox_abstract_ping_packets_inputlayout)
+                .setVisibility(View.VISIBLE);
     }
 
     @Nullable
@@ -56,7 +62,18 @@ public class ToolboxPingTile extends AbstractToolboxTile {
     @NonNull
     @Override
     protected AbstractRouterAction getRouterAction(String textToFind) {
-        return new PingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences, textToFind);
+        final String packetCountStr = ((EditText) layout.findViewById(R.id.tile_toolbox_abstract_ping_packets))
+                .getText().toString();
+        Integer packetCount = null;
+        try {
+            packetCount = Integer.parseInt(packetCountStr);
+        } catch (final Exception e) {
+            Crashlytics.logException(e);
+            //No worries
+        }
+
+        return new PingFromRouterAction(mParentFragmentActivity, mRouterActionListener, mGlobalPreferences,
+                textToFind, packetCount);
     }
 
     @Override

@@ -109,11 +109,11 @@ public abstract class AbstractRouterAction<T> extends
     @NonNull
     protected abstract RouterActionResult<T> doActionInBackground(@NonNull final Router router);
 
-    protected static class RouterActionResult<T> {
+    public static class RouterActionResult<T> {
         private final T result;
         private final Exception exception;
 
-        protected RouterActionResult(T result, Exception exception) {
+        public RouterActionResult(T result, Exception exception) {
             this.result = result;
             this.exception = exception;
         }
