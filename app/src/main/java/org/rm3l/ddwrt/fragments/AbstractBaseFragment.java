@@ -1024,6 +1024,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     private void initLoaders() {
+        if (!mLoaderIdsInUse.isEmpty()) {
+            stopLoaders();
+        }
         // initiate the loaders to do the background work
         final LoaderManager loaderManager = getLoaderManager();
 

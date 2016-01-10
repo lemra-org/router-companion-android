@@ -63,7 +63,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SER
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION;
 
 /**
- * TODO
  * Created by rm3l on 20/12/15.
  */
 public class SpeedTestActivity extends AppCompatActivity
@@ -80,7 +79,6 @@ public class SpeedTestActivity extends AppCompatActivity
     private static final int PING_LATENCY_MEASURED = 3;
     public static final Splitter EQUAL_SPLITTER = Splitter.on("=").omitEmptyStrings().trimResults();
     public static final Splitter SLASH_SPLITTER = Splitter.on("/").omitEmptyStrings().trimResults();
-//    private Handler mHandler;
 
     private boolean mIsThemeLight;
     private Router mRouter;
