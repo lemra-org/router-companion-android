@@ -455,8 +455,8 @@ public class SpeedTestActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mCancelFab.setVisibility(View.VISIBLE);
                             resetEverything(false);
+                            mCancelFab.setVisibility(View.VISIBLE);
                             findViewById(R.id.speedtest_latency_pb_internet)
                                     .setVisibility(View.VISIBLE);
                             findViewById(R.id.speedtest_dl_pb_internet)
