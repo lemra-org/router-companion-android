@@ -79,6 +79,7 @@ public class SpeedTestActivity extends AppCompatActivity
     private static final int PING_LATENCY_MEASURED = 3;
     public static final Splitter EQUAL_SPLITTER = Splitter.on("=").omitEmptyStrings().trimResults();
     public static final Splitter SLASH_SPLITTER = Splitter.on("/").omitEmptyStrings().trimResults();
+    public static final String AUTO_DETECTED = "Auto-detected";
 
     private boolean mIsThemeLight;
     private Router mRouter;
@@ -373,7 +374,7 @@ public class SpeedTestActivity extends AppCompatActivity
         boolean doUpdateServerTextLabel = true;
         switch (serverSetting) {
             case ROUTER_SPEED_TEST_SERVER_AUTO:
-                routerText = "Auto-detected";
+                routerText = AUTO_DETECTED;
                 final String serverLabelStr = mServerLabel.getText().toString();
                 if (!(isNullOrEmpty(serverLabelStr)
                     || routerText.equals(serverLabelStr))) {
@@ -405,7 +406,7 @@ public class SpeedTestActivity extends AppCompatActivity
         if (doUpdateServerTextLabel) {
             mServerLabel.setText(routerText);
         }
-        if (!ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
+        if (!AUTO_DETECTED.equalsIgnoreCase(routerText)) {
             //Load flag in the background
             refreshServerLocationFlag(serverSetting);
         } else {
