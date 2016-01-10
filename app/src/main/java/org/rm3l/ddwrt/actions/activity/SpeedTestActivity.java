@@ -31,10 +31,12 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.squareup.picasso.Callback;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.PingFromRouterAction;
@@ -53,7 +55,7 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
@@ -76,6 +78,8 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final int SELECT_SERVER = 1;
     private static final int MEASURE_PING_LATENCY = 2;
     private static final int PING_LATENCY_MEASURED = 3;
+    public static final Splitter EQUAL_SPLITTER = Splitter.on("=").omitEmptyStrings().trimResults();
+    public static final Splitter SLASH_SPLITTER = Splitter.on("/").omitEmptyStrings().trimResults();
 //    private Handler mHandler;
 
     private boolean mIsThemeLight;
@@ -140,6 +144,7 @@ public class SpeedTestActivity extends AppCompatActivity
     private View internetRouterLink;
     private View routerLanLink;
     private int defaultColorForPaths;
+    private TextView errorPlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,7 +234,7 @@ public class SpeedTestActivity extends AppCompatActivity
         mServerLabel =
                 (TextView) findViewById(R.id.speedtest_server);
 
-        final TextView errorPlaceholder =
+        errorPlaceholder =
                 (TextView) findViewById(R.id.router_speedtest_error);
         errorPlaceholder.setVisibility(View.GONE);
 
@@ -437,7 +442,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            resetEverything();
+                            resetEverything(false);
                             findViewById(R.id.speedtest_latency_pb_internet)
                                     .setVisibility(View.VISIBLE);
                             findViewById(R.id.speedtest_dl_pb_internet)
@@ -455,20 +460,48 @@ public class SpeedTestActivity extends AppCompatActivity
                     publishProgress(SELECT_SERVER);
                     final String serverSetting = mRouterPreferences.getString(
                             ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
-                    final String server;
+
+                    String server = null;
                     if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
-                        //FIXME Iterate over each server to determine the closest one, in terms of ping latency
-                        //Begin TEST: For now, randomly select one
-                        final String[] servers = new String[]{"DE", "US", "BR", "KR", "JP", "AU"};
-                        final String selectedServer = servers[new Random().nextInt(servers.length)];
-                        server = SERVERS.get(selectedServer, PING_SERVER);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshSpeedTestParameters(selectedServer);
+                        // Iterate over each server to determine the closest one,
+                        // in terms of ping latency
+                        float minLatency = Float.MAX_VALUE;
+                        String serverCountry = null;
+                        for (final Map.Entry<String, Map<String, String>> entry :
+                                SERVERS.rowMap().entrySet()) {
+                            final String country = entry.getKey();
+                            final Map<String, String> value = entry.getValue();
+                            final String pingServer = value.get(PING_SERVER);
+                            if (isNullOrEmpty(pingServer)) {
+                                continue;
                             }
-                        });
-                        //End TEST
+                            final PingRTT pingRTT;
+                            try {
+                                pingRTT = runPing(pingServer);
+                            } catch (final Exception e) {
+                                Crashlytics.logException(e);
+                                continue;
+                            }
+                            final float avg = pingRTT.getAvg();
+                            if (avg < 0) {
+                                continue;
+                            }
+                            if (avg <= minLatency) {
+                                minLatency = avg;
+                                server = pingServer;
+                                serverCountry = country;
+                            }
+                        }
+                        final String pingServerCountry = serverCountry;
+                        if (!isNullOrEmpty(pingServerCountry)) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    refreshSpeedTestParameters(pingServerCountry);
+                                }
+                            });
+                        }
+
                     } else {
                         server = SERVERS.get(serverSetting, PING_SERVER);
                     }
@@ -478,35 +511,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
                     //2- Now measure ping latency
                     publishProgress(MEASURE_PING_LATENCY);
-                    final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouter, null,
-                            String.format(PingFromRouterAction.PING_CMD_TO_FORMAT,
-                                    PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server) + " | grep \"round-trip\"");
-                    if (pingOutput == null || pingOutput.length < 1) {
-                        //Nothing - abort right now with an error message
-                        throw new SpeedTestException("Unable to contact remote server");
-                    }
-                    final String pingRttOutput = pingOutput[0];
-                    final List<String> pingRttOutputList = Splitter.on("=").omitEmptyStrings().trimResults()
-                            .splitToList(pingRttOutput);
-                    if (pingRttOutputList.size() < 2) {
-                        throw new SpeedTestException("Unable to contact remote server");
-                    }
-                    final String pingRtt = pingRttOutputList.get(1)
-                            .replaceAll("ms","")
-                            .trim();
-                    final List<String> pingRttSplitResult = Splitter.on("/").omitEmptyStrings().trimResults()
-                            .splitToList(pingRtt);
-                    wanLatencyResults = new PingRTT();
-                    final int size = pingRttSplitResult.size();
-                    if (size >= 1) {
-                        wanLatencyResults.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
-                    }
-                    if (size >= 2) {
-                        wanLatencyResults.setAvg(Float.parseFloat(pingRttSplitResult.get(1)));
-                    }
-                    if (size >= 3) {
-                        wanLatencyResults.setMax(Float.parseFloat(pingRttSplitResult.get(2)));
-                    }
+                    wanLatencyResults = runPing(server);
                     publishProgress(PING_LATENCY_MEASURED);
 
                     //TODO - To Be Continued
@@ -520,8 +525,58 @@ public class SpeedTestActivity extends AppCompatActivity
                 return new AbstractRouterAction.RouterActionResult<>(null, exception);
             }
 
+            @NonNull
+            private PingRTT runPing(@NonNull final String server) throws Exception {
+                if (Strings.isNullOrEmpty(server)) {
+                    throw new IllegalArgumentException("No Server specified");
+                }
+                final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouter, null,
+                        String.format(PingFromRouterAction.PING_CMD_TO_FORMAT,
+                                PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server) + " | grep \"round-trip\"");
+                if (pingOutput == null || pingOutput.length < 1) {
+                    //Nothing - abort right now with an error message
+                    throw new SpeedTestException("Unable to contact remote server");
+                }
+                final String pingRttOutput = pingOutput[0];
+                final List<String> pingRttOutputList = EQUAL_SPLITTER
+                        .splitToList(pingRttOutput);
+                if (pingRttOutputList.size() < 2) {
+                    throw new SpeedTestException("Unable to contact remote server");
+                }
+                final String pingRtt = pingRttOutputList.get(1)
+                        .replaceAll("ms","")
+                        .trim();
+                final List<String> pingRttSplitResult = SLASH_SPLITTER
+                        .splitToList(pingRtt);
+                final PingRTT pingRTT = new PingRTT();
+                final int size = pingRttSplitResult.size();
+                if (size >= 1) {
+                    pingRTT.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
+                }
+                if (size >= 2) {
+                    pingRTT.setAvg(Float.parseFloat(pingRttSplitResult.get(1)));
+                }
+                if (size >= 3) {
+                    pingRTT.setMax(Float.parseFloat(pingRttSplitResult.get(2)));
+                }
+                return pingRTT;
+            }
+
             @Override
             protected void onPostExecute(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
+                if (voidRouterActionResult != null) {
+                    final Exception exception = voidRouterActionResult.getException();
+                    if (exception != null) {
+                        errorPlaceholder.setVisibility(View.VISIBLE);
+                        errorPlaceholder.setText("Error: " +
+                                ExceptionUtils.getRootCauseMessage(exception));
+                    } else {
+                        errorPlaceholder.setVisibility(View.GONE);
+                    }
+                } else {
+                    errorPlaceholder.setVisibility(View.GONE);
+                }
+                resetEverything(true);
                 super.onPostExecute(voidRouterActionResult);
             }
 
@@ -538,7 +593,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 switch (progressCode) {
                     case SELECT_SERVER:
                         noticeTextView
-                                .setText("1/4 - Determining remote Internet Server...");
+                                .setText("1/4 - Selecting remote Internet Server...");
                         noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
                                 android.R.anim.slide_in_left));
                         noticeTextView.setVisibility(View.VISIBLE);
@@ -560,7 +615,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             final TextView wanLatencyTextView = (TextView) findViewById(R.id.speedtest_internet_latency);
                             wanLatencyTextView.setVisibility(View.VISIBLE);
                             wanLatencyTextView
-                                    .setText(String.format("%f ms", wanLatencyResults.getAvg()));
+                                    .setText(String.format("%.2f ms", wanLatencyResults.getAvg()));
                         }
 
 
@@ -572,10 +627,12 @@ public class SpeedTestActivity extends AppCompatActivity
 
             @Override
             protected void onCancelled(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-                resetEverything();
+                errorPlaceholder.setText("Cancelled");
+                errorPlaceholder.setVisibility(View.VISIBLE);
+                resetEverything(true);
             }
 
-            private void resetEverything() {
+            private void resetEverything(final boolean enableSwipeRefresh) {
                 internetRouterLink.setBackgroundColor(defaultColorForPaths);
                 routerLanLink.setBackgroundColor(defaultColorForPaths);
 
@@ -587,9 +644,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
                 mCancelFab.setVisibility(View.GONE);
 
-                setRefreshActionButtonState(false);
+                setRefreshActionButtonState(!enableSwipeRefresh);
 
-                mSwipeRefreshLayout.setEnabled(true);
+                mSwipeRefreshLayout.setEnabled(enableSwipeRefresh);
             }
         };
 
