@@ -1081,6 +1081,18 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     }
 
     @Override
+    public void onResume() {
+        initLoaders();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        stopLoaders();
+        super.onPause();
+    }
+
+    @Override
     public void onDestroy() {
         stopLoaders();
         super.onDestroy();
