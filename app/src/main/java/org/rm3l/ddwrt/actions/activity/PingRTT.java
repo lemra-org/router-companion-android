@@ -1,0 +1,48 @@
+package org.rm3l.ddwrt.actions.activity;
+
+/**
+ * Created by rm3l on 10/01/16.
+ */
+public class PingRTT {
+
+    private float min;
+    private float max;
+    private float avg;
+    private float stddev;
+
+    public float getMin() {
+        return min;
+    }
+
+    public PingRTT setMin(float min) {
+        this.min = min;
+        return this;
+    }
+
+    public float getMax() {
+        return max;
+    }
+
+    public PingRTT setMax(float max) {
+        this.max = max;
+        return this;
+    }
+
+    public float getAvg() {
+        return avg;
+    }
+
+    public PingRTT setAvg(float avg) {
+        this.avg = avg;
+        return this;
+    }
+
+    public float getStddev() {
+        return stddev;
+    }
+
+    public PingRTT setStddev(float stddev) {
+        this.stddev = stddev;
+        return this;
+    }
+}

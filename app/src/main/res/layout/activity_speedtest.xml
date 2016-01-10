@@ -24,6 +24,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".actions.activity.SpeedTestActivity"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
@@ -369,6 +370,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </ScrollView>
 
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <!-- Cancel Action Button -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/speedtest_cancel"
+            android:contentDescription="@string/cancel"
+            android:src="@drawable/ic_action_cancel"
+            android:tint="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="normal"
+            android:layout_gravity="bottom|end"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchor="@id/speedtest_scrollView"
+            app:layout_anchorGravity="end|bottom|right"
+            android:visibility="gone"/>
 
         <!-- Notice -->
         <TextView
