@@ -58,6 +58,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="android:spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
         <!--<item name="android:fitsSystemWindows">true</item>-->
 
+        <item name="android:windowActionBarOverlay">true</item>
+
         <!--<item name="android:windowBackground">@android:color/background_light</item>-->
         <!--<item name="android:colorBackground">@android:color/background_light</item>-->
 
@@ -104,6 +106,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item name="dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="spinnerDropDownItemStyle">@style/MySpinnerDropDownItem</item>
         <!--<item name="android:fitsSystemWindows">true</item>-->
+
+        <item name="android:windowActionBarOverlay">true</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/material_drawer_dark_background</item>
