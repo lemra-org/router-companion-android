@@ -430,4 +430,7 @@ dependencies {
 
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
 //    compile 'com.github.glomadrian:dashed-circular-progress:62912bbdd5'
+
+    compile 'mbanje.kurt:fabbutton:1.+'
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
 }

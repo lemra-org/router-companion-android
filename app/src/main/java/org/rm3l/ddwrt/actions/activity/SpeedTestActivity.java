@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -56,6 +55,8 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import mbanje.kurt.fabbutton.FabButton;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
@@ -106,7 +107,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private boolean mWithCurrentConnectionTesting;
 
-    private FloatingActionButton mCancelFab;
+    private FabButton mCancelFab;
 
     private SharedPreferences mRouterPreferences;
 
@@ -246,7 +247,7 @@ public class SpeedTestActivity extends AppCompatActivity
         defaultColorForPaths = ContextCompat.getColor(SpeedTestActivity.this,
                 R.color.network_link_color);
 
-        mCancelFab = (FloatingActionButton)
+        mCancelFab = (FabButton)
                 findViewById(R.id.speedtest_cancel);
         mCancelFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -458,6 +459,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         public void run() {
                             resetEverything(false);
                             mCancelFab.setVisibility(View.VISIBLE);
+                            mCancelFab.setProgress(0);
                             findViewById(R.id.speedtest_latency_pb_internet)
                                     .setVisibility(View.VISIBLE);
                             findViewById(R.id.speedtest_dl_pb_internet)
@@ -607,6 +609,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 }
                 switch (progressCode) {
                     case SELECT_SERVER:
+                        mCancelFab.setProgress(100 * 1/4);
                         noticeTextView
                                 .setText("1/4 - Selecting remote Internet Server...");
                         noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
@@ -615,6 +618,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         break;
 
                     case MEASURE_PING_LATENCY:
+                        mCancelFab.setProgress(100 * 2/4);
                         noticeTextView
                                 .setText("2/4 - Measuring Internet (WAN) Latency...");
                         final int latencyColor = ColorUtils.getColor(NET_LATENCY);
@@ -632,7 +636,6 @@ public class SpeedTestActivity extends AppCompatActivity
                             wanLatencyTextView
                                     .setText(String.format("%.2f ms", wanLatencyResults.getAvg()));
                         }
-
 
                     default:
                         break;

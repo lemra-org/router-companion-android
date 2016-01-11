@@ -47,25 +47,27 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id_router_management_activity" />
 
+    <!-- Error message placeholder -->
+    <TextView
+        android:id="@+id/router_speedtest_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
+        android:singleLine="true"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/error_placeholder"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@color/DarkRed"
+        android:visibility="gone"/>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!-- Error message placeholder -->
-        <TextView
-            android:id="@+id/router_speedtest_error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:ellipsize="end"
-            android:gravity="center_horizontal"
-            android:singleLine="true"
-            android:layout_marginBottom="5dp"
-            android:text="@string/error_placeholder"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:background="@color/DarkRed"
-            android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
 
         <LinearLayout
             android:id="@+id/speedtest_server_container"
@@ -371,38 +373,72 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <!-- Cancel Action Button -->
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/speedtest_cancel"
-            android:contentDescription="@string/cancel"
-            android:src="@drawable/ic_action_cancel"
-            android:tint="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_margin="@dimen/fab_margin"
-            app:fabSize="normal"
-            android:layout_gravity="bottom|end"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchor="@id/speedtest_scrollView"
-            app:layout_anchorGravity="end|bottom|right"
-            android:visibility="gone"/>
-
-        <!-- Notice -->
-        <TextView
-            android:id="@+id/router_speedtest_notice"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:singleLine="false"
-            android:maxLines="2"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
-            android:background="@color/jetstream_speed_test_background"
-            android:layout_gravity="center_horizontal|bottom"
-            android:visibility="gone"/>
+            android:orientation="horizontal"
+            android:layout_gravity="bottom">
+
+            <!-- Notice -->
+            <TextView
+                android:id="@+id/router_speedtest_notice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:singleLine="false"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
+                android:background="@color/jetstream_speed_test_background"
+                android:layout_gravity="center_horizontal|bottom"
+                android:visibility="gone"
+                android:maxLines="1"
+                android:maxLength="50"
+                android:ellipsize="end"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <!-- Cancel Action Button -->
+            <view
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                class="mbanje.kurt.fabbutton.FabButton"
+                android:id="@+id/speedtest_cancel"
+                android:layout_gravity="end|bottom"
+                android:color="@color/win8_magenta"
+                android:src="@drawable/ic_close_white_24dp"
+                android:visibility="gone"
+                android:indeterminate="false"
+                android:max="100"
+                android:clickable="true"
+                app:fbb_autoStart="true"
+                app:fbb_progressColor="#ff170aff"
+                app:fbb_progressWidthRatio="0.1"
+                app:fbb_endBitmap="@drawable/ic_fab_complete"
+                app:fbb_showEndBitmap="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/speedtest_cancel"-->
+            <!--android:contentDescription="@string/cancel"-->
+            <!--android:src="@drawable/ic_action_cancel"-->
+            <!--android:tint="@android:color/white"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:clickable="true"-->
+            <!--android:layout_margin="@dimen/fab_margin"-->
+            <!--app:fabSize="normal"-->
+            <!--android:layout_gravity="bottom|end"-->
+            <!--app:elevation="6dp"-->
+            <!--app:pressedTranslationZ="12dp"-->
+            <!--app:layout_anchor="@id/speedtest_scrollView"-->
+            <!--app:layout_anchorGravity="end|bottom|right"-->
+            <!--android:visibility="gone"/>-->
 
     </FrameLayout>
 
