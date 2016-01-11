@@ -93,7 +93,7 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_menu_refresh"
+                android:src="@drawable/ic_refresh_white_24dp"
                 android:contentDescription="Refresh"
                 android:background="?android:attr/selectableItemBackground"/>
 

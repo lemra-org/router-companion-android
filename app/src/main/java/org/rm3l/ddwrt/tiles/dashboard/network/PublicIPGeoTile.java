@@ -39,6 +39,7 @@ import org.rm3l.ddwrt.resources.PublicIPInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.tiles.status.wireless.ActiveIPConnectionsDetailActivity;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -64,10 +65,16 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
     private IPWhoisInfo mIPWhoisInfoWithGeo;
     private String mWanPublicIP;
 
+    private boolean isThemeLight;
+
+    private final ImageButton zoomMapButton;
+
     public PublicIPGeoTile(@NonNull Fragment parentFragment,
                            @NonNull Bundle arguments,
                            @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_public_ip_geo, null);
+
+        isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         //Permission requests
         final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
@@ -132,7 +139,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
             }
         }
 
-        final ImageButton zoomMapButton = (ImageButton)
+        zoomMapButton = (ImageButton)
                 layout.findViewById(R.id.tile_public_ip_geo_title_zoom);
         zoomMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,6 +187,17 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
                     }
                     nbRunsLoader++;
+
+                    mParentFragmentActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            zoomMapButton.setImageDrawable(ContextCompat
+                            .getDrawable(mParentFragmentActivity,
+                                    isThemeLight ?
+                                            R.drawable.ic_zoom_out_map_black_24dp :
+                                            R.drawable.ic_zoom_out_map_white_24dp));
+                        }
+                    });
 
                     updateProgressBarViewSeparator(0);
 

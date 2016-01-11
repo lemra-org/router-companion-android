@@ -59,7 +59,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/action_actions"
         android:alphabeticShortcut="A"
-        android:icon="@drawable/ic_action_action_launch"
+        android:icon="@drawable/ic_launch_white_24dp"
         android:orderInCategory="5"
         android:title="@string/menuitem_actions"
         app:showAsAction="ifRoom">

@@ -388,7 +388,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginTop="2dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/ic_speedtest"
+            android:src="@drawable/ic_network_check_white_24dp"
             android:layout_alignParentBottom="true"
             app:elevation="10dp"
             android:focusable="false"

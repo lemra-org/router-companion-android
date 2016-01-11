@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_aliases_list_refresh_search"
         android:alphabeticShortcut="l"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="1"
         android:title="@string/action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
@@ -38,7 +38,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_aliases_list_refresh"
         android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_menu_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
         android:orderInCategory="2"
         android:title="@string/menuitem_refresh"
         app:showAsAction="ifRoom"/>

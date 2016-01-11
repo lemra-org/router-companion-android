@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- Search, should appear as action button -->
     <item
         android:id="@+id/tile_status_active_ip_connections_search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="1"
         android:title="@string/action_search"
         android:visible="false"
@@ -63,7 +63,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/tile_status_active_ip_connections_share"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="3"
         android:title="@string/share"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"

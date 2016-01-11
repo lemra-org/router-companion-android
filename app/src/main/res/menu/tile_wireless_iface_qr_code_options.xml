@@ -24,7 +24,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <item
         android:id="@+id/tile_status_wireless_iface_qrcode_share"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="1"
         android:title="@string/share"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"

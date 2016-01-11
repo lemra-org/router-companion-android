@@ -28,7 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_speedtest_refresh"
         android:alphabeticShortcut="r"
-        android:icon="@drawable/ic_menu_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
         android:orderInCategory="1"
         android:title="@string/menuitem_refresh"
         app:showAsAction="ifRoom"/>
@@ -36,14 +36,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <item
         android:id="@+id/router_speedtest_settings"
         android:alphabeticShortcut="S"
-        android:icon="@drawable/ic_action_action_settings"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:orderInCategory="2"
         android:title="@string/menuitem_settings"
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/router_speedtest_share"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_share_white_24dp"
         android:alphabeticShortcut="s"
         android:orderInCategory="3"
         android:title="@string/share"

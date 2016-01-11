@@ -1725,7 +1725,8 @@ public class WirelessClientsTile
                             .inflate(R.layout.tile_status_wireless_client, null);
 
                     //Create Options Menu
-                    final ImageButton tileMenu = (ImageButton) cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
+                    final ImageButton tileMenu = (ImageButton)
+                            cardView.findViewById(R.id.tile_status_wireless_client_device_menu);
 
                     if (!isThemeLight) {
                         //Set menu background to white
@@ -2252,6 +2253,13 @@ public class WirelessClientsTile
                         ouiAndLastSeenView.setVisibility(View.GONE);
                         trafficGraphPlaceHolderView.setVisibility(View.GONE);
                         noDataView.setVisibility(View.GONE);
+                    }
+
+                    final View wanBlockedDevice = cardView.findViewById(R.id.tile_status_wireless_client_blocked);
+                    if (wanAccessState == null || wanAccessState == Device.WANAccessState.WAN_ACCESS_UNKNOWN) {
+                        wanBlockedDevice.setVisibility(View.GONE);
+                    } else {
+                        wanBlockedDevice.setVisibility(isDeviceWanAccessEnabled ? View.GONE : View.VISIBLE);
                     }
 
                     tileMenu.setOnClickListener(new View.OnClickListener() {
