@@ -27,7 +27,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/tile_overview_network_map_hide_inactive_hosts"
         android:checkable="true"
         android:checked="false"
-        android:icon="@drawable/ic_action_av_snooze"
         android:orderInCategory="1"
         android:title="@string/hide_inactive_hosts"
         app:showAsAction="never" />

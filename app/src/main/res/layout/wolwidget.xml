@@ -81,7 +81,7 @@
                 android:id="@+id/wol_widget_launch_action"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@android:drawable/ic_media_play"
+                android:src="@drawable/ic_open_in_new_black_24dp"
                 android:contentDescription="Open"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"/>
@@ -93,7 +93,7 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_refresh_white_24dp"
+                android:src="@drawable/ic_refresh_black_24dp"
                 android:contentDescription="Refresh"
                 android:background="?android:attr/selectableItemBackground"/>
 
@@ -104,7 +104,7 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_action_av_snooze"
+                android:src="@drawable/ic_alarm_on_black_24dp"
                 android:contentDescription="Wake All"
                 android:background="?android:attr/selectableItemBackground"/>
 

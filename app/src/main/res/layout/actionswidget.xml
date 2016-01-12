@@ -82,7 +82,7 @@
                 android:id="@+id/actions_widget_launch_action"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@android:drawable/ic_media_play"
+                android:src="@drawable/ic_open_in_new_black_24dp"
                 android:contentDescription="Open"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/selectableItemBackground"/>
@@ -94,7 +94,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_action_reboot"
+                android:src="@drawable/ic_settings_power_black_24dp"
                 android:contentDescription="Reboot"
                 android:background="?android:attr/selectableItemBackground"/>
 
