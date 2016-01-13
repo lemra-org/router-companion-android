@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import com.google.common.collect.Lists;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -183,5 +184,31 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
     @Override
     public void deleteWANTrafficDataByRouter(@NonNull String router) {
         //TODO
+    }
+
+    @Nullable
+    @Override
+    public Long insertSpeedTestResult(@NonNull SpeedTestResult speedTestResult) {
+        //TODO
+        return null;
+    }
+
+    @NonNull
+    @Override
+    public List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull String router) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public void deleteSpeedTestResultByRouterById(@NonNull String router, long id) {
+        //TODO
+
+    }
+
+    @Override
+    public void deleteAllSpeedTestResultsByRouter(@NonNull String router) {
+        //TODO
+
     }
 }
