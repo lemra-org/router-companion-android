@@ -33,6 +33,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
+import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
@@ -60,6 +61,18 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_USERNAME;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.ROUTER_UUID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_ROUTERS;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_COLUMN_ID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_DL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_UL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_ROUTER_UUID;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_SERVER;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_TEST_DATE;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_DL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_UL;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC_COLUMN_ID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC_ROUTER_UUID;
@@ -100,6 +113,19 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_WAN_TRAFFIC_TRAFFIC_DATE,
             TABLE_WAN_TRAFFIC_TRAFFIC_IN,
             TABLE_WAN_TRAFFIC_TRAFFIC_OUT};
+
+    @NonNull
+    private static final String[] speedTestResultsAllColumns = {
+            TABLE_SPEED_TEST_RESULTS_COLUMN_ID,
+            TABLE_SPEED_TEST_RESULTS_ROUTER_UUID,
+            TABLE_SPEED_TEST_RESULTS_TEST_DATE,
+            TABLE_SPEED_TEST_RESULTS_SERVER,
+            TABLE_SPEED_TEST_RESULTS_WAN_PING,
+            TABLE_SPEED_TEST_RESULTS_WAN_DL,
+            TABLE_SPEED_TEST_RESULTS_WAN_UL,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_DL,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
@@ -491,6 +517,104 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         }
     }
 
+    @Nullable
+    @Override
+    public Long insertSpeedTestResult(@NonNull SpeedTestResult speedTestResult) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+            return instance.openDatabase()
+                    .insertOrThrow(TABLE_SPEED_TEST_RESULTS, null,
+                        getContentValuesFromSpeedTestResult(speedTestResult));
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            return null;
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @NonNull
+    @Override
+    public List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull String router) {
+        if (isNullOrEmpty(router)) {
+            return Collections.emptyList();
+        }
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+
+        try {
+            final List<SpeedTestResult> speedTestResults = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_SPEED_TEST_RESULTS,
+                            speedTestResultsAllColumns,
+                            String.format("%s = '%s'",
+                                    TABLE_SPEED_TEST_RESULTS_ROUTER_UUID, router),
+                            null, null, null,
+                            TABLE_SPEED_TEST_RESULTS_TEST_DATE + " DESC");
+
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final SpeedTestResult speedTestResult = cursorToSpeedTestResult(cursor);
+                        speedTestResults.add(speedTestResult);
+                        cursor.moveToNext();
+                    }
+                }
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
+            }
+
+            return speedTestResults;
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            throw e;
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public void deleteSpeedTestResultByRouterById(@NonNull String router, long id) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+
+            instance.openDatabase()
+                    .delete(TABLE_SPEED_TEST_RESULTS,
+                            String.format("%s='%s' AND %s=%d",
+                                    TABLE_SPEED_TEST_RESULTS_ROUTER_UUID, router,
+                                    TABLE_SPEED_TEST_RESULTS_COLUMN_ID, (int) id), null);
+
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Override
+    public void deleteAllSpeedTestResultsByRouter(@NonNull String router) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+
+            instance.openDatabase()
+                    .delete(TABLE_SPEED_TEST_RESULTS,
+                            String.format("%s='%s'",
+                                    TABLE_SPEED_TEST_RESULTS_ROUTER_UUID, router),
+                            null);
+
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
 
     @NonNull
     private Router cursorToRouter(@NonNull Cursor cursor) {
@@ -517,6 +641,18 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
 
         return new WANTrafficData(cursor.getString(1),
                 cursor.getString(2), cursor.getDouble(3), cursor.getDouble(4))
+                .setId(cursor.getInt(0));
+    }
+
+    @NonNull
+    private SpeedTestResult cursorToSpeedTestResult(@NonNull Cursor cursor) {
+
+        return new SpeedTestResult(cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getDouble(4), cursor.getDouble(5), cursor.getDouble(6),
+                cursor.getString(7), cursor.getDouble(8), cursor.getDouble(9),
+                cursor.getString(10))
                 .setId(cursor.getInt(0));
     }
 
@@ -549,6 +685,28 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(TABLE_WAN_TRAFFIC_TRAFFIC_DATE, wanTrafficData.getDate());
         values.put(TABLE_WAN_TRAFFIC_TRAFFIC_IN, wanTrafficData.getTraffIn().doubleValue());
         values.put(TABLE_WAN_TRAFFIC_TRAFFIC_OUT, wanTrafficData.getTraffOut().doubleValue());
+        return values;
+    }
+
+    @NonNull
+    private ContentValues getContentValuesFromSpeedTestResult(@NonNull SpeedTestResult speedTestResult) {
+        ContentValues values = new ContentValues();
+
+        values.put(TABLE_SPEED_TEST_RESULTS_ROUTER_UUID, speedTestResult.getRouter());
+        values.put(TABLE_SPEED_TEST_RESULTS_TEST_DATE, speedTestResult.getDate());
+        values.put(TABLE_SPEED_TEST_RESULTS_SERVER, speedTestResult.getServer());
+        values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING, speedTestResult.getWanPing().doubleValue());
+        values.put(TABLE_SPEED_TEST_RESULTS_WAN_DL, speedTestResult.getWanDl().doubleValue());
+        values.put(TABLE_SPEED_TEST_RESULTS_WAN_UL, speedTestResult.getWanUl().doubleValue());
+        values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE, speedTestResult.getConnectionType());
+        final Number connectionDl = speedTestResult.getConnectionDl();
+        values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_DL, connectionDl != null ?
+                connectionDl.doubleValue() : null);
+        final Number connectionUl = speedTestResult.getConnectionUl();
+        values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_UL,
+                connectionUl != null ? connectionUl.doubleValue() : null);
+        values.put(TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE, speedTestResult.getServerCountryCode());
+
         return values;
     }
 

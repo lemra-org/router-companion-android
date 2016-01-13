@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+DD-WRT Companion is a mobile app that lets you connect to,
+monitor and manage your DD-WRT routers on the go.
+
+Copyright (C) 2014  Armel Soro
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
+-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/speed_test_result_item_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardPreventCornerOverlap="true"
+        card_view:contentPaddingBottom="@dimen/activity_vertical_margin"
+        card_view:contentPaddingLeft="10dp"
+        card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
+        card_view:contentPaddingTop="@dimen/activity_vertical_margin">
+
+        <LinearLayout
+            android:id="@+id/speed_test_result_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/speed_test_result_first_glance_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/speed_test_result_test_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="start"
+                    android:scrollHorizontally="true"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <ImageView
+                    android:id="@+id/speed_test_result_server_country_flag"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="end"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/speed_test_result_wanPing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:scrollHorizontally="true"
+                        android:layout_margin="10dp"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_wanDl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:scrollHorizontally="true"
+                        android:layout_margin="10dp"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_wanUl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:scrollHorizontally="true"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/speed_test_result_details_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <GridLayout
+                    android:id="@+id/speed_test_result_details_table"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:columnCount="3"
+                    android:stretchColumns="*">
+
+                    <!-- Test Date -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Test Date"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_detail_test_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Server Location -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Server"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- WAN PING -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WAN Ping"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_wanPing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- WAN DL -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WAN Download"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_wanDownload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- WAN UL -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WAN Upload"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_wanUpload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+
+                    <!-- Connection UL -->
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionUl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connection Upload"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionUl_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionUl_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Connection DL -->
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionDl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connection Download"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionDl_sep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_connectionDl_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+
+                </GridLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

@@ -25,6 +25,7 @@ package org.rm3l.ddwrt.mgmt.dao;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 
@@ -66,5 +67,15 @@ public interface DDWRTCompanionDAO {
                                                                @NonNull final String dateHigher);
 
     void deleteWANTrafficDataByRouter(@NonNull final String router);
+
+    @Nullable
+    Long insertSpeedTestResult(@NonNull final SpeedTestResult speedTestResult);
+
+    @NonNull
+    List<SpeedTestResult> getSpeedTestResultsByRouter(@NonNull final String router);
+
+    void deleteSpeedTestResultByRouterById(@NonNull final String router, final long id);
+
+    void deleteAllSpeedTestResultsByRouter(@NonNull final String router);
 
 }

@@ -41,6 +41,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     private static final String TAG = DDWRTCompanionSqliteOpenHelper.class.getSimpleName();
 
+    /*
+     * DB Table: Routers
+     */
     public static final String TABLE_ROUTERS = "routers";
     public static final String COLUMN_ID = "_id";
     public static final String ROUTER_UUID = "uuid";
@@ -69,6 +72,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             ROUTER_FIRMWARE + " TEXT DEFAULT NULL" +
             ");";
 
+    /*
+     * DB Table: wan_traffic
+     */
     public static final String TABLE_WAN_TRAFFIC = "wan_traffic";
     public static final String TABLE_WAN_TRAFFIC_COLUMN_ID = "_id";
     public static final String TABLE_WAN_TRAFFIC_ROUTER_UUID = "fk_router_uuid";
@@ -89,6 +95,45 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
                 ") ON DELETE CASCADE ON UPDATE CASCADE " +
             ");";
 
+    /*
+     * DB Table: speed_test_results
+     */
+    public static final String TABLE_SPEED_TEST_RESULTS = "speed_test_results";
+    public static final String TABLE_SPEED_TEST_RESULTS_COLUMN_ID = "_id";
+    public static final String TABLE_SPEED_TEST_RESULTS_ROUTER_UUID = "fk_router_uuid";
+    public static final String TABLE_SPEED_TEST_RESULTS_TEST_DATE = "test_date";
+    public static final String TABLE_SPEED_TEST_RESULTS_SERVER = "server";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING = "wan_ping";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_DL = "wan_dl";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_UL = "wan_ul";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE = "conn_type";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_DL = "conn_dl";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_UL = "conn_ul";
+    public static final String TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE = "server_country_code";
+
+    // Database creation sql statement
+    private static final String TABLE_SPEED_TEST_RESULTS_CREATE =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_SPEED_TEST_RESULTS +
+            " (" +
+                    TABLE_SPEED_TEST_RESULTS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    TABLE_SPEED_TEST_RESULTS_ROUTER_UUID + " TEXT NOT NULL, " +
+                    TABLE_SPEED_TEST_RESULTS_TEST_DATE + " TEXT NOT NULL, " +
+                    TABLE_SPEED_TEST_RESULTS_SERVER + " TEXT NOT NULL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_PING + " REAL NOT NULL CHECK(" + TABLE_SPEED_TEST_RESULTS_WAN_PING + ">=0) , " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_DL + " REAL CHECK(" + TABLE_SPEED_TEST_RESULTS_WAN_DL + ">=0) , " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_UL + " REAL CHECK(" + TABLE_SPEED_TEST_RESULTS_WAN_UL + ">=0) , " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE + " TEXT DEFAULT NULL , " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_DL + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_UL + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE + " TEXT, " +
+            "FOREIGN KEY (" + TABLE_SPEED_TEST_RESULTS_ROUTER_UUID + ") REFERENCES " +
+            TABLE_ROUTERS + "(" + ROUTER_UUID +
+            ") ON DELETE CASCADE ON UPDATE CASCADE " +
+            ");";
+
+    /**
+     * DB
+     */
     public static final String DATABASE_NAME = "routers.db";
 
     /*
@@ -96,7 +141,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 8;
 
     private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
 
@@ -116,6 +161,9 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
         //V6: Add Router Firmware: Add DB for WAN Traffic Data
         DATABASE_UPGRADES.put(6, TABLE_WAN_TRAFFIC_CREATE);
+
+        //V8: Speed Test Results
+        DATABASE_UPGRADES.put(8, TABLE_SPEED_TEST_RESULTS_CREATE);
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
@@ -140,7 +188,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
          */
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion) {
-            //Loop because we do not know what version users will be converted from or to
+            //Loop because we do not know which version users will be converted from or to
             final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
             if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
                 Crashlytics.log(Log.INFO, TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
