@@ -29,7 +29,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent"
     android:gravity="bottom"
     sothree:umanoPanelHeight="68dp"
-    sothree:umanoShadowHeight="4dp">
+    sothree:umanoShadowHeight="4dp"
+    sothree:umanoOverlay="true"
+    sothree:umanoParallaxOffset="100dp"
+    sothree:umanoScrollableView="@+id/speedtest_results_recycler_view"
+    sothree:umanoDragView="@+id/dragView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -454,11 +458,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     </LinearLayout>
 
+    <!-- Sliding Up Panel -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:id="@+id/dragView">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -493,8 +501,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:orientation="horizontal">
