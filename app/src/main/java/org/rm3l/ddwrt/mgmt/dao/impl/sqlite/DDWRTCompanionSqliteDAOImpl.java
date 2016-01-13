@@ -125,7 +125,8 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_SPEED_TEST_RESULTS_WAN_UL,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL,
-            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL};
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL,
+            TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
