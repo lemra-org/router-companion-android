@@ -703,8 +703,8 @@ public class SpeedTestActivity extends AppCompatActivity
                                             .format(executionDate),
                                         server,
                                         wanLatencyResults.getAvg(),
-                                        new Random().nextInt(100) * 1024^3,
-                                        new Random().nextInt(27) * 1024^2,
+                                        new Random().nextInt(777) * 1024^4,
+                                        new Random().nextInt(27) * 1024^4,
                                         null,
                                         null,
                                         null,
@@ -1122,7 +1122,10 @@ public class SpeedTestActivity extends AppCompatActivity
             final View containerView = holder.containerView;
             final TextView testDateView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_test_date);
-            final String speedTestResultDate = speedTestResult.getDate();
+            String speedTestResultDate = speedTestResult.getDate();
+            if (speedTestResultDate != null) {
+                speedTestResultDate = speedTestResultDate.replaceAll(" ", "\n");
+            }
             testDateView.setText(speedTestResultDate);
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_detail_test_date))
@@ -1131,7 +1134,7 @@ public class SpeedTestActivity extends AppCompatActivity
             final String serverCountryCode = speedTestResult.getServerCountryCode();
             final ImageView imageView = (ImageView) containerView.findViewById(R.id.speed_test_result_server_country_flag);
             if (serverCountryCode == null || serverCountryCode.isEmpty()) {
-                imageView.setVisibility(View.INVISIBLE);
+                imageView.setVisibility(View.GONE);
             } else {
                 refreshServerLocationFlag(activity,
                         serverCountryCode,
@@ -1140,17 +1143,19 @@ public class SpeedTestActivity extends AppCompatActivity
 
             final TextView wanPingView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
-            final String wanPing = String.format("%.2f ms", speedTestResult.getWanPing());
+            final String wanPing = String.format("%.2f\nms", speedTestResult.getWanPing());
             wanPingView.setText(wanPing);
 
             final TextView wanDlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
-            final String wanDl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue());
+            final String wanDl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue())
+                        .replaceAll(" ", "\n");
             wanDlView.setText(wanDl);
 
             final TextView wanUlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
-            final String wanUl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue());
+            final String wanUl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue())
+                    .replaceAll(" ", "\n");
             wanUlView.setText(wanUl);
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_details_server))
@@ -1162,7 +1167,7 @@ public class SpeedTestActivity extends AppCompatActivity
             ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanUpload))
                     .setText(wanUl);
 
-            //TODO
+            //TODO add connection measures
         }
 
         @Override
