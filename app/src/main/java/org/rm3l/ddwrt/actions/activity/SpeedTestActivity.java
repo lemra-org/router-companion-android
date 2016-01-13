@@ -1140,7 +1140,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
             final TextView wanPingView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
-            final String wanPing = FileUtils.byteCountToDisplaySize(speedTestResult.getWanPing().longValue());
+            final String wanPing = String.format("%.2f ms", speedTestResult.getWanPing());
             wanPingView.setText(wanPing);
 
             final TextView wanDlView =
