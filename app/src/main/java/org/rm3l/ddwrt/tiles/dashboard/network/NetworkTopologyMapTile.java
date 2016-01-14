@@ -107,6 +107,21 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                 }
             }
         };
+
+
+        final FloatingActionButton speedtestFab =
+                (FloatingActionButton) layout.findViewById(R.id.tile_network_map_speedtest);
+
+        speedtestFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent speedTestIntent = new Intent(mParentFragmentActivity,
+                        SpeedTestActivity.class);
+                speedTestIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
+                mParentFragmentActivity.startActivity(speedTestIntent);
+            }
+        });
+
     }
 
     @Override
@@ -323,19 +338,6 @@ public class NetworkTopologyMapTile extends DDWRTTile<NVRAMInfo> {
                             layout.findViewById(R.id.tile_network_map_router_imageView));
 
 //            final LinearLayout mapContainerView = (LinearLayout) layout.findViewById(R.id.tile_network_map_container);
-
-            final FloatingActionButton speedtestFab =
-                    (FloatingActionButton) layout.findViewById(R.id.tile_network_map_speedtest);
-
-            speedtestFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Intent speedTestIntent = new Intent(mParentFragmentActivity,
-                            SpeedTestActivity.class);
-                    speedTestIntent.putExtra(ROUTER_SELECTED, mRouter.getUuid());
-                    mParentFragmentActivity.startActivity(speedTestIntent);
-                }
-            });
 
             final TextView devicesCountTextView
                     = (TextView) layout.findViewById(R.id.tile_network_map_wan_lan_textView);
