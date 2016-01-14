@@ -237,8 +237,9 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceMedium"
+                                        android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_latency"
+                                        android:textStyle="bold"
                                         android:layout_centerInParent="true"/>
 
                                     <ProgressBar
@@ -255,7 +256,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             <View
                                 android:id="@+id/speedtest_internet_line"
                                 android:layout_width="3dp"
-                                android:layout_height="130dp"
+                                android:layout_height="160dp"
                                 android:background="@color/network_link_color"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_centerInParent="true"/>
@@ -285,7 +286,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceMedium"
+                                        android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_dl_speed"
                                         android:layout_centerInParent="true"
                                         android:textStyle="bold"/>
@@ -315,7 +316,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceMedium"
+                                        android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_ul_speed"
                                         android:layout_centerInParent="true"
                                         android:textStyle="bold" />
@@ -456,7 +457,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/dragView">
 
         <RelativeLayout
-            android:layout_margin="7dp"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -485,6 +486,17 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
             </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/speedtest_results_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play_circle_outline_black_24dp"
+                android:contentDescription="Run Speed Test"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_centerInParent="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

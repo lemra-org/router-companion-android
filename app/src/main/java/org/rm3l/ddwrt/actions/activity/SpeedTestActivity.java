@@ -53,6 +53,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.io.Files;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Callback;
 
 import org.apache.commons.io.FileUtils;
@@ -189,6 +190,10 @@ public class SpeedTestActivity extends AppCompatActivity
     private Menu optionsMenu;
     private File mFileToShare;
 
+    private SlidingUpPanelLayout mSlidingUpPanelLayout;
+
+    private ImageButton speedtestRunImageButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,6 +211,9 @@ public class SpeedTestActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_speedtest);
+
+        mSlidingUpPanelLayout =
+                (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 
         final Intent intent = getIntent();
 
@@ -335,18 +343,31 @@ public class SpeedTestActivity extends AppCompatActivity
                 findViewById(R.id.speedtest_results_refresh);
         final ImageButton speedtestResultsClearAllImageButton = (ImageButton)
                 findViewById(R.id.speedtest_results_clear_all);
+        speedtestRunImageButton = (ImageButton)
+                findViewById(R.id.speedtest_results_play);
 
         if (mIsThemeLight) {
             speedtestResultsRefreshImageButton.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_refresh_black_24dp));
             speedtestResultsClearAllImageButton.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_clear_all_black_24dp));
+            speedtestRunImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_play_circle_outline_black_24dp));
         } else {
             speedtestResultsRefreshImageButton.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_refresh_white_24dp));
             speedtestResultsClearAllImageButton.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_clear_all_white_24dp));
+            speedtestRunImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_play_circle_outline_white_24dp));
         }
+
+        speedtestRunImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+            }
+        });
 
         speedtestResultsRefreshImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -448,7 +469,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
         });
 
-        doPerformSpeedTest();
+        onRefresh();
     }
 
     @Override
@@ -623,24 +644,6 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private void refreshServerLocationFlag(final String countryCode) {
         refreshServerLocationFlag(this, countryCode, mServerCountryFlag);
-//        ImageUtils.downloadImageFromUrl(this,
-//                String.format("%s/%s.png",
-//                        DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
-//                        countryCode),
-//                mServerCountryFlag,
-//                null,
-//                null,
-//                new Callback() {
-//                    @Override
-//                    public void onSuccess() {
-//                        mServerCountryFlag.setVisibility(View.VISIBLE);
-//                    }
-//
-//                    @Override
-//                    public void onError() {
-//                        mServerCountryFlag.setVisibility(View.GONE);
-//                    }
-//                });
     }
 
     @NonNull
@@ -683,37 +686,6 @@ public class SpeedTestActivity extends AppCompatActivity
                 break;
         }
 
-//        switch (serverSetting) {
-//            case ROUTER_SPEED_TEST_SERVER_AUTO:
-//                routerText = AUTO_DETECTED;
-//                final String serverLabelStr = mServerLabel.getText().toString();
-//                if (!(isNullOrEmpty(serverLabelStr)
-//                    || routerText.equals(serverLabelStr))) {
-//                    doUpdateServerTextLabel = false;
-//                }
-//                break;
-//            case "DE":
-//                routerText = "Frankfurt (Germany)";
-//                break;
-//            case "US":
-//                routerText = "California (USA)";
-//                break;
-//            case "BR":
-//                routerText = "Sao Paulo (Brazil)";
-//                break;
-//            case "KR":
-//                routerText = "Seoul (South Korea)";
-//                break;
-//            case "JP":
-//                routerText = "Tokyo (Japan)";
-//                break;
-//            case "AU":
-//                routerText = "Sydney (Australia)";
-//                break;
-//            default:
-//                routerText = serverSetting;
-//                break;
-//        }
         if (doUpdateServerTextLabel) {
             mServerLabel.setText(routerText);
         }
@@ -742,6 +714,9 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void doPerformSpeedTest() {
+
+        speedtestRunImageButton.setEnabled(false);
+
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
@@ -753,9 +728,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
         refreshSpeedTestParameters(serverSetting);
 
-        if (mSpeedTestAsyncTask != null && !mSpeedTestAsyncTask.isCancelled()) {
-            mSpeedTestAsyncTask.cancel(true);
-        }
+//        if (mSpeedTestAsyncTask != null && !mSpeedTestAsyncTask.isCancelled()) {
+//            mSpeedTestAsyncTask.cancel(true);
+//        }
 
         mSpeedTestAsyncTask = new AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>>() {
 
@@ -777,6 +752,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             resetEverything(false);
+                            errorPlaceholder.setVisibility(View.GONE);
                             mCancelFab.setVisibility(View.VISIBLE);
                             mCancelFab.setProgress(0);
                             findViewById(R.id.speedtest_latency_pb_internet)
@@ -811,13 +787,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             if (isNullOrEmpty(pingServer)) {
                                 continue;
                             }
-                            final PingRTT pingRTT;
-                            try {
-                                pingRTT = runPing(pingServer);
-                            } catch (final Exception e) {
-                                Crashlytics.logException(e);
-                                continue;
-                            }
+                            final PingRTT pingRTT = runPing(pingServer);
                             final float avg = pingRTT.getAvg();
                             if (avg < 0) {
                                 continue;
@@ -904,8 +874,18 @@ public class SpeedTestActivity extends AppCompatActivity
                     final Exception exception = voidRouterActionResult.getException();
                     if (exception != null) {
                         errorPlaceholder.setVisibility(View.VISIBLE);
+                        final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(exception);
                         errorPlaceholder.setText("Error: " +
-                                ExceptionUtils.getRootCauseMessage(exception));
+                                rootCauseMessage);
+                        if (!isNullOrEmpty(rootCauseMessage)) {
+                            errorPlaceholder.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(SpeedTestActivity.this, rootCauseMessage,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     } else {
                         //Persist speed test result
                         //FIXME Use real data
@@ -1012,146 +992,13 @@ public class SpeedTestActivity extends AppCompatActivity
                 setRefreshActionButtonState(!enableSwipeRefresh);
 
                 mSwipeRefreshLayout.setEnabled(enableSwipeRefresh);
+
+                speedtestRunImageButton.setEnabled(enableSwipeRefresh);
             }
         };
 
         mSpeedTestAsyncTask.execute();
 
-
-
-//        mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//
-//                    mCancelFab.setVisibility(View.VISIBLE);
-//
-//                    //FIXME Using a static server for now,
-//                    // but shouldn't we select best server (smallest ping) from a list of servers
-//                    // (cf. SpeedTest XML API???)
-//                    noticeTextView
-//                            .setText("1/4 - Measuring Internet (WAN) Latency...");
-//                    noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
-//                            android.R.anim.slide_in_left));
-//                    noticeTextView.setVisibility(View.VISIBLE);
-//
-//                    final int latencyColor = ColorUtils.getColor(NET_LATENCY);
-//                    internetRouterLink.setBackgroundColor(latencyColor);
-//                    highlightTitleTextView(mSpeedtestLatencyTitle);
-//                    //Display animation: RTT
-//                    //TODO Perform actual measurements
-//
-//                    mHandler.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            //Reset color
-//                            internetRouterLink.setBackgroundColor(defaultColorForPaths);
-//
-//                            //2
-//                            noticeTextView.setText("2/4 - Testing Internet (WAN) Download Speed...");
-//                            final int wanDLColor = ColorUtils.getColor(NET_DL);
-//                            internetRouterLink.setBackgroundColor(wanDLColor);
-//                            highlightTitleTextView(mSpeedtestWanDlTitle);
-//                            //Display animation: DL: WAN -> Router
-//                            //TODO Perform actual measurements
-//
-//                            mHandler.postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    //Reset color
-//                                    internetRouterLink.setBackgroundColor(defaultColorForPaths);
-//
-//                                    //3
-//                                    noticeTextView
-//                                            .setText("3/4 - Testing Internet (WAN) Upload Speed...");
-//                                    final int wanULColor = ColorUtils.getColor(NET_UL);
-//                                    internetRouterLink.setBackgroundColor(wanULColor);
-//                                    highlightTitleTextView(mSpeedtestWanUlTitle);
-//                                    //Display animation: UL: Router -> WAN
-//                                    //TODO Perform actual measurements
-//
-//                                    mHandler.postDelayed(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            //Reset color
-//                                            internetRouterLink.setBackgroundColor(defaultColorForPaths);
-//
-//                                            //FIXME Perform this test only if device is connected to a local network provided by the Router
-//                                            //4
-//                                            noticeTextView
-//                                                    .setText("4/4 - Measuring Connection Speed...");
-//                                            final int lanColor = ColorUtils.getColor(NET_WIFI);
-//                                            routerLanLink.setBackgroundColor(lanColor);
-//                                            highlightTitleTextView(mSpeedtestWifiSpeedTitle,
-//                                                    mSpeedtestWifiEfficiencyTitle);
-//                                            //Display animation: UL: Router -> WAN
-//                                            //TODO Perform actual measurements
-//
-//                                            mHandler.postDelayed(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//
-//                                                    routerLanLink.setBackgroundColor(defaultColorForPaths);
-//
-//                                                    noticeTextView.startAnimation(AnimationUtils.loadAnimation(
-//                                                            SpeedTestActivity.this,
-//                                                            android.R.anim.slide_out_right));
-//                                                    noticeTextView.setVisibility(View.GONE);
-//                                                    resetAllTitleViews();
-//
-//                                                    mCancelFab.setVisibility(View.GONE);
-//
-//                                                    setRefreshActionButtonState(false);
-//
-//                                                    mSwipeRefreshLayout.setEnabled(true);
-//
-//                                                }
-//                                            }, 5789);
-//                                        }
-//                                    }, 7000);
-//                                }
-//                            }, 5000);
-//                        }
-//                    }, 3000);
-//
-//                    //TODO Run actual tests and display notice info
-//                    //Do not block thread
-//
-////                    noticeTextView
-////                            .setText("2/3 - Testing Internet (WAN) Upload (UL) Speed...");
-//                    //TODO Run actual tests and display notice info
-//
-//
-////                    noticeTextView
-////                            .setText("3/3 - Testing Link Speed between this device and the Router...");
-//                    //TODO Run actual tests and display notice info
-//
-//
-//                } catch (final Exception e) {
-//                    e.printStackTrace();
-//                    Utils.reportException(SpeedTestActivity.this,
-//                            new IllegalStateException(e));
-//                    final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-//                    errorPlaceholder.setText(String.format("Error%s",
-//                            isNullOrEmpty(rootCauseMessage) ? "" :
-//                                    (": " + rootCauseMessage)));
-//                    if (!isNullOrEmpty(rootCauseMessage)) {
-//                        errorPlaceholder.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                Toast.makeText(SpeedTestActivity.this,
-//                                        rootCauseMessage, Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//                    }
-//                    //No worries
-//                } finally {
-////                    setRefreshActionButtonState(false);
-////                    mSwipeRefreshLayout.setEnabled(true);
-////                    noticeTextView.setVisibility(View.GONE);
-//                }
-//            }
-//        }, 1000);
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
@@ -1261,7 +1108,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 shareMenuItem.setEnabled(true);
                 mFileToShare = new File(getCacheDir(),
                         Utils.getEscapedFileName(String.format("Speed Test Results on Router '%s'",
-                                mRouter.getDisplayName())) + ".csv");
+                                mRouter.getCanonicalHumanReadableName())) + ".csv");
 
                 final List<String> csvTextOutput = new ArrayList<>();
 
@@ -1552,7 +1399,7 @@ public class SpeedTestActivity extends AppCompatActivity
             testDateView.setText(speedTestResultDate);
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_detail_test_date))
-                    .setText(speedTestResultDate);
+                    .setText(speedTestResult.getDate());
 
             final String serverCountryCode = speedTestResult.getServerCountryCode();
             final ImageView imageView = (ImageView) containerView.findViewById(R.id.speed_test_result_server_country_flag);
@@ -1571,21 +1418,26 @@ public class SpeedTestActivity extends AppCompatActivity
 
             final TextView wanDlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
-            final String wanDlByteCountDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue());
+            final String wanDlByteCountDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + "ps";
             final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
             wanDlView.setText(wanDl);
 
             final TextView wanUlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
-            final String wanUlByteCountToDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue());
+            final String wanUlByteCountToDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + "ps";
             final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
             wanUlView.setText(wanUl);
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_details_server))
                     .setText(speedTestResult.getServer());
 
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_server_location))
-                    .setText(getServerLocationDisplayFromCountryCode(serverCountryCode));
+            final TextView serverLocationView = (TextView) containerView.findViewById(R.id.speed_test_result_details_server_location);
+            if (isNullOrEmpty(serverCountryCode)) {
+                serverLocationView.setText("-");
+            } else {
+                serverLocationView
+                        .setText(getServerLocationDisplayFromCountryCode(serverCountryCode));
+            }
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing))
                     .setText(String.format("%.2f ms", ping.floatValue()));
@@ -1611,10 +1463,13 @@ public class SpeedTestActivity extends AppCompatActivity
                                             activity.mDao.deleteSpeedTestResultByRouterById(mRouterUuid,
                                                     speedTestResult.getId());
 
+                                            final List<SpeedTestResult> speedTestResultsByRouter = activity.mDao.getSpeedTestResultsByRouter(mRouterUuid);
                                             activity.mAdapter.setSpeedTestResults(
-                                                    activity.mDao.getSpeedTestResultsByRouter(mRouterUuid)
+                                                    speedTestResultsByRouter
                                             );
-                                            activity.mAdapter.notifyItemRemoved(position);
+                                            activity.mAdapter.notifyDataSetChanged();
+
+                                            activity.updateNbSpeedTestResults(speedTestResultsByRouter);
 
                                             //Request Backup
                                             Utils.requestBackup(activity);

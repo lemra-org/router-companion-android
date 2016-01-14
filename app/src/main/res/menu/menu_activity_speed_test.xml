@@ -39,7 +39,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_settings_white_24dp"
         android:orderInCategory="2"
         android:title="@string/menuitem_settings"
-        app:showAsAction="collapseActionView|ifRoom" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/router_speedtest_share"
@@ -48,6 +48,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:orderInCategory="3"
         android:title="@string/share"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="collapseActionView|ifRoom"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
