@@ -1605,9 +1605,14 @@ public class SpeedTestActivity extends AppCompatActivity
                                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(final DialogInterface dialogInterface, final int i) {
-                                            activity.mDao.deleteSpeedTestResultByRouterById(mRouter.getUuid(),
+                                            final String mRouterUuid = mRouter.getUuid();
+
+                                            activity.mDao.deleteSpeedTestResultByRouterById(mRouterUuid,
                                                     speedTestResult.getId());
 
+                                            activity.mAdapter.setSpeedTestResults(
+                                                    activity.mDao.getSpeedTestResultsByRouter(mRouterUuid)
+                                            );
                                             activity.mAdapter.notifyItemRemoved(position);
 
                                             //Request Backup
