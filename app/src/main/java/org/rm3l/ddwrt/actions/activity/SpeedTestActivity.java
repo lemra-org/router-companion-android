@@ -97,7 +97,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
@@ -725,8 +724,10 @@ public class SpeedTestActivity extends AppCompatActivity
             mServerCountryFlag.setVisibility(View.GONE);
         }
 
-        mWithCurrentConnectionTesting =
-                mRouterPreferences.getBoolean(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION, true);
+        //TODO Disabled for now
+//        mWithCurrentConnectionTesting =
+//                mRouterPreferences.getBoolean(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION, true);
+        mWithCurrentConnectionTesting = false;
 
         final View devices = findViewById(R.id.speedtest_connection_devices);
         final View connectionLink = findViewById(R.id.speedtest_connection_link);

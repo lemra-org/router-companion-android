@@ -45,11 +45,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:title="Data transfer duration threshold (in seconds)"
         android:summary="Test continues with next sample data size until transfer duration exceeds this"/>
 
-    <org.rm3l.ddwrt.widgets.MySwitchPreference
-        android:defaultValue="true"
-        android:key="routerSpeedTest.withCurrentConnection"
-        android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."
-        android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."
-        android:title="Test device to router connection" />
+    <!-- Disabled for now -->
+    <!--<org.rm3l.ddwrt.widgets.MySwitchPreference-->
+        <!--android:defaultValue="true"-->
+        <!--android:key="routerSpeedTest.withCurrentConnection"-->
+        <!--android:summaryOff="Disabled. Link from this device to the router will not be tested. WAN Link (from Router to Internet) is always tested."-->
+        <!--android:summaryOn="Link from this device to the router will be tested, besides WAN Link (from Router to Internet)."-->
+        <!--android:title="Test device to router connection" />-->
 
 </PreferenceScreen>
