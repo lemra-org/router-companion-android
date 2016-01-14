@@ -1,27 +1,38 @@
 package org.rm3l.ddwrt.actions.activity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,10 +47,12 @@ import android.widget.Toast;
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import com.google.common.io.Files;
 import com.squareup.picasso.Callback;
 
 import org.apache.commons.io.FileUtils;
@@ -63,17 +76,24 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import de.keyboardsurfer.android.widget.crouton.Style;
 import mbanje.kurt.fabbutton.FabButton;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
@@ -106,8 +126,6 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private Menu optionsMenu;
-
     private BroadcastReceiver mMessageReceiver;
 
     private TextView mSpeedtestLatencyTitle;
@@ -118,7 +136,6 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private TextView[] mTitleTextViews;
 
-    private View mServerContainer;
     private ImageView mServerCountryFlag;
     private TextView mServerLabel;
 
@@ -168,6 +185,10 @@ public class SpeedTestActivity extends AppCompatActivity
     private TextView errorPlaceholder;
 
     private DDWRTCompanionDAO mDao;
+
+    private ShareActionProvider mShareActionProvider;
+    private Menu optionsMenu;
+    private File mFileToShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,7 +303,6 @@ public class SpeedTestActivity extends AppCompatActivity
                 mSpeedtestWifiSpeedTitle,
                 mSpeedtestWifiEfficiencyTitle};
 
-        mServerContainer = findViewById(R.id.speedtest_server_container);
         mServerCountryFlag =
                 (ImageView) findViewById(R.id.speedtest_server_country_flag);
         mServerLabel =
@@ -312,16 +332,158 @@ public class SpeedTestActivity extends AppCompatActivity
             }
         });
 
-        final ImageButton imageButton = (ImageButton)
+        final ImageButton speedtestResultsRefreshImageButton = (ImageButton)
                 findViewById(R.id.speedtest_results_refresh);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        final ImageButton speedtestResultsClearAllImageButton = (ImageButton)
+                findViewById(R.id.speedtest_results_clear_all);
+
+        if (mIsThemeLight) {
+            speedtestResultsRefreshImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_refresh_black_24dp));
+            speedtestResultsClearAllImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_clear_all_black_24dp));
+        } else {
+            speedtestResultsRefreshImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_refresh_white_24dp));
+            speedtestResultsClearAllImageButton.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_clear_all_white_24dp));
+        }
+
+        speedtestResultsRefreshImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 refreshSpeedTestResults();
             }
         });
 
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                SnackbarUtils.buildSnackbar(this,
+                        "Storage access is required to share Speed Test results.",
+                        "OK",
+                        Snackbar.LENGTH_INDEFINITE,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(SpeedTestActivity.this,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        speedtestResultsClearAllImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(SpeedTestActivity.this)
+                        .setIcon(R.drawable.ic_action_alert_warning)
+                        .setTitle("Delete All Results?")
+                        .setMessage("You'll lose all speed test records!")
+                        .setCancelable(true)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialogInterface, final int i) {
+                                mDao.deleteAllSpeedTestResultsByRouter(mRouter.getUuid());
+
+                                refreshSpeedTestResults();
+
+                                //Request Backup
+                                Utils.requestBackup(SpeedTestActivity.this);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Cancelled - nothing more to do!
+                            }
+                        }).create().show();
+            }
+        });
+
         doPerformSpeedTest();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case DDWRTCompanionConstants.Permissions.STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+                        menuItem.setEnabled(true);
+                    }
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Crashlytics.log(Log.WARN, LOG_TAG, "Boo! Permission denied for #" + requestCode);
+                    Utils.displayMessage(this,
+                            "Sharing of SpeedTest Results will be unavailable",
+                            Style.INFO);
+                    if (optionsMenu != null) {
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+                        menuItem.setEnabled(false);
+                    }
+                }
+                return;
+            }
+            default:
+                break;
+        }
     }
 
     @Override
@@ -333,14 +495,18 @@ public class SpeedTestActivity extends AppCompatActivity
                 ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO));
     }
 
-    private void refreshSpeedTestResults() {
-        final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
-        mAdapter.setSpeedTestResults(speedTestResultsByRouter);
-        mAdapter.notifyDataSetChanged();
+    private void updateNbSpeedTestResults(List<SpeedTestResult> speedTestResultsByRouter) {
         final int size = speedTestResultsByRouter.size();
         final TextView nbResultsView = (TextView) findViewById(R.id.speedtest_results_nb_results);
         nbResultsView
                 .setText(Integer.toString(size));
+    }
+
+    private void refreshSpeedTestResults() {
+        final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
+        mAdapter.setSpeedTestResults(speedTestResultsByRouter);
+        mAdapter.notifyDataSetChanged();
+        updateNbSpeedTestResults(speedTestResultsByRouter);
     }
 
     @Override
@@ -375,7 +541,16 @@ public class SpeedTestActivity extends AppCompatActivity
         } catch (final Exception e) {
             e.printStackTrace();
         } finally {
-            super.onDestroy();
+            try {
+                if (mFileToShare != null) {
+                    //noinspection ResultOfMethodCallIgnored
+                    mFileToShare.delete();
+                }
+            } catch (final Exception e) {
+                Crashlytics.logException(e);
+            } finally {
+                super.onDestroy();
+            }
         }
     }
 
@@ -469,40 +644,77 @@ public class SpeedTestActivity extends AppCompatActivity
 //                });
     }
 
-    private void refreshSpeedTestParameters(final String serverSetting) {
-        final String routerText;
-        boolean doUpdateServerTextLabel = true;
-        switch (serverSetting) {
+    @NonNull
+    private static String getServerLocationDisplayFromCountryCode(@NonNull final String serverCountryCode) {
+        switch (nullToEmpty(serverCountryCode)) {
             case ROUTER_SPEED_TEST_SERVER_AUTO:
-                routerText = AUTO_DETECTED;
+                return AUTO_DETECTED;
+            case "DE":
+                return "Frankfurt (Germany)";
+            case "US":
+                return "California (USA)";
+            case "BR":
+                return "Sao Paulo (Brazil)";
+            case "KR":
+                return "Seoul (South Korea)";
+            case "JP":
+                return "Tokyo (Japan)";
+            case "AU":
+                return "Sydney (Australia)";
+            default:
+                return isNullOrEmpty(serverCountryCode) ?
+                        "-" : serverCountryCode;
+        }
+    }
+
+    private void refreshSpeedTestParameters(@NonNull final String serverSetting) {
+//        final String routerText;
+        boolean doUpdateServerTextLabel = true;
+
+        final String routerText = getServerLocationDisplayFromCountryCode(serverSetting);
+        switch (nullToEmpty(routerText)) {
+            case AUTO_DETECTED:
                 final String serverLabelStr = mServerLabel.getText().toString();
                 if (!(isNullOrEmpty(serverLabelStr)
-                    || routerText.equals(serverLabelStr))) {
+                        || routerText.equals(serverLabelStr))) {
                     doUpdateServerTextLabel = false;
                 }
                 break;
-            case "DE":
-                routerText = "Frankfurt (Germany)";
-                break;
-            case "US":
-                routerText = "California (USA)";
-                break;
-            case "BR":
-                routerText = "Sao Paulo (Brazil)";
-                break;
-            case "KR":
-                routerText = "Seoul (South Korea)";
-                break;
-            case "JP":
-                routerText = "Tokyo (Japan)";
-                break;
-            case "AU":
-                routerText = "Sydney (Australia)";
-                break;
             default:
-                routerText = serverSetting;
                 break;
         }
+
+//        switch (serverSetting) {
+//            case ROUTER_SPEED_TEST_SERVER_AUTO:
+//                routerText = AUTO_DETECTED;
+//                final String serverLabelStr = mServerLabel.getText().toString();
+//                if (!(isNullOrEmpty(serverLabelStr)
+//                    || routerText.equals(serverLabelStr))) {
+//                    doUpdateServerTextLabel = false;
+//                }
+//                break;
+//            case "DE":
+//                routerText = "Frankfurt (Germany)";
+//                break;
+//            case "US":
+//                routerText = "California (USA)";
+//                break;
+//            case "BR":
+//                routerText = "Sao Paulo (Brazil)";
+//                break;
+//            case "KR":
+//                routerText = "Seoul (South Korea)";
+//                break;
+//            case "JP":
+//                routerText = "Tokyo (Japan)";
+//                break;
+//            case "AU":
+//                routerText = "Sydney (Australia)";
+//                break;
+//            default:
+//                routerText = serverSetting;
+//                break;
+//        }
         if (doUpdateServerTextLabel) {
             mServerLabel.setText(routerText);
         }
@@ -584,6 +796,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     final String serverSetting = mRouterPreferences.getString(
                             ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
 
+                    pingServerCountry = serverSetting;
                     if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
                         // Iterate over each server to determine the closest one,
                         // in terms of ping latency
@@ -709,6 +922,18 @@ public class SpeedTestActivity extends AppCompatActivity
                                         null,
                                         null,
                                         pingServerCountry));
+
+                        //Request Backup
+                        Utils.requestBackup(SpeedTestActivity.this);
+
+                        final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
+
+                        updateNbSpeedTestResults(speedTestResultsByRouter);
+                        mAdapter.setSpeedTestResults(speedTestResultsByRouter);
+                        mAdapter.notifyItemInserted(0);
+                        //Scroll to top
+                        mLayoutManager.scrollToPosition(0);
+
                         errorPlaceholder.setVisibility(View.GONE);
                     }
                 } else {
@@ -947,8 +1172,183 @@ public class SpeedTestActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_activity_speed_test, menu);
         this.optionsMenu = menu;
 
+        //Permission requests
+        final int rwExternalStoragePermissionCheck = ContextCompat
+                .checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat
+                    .shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                SnackbarUtils.buildSnackbar(this,
+                        "Storage access is required to share Speed Test Results.",
+                        "OK",
+                        Snackbar.LENGTH_INDEFINITE,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+                                //Request permission
+                                ActivityCompat.requestPermissions(SpeedTestActivity.this,
+                                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        DDWRTCompanionConstants.Permissions.STORAGE);
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        DDWRTCompanionConstants.Permissions.STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        /* Getting the actionprovider associated with the menu item whose id is share */
+        final MenuItem shareMenuItem = menu.findItem(R.id.router_speedtest_share);
+
+        mShareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(shareMenuItem);
+        if (mShareActionProvider == null) {
+            mShareActionProvider = new ShareActionProvider(this);
+            MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            shareMenuItem.setEnabled(false);
+        } else {
+
+            final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
+            if (speedTestResultsByRouter.isEmpty()) {
+                shareMenuItem.setEnabled(false);
+            } else {
+                shareMenuItem.setEnabled(true);
+                mFileToShare = new File(getCacheDir(),
+                        Utils.getEscapedFileName(String.format("Speed Test Results on Router '%s'",
+                                mRouter.getDisplayName())) + ".csv");
+
+                final List<String> csvTextOutput = new ArrayList<>();
+
+                try {
+                    final String hdr = "Test Date,Server,Server Location,WAN Ping,WAN Ping (Readable),WAN Download,WAN Download (Readable),WAN Upload,WAN Upload (Readable)";
+                    csvTextOutput.add(hdr);
+                    Files.write(hdr + "\n",
+                            mFileToShare,
+                            CHARSET);
+                    for (final SpeedTestResult speedTestResult : speedTestResultsByRouter) {
+                        if (speedTestResult == null) {
+                            continue;
+                        }
+                        final Number wanPing = speedTestResult.getWanPing();
+                        final Number wanDl = speedTestResult.getWanDl();
+                        final Number wanUl = speedTestResult.getWanUl();
+
+                        final String speedTestLine = String.format("%s,%s,%s,%.2f,%.2f ms,%.2f,%sps,%.2f,%sps",
+                                speedTestResult.getDate(),
+                                speedTestResult.getServer(),
+                                speedTestResult.getServerCountryCode(),
+                                wanPing.floatValue(),
+                                wanPing.floatValue(),
+                                wanDl.floatValue(),
+                                FileUtils.byteCountToDisplaySize(wanDl.longValue()),
+                                wanUl.floatValue(),
+                                FileUtils.byteCountToDisplaySize(wanUl.longValue()));
+
+                        csvTextOutput.add(speedTestLine);
+                        Files.append(speedTestLine + "\n",
+                                mFileToShare, CHARSET);
+                    }
+
+                    setShareFile(csvTextOutput, mFileToShare);
+
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    Utils.displayMessage(this, "Failed to export file - sharing will be unavailable. Please try again later", Style.ALERT);
+                    shareMenuItem.setEnabled(false);
+                    return super.onCreateOptionsMenu(menu);
+                }
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
 
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+    private void setShareFile(Collection<String> csvTextOutput, File file) {
+        if (mShareActionProvider == null) {
+            return;
+        }
+
+        final Uri uriForFile = FileProvider
+                .getUriForFile(this, DDWRTCompanionConstants.FILEPROVIDER_AUTHORITY, file);
+
+        mShareActionProvider.setOnShareTargetSelectedListener(new ShareActionProvider.OnShareTargetSelectedListener() {
+            @Override
+            public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+                grantUriPermission(intent.getComponent().getPackageName(),
+                        uriForFile, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                return true;
+            }
+        });
+
+        final Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
+        sendIntent.setType("text/html");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                String.format("Speed Test Results for Router '%s'", mRouter.getDisplayName()));
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                Html.fromHtml(String.format("%s\n\n%s",
+                        Joiner.on("\n").skipNulls().join(csvTextOutput),
+                        Utils.getShareIntentFooter())
+                        .replaceAll("\n", "<br/>")));
+
+        sendIntent.setData(uriForFile);
+//        sendIntent.setType("image/png");
+        sendIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        setShareIntent(sendIntent);
     }
 
     @Override
@@ -1091,14 +1491,22 @@ public class SpeedTestActivity extends AppCompatActivity
                     .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                     .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
             final CardView cardView = (CardView) v.findViewById(R.id.speed_test_result_item_cardview);
+            final ImageButton deleteImageButton = (ImageButton) cardView.findViewById(R.id.speedtest_result_delete);
             if (currentTheme == ColorUtils.LIGHT_THEME) {
                 //Light
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(activity, R.color.cardview_light_background));
+
+                deleteImageButton
+                        .setImageDrawable(ContextCompat.getDrawable(activity,
+                                R.drawable.ic_delete_black_24dp));
             } else {
                 //Default is Dark
                 cardView.setCardBackgroundColor(ContextCompat
                         .getColor(activity, R.color.cardview_dark_background));
+                deleteImageButton
+                        .setImageDrawable(ContextCompat.getDrawable(activity,
+                                R.drawable.ic_delete_white_24dp));
             }
 
 //        return new ViewHolder(this.context,
@@ -1107,7 +1515,7 @@ public class SpeedTestActivity extends AppCompatActivity
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, final int position) {
             if (position < 0 || position >= speedTestResults.size()) {
                 Utils.reportException(null, new IllegalStateException());
                 Toast.makeText(activity,
@@ -1120,10 +1528,24 @@ public class SpeedTestActivity extends AppCompatActivity
                 return;
             }
             final View containerView = holder.containerView;
+
+            containerView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final View placeholderView = containerView
+                            .findViewById(R.id.speed_test_result_details_placeholder);
+                    if (placeholderView.getVisibility() == View.VISIBLE) {
+                        placeholderView.setVisibility(View.GONE);
+                    } else {
+                        placeholderView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
             final TextView testDateView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_test_date);
             String speedTestResultDate = speedTestResult.getDate();
-            if (speedTestResultDate != null) {
+            if (!isNullOrEmpty(speedTestResultDate)) {
                 speedTestResultDate = speedTestResultDate.replaceAll(" ", "\n");
             }
             testDateView.setText(speedTestResultDate);
@@ -1143,31 +1565,64 @@ public class SpeedTestActivity extends AppCompatActivity
 
             final TextView wanPingView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
-            final String wanPing = String.format("%.2f\nms", speedTestResult.getWanPing());
-            wanPingView.setText(wanPing);
+            final Number ping = speedTestResult.getWanPing();
+            wanPingView.setText(String.format("%.2f\nms", ping.floatValue()));
 
             final TextView wanDlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
-            final String wanDl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue())
-                        .replaceAll(" ", "\n");
+            final String wanDlByteCountDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue());
+            final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
             wanDlView.setText(wanDl);
 
             final TextView wanUlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
-            final String wanUl = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue())
-                    .replaceAll(" ", "\n");
+            final String wanUlByteCountToDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue());
+            final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
             wanUlView.setText(wanUl);
 
             ((TextView) containerView.findViewById(R.id.speed_test_result_details_server))
                     .setText(speedTestResult.getServer());
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing))
-                    .setText(wanPing);
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanDownload))
-                    .setText(wanDl);
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanUpload))
-                    .setText(wanUl);
 
-            //TODO add connection measures
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_server_location))
+                    .setText(getServerLocationDisplayFromCountryCode(serverCountryCode));
+
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing))
+                    .setText(String.format("%.2f ms", ping.floatValue()));
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanDownload))
+                    .setText(wanDlByteCountDisplaySize);
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanUpload))
+                    .setText(wanUlByteCountToDisplaySize);
+
+            containerView.findViewById(R.id.speedtest_result_delete)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AlertDialog.Builder(activity)
+                                    .setIcon(R.drawable.ic_action_alert_warning)
+                                    .setTitle("Delete Speed Test Result?")
+                                    .setMessage("You'll lose this record!")
+                                    .setCancelable(true)
+                                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogInterface dialogInterface, final int i) {
+                                            activity.mDao.deleteSpeedTestResultByRouterById(mRouter.getUuid(),
+                                                    speedTestResult.getId());
+
+                                            activity.mAdapter.notifyItemRemoved(position);
+
+                                            //Request Backup
+                                            Utils.requestBackup(activity);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            //Cancelled - nothing more to do!
+                                        }
+                                    }).create().show();
+                        }
+                    });
+
         }
 
         @Override

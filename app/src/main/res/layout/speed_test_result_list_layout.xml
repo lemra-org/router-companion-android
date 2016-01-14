@@ -57,7 +57,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentTop="true"
                     android:layout_gravity="start"
                     android:scrollHorizontally="true"
-                    android:textAppearance="?android:textAppearanceMedium" />
+                    android:gravity="center"/>
 
                 <ImageView
                     android:id="@+id/speed_test_result_server_country_flag"
@@ -65,7 +65,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="30dp"
                     android:layout_centerInParent="true"
                     android:layout_alignParentTop="true"
-                    android:layout_gravity="end"/>
+                    android:layout_gravity="center"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -82,7 +82,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:scrollHorizontally="true"
                         android:layout_margin="10dp"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:gravity="center"/>
 
                     <TextView
                         android:id="@+id/speed_test_result_wanDl"
@@ -91,7 +92,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="start"
                         android:scrollHorizontally="true"
                         android:layout_margin="10dp"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:gravity="center" />
 
                     <TextView
                         android:id="@+id/speed_test_result_wanUl"
@@ -99,7 +101,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:scrollHorizontally="true"
-                        android:textAppearance="?android:textAppearanceMedium" />
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:gravity="center"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp" />
+
+                    <ImageButton
+                        android:id="@+id/speedtest_result_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_delete_black_24dp"
+                        android:contentDescription="Delete"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="?android:attr/selectableItemBackground"/>
 
                 </LinearLayout>
 
@@ -164,6 +179,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     <TextView
                         android:id="@+id/speed_test_result_details_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="4dp"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:singleLine="false"
+                        android:text="@string/loading" />
+
+                    <!-- Server Location -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Location"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8.0dip"
+                        android:layout_marginRight="8.0dip"
+                        android:text="@string/one_space" />
+
+                    <TextView
+                        android:id="@+id/speed_test_result_details_server_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
@@ -252,61 +293,61 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/loading" />
 
 
-                    <!-- Connection UL -->
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionUl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Connection Upload"
-                        android:textStyle="bold" />
+                    <!--&lt;!&ndash; Connection UL &ndash;&gt;-->
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionUl"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Connection Upload"-->
+                        <!--android:textStyle="bold" />-->
 
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionUl_sep"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="8.0dip"
-                        android:layout_marginRight="8.0dip"
-                        android:text="@string/one_space" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionUl_sep"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_marginLeft="8.0dip"-->
+                        <!--android:layout_marginRight="8.0dip"-->
+                        <!--android:text="@string/one_space" />-->
 
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionUl_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginBottom="4dp"
-                        android:ellipsize="end"
-                        android:gravity="start"
-                        android:singleLine="false"
-                        android:text="@string/loading" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionUl_txt"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="start"-->
+                        <!--android:layout_marginBottom="4dp"-->
+                        <!--android:ellipsize="end"-->
+                        <!--android:gravity="start"-->
+                        <!--android:singleLine="false"-->
+                        <!--android:text="@string/loading" />-->
 
-                    <!-- Connection DL -->
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionDl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Connection Download"
-                        android:textStyle="bold" />
+                    <!--&lt;!&ndash; Connection DL &ndash;&gt;-->
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionDl"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Connection Download"-->
+                        <!--android:textStyle="bold" />-->
 
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionDl_sep"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="8.0dip"
-                        android:layout_marginRight="8.0dip"
-                        android:text="@string/one_space" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionDl_sep"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_marginLeft="8.0dip"-->
+                        <!--android:layout_marginRight="8.0dip"-->
+                        <!--android:text="@string/one_space" />-->
 
-                    <TextView
-                        android:id="@+id/speed_test_result_details_connectionDl_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginBottom="4dp"
-                        android:ellipsize="end"
-                        android:gravity="start"
-                        android:singleLine="false"
-                        android:text="@string/loading" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/speed_test_result_details_connectionDl_txt"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="start"-->
+                        <!--android:layout_marginBottom="4dp"-->
+                        <!--android:ellipsize="end"-->
+                        <!--android:gravity="start"-->
+                        <!--android:singleLine="false"-->
+                        <!--android:text="@string/loading" />-->
 
 
                 </GridLayout>

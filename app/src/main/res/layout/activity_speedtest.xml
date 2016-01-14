@@ -23,18 +23,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoPanelHeight="68dp"
+    sothree:umanoPanelHeight="60dp"
     sothree:umanoShadowHeight="4dp"
     sothree:umanoOverlay="true"
     sothree:umanoParallaxOffset="100dp"
     sothree:umanoScrollableView="@+id/speedtest_results_recycler_view"
     sothree:umanoDragView="@+id/dragView">
 
+    <!-- MAIN CONTENT -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,21 +78,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textColor="@color/white"
             android:textStyle="bold"
             android:background="@color/DarkRed"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_margin="7dp"/>
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="7dp">
 
             <LinearLayout
-                android:id="@+id/speedtest_server_container"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="start"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp">
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -102,28 +103,82 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold"
                     android:textAppearance="?android:textAppearanceMedium"/>
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/speedtest_server"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:text="Auto-detected"/>
 
-                    <TextView
-                        android:id="@+id/speedtest_server"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:text="Auto-detected"/>
-
-                    <ImageView
-                        android:id="@+id/speedtest_server_country_flag"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:visibility="visible"/>
-
-                </RelativeLayout>
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/speedtest_server_country_flag"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:visibility="visible"/>
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="7dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginRight="7dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="top">
+
+                <!-- Notice -->
+                <TextView
+                    android:id="@+id/router_speedtest_notice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:singleLine="false"
+                    android:textStyle="bold"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/white"
+                    android:background="@color/jetstream_speed_test_background"
+                    android:layout_gravity="center_horizontal|top"
+                    android:visibility="visible"
+                    android:maxLines="1"
+                    android:maxLength="50"
+                    android:ellipsize="end"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"/>
+
+                <!-- Cancel Action Button -->
+                <view
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    class="mbanje.kurt.fabbutton.FabButton"
+                    android:id="@+id/speedtest_cancel"
+                    android:layout_gravity="end|top"
+                    android:color="@color/win8_magenta"
+                    android:src="@drawable/ic_close_white_24dp"
+                    android:visibility="visible"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:clickable="true"
+                    app:fbb_autoStart="true"
+                    app:fbb_progressColor="#ff170aff"
+                    app:fbb_progressWidthRatio="0.1"
+                    app:fbb_endBitmap="@drawable/ic_fab_complete"
+                    app:fbb_showEndBitmap="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+
+            </RelativeLayout>
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/swipeRefreshLayout"
@@ -396,63 +451,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="5dp"
         android:clickable="true"
         android:focusable="false"
         android:id="@+id/dragView">
-        
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:layout_margin="10dp">
-
-            <!-- Notice -->
-            <TextView
-                android:id="@+id/router_speedtest_notice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:singleLine="false"
-                android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/white"
-                android:background="@color/jetstream_speed_test_background"
-                android:layout_gravity="center_horizontal|bottom"
-                android:visibility="gone"
-                android:maxLines="1"
-                android:maxLength="50"
-                android:ellipsize="end"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <!-- Cancel Action Button -->
-            <view
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                class="mbanje.kurt.fabbutton.FabButton"
-                android:id="@+id/speedtest_cancel"
-                android:layout_gravity="end|bottom"
-                android:color="@color/win8_magenta"
-                android:src="@drawable/ic_close_white_24dp"
-                android:visibility="gone"
-                android:indeterminate="false"
-                android:max="100"
-                android:clickable="true"
-                app:fbb_autoStart="true"
-                app:fbb_progressColor="#ff170aff"
-                app:fbb_progressWidthRatio="0.1"
-                app:fbb_endBitmap="@drawable/ic_fab_complete"
-                app:fbb_showEndBitmap="true"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
-
-        </RelativeLayout>
 
         <RelativeLayout
+            android:layout_margin="7dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -469,8 +473,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_height="wrap_content"
                     android:text="xxx"
                     android:textAppearance="?android:textAppearanceMedium"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -491,8 +495,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <ImageButton
                     android:id="@+id/speedtest_results_refresh"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/ic_refresh_black_24dp"
                     android:contentDescription="Refresh"
                     android:layout_marginRight="10dp"
@@ -500,12 +504,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:background="?android:attr/selectableItemBackground"/>
 
                 <ImageButton
-                    android:id="@+id/speedtest_results_menu"
+                    android:id="@+id/speedtest_results_clear_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+                    android:src="@drawable/ic_clear_all_black_24dp"
+                    android:contentDescription="Delete All"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"/>
 
             </LinearLayout>
 
@@ -516,13 +522,15 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:id="@+id/speedtest_results_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical"
+            android:layout_margin="7dp"/>
 
         <TextView
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:layout_margin="7dp"
             android:layout_gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="You do not have any SpeedTest results yet!" />
