@@ -174,7 +174,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     app:fbb_progressColor="#ff170aff"
                     app:fbb_progressWidthRatio="0.1"
                     app:fbb_endBitmap="@drawable/ic_fab_complete"
-                    app:fbb_showEndBitmap="true"
+                    app:fbb_showEndBitmap="false"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"/>
 

@@ -162,12 +162,13 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:singleLine="false"
                         android:text="@string/loading" />
 
-                    <!-- Server Location -->
+                    <!-- Server: Hidden for now -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Server"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -175,7 +176,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_gravity="center"
                         android:layout_marginLeft="8.0dip"
                         android:layout_marginRight="8.0dip"
-                        android:text="@string/one_space" />
+                        android:text="@string/one_space"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/speed_test_result_details_server"
@@ -186,7 +188,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:ellipsize="end"
                         android:gravity="start"
                         android:singleLine="false"
-                        android:text="@string/loading" />
+                        android:text="@string/loading"
+                        android:visibility="gone" />
 
                     <!-- Server Location -->
                     <TextView
