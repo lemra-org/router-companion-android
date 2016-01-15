@@ -891,8 +891,8 @@ public class SpeedTestActivity extends AppCompatActivity
                             mRouterPreferences.getLong(
                                     ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB, ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT);
                     final long userDefinedRouterSpeedTestDurationThresholdSeconds =
-                            mRouterPreferences.getLong(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
-                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT);
+                            Long.parseLong(mRouterPreferences.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
+                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
 
                     Pair<Long, Long> pairAcceptedForComputation = null;
                     for (final String possibleFileSize : mPossibleFileSizes) {
