@@ -24,10 +24,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -347,9 +347,10 @@ public class AddWOLHostDialogFragment extends DialogFragment {
             public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                 try {
                     displayMessage(
-                            String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                            String.format("Error on action '%s': %s", routerAction.toString(),
+                                    Utils.handleException(exception).first),
                             Style.ALERT);
-                    Utils.reportException(null, exception);
+                    Crashlytics.logException(exception);
                 } finally {
                     if (mWaitingDialog != null) {
                         mWaitingDialog.cancel();

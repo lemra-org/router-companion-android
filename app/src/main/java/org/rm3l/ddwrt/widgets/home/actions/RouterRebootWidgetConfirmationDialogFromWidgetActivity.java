@@ -10,13 +10,13 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Toast;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.ConfirmDialogAsActivity;
 
 /**
@@ -82,7 +82,8 @@ public class RouterRebootWidgetConfirmationDialogFromWidgetActivity extends Conf
                                     @Override
                                     public void run() {
                                         Toast.makeText(RouterRebootWidgetConfirmationDialogFromWidgetActivity.this,
-                                                String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                                                String.format("Error on action '%s': %s", routerAction.toString(),
+                                                        Utils.handleException(exception).first),
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 });

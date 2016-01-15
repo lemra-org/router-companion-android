@@ -57,6 +57,9 @@ public class ExecStreamableCommandRouterAction extends AbstractRouterAction<Void
     protected final RouterActionResult<Void> doActionInBackground(@NonNull Router router) {
         Exception exception = null;
         try {
+            if (isCancelled()) {
+                throw new InterruptedException();
+            }
             final int exitStatus = SSHUtils.execStreamableCommand(mContext, router, globalSharedPreferences,
                     routerAction,
                     (RouterStreamActionListener) listener,

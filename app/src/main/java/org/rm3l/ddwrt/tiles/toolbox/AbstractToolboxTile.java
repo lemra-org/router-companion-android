@@ -44,7 +44,6 @@ import android.widget.Toast;
 
 import com.google.common.base.Throwables;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
@@ -176,7 +175,8 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                             public void onClick(final View v) {
                                 Toast.makeText(mParentFragmentActivity,
                                         (exception == null || exception instanceof InterruptedException) ?
-                                                errorMsgToDisplay : ExceptionUtils.getRootCauseMessage(exception),
+                                                errorMsgToDisplay :
+                                                Utils.handleException(exception).first,
                                         Toast.LENGTH_LONG).show();
                             }
                         });
@@ -373,6 +373,8 @@ public abstract class AbstractToolboxTile extends DDWRTTile<None> {
                 }
                 try {
                     mCurrentRouterActionTask.cancel(true);
+                    Toast.makeText(mParentFragmentActivity, "Stopping...", Toast.LENGTH_SHORT)
+                            .show();
                 } catch (final Exception e) {
                     Utils.reportException(null, e);
                 } finally {

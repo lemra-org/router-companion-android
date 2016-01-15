@@ -47,6 +47,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -70,6 +71,7 @@ import com.squareup.picasso.Transformation;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
@@ -103,11 +105,13 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static de.keyboardsurfer.android.widget.crouton.Crouton.makeText;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AD_FREE_APP_APPLICATION_ID;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APIKEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DOORBELL_APPID;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.FIRST_APP_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.IS_FIRST_LAUNCH_PREF_KEY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.OLD_IS_FIRST_LAUNCH_PREF_KEY;
@@ -813,6 +817,23 @@ public final class Utils {
                 // result of the request.
             }
         }
+    }
+
+    @NonNull
+    public static Pair<String, String> handleException(@Nullable final Exception exception) {
+        if (exception == null) {
+            return Pair.create(EMPTY_STRING, EMPTY_STRING);
+        }
+        final Throwable rootCause = ExceptionUtils.getRootCause(exception);
+        final String exceptionMessage = nullToEmpty(exception.getMessage());
+        if (rootCause == null) {
+            return Pair.create(exceptionMessage, exceptionMessage);
+        }
+        final String rootCauseMessage = rootCause.getMessage();
+        if (isNullOrEmpty(rootCauseMessage)) {
+            return Pair.create(exceptionMessage, exceptionMessage);
+        }
+        return Pair.create(rootCauseMessage, ExceptionUtils.getRootCauseMessage(exception));
     }
 
 }

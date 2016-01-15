@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.WakeOnLANRouterAction;
@@ -176,7 +175,7 @@ public class RouterWolWidgetConfirmationDialogFromWidgetActivity extends Confirm
                                                         String.format("Action '%s' executed but %d error(s) occurred: %s",
                                                                 routerAction.toString(),
                                                                 numActionsWithNoSuccess.get(),
-                                                                ExceptionUtils.getRootCauseMessage(exception)),
+                                                                Utils.handleException(exception).first),
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         });

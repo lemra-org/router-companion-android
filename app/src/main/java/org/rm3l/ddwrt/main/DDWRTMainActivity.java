@@ -95,7 +95,6 @@ import com.mikepenz.materialdrawer.util.RecyclerViewCacheUtil;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
@@ -1623,7 +1622,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                             Utils.displayMessage(DDWRTMainActivity.this,
                                                     String.format("Error on action '%s': %s",
                                                             routerAction.toString(),
-                                                            ExceptionUtils.getRootCauseMessage(exception)),
+                                                            Utils.handleException(exception).first),
                                                     Style.ALERT);
                                         } finally {
                                             runOnUiThread(new Runnable() {
@@ -1667,7 +1666,8 @@ public class DDWRTMainActivity extends AppCompatActivity
     @Override
     public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
         Utils.displayMessage(this,
-                String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                String.format("Error on action '%s': %s", routerAction.toString(),
+                        Utils.handleException(exception).first),
                 Style.ALERT);
     }
 

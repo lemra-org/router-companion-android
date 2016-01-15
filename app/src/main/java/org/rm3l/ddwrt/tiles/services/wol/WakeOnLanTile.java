@@ -45,7 +45,6 @@ import com.google.common.collect.Multimap;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -654,7 +653,7 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                                                                                         String.format("Action '%s' executed but %d error(s) occurred: %s",
                                                                                                                 routerAction.toString(),
                                                                                                                 numActionsWithNoSuccess.get(),
-                                                                                                                ExceptionUtils.getRootCauseMessage(exception)),
+                                                                                                                Utils.handleException(exception).first),
                                                                                                         Style.INFO);
                                                                                             }
                                                                                         }
@@ -1146,7 +1145,8 @@ public class WakeOnLanTile extends DDWRTTile<RouterData<ArrayList<Device>>> {
                                             @Override
                                             public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                                                 Utils.displayMessage(mParentFragmentActivity,
-                                                        String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                                                        String.format("Error on action '%s': %s", routerAction.toString(),
+                                                                Utils.handleException(exception).first),
                                                         Style.ALERT);
                                             }
                                         },

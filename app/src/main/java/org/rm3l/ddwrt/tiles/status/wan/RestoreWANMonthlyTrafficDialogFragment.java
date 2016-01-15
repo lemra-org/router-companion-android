@@ -37,7 +37,6 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Strings;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.BackupWANMonthlyTrafficRouterAction;
@@ -435,7 +434,8 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                                 }
                                             });
 
-                                            displayMessage(String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                                            displayMessage(String.format("Error on action '%s': %s", routerAction.toString(),
+                                                    Utils.handleException(exception).first),
                                                     Style.ALERT);
 
                                         }
@@ -568,7 +568,7 @@ public class RestoreWANMonthlyTrafficDialogFragment extends DialogFragment
                                                     Utils.displayMessage(mCtx,
                                                             String.format("Error on action '%s': %s",
                                                                     routerAction.toString(),
-                                                                    ExceptionUtils.getRootCauseMessage(exception)),
+                                                                    Utils.handleException(exception).first),
                                                             Style.ALERT);
                                                 } finally {
                                                     mCtx.runOnUiThread(new Runnable() {

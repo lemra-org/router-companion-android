@@ -26,7 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -270,7 +269,7 @@ public class IPGeoActivity extends AppCompatActivity {
                                         "Unable to geo-locate IP Address - please try again later.");
                             } else {
                                 errorView.setText("Error: " +
-                                        ExceptionUtils.getRootCauseMessage(e));
+                                                Utils.handleException(e).first);
                             }
                             errorView.setVisibility(View.VISIBLE);
                         }

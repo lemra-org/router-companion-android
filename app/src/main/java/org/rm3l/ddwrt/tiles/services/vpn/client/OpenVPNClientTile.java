@@ -47,7 +47,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -802,7 +801,8 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
     @Override
     public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
         Utils.displayMessage(mParentFragmentActivity,
-                String.format("Error: %s", ExceptionUtils.getRootCauseMessage(exception)),
+                String.format("Error: %s",
+                        Utils.handleException(exception).first),
                 Style.ALERT);
     }
 
@@ -923,7 +923,7 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
                                                                                   enable ? "enable" : "disable",
                                                                                   router.getDisplayName(),
                                                                                   router.getRemoteIpAddress(),
-                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                                  Utils.handleException(exception).first),
                                                                           Style.ALERT);
                                                               } finally {
                                                                   compoundButton.setEnabled(true);

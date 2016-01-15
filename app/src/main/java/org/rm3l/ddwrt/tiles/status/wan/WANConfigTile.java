@@ -48,7 +48,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.DHCPClientRouterAction;
@@ -676,7 +675,7 @@ public class WANConfigTile extends DDWRTTile<NVRAMInfo> implements PopupMenu.OnM
                                                                                       renew ? "renew" : "release",
                                                                                       router.getDisplayName(),
                                                                                       router.getRemoteIpAddress(),
-                                                                                      ExceptionUtils.getRootCauseMessage(exception)),
+                                                                                      Utils.handleException(exception).first),
                                                                               Style.ALERT);
                                                                   } finally {
                                                                       mDhcpActionRunning.set(false);

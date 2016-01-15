@@ -64,7 +64,6 @@ import com.google.common.base.Joiner;
 import com.madx.updatechecker.lib.UpdateRunnable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.about.AboutDialog;
@@ -583,7 +582,7 @@ public class RouterManagementActivity
                                                         Utils.displayMessage(RouterManagementActivity.this,
                                                                 String.format("Action '%s' executed but %d error(s) occurred: %s",
                                                                         routerAction.toString(), numActionsWithNoSuccess.get(),
-                                                                        ExceptionUtils.getRootCauseMessage(exception)),
+                                                                        Utils.handleException(exception).first),
                                                                 Style.INFO);
                                                     }
                                                 }

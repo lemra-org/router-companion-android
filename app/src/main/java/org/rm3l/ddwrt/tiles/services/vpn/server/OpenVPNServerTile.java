@@ -20,7 +20,6 @@ import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
@@ -431,7 +430,7 @@ public class OpenVPNServerTile extends DDWRTTile<NVRAMInfo> {
                                                                                   enable ? "enable" : "disable",
                                                                                   router.getDisplayName(),
                                                                                   router.getRemoteIpAddress(),
-                                                                                  ExceptionUtils.getRootCauseMessage(exception)),
+                                                                                  Utils.handleException(exception).first),
                                                                           Style.ALERT);
                                                               } finally {
                                                                   compoundButton.setEnabled(true);

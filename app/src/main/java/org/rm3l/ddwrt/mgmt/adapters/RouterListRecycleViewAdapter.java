@@ -66,7 +66,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
@@ -643,7 +642,7 @@ public class RouterListRecycleViewAdapter extends
                                         public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                                             //An error occurred
                                             final String msg = String.format("Error: %s",
-                                                    ExceptionUtils.getRootCauseMessage(exception));
+                                                    Utils.handleException(exception).first);
 
                                             if (context instanceof Activity) {
                                                 Utils.displayMessage((Activity) context,

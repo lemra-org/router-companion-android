@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 /**
@@ -90,7 +89,7 @@ public final class SnackbarUtils {
                     e.printStackTrace();
                     Utils.reportException(ctx, e);
                     Toast.makeText(ctx, "Internal Error (" + Strings.nullToEmpty(
-                            ExceptionUtils.getRootCauseMessage(e)) +
+                            Utils.handleException(e).first) +
                             "). Please try again later.", Toast.LENGTH_SHORT)
                             .show();
                 }

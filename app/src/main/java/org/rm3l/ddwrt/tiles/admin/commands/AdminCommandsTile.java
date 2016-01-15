@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.support.v4.util.Pair;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,9 +18,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Throwables;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
@@ -29,6 +27,7 @@ import org.rm3l.ddwrt.actions.RouterStreamActionListener;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ReportingUtils;
+import org.rm3l.ddwrt.utils.Utils;
 
 import static android.widget.TextView.BufferType.EDITABLE;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -81,13 +80,13 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                     @Override
                     public void run() {
                         final String errorMsgToDisplay;
+                        final Pair<String, String> exceptionHandled = Utils.handleException(exception);
                         if (exception != null) {
                             //noinspection ThrowableResultOfMethodCallIgnored
                             if (exception instanceof InterruptedException) {
                                 errorMsgToDisplay = "Action Aborted.";
                             } else {
-                                final Throwable rootCause = Throwables.getRootCause(exception);
-                                errorMsgToDisplay = "Error: " + (rootCause != null ? rootCause.getMessage() : "null");
+                                errorMsgToDisplay = ("Error: " + exceptionHandled.first);
                             }
                         } else {
                             errorMsgToDisplay = "Internal error! Please try again later.";
@@ -98,7 +97,7 @@ public class AdminCommandsTile extends DDWRTTile<Void> {
                             public void onClick(final View v) {
                                 Toast.makeText(mParentFragmentActivity,
                                         (exception == null || exception instanceof InterruptedException) ?
-                                                errorMsgToDisplay : ExceptionUtils.getRootCauseMessage(exception),
+                                                errorMsgToDisplay : exceptionHandled.second,
                                         Toast.LENGTH_LONG).show();
                             }
                         });

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -155,7 +154,8 @@ public class EditWOLHostDialogFragment extends AddWOLHostDialogFragment {
             public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
                 try {
                     Utils.displayMessage(getActivity(),
-                            String.format("Error on action '%s': %s", routerAction.toString(), ExceptionUtils.getRootCauseMessage(exception)),
+                            String.format("Error on action '%s': %s", routerAction.toString(),
+                                    Utils.handleException(exception).first),
                             Style.ALERT);
                     Utils.reportException(null, exception);
                 } finally {

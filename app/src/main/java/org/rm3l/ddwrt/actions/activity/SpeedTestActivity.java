@@ -58,7 +58,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Callback;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.PingFromRouterAction;
@@ -174,23 +173,40 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final String HTTP_DL_URL = "HTTP_DL_URL";
 
     static {
+        /*
+            Public Access for S3 requires the following bucket policy:
+
+            {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid":"AddPerm",
+                  "Effect":"Allow",
+                  "Principal": "*",
+                  "Action":["s3:GetObject"],
+                  "Resource":["arn:aws:s3:::speed-test--frankfurt/*"]
+                }
+              ]
+            }
+         */
+
         SERVERS.put("DE", PING_SERVER, "s3.eu-central-1.amazonaws.com");
-        SERVERS.put("DE", HTTP_DL_URL, "https://s3.eu-central-1.amazonaws.com/speed-test--frankfurt");
+        SERVERS.put("DE", HTTP_DL_URL, "http://speed-test--frankfurt.s3-website.eu-central-1.amazonaws.com");
 
         SERVERS.put("US", PING_SERVER, "s3-us-west-1.amazonaws.com");
-        SERVERS.put("US", HTTP_DL_URL, "https://s3-us-west-1.amazonaws.com/speed-test--northern-california");
+        SERVERS.put("US", HTTP_DL_URL, "http://speed-test--northern-california.s3-website-us-west-1.amazonaws.com");
 
         SERVERS.put("BR", PING_SERVER, "s3-sa-east-1.amazonaws.com");
-        SERVERS.put("BR", HTTP_DL_URL, "https://s3-sa-east-1.amazonaws.com/speed-test--sao-paulo");
+        SERVERS.put("BR", HTTP_DL_URL, "http://speed-test--sao-paulo.s3-website-sa-east-1.amazonaws.com");
 
         SERVERS.put("KR", PING_SERVER, "s3.ap-northeast-2.amazonaws.com");
-        SERVERS.put("KR", HTTP_DL_URL, "https://s3.ap-northeast-2.amazonaws.com/speed-test--seoul");
+        SERVERS.put("KR", HTTP_DL_URL, "http://speed-test--seoul.s3-website.ap-northeast-2.amazonaws.com");
 
         SERVERS.put("JP", PING_SERVER, "s3-ap-northeast-1.amazonaws.com");
-        SERVERS.put("JP", HTTP_DL_URL, "https://s3-ap-northeast-1.amazonaws.com/speed-test--tokyo");
+        SERVERS.put("JP", HTTP_DL_URL, "http://speed-test--tokyo.s3-website-ap-northeast-1.amazonaws.com");
 
         SERVERS.put("AU", PING_SERVER, "s3-ap-southeast-2.amazonaws.com");
-        SERVERS.put("AU", HTTP_DL_URL, "https://s3-ap-southeast-2.amazonaws.com/speed-test--sydney");
+        SERVERS.put("AU", HTTP_DL_URL, "http://speed-test--sydney.s3-website-ap-southeast-2.amazonaws.com");
     }
 
     private TextView noticeTextView;
@@ -209,7 +225,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private ImageButton speedtestRunImageButton;
 
-    private String[] mPossibleFileSizes;
+    private Long[] mPossibleFileSizes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,9 +262,27 @@ public class SpeedTestActivity extends AppCompatActivity
             return;
         }
 
-        mPossibleFileSizes =
-                getResources().getStringArray(
-                        R.array.routerSpeedTestMaxFileSize_values);
+        final String[] maxFileSizeValuesStrArr = getResources().getStringArray(
+                R.array.routerSpeedTestMaxFileSize_values);
+        if (maxFileSizeValuesStrArr == null) {
+            mPossibleFileSizes = new Long[] {128L};
+        } else {
+            mPossibleFileSizes = new Long[maxFileSizeValuesStrArr.length];
+            int i = 0;
+            try {
+                for (final String maxFileSizeValuesStr : maxFileSizeValuesStrArr) {
+                    mPossibleFileSizes[i++] = Long.parseLong(maxFileSizeValuesStr);
+                }
+            } catch (final NumberFormatException nfe) {
+                nfe.printStackTrace();
+                Utils.reportException(this, nfe);
+                Toast.makeText(
+                        this, "Internal Error - thanks for reporting the issue.",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+        }
         Arrays.sort(mPossibleFileSizes);
 
         mRouterPreferences = getSharedPreferences(routerSelected, Context.MODE_PRIVATE);
@@ -352,6 +386,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
         mCancelFab = (FabButton)
                 findViewById(R.id.speedtest_cancel);
+        mCancelFab.setEnabled(true);
         mCancelFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -366,6 +401,10 @@ public class SpeedTestActivity extends AppCompatActivity
                         }
                     });
                     mSpeedTestAsyncTask.cancel(true);
+                    Toast.makeText(SpeedTestActivity.this,
+                            "Stopping...",
+                            Toast.LENGTH_SHORT)
+                        .show();
                 }
             }
         });
@@ -701,8 +740,8 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     @Nullable
-    private static String getRemoteFileExtension(@Nullable  final String fileSizeKB) {
-        switch (nullToEmpty(fileSizeKB)) {
+    private static String getRemoteFileExtension(@Nullable  final Long fileSizeKB) {
+        switch (Long.toString(fileSizeKB)) {
             case "128":
                 return "128KB";
             case "256":
@@ -809,6 +848,9 @@ public class SpeedTestActivity extends AppCompatActivity
                 executionDate = new Date();
                 Exception exception = null;
                 try {
+                    if (isCancelled()) {
+                        throw new InterruptedException();
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -845,6 +887,9 @@ public class SpeedTestActivity extends AppCompatActivity
                         String serverCountry = null;
                         for (final Map.Entry<String, Map<String, String>> entry :
                                 SERVERS.rowMap().entrySet()) {
+                            if (isCancelled()) {
+                                throw new InterruptedException();
+                            }
                             final String country = entry.getKey();
                             final Map<String, String> value = entry.getValue();
                             final String pingServer = value.get(PING_SERVER);
@@ -898,12 +943,16 @@ public class SpeedTestActivity extends AppCompatActivity
                                 ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
 
                     Pair<Long, Long> pairAcceptedForComputation = null;
-                    
+
+                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes));
+
                     int pg = 3;
-                    for (final String possibleFileSize : mPossibleFileSizes) {
+                    for (final Long possibleFileSize : mPossibleFileSizes) {
+                        if (isCancelled()) {
+                            throw new InterruptedException();
+                        }
                         //Measure time to download file of the specified type
-                        final long t0 = System.nanoTime();
-                        //TODO Actual file DL
                         /*
                         String.format("echo -e \"" +
                                                         "GET / HTTP/1.1\\r\\n" +
@@ -928,32 +977,50 @@ public class SpeedTestActivity extends AppCompatActivity
                                 //highlightTitleTextView(mSpeedtestWanDlTitle);
                             }
                         });
-                        
-                        final int wanDlCmdStatus = SSHUtils.runCommands(SpeedTestActivity.this,
+
+                        final long t0 = System.nanoTime();
+                        final String[] cmdExecOutput = SSHUtils.getManualProperty(SpeedTestActivity.this,
+                                mRouter,
                                 getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                                         Context.MODE_PRIVATE),
-                                mRouter,
-                                String.format("/usr/bin/wget -qO /dev/null %s/%s?id=%s",
+                                String.format("/usr/bin/wget -qO /dev/null %s/%s?id=%s 2>&1 ",
                                         wanSpeedUrl,
                                         remoteFileName,
-                                        Long.toString(t0)));
-                        if (wanDlCmdStatus != 0) {
-                            throw new
-                                    DDWRTCompanionException("Failed to download " + remoteFileName + " data");
-                        }
+                                        Long.toString(t0)),
+                                "/bin/echo $?"
+                        );
                         final long t1 = System.nanoTime();
+
+                        if (cmdExecOutput == null || cmdExecOutput.length == 0) {
+                            final SpeedTestException speedTestException = new
+                                    SpeedTestException("Failed to download " + remoteFileName + " data");
+                            Crashlytics.logException(speedTestException);
+                            throw speedTestException;
+                        }
+                        final String exitStatus = nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1]).trim();
+                        if (!"0".equals(exitStatus)) {
+                            final SpeedTestException speedTestException = new
+                                    SpeedTestException("Failed to download " + remoteFileName + " data: unexpected command exit status");
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, Arrays.toString(cmdExecOutput));
+                            Crashlytics.logException(speedTestException);
+                            throw speedTestException;
+                        }
+
                         final long elapsed = t1 - t0;
-                        final long possibleFileSizeLong = Long.parseLong(possibleFileSize);
                         pairAcceptedForComputation = Pair.create(
-                                possibleFileSizeLong,
+                                possibleFileSize,
                                 elapsed);
                         //Stop conditions: time_to_dl >= threshold or
                         // fileSize >= possibleFileSize
-                        if (possibleFileSizeLong >= userDefinedRouterSpeedTestMaxFileSizeKB
+                        if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeKB
                             || TimeUnit.NANOSECONDS.toMillis(elapsed) >=
                                 TimeUnit.SECONDS.toMillis(userDefinedRouterSpeedTestDurationThresholdSeconds)) {
                             break;
                         }
+                    }
+
+                    if (isCancelled()) {
+                        throw new InterruptedException();
                     }
 
                     //3- WAN DL
@@ -967,6 +1034,9 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
                     publishProgress(WAN_DL_MEASURED);
 
+                    if (isCancelled()) {
+                        throw new InterruptedException();
+                    }
 
                     //3- WAN UL
                     publishProgress(TEST_WAN_UL);
@@ -988,8 +1058,8 @@ public class SpeedTestActivity extends AppCompatActivity
                     throw new IllegalArgumentException("No Server specified");
                 }
                 final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouter, null,
-                        String.format(PingFromRouterAction.PING_CMD_TO_FORMAT,
-                                PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server) + " | grep \"round-trip\"");
+                        String.format(PingFromRouterAction.PING_CMD_TO_FORMAT + " | grep \"round-trip\"",
+                                PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server));
                 if (pingOutput == null || pingOutput.length < 1) {
                     //Nothing - abort right now with an error message
                     throw new SpeedTestException("Unable to contact remote server");
@@ -1025,14 +1095,13 @@ public class SpeedTestActivity extends AppCompatActivity
                     final Exception exception = voidRouterActionResult.getException();
                     if (exception != null) {
                         errorPlaceholder.setVisibility(View.VISIBLE);
-                        final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(exception);
-                        errorPlaceholder.setText("Error: " +
-                                rootCauseMessage);
-                        if (!isNullOrEmpty(rootCauseMessage)) {
+                        final Pair<String, String> exceptionPair = Utils.handleException(exception);
+                        errorPlaceholder.setText("Error: " + exceptionPair.first);
+                        if (!isNullOrEmpty(exceptionPair.second)) {
                             errorPlaceholder.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Toast.makeText(SpeedTestActivity.this, rootCauseMessage,
+                                    Toast.makeText(SpeedTestActivity.this, exceptionPair.second,
                                             Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -1185,7 +1254,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
             @Override
             protected void onCancelled(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-                errorPlaceholder.setText("Cancelled");
+                errorPlaceholder.setText("Aborted");
                 errorPlaceholder.setVisibility(View.VISIBLE);
                 resetEverything(true);
             }
