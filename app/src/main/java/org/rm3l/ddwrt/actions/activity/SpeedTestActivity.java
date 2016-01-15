@@ -114,6 +114,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private static final String LOG_TAG = SpeedTestActivity
             .class.getSimpleName();
+            
+    public static final String PER_SEC = "/s";
+            
     public static final String NET_LATENCY = "net_latency";
     public static final String NET_DL = "net_dl";
     public static final String NET_UL = "net_ul";
@@ -895,6 +898,8 @@ public class SpeedTestActivity extends AppCompatActivity
                                 ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
 
                     Pair<Long, Long> pairAcceptedForComputation = null;
+                    
+                    int pg = 3;
                     for (final String possibleFileSize : mPossibleFileSizes) {
                         //Measure time to download file of the specified type
                         final long t0 = System.nanoTime();
@@ -907,16 +912,34 @@ public class SpeedTestActivity extends AppCompatActivity
                                                         "| /usr/bin/nc %s %d"
                          */
                         //"wget -qO /dev/null http://cachefly.cachefly.net/10mb.test?id="+System.currentTimeMillis()
+                        
+                        final String remoteFileName = getRemoteFileExtension(possibleFileSize);
+                        pg += 2;
+                        final int pgForFile = pg;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Display message to user
+                                mCancelFab.setProgress((100 * 3/4) + pgForFile);
+                                noticeTextView
+                                        .setText("3/4 - Downloading " + remoteFileName + " data...");
+                                //final int netDlColor = ColorUtils.getColor(NET_DL);
+                                //internetRouterLink.setBackgroundColor(netDlColor);
+                                //highlightTitleTextView(mSpeedtestWanDlTitle);
+                            }
+                        });
+                        
                         final int wanDlCmdStatus = SSHUtils.runCommands(SpeedTestActivity.this,
                                 getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                                         Context.MODE_PRIVATE),
                                 mRouter,
-                                String.format("/usr/bin/wget -qO /dev/null %s/%s",
+                                String.format("/usr/bin/wget -qO /dev/null %s/%s?id=%s",
                                         wanSpeedUrl,
-                                        getRemoteFileExtension(possibleFileSize)));
+                                        remoteFileName,
+                                        Long.toString(t0)));
                         if (wanDlCmdStatus != 0) {
                             throw new
-                                    DDWRTCompanionException("Failed to download file with size: " + possibleFileSize);
+                                    DDWRTCompanionException("Failed to download " + remoteFileName + " data");
                         }
                         final long t1 = System.nanoTime();
                         final long elapsed = t1 - t0;
@@ -940,8 +963,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         final long wanDl = (timeElapsed != 0 ?
                                 ((pairAcceptedForComputation.first * 1024) / timeElapsed) :
                                 (pairAcceptedForComputation.first * 1024));
-                        speedTestResult.setWanDl(
-                                wanDl);
+                        speedTestResult.setWanDl(wanDl);
                     }
                     publishProgress(WAN_DL_MEASURED);
 
@@ -1127,9 +1149,10 @@ public class SpeedTestActivity extends AppCompatActivity
                         if (speedTestResult != null
                                 && speedTestResult.getWanDl() != null) {
                             wanDlTextView
-                                    .setText(String.format("%sps",
+                                    .setText(String.format("%s%s",
                                             FileUtils.byteCountToDisplaySize(
-                                                    speedTestResult.getWanDl().longValue())));
+                                                    speedTestResult.getWanDl().longValue()),
+                                            PER_SEC));
                         } else {
                             wanDlTextView.setText("-");
                         }
@@ -1145,9 +1168,10 @@ public class SpeedTestActivity extends AppCompatActivity
                         if (speedTestResult != null
                                 && speedTestResult.getWanUl() != null) {
                             wanUlTextView
-                                    .setText(String.format("%sps",
+                                    .setText(String.format("%s%s",
                                             FileUtils.byteCountToDisplaySize(
-                                                    speedTestResult.getWanUl().longValue())));
+                                                    speedTestResult.getWanUl().longValue()),
+                                            PER_SEC));
                         } else {
                             wanUlTextView.setText("-");
                         }
@@ -1316,7 +1340,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         final Number wanDl = speedTestResult.getWanDl();
                         final Number wanUl = speedTestResult.getWanUl();
 
-                        final String speedTestLine = String.format("%s,%s,%s,%.2f,%.2f ms,%.2f,%sps,%.2f,%sps",
+                        final String speedTestLine = String.format("%s,%s,%s,%.2f,%.2f ms,%.2f,%s%s,%.2f,%s%s",
                                 speedTestResult.getDate(),
                                 speedTestResult.getServer(),
                                 speedTestResult.getServerCountryCode(),
@@ -1324,8 +1348,10 @@ public class SpeedTestActivity extends AppCompatActivity
                                 wanPing.floatValue(),
                                 wanDl.floatValue(),
                                 FileUtils.byteCountToDisplaySize(wanDl.longValue()),
+                                PER_SEC,
                                 wanUl.floatValue(),
-                                FileUtils.byteCountToDisplaySize(wanUl.longValue()));
+                                FileUtils.byteCountToDisplaySize(wanUl.longValue()),
+                                PER_SEC);
 
                         csvTextOutput.add(speedTestLine);
                         Files.append(speedTestLine + "\n",
@@ -1608,13 +1634,13 @@ public class SpeedTestActivity extends AppCompatActivity
 
             final TextView wanDlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
-            final String wanDlByteCountDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + "ps";
+            final String wanDlByteCountDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + PER_SEC);
             final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
             wanDlView.setText(wanDl);
 
             final TextView wanUlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
-            final String wanUlByteCountToDisplaySize = FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + "ps";
+            final String wanUlByteCountToDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + PER_SEC);
             final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
             wanUlView.setText(wanUl);
 
