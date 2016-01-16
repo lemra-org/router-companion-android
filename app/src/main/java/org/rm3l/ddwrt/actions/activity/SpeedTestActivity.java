@@ -1702,8 +1702,8 @@ public class SpeedTestActivity extends AppCompatActivity
             final TextView wanPingView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
             wanPingView.setCompoundDrawablesWithIntrinsicBounds(
-                    isThemeLight ? R.drawable.ic_settings_ethernet_black_24dp : R.drawable.ic_settings_ethernet_white_24dp,
-                    0, 0, 0
+                    0, isThemeLight ? R.drawable.ic_settings_ethernet_black_24dp : R.drawable.ic_settings_ethernet_white_24dp,
+                    0, 0
             );
             final Number ping = speedTestResult.getWanPing();
             wanPingView.setText(String.format("%.2f\nms", ping.floatValue()));
@@ -1711,8 +1711,8 @@ public class SpeedTestActivity extends AppCompatActivity
             final TextView wanDlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
             wanDlView.setCompoundDrawablesWithIntrinsicBounds(
-                    isThemeLight ? R.drawable.ic_file_download_black_24dp : R.drawable.ic_file_download_white_24dp,
-                    0, 0, 0
+                    0, isThemeLight ? R.drawable.ic_file_download_black_24dp : R.drawable.ic_file_download_white_24dp,
+                    0, 0
             );
             final String wanDlByteCountDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + PER_SEC);
             final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
@@ -1721,8 +1721,8 @@ public class SpeedTestActivity extends AppCompatActivity
             final TextView wanUlView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
             wanUlView.setCompoundDrawablesWithIntrinsicBounds(
-                    isThemeLight ? R.drawable.ic_file_upload_black_24dp : R.drawable.ic_file_upload_white_24dp,
-                    0, 0, 0
+                    0, isThemeLight ? R.drawable.ic_file_upload_black_24dp : R.drawable.ic_file_upload_white_24dp,
+                    0, 0
             );
             final String wanUlByteCountToDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + PER_SEC);
             final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
