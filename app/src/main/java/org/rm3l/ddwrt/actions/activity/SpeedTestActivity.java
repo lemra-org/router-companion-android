@@ -1702,7 +1702,7 @@ public class SpeedTestActivity extends AppCompatActivity
             final TextView wanPingView =
                     (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
             wanPingView.setCompoundDrawablesWithIntrinsicBounds(
-                    isThemeLight ? R.drawable.ic_public_black_24dp : R.drawable.ic_public_white_24dp,
+                    isThemeLight ? R.drawable.ic_settings_ethernet_black_24dp : R.drawable.ic_settings_ethernet_white_24dp,
                     0, 0, 0
             );
             final Number ping = speedTestResult.getWanPing();
