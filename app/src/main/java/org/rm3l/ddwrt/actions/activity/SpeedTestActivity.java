@@ -774,48 +774,54 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void refreshSpeedTestParameters(@NonNull final String serverSetting) {
-//        final String routerText;
-        boolean doUpdateServerTextLabel = true;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //        final String routerText;
+                boolean doUpdateServerTextLabel = true;
 
-        final String routerText = getServerLocationDisplayFromCountryCode(serverSetting);
-        switch (nullToEmpty(routerText)) {
-            case RANDOM_SELECTED:
-            case AUTO_DETECTED:
-                final String serverLabelStr = mServerLabel.getText().toString();
-                if (!(isNullOrEmpty(serverLabelStr)
-                        || routerText.equals(serverLabelStr))) {
-                    doUpdateServerTextLabel = false;
+                final String routerText = getServerLocationDisplayFromCountryCode(serverSetting);
+                switch (nullToEmpty(routerText)) {
+                    case RANDOM_SELECTED:
+                    case AUTO_DETECTED:
+                        final String serverLabelStr = mServerLabel.getText().toString();
+                        if (!(isNullOrEmpty(serverLabelStr)
+                                || routerText.equals(serverLabelStr))) {
+                            doUpdateServerTextLabel = false;
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            default:
-                break;
-        }
 
-        if (doUpdateServerTextLabel) {
-            mServerLabel.setText(routerText);
-        }
-        if (!AUTO_DETECTED.equalsIgnoreCase(routerText)) {
-            //Load flag in the background
-            refreshServerLocationFlag(serverSetting);
-        } else {
-            mServerCountryFlag.setVisibility(View.GONE);
-        }
+                if (doUpdateServerTextLabel) {
+                    mServerLabel.setText(routerText);
+                }
+                if (!AUTO_DETECTED.equalsIgnoreCase(routerText)) {
+                    //Load flag in the background
+                    refreshServerLocationFlag(serverSetting);
+                } else {
+                    mServerCountryFlag.setVisibility(View.GONE);
+                }
 
-        //TODO Disabled for now
+                //TODO Disabled for now
 //        mWithCurrentConnectionTesting =
 //                mRouterPreferences.getBoolean(ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION, true);
-        mWithCurrentConnectionTesting = false;
+                mWithCurrentConnectionTesting = false;
 
-        final View devices = findViewById(R.id.speedtest_connection_devices);
-        final View connectionLink = findViewById(R.id.speedtest_connection_link);
+                final View devices = findViewById(R.id.speedtest_connection_devices);
+                final View connectionLink = findViewById(R.id.speedtest_connection_link);
 
-        if (mWithCurrentConnectionTesting) {
-            connectionLink.setVisibility(View.VISIBLE);
-            devices.setVisibility(View.VISIBLE);
-        } else {
-            connectionLink.setVisibility(View.GONE);
-            devices.setVisibility(View.GONE);
-        }
+                if (mWithCurrentConnectionTesting) {
+                    connectionLink.setVisibility(View.VISIBLE);
+                    devices.setVisibility(View.VISIBLE);
+                } else {
+                    connectionLink.setVisibility(View.GONE);
+                    devices.setVisibility(View.GONE);
+                }
+            }
+        });
+
     }
 
     private void doPerformSpeedTest() {
