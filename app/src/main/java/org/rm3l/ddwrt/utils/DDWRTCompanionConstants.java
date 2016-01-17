@@ -156,6 +156,7 @@ public final class DDWRTCompanionConstants {
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS = "routerSpeedTestDurationThresholdSeconds";
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT = "8";
     public static final String ROUTER_SPEED_TEST_SERVER_AUTO = "_auto_";
+    public static final String ROUTER_SPEED_TEST_SERVER_RANDOM = "_random_";
     public static final String ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION = "routerSpeedTest.withCurrentConnection";
 
     public static int MB = 1024 * 1024;

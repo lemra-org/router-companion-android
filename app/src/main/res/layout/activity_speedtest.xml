@@ -129,56 +129,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_marginEnd="7dp"
             android:layout_marginRight="7dp">
 
-            <RelativeLayout
+            <!-- Notice -->
+            <TextView
+                android:id="@+id/router_speedtest_notice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="top">
-
-                <!-- Notice -->
-                <TextView
-                    android:id="@+id/router_speedtest_notice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:singleLine="false"
-                    android:textStyle="bold"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/white"
-                    android:background="@color/jetstream_speed_test_background"
-                    android:layout_gravity="center_horizontal|top"
-                    android:visibility="visible"
-                    android:maxLines="1"
-                    android:maxLength="50"
-                    android:ellipsize="end"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"/>
-
-                <!-- Cancel Action Button -->
-                <view
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    class="mbanje.kurt.fabbutton.FabButton"
-                    android:id="@+id/speedtest_cancel"
-                    android:layout_gravity="end|top"
-                    android:color="@color/win8_magenta"
-                    android:src="@drawable/ic_close_white_24dp"
-                    android:visibility="visible"
-                    android:indeterminate="false"
-                    android:max="100"
-                    android:clickable="true"
-                    app:fbb_autoStart="true"
-                    app:fbb_progressColor="#ff170aff"
-                    app:fbb_progressWidthRatio="0.1"
-                    app:fbb_endBitmap="@drawable/ic_fab_complete"
-                    app:fbb_showEndBitmap="false"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"/>
-
-            </RelativeLayout>
+                android:gravity="center"
+                android:singleLine="false"
+                android:textStyle="italic"
+                android:visibility="gone"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
+                android:background="@color/jetstream_speed_test_background"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginBottom="10dp"/>
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/swipeRefreshLayout"
@@ -343,11 +307,34 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:contentDescription="Router"
                             android:layout_gravity="center_horizontal" />
 
+
+                        <!-- Cancel Action Button -->
+                        <view
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            class="mbanje.kurt.fabbutton.FabButton"
+                            android:id="@+id/speedtest_run_cancel"
+                            android:layout_gravity="end|center_horizontal"
+                            android:color="@color/win8_magenta"
+                            android:src="@drawable/ic_play_arrow_white_24dp"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:clickable="true"
+                            app:fbb_showShadow="true"
+                            app:fbb_autoStart="true"
+                            app:fbb_progressColor="@color/primary"
+                            app:fbb_progressWidthRatio="0.1"
+                            app:fbb_hideProgressOnComplete="true"
+                            app:fbb_endBitmap="@drawable/ic_play_arrow_white_24dp"
+                            app:fbb_showEndBitmap="true"
+                            android:layout_marginBottom="30dp"/>
+
                         <RelativeLayout
                             android:id="@+id/speedtest_connection_link"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal">
+                            android:layout_gravity="center_horizontal"
+                            android:visibility="gone">
 
                             <View
                                 android:id="@+id/speedtest_router_lan_path_vertical"
@@ -436,7 +423,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="60dp"
                             android:layout_gravity="center_horizontal"
                             android:src="@drawable/ic_action_device_devices2"
-                            android:contentDescription="Devices" />
+                            android:contentDescription="Devices"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
                 </ScrollView>
@@ -486,17 +474,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
             </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/speedtest_results_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_play_circle_outline_black_24dp"
-                android:contentDescription="Run Speed Test"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_centerInParent="true"
-                android:background="?android:attr/selectableItemBackground"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

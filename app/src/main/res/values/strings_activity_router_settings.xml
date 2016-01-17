@@ -85,7 +85,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
 
     <string-array name="routerSpeedTestMaxFileSize_titles">
-        <item>128 KB</item>
+        <!--<item>128 KB</item>-->
         <item>256 KB</item>
         <item>512 KB</item>
         <item>1 MB</item>
@@ -96,9 +96,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>32 MB</item>
         <item>64 MB</item>
         <item>128 MB</item>
+        <item>256 MB</item>
+        <item>512 MB</item>
+        <item>1 GB</item>
     </string-array>
     <string-array name="routerSpeedTestMaxFileSize_values">
-        <item>128</item>
+        <!--<item>128</item>-->
         <item>256</item>
         <item>512</item>
         <item>1024</item>
@@ -109,6 +112,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>32768</item>
         <item>65536</item>
         <item>131072</item>
+
+        <item>262144</item>
+        <item>524288</item>
+        <item>1048576</item>
     </string-array>
 
     <string-array name="pref_notifications_sync_frequency_titles">
@@ -188,6 +195,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string-array name="speedtest_servers_titles">
         <item>Auto</item>
+        <item>Random</item>
         <item>Frankfurt (Germany)</item>
         <item>California (USA)</item>
         <item>Sao Paulo (Brazil)</item>
@@ -197,6 +205,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </string-array>
     <string-array name="speedtest_servers_values">
         <item>_auto_</item>
+        <item>_random_</item>
         <item>DE</item>
         <item>US</item>
         <item>BR</item>
