@@ -57,7 +57,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_alignParentTop="true"
                     android:layout_gravity="start"
                     android:scrollHorizontally="true"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:gravity="center"/>
 
 
@@ -74,7 +74,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_gravity="center"
-                        android:layout_margin="10dp"/>
+                        android:layout_marginTop="15dp"/>
 
                     <TextView
                         android:id="@+id/speed_test_result_wanPing"
@@ -82,7 +82,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:scrollHorizontally="true"
-                        android:layout_margin="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:gravity="center"/>
 
@@ -92,7 +93,8 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:scrollHorizontally="true"
-                        android:layout_margin="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:gravity="center" />
 
@@ -115,7 +117,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:contentDescription="Delete"
                         android:layout_marginRight="5dp"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="15dp"
                         android:background="?android:attr/selectableItemBackground"/>
 
                 </LinearLayout>

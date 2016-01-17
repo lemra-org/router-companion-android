@@ -1202,6 +1202,9 @@ public class ManageRouterAliasesActivity
             if (currentTheme == ColorUtils.LIGHT_THEME) {
                 //Light
                 fragmentActivity.setTheme(R.style.AppThemeLight);
+                fragmentActivity.getWindow().getDecorView()
+                        .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+                                android.R.color.white));
             } else {
                 //Default is Dark
                 fragmentActivity.setTheme(R.style.AppThemeDark);

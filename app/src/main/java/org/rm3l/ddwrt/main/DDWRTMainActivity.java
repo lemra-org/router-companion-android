@@ -307,6 +307,9 @@ public class DDWRTMainActivity extends AppCompatActivity
         if (mCurrentTheme == ColorUtils.LIGHT_THEME) {
             //Light
             setTheme(R.style.AppThemeLight);
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);

@@ -144,277 +144,272 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_gravity="center_horizontal|top"
                 android:layout_marginBottom="10dp"/>
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
+
+            <ScrollView
+                android:id="@+id/speedtest_scrollView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:fillViewport="true">
 
-                <ScrollView
-                    android:id="@+id/speedtest_scrollView"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:fillViewport="true">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                    <LinearLayout
+                    <ImageView
+                        android:id="@+id/speedtest_wan_imageView"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/internet"
+                        android:contentDescription="Internet"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                        android:layout_gravity="center_horizontal">
 
-                        <ImageView
-                            android:id="@+id/speedtest_wan_imageView"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
-                            android:src="@drawable/internet"
-                            android:contentDescription="Internet"
-                            android:layout_gravity="center_horizontal"/>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal">
+                            android:orientation="vertical"
+                            android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@+id/speedtest_internet_line"
+                            android:layout_toStartOf="@+id/speedtest_internet_line"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginTop="10dp">
 
-                            <LinearLayout
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_alignParentTop="true"
-                                android:layout_toLeftOf="@+id/speedtest_internet_line"
-                                android:layout_toStartOf="@+id/speedtest_internet_line"
-                                android:layout_marginRight="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginTop="10dp">
+                                android:id="@+id/speedtest_latency_title"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/latency"
+                                android:gravity="end" />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:id="@+id/speedtest_latency_title"
-                                    android:textAppearance="?android:attr/textAppearanceSmall"
-                                    android:text="@string/latency"
-                                    android:gravity="end" />
-
-                                <RelativeLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceLarge"
-                                        android:id="@+id/speedtest_internet_latency"
-                                        android:textStyle="bold"
-                                        android:layout_centerInParent="true"
-                                        android:text="-"/>
-
-                                    <ProgressBar
-                                        style="?android:attr/progressBarStyleSmall"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:id="@+id/speedtest_latency_pb_internet"
-                                        android:layout_centerInParent="true"
-                                        android:visibility="invisible"/>
-
-                                </RelativeLayout>
-
-                            </LinearLayout>
-
-                            <View
-                                android:id="@+id/speedtest_internet_line"
-                                android:layout_width="3dp"
-                                android:layout_height="160dp"
-                                android:background="@color/network_link_color"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_centerInParent="true"/>
-
-                            <LinearLayout
+                            <RelativeLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_alignParentTop="true"
-                                android:layout_toRightOf="@+id/speedtest_internet_line"
-                                android:layout_toEndOf="@+id/speedtest_internet_line"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginTop="10dp">
+                                android:layout_height="wrap_content">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/speedtest_wan_dl_title"
-                                    android:textAppearance="?android:attr/textAppearanceSmall"
-                                    android:text="@string/internet_dl_speed"/>
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:id="@+id/speedtest_internet_latency"
+                                    android:textStyle="bold"
+                                    android:layout_centerInParent="true"
+                                    android:text="-"/>
 
-                                <RelativeLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceLarge"
-                                        android:id="@+id/speedtest_internet_dl_speed"
-                                        android:layout_centerInParent="true"
-                                        android:textStyle="bold"
-                                        android:text="-"/>
-
-                                    <ProgressBar
-                                        style="?android:attr/progressBarStyleSmall"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:id="@+id/speedtest_dl_pb_internet"
-                                        android:layout_centerInParent="true"
-                                        android:visibility="invisible"/>
-
-                                </RelativeLayout>
-
-
-                                <TextView
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="?android:attr/textAppearanceSmall"
-                                    android:text="@string/internet_ul_speed"
-                                    android:id="@+id/speedtest_wan_ul_title"
-                                    android:layout_marginTop="15dp"/>
+                                    android:id="@+id/speedtest_latency_pb_internet"
+                                    android:layout_centerInParent="true"
+                                    android:visibility="invisible"/>
 
-                                <RelativeLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
+                            </RelativeLayout>
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceLarge"
-                                        android:id="@+id/speedtest_internet_ul_speed"
-                                        android:layout_centerInParent="true"
-                                        android:textStyle="bold"
-                                        android:text="-"/>
+                        </LinearLayout>
 
-                                    <ProgressBar
-                                        style="?android:attr/progressBarStyleSmall"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:id="@+id/speedtest_ul_pb_internet"
-                                        android:layout_centerInParent="true"
-                                        android:visibility="invisible"/>
+                        <View
+                            android:id="@+id/speedtest_internet_line"
+                            android:layout_width="3dp"
+                            android:layout_height="160dp"
+                            android:background="@color/network_link_color"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_centerInParent="true"/>
 
-                                </RelativeLayout>
-
-                            </LinearLayout>
-
-                        </RelativeLayout>
-
-                        <!-- Router -->
-                        <ImageView
-                            android:id="@+id/speedtest_router_imageView"
-                            android:layout_width="116dp"
-                            android:layout_height="67dp"
-                            android:src="@drawable/router"
-                            android:contentDescription="Router"
-                            android:layout_gravity="center_horizontal" />
-
-
-                        <RelativeLayout
-                            android:id="@+id/speedtest_connection_link"
-                            android:layout_width="match_parent"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:visibility="gone">
+                            android:orientation="vertical"
+                            android:layout_alignParentTop="true"
+                            android:layout_toRightOf="@+id/speedtest_internet_line"
+                            android:layout_toEndOf="@+id/speedtest_internet_line"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp">
 
-                            <View
-                                android:id="@+id/speedtest_router_lan_path_vertical"
-                                android:layout_width="3dp"
-                                android:layout_height="130dp"
-                                android:background="@color/network_link_color"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_centerInParent="true"/>
-
-                            <LinearLayout
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_alignParentTop="true"
-                                android:layout_toRightOf="@+id/speedtest_router_lan_path_vertical"
-                                android:layout_toEndOf="@+id/speedtest_router_lan_path_vertical"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginTop="10dp">
+                                android:id="@+id/speedtest_wan_dl_title"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/internet_dl_speed"/>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="?android:attr/textAppearanceSmall"
-                                    android:id="@+id/speedtest_lan_title"
-                                    android:text="@string/wifi_speed" />
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:id="@+id/speedtest_internet_dl_speed"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold"
+                                    android:text="-"/>
 
-                                <RelativeLayout
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceMedium"
-                                        android:id="@+id/speedtest_wifi_speed"
-                                        android:layout_centerInParent="true"
-                                        android:textStyle="bold"/>
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/speedtest_dl_pb_internet"
+                                    android:layout_centerInParent="true"
+                                    android:visibility="invisible"/>
 
-                                    <ProgressBar
-                                        style="?android:attr/progressBarStyleSmall"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:id="@+id/speedtest_pb_wifi"
-                                        android:layout_centerInParent="true"/>
-                                </RelativeLayout>
+                            </RelativeLayout>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/internet_ul_speed"
+                                android:id="@+id/speedtest_wan_ul_title"
+                                android:layout_marginTop="15dp"/>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textAppearance="?android:attr/textAppearanceSmall"
-                                    android:text="@string/wifi_efficiency"
-                                    android:id="@+id/speedtest_wifi_efficiency_title"
-                                    android:layout_marginTop="15dp"
-                                    android:visibility="gone"/>
+                                    android:textAppearance="?android:attr/textAppearanceLarge"
+                                    android:id="@+id/speedtest_internet_ul_speed"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold"
+                                    android:text="-"/>
 
-                                <RelativeLayout
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:visibility="gone">
+                                    android:id="@+id/speedtest_ul_pb_internet"
+                                    android:layout_centerInParent="true"
+                                    android:visibility="invisible"/>
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="?android:attr/textAppearanceMedium"
-                                        android:id="@+id/speedtest_wifi_efficiency"
-                                        android:layout_centerInParent="true"
-                                        android:textStyle="bold" />
+                            </RelativeLayout>
 
-                                    <ProgressBar
-                                        style="?android:attr/progressBarStyleSmall"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:id="@+id/speedtest_pb_wifi_efficiency"
-                                        android:layout_centerInParent="true"/>
+                        </LinearLayout>
 
-                                </RelativeLayout>
+                    </RelativeLayout>
 
-                            </LinearLayout>
+                    <!-- Router -->
+                    <ImageView
+                        android:id="@+id/speedtest_router_imageView"
+                        android:layout_width="116dp"
+                        android:layout_height="67dp"
+                        android:src="@drawable/router"
+                        android:contentDescription="Router"
+                        android:layout_gravity="center_horizontal" />
 
-                        </RelativeLayout>
 
-                        <ImageView
-                            android:id="@+id/speedtest_connection_devices"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                    <RelativeLayout
+                        android:id="@+id/speedtest_connection_link"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:visibility="gone">
+
+                        <View
+                            android:id="@+id/speedtest_router_lan_path_vertical"
+                            android:layout_width="3dp"
+                            android:layout_height="130dp"
+                            android:background="@color/network_link_color"
                             android:layout_gravity="center_horizontal"
-                            android:src="@drawable/ic_action_device_devices2"
-                            android:contentDescription="Devices"
-                            android:visibility="gone"/>
+                            android:layout_centerInParent="true"/>
 
-                    </LinearLayout>
-                </ScrollView>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_alignParentTop="true"
+                            android:layout_toRightOf="@+id/speedtest_router_lan_path_vertical"
+                            android:layout_toEndOf="@+id/speedtest_router_lan_path_vertical"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp">
 
-            </android.support.v4.widget.SwipeRefreshLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:id="@+id/speedtest_lan_title"
+                                android:text="@string/wifi_speed" />
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/speedtest_wifi_speed"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold"/>
+
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/speedtest_pb_wifi"
+                                    android:layout_centerInParent="true"/>
+                            </RelativeLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/wifi_efficiency"
+                                android:id="@+id/speedtest_wifi_efficiency_title"
+                                android:layout_marginTop="15dp"
+                                android:visibility="gone"/>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:id="@+id/speedtest_wifi_efficiency"
+                                    android:layout_centerInParent="true"
+                                    android:textStyle="bold" />
+
+                                <ProgressBar
+                                    style="?android:attr/progressBarStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/speedtest_pb_wifi_efficiency"
+                                    android:layout_centerInParent="true"/>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:id="@+id/speedtest_connection_devices"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_action_device_devices2"
+                        android:contentDescription="Devices"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+            </ScrollView>
 
             <!-- Cancel Action Button -->
             <view

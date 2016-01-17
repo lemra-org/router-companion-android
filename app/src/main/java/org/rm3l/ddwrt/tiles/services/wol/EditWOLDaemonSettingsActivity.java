@@ -87,6 +87,9 @@ public class EditWOLDaemonSettingsActivity extends AppCompatActivity {
         if (themeLight) {
             //Light
             setTheme(R.style.AppThemeLight);
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);

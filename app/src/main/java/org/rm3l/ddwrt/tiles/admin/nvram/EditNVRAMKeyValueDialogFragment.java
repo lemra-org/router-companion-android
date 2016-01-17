@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +90,9 @@ public class EditNVRAMKeyValueDialogFragment extends DialogFragment {
         if (currentTheme == ColorUtils.LIGHT_THEME) {
             //Light
             fragmentActivity.setTheme(R.style.AppThemeLight);
+            fragmentActivity.getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(fragmentActivity,
+                            android.R.color.white));
         } else {
             //Default is Dark
             fragmentActivity.setTheme(R.style.AppThemeDark);

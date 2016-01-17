@@ -29,6 +29,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 
 import org.rm3l.ddwrt.BuildConfig;
@@ -88,6 +89,10 @@ public class DonateActivity extends FragmentActivity {
         if (currentTheme == ColorUtils.LIGHT_THEME) {
             //Light
             setTheme(R.style.AppThemeLight);
+            getWindow().getDecorView()
+                    .setBackgroundColor(ContextCompat.getColor(this,
+                            android.R.color.white));
+
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
