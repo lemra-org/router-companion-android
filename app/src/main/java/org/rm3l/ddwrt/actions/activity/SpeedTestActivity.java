@@ -532,6 +532,10 @@ public class SpeedTestActivity extends AppCompatActivity
                         }).create().show();
             }
         });
+
+        refreshSpeedTestParameters(mRouterPreferences.getString(
+                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO));
+
     }
 
     @Override

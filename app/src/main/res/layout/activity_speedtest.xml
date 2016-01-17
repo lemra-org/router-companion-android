@@ -204,14 +204,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                         android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_latency"
                                         android:textStyle="bold"
-                                        android:layout_centerInParent="true"/>
+                                        android:layout_centerInParent="true"
+                                        android:text="-"/>
 
                                     <ProgressBar
                                         style="?android:attr/progressBarStyleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:id="@+id/speedtest_latency_pb_internet"
-                                        android:layout_centerInParent="true"/>
+                                        android:layout_centerInParent="true"
+                                        android:visibility="invisible"/>
 
                                 </RelativeLayout>
 
@@ -253,14 +255,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                         android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_dl_speed"
                                         android:layout_centerInParent="true"
-                                        android:textStyle="bold"/>
+                                        android:textStyle="bold"
+                                        android:text="-"/>
 
                                     <ProgressBar
                                         style="?android:attr/progressBarStyleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:id="@+id/speedtest_dl_pb_internet"
-                                        android:layout_centerInParent="true"/>
+                                        android:layout_centerInParent="true"
+                                        android:visibility="invisible"/>
 
                                 </RelativeLayout>
 
@@ -283,14 +287,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                         android:textAppearance="?android:attr/textAppearanceLarge"
                                         android:id="@+id/speedtest_internet_ul_speed"
                                         android:layout_centerInParent="true"
-                                        android:textStyle="bold" />
+                                        android:textStyle="bold"
+                                        android:text="-"/>
 
                                     <ProgressBar
                                         style="?android:attr/progressBarStyleSmall"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:id="@+id/speedtest_ul_pb_internet"
-                                        android:layout_centerInParent="true"/>
+                                        android:layout_centerInParent="true"
+                                        android:visibility="invisible"/>
 
                                 </RelativeLayout>
 
