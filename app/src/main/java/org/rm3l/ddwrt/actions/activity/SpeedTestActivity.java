@@ -27,18 +27,15 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -60,7 +57,7 @@ import org.apache.commons.io.FileUtils;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.PingFromRouterAction;
-import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
+import org.rm3l.ddwrt.exceptions.SpeedTestException;
 import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
@@ -105,7 +102,6 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
 /**
  * Created by rm3l on 20/12/15.
@@ -160,7 +156,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private FabButton mRunCancelFab;
 
-    private AtomicBoolean mSpeedTestRunning = new AtomicBoolean(false);
+    private static final AtomicBoolean speedTestRunning = new AtomicBoolean(false);
 
     private SharedPreferences mRouterPreferences;
 
@@ -385,14 +381,18 @@ public class SpeedTestActivity extends AppCompatActivity
         mRunCancelFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final boolean isRunning = mSpeedTestRunning.get();
+                final boolean isRunning = speedTestRunning.get();
+                Toast.makeText(SpeedTestActivity.this,
+                        "[REMOVEME] onClick(mRunCancelFab) - isRunning: " + isRunning,
+                        Toast.LENGTH_LONG)
+                            .show();
                 Crashlytics.log(Log.DEBUG, LOG_TAG,
                         "onClick(mRunCancelFab) - isRunning: " + isRunning);
                 if (isRunning) {
                     //Running - cancel task
                     //Add stopping line
                     if (mSpeedTestAsyncTask == null) {
-                        mSpeedTestRunning.set(false);
+                        speedTestRunning.set(false);
                         return;
                     }
                     runOnUiThread(new Runnable() {
@@ -575,13 +575,21 @@ public class SpeedTestActivity extends AppCompatActivity
         }
     }
 
+    protected void setSpeedTestResults(List<SpeedTestResult> results) {
+        this.mAdapter.setSpeedTestResults(results);
+    }
+
+    protected void notifyDataSetChanged() {
+        this.mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         refreshSpeedTestResults();
     }
 
-    private void updateNbSpeedTestResults(List<SpeedTestResult> speedTestResultsByRouter) {
+    protected void updateNbSpeedTestResults(List<SpeedTestResult> speedTestResultsByRouter) {
         final int size = speedTestResultsByRouter.size();
         final TextView nbResultsView = (TextView) findViewById(R.id.speedtest_results_nb_results);
         nbResultsView
@@ -674,7 +682,7 @@ public class SpeedTestActivity extends AppCompatActivity
         }
     }
 
-    private static void refreshServerLocationFlag(
+    protected static void refreshServerLocationFlag(
             @NonNull final Context ctx, @NonNull final String countryCode,
                                            @NonNull final ImageView imageView) {
         ImageUtils.downloadImageFromUrl(ctx,
@@ -702,7 +710,7 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     @NonNull
-    private static String getServerLocationDisplayFromCountryCode(@NonNull final String serverCountryCode) {
+    protected static String getServerLocationDisplayFromCountryCode(@NonNull final String serverCountryCode) {
         switch (nullToEmpty(serverCountryCode)) {
             case ROUTER_SPEED_TEST_SERVER_AUTO:
                 return AUTO_DETECTED;
@@ -831,10 +839,6 @@ public class SpeedTestActivity extends AppCompatActivity
         refreshSpeedTestParameters(mRouterPreferences.getString(
                 ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO));
 
-        if (mSpeedTestAsyncTask != null) {
-            mSpeedTestAsyncTask.cancel(true);
-        }
-
         mSpeedTestAsyncTask = new AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>>() {
 
             private SpeedTestResult speedTestResult;
@@ -854,7 +858,10 @@ public class SpeedTestActivity extends AppCompatActivity
                     if (isCancelled()) {
                         throw new InterruptedException();
                     }
-                    mSpeedTestRunning.set(true);
+                    if (speedTestRunning.get()) {
+                        throw new SpeedTestException("Already Running");
+                    }
+                    speedTestRunning.set(true);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -992,18 +999,18 @@ public class SpeedTestActivity extends AppCompatActivity
                             }
                         });
 
-                        final long t0 = System.nanoTime();
                         final String[] cmdExecOutput = SSHUtils.getManualProperty(SpeedTestActivity.this,
                                 mRouter,
                                 getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                                         Context.MODE_PRIVATE),
-                                String.format("/usr/bin/wget -qO /dev/null %s/%s?id=%s 2>&1 ",
+                                "DATE_START=$(/bin/date +\"%s\")",
+                                String.format("/usr/bin/wget -qO /dev/null \"%s/%s?id=%s\" > /dev/null 2>&1 ",
                                         wanSpeedUrl,
                                         remoteFileName,
-                                        Long.toString(t0)),
-                                "/bin/echo $?"
+                                        System.currentTimeMillis()),
+                                "DATE_END=$(/bin/date +\"%s\")",
+                                "/bin/echo $((${DATE_END}-${DATE_START}))"
                         );
-                        final long t1 = System.nanoTime();
 
                         if (cmdExecOutput == null || cmdExecOutput.length == 0) {
                             final SpeedTestException speedTestException = new
@@ -1011,24 +1018,28 @@ public class SpeedTestActivity extends AppCompatActivity
                             Crashlytics.logException(speedTestException);
                             throw speedTestException;
                         }
-                        final String exitStatus = nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1]).trim();
-                        if (!"0".equals(exitStatus)) {
-                            final SpeedTestException speedTestException = new
-                                    SpeedTestException("Failed to download " + remoteFileName + " data: unexpected command exit status");
-                            Crashlytics.log(Log.DEBUG, LOG_TAG, Arrays.toString(cmdExecOutput));
-                            Crashlytics.logException(speedTestException);
-                            throw speedTestException;
+
+                        final long elapsedMillis;
+                        try {
+                            elapsedMillis = Long.parseLong(
+                                    nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1])
+                                        .trim());
+                        } catch (final NumberFormatException nfe) {
+                            Crashlytics.logException(nfe);
+                            throw new SpeedTestException("Unexpected output - please try again later.");
                         }
 
-                        final long elapsed = t1 - t0;
+                        if (elapsedMillis < 0) {
+                            throw new SpeedTestException("Unexpected output - please try again later.");
+                        }
+
                         pairAcceptedForComputation = Pair.create(
                                 possibleFileSize,
-                                elapsed);
-                        //Stop conditions: time_to_dl >= threshold or
-                        // fileSize >= possibleFileSize
+                                elapsedMillis);
+                        //Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
                         if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeKB
-                                || TimeUnit.NANOSECONDS.toMillis(elapsed) >=
-                                TimeUnit.SECONDS.toMillis(userDefinedRouterSpeedTestDurationThresholdSeconds)) {
+                                || elapsedMillis >= TimeUnit.SECONDS.toMillis(
+                                    userDefinedRouterSpeedTestDurationThresholdSeconds)) {
                             break;
                         }
                     }
@@ -1297,13 +1308,11 @@ public class SpeedTestActivity extends AppCompatActivity
 
                 setRefreshActionButtonState(!enableSwipeRefresh);
 
-                mSpeedTestRunning.set(false);
-
+                speedTestRunning.set(false);
             }
         };
 
         mSpeedTestAsyncTask.execute();
-
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
@@ -1594,239 +1603,6 @@ public class SpeedTestActivity extends AppCompatActivity
                             mRouter.getDisplayName(),
                             effectiveRemoteAddr,
                             effectivePort));
-        }
-    }
-
-    public static class SpeedTestException extends DDWRTCompanionException {
-        public SpeedTestException() {
-        }
-
-        public SpeedTestException(@Nullable String detailMessage) {
-            super(detailMessage);
-        }
-
-        public SpeedTestException(@Nullable String detailMessage, @Nullable Throwable throwable) {
-            super(detailMessage, throwable);
-        }
-
-        public SpeedTestException(@Nullable Throwable throwable) {
-            super(throwable);
-        }
-    }
-
-    static class SpeedTestResultRecyclerViewAdapter
-        extends RecyclerView.Adapter<SpeedTestResultRecyclerViewAdapter.ViewHolder> {
-
-        private final SpeedTestActivity activity;
-        private List<SpeedTestResult> speedTestResults;
-        private final Router mRouter;
-
-        public SpeedTestResultRecyclerViewAdapter(final SpeedTestActivity activity,
-                                                  final Router mRouter) {
-            this.activity = activity;
-            this.mRouter = mRouter;
-        }
-
-        public List<SpeedTestResult> getSpeedTestResults() {
-            return speedTestResults;
-        }
-
-        public SpeedTestResultRecyclerViewAdapter setSpeedTestResults(List<SpeedTestResult> speedTestResults) {
-            this.speedTestResults = speedTestResults;
-            return this;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.speed_test_result_list_layout, parent, false);
-            // set the view's size, margins, paddings and layout parameters
-            // ...
-            final long currentTheme = activity
-                    .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                    .getLong(THEMING_PREF, DDWRTCompanionConstants.DEFAULT_THEME);
-            final CardView cardView = (CardView) v.findViewById(R.id.speed_test_result_item_cardview);
-            final ImageButton deleteImageButton = (ImageButton) cardView.findViewById(R.id.speedtest_result_delete);
-            if (currentTheme == ColorUtils.LIGHT_THEME) {
-                //Light
-                cardView.setCardBackgroundColor(ContextCompat
-                        .getColor(activity, R.color.cardview_light_background));
-
-                deleteImageButton
-                        .setImageDrawable(ContextCompat.getDrawable(activity,
-                                R.drawable.ic_delete_black_24dp));
-            } else {
-                //Default is Dark
-                cardView.setCardBackgroundColor(ContextCompat
-                        .getColor(activity, R.color.cardview_dark_background));
-                deleteImageButton
-                        .setImageDrawable(ContextCompat.getDrawable(activity,
-                                R.drawable.ic_delete_white_24dp));
-            }
-
-//        return new ViewHolder(this.context,
-//                RippleViewCreator.addRippleToView(v));
-            return new ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            if (position < 0 || position >= speedTestResults.size()) {
-                Utils.reportException(null, new IllegalStateException());
-                Toast.makeText(activity,
-                        "Internal Error. Please try again later",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            final SpeedTestResult speedTestResult = speedTestResults.get(position);
-            if (speedTestResult == null) {
-                return;
-            }
-
-            final boolean isThemeLight = ColorUtils.isThemeLight(activity);
-
-            final View containerView = holder.containerView;
-
-            containerView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final View placeholderView = containerView
-                            .findViewById(R.id.speed_test_result_details_placeholder);
-                    if (placeholderView.getVisibility() == View.VISIBLE) {
-                        placeholderView.setVisibility(View.GONE);
-                    } else {
-                        placeholderView.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-            final TextView testDateView =
-                    (TextView) containerView.findViewById(R.id.speed_test_result_test_date);
-            String speedTestResultDate = speedTestResult.getDate();
-            if (!isNullOrEmpty(speedTestResultDate)) {
-                speedTestResultDate = speedTestResultDate.replaceAll(" ", "\n");
-            }
-            testDateView.setText(speedTestResultDate);
-
-            ((TextView) containerView.findViewById(R.id.speed_test_result_detail_test_date))
-                    .setText(speedTestResult.getDate());
-
-            final String serverCountryCode = speedTestResult.getServerCountryCode();
-            final ImageView imageView = (ImageView) containerView.findViewById(R.id.speed_test_result_server_country_flag);
-            if (serverCountryCode == null || serverCountryCode.isEmpty()) {
-                imageView.setVisibility(View.GONE);
-            } else {
-                refreshServerLocationFlag(activity,
-                        serverCountryCode,
-                        imageView);
-            }
-
-            final TextView wanPingView =
-                    (TextView) containerView.findViewById(R.id.speed_test_result_wanPing);
-            wanPingView.setCompoundDrawablesWithIntrinsicBounds(
-                    0, isThemeLight ? R.drawable.ic_settings_ethernet_black_24dp : R.drawable.ic_settings_ethernet_white_24dp,
-                    0, 0
-            );
-            final Number ping = speedTestResult.getWanPing();
-            wanPingView.setText(String.format("%.2f\nms", ping.floatValue()));
-
-            final TextView wanDlView =
-                    (TextView) containerView.findViewById(R.id.speed_test_result_wanDl);
-            wanDlView.setCompoundDrawablesWithIntrinsicBounds(
-                    0, isThemeLight ? R.drawable.ic_file_download_black_24dp : R.drawable.ic_file_download_white_24dp,
-                    0, 0
-            );
-            final String wanDlByteCountDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanDl().longValue()) + PER_SEC);
-            final String wanDl = wanDlByteCountDisplaySize.replaceAll(" ", "\n");
-            wanDlView.setText(wanDl);
-
-            final TextView wanUlView =
-                    (TextView) containerView.findViewById(R.id.speed_test_result_wanUl);
-            wanUlView.setCompoundDrawablesWithIntrinsicBounds(
-                    0, isThemeLight ? R.drawable.ic_file_upload_black_24dp : R.drawable.ic_file_upload_white_24dp,
-                    0, 0
-            );
-            final String wanUlByteCountToDisplaySize = (FileUtils.byteCountToDisplaySize(speedTestResult.getWanUl().longValue()) + PER_SEC);
-            final String wanUl = wanUlByteCountToDisplaySize.replaceAll(" ", "\n");
-            wanUlView.setText(wanUl);
-
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_server))
-                    .setText(speedTestResult.getServer());
-
-            final TextView serverLocationView = (TextView) containerView.findViewById(R.id.speed_test_result_details_server_location);
-            if (isNullOrEmpty(serverCountryCode)) {
-                serverLocationView.setText("-");
-            } else {
-                serverLocationView
-                        .setText(getServerLocationDisplayFromCountryCode(serverCountryCode));
-            }
-
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing))
-                    .setText(String.format("%.2f ms", ping.floatValue()));
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanDownload))
-                    .setText(wanDlByteCountDisplaySize);
-            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanUpload))
-                    .setText(wanUlByteCountToDisplaySize);
-
-            containerView.findViewById(R.id.speedtest_result_delete)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            new AlertDialog.Builder(activity)
-                                    .setIcon(R.drawable.ic_action_alert_warning)
-                                    .setTitle("Delete Speed Test Result?")
-                                    .setMessage("You'll lose this record!")
-                                    .setCancelable(true)
-                                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(final DialogInterface dialogInterface, final int i) {
-                                            final String mRouterUuid = mRouter.getUuid();
-
-                                            activity.mDao.deleteSpeedTestResultByRouterById(mRouterUuid,
-                                                    speedTestResult.getId());
-
-                                            final List<SpeedTestResult> speedTestResultsByRouter = activity.mDao.getSpeedTestResultsByRouter(mRouterUuid);
-                                            activity.mAdapter.setSpeedTestResults(
-                                                    speedTestResultsByRouter
-                                            );
-                                            activity.mAdapter.notifyDataSetChanged();
-
-                                            activity.updateNbSpeedTestResults(speedTestResultsByRouter);
-
-                                            //Request Backup
-                                            Utils.requestBackup(activity);
-                                        }
-                                    })
-                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            //Cancelled - nothing more to do!
-                                        }
-                                    }).create().show();
-                        }
-                    });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return speedTestResults != null ?
-                    speedTestResults.size() : 0;
-        }
-
-        static class ViewHolder extends RecyclerView.ViewHolder {
-
-            private final View itemView;
-
-            final View containerView;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                this.itemView = itemView;
-                containerView = itemView.findViewById(R.id.speed_test_result_container);
-
-            }
         }
     }
 
