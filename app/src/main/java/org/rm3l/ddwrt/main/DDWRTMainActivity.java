@@ -530,67 +530,78 @@ public class DDWRTMainActivity extends AppCompatActivity
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Dashboard")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_dashboard : R.drawable.ic_action_dashboard_dark)
+                                        R.drawable.ic_dashboard_black_24dp : R.drawable.ic_dashboard_white_24dp)
                                 .withIdentifier(1),
 
                         new SectionDrawerItem().withName("Status").withSelectable(false),
                         new PrimaryDrawerItem().withName("Status")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_action_info : R.drawable.ic_action_action_info_dark)
+                                        R.drawable.ic_info_black_24dp : R.drawable.ic_info_white_24dp)
                                 .withIdentifier(2),
                         new PrimaryDrawerItem().withName("Wireless")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_device_signal_wifi_3_bar :
-                                        R.drawable.ic_action_device_signal_wifi_3_bar_dark)
+                                        R.drawable.ic_network_wifi_black_24dp :
+                                        R.drawable.ic_network_wifi_white_24dp)
                                 .withIdentifier(3),
                         new PrimaryDrawerItem().withName("Clients")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_devices :
-                                        R.drawable.ic_action_devices_dark)
+                                        R.drawable.ic_devices_black_24dp :
+                                        R.drawable.ic_devices_white_24dp)
                                 .withIdentifier(4),
                         new PrimaryDrawerItem().withName("Monitoring")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_trending_up :
-                                        R.drawable.ic_action_trending_up_dark)
+                                        R.drawable.ic_timeline_black_24dp :
+                                        R.drawable.ic_timeline_white_24dp)
                                 .withIdentifier(5),
 
                         new SectionDrawerItem().withName("Services").withSelectable(false),
                         new PrimaryDrawerItem().withName("OpenVPN")
-                                .withIcon(mIsThemeLight ? R.drawable.ic_action_openvpn : R.drawable.ic_action_openvpn_dark)
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_openvpn_black :
+                                        R.drawable.ic_openvpn_white)
                                 .withIdentifier(7),
                         new PrimaryDrawerItem().withName("PPTP")
-                                .withIcon(mIsThemeLight ? R.drawable.ic_action_communication_vpn_key :
-                                        R.drawable.ic_action_communication_vpn_key_dark)
+                                .withIcon(mIsThemeLight ? R.drawable.ic_vpn_key_black_24dp :
+                                        R.drawable.ic_vpn_key_white_24dp)
                                 .withIdentifier(8),
                         new PrimaryDrawerItem().withName("Wake On LAN")
-                                .withIcon(mIsThemeLight ? R.drawable.ic_action_wol_3 : R.drawable.ic_action_wol_3_dark)
+                                .withIcon(mIsThemeLight ? R.drawable.ic_settings_power_black_24dp :
+                                        R.drawable.ic_settings_power_white_24dp)
                                 .withIdentifier(9),
 
                         new SectionDrawerItem().withName("Admin Area").withSelectable(false),
-                        new PrimaryDrawerItem().withName("Commands")
-                                .withIcon(mIsThemeLight ? R.drawable.ic_action_terminal : R.drawable.ic_action_terminal_dark)
+                        new PrimaryDrawerItem().withName("Access Restrictions")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_block_black_24dp : R.drawable.ic_block_white_24dp)
                                 .withIdentifier(11),
+                        new PrimaryDrawerItem().withName("Commands")
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_action_cli_black :
+                                        R.drawable.ic_action_cli_white)
+                                .withIdentifier(12),
                         new PrimaryDrawerItem().withName("NVRAM")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_ram_3 : R.drawable.ic_action_ram_3_dark)
-                                .withIdentifier(12),
+                                        R.drawable.ic_memory_black_24dp : R.drawable.ic_memory_white_24dp)
+                                .withIdentifier(13),
 
                         new SectionDrawerItem().withName("Toolbox").withSelectable(false),
                         new PrimaryDrawerItem().withName("Network")
                                 .withIcon(mIsThemeLight ?
-                                        R.drawable.ic_action_network :
-                                        R.drawable.ic_action_network_dark)
-                                .withIdentifier(14)
+                                        R.drawable.ic_device_hub_black_24dp :
+                                        R.drawable.ic_device_hub_white_24dp)
+                                .withIdentifier(15)
                 )
                 .addStickyDrawerItems(
                         new PrimaryDrawerItem().withName("Help")
-                                .withIcon(android.R.drawable.ic_menu_help)
+                                .withIcon(mIsThemeLight ?
+                                        R.drawable.ic_help_outline_black_24dp :
+                                        R.drawable.ic_help_outline_white_24dp)
                                 .withIdentifier(1001),
 //                        new PrimaryDrawerItem().withName("What's new").withIcon(R.drawable.ic_action_action_info_outline).withIdentifier(1002),
                         new PrimaryDrawerItem().withName("Send Feedback")
                                 .withIcon(mIsThemeLight ?
-                                    R.drawable.ic_action_action_thumbs_up_down :
-                                        R.drawable.ic_action_action_thumbs_up_down_dark)
+                                    R.drawable.ic_feedback_black_24dp :
+                                        R.drawable.ic_feedback_white_24dp)
                                 .withIdentifier(1003)
 //                        new PrimaryDrawerItem().withName("About").withIcon(R.drawable.ic_action_social_person).withIdentifier(1004)
                 )

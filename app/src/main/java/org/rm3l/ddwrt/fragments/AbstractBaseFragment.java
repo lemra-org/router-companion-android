@@ -59,6 +59,7 @@ import com.google.common.collect.Maps;
 
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.fragments.access.AccessRestrictionsWANAccessFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminCommandsFragment;
 import org.rm3l.ddwrt.fragments.admin.AdminNVRAMFragment;
 import org.rm3l.ddwrt.fragments.dashboard.DashboardBandwidthFragment;
@@ -456,7 +457,18 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
         });
         tabsForDDWRT.putAll(9, servicesWolTabs);
 
-        //11- Admin > Commands
+        //11- Admin > Access Restrictions
+        final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminAccessRestrictionsTabs = new ArrayList<>();
+        adminAccessRestrictionsTabs.add(new FragmentTabDescription<AccessRestrictionsWANAccessFragment>
+                (AccessRestrictionsWANAccessFragment.class) {
+            @Override
+            public int getTitleRes() {
+                return R.string.access_restrictions;
+            }
+        });
+        tabsForDDWRT.putAll(11, adminAccessRestrictionsTabs);
+
+        //12- Admin > Commands
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminCmdTabs = new ArrayList<>();
         adminCmdTabs.add(new FragmentTabDescription<AdminCommandsFragment>
                 (AdminCommandsFragment.class) {
@@ -465,9 +477,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.command_shell;
             }
         });
-        tabsForDDWRT.putAll(11, adminCmdTabs);
+        tabsForDDWRT.putAll(12, adminCmdTabs);
 
-        //12- Admin > NVRAM
+        //13- Admin > NVRAM
         final ArrayList<FragmentTabDescription<? extends AbstractBaseFragment>> adminNvramTabs = new ArrayList<>();
         adminNvramTabs.add(new FragmentTabDescription<AdminNVRAMFragment>
                 (AdminNVRAMFragment.class) {
@@ -476,9 +488,9 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.admin_area_nvram;
             }
         });
-        tabsForDDWRT.putAll(12, adminNvramTabs);
+        tabsForDDWRT.putAll(13, adminNvramTabs);
 
-        //14- Toolbox > Network
+        //15- Toolbox > Network
         //FIXME Add "netstat" also (auto-refreshable)
 //                tabsToSort[3] = AbstractBaseFragment.newInstance(parentFragment, ToolboxSubnetCalculatorFragment.class, parentSectionTitle,
 //                        resources.getString(R.string.toolbox_subnet_calculator), router);
@@ -525,7 +537,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                 return R.string.toolbox_oui_lookup;
             }
         });
-        tabsForDDWRT.putAll(14, toolboxNetworkTabs);
+        tabsForDDWRT.putAll(15, toolboxNetworkTabs);
         return tabsForDDWRT;
     }
 

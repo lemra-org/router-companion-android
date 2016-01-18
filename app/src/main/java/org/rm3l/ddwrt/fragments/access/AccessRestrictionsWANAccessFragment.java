@@ -35,7 +35,7 @@ import java.util.List;
  * <p/>
  * TODO To implement
  */
-public class AccessWANAccessFragment extends AbstractBaseFragment {
+public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
 
     @Nullable
     @Override
