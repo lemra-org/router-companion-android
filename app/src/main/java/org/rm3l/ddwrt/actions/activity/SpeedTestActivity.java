@@ -982,7 +982,6 @@ public class SpeedTestActivity extends AppCompatActivity
                                                         "User-Agent:%s/%s\\r\\n\" " +
                                                         "| /usr/bin/nc %s %d"
                          */
-                        //"wget -qO /dev/null http://cachefly.cachefly.net/10mb.test?id="+System.currentTimeMillis()
 
                         final String remoteFileName = getRemoteFileName(possibleFileSize);
                         final int pgForFile = (pg++);
@@ -999,12 +998,13 @@ public class SpeedTestActivity extends AppCompatActivity
                             }
                         });
 
-                        final String[] cmdExecOutput = SSHUtils.getManualProperty(SpeedTestActivity.this,
+                        final String[] cmdExecOutput = SSHUtils.getManualProperty(
+                                SpeedTestActivity.this,
                                 mRouter,
                                 getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                                         Context.MODE_PRIVATE),
                                 "DATE_START=$(/bin/date +\"%s\")",
-                                String.format("/usr/bin/wget -qO /dev/null \"%s/%s?id=%s\" > /dev/null 2>&1 ",
+                                String.format("/usr/bin/wget -qO /dev/null \"%s/%s?_=%s\" > /dev/null 2>&1 ",
                                         wanSpeedUrl,
                                         remoteFileName,
                                         System.currentTimeMillis()),
@@ -1051,7 +1051,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     //3- WAN DL
                     publishProgress(TEST_WAN_DL);
                     if (pairAcceptedForComputation != null) {
-                        final long timeElapsed = TimeUnit.NANOSECONDS.toSeconds(pairAcceptedForComputation.second);
+                        final long timeElapsed = TimeUnit.MILLISECONDS.toSeconds(pairAcceptedForComputation.second);
                         final long wanDl = (timeElapsed != 0 ?
                                 ((pairAcceptedForComputation.first * 1024) / timeElapsed) :
                                 (pairAcceptedForComputation.first * 1024));
