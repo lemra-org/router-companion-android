@@ -247,8 +247,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
         final String routerSelectedUuid =
                 intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
+        final Router originalRouter;
         if (isNullOrEmpty(routerSelectedUuid) ||
-                (mRouter = RouterManagementActivity.getDao(this)
+                (originalRouter = RouterManagementActivity.getDao(this)
                         .getRouter(routerSelectedUuid)) == null) {
             Toast.makeText(
                     this, "Missing Router - might have been removed?",
@@ -256,6 +257,10 @@ public class SpeedTestActivity extends AppCompatActivity
             finish();
             return;
         }
+        
+        //Establish a brand-new connection to the Router
+        mRouter = new Router(this, originalRouter)
+            .setUuid(java.util.UUID.randomUUID().toString());
 
         final String[] maxFileSizeValuesStrArr = getResources().getStringArray(
                 R.array.routerSpeedTestMaxFileSize_values);
