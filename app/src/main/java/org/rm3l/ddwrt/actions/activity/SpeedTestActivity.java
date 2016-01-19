@@ -156,8 +156,8 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private FabButton mRunCancelFab;
 
-    private static final AtomicBoolean speedTestRunning = new AtomicBoolean(false);
-
+    private final AtomicBoolean speedTestRunning = new AtomicBoolean(false);
+    
     private SharedPreferences mRouterPreferences;
 
     private AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>>
@@ -380,44 +380,6 @@ public class SpeedTestActivity extends AppCompatActivity
         defaultColorForPaths = ContextCompat.getColor(SpeedTestActivity.this,
                 R.color.network_link_color);
 
-
-        mRunCancelFab = (FabButton)
-                findViewById(R.id.speedtest_run_cancel);
-        mRunCancelFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final boolean isRunning = speedTestRunning.get();
-                Toast.makeText(SpeedTestActivity.this,
-                        "[REMOVEME] onClick(mRunCancelFab) - isRunning: " + isRunning,
-                        Toast.LENGTH_LONG)
-                            .show();
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
-                        "onClick(mRunCancelFab) - isRunning: " + isRunning);
-                if (isRunning) {
-                    //Running - cancel task
-                    //Add stopping line
-                    if (mSpeedTestAsyncTask == null) {
-                        speedTestRunning.set(false);
-                        return;
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorPlaceholder.setVisibility(View.VISIBLE);
-                            errorPlaceholder.setText(" Stopping...");
-                        }
-                    });
-                    mSpeedTestAsyncTask.cancel(true);
-                    Toast.makeText(SpeedTestActivity.this,
-                            "Stopping...", Toast.LENGTH_SHORT)
-                        .show();
-                } else {
-                    //Not running - do run
-                    onRefresh();
-                }
-            }
-        });
-
         final ImageButton speedtestResultsRefreshImageButton = (ImageButton)
                 findViewById(R.id.speedtest_results_refresh);
         final ImageButton speedtestResultsClearAllImageButton = (ImageButton)
@@ -532,6 +494,45 @@ public class SpeedTestActivity extends AppCompatActivity
                                 //Cancelled - nothing more to do!
                             }
                         }).create().show();
+            }
+        });
+        
+        
+        mRunCancelFab = (FabButton)
+                findViewById(R.id.speedtest_run_cancel);
+        mRunCancelFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(SpeedTestActivity.this,
+                        "[REMOVEME] onClick(mRunCancelFab) - speedTestRunning.get(): " + speedTestRunning.get(),
+                        Toast.LENGTH_LONG)
+                            .show();
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "onClick(mRunCancelFab) - speedTestRunning.get(): " + speedTestRunning.get());
+                if (speedTestRunning.get()) {
+                    //Running - cancel task
+                    //Add stopping line
+                    //if (mSpeedTestAsyncTask == null) {
+                    //    speedTestRunning.set(false);
+                    //    return;
+                    //}
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorPlaceholder.setVisibility(View.VISIBLE);
+                            errorPlaceholder.setText(" Stopping...");
+                        }
+                    });
+                    mSpeedTestAsyncTask.cancel(true);
+                    //Force-destroy router session
+                    mRouter.destroyAllSessions();
+                    Toast.makeText(SpeedTestActivity.this,
+                            "Stopping...", Toast.LENGTH_SHORT)
+                        .show();
+                } else {
+                    //Not running - do run
+                    onRefresh();
+                }
             }
         });
 
@@ -856,17 +857,17 @@ public class SpeedTestActivity extends AppCompatActivity
 
             @Override
             protected AbstractRouterAction.RouterActionResult<Void> doInBackground(Void... params) {
-
+    
                 executionDate = new Date();
                 Exception exception = null;
                 try {
-                    if (isCancelled()) {
-                        throw new InterruptedException();
-                    }
                     if (speedTestRunning.get()) {
                         throw new SpeedTestException("Already Running");
                     }
                     speedTestRunning.set(true);
+                    if (isCancelled()) {
+                        throw new InterruptedException();
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1295,6 +1296,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
 
             private void resetEverything(final boolean enableSwipeRefresh) {
+                try {
                 internetRouterLink.setBackgroundColor(defaultColorForPaths);
                 routerLanLink.setBackgroundColor(defaultColorForPaths);
 
@@ -1312,8 +1314,9 @@ public class SpeedTestActivity extends AppCompatActivity
                 mRunCancelFab.setProgress(0);
 
                 setRefreshActionButtonState(!enableSwipeRefresh);
-
-                speedTestRunning.set(false);
+                } finally {
+                    speedTestRunning.set(false);
+                }
             }
         };
 
