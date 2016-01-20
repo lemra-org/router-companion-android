@@ -359,8 +359,8 @@ public class RouterCpuInfoActivity extends AppCompatActivity {
         //sendIntent.setType("text/plain");
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("CPU Info for Router '%s' (%s)",
-                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                String.format("CPU Info for Router '%s'",
+                        mRouter.getCanonicalHumanReadableName()));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 Html.fromHtml(String.format("%s%s",

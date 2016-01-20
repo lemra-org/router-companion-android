@@ -56,20 +56,20 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </PreferenceCategory>
 
     <!-- Data & Sync -->
-    <PreferenceCategory
-        android:key="@string/pref_header_data_sync"
-        android:title="Data &amp; Sync">
+    <!--<PreferenceCategory-->
+        <!--android:key="@string/pref_header_data_sync"-->
+        <!--android:title="Data &amp; Sync">-->
 
-        <org.rm3l.ddwrt.widgets.LongListPreference
-            android:defaultValue="3600000"
-            android:entries="@array/pref_sync_frequency_titles"
-            android:entryValues="@array/pref_sync_frequency_values"
-            android:key="routerDataPullIntervalSeconds"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Auto-refresh interval" />
+        <!--<org.rm3l.ddwrt.widgets.LongListPreference-->
+            <!--android:defaultValue="3600000"-->
+            <!--android:entries="@array/pref_sync_frequency_titles"-->
+            <!--android:entryValues="@array/pref_sync_frequency_values"-->
+            <!--android:key="routerDataPullIntervalSeconds"-->
+            <!--android:negativeButtonText="@null"-->
+            <!--android:positiveButtonText="@null"-->
+            <!--android:title="Auto-refresh interval" />-->
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
 
     <!-- Monitoring -->

@@ -23,23 +23,47 @@
 package org.rm3l.ddwrt.fragments.access;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.rm3l.ddwrt.fragments.AbstractBaseFragment;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
+import org.rm3l.ddwrt.tiles.admin.accessrestrictions.AccessRestrictionsWANAccessTile;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * WAN Access Fragment
  * <p/>
- * TODO To implement
  */
 public class AccessRestrictionsWANAccessFragment extends AbstractBaseFragment {
+
+    private List<DDWRTTile> tiles = null;
 
     @Nullable
     @Override
     protected List<DDWRTTile> getTiles(@Nullable Bundle savedInstanceState) {
-        return null;
+        if (tiles == null) {
+            tiles = Collections.<DDWRTTile>
+                    singletonList(new AccessRestrictionsWANAccessTile(this, savedInstanceState, this.router));
+        }
+        return tiles;
+    }
+
+    @NonNull
+    protected int getRootViewType() {
+        return RootViewType_LINEAR_LAYOUT;
+    }
+
+    @Override
+    protected boolean canChildScrollUp() {
+        final List<DDWRTTile> tiles = this.getTiles(null);
+        if (tiles == null || tiles.isEmpty()) {
+            return false;
+        }
+        final DDWRTTile tile = tiles.get(0);
+        return (tile instanceof AccessRestrictionsWANAccessTile &&
+                ((AccessRestrictionsWANAccessTile) tile).canChildScrollUp());
     }
 }

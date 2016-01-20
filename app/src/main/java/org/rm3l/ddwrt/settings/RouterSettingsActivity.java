@@ -28,7 +28,6 @@ import android.support.annotation.NonNull;
 
 import org.rm3l.ddwrt.R;
 
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
@@ -70,7 +69,7 @@ public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(SORTING_STRATEGY_PREF));
-            bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_INTERVAL_SECONDS_PREF));
+//            bindPreferenceSummaryToValue(findPreference(AUTO_REFRESH_INTERVAL_SECONDS_PREF));
             bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_ENABLE));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SOUND));
 //            bindPreferenceSummaryToValue(findPreference(NOTIFICATIONS_SYNC_INTERVAL_MINUTES_PREF));

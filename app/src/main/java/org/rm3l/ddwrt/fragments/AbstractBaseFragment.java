@@ -124,6 +124,7 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
     public static final String PARENT_SECTION_TITLE = "parent_section_title";
     public static final String STATE_LOADER_IDS = "loaderIds";
     private static final String LOG_TAG = AbstractBaseFragment.class.getSimpleName();
+    public static final Random RANDOM = new Random();
     private static AbstractBaseFragment mNoDataFragment;
     protected final Handler mHandler = new Handler();
     private Map<Integer, Object> mLoaderIdsInUse;
@@ -832,16 +833,20 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                     }
                     this.fragmentTiles.addAll(tiles);
                     //insert banner ad randomly
-                    this.fragmentTiles.add(
-                            Math.max(randomMin, new Random().nextInt(size)),
-                            new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
+                    if (RANDOM.nextBoolean()) {
+                        this.fragmentTiles.add(
+                                Math.max(randomMin, new Random().nextInt(size)),
+                                new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
+                    }
                 } else {
-                    if (size == 1 && tiles.get(0) != null && !tiles.get(0).isEmbeddedWithinScrollView()) {
-                        //Add banner add first, then all other tiles (issue with AdminNVRAMTile)
-                        this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
-                    } else {
-                        //Add banner add first, then all other tiles
-                        this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
+                    if (RANDOM.nextBoolean()) {
+                        if (size == 1 && tiles.get(0) != null && !tiles.get(0).isEmbeddedWithinScrollView()) {
+                            //Add banner add first, then all other tiles (issue with AdminNVRAMTile)
+                            this.fragmentTiles.add(new BannerAdTile(this, savedInstanceState, this.router));
+                        } else {
+                            //Add banner add first, then all other tiles
+                            this.fragmentTiles.add(new AvocarrotNativeAdTile(this, savedInstanceState, this.router));
+                        }
                     }
 
                     this.fragmentTiles.addAll(tiles);
@@ -929,7 +934,8 @@ public abstract class AbstractBaseFragment<T> extends Fragment implements Loader
                                 FrameLayout.LayoutParams.WRAP_CONTENT);
                         cardViewLayoutParams.rightMargin = R.dimen.marginRight;
                         cardViewLayoutParams.leftMargin = R.dimen.marginLeft;
-                        cardViewLayoutParams.bottomMargin = R.dimen.activity_vertical_margin;
+                        cardViewLayoutParams.topMargin = R.dimen.cardview_margin_top;
+                        cardViewLayoutParams.bottomMargin = R.dimen.cardview_margin_bottom;
 
                         final CardView cardView = new CardView(activity);
                         cardView.setLayoutParams(cardViewLayoutParams);

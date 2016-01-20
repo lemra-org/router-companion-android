@@ -176,7 +176,7 @@ public class RouterManagementActivity
             setTheme(R.style.AppThemeLight);
             getWindow().getDecorView()
                     .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+                            R.color.GhostWhite));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);

@@ -943,8 +943,8 @@ public class WANMonthlyTrafficTile
                                                     final Intent shareIntent = new Intent();
                                                     shareIntent.setAction(Intent.ACTION_SEND);
                                                     shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                                            String.format("Backup of WAN Monthly Traffic on Router '%s' (%s)",
-                                                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                                                            String.format("Backup of WAN Monthly Traffic on Router '%s'",
+                                                                    mRouter.getCanonicalHumanReadableName()));
                                                     shareIntent.setType("text/html");
                                                     shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
                                                             ("Backup Date: " + backupDate + "\n\n").replaceAll("\n", "<br/>") +

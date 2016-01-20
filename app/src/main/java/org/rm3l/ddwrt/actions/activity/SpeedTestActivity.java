@@ -85,7 +85,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -137,7 +137,8 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final Random RANDOM = new Random();
 
     private boolean mIsThemeLight;
-    private Router mRouter;
+    private Router mOriginalRouter;
+    private Router mRouterCopy;
 
     private Toolbar mToolbar;
 
@@ -156,12 +157,11 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private FabButton mRunCancelFab;
 
-    private final AtomicBoolean speedTestRunning = new AtomicBoolean(false);
+    private AtomicBoolean mSpeedTestRunning;
     
     private SharedPreferences mRouterPreferences;
 
-    private AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>>
-            mSpeedTestAsyncTask;
+    private SpeedTestAsyncTask mSpeedTestAsyncTask;
 
     private RecyclerViewEmptySupport mRecyclerView;
     private SpeedTestResultRecyclerViewAdapter mAdapter;
@@ -247,9 +247,8 @@ public class SpeedTestActivity extends AppCompatActivity
 
         final String routerSelectedUuid =
                 intent.getStringExtra(RouterManagementActivity.ROUTER_SELECTED);
-        final Router originalRouter;
         if (isNullOrEmpty(routerSelectedUuid) ||
-                (originalRouter = RouterManagementActivity.getDao(this)
+                (mOriginalRouter = RouterManagementActivity.getDao(this)
                         .getRouter(routerSelectedUuid)) == null) {
             Toast.makeText(
                     this, "Missing Router - might have been removed?",
@@ -257,10 +256,15 @@ public class SpeedTestActivity extends AppCompatActivity
             finish();
             return;
         }
+
+        mSpeedTestRunning = new AtomicBoolean(false);
         
         //Establish a brand-new connection to the Router
-        mRouter = new Router(this, originalRouter)
-            .setUuid(java.util.UUID.randomUUID().toString());
+        mRouterCopy = new Router(this, mOriginalRouter)
+            .setUuid(UUID.randomUUID().toString());
+        //In order for router avatar to be correctly fetched, we have to copy router model
+        //from original preferences
+        mRouterCopy.setRouterModel(Router.getRouterModel(this, mOriginalRouter));
 
         final String[] maxFileSizeValuesStrArr = getResources().getStringArray(
                 R.array.routerSpeedTestMaxFileSize_values);
@@ -320,7 +324,7 @@ public class SpeedTestActivity extends AppCompatActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        Router.doFetchAndSetRouterAvatarInImageView(this, mRouter,
+        Router.doFetchAndSetRouterAvatarInImageView(this, mRouterCopy,
                 (ImageView) findViewById(R.id.speedtest_router_imageView));
 
         mDao = RouterManagementActivity.getDao(this);
@@ -346,8 +350,8 @@ public class SpeedTestActivity extends AppCompatActivity
         mRecyclerView.setEmptyView(emptyView);
 
         // specify an adapter (see also next example)
-        mAdapter = new SpeedTestResultRecyclerViewAdapter(this, mRouter)
-            .setSpeedTestResults(mDao.getSpeedTestResultsByRouter(mRouter.getUuid()));
+        mAdapter = new SpeedTestResultRecyclerViewAdapter(this, mOriginalRouter)
+            .setSpeedTestResults(mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()));
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -480,7 +484,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(final DialogInterface dialogInterface, final int i) {
-                                mDao.deleteAllSpeedTestResultsByRouter(mRouter.getUuid());
+                                mDao.deleteAllSpeedTestResultsByRouter(mOriginalRouter.getUuid());
 
                                 refreshSpeedTestResults();
 
@@ -503,38 +507,10 @@ public class SpeedTestActivity extends AppCompatActivity
         mRunCancelFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SpeedTestActivity.this,
-                        "[REMOVEME] onClick(mRunCancelFab) - speedTestRunning.get(): " + speedTestRunning.get(),
-                        Toast.LENGTH_LONG)
-                            .show();
-                Crashlytics.log(Log.DEBUG, LOG_TAG,
-                        "onClick(mRunCancelFab) - speedTestRunning.get(): " + speedTestRunning.get());
-                if (speedTestRunning.get()) {
-                    //Running - cancel task
-                    //Add stopping line
-                    //if (mSpeedTestAsyncTask == null) {
-                    //    speedTestRunning.set(false);
-                    //    return;
-                    //}
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorPlaceholder.setVisibility(View.VISIBLE);
-                            errorPlaceholder.setText(" Stopping...");
-                        }
-                    });
-                    mSpeedTestAsyncTask.cancel(true);
-                    //Force-destroy router session
-                    mRouter.destroyAllSessions();
-                    Toast.makeText(SpeedTestActivity.this,
-                            "Stopping...", Toast.LENGTH_SHORT)
-                        .show();
-                } else {
-                    //Not running - do run
-                    onRefresh();
-                }
+                startOrCancelAction();
             }
         });
+
 
         final String mRouterPreferencesString = mRouterPreferences.getString(
                 ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
@@ -544,6 +520,42 @@ public class SpeedTestActivity extends AppCompatActivity
             mServerLabel.setText(RANDOM_SELECTED);
         } else {
             refreshSpeedTestParameters(mRouterPreferencesString);
+        }
+    }
+
+    private void startOrCancelAction() {
+        Toast.makeText(SpeedTestActivity.this,
+                "[REMOVEME] onClick(mRunCancelFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get(),
+                Toast.LENGTH_LONG).show();
+        Crashlytics.log(Log.DEBUG, LOG_TAG,
+                "onClick(mRunCancelFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get());
+        if (mSpeedTestRunning.get()) {
+            //Cancel
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    errorPlaceholder.setVisibility(View.VISIBLE);
+                    errorPlaceholder.setText(" Stopping...");
+                }
+            });
+            if (mSpeedTestAsyncTask == null) {
+                mSpeedTestRunning.set(false);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorPlaceholder.setText(" Aborted!");
+                        mRunCancelFab.setIcon(
+                                R.drawable.ic_play_arrow_white_24dp,
+                                R.drawable.ic_play_arrow_white_24dp
+                        );
+                    }
+                });
+                return;
+            }
+            mSpeedTestAsyncTask.cancelAction();
+
+        } else {
+            onRefresh();
         }
     }
 
@@ -603,7 +615,7 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void refreshSpeedTestResults() {
-        final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
+        final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid());
         mAdapter.setSpeedTestResults(speedTestResultsByRouter);
         mAdapter.notifyDataSetChanged();
         updateNbSpeedTestResults(speedTestResultsByRouter);
@@ -642,9 +654,13 @@ public class SpeedTestActivity extends AppCompatActivity
             e.printStackTrace();
         } finally {
             try {
-                if (mFileToShare != null) {
-                    //noinspection ResultOfMethodCallIgnored
-                    mFileToShare.delete();
+                try {
+                    mRouterCopy.destroyAllSessions();
+                } finally {
+                    if (mFileToShare != null) {
+                        //noinspection ResultOfMethodCallIgnored
+                        mFileToShare.delete();
+                    }
                 }
             } catch (final Exception e) {
                 Crashlytics.logException(e);
@@ -845,480 +861,7 @@ public class SpeedTestActivity extends AppCompatActivity
         refreshSpeedTestParameters(mRouterPreferences.getString(
                 ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO));
 
-        mSpeedTestAsyncTask = new AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>>() {
-
-            private SpeedTestResult speedTestResult;
-
-            private Date executionDate;
-
-            private String pingServerCountry;
-
-            private String server;
-
-            @Override
-            protected AbstractRouterAction.RouterActionResult<Void> doInBackground(Void... params) {
-    
-                executionDate = new Date();
-                Exception exception = null;
-                try {
-                    if (speedTestRunning.get()) {
-                        throw new SpeedTestException("Already Running");
-                    }
-                    speedTestRunning.set(true);
-                    if (isCancelled()) {
-                        throw new InterruptedException();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            resetEverything(false);
-                            errorPlaceholder.setVisibility(View.GONE);
-                            mRunCancelFab.setIcon(
-                                    R.drawable.ic_close_white_24dp,
-                                    R.drawable.ic_play_arrow_white_24dp
-                            );
-                            mRunCancelFab.setProgress(0);
-                            findViewById(R.id.speedtest_latency_pb_internet)
-                                    .setVisibility(View.VISIBLE);
-                            findViewById(R.id.speedtest_dl_pb_internet)
-                                    .setVisibility(View.VISIBLE);
-                            findViewById(R.id.speedtest_ul_pb_internet)
-                                    .setVisibility(View.VISIBLE);
-                            findViewById(R.id.speedtest_pb_wifi)
-                                    .setVisibility(View.VISIBLE);
-                            findViewById(R.id.speedtest_pb_wifi_efficiency)
-                                    .setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    //1- Determine if we need to select the closest server
-                    publishProgress(SELECT_SERVER);
-                    final String serverSetting = mRouterPreferences.getString(
-                            ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
-
-                    String wanSpeedUrl = null;
-
-                    pingServerCountry = serverSetting;
-                    if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
-                        // Iterate over each server to determine the closest one,
-                        // in terms of ping latency
-                        float minLatency = Float.MAX_VALUE;
-                        String serverCountry = null;
-                        for (final Map.Entry<String, Map<String, String>> entry :
-                                SERVERS.rowMap().entrySet()) {
-                            if (isCancelled()) {
-                                throw new InterruptedException();
-                            }
-                            final String country = entry.getKey();
-                            final Map<String, String> value = entry.getValue();
-                            final String pingServer = value.get(PING_SERVER);
-                            wanSpeedUrl = value.get(HTTP_DL_URL);
-                            if (isNullOrEmpty(pingServer)) {
-                                continue;
-                            }
-                            final PingRTT pingRTT = runPing(pingServer);
-                            final float avg = pingRTT.getAvg();
-                            if (avg < 0) {
-                                continue;
-                            }
-                            if (avg <= minLatency) {
-                                minLatency = avg;
-                                server = pingServer;
-                                serverCountry = country;
-                            }
-                        }
-                        pingServerCountry = serverCountry;
-                        if (!isNullOrEmpty(pingServerCountry)) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    refreshSpeedTestParameters(pingServerCountry);
-                                }
-                            });
-                        }
-
-                    } else {
-                        pingServerCountry =  serverSetting;
-                        if (ROUTER_SPEED_TEST_SERVER_RANDOM.equals(serverSetting)) {
-                            //Pick one randomly
-                            final Set<String> rowKeySet = SERVERS.rowKeySet();
-                            pingServerCountry = Lists.newArrayList(rowKeySet).get(
-                                    RANDOM.nextInt(rowKeySet.size()));
-                        }
-                        refreshSpeedTestParameters(pingServerCountry);
-                        server = SERVERS.get(pingServerCountry, PING_SERVER);
-                        wanSpeedUrl = SERVERS.get(pingServerCountry, HTTP_DL_URL);
-                    }
-
-                    if (isNullOrEmpty(server) || isNullOrEmpty(wanSpeedUrl)) {
-                        throw new SpeedTestException("Invalid server");
-                    }
-
-                    speedTestResult = new SpeedTestResult();
-
-                    //2- Now measure ping latency
-                    publishProgress(MEASURE_PING_LATENCY);
-                    final PingRTT wanLatencyResults = runPing(server);
-                    speedTestResult.setWanPingRTT(wanLatencyResults);
-                    publishProgress(PING_LATENCY_MEASURED);
-
-                    //WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
-                    final long userDefinedRouterSpeedTestMaxFileSizeKB =
-                            mRouterPreferences.getLong(
-                                    ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB, ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT);
-                    final long userDefinedRouterSpeedTestDurationThresholdSeconds =
-                            Long.parseLong(mRouterPreferences.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
-                                    ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
-
-                    Pair<Long, Long> pairAcceptedForComputation = null;
-
-                    Crashlytics.log(Log.DEBUG, LOG_TAG,
-                            "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes));
-
-                    int pg = 2;
-                    for (final Long possibleFileSize : mPossibleFileSizes) {
-                        if (isCancelled()) {
-                            throw new InterruptedException();
-                        }
-                        //Measure time to download file of the specified type
-                        /*
-                        String.format("echo -e \"" +
-                                                        "GET / HTTP/1.1\\r\\n" +
-                                                        "Host:%s\\r\\n" +
-                                                        "User-Agent:%s/%s\\r\\n\" " +
-                                                        "| /usr/bin/nc %s %d"
-                         */
-
-                        final String remoteFileName = getRemoteFileName(possibleFileSize);
-                        final int pgForFile = (pg++);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Display message to user
-                                mRunCancelFab.setProgress((100 * 3/4) + pgForFile);
-                                noticeTextView
-                                        .setText("3/4 - Downloading data: " + remoteFileName + "...");
-                                //final int netDlColor = ColorUtils.getColor(NET_DL);
-                                //internetRouterLink.setBackgroundColor(netDlColor);
-                                //highlightTitleTextView(mSpeedtestWanDlTitle);
-                            }
-                        });
-
-                        final String[] cmdExecOutput = SSHUtils.getManualProperty(
-                                SpeedTestActivity.this,
-                                mRouter,
-                                getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                                        Context.MODE_PRIVATE),
-                                "DATE_START=$(/bin/date +\"%s\")",
-                                String.format("/usr/bin/wget -qO /dev/null \"%s/%s?_=%s\" > /dev/null 2>&1 ",
-                                        wanSpeedUrl,
-                                        remoteFileName,
-                                        System.currentTimeMillis()),
-                                "DATE_END=$(/bin/date +\"%s\")",
-                                "/bin/echo $((${DATE_END}-${DATE_START}))"
-                        );
-
-                        if (cmdExecOutput == null || cmdExecOutput.length == 0) {
-                            final SpeedTestException speedTestException = new
-                                    SpeedTestException("Failed to download data: " + remoteFileName);
-                            Crashlytics.logException(speedTestException);
-                            throw speedTestException;
-                        }
-
-                        final long elapsedMillis;
-                        try {
-                            elapsedMillis = Long.parseLong(
-                                    nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1])
-                                        .trim());
-                        } catch (final NumberFormatException nfe) {
-                            Crashlytics.logException(nfe);
-                            throw new SpeedTestException("Unexpected output - please try again later.");
-                        }
-
-                        if (elapsedMillis < 0) {
-                            throw new SpeedTestException("Unexpected output - please try again later.");
-                        }
-
-                        pairAcceptedForComputation = Pair.create(
-                                possibleFileSize,
-                                elapsedMillis);
-                        //Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
-                        if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeKB
-                                || elapsedMillis >= TimeUnit.SECONDS.toMillis(
-                                    userDefinedRouterSpeedTestDurationThresholdSeconds)) {
-                            break;
-                        }
-                    }
-
-                    if (isCancelled()) {
-                        throw new InterruptedException();
-                    }
-
-                    //3- WAN DL
-                    publishProgress(TEST_WAN_DL);
-                    if (pairAcceptedForComputation != null) {
-                        final long timeElapsed = TimeUnit.MILLISECONDS.toSeconds(pairAcceptedForComputation.second);
-                        final long wanDl = (timeElapsed != 0 ?
-                                ((pairAcceptedForComputation.first * 1024) / timeElapsed) :
-                                (pairAcceptedForComputation.first * 1024));
-                        speedTestResult.setWanDl(wanDl);
-                    }
-                    publishProgress(WAN_DL_MEASURED);
-
-                    if (isCancelled()) {
-                        throw new InterruptedException();
-                    }
-
-                    //3- WAN UL
-                    publishProgress(TEST_WAN_UL);
-                    //TODO //FIXME Use real data
-                    speedTestResult.setWanUl(new Random().nextInt(27) * 1024^5);
-                    publishProgress(WAN_UL_MEASURED);
-
-                } catch (Exception e) {
-                    Crashlytics.logException(e);
-                    exception = e;
-                }
-
-                return new AbstractRouterAction.RouterActionResult<>(null, exception);
-            }
-
-            @NonNull
-            private PingRTT runPing(@NonNull final String server) throws Exception {
-                if (Strings.isNullOrEmpty(server)) {
-                    throw new IllegalArgumentException("No Server specified");
-                }
-                final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouter, null,
-                        String.format(Locale.US,
-                                PingFromRouterAction.PING_CMD_TO_FORMAT + " | grep \"round-trip\"",
-                                PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server));
-                if (pingOutput == null || pingOutput.length < 1) {
-                    //Nothing - abort right now with an error message
-                    throw new SpeedTestException("Unable to contact remote server");
-                }
-                final String pingRttOutput = pingOutput[0];
-                final List<String> pingRttOutputList = EQUAL_SPLITTER
-                        .splitToList(pingRttOutput);
-                if (pingRttOutputList.size() < 2) {
-                    throw new SpeedTestException("Unable to contact remote server");
-                }
-                final String pingRtt = pingRttOutputList.get(1)
-                        .replaceAll("ms","")
-                        .trim();
-                final List<String> pingRttSplitResult = SLASH_SPLITTER
-                        .splitToList(pingRtt);
-                final PingRTT pingRTT = new PingRTT();
-                final int size = pingRttSplitResult.size();
-                if (size >= 1) {
-                    pingRTT.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
-                }
-                if (size >= 2) {
-                    pingRTT.setAvg(Float.parseFloat(pingRttSplitResult.get(1)));
-                }
-                if (size >= 3) {
-                    pingRTT.setMax(Float.parseFloat(pingRttSplitResult.get(2)));
-                }
-                return pingRTT;
-            }
-
-            @Override
-            protected void onPostExecute(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-                if (voidRouterActionResult != null) {
-                    final Exception exception = voidRouterActionResult.getException();
-                    mRunCancelFab.setIcon(
-                            R.drawable.ic_play_arrow_white_24dp,
-                            R.drawable.ic_play_arrow_white_24dp
-                    );
-                    if (exception != null) {
-                        errorPlaceholder.setVisibility(View.VISIBLE);
-                        final Pair<String, String> exceptionPair = Utils.handleException(exception);
-                        errorPlaceholder.setText("Error: " + exceptionPair.first);
-                        if (!isNullOrEmpty(exceptionPair.second)) {
-                            errorPlaceholder.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Toast.makeText(SpeedTestActivity.this, exceptionPair.second,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    } else {
-                        //Persist speed test result
-                        mDao.insertSpeedTestResult(
-                                new SpeedTestResult(
-                                        mRouter.getUuid(),
-                                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                                                Locale.US)
-                                                .format(executionDate),
-                                        server,
-                                        speedTestResult.getWanPing(),
-                                        speedTestResult.getWanDl(),
-                                        speedTestResult.getWanUl(),
-                                        null,
-                                        null,
-                                        null,
-                                        pingServerCountry));
-
-                        //Request Backup
-                        Utils.requestBackup(SpeedTestActivity.this);
-
-                        final List<SpeedTestResult> speedTestResultsByRouter =
-                                mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
-
-                        updateNbSpeedTestResults(speedTestResultsByRouter);
-                        mAdapter.setSpeedTestResults(speedTestResultsByRouter);
-                        mAdapter.notifyItemInserted(0);
-                        //Scroll to top
-                        mLayoutManager.scrollToPosition(0);
-
-                        errorPlaceholder.setVisibility(View.GONE);
-                    }
-                } else {
-                    errorPlaceholder.setVisibility(View.GONE);
-                }
-                resetEverything(true);
-                super.onPostExecute(voidRouterActionResult);
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                //Runs on main thread
-                if (values == null) {
-                    return;
-                }
-                final Integer progressCode = values[0];
-                if (progressCode == null) {
-                    return;
-                }
-                switch (progressCode) {
-                    case SELECT_SERVER:
-                        mRunCancelFab.setProgress(100 * 1/4);
-                        noticeTextView
-                                .setText("1/4 - Selecting remote test Server...");
-                        noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
-                                android.R.anim.slide_in_left));
-                        noticeTextView.setVisibility(View.VISIBLE);
-                        break;
-
-                    case MEASURE_PING_LATENCY:
-                        mRunCancelFab.setProgress(100 * 2/4);
-                        noticeTextView
-                                .setText("2/4 - Measuring Internet (WAN) Latency...");
-                        final int latencyColor = ColorUtils.getColor(NET_LATENCY);
-                        internetRouterLink.setBackgroundColor(latencyColor);
-                        highlightTitleTextView(mSpeedtestLatencyTitle);
-                        break;
-
-                    case TEST_WAN_DL:
-                        mRunCancelFab.setProgress(100 * 3/4);
-                        noticeTextView
-                                .setText("3/4 - Measuring Internet (WAN) Download Speed...");
-                        final int netDlColor = ColorUtils.getColor(NET_DL);
-                        internetRouterLink.setBackgroundColor(netDlColor);
-                        highlightTitleTextView(mSpeedtestWanDlTitle);
-                        break;
-
-                    case TEST_WAN_UL:
-                        mRunCancelFab.setProgress(100 * 4/4);
-                        noticeTextView
-                                .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
-                        final int netUlColor = ColorUtils.getColor(NET_UL);
-                        internetRouterLink.setBackgroundColor(netUlColor);
-                        highlightTitleTextView(mSpeedtestWanUlTitle);
-                        break;
-
-                    case PING_LATENCY_MEASURED:
-                        //Display results
-                        //noinspection ConstantConditions
-                        findViewById(R.id.speedtest_latency_pb_internet)
-                                .setVisibility(View.GONE);
-                        final TextView wanLatencyTextView =
-                                (TextView) findViewById(R.id.speedtest_internet_latency);
-                        wanLatencyTextView.setVisibility(View.VISIBLE);
-                        if (speedTestResult != null
-                                && speedTestResult.getWanPing() != null) {
-                            wanLatencyTextView
-                                    .setText(String.format("%.2f ms",
-                                            speedTestResult.getWanPing().floatValue()));
-                        } else {
-                            wanLatencyTextView.setText("-");
-                        }
-
-                    case WAN_DL_MEASURED:
-                        //noinspection ConstantConditions
-                        findViewById(R.id.speedtest_dl_pb_internet)
-                                .setVisibility(View.GONE);
-                        final TextView wanDlTextView =
-                                (TextView) findViewById(R.id.speedtest_internet_dl_speed);
-                        wanDlTextView.setVisibility(View.VISIBLE);
-                        if (speedTestResult != null
-                                && speedTestResult.getWanDl() != null) {
-                            wanDlTextView
-                                    .setText(String.format("%s%s",
-                                            FileUtils.byteCountToDisplaySize(
-                                                    speedTestResult.getWanDl().longValue()),
-                                            PER_SEC));
-                        } else {
-                            wanDlTextView.setText("-");
-                        }
-                        break;
-
-                    case WAN_UL_MEASURED:
-                        //noinspection ConstantConditions
-                        findViewById(R.id.speedtest_ul_pb_internet)
-                                .setVisibility(View.GONE);
-                        final TextView wanUlTextView =
-                                (TextView) findViewById(R.id.speedtest_internet_ul_speed);
-                        wanUlTextView.setVisibility(View.VISIBLE);
-                        if (speedTestResult != null
-                                && speedTestResult.getWanUl() != null) {
-                            wanUlTextView
-                                    .setText(String.format("%s%s",
-                                            FileUtils.byteCountToDisplaySize(
-                                                    speedTestResult.getWanUl().longValue()),
-                                            PER_SEC));
-                        } else {
-                            wanUlTextView.setText("-");
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-                super.onProgressUpdate(values);
-            }
-
-            @Override
-            protected void onCancelled(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
-                errorPlaceholder.setText("Aborted");
-                errorPlaceholder.setVisibility(View.VISIBLE);
-                resetEverything(true);
-            }
-
-            private void resetEverything(final boolean enableSwipeRefresh) {
-                try {
-                internetRouterLink.setBackgroundColor(defaultColorForPaths);
-                routerLanLink.setBackgroundColor(defaultColorForPaths);
-
-                noticeTextView.startAnimation(AnimationUtils.loadAnimation(
-                        SpeedTestActivity.this,
-                        android.R.anim.slide_out_right));
-                noticeTextView.setVisibility(View.GONE);
-                resetAllTitleViews();
-
-                mRunCancelFab.resetIcon();
-                mRunCancelFab.setIcon(
-                        R.drawable.ic_play_arrow_white_24dp,
-                        R.drawable.ic_play_arrow_white_24dp
-                );
-                mRunCancelFab.setProgress(0);
-
-                setRefreshActionButtonState(!enableSwipeRefresh);
-                } finally {
-                    speedTestRunning.set(false);
-                }
-            }
-        };
+        mSpeedTestAsyncTask = new SpeedTestAsyncTask();
 
         mSpeedTestAsyncTask.execute();
     }
@@ -1422,14 +965,14 @@ public class SpeedTestActivity extends AppCompatActivity
             shareMenuItem.setEnabled(false);
         } else {
 
-            final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mRouter.getUuid());
+            final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid());
             if (speedTestResultsByRouter.isEmpty()) {
                 shareMenuItem.setEnabled(false);
             } else {
                 shareMenuItem.setEnabled(true);
                 mFileToShare = new File(getCacheDir(),
                         Utils.getEscapedFileName(String.format("Speed Test Results on Router '%s'",
-                                mRouter.getCanonicalHumanReadableName())) + ".csv");
+                                mOriginalRouter.getCanonicalHumanReadableName())) + ".csv");
 
                 final List<String> csvTextOutput = new ArrayList<>();
 
@@ -1511,7 +1054,7 @@ public class SpeedTestActivity extends AppCompatActivity
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
                 String.format("Speed Test Results for Router '%s'",
-                        mRouter.getCanonicalHumanReadableName()));
+                        mOriginalRouter.getCanonicalHumanReadableName()));
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 Html.fromHtml(String.format("%s\n\n%s",
                         Joiner.on("\n").skipNulls().join(csvTextOutput),
@@ -1549,7 +1092,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 final Intent settingsActivity = new Intent(this,
                         RouterSpeedTestSettingsActivity.class);
                 settingsActivity.putExtra(RouterManagementActivity.ROUTER_SELECTED,
-                        mRouter.getUuid());
+                        mOriginalRouter.getUuid());
                 this.startActivity(settingsActivity);
                 return true;
 
@@ -1602,15 +1145,507 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void updateToolbarTitleAndSubTitle() {
-        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mRouter, SpeedTestActivity.this);
-        final Integer effectivePort = Router.getEffectivePort(mRouter, SpeedTestActivity.this);
+        final String effectiveRemoteAddr = Router.getEffectiveRemoteAddr(mOriginalRouter, SpeedTestActivity.this);
+        final Integer effectivePort = Router.getEffectivePort(mOriginalRouter, SpeedTestActivity.this);
 
         if (mToolbar != null) {
             mToolbar.setSubtitle(
                     String.format(Locale.US, "%s (%s:%d)",
-                            mRouter.getDisplayName(),
+                            mOriginalRouter.getDisplayName(),
                             effectiveRemoteAddr,
                             effectivePort));
+        }
+    }
+
+    class SpeedTestAsyncTask extends
+            AsyncTask<Void, Integer, AbstractRouterAction.RouterActionResult<Void>> {
+
+        private SpeedTestResult speedTestResult;
+
+        private Date executionDate;
+
+        private String pingServerCountry;
+
+        private String server;
+
+        public void cancelAction() {
+            mRouterCopy.destroyAllSessions();
+        }
+
+        @Override
+        protected AbstractRouterAction.RouterActionResult<Void> doInBackground(Void... params) {
+
+            executionDate = new Date();
+
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "executionDate: " + executionDate);
+
+            Exception exception = null;
+            try {
+                if (mSpeedTestRunning.get()) {
+                    throw new SpeedTestException("Already Running");
+                }
+                mSpeedTestRunning.set(true);
+                if (isCancelled()) {
+                    throw new InterruptedException();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        resetEverything(false);
+                        errorPlaceholder.setVisibility(View.GONE);
+                        mRunCancelFab.setIcon(
+                                R.drawable.ic_close_white_24dp,
+                                R.drawable.ic_play_arrow_white_24dp
+                        );
+                        mRunCancelFab.setProgress(0);
+                        findViewById(R.id.speedtest_latency_pb_internet)
+                                .setVisibility(View.VISIBLE);
+                        findViewById(R.id.speedtest_dl_pb_internet)
+                                .setVisibility(View.VISIBLE);
+                        findViewById(R.id.speedtest_ul_pb_internet)
+                                .setVisibility(View.VISIBLE);
+                        findViewById(R.id.speedtest_pb_wifi)
+                                .setVisibility(View.VISIBLE);
+                        findViewById(R.id.speedtest_pb_wifi_efficiency)
+                                .setVisibility(View.VISIBLE);
+                    }
+                });
+
+                //1- Determine if we need to select the closest server
+                publishProgress(SELECT_SERVER);
+                final String serverSetting = mRouterPreferences.getString(
+                        ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
+
+                String wanSpeedUrl = null;
+
+                pingServerCountry = serverSetting;
+                if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
+                    // Iterate over each server to determine the closest one,
+                    // in terms of ping latency
+                    float minLatency = Float.MAX_VALUE;
+                    String serverCountry = null;
+                    for (final Map.Entry<String, Map<String, String>> entry :
+                            SERVERS.rowMap().entrySet()) {
+                        if (isCancelled()) {
+                            throw new InterruptedException();
+                        }
+                        final String country = entry.getKey();
+                        final Map<String, String> value = entry.getValue();
+                        final String pingServer = value.get(PING_SERVER);
+                        wanSpeedUrl = value.get(HTTP_DL_URL);
+                        if (isNullOrEmpty(pingServer)) {
+                            continue;
+                        }
+                        final PingRTT pingRTT = runPing(pingServer);
+                        final float avg = pingRTT.getAvg();
+                        if (avg < 0) {
+                            continue;
+                        }
+                        if (avg <= minLatency) {
+                            minLatency = avg;
+                            server = pingServer;
+                            serverCountry = country;
+                        }
+                    }
+                    pingServerCountry = serverCountry;
+                    if (!isNullOrEmpty(pingServerCountry)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshSpeedTestParameters(pingServerCountry);
+                            }
+                        });
+                    }
+
+                } else {
+                    pingServerCountry =  serverSetting;
+                    if (ROUTER_SPEED_TEST_SERVER_RANDOM.equals(serverSetting)) {
+                        //Pick one randomly
+                        final Set<String> rowKeySet = SERVERS.rowKeySet();
+                        pingServerCountry = Lists.newArrayList(rowKeySet).get(
+                                RANDOM.nextInt(rowKeySet.size()));
+                    }
+                    refreshSpeedTestParameters(pingServerCountry);
+                    server = SERVERS.get(pingServerCountry, PING_SERVER);
+                    wanSpeedUrl = SERVERS.get(pingServerCountry, HTTP_DL_URL);
+                }
+
+                if (isNullOrEmpty(server) || isNullOrEmpty(wanSpeedUrl)) {
+                    throw new SpeedTestException("Invalid server");
+                }
+
+                speedTestResult = new SpeedTestResult();
+
+                //2- Now measure ping latency
+                publishProgress(MEASURE_PING_LATENCY);
+                final PingRTT wanLatencyResults = runPing(server);
+                speedTestResult.setWanPingRTT(wanLatencyResults);
+                publishProgress(PING_LATENCY_MEASURED);
+
+                //WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
+                final long userDefinedRouterSpeedTestMaxFileSizeKB =
+                        mRouterPreferences.getLong(
+                                ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB, ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT);
+                final long userDefinedRouterSpeedTestDurationThresholdSeconds =
+                        Long.parseLong(mRouterPreferences.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
+                                ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
+
+                Pair<Long, Long> pairAcceptedForComputation = null;
+
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "mPossibleFileSizes: " + Arrays.toString(mPossibleFileSizes));
+
+                int pg = 2;
+                for (final Long possibleFileSize : mPossibleFileSizes) {
+                    if (isCancelled()) {
+                        throw new InterruptedException();
+                    }
+                    //Measure time to download file of the specified type
+                        /*
+                        String.format("echo -e \"" +
+                                                        "GET / HTTP/1.1\\r\\n" +
+                                                        "Host:%s\\r\\n" +
+                                                        "User-Agent:%s/%s\\r\\n\" " +
+                                                        "| /usr/bin/nc %s %d"
+                         */
+
+                    final String remoteFileName = getRemoteFileName(possibleFileSize);
+                    final int pgForFile = (pg++);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Display message to user
+                            mRunCancelFab.setProgress((100 * 3/4) + pgForFile);
+                            noticeTextView
+                                    .setText("3/4 - Downloading data: " + remoteFileName + "...");
+                            //final int netDlColor = ColorUtils.getColor(NET_DL);
+                            //internetRouterLink.setBackgroundColor(netDlColor);
+                            //highlightTitleTextView(mSpeedtestWanDlTitle);
+                        }
+                    });
+
+                    final String[] cmdExecOutput = SSHUtils.getManualProperty(
+                            SpeedTestActivity.this,
+                            mRouterCopy,
+                            getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                                    Context.MODE_PRIVATE),
+                            "DATE_START=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
+                            String.format("/usr/bin/wget -qO /dev/null \"%s/%s?_=%s\" > /dev/null 2>&1 ",
+                                    wanSpeedUrl,
+                                    remoteFileName,
+                                    System.currentTimeMillis()),
+                            "DATE_END=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
+                            "/bin/echo $((${DATE_END}-${DATE_START}))" //number of seconds
+                    );
+
+                    if (cmdExecOutput == null || cmdExecOutput.length == 0) {
+                        final SpeedTestException speedTestException = new
+                                SpeedTestException("Failed to download data: " + remoteFileName);
+                        Crashlytics.logException(speedTestException);
+                        throw speedTestException;
+                    }
+
+                    final long elapsedSeconds;
+                    try {
+                        elapsedSeconds = Long.parseLong(
+                                nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1])
+                                        .trim());
+                    } catch (final NumberFormatException nfe) {
+                        Crashlytics.logException(nfe);
+                        throw new SpeedTestException("Unexpected output - please try again later.");
+                    }
+
+                    if (elapsedSeconds < 0) {
+                        throw new SpeedTestException("Unexpected output - please try again later.");
+                    }
+
+                    pairAcceptedForComputation = Pair.create(
+                            possibleFileSize,
+                            elapsedSeconds);
+                    //Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
+                    if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeKB
+                            || elapsedSeconds >= userDefinedRouterSpeedTestDurationThresholdSeconds) {
+                        break;
+                    }
+                }
+
+                if (isCancelled()) {
+                    throw new InterruptedException();
+                }
+
+                //3- WAN DL
+                publishProgress(TEST_WAN_DL);
+                if (pairAcceptedForComputation != null) {
+                    final long timeElapsedSeconds = pairAcceptedForComputation.second;
+                    final long wanDl = (timeElapsedSeconds != 0 ?
+                            ((pairAcceptedForComputation.first * 1024) / timeElapsedSeconds) :
+                            (pairAcceptedForComputation.first * 1024));
+                    speedTestResult.setWanDl(wanDl);
+                }
+                publishProgress(WAN_DL_MEASURED);
+
+                if (isCancelled()) {
+                    throw new InterruptedException();
+                }
+
+                //3- WAN UL
+                publishProgress(TEST_WAN_UL);
+                //TODO //FIXME Use real data
+                speedTestResult.setWanUl(new Random().nextInt(27) * 1024^5);
+                publishProgress(WAN_UL_MEASURED);
+
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+                exception = e;
+            }
+
+            return new AbstractRouterAction.RouterActionResult<>(null, exception);
+        }
+
+        @NonNull
+        private PingRTT runPing(@NonNull final String server) throws Exception {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "runPing: " + server);
+
+            if (Strings.isNullOrEmpty(server)) {
+                throw new IllegalArgumentException("No Server specified");
+            }
+            final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouterCopy, null,
+                    String.format(Locale.US,
+                            PingFromRouterAction.PING_CMD_TO_FORMAT + " | grep \"round-trip\"",
+                            PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server));
+            if (pingOutput == null || pingOutput.length < 1) {
+                //Nothing - abort right now with an error message
+                throw new SpeedTestException("Unable to contact remote server");
+            }
+            final String pingRttOutput = pingOutput[0];
+            final List<String> pingRttOutputList = EQUAL_SPLITTER
+                    .splitToList(pingRttOutput);
+            if (pingRttOutputList.size() < 2) {
+                throw new SpeedTestException("Unable to contact remote server");
+            }
+            final String pingRtt = pingRttOutputList.get(1)
+                    .replaceAll("ms","")
+                    .trim();
+            final List<String> pingRttSplitResult = SLASH_SPLITTER
+                    .splitToList(pingRtt);
+            final PingRTT pingRTT = new PingRTT();
+            final int size = pingRttSplitResult.size();
+            if (size >= 1) {
+                pingRTT.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
+            }
+            if (size >= 2) {
+                pingRTT.setAvg(Float.parseFloat(pingRttSplitResult.get(1)));
+            }
+            if (size >= 3) {
+                pingRTT.setMax(Float.parseFloat(pingRttSplitResult.get(2)));
+            }
+            return pingRTT;
+        }
+
+        @Override
+        protected void onPostExecute(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onPostExecute");
+
+            if (voidRouterActionResult != null) {
+                final Exception exception = voidRouterActionResult.getException();
+                mRunCancelFab.setIcon(
+                        R.drawable.ic_play_arrow_white_24dp,
+                        R.drawable.ic_play_arrow_white_24dp
+                );
+                if (exception != null) {
+                    errorPlaceholder.setVisibility(View.VISIBLE);
+                    final Pair<String, String> exceptionPair = Utils.handleException(exception);
+                    errorPlaceholder.setText("Error: " + exceptionPair.first);
+                    if (!isNullOrEmpty(exceptionPair.second)) {
+                        errorPlaceholder.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(SpeedTestActivity.this, exceptionPair.second,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } else {
+                    //Persist speed test result
+                    mDao.insertSpeedTestResult(
+                            new SpeedTestResult(
+                                    mOriginalRouter.getUuid(),
+                                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                            Locale.US)
+                                            .format(executionDate),
+                                    server,
+                                    speedTestResult.getWanPing(),
+                                    speedTestResult.getWanDl(),
+                                    speedTestResult.getWanUl(),
+                                    null,
+                                    null,
+                                    null,
+                                    pingServerCountry));
+
+                    //Request Backup
+                    Utils.requestBackup(SpeedTestActivity.this);
+
+                    final List<SpeedTestResult> speedTestResultsByRouter =
+                            mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid());
+
+                    updateNbSpeedTestResults(speedTestResultsByRouter);
+                    mAdapter.setSpeedTestResults(speedTestResultsByRouter);
+                    mAdapter.notifyItemInserted(0);
+                    //Scroll to top
+                    mLayoutManager.scrollToPosition(0);
+
+                    errorPlaceholder.setVisibility(View.GONE);
+                }
+            } else {
+                errorPlaceholder.setVisibility(View.GONE);
+            }
+            resetEverything(true);
+            super.onPostExecute(voidRouterActionResult);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            //Runs on main thread
+            if (values == null) {
+                return;
+            }
+            final Integer progressCode = values[0];
+
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "progressCode: " + progressCode);
+
+            if (progressCode == null) {
+                return;
+            }
+            switch (progressCode) {
+                case SELECT_SERVER:
+                    mRunCancelFab.setProgress(100 * 1/4);
+                    noticeTextView
+                            .setText("1/4 - Selecting remote test Server...");
+                    noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
+                            android.R.anim.slide_in_left));
+                    noticeTextView.setVisibility(View.VISIBLE);
+                    break;
+
+                case MEASURE_PING_LATENCY:
+                    mRunCancelFab.setProgress(100 * 2/4);
+                    noticeTextView
+                            .setText("2/4 - Measuring Internet (WAN) Latency...");
+                    final int latencyColor = ColorUtils.getColor(NET_LATENCY);
+                    internetRouterLink.setBackgroundColor(latencyColor);
+                    highlightTitleTextView(mSpeedtestLatencyTitle);
+                    break;
+
+                case TEST_WAN_DL:
+                    mRunCancelFab.setProgress(100 * 3/4);
+                    noticeTextView
+                            .setText("3/4 - Measuring Internet (WAN) Download Speed...");
+                    final int netDlColor = ColorUtils.getColor(NET_DL);
+                    internetRouterLink.setBackgroundColor(netDlColor);
+                    highlightTitleTextView(mSpeedtestWanDlTitle);
+                    break;
+
+                case TEST_WAN_UL:
+                    mRunCancelFab.setProgress(100 * 4/4);
+                    noticeTextView
+                            .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
+                    final int netUlColor = ColorUtils.getColor(NET_UL);
+                    internetRouterLink.setBackgroundColor(netUlColor);
+                    highlightTitleTextView(mSpeedtestWanUlTitle);
+                    break;
+
+                case PING_LATENCY_MEASURED:
+                    //Display results
+                    //noinspection ConstantConditions
+                    findViewById(R.id.speedtest_latency_pb_internet)
+                            .setVisibility(View.GONE);
+                    final TextView wanLatencyTextView =
+                            (TextView) findViewById(R.id.speedtest_internet_latency);
+                    wanLatencyTextView.setVisibility(View.VISIBLE);
+                    if (speedTestResult != null
+                            && speedTestResult.getWanPing() != null) {
+                        wanLatencyTextView
+                                .setText(String.format("%.2f ms",
+                                        speedTestResult.getWanPing().floatValue()));
+                    } else {
+                        wanLatencyTextView.setText("-");
+                    }
+                    break;
+
+                case WAN_DL_MEASURED:
+                    //noinspection ConstantConditions
+                    findViewById(R.id.speedtest_dl_pb_internet)
+                            .setVisibility(View.GONE);
+                    final TextView wanDlTextView =
+                            (TextView) findViewById(R.id.speedtest_internet_dl_speed);
+                    wanDlTextView.setVisibility(View.VISIBLE);
+                    if (speedTestResult != null
+                            && speedTestResult.getWanDl() != null) {
+                        wanDlTextView
+                                .setText(String.format("%s%s",
+                                        FileUtils.byteCountToDisplaySize(
+                                                speedTestResult.getWanDl().longValue()),
+                                        PER_SEC));
+                    } else {
+                        wanDlTextView.setText("-");
+                    }
+                    break;
+
+                case WAN_UL_MEASURED:
+                    //noinspection ConstantConditions
+                    findViewById(R.id.speedtest_ul_pb_internet)
+                            .setVisibility(View.GONE);
+                    final TextView wanUlTextView =
+                            (TextView) findViewById(R.id.speedtest_internet_ul_speed);
+                    wanUlTextView.setVisibility(View.VISIBLE);
+                    if (speedTestResult != null
+                            && speedTestResult.getWanUl() != null) {
+                        wanUlTextView
+                                .setText(String.format("%s%s",
+                                        FileUtils.byteCountToDisplaySize(
+                                                speedTestResult.getWanUl().longValue()),
+                                        PER_SEC));
+                    } else {
+                        wanUlTextView.setText("-");
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onCancelled(AbstractRouterAction.RouterActionResult<Void> voidRouterActionResult) {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onCancelled");
+            errorPlaceholder.setText("Aborted");
+            errorPlaceholder.setVisibility(View.VISIBLE);
+            resetEverything(true);
+        }
+
+        private void resetEverything(final boolean enableSwipeRefresh) {
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "resetEverything(" + enableSwipeRefresh + ")");
+            try {
+                internetRouterLink.setBackgroundColor(defaultColorForPaths);
+                routerLanLink.setBackgroundColor(defaultColorForPaths);
+
+                noticeTextView.startAnimation(AnimationUtils.loadAnimation(
+                        SpeedTestActivity.this,
+                        android.R.anim.slide_out_right));
+                noticeTextView.setVisibility(View.GONE);
+                resetAllTitleViews();
+
+                mRunCancelFab.resetIcon();
+                mRunCancelFab.setIcon(
+                        R.drawable.ic_play_arrow_white_24dp,
+                        R.drawable.ic_play_arrow_white_24dp
+                );
+                mRunCancelFab.setProgress(0);
+
+                setRefreshActionButtonState(!enableSwipeRefresh);
+            } finally {
+                mSpeedTestRunning.set(false);
+            }
         }
     }
 

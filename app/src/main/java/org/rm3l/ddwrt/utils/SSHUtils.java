@@ -97,7 +97,7 @@ public final class SSHUtils {
     public static final Joiner JOINER_CARRIAGE_RETURN = Joiner.on("\n");
     public static final int CONNECT_TIMEOUT_MILLIS = 10000; //Timeout of 10s
     public static final int CONNECTION_KEEP_ALIVE_INTERVAL_MILLIS = 1000; //Send a Keep-Alive msg every 1s
-    public static final int MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER = 2;
+    public static final int MAX_NUMBER_OF_CONCURRENT_SSH_SESSIONS_PER_ROUTER = 3;
 
     private static final List<String> MULTI_OUTPUT_NVRAM_VARS =
             Arrays.asList(SSHD_RSA_HOST_KEY,

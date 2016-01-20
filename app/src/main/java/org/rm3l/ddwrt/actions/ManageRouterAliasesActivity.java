@@ -155,7 +155,7 @@ public class ManageRouterAliasesActivity
             setTheme(R.style.AppThemeLight);
             getWindow().getDecorView()
                     .setBackgroundColor(ContextCompat.getColor(this,
-                            android.R.color.white));
+                            R.color.GhostWhite));
         } else {
             //Default is Dark
             setTheme(R.style.AppThemeDark);
@@ -749,8 +749,8 @@ public class ManageRouterAliasesActivity
                                     final Intent shareIntent = new Intent();
                                     shareIntent.setAction(Intent.ACTION_SEND);
                                     shareIntent.putExtra(Intent.EXTRA_SUBJECT,
-                                            String.format("Aliases Backup for Router '%s' (%s)",
-                                                    mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                                            String.format("Aliases Backup for Router '%s'",
+                                                    mRouter.getCanonicalHumanReadableName()));
                                     shareIntent.setType("text/html");
                                     shareIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(
                                             ("Backup Date: " + backupDate + "\n\n" +

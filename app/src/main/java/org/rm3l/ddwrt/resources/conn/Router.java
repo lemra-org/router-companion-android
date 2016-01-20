@@ -191,6 +191,9 @@ public class Router implements Serializable {
 
     private final Context context;
 
+    @Nullable
+    private String routerModel;
+
     public static class RouterForSessionCache {
         @NonNull
         private final Router router;
@@ -865,12 +868,22 @@ public class Router implements Serializable {
     }
 
     @Nullable
+    public String getRouterModel() {
+        return routerModel;
+    }
+
+    public Router setRouterModel(@Nullable String routerModel) {
+        this.routerModel = routerModel;
+        return this;
+    }
+
+    @Nullable
     public static String getRouterModel(@Nullable final Context context, @Nullable final Router routerAt) {
         if (context == null || routerAt == null) {
             return null;
         }
         return context.getSharedPreferences(routerAt.getUuid(), Context.MODE_PRIVATE)
-                .getString(NVRAMInfo.MODEL, null);
+                .getString(NVRAMInfo.MODEL, routerAt.routerModel);
     }
 
     public static String getRouterAvatarUrl(@Nullable final String routerModel,

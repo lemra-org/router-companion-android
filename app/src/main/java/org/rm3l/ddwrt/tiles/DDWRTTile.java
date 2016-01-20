@@ -281,18 +281,18 @@ public abstract class DDWRTTile<T>
 
     protected <T extends DDWRTTile> void doneWithLoaderInstance(final T tile, @NonNull final Loader loader,
                                                                 @Nullable final int... additionalButtonsToMakeVisible) {
-        doneWithLoaderInstance(tile, loader,
-                this.mParentFragmentPreferences != null ?
-                        this.mParentFragmentPreferences.
-                                getLong(DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1) * 1000 :
-                        -1,
-                additionalButtonsToMakeVisible);
+//        doneWithLoaderInstance(tile, loader,
+//                this.mParentFragmentPreferences != null ?
+//                        this.mParentFragmentPreferences.
+//                                getLong(DDWRTCompanionConstants.AUTO_REFRESH_INTERVAL_SECONDS_PREF, -1) * 1000 :
+//                        -1,
+//                additionalButtonsToMakeVisible);
 
         //No auto-refresh, now that user can refresh data manually
-//        doneWithLoaderInstance(tile,
-//                loader,
-//                -1l,
-//                additionalButtonsToMakeVisible);
+        doneWithLoaderInstance(tile,
+                loader,
+                -1l,
+                additionalButtonsToMakeVisible);
     }
 
     @Nullable

@@ -34,6 +34,8 @@ import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.ReportingUtils;
 
+import java.util.Locale;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -52,7 +54,7 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
     @NonNull
     protected String mRouterUuid;
 
-    @NonNull
+    @Nullable
     protected Router mRouter;
 
     @Override
@@ -88,7 +90,11 @@ public abstract class AbstractRouterSettingsActivity extends AbstractDDWRTSettin
     @Nullable
     @Override
     protected String getToolbarSubtitle() {
-        return String.format("%s (%s:%d)",
+        if (mRouter == null) {
+            return null;
+        }
+        return String.format(Locale.US,
+                "%s (%s:%d)",
                 mRouter.getDisplayName(),
                 mRouter.getRemoteIpAddress(),
                 mRouter.getRemotePort());

@@ -355,8 +355,8 @@ public class RouterMemInfoActivity extends AppCompatActivity {
         sendIntent.putExtra(Intent.EXTRA_STREAM, uriForFile);
         sendIntent.setType("text/html");
         sendIntent.putExtra(Intent.EXTRA_SUBJECT,
-                String.format("Memory Info for Router '%s' (%s)",
-                        mRouter.getDisplayName(), mRouter.getRemoteIpAddress()));
+                String.format("Memory Info for Router '%s'",
+                        mRouter.getCanonicalHumanReadableName()));
 
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 Html.fromHtml(String.format("%s%s",
