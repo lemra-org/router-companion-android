@@ -22,6 +22,29 @@ import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 /**
+ * WAN Access Policies tile
+ *
+ * See http://www.dd-wrt.com/phpBB2/viewtopic.php?p=460996 for instructions on how to manipulate WAN Access Policies:
+ *
+ * <pre>
+ Ok I have it working. Here is what I did in case some else wants to use it.
+ Set your access policy with the web interface and save it. In my case I saved it disabled to rule 1.Then to enable or disable it I telnet to the router and use the following commands.
+ note: rule1 = rule1, rule2 = 2 etc.
+ STAT:1 = enable STAT:2 = disable
+
+ To disable access policy
+ root@DD-WRT:~# nvram set filter_rule1=\$STAT:2\$NAME:NoInet\$DENY:1\$$
+ nvram commit (if you want the change to be permanent)
+ root@DD-WRT:~# stopservice firewall
+ root@DD-WRT:~# startservice firewall
+
+ To enable enable access policy
+ root@DD-WRT:~# nvram set filter_rule1=\$STAT:1\$NAME:NoInet\$DENY:1\$$
+ nvram commit (if you want the change to be permanent)
+ root@DD-WRT:~# stopservice firewall
+ root@DD-WRT:~# startservice firewall
+ * </pre>
+ *
  * Created by rm3l on 20/01/16.
  */
 public class AccessRestrictionsWANAccessTile extends DDWRTTile<None> {
