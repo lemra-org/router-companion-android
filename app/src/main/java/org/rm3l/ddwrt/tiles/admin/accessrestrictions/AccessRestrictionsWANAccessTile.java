@@ -226,9 +226,9 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
                         .setException(new DDWRTNoDataException("No Data!"));
             }
 
-            layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
+            layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_loading_view).setVisibility(View.GONE);
 
-            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_error);
 
             final Exception exception = data.getException();
 
