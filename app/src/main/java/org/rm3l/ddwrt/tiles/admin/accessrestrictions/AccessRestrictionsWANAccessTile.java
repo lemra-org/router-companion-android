@@ -37,6 +37,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
+import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
@@ -68,7 +69,8 @@ import java.util.List;
  *
  * Created by rm3l on 20/01/16.
  */
-public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<WANAccessPolicy>>> {
+public class AccessRestrictionsWANAccessTile extends
+        DDWRTTile<AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData> {
 
     private static final String LOG_TAG =
             AccessRestrictionsWANAccessTile.class.getSimpleName();
@@ -162,10 +164,10 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
 
     @Nullable
     @Override
-    protected Loader<RouterData<List<WANAccessPolicy>>> getLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<RouterData<List<WANAccessPolicy>>>(this.mParentFragmentActivity) {
+    protected Loader<AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<WANAccessPoliciesRouterData>(this.mParentFragmentActivity) {
             @Override
-            public RouterData<List<WANAccessPolicy>> loadInBackground() {
+            public WANAccessPoliciesRouterData loadInBackground() {
                 try {
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " +
                             AccessRestrictionsWANAccessTile.class + ": routerInfo=" +
@@ -191,12 +193,23 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
                     }
                     updateProgressBarViewSeparator(35);
 
-
-                    //FIXME Now construct the list of policies
                     final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
 
-                    final RouterData<List<WANAccessPolicy>> routerData =
-                            new RouterData<List<WANAccessPolicy>>() {}
+                    if (Utils.isDemoRouter(mRouter)) {
+                        for (int i = 1; i <= 10; i++) {
+                            final WANAccessPolicy wanAccessPolicy =
+                                    new WANAccessPolicy()
+                                    .setNumber(i)
+                                    .setName("myWanPolicy " + i);
+                            //TODO Add other properties here
+                            wanAccessPolicies.add(wanAccessPolicy);
+                        }
+                    } else {
+                        //FIXME Now construct the list of policies
+                    }
+
+                    final AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData
+                            routerData = (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
                             .setData(wanAccessPolicies);
 
                     updateProgressBarViewSeparator(90);
@@ -205,15 +218,15 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
-                    return new RouterData<List<WANAccessPolicy>>(){}.setException(e);
+                    return (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData().setException(e);
                 }
             }
         };
     }
 
     @Override
-    public void onLoadFinished(Loader<RouterData<List<WANAccessPolicy>>> loader,
-                               RouterData<List<WANAccessPolicy>> data) {
+    public void onLoadFinished(Loader<WANAccessPoliciesRouterData> loader,
+                               WANAccessPoliciesRouterData data) {
 
         try {
             //Set tiles
@@ -222,7 +235,7 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
             List<WANAccessPolicy> wanAccessPolicies = null;
             if (data == null
                     || (wanAccessPolicies = data.getData()) == null) {
-                data = new RouterData<List<WANAccessPolicy>>() {}
+                data = (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
                         .setException(new DDWRTNoDataException("No Data!"));
             }
 
@@ -390,5 +403,10 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<W
                         itemView.findViewById(R.id.access_restriction_policy_cardview_menu);
             }
         }
+    }
+
+    static class WANAccessPoliciesRouterData extends
+            RouterData<List<WANAccessPolicy>> {
+
     }
 }

@@ -111,7 +111,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="wrap_content"
                             android:id="@+id/access_restriction_policy_cardview_days_monday"
                             android:text="Mon"
-                            android:background="@drawable/table_border"
+                            android:background="@drawable/table_border_selected"
                             android:gravity="center_horizontal"/>
 
                         <TextView
@@ -135,7 +135,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="wrap_content"
                             android:id="@+id/access_restriction_policy_cardview_days_thursday"
                             android:text="Thu"
-                            android:background="@drawable/table_border"
+                            android:background="@drawable/table_border_selected"
                             android:gravity="center_horizontal"/>
 
                         <TextView
@@ -143,7 +143,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_height="wrap_content"
                             android:id="@+id/access_restriction_policy_cardview_days_friday"
                             android:text="Fri"
-                            android:background="@drawable/table_border"
+                            android:background="@drawable/table_border_selected"
                             android:gravity="center_horizontal"/>
 
                         <TextView
