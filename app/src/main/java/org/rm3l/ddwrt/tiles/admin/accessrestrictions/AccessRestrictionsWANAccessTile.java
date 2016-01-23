@@ -1,25 +1,46 @@
 package org.rm3l.ddwrt.tiles.admin.accessrestrictions;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.crashlytics.android.Crashlytics;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.R;
-import org.rm3l.ddwrt.resources.None;
+import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
+import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
+import org.rm3l.ddwrt.resources.RouterData;
+import org.rm3l.ddwrt.resources.WANAccessPolicy;
+import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
+import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * WAN Access Policies tile
@@ -47,7 +68,7 @@ import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
  *
  * Created by rm3l on 20/01/16.
  */
-public class AccessRestrictionsWANAccessTile extends DDWRTTile<None> {
+public class AccessRestrictionsWANAccessTile extends DDWRTTile<RouterData<List<WANAccessPolicy>>> {
 
     private static final String LOG_TAG =
             AccessRestrictionsWANAccessTile.class.getSimpleName();
@@ -55,6 +76,8 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<None> {
     private RecyclerViewEmptySupport mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private long mLastSync;
 
     public AccessRestrictionsWANAccessTile(@NonNull Fragment parentFragment, @NonNull Bundle arguments, @Nullable Router router) {
         super(parentFragment, arguments, router, R.layout.tile_admin_access_restrictions_wan_access, null);
@@ -80,12 +103,10 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<None> {
         }
         mRecyclerView.setEmptyView(emptyView);
 
-////TODO
+        // specify an adapter (see also next example)
+        mAdapter = new WANAccessRulesRecyclerViewAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
 
-//        // specify an adapter (see also next example)
-//        mAdapter = new NVRAMDataRecyclerViewAdapter(mParentFragmentActivity, router, mNvramInfoDefaultSorting);
-//        mRecyclerView.setAdapter(mAdapter);
-//
         final Display display = mParentFragmentActivity
                 .getWindowManager()
                 .getDefaultDisplay();
@@ -141,12 +162,233 @@ public class AccessRestrictionsWANAccessTile extends DDWRTTile<None> {
 
     @Nullable
     @Override
-    protected Loader<None> getLoader(int id, Bundle args) {
-        return null;
+    protected Loader<RouterData<List<WANAccessPolicy>>> getLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<RouterData<List<WANAccessPolicy>>>(this.mParentFragmentActivity) {
+            @Override
+            public RouterData<List<WANAccessPolicy>> loadInBackground() {
+                try {
+                    Crashlytics.log(Log.DEBUG, LOG_TAG, "Init background loader for " +
+                            AccessRestrictionsWANAccessTile.class + ": routerInfo=" +
+                            mRouter + " / nbRunsLoader=" + nbRunsLoader);
+
+                    if (mRefreshing.getAndSet(true)) {
+                        throw new DDWRTTileAutoRefreshNotAllowedException();
+                    }
+                    nbRunsLoader++;
+
+                    updateProgressBarViewSeparator(0);
+
+                    mLastSync = System.currentTimeMillis();
+
+                    updateProgressBarViewSeparator(10);
+                    final NVRAMInfo nvramInfo =
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                        mRouter,
+                                        mGlobalPreferences,
+                                        "filter_");
+                    if (nvramInfo == null) {
+                        return null;
+                    }
+                    updateProgressBarViewSeparator(35);
+
+
+                    //FIXME Now construct the list of policies
+                    final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
+
+                    final RouterData<List<WANAccessPolicy>> routerData =
+                            new RouterData<List<WANAccessPolicy>>() {}
+                            .setData(wanAccessPolicies);
+
+                    updateProgressBarViewSeparator(90);
+
+                    return routerData;
+
+                } catch (@NonNull final Exception e) {
+                    e.printStackTrace();
+                    return new RouterData<List<WANAccessPolicy>>(){}.setException(e);
+                }
+            }
+        };
     }
 
     @Override
-    public void onLoadFinished(Loader<None> loader, None data) {
+    public void onLoadFinished(Loader<RouterData<List<WANAccessPolicy>>> loader,
+                               RouterData<List<WANAccessPolicy>> data) {
 
+        try {
+            //Set tiles
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
+
+            List<WANAccessPolicy> wanAccessPolicies = null;
+            if (data == null
+                    || (wanAccessPolicies = data.getData()) == null) {
+                data = new RouterData<List<WANAccessPolicy>>() {}
+                        .setException(new DDWRTNoDataException("No Data!"));
+            }
+
+            layout.findViewById(R.id.tile_admin_nvram_loading_view).setVisibility(View.GONE);
+
+            final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_nvram_error);
+
+            final Exception exception = data.getException();
+
+            if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+
+                if (exception == null) {
+                    errorPlaceHolderView.setVisibility(View.GONE);
+                }
+
+                //TODO
+                ((WANAccessRulesRecyclerViewAdapter) mAdapter)
+                        .setWanAccessPolicies(wanAccessPolicies);
+                mAdapter.notifyDataSetChanged();
+
+                //Update last sync
+                final RelativeTimeTextView lastSyncView = (RelativeTimeTextView) layout.findViewById(R.id.tile_last_sync);
+                lastSyncView.setReferenceTime(mLastSync);
+                lastSyncView.setPrefix("Last sync: ");
+
+            }
+
+            if (exception != null && !(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
+                //noinspection ThrowableResultOfMethodCallIgnored
+                final Throwable rootCause = Throwables.getRootCause(exception);
+                errorPlaceHolderView.setText("Error: " + (rootCause != null ? rootCause.getMessage() : "null"));
+                final Context parentContext = this.mParentFragmentActivity;
+                errorPlaceHolderView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        //noinspection ThrowableResultOfMethodCallIgnored
+                        if (rootCause != null) {
+                            Toast.makeText(parentContext,
+                                    rootCause.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                errorPlaceHolderView.setVisibility(View.VISIBLE);
+                updateProgressBarWithError();
+            } else if (exception == null){
+                updateProgressBarWithSuccess();
+            }
+
+
+            Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished(): done loading!");
+        } finally {
+            mRefreshing.set(false);
+            doneWithLoaderInstance(this, loader);
+        }
+
+    }
+
+    static class WANAccessRulesRecyclerViewAdapter
+            extends RecyclerView.Adapter<WANAccessRulesRecyclerViewAdapter.ViewHolder> {
+
+        @NonNull
+        private final AccessRestrictionsWANAccessTile tile;
+
+        @NonNull
+        private final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
+
+        public WANAccessRulesRecyclerViewAdapter(@NonNull final AccessRestrictionsWANAccessTile tile) {
+            this.tile = tile;
+        }
+
+        @NonNull
+        public List<WANAccessPolicy> getWanAccessPolicies() {
+            return wanAccessPolicies;
+        }
+
+        public WANAccessRulesRecyclerViewAdapter setWanAccessPolicies(
+                @Nullable final List<WANAccessPolicy> wanAccessPolicies) {
+            this.wanAccessPolicies.clear();
+            if (wanAccessPolicies != null) {
+                this.wanAccessPolicies.addAll(wanAccessPolicies);
+            }
+            return this;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            // create a new view
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.tile_admin_access_restrictions_list, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+            // ...
+            final ViewHolder vh = new ViewHolder(this.tile, v);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            // - get element from your dataset at this position
+            // - replace the contents of the view with that element
+            if (position < 0 || position >= wanAccessPolicies.size()) {
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "invalid position for WAN Access Policy Adapter");
+                return;
+            }
+            final WANAccessPolicy wanAccessPolicy = wanAccessPolicies.get(position);
+            if (wanAccessPolicy == null) {
+                //Report error
+                Crashlytics.log(Log.DEBUG, LOG_TAG,
+                        "wanAccessPolicy @" + position + " is NULL");
+                return;
+            }
+
+            //TODO
+        }
+
+        @Override
+        public int getItemCount() {
+            return wanAccessPolicies.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+
+            final CardView cardView;
+            final TextView policyNb;
+            final TextView policyName;
+            final TextView policyHours;
+
+            final TextView[] daysTextViews = new TextView[7];
+
+            final SwitchCompat statusSwitchButton;
+            final ImageButton menuImageButton;
+
+            private final AccessRestrictionsWANAccessTile tile;
+
+            public ViewHolder(AccessRestrictionsWANAccessTile tile, View itemView) {
+                super(itemView);
+                this.tile = tile;
+                this.cardView = (CardView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview);
+                this.policyNb = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_number);
+                this.policyName = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_name);
+                this.policyHours = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_hours);
+
+                this.daysTextViews[0] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_sunday);
+                this.daysTextViews[1] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_monday);
+                this.daysTextViews[2] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_tuesday);
+                this.daysTextViews[3] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_wednesday);
+                this.daysTextViews[4] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_thursday);
+                this.daysTextViews[5] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_friday);
+                this.daysTextViews[6] = (TextView)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_days_saturday);
+
+                this.statusSwitchButton = (SwitchCompat)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_status);
+                this.menuImageButton = (ImageButton)
+                        itemView.findViewById(R.id.access_restriction_policy_cardview_menu);
+            }
+        }
     }
 }
