@@ -182,17 +182,6 @@ public class AccessRestrictionsWANAccessTile extends
 
                     mLastSync = System.currentTimeMillis();
 
-                    updateProgressBarViewSeparator(10);
-                    final NVRAMInfo nvramInfo =
-                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
-                                        mRouter,
-                                        mGlobalPreferences,
-                                        "filter_");
-                    if (nvramInfo == null) {
-                        return null;
-                    }
-                    updateProgressBarViewSeparator(35);
-
                     final List<WANAccessPolicy> wanAccessPolicies = new ArrayList<>();
 
                     if (Utils.isDemoRouter(mRouter)) {
@@ -205,12 +194,23 @@ public class AccessRestrictionsWANAccessTile extends
                             wanAccessPolicies.add(wanAccessPolicy);
                         }
                     } else {
+                        updateProgressBarViewSeparator(10);
+                        final NVRAMInfo nvramInfo =
+                                SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                        mRouter,
+                                        mGlobalPreferences,
+                                        "filter_");
+                        if (nvramInfo == null) {
+                            return null;
+                        }
+                        updateProgressBarViewSeparator(35);
+
                         //FIXME Now construct the list of policies
                     }
 
-                    final AccessRestrictionsWANAccessTile.WANAccessPoliciesRouterData
-                            routerData = (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
-                            .setData(wanAccessPolicies);
+                    final WANAccessPoliciesRouterData routerData =
+                            (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
+                                .setData(wanAccessPolicies);
 
                     updateProgressBarViewSeparator(90);
 
@@ -218,7 +218,8 @@ public class AccessRestrictionsWANAccessTile extends
 
                 } catch (@NonNull final Exception e) {
                     e.printStackTrace();
-                    return (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData().setException(e);
+                    return (WANAccessPoliciesRouterData)
+                            new WANAccessPoliciesRouterData().setException(e);
                 }
             }
         };
@@ -232,18 +233,22 @@ public class AccessRestrictionsWANAccessTile extends
             //Set tiles
             Crashlytics.log(Log.DEBUG, LOG_TAG, "onLoadFinished: loader=" + loader + " / data=" + data);
 
-            List<WANAccessPolicy> wanAccessPolicies = null;
-            if (data == null
-                    || (wanAccessPolicies = data.getData()) == null) {
+            if (data == null) {
                 data = (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
                         .setException(new DDWRTNoDataException("No Data!"));
             }
 
+            List<WANAccessPolicy> wanAccessPolicies = data.getData();
+            Exception exception = data.getException();
+            if (exception == null && wanAccessPolicies == null) {
+                data = (WANAccessPoliciesRouterData) new WANAccessPoliciesRouterData()
+                            .setException(new DDWRTNoDataException("No Data!"));
+            }
+            exception = data.getException();
+
             layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_loading_view).setVisibility(View.GONE);
 
             final TextView errorPlaceHolderView = (TextView) this.layout.findViewById(R.id.tile_admin_access_restrictions_wan_access_error);
-
-            final Exception exception = data.getException();
 
             if (!(exception instanceof DDWRTTileAutoRefreshNotAllowedException)) {
 
