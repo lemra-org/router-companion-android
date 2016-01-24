@@ -11,6 +11,8 @@ public class WANAccessPolicy {
     public static final String DENY = "deny";
     public static final String FILTER = "filter";
 
+    public static final String STATUS_UNKNOWN = "unknown";
+
     private int number;
 
     private String name;

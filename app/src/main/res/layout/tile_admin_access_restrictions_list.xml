@@ -45,16 +45,16 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         card_view:contentPaddingRight="@dimen/main_activity_horizontal_margin"
         card_view:contentPaddingTop="@dimen/activity_vertical_margin">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true">
+                android:layout_weight="3.5">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -170,11 +170,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </LinearLayout>
 
             <LinearLayout
+                android:layout_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true">
+                android:layout_gravity="end">
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/access_restriction_policy_cardview_status"
@@ -196,7 +196,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

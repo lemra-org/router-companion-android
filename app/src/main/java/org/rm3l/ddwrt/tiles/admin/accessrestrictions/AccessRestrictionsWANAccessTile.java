@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.rm3l.ddwrt.R;
@@ -42,6 +44,9 @@ import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * WAN Access Policies tile
@@ -195,15 +200,96 @@ public class AccessRestrictionsWANAccessTile extends
                         }
                     } else {
                         updateProgressBarViewSeparator(10);
-                        final NVRAMInfo nvramInfo =
+
+                        //1- Get all rules first
+
+                        /*
+                        filter_rule10=$STAT:1$NAME:myPolicy10$DENY:1$$
+                        filter_rule1=$STAT:0$NAME:myPolicy1$DENY:0$$
+                        filter_rule2=$STAT:2$NAME:myPolicy2$DENY:0$$
+                        filter_rule3=
+                        filter_rule4=
+                        filter_rule5=
+                        filter_rule6=
+                        filter_rule7=$STAT:1$NAME:myPolicy7$DENY:1$$
+                         */
+                        NVRAMInfo nvramInfo =
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
                                         mRouter,
                                         mGlobalPreferences,
-                                        "filter_");
-                        if (nvramInfo == null) {
+                                        "filter_rule");
+                        Properties properties;
+                        if (nvramInfo == null
+                                || (properties = nvramInfo.getData()) == null) {
                             return null;
                         }
-                        updateProgressBarViewSeparator(35);
+
+                        int i = 2;
+                        final Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+                        for (final Map.Entry<Object, Object> entry : entries) {
+                            final Object key = entry.getKey();
+                            final Object value = entry.getValue();
+                            if (key == null || value == null) {
+                                continue;
+                            }
+                            //Skip empty rules
+                            final String valueStr = value.toString();
+                            if (Strings.isNullOrEmpty(valueStr)) {
+                                continue;
+                            }
+                            final String keyStr = key.toString();
+                            final int keyNb = Integer.parseInt(
+                                    keyStr.replace("filter_rule", "").trim());
+
+                            final WANAccessPolicy wanAccessPolicy = new WANAccessPolicy()
+                                    .setNumber(keyNb);
+
+                            final List<String> statusSplitter =
+                                    Splitter.on("$NAME:").omitEmptyStrings().trimResults()
+                                    .splitToList(valueStr);
+                            if (!statusSplitter.isEmpty()) {
+                                //myPolicy7$DENY:1$$
+                                wanAccessPolicy.setStatus(
+                                        statusSplitter.get(0).replaceAll("$STAT:", "2"));
+                                if (statusSplitter.size() >= 2) {
+                                    final String nameAndFollowingStr = statusSplitter.get(1);
+                                    final List<String> nameAndFollowingSplitter =
+                                            Splitter.on("$DENY:").omitEmptyStrings().trimResults()
+                                            .splitToList(nameAndFollowingStr);
+                                    if (!nameAndFollowingSplitter.isEmpty()) {
+                                        wanAccessPolicy.setName(nameAndFollowingSplitter.get(0));
+                                        if (nameAndFollowingSplitter.size() >= 2) {
+                                            //$DENY:1$$
+                                            //FIXME
+                                        }
+                                    }
+                                }
+                            } else {
+                                wanAccessPolicy.setStatus(WANAccessPolicy.STATUS_UNKNOWN);
+                            }
+
+                            //2- For each, retrieve Time of Day (TOD)
+                            nvramInfo =
+                                    SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                            mRouter,
+                                            mGlobalPreferences,
+                                            "filter_tod" + keyNb);
+                            if (nvramInfo == null
+                                    || nvramInfo.getProperty("filter_tod" + keyNb) == null) {
+                                continue;
+                            }
+                            String tod = nvramInfo.getProperty("filter_tod" + keyNb);
+                            if ("7".equals(tod)) {
+                                tod = "1 1 1 1 1 1 1";
+                            }
+
+
+                            updateProgressBarViewSeparator(10 + (i++));
+                        }
+
+
+                        updateProgressBarViewSeparator(40);
+
 
                         //FIXME Now construct the list of policies
                     }
