@@ -31,6 +31,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,7 @@ import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.resources.conn.NVRAMInfo;
 import org.rm3l.ddwrt.resources.conn.Router;
+import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
@@ -116,10 +119,18 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         // - replace the contents of the view with that element
         final Entry<Object, Object> entryAt = entryList.get(position);
 
+        if (ColorUtils.isThemeLight(this.context)) {
+            holder.cardView.setCardBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_light_background));
+        } else {
+            holder.cardView.setCardBackgroundColor(ContextCompat
+                    .getColor(context, R.color.cardview_dark_background));
+        }
+
         holder.key.setText(entryAt.getKey().toString());
         final Object value = entryAt.getValue();
         holder.value.setText(nullToEmpty(value != null ? value.toString() : ""));
-        holder.position = position;
+        holder.position = holder.getAdapterPosition();
     }
 
     @Override
@@ -159,6 +170,8 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
 
         private static final String EDIT_NVRAM_DATA_FRAGMENT_TAG = "edit_nvram_data_fragment_tag";
 
+        final CardView cardView;
+
         @NonNull
         final TextView key;
 
@@ -167,6 +180,7 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
         private final Context context;
         private final View itemView;
         private final FragmentManager fragmentManager;
+
         int position;
 
         public ViewHolder(Context context, FragmentManager fragmentManager, View itemView) {
@@ -175,6 +189,9 @@ public class NVRAMDataRecyclerViewAdapter extends RecyclerView.Adapter<NVRAMData
             this.fragmentManager = fragmentManager;
             this.itemView = itemView;
             this.itemView.setOnClickListener(this);
+            this.cardView = (CardView)
+                    this.itemView.findViewById(R.id.nvram_entry_cardview);
+            this.cardView.setOnClickListener(this);
 
             this.key = (TextView) this.itemView.findViewById(R.id.nvram_key);
             this.value = (TextView) this.itemView.findViewById(R.id.nvram_value);

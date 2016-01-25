@@ -25,7 +25,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/access_restriction_policy_cardview"
+        android:id="@+id/nvram_entry_cardview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
