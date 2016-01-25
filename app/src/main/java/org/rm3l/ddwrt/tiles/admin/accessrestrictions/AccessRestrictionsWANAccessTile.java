@@ -222,7 +222,7 @@ public class AccessRestrictionsWANAccessTile extends
                                 SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
                                         mRouter,
                                         mGlobalPreferences,
-                                        "filter_rule");
+                                        "filter_rule.*");
                         Properties properties;
                         if (nvramInfo == null
                                 || (properties = nvramInfo.getData()) == null) {
