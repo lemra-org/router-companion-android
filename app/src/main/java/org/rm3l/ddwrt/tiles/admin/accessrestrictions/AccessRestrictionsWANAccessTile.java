@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +20,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,10 +42,13 @@ import org.rm3l.ddwrt.tiles.DDWRTTile;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
+import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -225,6 +230,7 @@ public class AccessRestrictionsWANAccessTile extends
                         }
 
                         int i = 2;
+                        String todPattern;
                         final Set<Map.Entry<Object, Object>> entries = properties.entrySet();
                         for (final Map.Entry<Object, Object> entry : entries) {
                             final Object key = entry.getKey();
@@ -250,7 +256,7 @@ public class AccessRestrictionsWANAccessTile extends
                             if (!statusSplitter.isEmpty()) {
                                 //myPolicy7$DENY:1$$
                                 wanAccessPolicy.setStatus(
-                                        statusSplitter.get(0).replaceAll("$STAT:", "2"));
+                                        statusSplitter.get(0).replaceAll("$STAT:", ""));
                                 if (statusSplitter.size() >= 2) {
                                     final String nameAndFollowingStr = statusSplitter.get(1);
                                     final List<String> nameAndFollowingSplitter =
@@ -259,8 +265,15 @@ public class AccessRestrictionsWANAccessTile extends
                                     if (!nameAndFollowingSplitter.isEmpty()) {
                                         wanAccessPolicy.setName(nameAndFollowingSplitter.get(0));
                                         if (nameAndFollowingSplitter.size() >= 2) {
-                                            //$DENY:1$$
-                                            //FIXME
+                                            //1$$
+                                            final String s =
+                                                    nameAndFollowingSplitter.get(1).replaceAll("$$", "");
+                                            if ("0".equals(s)) {
+                                                wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.FILTER);
+                                            } else {
+                                                wanAccessPolicy.setDenyOrFilter(WANAccessPolicy.DENY);
+                                            }
+
                                         }
                                     }
                                 }
@@ -273,25 +286,59 @@ public class AccessRestrictionsWANAccessTile extends
                                     SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
                                             mRouter,
                                             mGlobalPreferences,
-                                            "filter_tod" + keyNb);
-                            if (nvramInfo == null
-                                    || nvramInfo.getProperty("filter_tod" + keyNb) == null) {
-                                continue;
-                            }
-                            String tod = nvramInfo.getProperty("filter_tod" + keyNb);
-                            if ("7".equals(tod)) {
-                                tod = "1 1 1 1 1 1 1";
+                                            "filter_tod_buf" + keyNb);
+
+                            updateProgressBarViewSeparator(10 + (i++));
+
+                            if (nvramInfo != null
+                                    && nvramInfo.getProperty("filter_tod_buf" + keyNb) != null) {
+
+                                todPattern = nvramInfo.getProperty("filter_tod_buf" + keyNb);
+                                if ("7".equals(todPattern)) {
+                                    todPattern = "1 1 1 1 1 1 1";
+                                }
+                                wanAccessPolicy.setDaysPattern(todPattern);
                             }
 
+                            nvramInfo =
+                                    SSHUtils.getNVRamInfoFromRouter(mParentFragmentActivity,
+                                            mRouter,
+                                            mGlobalPreferences,
+                                            "filter_tod" + keyNb);
+
+                            updateProgressBarViewSeparator(10 + (i++));
+
+                            if (nvramInfo != null
+                                    && nvramInfo.getProperty("filter_tod" + keyNb) != null) {
+                                /*
+                                filter_tod4=0:0 23:59 0-6
+                                filter_tod5=0:0 23:59 0,2,6
+                                filter_tod6=0:0 23:59 0-1
+                                filter_tod7=6:0 18:0 0-6
+                                 */
+                                final String filterTod = nvramInfo.getProperty("filter_tod" + keyNb);
+                                final List<String> list = Splitter.on(" ").omitEmptyStrings().trimResults()
+                                        .splitToList(filterTod);
+                                if (list.size() >= 2) {
+                                    final String start = list.get(0);
+                                    final String end = list.get(1);
+                                    if ("0:0".equals(start)
+                                            && "23:59".equals(end)) {
+                                        wanAccessPolicy.setTimeOfDay("24 Hours");
+                                    } else {
+                                        wanAccessPolicy.setTimeOfDay(
+                                                String.format(Locale.US,
+                                                        "from %s to %s", start, end));
+                                    }
+                                }
+                            }
+
+                            wanAccessPolicies.add(wanAccessPolicy);
 
                             updateProgressBarViewSeparator(10 + (i++));
                         }
 
-
-                        updateProgressBarViewSeparator(40);
-
-
-                        //FIXME Now construct the list of policies
+                        updateProgressBarViewSeparator(80);
                     }
 
                     final WANAccessPoliciesRouterData routerData =
@@ -439,7 +486,114 @@ public class AccessRestrictionsWANAccessTile extends
                 return;
             }
 
-            //TODO
+            if (ColorUtils.isThemeLight(this.tile.mParentFragmentActivity)) {
+                holder.cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_light_background));
+            } else {
+                holder.cardView.setCardBackgroundColor(ContextCompat
+                        .getColor(this.tile.mParentFragmentActivity, R.color.cardview_dark_background));
+            }
+
+            holder.policyNb.setText(String.valueOf(wanAccessPolicy.getNumber()));
+            holder.policyName.setText(wanAccessPolicy.getName());
+
+            String daysPattern = wanAccessPolicy.getDaysPattern();
+            if (daysPattern != null) {
+                if ("7".equals(daysPattern)) {
+                    daysPattern = "1 1 1 1 1 1 1"; //Everyday
+                }
+                final List<String> timeOfDayBufferList = Splitter.on(" ").omitEmptyStrings().trimResults()
+                        .splitToList(daysPattern);
+                for (int i = 0; i < timeOfDayBufferList.size(); i++) {
+                    final String todStatus = timeOfDayBufferList.get(i);
+                    if (i >= holder.daysTextViews.length) {
+                        continue;
+                    }
+                    final TextView daysTextView = holder.daysTextViews[i];
+                    daysTextView.setEnabled(true);
+                    if ("1".equals(todStatus)) {
+                        daysTextView
+                                .setBackgroundResource(R.drawable.table_border_selected);
+                    } else {
+                        daysTextView
+                                .setBackgroundResource(R.drawable.table_border);
+                        if (!"0".equals(todStatus)) {
+                            daysTextView.setEnabled(false);
+                        }
+                    }
+                }
+            }
+
+            holder.policyHours.setText(wanAccessPolicy.getTimeOfDay());
+
+            holder.statusSwitchButton.setEnabled(true);
+            final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus());
+            switch (status) {
+                case "0":
+                    //Disabled
+                    holder.statusSwitchButton.setChecked(false);
+                    break;
+                case "1":
+                case "2":
+                    holder.statusSwitchButton.setChecked(true);
+                    break;
+                default:
+                    holder.statusSwitchButton.setChecked(false);
+                    holder.statusSwitchButton.setEnabled(false);
+                    break;
+            }
+
+
+
+            holder.statusSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+
+                    SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
+                            tile.mParentFragmentActivity.findViewById(android.R.id.content),
+                            String.format("Going to %sable WAN Access Policy: '%s'",
+                                    isChecked ? "en" : "dis", wanAccessPolicy.getName()),
+                            "Undo",
+                            Snackbar.LENGTH_LONG,
+                            new SnackbarCallback() {
+                                @Override
+                                public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                                }
+
+                                @Override
+                                public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                                }
+
+                                @Override
+                                public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+
+                                }
+
+                                @Override
+                                public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+                                    //TODO Exec action
+                                    Toast.makeText(tile.mParentFragmentActivity,
+                                            "[TODO] Execute action",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                                }
+
+                                @Override
+                                public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                                }
+                            },
+                            null,
+                            true);
+                }
+            });
+
         }
 
         @Override
