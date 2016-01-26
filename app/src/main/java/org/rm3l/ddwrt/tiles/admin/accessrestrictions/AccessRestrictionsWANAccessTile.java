@@ -335,6 +335,8 @@ public class AccessRestrictionsWANAccessTile extends
                                 }
                             }
 
+                            Crashlytics.log(Log.DEBUG, LOG_TAG, "wanAccessPolicy: " + wanAccessPolicy);
+
                             wanAccessPolicies.add(wanAccessPolicy);
 
                             updateProgressBarViewSeparator(10 + (i++));

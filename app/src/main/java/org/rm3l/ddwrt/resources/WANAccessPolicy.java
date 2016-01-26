@@ -103,4 +103,58 @@ public class WANAccessPolicy {
     public List<String> getBlockedWebsitesByKeyword() {
         return blockedWebsitesByKeyword;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WANAccessPolicy that = (WANAccessPolicy) o;
+
+        if (number != that.number) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (timeOfDay != null ? !timeOfDay.equals(that.timeOfDay) : that.timeOfDay != null)
+            return false;
+        if (daysPattern != null ? !daysPattern.equals(that.daysPattern) : that.daysPattern != null)
+            return false;
+        if (denyOrFilter != null ? !denyOrFilter.equals(that.denyOrFilter) : that.denyOrFilter != null)
+            return false;
+        if (blockedServices != null ? !blockedServices.equals(that.blockedServices) : that.blockedServices != null)
+            return false;
+        if (blockedWebsitesByUrl != null ? !blockedWebsitesByUrl.equals(that.blockedWebsitesByUrl) : that.blockedWebsitesByUrl != null)
+            return false;
+        return blockedWebsitesByKeyword != null ? blockedWebsitesByKeyword.equals(that.blockedWebsitesByKeyword) : that.blockedWebsitesByKeyword == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = number;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (timeOfDay != null ? timeOfDay.hashCode() : 0);
+        result = 31 * result + (daysPattern != null ? daysPattern.hashCode() : 0);
+        result = 31 * result + (denyOrFilter != null ? denyOrFilter.hashCode() : 0);
+        result = 31 * result + (blockedServices != null ? blockedServices.hashCode() : 0);
+        result = 31 * result + (blockedWebsitesByUrl != null ? blockedWebsitesByUrl.hashCode() : 0);
+        result = 31 * result + (blockedWebsitesByKeyword != null ? blockedWebsitesByKeyword.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WANAccessPolicy{" +
+                "number=" + number +
+                ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                ", timeOfDay='" + timeOfDay + '\'' +
+                ", daysPattern='" + daysPattern + '\'' +
+                ", denyOrFilter='" + denyOrFilter + '\'' +
+                ", blockedServices=" + blockedServices +
+                ", blockedWebsitesByUrl=" + blockedWebsitesByUrl +
+                ", blockedWebsitesByKeyword=" + blockedWebsitesByKeyword +
+                '}';
+
+    }
 }
