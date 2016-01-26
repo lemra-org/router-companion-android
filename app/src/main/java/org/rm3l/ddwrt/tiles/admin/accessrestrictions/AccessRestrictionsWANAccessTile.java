@@ -47,6 +47,8 @@ import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
 import org.rm3l.ddwrt.widgets.RecyclerViewEmptySupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -454,6 +456,12 @@ public class AccessRestrictionsWANAccessTile extends
             this.wanAccessPolicies.clear();
             if (wanAccessPolicies != null) {
                 this.wanAccessPolicies.addAll(wanAccessPolicies);
+                Collections.sort(this.wanAccessPolicies, new Comparator<WANAccessPolicy>() {
+                    @Override
+                    public int compare(WANAccessPolicy lhs, WANAccessPolicy rhs) {
+                        return Integer.valueOf(lhs.getNumber()).compareTo(rhs.getNumber());
+                    }
+                });
             }
             return this;
         }
