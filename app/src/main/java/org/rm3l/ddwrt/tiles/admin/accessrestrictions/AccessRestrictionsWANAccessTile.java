@@ -576,12 +576,12 @@ public class AccessRestrictionsWANAccessTile extends
 
                                 @Override
                                 public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
-
+                                    //TODO Revert SwitchButton state
                                 }
 
                                 @Override
                                 public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
-
+                                    //TODO Revert SwitchButton state
                                 }
 
                                 @Override
@@ -594,12 +594,12 @@ public class AccessRestrictionsWANAccessTile extends
 
                                 @Override
                                 public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
-
+                                    //TODO Revert SwitchButton state
                                 }
 
                                 @Override
                                 public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
-
+                                    //TODO Revert SwitchButton state
                                 }
                             },
                             null,
