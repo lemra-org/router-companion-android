@@ -540,11 +540,14 @@ public class AccessRestrictionsWANAccessTile extends
             final String status = Strings.nullToEmpty(wanAccessPolicy.getStatus());
             switch (status) {
                 case "0":
+                case "$STAT:0":
                     //Disabled
                     holder.statusSwitchButton.setChecked(false);
                     break;
                 case "1":
+                case "$STAT:1":
                 case "2":
+                case "$STAT:2":
                     holder.statusSwitchButton.setChecked(true);
                     break;
                 default:
