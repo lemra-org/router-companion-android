@@ -157,15 +157,22 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     </TableRow>
                 </TableLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hours: "/>
-                <TextView
-                    android:id="@+id/access_restriction_policy_cardview_hours"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="14:00-06:00"/>
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hours: "
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"/>
+                    <TextView
+                        android:id="@+id/access_restriction_policy_cardview_hours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="14:00-06:00"/>
+                </LinearLayout>
 
             </LinearLayout>
 

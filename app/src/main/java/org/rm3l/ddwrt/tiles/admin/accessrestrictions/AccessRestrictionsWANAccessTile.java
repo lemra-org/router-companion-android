@@ -18,9 +18,13 @@ import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
@@ -65,6 +70,8 @@ import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
 
 /**
  * WAN Access Policies tile
+ *
+ * https://github.com/mirror/dd-wrt/blob/master/src/router/httpd/visuals/filters.c
  *
  * See http://www.dd-wrt.com/phpBB2/viewtopic.php?p=460996 for instructions on how to manipulate WAN Access Policies:
  *
@@ -567,6 +574,14 @@ public class AccessRestrictionsWANAccessTile extends
             holder.statusSwitchButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                        Utils.displayUpgradeMessage(tile.mParentFragmentActivity,
+                                "Toggle WAN Access Policy Restriction");
+                        holder.statusSwitchButton.toggle();
+                        return;
+                    }
+
                     holder.statusSwitchButton.setEnabled(false);
                     final boolean isChecked = holder.statusSwitchButton.isChecked();
                     SnackbarUtils.buildSnackbar(tile.mParentFragmentActivity,
@@ -611,6 +626,10 @@ public class AccessRestrictionsWANAccessTile extends
                                             String.format("%sabling WAN Access Policy: '%s'...",
                                                     isChecked ?"En":"Dis", wanAccessPolicy.getName()),
                                             Style.INFO);
+                                    final int enableStatus = !isChecked ? DISABLE :
+                                            WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
+                                                    ENABLE_1 :
+                                                    ENABLE_2;
                                     new ToggleWANAccessPolicyRouterAction(tile.mParentFragmentActivity,
                                             new RouterActionListener() {
                                                 @Override
@@ -628,6 +647,9 @@ public class AccessRestrictionsWANAccessTile extends
                                                                         Style.CONFIRM);
                                                             } finally {
                                                                 holder.statusSwitchButton.setEnabled(true);
+                                                                wanAccessPolicy.setStatus(Integer.toString(enableStatus));
+                                                                WANAccessRulesRecyclerViewAdapter.this.
+                                                                        notifyItemChanged(holder.getAdapterPosition());
                                                             }
                                                         }
 
@@ -658,10 +680,7 @@ public class AccessRestrictionsWANAccessTile extends
                                             },
                                             tile.mGlobalPreferences,
                                             wanAccessPolicy,
-                                            !isChecked ? DISABLE :
-                                                    WANAccessPolicy.DENY.equals(wanAccessPolicy.getDenyOrFilter()) ?
-                                                            ENABLE_1 :
-                                                            ENABLE_2).execute(tile.mRouter);
+                                            enableStatus).execute(tile.mRouter);
                                 }
 
                                 @Override
@@ -690,6 +709,33 @@ public class AccessRestrictionsWANAccessTile extends
                             },
                             null,
                             true);
+                }
+            });
+
+            holder.menuImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final PopupMenu popup = new PopupMenu(tile.mParentFragmentActivity, v);
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.tile_wan_access_policy_toggle:
+                                    holder.statusSwitchButton.performClick();
+                                    return true;
+                                case R.id.tile_wan_access_policy_remove:
+                                    //TODO
+                                    return true;
+                                default:
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                    final MenuInflater inflater = popup.getMenuInflater();
+                    final Menu menu = popup.getMenu();
+                    inflater.inflate(R.menu.tile_wan_access_policy_options, menu);
+                    popup.show();
                 }
             });
 
