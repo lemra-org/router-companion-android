@@ -33,6 +33,8 @@ public enum RouterAction {
     RESET_COUNTERS("Reset Bandwidth Counters"),
     DISABLE_WAN_ACCESS("Disable WAN Access"),
     ENABLE_WAN_ACCESS("Enable WAN Access"),
+    DISABLE_WAN_ACCESS_POLICY("Disable WAN Access Policy"),
+    ENABLE_WAN_ACCESS_POLICY("Enable WAN Access Policy"),
     PING("Ping"),
     ARPING("Arping"),
     TRACEROUTE("Traceroute"),
