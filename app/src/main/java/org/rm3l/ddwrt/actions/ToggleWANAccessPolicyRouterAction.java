@@ -59,7 +59,7 @@ public class ToggleWANAccessPolicyRouterAction extends AbstractRouterAction<Void
             - Disabled / Filter : $STAT:0$NAME:myPolicy1StatusDisableFilter$DENY:0$$
              */
             final String filterRuleValue = String.format(Locale.US,
-                    "$STAT:%d$NAME:%s$DENY:%d$$",
+                    "\\$STAT:%d\\$NAME:%s\\$DENY:%d\\$\\$",
                     mEnableStatus,
                     Strings.nullToEmpty(mWanAccessPolicy.getName()),
                     WANAccessPolicy.DENY.equals(mWanAccessPolicy.getDenyOrFilter()) ? 1 : 0);
