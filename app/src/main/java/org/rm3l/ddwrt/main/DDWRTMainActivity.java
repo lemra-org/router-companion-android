@@ -570,7 +570,7 @@ public class DDWRTMainActivity extends AppCompatActivity
                                 .withIdentifier(9),
 
                         new SectionDrawerItem().withName("Admin Area").withSelectable(false),
-                        new PrimaryDrawerItem().withName("Access Restrictions")
+                        new PrimaryDrawerItem().withName(getResources().getString(R.string.access_restrictions))
                                 .withIcon(mIsThemeLight ?
                                         R.drawable.ic_block_black_24dp : R.drawable.ic_block_white_24dp)
                                 .withIdentifier(11),
