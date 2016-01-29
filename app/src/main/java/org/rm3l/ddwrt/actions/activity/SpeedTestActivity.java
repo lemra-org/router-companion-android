@@ -87,7 +87,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.keyboardsurfer.android.widget.crouton.Style;
 import mbanje.kurt.fabbutton.FabButton;
@@ -156,9 +155,10 @@ public class SpeedTestActivity extends AppCompatActivity
     private ImageView mServerCountryFlag;
     private TextView mServerLabel;
 
-    private FabButton mRunCancelFab;
+    private FabButton mRunFab;
+    private FabButton mCancelFab;
 
-    private AtomicBoolean mSpeedTestRunning;
+//    private AtomicBoolean mSpeedTestRunning;
     
     private SharedPreferences mRouterPreferences;
 
@@ -258,7 +258,7 @@ public class SpeedTestActivity extends AppCompatActivity
             return;
         }
 
-        mSpeedTestRunning = new AtomicBoolean(false);
+//        mSpeedTestRunning = new AtomicBoolean(false);
         
         //Establish a brand-new connection to the Router
         mRouterCopy = new Router(this, mOriginalRouter)
@@ -507,15 +507,31 @@ public class SpeedTestActivity extends AppCompatActivity
         });
         
         
-        mRunCancelFab = (FabButton)
-                findViewById(R.id.speedtest_run_cancel);
-        mRunCancelFab.setOnClickListener(new View.OnClickListener() {
+        mRunFab = (FabButton)
+                findViewById(R.id.speedtest_run_action);
+        mCancelFab = (FabButton)
+                findViewById(R.id.speedtest_cancel_action);
+
+        mCancelFab.setVisibility(View.GONE);
+        mRunFab.setVisibility(View.VISIBLE);
+
+        mRunFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startOrCancelAction();
+                onRefresh();
             }
         });
-
+        mCancelFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSpeedTestAsyncTask != null) {
+                    mSpeedTestAsyncTask.cancelAction();
+                } else {
+                    mCancelFab.setVisibility(View.GONE);
+                    mRunFab.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         final String mRouterPreferencesString = mRouterPreferences.getString(
                 ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
@@ -529,39 +545,47 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void startOrCancelAction() {
-        Toast.makeText(SpeedTestActivity.this,
-                "[REMOVEME] onClick(mRunCancelFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get(),
-                Toast.LENGTH_LONG).show();
-        Crashlytics.log(Log.DEBUG, LOG_TAG,
-                "onClick(mRunCancelFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get());
-        if (mSpeedTestRunning.get()) {
-            //Cancel
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    errorPlaceholder.setVisibility(View.VISIBLE);
-                    errorPlaceholder.setText(" Stopping...");
-                }
-            });
-            if (mSpeedTestAsyncTask == null) {
-                mSpeedTestRunning.set(false);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        errorPlaceholder.setText(" Aborted!");
-                        mRunCancelFab.setIcon(
-                                R.drawable.ic_play_arrow_white_24dp,
-                                R.drawable.ic_play_arrow_white_24dp
-                        );
-                    }
-                });
-                return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Run
+                onRefresh();
             }
-            mSpeedTestAsyncTask.cancelAction();
+        });
 
-        } else {
-            onRefresh();
-        }
+//        Toast.makeText(SpeedTestActivity.this,
+//                "[REMOVEME] onClick(mRunFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get(),
+//                Toast.LENGTH_LONG).show();
+//        Crashlytics.log(Log.DEBUG, LOG_TAG,
+//                "onClick(mRunFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get());
+//        if (mSpeedTestRunning.get()) {
+//            //Cancel
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    errorPlaceholder.setVisibility(View.VISIBLE);
+//                    errorPlaceholder.setText(" Stopping...");
+//                }
+//            });
+//            if (mSpeedTestAsyncTask == null) {
+//                mSpeedTestRunning.set(false);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        errorPlaceholder.setText(" Aborted!");
+//                        mRunFab.setIcon(
+//                                R.drawable.ic_play_arrow_white_24dp,
+//                                R.drawable.ic_play_arrow_white_24dp
+//                        );
+//                    }
+//                });
+//                return;
+//            }
+//            mSpeedTestAsyncTask.cancelAction();
+//
+//        } else {
+//            onRefresh();
+//        }
     }
 
     @Override
@@ -860,6 +884,9 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     private void doPerformSpeedTest() {
+
+        mRunFab.setVisibility(View.GONE);
+        mCancelFab.setVisibility(View.VISIBLE);
 
         setRefreshActionButtonState(true);
 
@@ -1186,10 +1213,12 @@ public class SpeedTestActivity extends AppCompatActivity
 
             Exception exception = null;
             try {
-                if (mSpeedTestRunning.get()) {
-                    throw new SpeedTestException("Already Running");
-                }
-                mSpeedTestRunning.set(true);
+
+//                if (mSpeedTestRunning.get()) {
+//                    throw new SpeedTestException("Already Running");
+//                }
+//                mSpeedTestRunning.set(true);
+
                 if (isCancelled()) {
                     throw new InterruptedException();
                 }
@@ -1198,11 +1227,17 @@ public class SpeedTestActivity extends AppCompatActivity
                     public void run() {
                         resetEverything(false);
                         errorPlaceholder.setVisibility(View.GONE);
-                        mRunCancelFab.setIcon(
-                                R.drawable.ic_close_white_24dp,
-                                R.drawable.ic_play_arrow_white_24dp
-                        );
-                        mRunCancelFab.setProgress(0);
+//                        mRunFab.setIcon(
+//                                R.drawable.ic_close_white_24dp,
+//                                R.drawable.ic_play_arrow_white_24dp
+//                        );
+
+                        mRunFab.setVisibility(View.GONE);
+                        mCancelFab.setVisibility(View.VISIBLE);
+
+                        mRunFab.setProgress(0);
+                        mCancelFab.setProgress(0);
+
                         findViewById(R.id.speedtest_latency_pb_internet)
                                 .setVisibility(View.VISIBLE);
                         findViewById(R.id.speedtest_dl_pb_internet)
@@ -1320,7 +1355,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             //Display message to user
-                            mRunCancelFab.setProgress((100 * 3/4) + pgForFile);
+                            mCancelFab.setProgress((100 * 3/4) + pgForFile);
                             noticeTextView
                                     .setText("3/4 - Downloading data: " + remoteFileName + "...");
                             //final int netDlColor = ColorUtils.getColor(NET_DL);
@@ -1453,10 +1488,10 @@ public class SpeedTestActivity extends AppCompatActivity
 
             if (voidRouterActionResult != null) {
                 final Exception exception = voidRouterActionResult.getException();
-                mRunCancelFab.setIcon(
-                        R.drawable.ic_play_arrow_white_24dp,
-                        R.drawable.ic_play_arrow_white_24dp
-                );
+//                mRunFab.setIcon(
+//                        R.drawable.ic_play_arrow_white_24dp,
+//                        R.drawable.ic_play_arrow_white_24dp
+//                );
                 if (exception != null) {
                     errorPlaceholder.setVisibility(View.VISIBLE);
                     final Pair<String, String> exceptionPair = Utils.handleException(exception);
@@ -1523,7 +1558,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
             switch (progressCode) {
                 case SELECT_SERVER:
-                    mRunCancelFab.setProgress(100 * 1/4);
+                    mCancelFab.setProgress(100 * 1/4);
                     noticeTextView
                             .setText("1/4 - Selecting remote test Server...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
@@ -1532,7 +1567,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case MEASURE_PING_LATENCY:
-                    mRunCancelFab.setProgress(100 * 2/4);
+                    mCancelFab.setProgress(100 * 2/4);
                     noticeTextView
                             .setText("2/4 - Measuring Internet (WAN) Latency...");
                     final int latencyColor = ColorUtils.getColor(NET_LATENCY);
@@ -1541,7 +1576,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_DL:
-                    mRunCancelFab.setProgress(100 * 3/4);
+                    mCancelFab.setProgress(100 * 3/4);
                     noticeTextView
                             .setText("3/4 - Measuring Internet (WAN) Download Speed...");
                     final int netDlColor = ColorUtils.getColor(NET_DL);
@@ -1550,7 +1585,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_UL:
-                    mRunCancelFab.setProgress(100 * 4/4);
+                    mCancelFab.setProgress(100 * 4/4);
                     noticeTextView
                             .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
                     final int netUlColor = ColorUtils.getColor(NET_UL);
@@ -1640,16 +1675,21 @@ public class SpeedTestActivity extends AppCompatActivity
                 noticeTextView.setVisibility(View.GONE);
                 resetAllTitleViews();
 
-                mRunCancelFab.resetIcon();
-                mRunCancelFab.setIcon(
-                        R.drawable.ic_play_arrow_white_24dp,
-                        R.drawable.ic_play_arrow_white_24dp
-                );
-                mRunCancelFab.setProgress(0);
+                mRunFab.resetIcon();
+                mCancelFab.resetIcon();
+//                mRunFab.setIcon(
+//                        R.drawable.ic_play_arrow_white_24dp,
+//                        R.drawable.ic_play_arrow_white_24dp
+//                );
+                mCancelFab.setProgress(0);
+                mRunFab.setProgress(0);
+
+                mRunFab.setVisibility(View.VISIBLE);
+                mCancelFab.setVisibility(View.GONE);
 
                 setRefreshActionButtonState(!enableSwipeRefresh);
             } finally {
-                mSpeedTestRunning.set(false);
+//                mSpeedTestRunning.set(false);
             }
         }
     }

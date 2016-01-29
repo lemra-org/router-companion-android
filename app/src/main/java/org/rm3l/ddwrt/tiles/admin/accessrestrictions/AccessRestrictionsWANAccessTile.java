@@ -70,6 +70,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.DISABLE;
 import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_1;
 import static org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction.ENABLE_2;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.EMPTY_STRING;
 
 /**
  * WAN Access Policies tile
@@ -738,16 +739,16 @@ public class AccessRestrictionsWANAccessTile extends
                             final int wanAccessPolicyNumber = wanAccessPolicy.getNumber();
 
                             final NVRAMInfo nvramVarsToSet = new NVRAMInfo()
-                                    .setProperty("filter_dport_grp"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_ip_grp"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_mac_grp"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_p2p_grp"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_port_grp"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_rule"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_tod"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_tod_buf"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_web_host"+wanAccessPolicyNumber, "")
-                                    .setProperty("filter_web_url"+wanAccessPolicyNumber, "");
+                                    .setProperty("filter_dport_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_ip_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_mac_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_p2p_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_port_grp"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_rule"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_tod"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_tod_buf"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_web_host"+wanAccessPolicyNumber, EMPTY_STRING)
+                                    .setProperty("filter_web_url"+wanAccessPolicyNumber, EMPTY_STRING);
 
                             new SetNVRAMVariablesAction(tile.mParentFragmentActivity,
                                     nvramVarsToSet,
