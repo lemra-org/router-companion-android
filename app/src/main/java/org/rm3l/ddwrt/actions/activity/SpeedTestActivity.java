@@ -42,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Joiner;
@@ -354,6 +355,10 @@ public class SpeedTestActivity extends AppCompatActivity
             .setSpeedTestResults(mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()));
 
         mRecyclerView.setAdapter(mAdapter);
+
+        final RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(itemDecoration);
 
         mSpeedtestLatencyTitle = (TextView) findViewById(R.id.speedtest_latency_title);
         mSpeedtestWanDlTitle = (TextView) findViewById(R.id.speedtest_wan_dl_title);
