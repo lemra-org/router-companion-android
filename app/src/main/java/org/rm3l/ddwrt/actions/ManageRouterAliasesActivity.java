@@ -54,6 +54,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.common.base.Predicate;
@@ -227,9 +228,9 @@ public class ManageRouterAliasesActivity
         mAdapter = new RouterAliasesListRecyclerViewAdapter(this, mRouter);
         mRecyclerView.setAdapter(mAdapter);
 
-//        final RecyclerView.ItemDecoration itemDecoration =
-//                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-//        mRecyclerView.addItemDecoration(itemDecoration);
+        final RecyclerView.ItemDecoration itemDecoration =
+                new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(itemDecoration);
 
         addNewButton = (FloatingActionButton) findViewById(R.id.router_alias_add);
 
