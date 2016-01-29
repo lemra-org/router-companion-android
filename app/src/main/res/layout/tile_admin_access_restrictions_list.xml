@@ -164,14 +164,29 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hours: "
-                        android:layout_marginRight="10dp"
-                        android:layout_marginEnd="10dp"/>
+                        android:text="Time of Day: "
+                        android:layout_marginRight="5dp"
+                        android:layout_marginEnd="5dp"/>
                     <TextView
                         android:id="@+id/access_restriction_policy_cardview_hours"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="14:00-06:00"/>
+                        android:text="Internet Access Policy: "
+                        android:layout_marginRight="5dp"
+                        android:layout_marginEnd="5dp"/>
+                    <TextView
+                        android:id="@+id/access_restriction_policy_cardview_internet_policy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -194,7 +209,19 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_marginBottom="35dp"/>
 
                 <ImageButton
+                    android:id="@+id/access_restriction_policy_remove_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:src="@drawable/ic_action_action_delete"
+                    android:background="?android:selectableItemBackground"
+                    android:contentDescription="Remove" />
+
+                <!-- Mutually exclusive with the 'remove' button above.
+                Hidden for now, since there is only one menu item-->
+                <ImageButton
                     android:id="@+id/access_restriction_policy_cardview_menu"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"

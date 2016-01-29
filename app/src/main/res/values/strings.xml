@@ -134,7 +134,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <string name="security_vpn_passthrough">VPN Passthrough</string>
 
     <!-- 6 = Access => {WAN} -->
-    <string name="access_restrictions">Access Restrictions (BETA)</string>
+    <string name="access_restrictions">Access Restrictions</string>
     <string name="access_restrictions_wan">WAN Access</string>
 
     <!-- 7 = NAT/QoS => {Port Fwding, Port Range Fwding, Port Triggerring, UPnP, DMZ, QoS} -->

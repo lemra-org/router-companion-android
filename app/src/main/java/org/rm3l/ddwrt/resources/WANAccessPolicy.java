@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class WANAccessPolicy {
 
-    public static final String DENY = "deny";
-    public static final String FILTER = "filter";
+    public static final String DENY = "Deny";
+    public static final String FILTER = "Filter";
 
     public static final String STATUS_UNKNOWN = "unknown";
 
