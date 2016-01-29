@@ -1031,7 +1031,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 final List<String> csvTextOutput = new ArrayList<>();
 
                 try {
-                    final String hdr = "Test Date,Server,Server Location,WAN Ping,WAN Ping (Readable),WAN Download,WAN Download (Readable),WAN Upload,WAN Upload (Readable)";
+                    final String hdr = "Test Date,Server Location,WAN Ping,WAN Ping (Readable),WAN Download,WAN Download (Readable),WAN Upload,WAN Upload (Readable)";
                     csvTextOutput.add(hdr);
                     Files.write(hdr + "\n",
                             mFileToShare,
@@ -1045,9 +1045,8 @@ public class SpeedTestActivity extends AppCompatActivity
                         final Number wanUl = speedTestResult.getWanUl();
 
                         final String speedTestLine = String.format(Locale.US,
-                                "%s,%s,%s,%.2f,%.2f ms,%.2f,%s%s,%.2f,%s%s",
+                                "%s,%s,%.2f,%.2f ms,%.2f,%s%s,%.2f,%s%s",
                                 speedTestResult.getDate(),
-                                speedTestResult.getServer(),
                                 speedTestResult.getServerCountryCode(),
                                 wanPing.floatValue(),
                                 wanPing.floatValue(),
