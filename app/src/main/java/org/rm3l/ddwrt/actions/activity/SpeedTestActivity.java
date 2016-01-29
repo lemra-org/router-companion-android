@@ -741,6 +741,18 @@ public class SpeedTestActivity extends AppCompatActivity
         for (final TextView textView : mTitleTextViews) {
             textView.setTypeface(null, Typeface.NORMAL);
         }
+
+        findViewById(R.id.speedtest_latency_pb_internet)
+                .setVisibility(View.GONE);
+        findViewById(R.id.speedtest_dl_pb_internet)
+                .setVisibility(View.GONE);
+        findViewById(R.id.speedtest_ul_pb_internet)
+                .setVisibility(View.GONE);
+        findViewById(R.id.speedtest_pb_wifi)
+                .setVisibility(View.GONE);
+        findViewById(R.id.speedtest_pb_wifi_efficiency)
+                .setVisibility(View.GONE);
+
     }
 
     protected static void refreshServerLocationFlag(
@@ -1211,6 +1223,9 @@ public class SpeedTestActivity extends AppCompatActivity
         private String server;
 
         public void cancelAction() {
+            Toast.makeText(SpeedTestActivity.this,
+                    "Cancelling Speed Test run...",
+                    Toast.LENGTH_SHORT).show();
             mRouterCopy.destroyAllSessions();
         }
 
