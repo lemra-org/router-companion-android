@@ -186,6 +186,8 @@ public final class DDWRTCompanionConstants {
 
     public static final String COUNTRY_API_SERVER_FLAG = "http://www.geognos.com/api/en/countries/flag";
 
+    public static final int MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION = 3;
+
     public static class Permissions {
         public static final int INTERNET = 1;
         public static final int NETSTATE = 2;

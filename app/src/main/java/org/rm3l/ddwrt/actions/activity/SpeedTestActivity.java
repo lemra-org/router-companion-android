@@ -55,6 +55,7 @@ import com.google.common.io.Files;
 import com.squareup.picasso.Callback;
 
 import org.apache.commons.io.FileUtils;
+import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.actions.AbstractRouterAction;
 import org.rm3l.ddwrt.actions.PingFromRouterAction;
@@ -95,6 +96,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.CHARSET;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB;
@@ -518,6 +520,14 @@ public class SpeedTestActivity extends AppCompatActivity
         mRunFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
+                            >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
+                        Utils.displayUpgradeMessage(SpeedTestActivity.this,
+                                "Save more SpeedTest runs");
+                        return;
+                    }
+                }
                 onRefresh();
             }
         });
