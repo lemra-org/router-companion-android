@@ -84,38 +84,51 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <item>86400</item>
     </string-array>
 
+    <!--<string-array name="routerSpeedTestMaxFileSize_titles">-->
+        <!--&lt;!&ndash;<item>128 KB</item>&ndash;&gt;-->
+        <!--<item>256 KB</item>-->
+        <!--<item>512 KB</item>-->
+        <!--<item>1 MB</item>-->
+        <!--<item>2 MB</item>-->
+        <!--<item>4 MB</item>-->
+        <!--<item>8 MB</item>-->
+        <!--<item>16 MB</item>-->
+        <!--<item>32 MB</item>-->
+        <!--<item>64 MB</item>-->
+        <!--<item>128 MB</item>-->
+        <!--<item>256 MB</item>-->
+        <!--<item>512 MB</item>-->
+        <!--<item>1 GB</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="routerSpeedTestMaxFileSize_values">-->
+        <!--&lt;!&ndash;<item>128</item>&ndash;&gt;-->
+        <!--<item>256</item>-->
+        <!--<item>512</item>-->
+        <!--<item>1024</item>-->
+        <!--<item>2048</item>-->
+        <!--<item>4096</item>-->
+        <!--<item>8192</item>-->
+        <!--<item>16384</item>-->
+        <!--<item>32768</item>-->
+        <!--<item>65536</item>-->
+        <!--<item>131072</item>-->
+
+        <!--<item>262144</item>-->
+        <!--<item>524288</item>-->
+        <!--<item>1048576</item>-->
+    <!--</string-array>-->
+
     <string-array name="routerSpeedTestMaxFileSize_titles">
-        <!--<item>128 KB</item>-->
-        <item>256 KB</item>
-        <item>512 KB</item>
         <item>1 MB</item>
-        <item>2 MB</item>
-        <item>4 MB</item>
-        <item>8 MB</item>
-        <item>16 MB</item>
-        <item>32 MB</item>
-        <item>64 MB</item>
-        <item>128 MB</item>
-        <item>256 MB</item>
-        <item>512 MB</item>
-        <item>1 GB</item>
+        <item>10 MB</item>
+        <item>100 MB</item>
+        <item>500 MB</item>
     </string-array>
     <string-array name="routerSpeedTestMaxFileSize_values">
-        <!--<item>128</item>-->
-        <item>256</item>
-        <item>512</item>
-        <item>1024</item>
-        <item>2048</item>
-        <item>4096</item>
-        <item>8192</item>
-        <item>16384</item>
-        <item>32768</item>
-        <item>65536</item>
-        <item>131072</item>
-
-        <item>262144</item>
-        <item>524288</item>
-        <item>1048576</item>
+        <item>1</item>
+        <item>10</item>
+        <item>100</item>
+        <item>500</item>
     </string-array>
 
     <string-array name="pref_notifications_sync_frequency_titles">
@@ -193,25 +206,76 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <string name="speed_test_router_settings">Speed Test Settings</string>
 
+    <!--<string-array name="speedtest_servers_titles">-->
+        <!--<item>Auto</item>-->
+        <!--<item>Random</item>-->
+        <!--<item>Frankfurt (Germany)</item>-->
+        <!--<item>California (USA)</item>-->
+        <!--<item>Sao Paulo (Brazil)</item>-->
+        <!--<item>Seoul (South Korea)</item>-->
+        <!--<item>Tokyo (Japan)</item>-->
+        <!--<item>Sydney (Australia)</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="speedtest_servers_values">-->
+        <!--<item>_auto_</item>-->
+        <!--<item>_random_</item>-->
+        <!--<item>DE</item>-->
+        <!--<item>US</item>-->
+        <!--<item>BR</item>-->
+        <!--<item>KR</item>-->
+        <!--<item>JP</item>-->
+        <!--<item>AU</item>-->
+    <!--</string-array>-->
+
+    <!-- Use SoftLayer:
+    http://www.softlayer.com/data-centers -->
     <string-array name="speedtest_servers_titles">
         <item>Auto</item>
         <item>Random</item>
+        <item>Amsterdam (The Netherlands)</item>
+        <item>Chennai (India)</item>
+        <item>Dallas (USA)</item>
         <item>Frankfurt (Germany)</item>
-        <item>California (USA)</item>
+        <item>Hong Kong (China)</item>
+        <item>Houston (USA)</item>
+        <item>London (United Kingdom)</item>
+        <item>Melbourne (Australia)</item>
+        <item>Milan (Italy)</item>
+        <item>Montreal (Canada)</item>
+        <item>Paris (France)</item>
+        <item>Querétaro (Mexico)</item>
+        <item>San Jose (USA)</item>
         <item>Sao Paulo (Brazil)</item>
-        <item>Seoul (South Korea)</item>
-        <item>Tokyo (Japan)</item>
+        <item>Seattle (USA)</item>
+        <item>Singapore (Singapore)</item>
         <item>Sydney (Australia)</item>
+        <item>Tokyo (Japan)</item>
+        <item>Toronto (Canada)</item>
+        <item>Washington, D.C. (USA)</item>
     </string-array>
     <string-array name="speedtest_servers_values">
         <item>_auto_</item>
         <item>_random_</item>
+        <item>NL</item>
+        <item>IN</item>
+        <item>US-DAL</item>
         <item>DE</item>
-        <item>US</item>
+        <item>HK</item>
+        <item>US-HOU</item>
+        <item>GB</item>
+        <item>AU-MEL</item>
+        <item>IT</item>
+        <item>CA-MON</item>
+        <item>FR</item>
+        <item>MX</item>
+        <item>US-SJC</item>
         <item>BR</item>
-        <item>KR</item>
+        <item>US-SEA</item>
+        <item>SG</item>
+        <item>AU-SYD</item>
         <item>JP</item>
-        <item>AU</item>
+        <item>CA-TOR</item>
+        <item>US-WDC</item>
     </string-array>
 
 </resources>

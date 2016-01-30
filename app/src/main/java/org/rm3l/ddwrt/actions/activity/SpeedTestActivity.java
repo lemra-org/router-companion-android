@@ -99,8 +99,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.DEFAULT_SHARED_PREFER
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB;
-import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
+import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_AUTO;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SERVER_RANDOM;
@@ -137,6 +137,7 @@ public class SpeedTestActivity extends AppCompatActivity
     public static final String RANDOM_SELECTED = "Random";
 
     public static final Random RANDOM = new Random();
+    public static final Splitter HYPHEN_SPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
 
     private boolean mIsThemeLight;
     private Router mOriginalRouter;
@@ -193,23 +194,84 @@ public class SpeedTestActivity extends AppCompatActivity
             }
          */
 
-        SERVERS.put("DE", PING_SERVER, "s3.eu-central-1.amazonaws.com");
-        SERVERS.put("DE", HTTP_DL_URL, "http://speed-test--frankfurt.s3-website.eu-central-1.amazonaws.com");
+//        SERVERS.put("DE", PING_SERVER, "s3.eu-central-1.amazonaws.com");
+//        SERVERS.put("DE", HTTP_DL_URL, "http://speed-test--frankfurt.s3-website.eu-central-1.amazonaws.com");
+//
+//        SERVERS.put("US", PING_SERVER, "s3-us-west-1.amazonaws.com");
+//        SERVERS.put("US", HTTP_DL_URL, "http://speed-test--northern-california.s3-website-us-west-1.amazonaws.com");
+//
+//        SERVERS.put("BR", PING_SERVER, "s3-sa-east-1.amazonaws.com");
+//        SERVERS.put("BR", HTTP_DL_URL, "http://speed-test--sao-paulo.s3-website-sa-east-1.amazonaws.com");
+//
+//        SERVERS.put("KR", PING_SERVER, "s3.ap-northeast-2.amazonaws.com");
+//        SERVERS.put("KR", HTTP_DL_URL, "http://speed-test--seoul.s3-website.ap-northeast-2.amazonaws.com");
+//
+//        SERVERS.put("JP", PING_SERVER, "s3-ap-northeast-1.amazonaws.com");
+//        SERVERS.put("JP", HTTP_DL_URL, "http://speed-test--tokyo.s3-website-ap-northeast-1.amazonaws.com");
+//
+//        SERVERS.put("AU", PING_SERVER, "s3-ap-southeast-2.amazonaws.com");
+//        SERVERS.put("AU", HTTP_DL_URL, "http://speed-test--sydney.s3-website-ap-southeast-2.amazonaws.com");
 
-        SERVERS.put("US", PING_SERVER, "s3-us-west-1.amazonaws.com");
-        SERVERS.put("US", HTTP_DL_URL, "http://speed-test--northern-california.s3-website-us-west-1.amazonaws.com");
+        SERVERS.put("NL", PING_SERVER, "speedtest.ams01.softlayer.com");
+        SERVERS.put("NL", HTTP_DL_URL, "http://speedtest.ams01.softlayer.com/downloads/test%s.zip");
 
-        SERVERS.put("BR", PING_SERVER, "s3-sa-east-1.amazonaws.com");
-        SERVERS.put("BR", HTTP_DL_URL, "http://speed-test--sao-paulo.s3-website-sa-east-1.amazonaws.com");
+        SERVERS.put("IN", PING_SERVER, "speedtest.che01.softlayer.com");
+        SERVERS.put("IN", HTTP_DL_URL, "http://speedtest.che01.softlayer.com/downloads/test%s.zip");
 
-        SERVERS.put("KR", PING_SERVER, "s3.ap-northeast-2.amazonaws.com");
-        SERVERS.put("KR", HTTP_DL_URL, "http://speed-test--seoul.s3-website.ap-northeast-2.amazonaws.com");
+        SERVERS.put("US-DAL", PING_SERVER, "speedtest.dal01.softlayer.com");
+        SERVERS.put("US-DAL", HTTP_DL_URL, "http://speedtest.dal01.softlayer.com/downloads/test%s.zip");
 
-        SERVERS.put("JP", PING_SERVER, "s3-ap-northeast-1.amazonaws.com");
-        SERVERS.put("JP", HTTP_DL_URL, "http://speed-test--tokyo.s3-website-ap-northeast-1.amazonaws.com");
+        SERVERS.put("DE", PING_SERVER, "speedtest.fra02.softlayer.com");
+        SERVERS.put("DE", HTTP_DL_URL, "http://speedtest.fra02.softlayer.com/downloads/test%s.zip");
 
-        SERVERS.put("AU", PING_SERVER, "s3-ap-southeast-2.amazonaws.com");
-        SERVERS.put("AU", HTTP_DL_URL, "http://speed-test--sydney.s3-website-ap-southeast-2.amazonaws.com");
+        SERVERS.put("HK", PING_SERVER, "speedtest.hkg02.softlayer.com");
+        SERVERS.put("HK", HTTP_DL_URL, "http://speedtest.hkg02.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("US-HOU", PING_SERVER, "speedtest.hou02.softlayer.com");
+        SERVERS.put("US-HOU", HTTP_DL_URL, "http://speedtest.hou02.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("GB", PING_SERVER, "speedtest.lon02.softlayer.com");
+        SERVERS.put("GB", HTTP_DL_URL, "http://speedtest.lon02.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("AU-MEL", PING_SERVER, "speedtest.mel01.softlayer.com");
+        SERVERS.put("AU-MEL", HTTP_DL_URL, "http://speedtest.mel01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("IT", PING_SERVER, "speedtest.mil01.softlayer.com");
+        SERVERS.put("IT", HTTP_DL_URL, "http://speedtest.mil01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("CA-MON", PING_SERVER, "speedtest.mon01.softlayer.com");
+        SERVERS.put("CA-MON", HTTP_DL_URL, "http://speedtest.mon01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("FR", PING_SERVER, "speedtest.par01.softlayer.com");
+        SERVERS.put("FR", HTTP_DL_URL, "http://speedtest.par01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("MX", PING_SERVER, "speedtest.mex01.softlayer.com");
+        SERVERS.put("MX", HTTP_DL_URL, "http://speedtest.mex01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("US-SJC", PING_SERVER, "speedtest.sjc01.softlayer.com");
+        SERVERS.put("US-SJC", HTTP_DL_URL, "http://speedtest.sjc01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("BR", PING_SERVER, "speedtest.sao01.softlayer.com");
+        SERVERS.put("BR", HTTP_DL_URL, "http://speedtest.sao01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("US-SEA", PING_SERVER, "speedtest.sea01.softlayer.com");
+        SERVERS.put("US-SEA", HTTP_DL_URL, "http://speedtest.sea01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("SG", PING_SERVER, "speedtest.sng01.softlayer.com");
+        SERVERS.put("SG", HTTP_DL_URL, "http://speedtest.sng01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("AU-SYD", PING_SERVER, "speedtest.syd01.softlayer.com");
+        SERVERS.put("AU-SYD", HTTP_DL_URL, "http://speedtest.syd01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("JP", PING_SERVER, "speedtest.tok02.softlayer.com");
+        SERVERS.put("JP", HTTP_DL_URL, "http://speedtest.tok02.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("CA-TOR", PING_SERVER, "speedtest.tor01.softlayer.com");
+        SERVERS.put("CA-TOR", HTTP_DL_URL, "http://speedtest.tor01.softlayer.com/downloads/test%s.zip");
+
+        SERVERS.put("US-WDC", PING_SERVER, "speedtest.wdc01.softlayer.com");
+        SERVERS.put("US-WDC", HTTP_DL_URL, "http://speedtest.wdc01.softlayer.com/downloads/test%s.zip");
+
     }
 
     private TextView noticeTextView;
@@ -272,7 +334,7 @@ public class SpeedTestActivity extends AppCompatActivity
         final String[] maxFileSizeValuesStrArr = getResources().getStringArray(
                 R.array.routerSpeedTestMaxFileSize_values);
         if (maxFileSizeValuesStrArr == null) {
-            mPossibleFileSizes = new Long[] {128L};
+            mPossibleFileSizes = new Long[] {1L};
             Utils.reportException(this,
                     new SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL"));
         } else {
@@ -293,7 +355,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
         }
         if (mPossibleFileSizes.length == 0) {
-            mPossibleFileSizes = new Long[] {128L};
+            mPossibleFileSizes = new Long[] {1L};
             Utils.reportException(this,
                     new SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL or empty"));
         }
@@ -554,50 +616,6 @@ public class SpeedTestActivity extends AppCompatActivity
         }
     }
 
-    private void startOrCancelAction() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Run
-                onRefresh();
-            }
-        });
-
-//        Toast.makeText(SpeedTestActivity.this,
-//                "[REMOVEME] onClick(mRunFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get(),
-//                Toast.LENGTH_LONG).show();
-//        Crashlytics.log(Log.DEBUG, LOG_TAG,
-//                "onClick(mRunFab) - mSpeedTestRunning.get(): " + mSpeedTestRunning.get());
-//        if (mSpeedTestRunning.get()) {
-//            //Cancel
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    errorPlaceholder.setVisibility(View.VISIBLE);
-//                    errorPlaceholder.setText(" Stopping...");
-//                }
-//            });
-//            if (mSpeedTestAsyncTask == null) {
-//                mSpeedTestRunning.set(false);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        errorPlaceholder.setText(" Aborted!");
-//                        mRunFab.setIcon(
-//                                R.drawable.ic_play_arrow_white_24dp,
-//                                R.drawable.ic_play_arrow_white_24dp
-//                        );
-//                    }
-//                });
-//                return;
-//            }
-//            mSpeedTestAsyncTask.cancelAction();
-//
-//        } else {
-//            onRefresh();
-//        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -650,7 +668,7 @@ public class SpeedTestActivity extends AppCompatActivity
         final int size = speedTestResultsByRouter.size();
         final TextView nbResultsView = (TextView) findViewById(R.id.speedtest_results_nb_results);
         nbResultsView
-                .setText(Integer.toString(size));
+                .setText(String.format(Locale.US, "%d", size));
     }
 
     private void refreshSpeedTestResults() {
@@ -752,16 +770,19 @@ public class SpeedTestActivity extends AppCompatActivity
                 .setVisibility(View.GONE);
         findViewById(R.id.speedtest_pb_wifi_efficiency)
                 .setVisibility(View.GONE);
-
     }
 
     protected static void refreshServerLocationFlag(
             @NonNull final Context ctx, @NonNull final String countryCode,
                                            @NonNull final ImageView imageView) {
+
+        final List<String> countryCodeSplitted =
+                HYPHEN_SPLITTER.splitToList(countryCode);
+
         ImageUtils.downloadImageFromUrl(ctx,
                 String.format("%s/%s.png",
                         DDWRTCompanionConstants.COUNTRY_API_SERVER_FLAG,
-                        countryCode),
+                        countryCodeSplitted.isEmpty() ? countryCode : countryCodeSplitted.get(0)),
                 imageView,
                 null,
                 null,
@@ -794,9 +815,44 @@ public class SpeedTestActivity extends AppCompatActivity
                         RANDOM.nextInt(rowKeySet.size()));
                 if (ROUTER_SPEED_TEST_SERVER_RANDOM.equals(randomCountryCode)) {
                     //Should not happen, but hey, ou never know!
-                    return "DE";
+                    return "Frankfurt (Germany)";
                 }
                 return getServerLocationDisplayFromCountryCode(randomCountryCode);
+            case "NL":
+                return "Amsterdam (The Netherlands)";
+            case "IN":
+                return "Chennai (India)";
+            case "US-DAL":
+                return "Dallas (USA)";
+            case "HK":
+                return "Hong Kong (China)";
+            case "US-HOU":
+                return "Houston (USA)";
+            case "GB":
+                return "London (United Kingdom)";
+            case "AU-MEL":
+                return "Melbourne (Australia)";
+            case "IT":
+                return "Milan (Italy)";
+            case "CA-MON":
+                return "Montreal (Canada)";
+            case "FR":
+                return "Paris (France)";
+            case "MX":
+                return "Querétaro (Mexico)";
+            case "US-SJC":
+                return "San Jose (USA)";
+            case "US-SEA":
+                return "Seattle (USA)";
+            case "SG":
+                return "Singapore (Singapore)";
+            case "AU-SYD":
+            case "AU":
+                return "Sydney (Australia)";
+            case "CA-TOR":
+                return "Toronto (Canada)";
+            case "US-WDC":
+                return "Washington, D.C. (USA)";
             case "DE":
                 return "Frankfurt (Germany)";
             case "US":
@@ -807,8 +863,6 @@ public class SpeedTestActivity extends AppCompatActivity
                 return "Seoul (South Korea)";
             case "JP":
                 return "Tokyo (Japan)";
-            case "AU":
-                return "Sydney (Australia)";
             default:
                 return isNullOrEmpty(serverCountryCode) ?
                         "-" : serverCountryCode;
@@ -1047,7 +1101,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         final String speedTestLine = String.format(Locale.US,
                                 "%s,%s,%.2f,%.2f ms,%.2f,%s%s,%.2f,%s%s",
                                 speedTestResult.getDate(),
-                                speedTestResult.getServerCountryCode(),
+                                getServerLocationDisplayFromCountryCode(speedTestResult.getServerCountryCode()),
                                 wanPing.floatValue(),
                                 wanPing.floatValue(),
                                 wanDl.floatValue(),
@@ -1288,6 +1342,8 @@ public class SpeedTestActivity extends AppCompatActivity
                     // in terms of ping latency
                     float minLatency = Float.MAX_VALUE;
                     String serverCountry = null;
+
+                    int i = 1;
                     for (final Map.Entry<String, Map<String, String>> entry :
                             SERVERS.rowMap().entrySet()) {
                         if (isCancelled()) {
@@ -1300,6 +1356,19 @@ public class SpeedTestActivity extends AppCompatActivity
                         if (isNullOrEmpty(pingServer)) {
                             continue;
                         }
+
+                        final int j = (i++);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCancelFab.setProgress(j + (100 * 1 /4));
+                                noticeTextView
+                                        .setText(String.format(Locale.US, "1/4 - Contacting '%s'...",
+                                                getServerLocationDisplayFromCountryCode(country)));
+                            }
+                        });
+
                         final PingRTT pingRTT = runPing(pingServer);
                         final float avg = pingRTT.getAvg();
                         if (avg < 0) {
@@ -1347,9 +1416,9 @@ public class SpeedTestActivity extends AppCompatActivity
                 publishProgress(PING_LATENCY_MEASURED);
 
                 //WAN DL / UL: algorithm here: https://speedof.me/howitworks.html
-                final long userDefinedRouterSpeedTestMaxFileSizeKB =
+                final long userDefinedRouterSpeedTestMaxFileSizeMB =
                         mRouterPreferences.getLong(
-                                ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB, ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT);
+                                ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB, ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT);
                 final long userDefinedRouterSpeedTestDurationThresholdSeconds =
                         Long.parseLong(mRouterPreferences.getString(ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS,
                                 ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT));
@@ -1365,16 +1434,16 @@ public class SpeedTestActivity extends AppCompatActivity
                         throw new InterruptedException();
                     }
                     //Measure time to download file of the specified type
-                        /*
-                        String.format("echo -e \"" +
-                                                        "GET / HTTP/1.1\\r\\n" +
-                                                        "Host:%s\\r\\n" +
-                                                        "User-Agent:%s/%s\\r\\n\" " +
-                                                        "| /usr/bin/nc %s %d"
-                         */
+//
+//                    final String remoteFileName = getRemoteFileName(possibleFileSize);
 
-                    final String remoteFileName = getRemoteFileName(possibleFileSize);
-                    final int pgForFile = (pg++);
+                    final String remoteFileName = Long.toString(possibleFileSize);
+
+                    wanSpeedUrl = String.format(wanSpeedUrl, remoteFileName);
+
+                    pg += 3;
+
+                    final int pgForFile = pg;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1427,7 +1496,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             possibleFileSize,
                             elapsedSeconds);
                     //Stop conditions: time_to_dl >= threshold or fileSize >= possibleFileSize
-                    if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeKB
+                    if (possibleFileSize >= userDefinedRouterSpeedTestMaxFileSizeMB
                             || elapsedSeconds >= userDefinedRouterSpeedTestDurationThresholdSeconds) {
                         break;
                     }
@@ -1442,8 +1511,8 @@ public class SpeedTestActivity extends AppCompatActivity
                 if (pairAcceptedForComputation != null) {
                     final long timeElapsedSeconds = pairAcceptedForComputation.second;
                     final long wanDl = (timeElapsedSeconds != 0 ?
-                            ((pairAcceptedForComputation.first * 1024) / timeElapsedSeconds) :
-                            (pairAcceptedForComputation.first * 1024));
+                            ((pairAcceptedForComputation.first * 1024 * 1024) / timeElapsedSeconds) :
+                            (pairAcceptedForComputation.first * 1024 * 1024));
                     speedTestResult.setWanDl(wanDl);
                 }
                 publishProgress(WAN_DL_MEASURED);

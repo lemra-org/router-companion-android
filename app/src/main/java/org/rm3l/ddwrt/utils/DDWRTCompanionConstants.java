@@ -151,8 +151,8 @@ public final class DDWRTCompanionConstants {
     public static final String LAST_KNOWN_VERSION = "lastKnownVersion";
     public static final String BG_SERVICE_LAST_HANDLE = "bgServiceLastHandle";
     public static final String ROUTER_SPEED_TEST_SERVER = "routerSpeedTestServer";
-    public static final String ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB = "routerSpeedTestMaxFileSizeKB";
-    public static final long  ROUTER_SPEED_TEST_MAX_FILE_SIZE_KB_DEFAULT = 131072;
+    public static final String ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB = "routerSpeedTestMaxFileSizeKB";
+    public static final long ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB_DEFAULT = 1;
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS = "routerSpeedTestDurationThresholdSeconds";
     public static final String ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS_DEFAULT = "8";
     public static final String ROUTER_SPEED_TEST_SERVER_AUTO = "_auto_";
