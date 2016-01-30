@@ -274,12 +274,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/internet_ul_speed"
                                 android:id="@+id/speedtest_wan_ul_title"
-                                android:layout_marginTop="15dp"/>
+                                android:layout_marginTop="15dp"
+                                android:visibility="gone"/>
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:visibility="gone">
 
                                 <TextView
                                     android:layout_width="wrap_content"

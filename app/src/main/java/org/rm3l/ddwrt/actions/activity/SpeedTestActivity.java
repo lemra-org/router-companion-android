@@ -149,7 +149,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
     private TextView mSpeedtestLatencyTitle;
     private TextView mSpeedtestWanDlTitle;
-    private TextView mSpeedtestWanUlTitle;
+//    private TextView mSpeedtestWanUlTitle;
     private TextView mSpeedtestWifiSpeedTitle;
     private TextView mSpeedtestWifiEfficiencyTitle;
 
@@ -426,14 +426,14 @@ public class SpeedTestActivity extends AppCompatActivity
 
         mSpeedtestLatencyTitle = (TextView) findViewById(R.id.speedtest_latency_title);
         mSpeedtestWanDlTitle = (TextView) findViewById(R.id.speedtest_wan_dl_title);
-        mSpeedtestWanUlTitle = (TextView) findViewById(R.id.speedtest_wan_ul_title);
+//        mSpeedtestWanUlTitle = (TextView) findViewById(R.id.speedtest_wan_ul_title);
         mSpeedtestWifiSpeedTitle = (TextView) findViewById(R.id.speedtest_lan_title);
         mSpeedtestWifiEfficiencyTitle = (TextView) findViewById(R.id.speedtest_wifi_efficiency_title);
 
         mTitleTextViews = new TextView[] {
                 mSpeedtestLatencyTitle,
                 mSpeedtestWanDlTitle,
-                mSpeedtestWanUlTitle,
+//                mSpeedtestWanUlTitle,
                 mSpeedtestWifiSpeedTitle,
                 mSpeedtestWifiEfficiencyTitle};
 
@@ -1320,12 +1320,12 @@ public class SpeedTestActivity extends AppCompatActivity
                                 .setVisibility(View.VISIBLE);
                         findViewById(R.id.speedtest_dl_pb_internet)
                                 .setVisibility(View.VISIBLE);
-                        findViewById(R.id.speedtest_ul_pb_internet)
-                                .setVisibility(View.VISIBLE);
+//                        findViewById(R.id.speedtest_ul_pb_internet)
+//                                .setVisibility(View.VISIBLE);
                         findViewById(R.id.speedtest_pb_wifi)
                                 .setVisibility(View.VISIBLE);
-                        findViewById(R.id.speedtest_pb_wifi_efficiency)
-                                .setVisibility(View.VISIBLE);
+//                        findViewById(R.id.speedtest_pb_wifi_efficiency)
+//                                .setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -1522,7 +1522,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 }
 
                 //3- WAN UL
-                publishProgress(TEST_WAN_UL);
+//                publishProgress(TEST_WAN_UL);
                 //TODO //FIXME Use real data
                 speedTestResult.setWanUl(new Random().nextInt(27) * 1024^5);
                 publishProgress(WAN_UL_MEASURED);
@@ -1651,7 +1651,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
             switch (progressCode) {
                 case SELECT_SERVER:
-                    mCancelFab.setProgress(100 * 1/4);
+                    mCancelFab.setProgress(100 * 1/3);
                     noticeTextView
                             .setText("1/4 - Selecting remote test Server...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
@@ -1660,7 +1660,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case MEASURE_PING_LATENCY:
-                    mCancelFab.setProgress(100 * 2/4);
+                    mCancelFab.setProgress(100 * 2/3);
                     noticeTextView
                             .setText("2/4 - Measuring Internet (WAN) Latency...");
                     final int latencyColor = ColorUtils.getColor(NET_LATENCY);
@@ -1669,7 +1669,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_DL:
-                    mCancelFab.setProgress(100 * 3/4);
+                    mCancelFab.setProgress(100 * 3/3);
                     noticeTextView
                             .setText("3/4 - Measuring Internet (WAN) Download Speed...");
                     final int netDlColor = ColorUtils.getColor(NET_DL);
@@ -1678,12 +1678,12 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_UL:
-                    mCancelFab.setProgress(100 * 4/4);
-                    noticeTextView
-                            .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
+                    mCancelFab.setProgress(100 * 4/3);
+//                    noticeTextView
+//                            .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
                     final int netUlColor = ColorUtils.getColor(NET_UL);
                     internetRouterLink.setBackgroundColor(netUlColor);
-                    highlightTitleTextView(mSpeedtestWanUlTitle);
+//                    highlightTitleTextView(mSpeedtestWanUlTitle);
                     break;
 
                 case PING_LATENCY_MEASURED:
@@ -1729,7 +1729,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             .setVisibility(View.GONE);
                     final TextView wanUlTextView =
                             (TextView) findViewById(R.id.speedtest_internet_ul_speed);
-                    wanUlTextView.setVisibility(View.VISIBLE);
+//                    wanUlTextView.setVisibility(View.VISIBLE);
                     if (speedTestResult != null
                             && speedTestResult.getWanUl() != null) {
                         wanUlTextView
