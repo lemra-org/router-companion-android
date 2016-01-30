@@ -191,9 +191,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:text="@string/latency"
                                 android:gravity="end" />
 
-                            <RelativeLayout
+                            <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -212,7 +213,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_centerInParent="true"
                                     android:visibility="invisible"/>
 
-                            </RelativeLayout>
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -242,9 +243,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/internet_dl_speed"/>
 
-                            <RelativeLayout
+                            <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -263,7 +265,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_centerInParent="true"
                                     android:visibility="invisible"/>
 
-                            </RelativeLayout>
+                            </LinearLayout>
 
 
                             <TextView
@@ -274,9 +276,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:id="@+id/speedtest_wan_ul_title"
                                 android:layout_marginTop="15dp"/>
 
-                            <RelativeLayout
+                            <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -295,7 +298,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:layout_centerInParent="true"
                                     android:visibility="invisible"/>
 
-                            </RelativeLayout>
+                            </LinearLayout>
 
                         </LinearLayout>
 
