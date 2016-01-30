@@ -103,10 +103,10 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:title="Server" />
 
         <org.rm3l.ddwrt.widgets.LongListPreference
-            android:defaultValue="131072"
+            android:defaultValue="100"
             android:entries="@array/routerSpeedTestMaxFileSize_titles"
             android:entryValues="@array/routerSpeedTestMaxFileSize_values"
-            android:key="routerSpeedTestMaxFileSizeKB"
+            android:key="routerSpeedTestMaxFileSizeMB"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="Max. size of sample data" />

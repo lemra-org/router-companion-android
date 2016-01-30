@@ -119,13 +119,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--</string-array>-->
 
     <string-array name="routerSpeedTestMaxFileSize_titles">
-        <item>1 MB</item>
         <item>10 MB</item>
         <item>100 MB</item>
         <item>500 MB</item>
     </string-array>
     <string-array name="routerSpeedTestMaxFileSize_values">
-        <item>1</item>
         <item>10</item>
         <item>100</item>
         <item>500</item>
@@ -230,7 +228,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!-- Use SoftLayer:
     http://www.softlayer.com/data-centers -->
     <string-array name="speedtest_servers_titles">
-        <item>Auto</item>
+        <item>Auto : Lowest Latency</item>
         <item>Random</item>
         <item>Amsterdam (The Netherlands)</item>
         <item>Chennai (India)</item>

@@ -334,7 +334,7 @@ public class SpeedTestActivity extends AppCompatActivity
         final String[] maxFileSizeValuesStrArr = getResources().getStringArray(
                 R.array.routerSpeedTestMaxFileSize_values);
         if (maxFileSizeValuesStrArr == null) {
-            mPossibleFileSizes = new Long[] {1L};
+            mPossibleFileSizes = new Long[] {100L};
             Utils.reportException(this,
                     new SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL"));
         } else {
@@ -355,7 +355,7 @@ public class SpeedTestActivity extends AppCompatActivity
             }
         }
         if (mPossibleFileSizes.length == 0) {
-            mPossibleFileSizes = new Long[] {1L};
+            mPossibleFileSizes = new Long[] {100L};
             Utils.reportException(this,
                     new SpeedTestException("R.array.routerSpeedTestMaxFileSize_values is NULL or empty"));
         }
@@ -1331,7 +1331,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 final String serverSetting = mRouterPreferences.getString(
                         ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
 
-                String wanSpeedUrl = null;
+                String wanSpeedUrlToFormat = null;
 
                 pingServerCountry = serverSetting;
                 if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(serverSetting)) {
@@ -1349,7 +1349,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         final String country = entry.getKey();
                         final Map<String, String> value = entry.getValue();
                         final String pingServer = value.get(PING_SERVER);
-                        wanSpeedUrl = value.get(HTTP_DL_URL);
+                        wanSpeedUrlToFormat = value.get(HTTP_DL_URL);
                         if (isNullOrEmpty(pingServer)) {
                             continue;
                         }
@@ -1359,10 +1359,10 @@ public class SpeedTestActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mCancelFab.setProgress(j + (100 * 1 /4));
+                                mCancelFab.setProgress(j + (100 * 1 /3));
                                 noticeTextView
                                         .setText(String.format(Locale.US,
-                                                "1/4 - Selecting remote test Server...\n" +
+                                                "1/3 - Selecting remote test server...\n" +
                                                 " Contacting '%s'...",
                                                 getServerLocationDisplayFromCountryCode(country)));
                             }
@@ -1399,10 +1399,10 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
                     refreshSpeedTestParameters(pingServerCountry);
                     server = SERVERS.get(pingServerCountry, PING_SERVER);
-                    wanSpeedUrl = SERVERS.get(pingServerCountry, HTTP_DL_URL);
+                    wanSpeedUrlToFormat = SERVERS.get(pingServerCountry, HTTP_DL_URL);
                 }
 
-                if (isNullOrEmpty(server) || isNullOrEmpty(wanSpeedUrl)) {
+                if (isNullOrEmpty(server) || isNullOrEmpty(wanSpeedUrlToFormat)) {
                     throw new SpeedTestException("Invalid server");
                 }
 
@@ -1438,7 +1438,9 @@ public class SpeedTestActivity extends AppCompatActivity
 
                     final String remoteFileName = Long.toString(possibleFileSize);
 
-                    wanSpeedUrl = String.format(wanSpeedUrl, remoteFileName);
+                    final String completeServerUrl = String.format("%s?_=%d",
+                            String.format(wanSpeedUrlToFormat, remoteFileName),
+                            System.currentTimeMillis());
 
                     pg += 3;
 
@@ -1447,9 +1449,9 @@ public class SpeedTestActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             //Display message to user
-                            mCancelFab.setProgress((100 * 3/4) + pgForFile);
+                            mCancelFab.setProgress((100 * 3/3) + pgForFile);
                             noticeTextView
-                                    .setText("3/4 - Downloading data: " + remoteFileName + "MB...");
+                                    .setText("3/3 - Downloading data: " + remoteFileName + "MB...");
                             //final int netDlColor = ColorUtils.getColor(NET_DL);
                             //internetRouterLink.setBackgroundColor(netDlColor);
                             //highlightTitleTextView(mSpeedtestWanDlTitle);
@@ -1461,16 +1463,18 @@ public class SpeedTestActivity extends AppCompatActivity
                             mRouterCopy,
                             getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
                                     Context.MODE_PRIVATE),
+                            Joiner.on(" && ").skipNulls(),
                             "DATE_START=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
-                            String.format("/usr/bin/wget -qO /dev/null \"%s/%s?_=%s\" > /dev/null 2>&1 ",
-                                    wanSpeedUrl,
-                                    remoteFileName,
-                                    System.currentTimeMillis()),
+                            String.format("/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
+                                    completeServerUrl),
                             "DATE_END=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
-                            "/bin/echo $((${DATE_END}-${DATE_START}))" //number of seconds
-                    );
+                            "/bin/echo $((${DATE_END}-${DATE_START}))", //number of seconds
+                            "/bin/echo $?"
+                            );
 
-                    if (cmdExecOutput == null || cmdExecOutput.length == 0) {
+                    if (cmdExecOutput == null
+                            || cmdExecOutput.length < 2
+                            || !"0".equals(nullToEmpty(cmdExecOutput[cmdExecOutput.length-1]).trim())) {
                         final SpeedTestException speedTestException = new
                                 SpeedTestException("Failed to download data: " + remoteFileName + "MB");
                         Crashlytics.logException(speedTestException);
@@ -1480,7 +1484,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     final long elapsedSeconds;
                     try {
                         elapsedSeconds = Long.parseLong(
-                                nullToEmpty(cmdExecOutput[cmdExecOutput.length - 1])
+                                nullToEmpty(cmdExecOutput[cmdExecOutput.length - 2])
                                         .trim());
                     } catch (final NumberFormatException nfe) {
                         Crashlytics.logException(nfe);
@@ -1490,6 +1494,10 @@ public class SpeedTestActivity extends AppCompatActivity
                     if (elapsedSeconds < 0) {
                         throw new SpeedTestException("Unexpected output - please try again later.");
                     }
+
+                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            String.format("[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
+                                    possibleFileSize, elapsedSeconds, completeServerUrl));
 
                     pairAcceptedForComputation = Pair.create(
                             possibleFileSize,
@@ -1652,7 +1660,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 case SELECT_SERVER:
                     mCancelFab.setProgress(100 * 1/3);
                     noticeTextView
-                            .setText("1/4 - Selecting remote test Server...");
+                            .setText("1/3 - Selecting remote test Server...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
                             android.R.anim.slide_in_left));
                     noticeTextView.setVisibility(View.VISIBLE);
@@ -1661,7 +1669,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 case MEASURE_PING_LATENCY:
                     mCancelFab.setProgress(100 * 2/3);
                     noticeTextView
-                            .setText("2/4 - Measuring Internet (WAN) Latency...");
+                            .setText("2/3 - Measuring Internet (WAN) Latency...");
                     final int latencyColor = ColorUtils.getColor(NET_LATENCY);
                     internetRouterLink.setBackgroundColor(latencyColor);
                     highlightTitleTextView(mSpeedtestLatencyTitle);
@@ -1670,7 +1678,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 case TEST_WAN_DL:
                     mCancelFab.setProgress(100 * 3/3);
                     noticeTextView
-                            .setText("3/4 - Measuring Internet (WAN) Download Speed...");
+                            .setText("3/3 - Measuring Internet (WAN) Download Speed...");
                     final int netDlColor = ColorUtils.getColor(NET_DL);
                     internetRouterLink.setBackgroundColor(netDlColor);
                     highlightTitleTextView(mSpeedtestWanDlTitle);

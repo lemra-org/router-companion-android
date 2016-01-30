@@ -407,6 +407,14 @@ public final class SSHUtils {
 
     @Nullable
     public static String[] getManualProperty(Context ctx, @NonNull final Router router, SharedPreferences globalPreferences, @NonNull final String... cmdToExecute) throws Exception {
+        return getManualProperty(ctx, router, globalPreferences, null, cmdToExecute);
+
+    }
+
+    @Nullable
+    public static String[] getManualProperty(Context ctx, @NonNull final Router router, SharedPreferences globalPreferences,
+                                             @Nullable  final Joiner cmdSeparatorJoiner,
+                                             @NonNull final String... cmdToExecute) throws Exception {
         Crashlytics.log(Log.DEBUG, TAG, "getManualProperty: <router=" + router + " / cmdToExecute=" + Arrays.toString(cmdToExecute) + ">");
 
         checkDataSyncAlllowedByUsagePreference(ctx);
@@ -427,7 +435,10 @@ public final class SSHUtils {
 
             channelExec = (ChannelExec) jschSession.openChannel("exec");
 
-            channelExec.setCommand(Joiner.on("; ").skipNulls().join(cmdToExecute));
+            final Joiner separatorJoiner = (cmdSeparatorJoiner == null ?
+                Joiner.on(" ; ").skipNulls() : cmdSeparatorJoiner);
+
+            channelExec.setCommand(separatorJoiner.join(cmdToExecute));
             channelExec.setInputStream(null);
             in = channelExec.getInputStream();
             err = channelExec.getErrStream();
