@@ -804,7 +804,7 @@ public class SpeedTestActivity extends AppCompatActivity
     }
 
     @NonNull
-    protected static String getServerLocationDisplayFromCountryCode(@NonNull final String serverCountryCode) {
+    protected static String getServerLocationDisplayFromCountryCode(@Nullable final String serverCountryCode) {
         switch (nullToEmpty(serverCountryCode)) {
             case ROUTER_SPEED_TEST_SERVER_AUTO:
                 return AUTO_DETECTED;
@@ -1449,7 +1449,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             //Display message to user
                             mCancelFab.setProgress((100 * 3/4) + pgForFile);
                             noticeTextView
-                                    .setText("3/4 - Downloading data: " + remoteFileName + "...");
+                                    .setText("3/4 - Downloading data: " + remoteFileName + "MB...");
                             //final int netDlColor = ColorUtils.getColor(NET_DL);
                             //internetRouterLink.setBackgroundColor(netDlColor);
                             //highlightTitleTextView(mSpeedtestWanDlTitle);
@@ -1472,7 +1472,7 @@ public class SpeedTestActivity extends AppCompatActivity
 
                     if (cmdExecOutput == null || cmdExecOutput.length == 0) {
                         final SpeedTestException speedTestException = new
-                                SpeedTestException("Failed to download data: " + remoteFileName);
+                                SpeedTestException("Failed to download data: " + remoteFileName + "MB");
                         Crashlytics.logException(speedTestException);
                         throw speedTestException;
                     }
