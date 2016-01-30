@@ -101,6 +101,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:gravity="center" />
 
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/speed_test_result_wanUl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -277,12 +278,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                     <!-- WAN UL -->
                     <TextView
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="WAN Upload"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -291,6 +294,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/speed_test_result_details_wanUpload"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

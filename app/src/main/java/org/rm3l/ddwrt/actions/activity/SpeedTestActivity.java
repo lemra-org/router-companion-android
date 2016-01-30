@@ -1085,7 +1085,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 final List<String> csvTextOutput = new ArrayList<>();
 
                 try {
-                    final String hdr = "Test Date,Server Location,WAN Ping,WAN Ping (Readable),WAN Download,WAN Download (Readable),WAN Upload,WAN Upload (Readable)";
+                    final String hdr = "Test Date,Server Location,WAN Ping,WAN Ping (Readable),WAN Download,WAN Download (Readable)";
                     csvTextOutput.add(hdr);
                     Files.write(hdr + "\n",
                             mFileToShare,
@@ -1099,16 +1099,13 @@ public class SpeedTestActivity extends AppCompatActivity
                         final Number wanUl = speedTestResult.getWanUl();
 
                         final String speedTestLine = String.format(Locale.US,
-                                "%s,%s,%.2f,%.2f ms,%.2f,%s%s,%.2f,%s%s",
+                                "%s,%s,%.2f,%.2f ms,%.2f,%s%s",
                                 speedTestResult.getDate(),
                                 getServerLocationDisplayFromCountryCode(speedTestResult.getServerCountryCode()),
                                 wanPing.floatValue(),
                                 wanPing.floatValue(),
                                 wanDl.floatValue(),
                                 FileUtils.byteCountToDisplaySize(wanDl.longValue()),
-                                PER_SEC,
-                                wanUl.floatValue(),
-                                FileUtils.byteCountToDisplaySize(wanUl.longValue()),
                                 PER_SEC);
 
                         csvTextOutput.add(speedTestLine);
@@ -1364,7 +1361,9 @@ public class SpeedTestActivity extends AppCompatActivity
                             public void run() {
                                 mCancelFab.setProgress(j + (100 * 1 /4));
                                 noticeTextView
-                                        .setText(String.format(Locale.US, "1/4 - Contacting '%s'...",
+                                        .setText(String.format(Locale.US,
+                                                "1/4 - Selecting remote test Server...\n" +
+                                                " Contacting '%s'...",
                                                 getServerLocationDisplayFromCountryCode(country)));
                             }
                         });
