@@ -1354,7 +1354,9 @@ public class SpeedTestActivity extends AppCompatActivity
                             continue;
                         }
 
-                        final int j = (i++);
+                        i += 2;
+
+                        final int j = i;
 
                         runOnUiThread(new Runnable() {
                             @Override
