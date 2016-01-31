@@ -93,6 +93,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_services_wol_clients_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -130,6 +131,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:visibility="gone" />
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_services_wol_clients_loading_view_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,6 +145,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content"/>
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"

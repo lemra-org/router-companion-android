@@ -54,6 +54,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- Error message placeholder -->
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/tile_overview_uptime_error"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -97,6 +98,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:layout_gravity="center">
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/tile_overview_uptime_days"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -126,6 +128,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orientation="vertical">
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/tile_overview_uptime_hours"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -156,6 +159,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:orientation="vertical">
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/tile_overview_uptime_minutes"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -188,6 +192,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:indeterminate="false" />
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"

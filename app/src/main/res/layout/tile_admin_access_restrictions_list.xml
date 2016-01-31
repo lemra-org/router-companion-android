@@ -67,6 +67,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="#"
                         android:textAppearance="?android:textAppearanceSmall"/>
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/access_restriction_policy_cardview_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -76,6 +77,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginEnd="10dp"/>
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/access_restriction_policy_cardview_name"
@@ -168,6 +170,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginRight="5dp"
                         android:layout_marginEnd="5dp"/>
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/access_restriction_policy_cardview_hours"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -184,6 +187,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginRight="5dp"
                         android:layout_marginEnd="5dp"/>
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/access_restriction_policy_cardview_internet_policy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>

@@ -44,6 +44,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content">
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_device_source_ip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,6 +56,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:textAppearanceMedium" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_device_proto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,6 +71,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:textAppearanceSmall" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_device_dest_ip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,6 +98,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:scrollHorizontally="true">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_source_ip_hostname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -111,6 +115,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </RelativeLayout>
 
             <TextView
+                android:textIsSelectable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -130,6 +135,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:scrollHorizontally="true">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_dest_ip_org"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -152,6 +158,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_height="wrap_content">
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_sport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,6 +170,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textAppearance="?android:textAppearanceSmall" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_tcp_connection_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -174,6 +182,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_dport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -218,12 +227,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Transport Protocol -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Protocol"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -232,6 +243,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_protocol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -244,12 +256,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- TTL -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TTL"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -258,6 +272,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_ttl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -270,6 +285,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- TCP Connection State -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_tcp_connection_state_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -277,6 +293,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_tcp_connection_state_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -286,6 +303,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_tcp_connection_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -298,6 +316,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- ICMP ID -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_id_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -305,6 +324,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_id_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -314,6 +334,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -326,6 +347,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- ICMP Type -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_type_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -333,6 +355,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_type_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -342,6 +365,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -354,6 +378,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- ICMP Code -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_code_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -361,6 +386,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_code_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -370,6 +396,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -382,6 +409,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- ICMP Control Message Description -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -389,6 +417,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg_sep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -398,6 +427,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_icmp_ctrl_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -410,12 +440,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Source IP -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Source IP"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -424,6 +456,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_source_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -436,12 +469,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Source Hostname -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Source IP Host"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -450,6 +485,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_source_host"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -462,12 +498,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Source Port -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Source Port"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -476,6 +514,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_source_port"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -488,12 +527,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination IP -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Destination IP"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -502,6 +543,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -514,12 +556,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination WHOIS -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dest. IP WHOIS"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -528,6 +572,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_whois"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -540,12 +585,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination IP Country -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dest. IP Country"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -554,6 +601,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_whois_country"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -566,12 +614,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination IP Region -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dest. IP Region"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -580,6 +630,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_whois_region"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -592,6 +643,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination IP City -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dest. IP City"
@@ -606,6 +658,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_whois_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -618,12 +671,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Destination Port -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Destination Port"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -632,6 +687,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_destination_port"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -644,12 +700,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Packets -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Packets"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -658,6 +716,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_packets"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -670,12 +729,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                 <!-- Bytes -->
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bytes"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -684,6 +745,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/activity_ip_connections_details_bytes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -723,6 +785,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             </GridLayout>
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/activity_ip_connections_raw_line"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

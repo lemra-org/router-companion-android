@@ -65,12 +65,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_weight="10">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/router_alias_mac_addr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/router_alias_alias"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
@@ -88,6 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:indeterminate="true"/>
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/router_alias_oui"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

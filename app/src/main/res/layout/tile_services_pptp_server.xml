@@ -89,6 +89,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_services_pptp_server_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -151,6 +152,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -176,6 +178,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_broadcast_support"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -201,6 +204,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_force_mppe_encryption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -226,6 +230,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_server_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -251,6 +256,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_client_ips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -276,6 +282,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_radius"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -305,6 +312,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_radius_server_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -335,6 +343,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_radius_auth_port"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -365,6 +374,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:visibility="gone" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_services_pptp_server_radius_accounting_port"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -386,6 +396,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </RelativeLayout>
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"

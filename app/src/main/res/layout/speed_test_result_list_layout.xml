@@ -49,6 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/speed_test_result_test_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -79,6 +80,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginEnd="15dp"/>
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_wanPing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -90,6 +92,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:gravity="center"/>
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_wanDl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -101,6 +104,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:gravity="center" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:visibility="gone"
                         android:id="@+id/speed_test_result_wanUl"
                         android:layout_width="wrap_content"
@@ -159,6 +163,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_detail_test_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -187,6 +192,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:visibility="gone" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_details_server"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -214,6 +220,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_details_server_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -240,6 +247,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_details_wanPing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -266,6 +274,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_details_wanDownload"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -294,6 +303,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:text="@string/one_space" />
 
                     <TextView
+                        android:textIsSelectable="true"
                         android:visibility="gone"
                         android:id="@+id/speed_test_result_details_wanUpload"
                         android:layout_width="wrap_content"

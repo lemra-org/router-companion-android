@@ -57,6 +57,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_router_router_mem_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -92,6 +93,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_status_router_router_mem_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -137,6 +139,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginTop="10dp"
                         android:textAppearance="?android:textAppearanceMedium"/>
                     <TextView
+                        android:textIsSelectable="true"
                         android:id="@+id/tile_status_router_router_mem_total_available"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -159,6 +162,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_free"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -185,6 +189,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_free_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -208,6 +213,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_used"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -234,6 +240,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_used_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -257,6 +264,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_buffers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -283,6 +291,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_buffers_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -306,6 +315,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_cached"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -332,6 +342,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_cached_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -355,6 +366,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_active"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -381,6 +393,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_active_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -404,6 +417,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_status_router_router_mem_inactive"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -430,6 +444,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:max="100"
                                 android:scaleY="4.0"/>
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_status_router_router_mem_inactive_usage_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -449,6 +464,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_centerInParent="true" />
 
             <com.github.curioustechizen.ago.RelativeTimeTextView
+                android:textIsSelectable="true"
                 android:layout_marginTop="15dp"
                 android:layout_below="@+id/tile_status_router_router_mem_content"
                 android:id="@+id/tile_last_sync"

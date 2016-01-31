@@ -57,6 +57,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:textStyle="bold" />
 
         <TextView
+            android:textIsSelectable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -66,6 +67,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/one_space" />
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/wireless_security_settings_phy_iface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,6 +97,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/one_space" />
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/wireless_security_settings_ssid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,6 +126,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:text="@string/one_space" />
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/wireless_security_settings_hw_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,6 +139,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     </GridLayout>
 
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/wireless_security_settings_wep_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

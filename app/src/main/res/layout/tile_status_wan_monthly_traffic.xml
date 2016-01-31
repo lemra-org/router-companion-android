@@ -112,6 +112,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <!-- Error message placeholder -->
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/tile_status_wan_monthly_traffic_error"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
@@ -125,6 +126,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:visibility="gone" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/tile_status_wan_monthly_month_displayed"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
@@ -162,6 +164,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:weightSum="1">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_wan_monthly_traffic_dl"
                     android:gravity="center"
                     android:layout_gravity="center"
@@ -173,6 +176,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:drawableLeft="@drawable/ic_dl_white"/>
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_wan_monthly_traffic_dl_mb"
                     android:gravity="center"
                     android:layout_gravity="center"
@@ -205,6 +209,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:weightSum="1">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_wan_monthly_traffic_ul"
                     android:gravity="center"
                     android:layout_gravity="center"
@@ -216,6 +221,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:drawableLeft="@drawable/ic_ul_light"/>
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_wan_monthly_traffic_ul_mb"
                     android:gravity="center"
                     android:layout_gravity="center"
@@ -259,6 +265,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </LinearLayout>
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"

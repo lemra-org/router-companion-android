@@ -49,6 +49,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
     <!-- Error message placeholder -->
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/tile_network_map_error"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -89,6 +90,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/tile_network_map_active_clients"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -114,6 +116,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:text="@string/one_space" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/tile_network_map_active_dhcp_leases"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,6 +182,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:background="#ffcccccc" />
 
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_network_map_wan_public_ip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -231,6 +235,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_gravity="end">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_network_map_router_wan_ip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -258,6 +263,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             tools:ignore="UseCompoundDrawables">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_network_map_router_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -286,6 +292,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_gravity="end">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:id="@+id/tile_network_map_router_lan_ip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -335,6 +342,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginStart="80dp">
 
                         <TextView
+                            android:textIsSelectable="true"
                             android:id="@+id/tile_network_map_wan_lan_textView"
                             android:layout_width="74dp"
                             android:layout_height="74dp"
@@ -366,6 +374,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:indeterminate="false" />
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

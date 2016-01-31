@@ -41,6 +41,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:contentDescription="@string/app_name" />
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/info_text"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -51,6 +52,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <TableRow>
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/contributors"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -62,6 +64,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         <TableRow>
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/legal_text"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

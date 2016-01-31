@@ -55,6 +55,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     <!--android:visibility="gone" />-->
 
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/router_add_ddwrt_instructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,6 +63,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:text="@string/router_add_dialog_msg" />
 
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/router_add_openwrt_instructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,6 +72,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:visibility="gone" />
 
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/router_add_ddwrt_instructions_ads"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,6 +81,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:visibility="gone"/>
 
     <TextView
+        android:textIsSelectable="true"
         android:id="@+id/router_add_openwrt_instructions_ads"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

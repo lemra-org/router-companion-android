@@ -64,6 +64,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tile_status_lan_dhcp_status_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -103,6 +104,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_lan_dhcp_status_server"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -128,6 +130,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_lan_dhcp_status_daemon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -153,6 +156,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_lan_dhcp_status_start_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -178,6 +182,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_lan_dhcp_status_end_ip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -204,6 +209,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:text="@string/one_space" />
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/tile_status_lan_dhcp_status_client_lease_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -224,6 +230,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         </RelativeLayout>
 
         <com.github.curioustechizen.ago.RelativeTimeTextView
+            android:textIsSelectable="true"
             android:layout_marginTop="5dp"
             android:id="@+id/tile_last_sync"
             android:layout_width="wrap_content"

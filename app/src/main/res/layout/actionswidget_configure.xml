@@ -71,6 +71,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/selected_router_use_local_ssid_lookup"

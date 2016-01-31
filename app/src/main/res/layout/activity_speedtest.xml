@@ -65,6 +65,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
         <!-- Error message placeholder -->
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/router_speedtest_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,6 +105,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:textAppearance="?android:textAppearanceMedium"/>
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/speedtest_server"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -131,6 +133,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
             <!-- Notice -->
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/router_speedtest_notice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -184,6 +187,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_marginTop="10dp">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/speedtest_latency_title"
@@ -197,6 +201,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:textIsSelectable="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceLarge"
@@ -237,6 +242,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_marginTop="10dp">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/speedtest_wan_dl_title"
@@ -249,6 +255,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:orientation="horizontal">
 
                                 <TextView
+                                    android:textIsSelectable="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceLarge"
@@ -269,6 +276,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -284,6 +292,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:visibility="gone">
 
                                 <TextView
+                                    android:textIsSelectable="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceLarge"
@@ -344,6 +353,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             android:layout_marginTop="10dp">
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -354,6 +364,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
                                 <TextView
+                                    android:textIsSelectable="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -370,6 +381,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                             </RelativeLayout>
 
                             <TextView
+                                android:textIsSelectable="true"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -384,6 +396,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                 android:visibility="gone">
 
                                 <TextView
+                                    android:textIsSelectable="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -484,10 +497,11 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:orientation="horizontal">
 
                 <TextView
+                    android:textIsSelectable="true"
                     android:id="@+id/speedtest_results_nb_results"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="xxx"
+                    android:text="0"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:layout_marginRight="5dp"
                     android:layout_marginEnd="5dp"
@@ -542,6 +556,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:layout_margin="7dp"/>
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

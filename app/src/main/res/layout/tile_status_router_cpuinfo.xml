@@ -51,14 +51,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:orientation="vertical">
 
             <TextView
+                android:textIsSelectable="true"
                 android:id="@+id/tile_status_router_cpuinfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:enabled="false" />
+                android:layout_marginTop="4dp" />
 
         </LinearLayout>
     </ScrollView>
