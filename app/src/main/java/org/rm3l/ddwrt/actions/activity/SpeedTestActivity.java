@@ -1359,7 +1359,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mCancelFab.setProgress(j + (100 * 1 /3));
+                                mCancelFab.setProgress(j + (100 * 1 /4));
                                 noticeTextView
                                         .setText(String.format(Locale.US,
                                                 "1/3 - Selecting remote test server...\n" +
@@ -1449,7 +1449,7 @@ public class SpeedTestActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             //Display message to user
-                            mCancelFab.setProgress((100 * 3/3) + pgForFile);
+                            mCancelFab.setProgress((100 * 3/4) + pgForFile);
                             noticeTextView
                                     .setText("3/3 - Downloading data: " + remoteFileName + "MB...");
                             //final int netDlColor = ColorUtils.getColor(NET_DL);
@@ -1658,16 +1658,16 @@ public class SpeedTestActivity extends AppCompatActivity
             }
             switch (progressCode) {
                 case SELECT_SERVER:
-                    mCancelFab.setProgress(100 * 1/3);
+                    mCancelFab.setProgress(100 * 1/4);
                     noticeTextView
-                            .setText("1/3 - Selecting remote test Server...");
+                            .setText("1/3 - Selecting remote test server...");
                     noticeTextView.startAnimation(AnimationUtils.loadAnimation(SpeedTestActivity.this,
                             android.R.anim.slide_in_left));
                     noticeTextView.setVisibility(View.VISIBLE);
                     break;
 
                 case MEASURE_PING_LATENCY:
-                    mCancelFab.setProgress(100 * 2/3);
+                    mCancelFab.setProgress(100 * 2/4);
                     noticeTextView
                             .setText("2/3 - Measuring Internet (WAN) Latency...");
                     final int latencyColor = ColorUtils.getColor(NET_LATENCY);
@@ -1676,7 +1676,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_DL:
-                    mCancelFab.setProgress(100 * 3/3);
+                    mCancelFab.setProgress(100 * 3/4);
                     noticeTextView
                             .setText("3/3 - Measuring Internet (WAN) Download Speed...");
                     final int netDlColor = ColorUtils.getColor(NET_DL);
@@ -1685,7 +1685,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     break;
 
                 case TEST_WAN_UL:
-                    mCancelFab.setProgress(100 * 4/3);
+                    mCancelFab.setProgress(100 * 4/4);
 //                    noticeTextView
 //                            .setText("4/4 - Measuring Internet (WAN) Upload Speed...");
                     final int netUlColor = ColorUtils.getColor(NET_UL);
