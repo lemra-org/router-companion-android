@@ -27,7 +27,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
@@ -188,6 +187,11 @@ public class IPGeoActivity extends AppCompatActivity {
         final TextView errorView = (TextView) 
                 findViewById(R.id.activity_ip_geo_map_error);
         final MapView map = (MapView) findViewById(R.id.activity_ip_geo_map);
+
+        if (ColorUtils.isThemeLight(this)) {
+            map.getController().setInvertedTiles(true);
+        }
+
         final ProgressBar progressBar = (ProgressBar) 
                 findViewById(R.id.activity_ip_geo_map_loading);
 
@@ -211,7 +215,7 @@ public class IPGeoActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            map.setTileSource(TileSourceFactory.MAPNIK);
+                            map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
                             map.setBuiltInZoomControls(true);
                             map.setMultiTouchControls(true);
 

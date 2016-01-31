@@ -25,7 +25,6 @@ import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.common.base.Throwables;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
@@ -182,6 +181,8 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                     Crashlytics.log(Log.DEBUG, TAG, "Init background loader for " + PublicIPGeoTile.class + ": routerInfo=" +
                             mRouter + " / nbRunsLoader=" + nbRunsLoader);
+
+                    isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
                     if (mRefreshing.getAndSet(true)) {
                         return (None) new None().setException(new DDWRTTileAutoRefreshNotAllowedException());
@@ -368,7 +369,12 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
 
                 final MapView map = (MapView)
                         layout.findViewById(R.id.tile_public_ip_geo_map);
-                map.setTileSource(TileSourceFactory.MAPNIK);
+                map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
+
+                if (!isThemeLight) {
+                    //Night mode
+                    map.getController().setInvertedTiles(true);
+                }
 
                 map.setBuiltInZoomControls(true);
                 map.setMultiTouchControls(false);

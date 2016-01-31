@@ -26,6 +26,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.CharEncoding;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.rm3l.ddwrt.BuildConfig;
 
 import java.io.File;
@@ -158,6 +160,8 @@ public final class DDWRTCompanionConstants {
     public static final String ROUTER_SPEED_TEST_SERVER_AUTO = "_auto_";
     public static final String ROUTER_SPEED_TEST_SERVER_RANDOM = "_random_";
     public static final String ROUTER_SPEED_TEST_WITH_CURRENT_CONNECTION = "routerSpeedTest.withCurrentConnection";
+
+    public static final OnlineTileSourceBase TILE_SOURCE = TileSourceFactory.MAPQUESTOSM;
 
     public static int MB = 1024 * 1024;
 
