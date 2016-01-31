@@ -50,14 +50,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
             android:padding="10dip">
 
             <TextView
-                android:textIsSelectable="true"
                 android:id="@+id/nvram_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
-                android:textIsSelectable="true"
                 android:id="@+id/nvram_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
