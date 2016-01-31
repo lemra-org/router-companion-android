@@ -371,10 +371,8 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                         layout.findViewById(R.id.tile_public_ip_geo_map);
                 map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
 
-                if (!isThemeLight) {
-                    //Night mode
-                    map.getController().setInvertedTiles(true);
-                }
+                //Night mode
+                map.getController().setInvertedTiles(!isThemeLight);
 
                 map.setBuiltInZoomControls(true);
                 map.setMultiTouchControls(false);

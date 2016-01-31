@@ -215,9 +215,9 @@ public class IPGeoActivity extends AppCompatActivity {
                             map.setBuiltInZoomControls(true);
                             map.setMultiTouchControls(true);
 
-                            if (ColorUtils.isThemeLight(IPGeoActivity.this)) {
-                                map.getController().setInvertedTiles(true);
-                            }
+                            //Night mode
+                            map.getController().setInvertedTiles(!ColorUtils
+                                    .isThemeLight(IPGeoActivity.this));
 
                             //Act according to user-defined data usage control setting
                             //map.setUseDataConnection(Utils.canUseDataConnection(this));
