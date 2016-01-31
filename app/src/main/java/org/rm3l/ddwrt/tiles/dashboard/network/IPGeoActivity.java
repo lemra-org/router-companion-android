@@ -188,10 +188,6 @@ public class IPGeoActivity extends AppCompatActivity {
                 findViewById(R.id.activity_ip_geo_map_error);
         final MapView map = (MapView) findViewById(R.id.activity_ip_geo_map);
 
-        if (ColorUtils.isThemeLight(this)) {
-            map.getController().setInvertedTiles(true);
-        }
-
         final ProgressBar progressBar = (ProgressBar) 
                 findViewById(R.id.activity_ip_geo_map_loading);
 
@@ -218,6 +214,10 @@ public class IPGeoActivity extends AppCompatActivity {
                             map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
                             map.setBuiltInZoomControls(true);
                             map.setMultiTouchControls(true);
+
+                            if (ColorUtils.isThemeLight(IPGeoActivity.this)) {
+                                map.getController().setInvertedTiles(true);
+                            }
 
                             //Act according to user-defined data usage control setting
                             //map.setUseDataConnection(Utils.canUseDataConnection(this));
