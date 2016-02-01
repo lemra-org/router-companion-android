@@ -1292,9 +1292,11 @@ public class WirelessIfaceTile extends DDWRTTile<NVRAMInfo>
                             }
                             new SetNVRAMVariablesAction(mParentFragmentActivity,
                                     nvramInfo,
-                                    true,
+                                    false,
                                     this,
-                                    mGlobalPreferences
+                                    mGlobalPreferences,
+                                    "/sbin/startservice wlconf" //shall we stopservice first???
+                                    //Maybe /sbin/startservice lan or /sbin/startservice wan ?
 //                                    ,
 //                                    /*
 //                                    # the next few lines will restart the interface,
