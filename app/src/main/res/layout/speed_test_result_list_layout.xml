@@ -49,7 +49,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:textIsSelectable="true"
                     android:id="@+id/speed_test_result_test_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,7 +79,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_marginEnd="15dp"/>
 
                     <TextView
-                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_wanPing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -92,7 +90,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:gravity="center"/>
 
                     <TextView
-                        android:textIsSelectable="true"
                         android:id="@+id/speed_test_result_wanDl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -104,7 +101,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:gravity="center" />
 
                     <TextView
-                        android:textIsSelectable="true"
                         android:visibility="gone"
                         android:id="@+id/speed_test_result_wanUl"
                         android:layout_width="wrap_content"
