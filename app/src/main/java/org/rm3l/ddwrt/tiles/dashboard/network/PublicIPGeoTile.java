@@ -152,7 +152,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 intent.putExtra(IPGeoActivity.PUBLIC_IP_TO_DISPLAY, mWanPublicIP);
                 mParentFragmentActivity.startActivity(intent);
                 mParentFragmentActivity.overridePendingTransition(
-                        R.anim.zoom_exit, R.anim.zoom_enter);
+                        R.anim.zoom_enter, R.anim.zoom_exit);
             }
         });
 
