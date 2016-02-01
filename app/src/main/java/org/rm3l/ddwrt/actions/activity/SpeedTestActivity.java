@@ -1189,6 +1189,21 @@ public class SpeedTestActivity extends AppCompatActivity
                 return true;
 
             case R.id.router_speedtest_refresh:
+                final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
+                if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                    if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
+                            >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
+                        if (isDemoRouter) {
+                            Toast.makeText(SpeedTestActivity.this,
+                                "You cannot have more than " + MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION + " Speed Test results for the Demo Router",
+                                Toast.LENGTH_SHORT).show();
+                        } else {
+                            Utils.displayUpgradeMessage(SpeedTestActivity.this,
+                                "Save more SpeedTest runs");
+                        }
+                        return true;
+                    }
+                }
                 SnackbarUtils.buildSnackbar(this,
                         "Going to start Speed Test...",
                         "Undo",
