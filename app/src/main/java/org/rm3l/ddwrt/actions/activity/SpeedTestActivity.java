@@ -582,11 +582,18 @@ public class SpeedTestActivity extends AppCompatActivity
         mRunFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
+                final boolean isDemoRouter = Utils.isDemoRouter(mOriginalRouter);
+                if (isDemoRouter || BuildConfig.DONATIONS || BuildConfig.WITH_ADS) {
                     if (mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid()).size()
                             >= MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION) {
-                        Utils.displayUpgradeMessage(SpeedTestActivity.this,
+                        if (isDemoRouter) {
+                            Toast.makeText(SpeedTestActivity.this,
+                                "You cannot have more than " + MAX_ROUTER_SPEEDTEST_RESULTS_FREE_VERSION + " Speed Test results for the Demo Router",
+                                Toast.LENGTH_SHORT).show();
+                        } else {
+                            Utils.displayUpgradeMessage(SpeedTestActivity.this,
                                 "Save more SpeedTest runs");
+                        }
                         return;
                     }
                 }
@@ -1273,9 +1280,6 @@ public class SpeedTestActivity extends AppCompatActivity
         private String server;
 
         public void cancelAction() {
-            Toast.makeText(SpeedTestActivity.this,
-                    "Cancelling Speed Test run...",
-                    Toast.LENGTH_SHORT).show();
             mRouterCopy.destroyAllSessions();
         }
 
@@ -1460,19 +1464,29 @@ public class SpeedTestActivity extends AppCompatActivity
                         }
                     });
 
-                    final String[] cmdExecOutput = SSHUtils.getManualProperty(
-                            SpeedTestActivity.this,
-                            mRouterCopy,
-                            getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
-                                    Context.MODE_PRIVATE),
-                            Joiner.on(" && ").skipNulls(),
-                            "DATE_START=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
-                            String.format("/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
-                                    completeServerUrl),
-                            "DATE_END=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
-                            "/bin/echo $((${DATE_END}-${DATE_START}))", //number of seconds
-                            "/bin/echo $?"
-                            );
+                    final String[] cmdExecOutput;
+                    if (Utils.isDemoRouter(mOriginalRouter)) {
+                        cmdExecOutput = new String[] {
+                                Integer.toString(
+                                    Math.min(77, new Random().nextInt(possibleFileSize.intValue()))),
+                                Integer.toString(
+                                    new Random().nextInt(1))
+                            };
+                    } else {
+                        cmdExecOutput = SSHUtils.getManualProperty(
+                                SpeedTestActivity.this,
+                                mRouterCopy,
+                                getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY,
+                                        Context.MODE_PRIVATE),
+                                Joiner.on(" && ").skipNulls(),
+                                "DATE_START=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
+                                String.format("/usr/bin/wget -qO /dev/null \"%s\" > /dev/null 2>&1 ",
+                                        completeServerUrl),
+                                "DATE_END=$(/bin/date +\"%s\")", //seconds since 1970-01-01 00:00:00 UTC
+                                "/bin/echo $((${DATE_END}-${DATE_START}))", //number of seconds
+                                "/bin/echo $?"
+                                );
+                    }
 
                     if (cmdExecOutput == null
                             || cmdExecOutput.length < 2
@@ -1551,6 +1565,14 @@ public class SpeedTestActivity extends AppCompatActivity
             if (Strings.isNullOrEmpty(server)) {
                 throw new IllegalArgumentException("No Server specified");
             }
+            
+            if (Utils.isDemoRouter(mOriginalRouter)) {
+                return new PingRTT()
+                            .setMin(new Random().nextFloat())
+                            .setMax(new Random().nextFloat() * 1024)
+                            .setAvg(new Random().nextFloat() * 512);
+            }
+            
             final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouterCopy, null,
                     String.format(Locale.US,
                             PingFromRouterAction.PING_CMD_TO_FORMAT + " | grep \"round-trip\"",
