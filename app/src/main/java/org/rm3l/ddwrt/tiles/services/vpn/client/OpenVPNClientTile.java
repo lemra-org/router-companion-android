@@ -22,7 +22,9 @@
 package org.rm3l.ddwrt.tiles.services.vpn.client;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -67,6 +69,7 @@ import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -74,6 +77,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_ADV;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_AUTH;
 import static org.rm3l.ddwrt.resources.conn.NVRAMInfo.OPENVPNCL_BRIDGE;
@@ -757,12 +761,54 @@ public class OpenVPNClientTile extends DDWRTTile<NVRAMInfo>
             try {
                 switch (RouterAction.valueOf(routerAction)) {
                     case SET_NVRAM_VARIABLES:
-                        new SetNVRAMVariablesAction(mParentFragmentActivity,
-                                (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO),
-                                true, //Reboot Router at the end of the operation
-                                this,
-                                mGlobalPreferences)
-                                .execute(mRouter);
+                        final NVRAMInfo nvramInfo = (NVRAMInfo) token.getSerializable(OPENVPNCL_NVRAMINFO);
+                        final String openvpnClEnable = nullToEmpty(nvramInfo.getProperty(OPENVPNCL_ENABLE));
+                        if (Arrays.asList("0", "1").contains(openvpnClEnable)) {
+                            //Display a popup inviting user to toggle PPTP Client status at the same time
+                            final String pptpClientStatusToSet;
+                            if ("0".equals(openvpnClEnable)) {
+                                pptpClientStatusToSet = "1";
+                            } else {
+                                pptpClientStatusToSet = "0";
+                            }
+                            new AlertDialog.Builder(mParentFragmentActivity)
+                                    .setIcon(R.drawable.ic_action_alert_warning)
+                                    .setTitle("Toggle PPTP Client status")
+                                    .setMessage(String.format(Locale.US, "Router will be rebooted. Do you wish to %s PPTP Client at the same time?",
+                                            "0".equals(pptpClientStatusToSet) ? "stop" : "start"))
+                                    .setCancelable(true)
+                                    .setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    nvramInfo.setProperty(NVRAMInfo.PPTPD_CLIENT_ENABLE, pptpClientStatusToSet);
+                                                    new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                                            nvramInfo,
+                                                            true,
+                                                            OpenVPNClientTile.this,
+                                                            mGlobalPreferences)
+                                                            .execute(mRouter);
+                                                }
+                                            }
+                                    ).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                            nvramInfo,
+                                            true,
+                                            OpenVPNClientTile.this,
+                                            mGlobalPreferences)
+                                            .execute(mRouter);
+                                }
+                            }).create().show();
+
+                        } else {
+                            new SetNVRAMVariablesAction(mParentFragmentActivity,
+                                    nvramInfo,
+                                    true,
+                                    this,
+                                    mGlobalPreferences)
+                                    .execute(mRouter);
+                        }
                         break;
                     default:
                         //Ignored
