@@ -102,6 +102,7 @@ import org.rm3l.ddwrt.about.AboutDialog;
 import org.rm3l.ddwrt.actions.BackupRouterAction;
 import org.rm3l.ddwrt.actions.ClearARPCacheRouterAction;
 import org.rm3l.ddwrt.actions.ClearDNSCacheRouterAction;
+import org.rm3l.ddwrt.actions.ManageHTTPdRouterAction;
 import org.rm3l.ddwrt.actions.ManageRouterAliasesActivity;
 import org.rm3l.ddwrt.actions.RebootRouterAction;
 import org.rm3l.ddwrt.actions.RestoreRouterDefaultsAction;
@@ -1301,6 +1302,69 @@ public class DDWRTMainActivity extends AppCompatActivity
                                         DDWRTMainActivity.this,
                                         DDWRTMainActivity.this,
                                         mGlobalPreferences).execute(mRouter);
+                            }
+
+                            @Override
+                            public void onDismissEventManual(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventConsecutive(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+                        },
+                        null,
+                        true);
+            }
+                return true;
+            case R.id.action_ddwrt_actions_httpd_start:
+            case R.id.action_ddwrt_actions_httpd_stop:
+            case R.id.action_ddwrt_actions_httpd_restart: {
+                final int action;
+                final String actionMessage;
+                switch (item.getItemId()) {
+                    case R.id.action_ddwrt_actions_httpd_start:
+                        action = ManageHTTPdRouterAction.START;
+                        actionMessage = "started";
+                        break;
+                    case R.id.action_ddwrt_actions_httpd_stop:
+                        action = ManageHTTPdRouterAction.STOP;
+                        actionMessage = "stopped";
+                        break;
+                    default:
+                        action = ManageHTTPdRouterAction.RESTART;
+                        actionMessage = "restarted";
+                        break;
+                }
+                SnackbarUtils.buildSnackbar(this,
+                        String.format("Web Server (httpd) will be %s on '%s' (%s)...",
+                                actionMessage,
+                                mRouter.getDisplayName(), mRouter.getRemoteIpAddress()),
+                        "Undo",
+                        Snackbar.LENGTH_SHORT,
+                        new SnackbarCallback() {
+                            @Override
+                            public void onShowEvent(@Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventSwipe(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventActionClick(int event, @Nullable Bundle bundle) throws Exception {
+
+                            }
+
+                            @Override
+                            public void onDismissEventTimeout(int event, @Nullable Bundle bundle) throws Exception {
+                                new ManageHTTPdRouterAction(DDWRTMainActivity.this,
+                                        DDWRTMainActivity.this,
+                                        mGlobalPreferences,
+                                        action).execute(mRouter);
                             }
 
                             @Override

@@ -124,6 +124,41 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:orderInCategory="3"
                         android:title="Clear DNS Cache"
                         app:showAsAction="never" />
+
+                    <item
+                        android:checkable="false"
+                        android:checked="false"
+                        android:orderInCategory="4"
+                        android:title="HTTPd (Web Server)"
+                        app:showAsAction="ifRoom">
+                        <menu>
+                            <!-- Start httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_start"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:orderInCategory="1"
+                                android:title="Start HTTPd"
+                                app:showAsAction="never" />
+                            <!-- Stop httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_stop"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:orderInCategory="2"
+                                android:title="Stop HTTPd"
+                                app:showAsAction="never" />
+                            <!-- Restart httpd -->
+                            <item
+                                android:id="@+id/action_ddwrt_actions_httpd_restart"
+                                android:checkable="false"
+                                android:checked="false"
+                                android:orderInCategory="3"
+                                android:title="Restart HTTPd"
+                                app:showAsAction="never" />
+
+                        </menu>
+                    </item>
                         
                 </menu>
             </item>
