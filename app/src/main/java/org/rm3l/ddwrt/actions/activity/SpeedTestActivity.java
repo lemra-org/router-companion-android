@@ -613,7 +613,7 @@ public class SpeedTestActivity extends AppCompatActivity
         });
 
         final String mRouterPreferencesString = mRouterPreferences.getString(
-                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
+                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_RANDOM);
         if (ROUTER_SPEED_TEST_SERVER_AUTO.equals(mRouterPreferencesString)) {
             mServerLabel.setText(AUTO_DETECTED);
         } else if (ROUTER_SPEED_TEST_SERVER_RANDOM.equals(mRouterPreferencesString)) {
@@ -974,7 +974,7 @@ public class SpeedTestActivity extends AppCompatActivity
         setRefreshActionButtonState(true);
 
         refreshSpeedTestParameters(mRouterPreferences.getString(
-                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO));
+                ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_RANDOM));
 
         mSpeedTestAsyncTask = new SpeedTestAsyncTask();
 
@@ -1348,7 +1348,7 @@ public class SpeedTestActivity extends AppCompatActivity
                 //1- Determine if we need to select the closest server
                 publishProgress(SELECT_SERVER);
                 final String serverSetting = mRouterPreferences.getString(
-                        ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_AUTO);
+                        ROUTER_SPEED_TEST_SERVER, ROUTER_SPEED_TEST_SERVER_RANDOM);
 
                 String wanSpeedUrlToFormat = null;
 
