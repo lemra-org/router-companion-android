@@ -182,7 +182,9 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     private synchronized void closeDatabase() {
         if(mOpenCounter.decrementAndGet() == 0) {
             // Closing database
-            mDatabase.close();
+            if (mDatabase != null) {
+                mDatabase.close();
+            }
         }
     }
 
