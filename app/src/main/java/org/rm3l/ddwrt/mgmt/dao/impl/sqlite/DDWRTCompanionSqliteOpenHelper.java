@@ -28,7 +28,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -138,10 +137,22 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
                     TABLE_SPEED_TEST_RESULTS_CONNECTION_DL + " REAL, " +
                     TABLE_SPEED_TEST_RESULTS_CONNECTION_UL + " REAL, " +
                     TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE + " TEXT, " +
-            "FOREIGN KEY (" + TABLE_SPEED_TEST_RESULTS_ROUTER_UUID + ") REFERENCES " +
-            TABLE_ROUTERS + "(" + ROUTER_UUID +
-            ") ON DELETE CASCADE ON UPDATE CASCADE " +
-            ");";
+                    TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE + " REAL, " +
+                    TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION + " REAL, " +
+                    "FOREIGN KEY (" + TABLE_SPEED_TEST_RESULTS_ROUTER_UUID + ") REFERENCES " +
+                    TABLE_ROUTERS + "(" + ROUTER_UUID +
+                    ") ON DELETE CASCADE ON UPDATE CASCADE " +
+                ");";
 
     /**
      * DB
@@ -153,7 +164,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
 
     //TODO Don't forget to add new SQL here if a new table is to be created!
     private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
@@ -182,42 +193,45 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
         DATABASE_UPGRADES.put(6, TABLE_WAN_TRAFFIC_CREATE);
 
         //V8: Speed Test Results
-        DATABASE_UPGRADES.put(8, TABLE_SPEED_TEST_RESULTS_CREATE);
+        DATABASE_UPGRADES.put(12, TABLE_SPEED_TEST_RESULTS_CREATE);
 
-        //V10
-        final String[] v10Cols = new String[] {
-                TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN,
-                TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX,
-                TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV,
-                TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS,
-                TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE,
-                TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION,
-                TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE,
-                TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION,
-                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
-                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
-                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
-                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION
-        };
-        for (final String v10Col : v10Cols) {
-            DATABASE_UPGRADES.put(10,
-                    String.format("ALTER TABLE %s ADD COLUMN %s REAL DEFAULT NULL; ",
-                            TABLE_SPEED_TEST_RESULTS, v10Col));
-        }
+//        //V10
+//        final String[] v10Cols = new String[] {
+//                TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN,
+//                TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX,
+//                TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV,
+//                TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS,
+//                TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE,
+//                TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION,
+//                TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE,
+//                TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION,
+//                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
+//                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
+//                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
+//                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION
+//        };
+//        for (final String v10Col : v10Cols) {
+//            DATABASE_UPGRADES.put(10,
+//                    String.format("ALTER TABLE %s ADD COLUMN %s REAL DEFAULT NULL; ",
+//                            TABLE_SPEED_TEST_RESULTS, v10Col));
+//        }
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    //called whenever the app is freshly installed
     @Override
     public void onCreate(@NonNull SQLiteDatabase sqLiteDatabase) {
+        //CREATE statements
         for (final String dbTableToCreate : DATABASE_TABLES_TO_CREATE) {
-            Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + dbTableToCreate);
+            Log.d(TAG, "onCreate: execSQL: " + dbTableToCreate);
             sqLiteDatabase.execSQL(dbTableToCreate);
         }
     }
 
+    //called whenever the app is upgraded and launched and the database version is not the same
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //this assumes monotonically increasing version numbers for upgrades.
@@ -231,10 +245,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
             //Loop because we do not know which version users will be converted from or to
             final Collection<String> upgradeToSqlCollection = DATABASE_UPGRADES.get(upgradeTo);
             if (!(upgradeToSqlCollection == null || upgradeToSqlCollection.isEmpty())) {
-                Crashlytics.log(Log.INFO, TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
+                Log.d(TAG, "\t--> Performing DB Upgrade " + oldVersion + "=>" + upgradeTo);
                 for (final String upgradeToSql : upgradeToSqlCollection) {
                     if (!Strings.isNullOrEmpty(upgradeToSql)) {
-                        Crashlytics.log(Log.DEBUG, TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
+                        Log.d(TAG, "\t\t>>> upgradeToSql: " + upgradeToSql);
                         db.execSQL(upgradeToSql);
                     }
                 }
