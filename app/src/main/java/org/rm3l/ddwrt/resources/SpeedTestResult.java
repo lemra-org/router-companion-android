@@ -51,6 +51,22 @@ public class SpeedTestResult {
 
     private PingRTT wanPingRTT;
 
+    private Number wanDLFileSize;
+
+    private Long wanDLDuration;
+
+    private Number wanULFileSize;
+
+    private Long wanULDuration;
+
+    private Number connectionDLFileSize;
+
+    private Long connectionDLDuration;
+
+    private Number connectionULFileSize;
+
+    private Long connectionULDuration;
+
     public SpeedTestResult(@NonNull String router,
                            @NonNull String date,
                            @NonNull String server,
@@ -64,7 +80,6 @@ public class SpeedTestResult {
 
         this.router = router;
         this.date = date;
-        this.wanPing = wanPing;
         this.wanDl = wanDl;
         this.wanUl = wanUl;
         this.connectionType = connectionType;
@@ -72,6 +87,9 @@ public class SpeedTestResult {
         this.connectionUl = connectionUl;
         this.server = server;
         this.serverCountryCode = serverCountryCode;
+        this.wanPing = wanPing;
+        this.wanPingRTT = new PingRTT()
+                .setAvg(wanPing.floatValue());
     }
 
     public SpeedTestResult() {}
@@ -194,6 +212,78 @@ public class SpeedTestResult {
         if (wanPingRTT != null) {
             this.setWanPing(wanPingRTT.getAvg());
         }
+        return this;
+    }
+
+    public Number getWanDLFileSize() {
+        return wanDLFileSize;
+    }
+
+    public SpeedTestResult setWanDLFileSize(Number wanDLFileSize) {
+        this.wanDLFileSize = wanDLFileSize;
+        return this;
+    }
+
+    public Long getWanDLDuration() {
+        return wanDLDuration;
+    }
+
+    public SpeedTestResult setWanDLDuration(Long wanDLDuration) {
+        this.wanDLDuration = wanDLDuration;
+        return this;
+    }
+
+    public Number getWanULFileSize() {
+        return wanULFileSize;
+    }
+
+    public SpeedTestResult setWanULFileSize(Number wanULFileSize) {
+        this.wanULFileSize = wanULFileSize;
+        return this;
+    }
+
+    public Long getWanULDuration() {
+        return wanULDuration;
+    }
+
+    public SpeedTestResult setWanULDuration(Long wanULDuration) {
+        this.wanULDuration = wanULDuration;
+        return this;
+    }
+
+    public Number getConnectionDLFileSize() {
+        return connectionDLFileSize;
+    }
+
+    public SpeedTestResult setConnectionDLFileSize(Number connectionDLFileSize) {
+        this.connectionDLFileSize = connectionDLFileSize;
+        return this;
+    }
+
+    public Long getConnectionDLDuration() {
+        return connectionDLDuration;
+    }
+
+    public SpeedTestResult setConnectionDLDuration(Long connectionDLDuration) {
+        this.connectionDLDuration = connectionDLDuration;
+        return this;
+    }
+
+    public Number getConnectionULFileSize() {
+        return connectionULFileSize;
+    }
+
+    public SpeedTestResult setConnectionULFileSize(Number connectionULFileSize) {
+        this.connectionULFileSize = connectionULFileSize;
+        return this;
+    }
+
+    public Long getConnectionULDuration() {
+        return connectionULDuration;
+    }
+
+    public SpeedTestResult setConnectionULDuration(Long connectionULDuration) {
+        this.connectionULDuration = connectionULDuration;
         return this;
     }
 }

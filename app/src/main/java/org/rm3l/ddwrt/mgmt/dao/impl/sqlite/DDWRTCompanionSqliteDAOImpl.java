@@ -32,6 +32,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.rm3l.ddwrt.actions.activity.PingRTT;
 import org.rm3l.ddwrt.mgmt.dao.DDWRTCompanionDAO;
 import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
@@ -64,15 +65,27 @@ import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_COLUMN_ID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_DL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_UL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_ROUTER_UUID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_SERVER;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_TEST_DATE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_DL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_UL;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION;
+import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC_COLUMN_ID;
 import static org.rm3l.ddwrt.mgmt.dao.impl.sqlite.DDWRTCompanionSqliteOpenHelper.TABLE_WAN_TRAFFIC_ROUTER_UUID;
@@ -126,7 +139,19 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
             TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_DL,
             TABLE_SPEED_TEST_RESULTS_CONNECTION_UL,
-            TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE};
+            TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE,
+            TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN,
+            TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX,
+            TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV,
+            TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS,
+            TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE,
+            TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION,
+            TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE,
+            TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
+            TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION};
 
     public static synchronized void initialize(Context context) {
         if (instance == null) {
@@ -648,15 +673,36 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
     @NonNull
     private SpeedTestResult cursorToSpeedTestResult(@NonNull Cursor cursor) {
 
-        return new SpeedTestResult(cursor.getString(1),
+        final SpeedTestResult speedTestResult = new SpeedTestResult(cursor.getString(1),
                 cursor.getString(2),
                 cursor.getString(3),
                 cursor.getDouble(4), cursor.getDouble(5), cursor.getDouble(6),
                 cursor.getString(7), cursor.getDouble(8), cursor.getDouble(9),
                 cursor.getString(10))
                 .setId(cursor.getInt(0));
-    }
+        PingRTT wanPingRTT = speedTestResult.getWanPingRTT();
+        if (wanPingRTT == null) {
+            wanPingRTT = new PingRTT();
+        }
+        wanPingRTT.setMin(cursor.getFloat(11));
+        wanPingRTT.setMax(cursor.getFloat(12));
+        wanPingRTT.setAvg(cursor.getFloat(4));
+        wanPingRTT.setStddev(cursor.getFloat(13));
+        wanPingRTT.setPacketLoss(cursor.getFloat(14));
+        speedTestResult.setWanPingRTT(wanPingRTT);
 
+        speedTestResult.setWanDLFileSize(cursor.getDouble(15));
+        speedTestResult.setWanDLDuration(cursor.getLong(16));
+        speedTestResult.setWanULFileSize(cursor.getDouble(17));
+        speedTestResult.setWanULDuration(cursor.getLong(18));
+
+        speedTestResult.setConnectionDLFileSize(cursor.getDouble(19));
+        speedTestResult.setConnectionDLDuration(cursor.getLong(20));
+        speedTestResult.setConnectionULFileSize(cursor.getDouble(21));
+        speedTestResult.setConnectionULDuration(cursor.getLong(22));
+
+        return speedTestResult;
+    }
 
     @NonNull
     private ContentValues getContentValuesFromRouter(String uuid, @NonNull Router router) {
@@ -697,6 +743,15 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(TABLE_SPEED_TEST_RESULTS_TEST_DATE, speedTestResult.getDate());
         values.put(TABLE_SPEED_TEST_RESULTS_SERVER, speedTestResult.getServer());
         values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING, speedTestResult.getWanPing().doubleValue());
+
+        final PingRTT wanPingRTT = speedTestResult.getWanPingRTT();
+        if (wanPingRTT != null) {
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN, wanPingRTT.getMin());
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX, wanPingRTT.getMax());
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV, wanPingRTT.getStddev());
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS, wanPingRTT.getPacketLoss());
+        }
+
         values.put(TABLE_SPEED_TEST_RESULTS_WAN_DL, speedTestResult.getWanDl().doubleValue());
         values.put(TABLE_SPEED_TEST_RESULTS_WAN_UL, speedTestResult.getWanUl().doubleValue());
         values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE, speedTestResult.getConnectionType());
@@ -707,6 +762,25 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_UL,
                 connectionUl != null ? connectionUl.doubleValue() : null);
         values.put(TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE, speedTestResult.getServerCountryCode());
+
+        if (speedTestResult.getWanDLFileSize() != null) {
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE, speedTestResult.getWanDLFileSize().doubleValue());
+        }
+        values.put(TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION, speedTestResult.getWanDLDuration());
+        if (speedTestResult.getWanULFileSize() != null) {
+            values.put(TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE, speedTestResult.getWanULFileSize().doubleValue());
+        }
+        values.put(TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION, speedTestResult.getWanULDuration());
+
+        if (speedTestResult.getConnectionDLFileSize() != null) {
+            values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE, speedTestResult.getConnectionDLFileSize().doubleValue());
+        }
+        values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION, speedTestResult.getConnectionDLDuration());
+        if (speedTestResult.getConnectionULFileSize() != null) {
+            values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE, speedTestResult.getConnectionULFileSize().doubleValue());
+        }
+        values.put(TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION, speedTestResult.getConnectionULDuration());
+
 
         return values;
     }

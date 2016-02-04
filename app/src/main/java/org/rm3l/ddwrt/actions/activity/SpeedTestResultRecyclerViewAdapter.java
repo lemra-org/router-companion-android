@@ -193,6 +193,28 @@ public class SpeedTestResultRecyclerViewAdapter extends RecyclerView.Adapter<Spe
         ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanUpload))
                 .setText(wanUlByteCountToDisplaySize);
 
+        final PingRTT wanPingRTT = speedTestResult.getWanPingRTT();
+        if (wanPingRTT != null) {
+            //Set WAN Ping Max, Min, and Stddev, and Packet Loss
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing_min))
+                    .setText(String.format("%.2f ms", wanPingRTT.getMin()));
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing_max))
+                    .setText(String.format("%.2f ms", wanPingRTT.getMax()));
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanPing_packet_loss))
+                    .setText(String.format("%d%%", Float.valueOf(wanPingRTT.getPacketLoss()).intValue()));
+        }
+
+        if (speedTestResult.getWanDLFileSize() != null) {
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanDownload_size))
+                    .setText(String.format("%s MB", speedTestResult.getWanDLFileSize().longValue()));
+        }
+        if (speedTestResult.getWanDLDuration() != null) {
+            final long longValue = speedTestResult.getWanDLDuration().longValue();
+            ((TextView) containerView.findViewById(R.id.speed_test_result_details_wanDownload_duration))
+                    .setText(longValue + " second" + (longValue > 1 ? "s" : ""));
+        }
+
+
         containerView.findViewById(R.id.speedtest_result_delete)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override

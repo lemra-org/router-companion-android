@@ -220,6 +220,24 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 
                             </LinearLayout>
 
+                            <TextView
+                                android:textIsSelectable="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/speedtest_internet_latency_packet_loss"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:gravity="end"
+                                android:visibility="invisible"/>
+
+                            <TextView
+                                android:textIsSelectable="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/speedtest_internet_latency_max"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:gravity="end"
+                                android:visibility="invisible"/>
+
                         </LinearLayout>
 
                         <View
@@ -273,6 +291,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                                     android:visibility="invisible"/>
 
                             </LinearLayout>
+                            <TextView
+                                android:textIsSelectable="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:id="@+id/speedtest_internet_dl_speed_size_and_duration"/>
 
 
                             <TextView

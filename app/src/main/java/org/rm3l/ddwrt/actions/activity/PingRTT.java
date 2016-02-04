@@ -10,6 +10,8 @@ public class PingRTT {
     private float avg;
     private float stddev;
 
+    private float packetLoss;
+
     public float getMin() {
         return min;
     }
@@ -43,6 +45,15 @@ public class PingRTT {
 
     public PingRTT setStddev(float stddev) {
         this.stddev = stddev;
+        return this;
+    }
+
+    public float getPacketLoss() {
+        return packetLoss;
+    }
+
+    public PingRTT setPacketLoss(float packetLoss) {
+        this.packetLoss = packetLoss;
         return this;
     }
 }

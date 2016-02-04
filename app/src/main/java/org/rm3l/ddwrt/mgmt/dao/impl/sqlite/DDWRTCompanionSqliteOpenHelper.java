@@ -104,11 +104,23 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     public static final String TABLE_SPEED_TEST_RESULTS_TEST_DATE = "test_date";
     public static final String TABLE_SPEED_TEST_RESULTS_SERVER = "server";
     public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING = "wan_ping";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN = "wan_ping_min";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX = "wan_ping_max";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV = "wan_ping_stddev";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS = "wan_ping_packets_loss";
     public static final String TABLE_SPEED_TEST_RESULTS_WAN_DL = "wan_dl";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE = "wan_dl_filesize";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION = "wan_dl_duration";
     public static final String TABLE_SPEED_TEST_RESULTS_WAN_UL = "wan_ul";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE = "wan_ul_filesize";
+    public static final String TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION = "wan_ul_duration";
     public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_TYPE = "conn_type";
     public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_DL = "conn_dl";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE = "conn_dl_filesize";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION = "conn_dl_duration";
     public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_UL = "conn_ul";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE = "conn_ul_filesize";
+    public static final String TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION = "conn_ul_duration";
     public static final String TABLE_SPEED_TEST_RESULTS_SERVER_COUNTRY_CODE = "server_country_code";
 
     // Database creation sql statement
@@ -141,7 +153,7 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
      update DATABASE_CREATE (for newer installs), and
      add an entry into DATABASE_UPGRADES map
     */
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
 
@@ -164,6 +176,28 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
         //V8: Speed Test Results
         DATABASE_UPGRADES.put(8, TABLE_SPEED_TEST_RESULTS_CREATE);
+
+        //V10
+        final String[] v10Cols = new String[] {
+                TABLE_SPEED_TEST_RESULTS_WAN_PING_MIN,
+                TABLE_SPEED_TEST_RESULTS_WAN_PING_MAX,
+                TABLE_SPEED_TEST_RESULTS_WAN_PING_STDDEV,
+                TABLE_SPEED_TEST_RESULTS_WAN_PING_PACKETS_LOSS,
+                TABLE_SPEED_TEST_RESULTS_WAN_DL_FILESIZE,
+                TABLE_SPEED_TEST_RESULTS_WAN_DL_DURATION,
+                TABLE_SPEED_TEST_RESULTS_WAN_UL_FILESIZE,
+                TABLE_SPEED_TEST_RESULTS_WAN_UL_DURATION,
+                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_FILESIZE,
+                TABLE_SPEED_TEST_RESULTS_CONNECTION_DL_DURATION,
+                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_FILESIZE,
+                TABLE_SPEED_TEST_RESULTS_CONNECTION_UL_DURATION
+        };
+        for (final String v10Col : v10Cols) {
+            DATABASE_UPGRADES.put(10,
+                    String.format("ALTER TABLE %s ADD COLUMN %s REAL DEFAULT NULL; ",
+                            TABLE_SPEED_TEST_RESULTS, v10Col));
+        }
+
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {

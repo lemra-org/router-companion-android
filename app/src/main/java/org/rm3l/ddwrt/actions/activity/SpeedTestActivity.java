@@ -1527,8 +1527,12 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
 
                     Crashlytics.log(Log.DEBUG, LOG_TAG,
-                            String.format("[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
+                            String.format(Locale.US,
+                                    "[SpeedTest] Downloaded %d MB of data in %d seconds. Download URL is: \"%s\"",
                                     possibleFileSize, elapsedSeconds, completeServerUrl));
+
+                    speedTestResult.setWanDLFileSize(possibleFileSize);
+                    speedTestResult.setWanDLDuration(elapsedSeconds);
 
                     pairAcceptedForComputation = Pair.create(
                             possibleFileSize,
@@ -1583,20 +1587,41 @@ public class SpeedTestActivity extends AppCompatActivity
             
             if (Utils.isDemoRouter(mOriginalRouter)) {
                 return new PingRTT()
-                            .setMin(new Random().nextFloat())
-                            .setMax(new Random().nextFloat() * 1024)
-                            .setAvg(new Random().nextFloat() * 512);
+                        .setStddev(0.01f)
+                        .setPacketLoss(new Random().nextInt(100))
+                        .setMin(new Random().nextFloat())
+                        .setMax(new Random().nextFloat() * 1024)
+                        .setAvg(new Random().nextFloat() * 512);
             }
             
             final String[] pingOutput = SSHUtils.getManualProperty(SpeedTestActivity.this, mRouterCopy, null,
                     String.format(Locale.US,
-                            PingFromRouterAction.PING_CMD_TO_FORMAT + " | grep \"round-trip\"",
+                            PingFromRouterAction.PING_CMD_TO_FORMAT,
                             PingFromRouterAction.MAX_PING_PACKETS_TO_SEND, server));
-            if (pingOutput == null || pingOutput.length < 1) {
+            if (pingOutput == null || pingOutput.length < 2) {
                 //Nothing - abort right now with an error message
                 throw new SpeedTestException("Unable to contact remote server");
             }
-            final String pingRttOutput = pingOutput[0];
+
+            final PingRTT pingRTT = new PingRTT();
+
+            final String packetsStatusLine = pingOutput[pingOutput.length - 2];
+            final List<String> packetsStatusLineSplitList =
+                    Splitter.on(",").trimResults().omitEmptyStrings().splitToList(packetsStatusLine);
+            if (packetsStatusLineSplitList.size() >= 3) {
+                final String packetLossStr = packetsStatusLineSplitList.get(2);
+                if (!isNullOrEmpty(packetLossStr)) {
+                    try {
+                        pingRTT.setPacketLoss(
+                                Integer.parseInt(packetLossStr.replaceAll("% packet loss", "")));
+                    } catch (final NumberFormatException nfe) {
+                        nfe.printStackTrace();
+                        //No worries
+                    }
+                }
+            }
+
+            final String pingRttOutput = pingOutput[pingOutput.length - 1];
             final List<String> pingRttOutputList = EQUAL_SPLITTER
                     .splitToList(pingRttOutput);
             if (pingRttOutputList.size() < 2) {
@@ -1607,7 +1632,6 @@ public class SpeedTestActivity extends AppCompatActivity
                     .trim();
             final List<String> pingRttSplitResult = SLASH_SPLITTER
                     .splitToList(pingRtt);
-            final PingRTT pingRTT = new PingRTT();
             final int size = pingRttSplitResult.size();
             if (size >= 1) {
                 pingRTT.setMin(Float.parseFloat(pingRttSplitResult.get(0)));
@@ -1646,20 +1670,42 @@ public class SpeedTestActivity extends AppCompatActivity
                     }
                 } else {
                     //Persist speed test result
-                    mDao.insertSpeedTestResult(
-                            new SpeedTestResult(
-                                    mOriginalRouter.getUuid(),
-                                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                                            Locale.US)
-                                            .format(executionDate),
-                                    server,
-                                    speedTestResult.getWanPing(),
-                                    speedTestResult.getWanDl(),
-                                    speedTestResult.getWanUl(),
-                                    null,
-                                    null,
-                                    null,
-                                    pingServerCountry));
+                    final SpeedTestResult speedTestResultToPersist = new SpeedTestResult(
+                            mOriginalRouter.getUuid(),
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                    Locale.US)
+                                    .format(executionDate),
+                            server,
+                            this.speedTestResult.getWanPing(),
+                            this.speedTestResult.getWanDl(),
+                            this.speedTestResult.getWanUl(),
+                            null,
+                            null,
+                            null,
+                            pingServerCountry);
+                    final PingRTT speedTestResultToPersistWanPingRTT = new PingRTT();
+                    if (this.speedTestResult.getWanPing() != null) {
+                        speedTestResultToPersistWanPingRTT.setAvg(this.speedTestResult.getWanPing().floatValue());
+                    }
+                    if (this.speedTestResult.getWanPingRTT() != null) {
+                        speedTestResultToPersistWanPingRTT.setPacketLoss(this.speedTestResult.getWanPingRTT().getPacketLoss());
+                        speedTestResultToPersistWanPingRTT.setStddev(this.speedTestResult.getWanPingRTT().getStddev());
+                        speedTestResultToPersistWanPingRTT.setMax(this.speedTestResult.getWanPingRTT().getMax());
+                        speedTestResultToPersistWanPingRTT.setMin(this.speedTestResult.getWanPingRTT().getMin());
+                    }
+                    speedTestResultToPersist.setWanPingRTT(speedTestResultToPersistWanPingRTT);
+
+                    speedTestResultToPersist.setWanDLFileSize(speedTestResult.getWanDLFileSize());
+                    speedTestResultToPersist.setWanDLDuration(speedTestResult.getWanDLDuration());
+                    speedTestResultToPersist.setWanULFileSize(speedTestResult.getWanULFileSize());
+                    speedTestResultToPersist.setWanULDuration(speedTestResult.getWanULDuration());
+
+                    speedTestResultToPersist.setConnectionDLFileSize(speedTestResult.getConnectionDLFileSize());
+                    speedTestResultToPersist.setConnectionDLDuration(speedTestResult.getConnectionDLDuration());
+                    speedTestResultToPersist.setConnectionULFileSize(speedTestResult.getConnectionULFileSize());
+                    speedTestResultToPersist.setConnectionULDuration(speedTestResult.getConnectionULDuration());
+
+                    mDao.insertSpeedTestResult(speedTestResultToPersist);
 
                     //Request Backup
                     Utils.requestBackup(SpeedTestActivity.this);
@@ -1743,11 +1789,37 @@ public class SpeedTestActivity extends AppCompatActivity
                     if (speedTestResult != null
                             && speedTestResult.getWanPing() != null) {
                         wanLatencyTextView
-                                .setText(String.format("%.2f ms",
+                                .setText(String.format(Locale.US, "%.2f ms",
                                         speedTestResult.getWanPing().floatValue()));
                     } else {
                         wanLatencyTextView.setText("-");
                     }
+
+                    final TextView wanLatencyPacketLossTextView = (TextView)
+                            findViewById(R.id.speedtest_internet_latency_packet_loss);
+                    final TextView wanLatencyMaxTextView = (TextView)
+                            findViewById(R.id.speedtest_internet_latency_max);
+                    final PingRTT wanPingRTT;
+                    if (speedTestResult != null && (wanPingRTT = speedTestResult.getWanPingRTT()) != null) {
+                        if (wanPingRTT.getPacketLoss() >= 0) {
+                            wanLatencyPacketLossTextView.setVisibility(View.VISIBLE);
+                            wanLatencyPacketLossTextView.setText(String.format(Locale.US, "(%d%% packet loss)",
+                                    Float.valueOf(wanPingRTT.getPacketLoss()).intValue()));
+                        } else {
+                            wanLatencyPacketLossTextView.setVisibility(View.INVISIBLE);
+                        }
+                        if (wanPingRTT.getMax() >= 0) {
+                            wanLatencyMaxTextView.setVisibility(View.VISIBLE);
+                            wanLatencyMaxTextView.setText(String.format(Locale.US, "(max: %.2f ms)",
+                                    wanPingRTT.getMax()));
+                        } else {
+                            wanLatencyMaxTextView.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        wanLatencyPacketLossTextView.setVisibility(View.INVISIBLE);
+                        wanLatencyMaxTextView.setVisibility(View.INVISIBLE);
+                    }
+
                     break;
 
                 case WAN_DL_MEASURED:
@@ -1767,6 +1839,19 @@ public class SpeedTestActivity extends AppCompatActivity
                     } else {
                         wanDlTextView.setText("-");
                     }
+
+                    final TextView wanDLSizeAndDuration = (TextView)
+                            findViewById(R.id.speedtest_internet_dl_speed_size_and_duration);
+                    if (speedTestResult != null && speedTestResult.getWanDLFileSize() != null) {
+                        wanDLSizeAndDuration.setVisibility(View.VISIBLE);
+                        wanDLSizeAndDuration.setText(String.format(Locale.US,
+                                "(%d MB in %d s)",
+                                speedTestResult.getWanDLFileSize().longValue(),
+                                speedTestResult.getWanDLDuration()));
+                    } else {
+                        wanDLSizeAndDuration.setVisibility(View.INVISIBLE);
+                    }
+
                     break;
 
                 case WAN_UL_MEASURED:
