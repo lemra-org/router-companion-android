@@ -21,7 +21,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 -->
 <h3>%APP_NAME%</h3>
 v%VERSION_NAME%<br/><br/>
-Copyright &copy; 2014 Armel S.<br/><br/>
+Copyright &copy; 2014-%CURRENT_YEAR% Armel S.<br/><br/>
 
 <b><a href="%SUPPORT_WEBSITE_HREF%" target="_blank">http://ddwrt-companion.rm3l.org</a></b>
 <br><br>

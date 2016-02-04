@@ -22,6 +22,7 @@
 
 package org.rm3l.ddwrt.about;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -30,7 +31,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import org.apache.commons.io.IOUtils;
@@ -41,6 +44,7 @@ import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * About Dialog: fills in the dialog with text retrieved from a given raw file
@@ -50,6 +54,7 @@ import java.io.IOException;
  */
 public class AboutDialog extends Dialog {
 
+    public static final String CURRENT_YEAR_INFO_TXT = "%CURRENT_YEAR%";
     public static final String VERSION_CODE_INFO_TXT = "%VERSION_CODE%";
     public static final String VERSION_NAME_INFO_TXT = "%VERSION_NAME%";
     public static final String APP_NAME_INFO_TXT = "%APP_NAME%";
@@ -59,6 +64,7 @@ public class AboutDialog extends Dialog {
     private final Context mContext;
 
     private boolean isThemeLight;
+    private AlertDialog mOssLicensesAlertDialog;
 
     /**
      * Constructor
@@ -134,6 +140,7 @@ public class AboutDialog extends Dialog {
         if (fileFound) {
             setTextContentAndLinkify(tv,
                     infoText
+                            .replaceAll(CURRENT_YEAR_INFO_TXT, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)))
                             .replaceAll(APP_NAME_INFO_TXT, mContext.getString(mContext.getApplicationInfo().labelRes))
                             .replaceAll(VERSION_CODE_INFO_TXT, String.valueOf(BuildConfig.VERSION_CODE))
                             .replaceAll(VERSION_NAME_INFO_TXT, BuildConfig.VERSION_NAME)
@@ -154,6 +161,25 @@ public class AboutDialog extends Dialog {
                                             ""));
         }
         tv.setVisibility(fileFound ? View.VISIBLE : View.GONE);
+
+        findViewById(R.id.oss_licenses)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Context context = AboutDialog.this.getContext();
+                        final WebView view = (WebView) LayoutInflater.from(context)
+                                .inflate(R.layout.dialog_licenses, null);
+                        view.loadUrl("file:///android_asset/open_source_licenses.html");
+                        mOssLicensesAlertDialog = new AlertDialog.Builder(context)
+                                .setCancelable(true)
+                                .setTitle("Open Source Licenses")
+                                .setView(view)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .create();
+                        mOssLicensesAlertDialog.setCanceledOnTouchOutside(true);
+                        mOssLicensesAlertDialog.show();
+                    }
+                });
     }
 
 }

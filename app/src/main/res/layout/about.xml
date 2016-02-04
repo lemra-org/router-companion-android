@@ -75,6 +75,18 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:textStyle="italic" />
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/oss_licenses"
+                android:text="Open Source Licenses"/>
+
+        </TableRow>
+
     </TableLayout>
 
 </ScrollView>
