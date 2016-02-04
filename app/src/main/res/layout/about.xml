@@ -25,66 +25,65 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:scrollbars="none">
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*">
-
-        <TableRow>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ddwrt_companion_logo"
-                android:contentDescription="@string/app_name" />
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/info_text"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:gravity="center" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/contributors"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:layout_span="2"
-                android:textSize="13sp" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                android:textIsSelectable="true"
-                android:id="@+id/legal_text"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:layout_span="2"
-                android:textColor="#cccccc"
-                android:textSize="12sp"
-                android:textStyle="italic" />
-        </TableRow>
-
-        <TableRow>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/oss_licenses"
-                android:text="Open Source Licenses"/>
-
-        </TableRow>
-
-    </TableLayout>
-
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+    
+            <TableRow>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ddwrt_companion_logo"
+                    android:contentDescription="@string/app_name" />
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/info_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center" />
+            </TableRow>
+    
+            <TableRow>
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/contributors"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:layout_span="2"
+                    android:textSize="13sp" />
+            </TableRow>
+    
+            <TableRow>
+                <TextView
+                    android:textIsSelectable="true"
+                    android:id="@+id/legal_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:layout_span="2"
+                    android:textColor="#cccccc"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+            </TableRow>
+    
+        </TableLayout>
+        
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/oss_licenses"
+            android:text="Open Source Licenses"/>
+            
+    </LinearLayout>
+    
 </ScrollView>
