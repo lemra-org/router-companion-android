@@ -155,6 +155,13 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
     */
     private static final int DATABASE_VERSION = 10;
 
+    //TODO Don't forget to add new SQL here if a new table is to be created!
+    private static final String[] DATABASE_TABLES_TO_CREATE = new String[] {
+            DATABASE_CREATE,
+            TABLE_WAN_TRAFFIC_CREATE,
+            TABLE_SPEED_TEST_RESULTS_CREATE
+    };
+
     private static final Multimap<Integer, String> DATABASE_UPGRADES = ArrayListMultimap.create();
 
     static {
@@ -197,7 +204,6 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
                     String.format("ALTER TABLE %s ADD COLUMN %s REAL DEFAULT NULL; ",
                             TABLE_SPEED_TEST_RESULTS, v10Col));
         }
-
     }
 
     public DDWRTCompanionSqliteOpenHelper(Context context) {
@@ -206,10 +212,10 @@ public class DDWRTCompanionSqliteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(@NonNull SQLiteDatabase sqLiteDatabase) {
-        Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + DATABASE_CREATE);
-        sqLiteDatabase.execSQL(DATABASE_CREATE);
-        Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + TABLE_WAN_TRAFFIC_CREATE);
-        sqLiteDatabase.execSQL(TABLE_WAN_TRAFFIC_CREATE);
+        for (final String dbTableToCreate : DATABASE_TABLES_TO_CREATE) {
+            Crashlytics.log(Log.DEBUG, TAG, "onCreate: execSQL: " + dbTableToCreate);
+            sqLiteDatabase.execSQL(dbTableToCreate);
+        }
     }
 
     @Override
