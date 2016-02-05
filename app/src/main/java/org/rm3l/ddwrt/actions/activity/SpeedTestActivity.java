@@ -646,7 +646,7 @@ public class SpeedTestActivity extends AppCompatActivity
                     // permission was granted, yay!
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "Yay! Permission granted for #" + requestCode);
                     if (optionsMenu != null) {
-                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.router_speedtest_share);
                         menuItem.setEnabled(true);
                     }
                 } else {
@@ -657,7 +657,7 @@ public class SpeedTestActivity extends AppCompatActivity
                             "Sharing of SpeedTest Results will be unavailable",
                             Style.INFO);
                     if (optionsMenu != null) {
-                        final MenuItem menuItem = optionsMenu.findItem(R.id.tile_status_wireless_iface_qrcode_share);
+                        final MenuItem menuItem = optionsMenu.findItem(R.id.router_speedtest_share);
                         menuItem.setEnabled(false);
                     }
                 }
