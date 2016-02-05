@@ -45,7 +45,9 @@ import android.widget.Toast;
 
 import com.android.supportv7.widget.decorator.DividerItemDecoration;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -70,6 +72,7 @@ import org.rm3l.ddwrt.utils.AdUtils;
 import org.rm3l.ddwrt.utils.ColorUtils;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 import org.rm3l.ddwrt.utils.ImageUtils;
+import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.SSHUtils;
 import org.rm3l.ddwrt.utils.Utils;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
@@ -83,6 +86,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -291,6 +295,9 @@ public class SpeedTestActivity extends AppCompatActivity
     private SharedPreferences mGlobalPreferences;
     private boolean mWithCurrentConnectionTesting;
 
+    @Nullable
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -368,6 +375,9 @@ public class SpeedTestActivity extends AppCompatActivity
                         Context.MODE_PRIVATE);
 
         this.mMessageReceiver = new NetworkChangeReceiver();
+
+        mInterstitialAd = AdUtils.requestNewInterstitial(this,
+                R.string.interstitial_ad_unit_id_transtion_to_wan_monthly_chart);
 
         AdUtils.buildAndDisplayAdViewIfNeeded(this,
                 (AdView) findViewById(R.id.router_speedtest_adView));
@@ -732,6 +742,46 @@ public class SpeedTestActivity extends AppCompatActivity
             } finally {
                 super.onDestroy();
             }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
+    @Override
+    public void finish() {
+        if (BuildConfig.WITH_ADS &&
+                mInterstitialAd != null && AdUtils.canDisplayInterstialAd(this)) {
+
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    SpeedTestActivity.super.finish();
+                }
+
+                @Override
+                public void onAdOpened() {
+                    //Save preference
+                    getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
+                            Context.MODE_PRIVATE)
+                            .edit()
+                            .putLong(
+                                    DDWRTCompanionConstants.AD_LAST_INTERSTITIAL_PREF,
+                                    System.currentTimeMillis())
+                            .apply();
+                }
+            });
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                SpeedTestActivity.super.finish();
+            }
+
+        } else {
+            super.finish();
         }
     }
 
@@ -1296,11 +1346,27 @@ public class SpeedTestActivity extends AppCompatActivity
         private String server;
 
         public void cancelAction() {
+            try {
+                final Map<String, Object> eventMap = new HashMap<>();
+                eventMap.put("Action", "Cancel");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_SPEEDTEST, eventMap);
+            } catch (final Exception e) {
+                //No worries
+            }
+
             mRouterCopy.destroyAllSessions();
         }
 
         @Override
         protected AbstractRouterAction.RouterActionResult<Void> doInBackground(Void... params) {
+
+            try {
+                final Map<String, Object> eventMap = new HashMap<>();
+                eventMap.put("Action", "Run");
+                ReportingUtils.reportEvent(ReportingUtils.EVENT_SPEEDTEST, eventMap);
+            } catch (final Exception e) {
+                //No worries
+            }
 
             executionDate = new Date();
 
