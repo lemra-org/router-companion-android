@@ -29,7 +29,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_launch_white_24dp"
         android:orderInCategory="1"
         android:title="@string/menuitem_actions"
-        app:showAsAction="collapseActionView|ifRoom">
+        app:showAsAction="ifRoom">
 
         <menu>
 
@@ -189,7 +189,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:icon="@drawable/ic_settings_white_24dp"
         android:orderInCategory="2"
         android:title="@string/menuitem_settings"
-        app:showAsAction="collapseActionView|ifRoom" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_donate"
