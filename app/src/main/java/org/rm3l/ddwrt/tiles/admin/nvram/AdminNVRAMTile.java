@@ -40,6 +40,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -401,7 +402,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
         });
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+        final int rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
@@ -627,7 +628,7 @@ public class AdminNVRAMTile extends DDWRTTile<None> implements PopupMenu.OnMenuI
             }
         } else {
 
-            if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+            if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                     PackageManager.PERMISSION_GRANTED) {
                 Crouton.makeText(mParentFragmentActivity,

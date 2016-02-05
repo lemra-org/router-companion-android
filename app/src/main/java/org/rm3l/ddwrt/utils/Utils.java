@@ -47,6 +47,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.util.Pair;
 import android.text.Html;
 import android.text.Spannable;
@@ -754,7 +755,7 @@ public final class Utils {
         //Permission requests
 
         // WRITE_EXTERNAL_STORAGE (includes READ_EXTERNAL_STORAGE)
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         activity,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);

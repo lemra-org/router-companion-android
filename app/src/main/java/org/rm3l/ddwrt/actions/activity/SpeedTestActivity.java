@@ -22,6 +22,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -478,7 +479,7 @@ public class SpeedTestActivity extends AppCompatActivity
         });
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -1000,7 +1001,7 @@ public class SpeedTestActivity extends AppCompatActivity
         this.optionsMenu = menu;
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -1068,17 +1069,17 @@ public class SpeedTestActivity extends AppCompatActivity
         /* Getting the actionprovider associated with the menu item whose id is share */
         final MenuItem shareMenuItem = menu.findItem(R.id.router_speedtest_share);
 
-        mShareActionProvider = (ShareActionProvider)
-                MenuItemCompat.getActionProvider(shareMenuItem);
-        if (mShareActionProvider == null) {
-            mShareActionProvider = new ShareActionProvider(this);
-            MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
+        if (PermissionChecker.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             shareMenuItem.setEnabled(false);
         } else {
+
+            mShareActionProvider = (ShareActionProvider)
+                    MenuItemCompat.getActionProvider(shareMenuItem);
+            if (mShareActionProvider == null) {
+                mShareActionProvider = new ShareActionProvider(this);
+                MenuItemCompat.setActionProvider(shareMenuItem, mShareActionProvider);
+            }
 
             final List<SpeedTestResult> speedTestResultsByRouter = mDao.getSpeedTestResultsByRouter(mOriginalRouter.getUuid());
             if (speedTestResultsByRouter.isEmpty()) {

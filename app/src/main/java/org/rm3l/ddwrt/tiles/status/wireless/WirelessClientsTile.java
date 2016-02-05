@@ -45,6 +45,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Spannable;
@@ -547,10 +548,10 @@ public class WirelessClientsTile
                 });
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+        final int rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         //Android >= 6.0 now requires to request the COARSE_LOCATION permission to read HW Mac Addresses
-        final int accessCoarseLocationPermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+        final int accessCoarseLocationPermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED
                 || accessCoarseLocationPermissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -1215,7 +1216,7 @@ public class WirelessClientsTile
                         });
 
                         try {
-                            if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                            if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                                     PackageManager.PERMISSION_GRANTED) {
 
@@ -1446,7 +1447,7 @@ public class WirelessClientsTile
                     Crashlytics.log(Log.DEBUG, LOG_TAG, "disableBackup= " + disableBackup + " - mUsageDbBackupPath: " + mUsageDbBackupPath);
                     if (!disableBackup) {
                         try {
-                            if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                            if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                                     PackageManager.PERMISSION_GRANTED &&
                                     !isNullOrEmpty(mUsageDbBackupPath)) {

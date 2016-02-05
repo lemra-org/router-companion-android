@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -120,7 +121,7 @@ public class IPGeoActivity extends AppCompatActivity {
         }
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);

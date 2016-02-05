@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -76,7 +77,7 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
         isThemeLight = ColorUtils.isThemeLight(mParentFragmentActivity);
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+        final int rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?

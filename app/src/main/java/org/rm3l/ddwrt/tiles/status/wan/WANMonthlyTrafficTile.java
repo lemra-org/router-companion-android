@@ -41,9 +41,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.Html;
@@ -246,7 +246,7 @@ public class WANMonthlyTrafficTile
         }
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat.checkSelfPermission(mParentFragmentActivity,
+        final int rwExternalStoragePermissionCheck = PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (rwExternalStoragePermissionCheck != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
@@ -322,7 +322,7 @@ public class WANMonthlyTrafficTile
                         //Store current value in preferences
                         switch (itemId) {
                             case R.id.tile_wan_monthly_traffic_backup_raw:
-                                if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                                if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                     Utils.displayMessage(mParentFragmentActivity, "Storage access required", Style.ALERT);
                                     return false;
@@ -338,7 +338,7 @@ public class WANMonthlyTrafficTile
                                             "Backup WAN Traffic Data as CSV");
                                     return true;
                                 }
-                                if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                                if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                     Utils.displayMessage(mParentFragmentActivity, "Storage access required", Style.ALERT);
                                     return false;
@@ -354,7 +354,7 @@ public class WANMonthlyTrafficTile
                                     return true;
                                 }
 
-                                if (ContextCompat.checkSelfPermission(mParentFragmentActivity,
+                                if (PermissionChecker.checkSelfPermission(mParentFragmentActivity,
                                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                     Utils.displayMessage(mParentFragmentActivity, "Storage access required", Style.ALERT);
                                     return false;

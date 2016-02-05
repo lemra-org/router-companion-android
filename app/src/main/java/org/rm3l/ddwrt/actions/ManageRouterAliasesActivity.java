@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -360,7 +361,7 @@ public class ManageRouterAliasesActivity
         this.optionsMenu = menu;
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -522,7 +523,7 @@ public class ManageRouterAliasesActivity
                 return true;
 
             case R.id.router_aliases_import:
-                if (ContextCompat.checkSelfPermission(this,
+                if (PermissionChecker.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                         PackageManager.PERMISSION_GRANTED) {
                     //Permission denied
@@ -541,7 +542,7 @@ public class ManageRouterAliasesActivity
                 return true;
 
             case R.id.router_aliases_export_all:
-                if (ContextCompat.checkSelfPermission(this,
+                if (PermissionChecker.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                         PackageManager.PERMISSION_GRANTED) {
                     //Permission denied

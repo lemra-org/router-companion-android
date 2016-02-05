@@ -35,6 +35,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -314,7 +315,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         this.optionsMenu = menu;
 
         //Permission requests
-        final int rwExternalStoragePermissionCheck = ContextCompat
+        final int rwExternalStoragePermissionCheck = PermissionChecker
                 .checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -400,7 +401,7 @@ public class ActiveIPConnectionsDetailStatsActivity extends AppCompatActivity {
         final Canvas canvas = new Canvas(bitmapToExport);
         viewToShare.draw(canvas);
 
-        if (ContextCompat.checkSelfPermission(this,
+        if (PermissionChecker.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED) {
 
