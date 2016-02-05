@@ -505,7 +505,8 @@ public class StatusRouterSpaceUsageTile extends DDWRTTile<NVRAMInfo> {
                         pbText.setVisibility(View.GONE);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    Crashlytics.log(Log.DEBUG, LOG_TAG,
+                            "NumberFormatException" + e.getMessage());
                     pb.setVisibility(View.GONE);
                     pbText.setVisibility(View.GONE);
                 }
