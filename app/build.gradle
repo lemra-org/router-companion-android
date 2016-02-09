@@ -52,10 +52,12 @@ gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.hasTask(':app:assembleGoogleRelease') ||
             taskGraph.hasTask(':app:assembleAmazonRelease') ||
             taskGraph.hasTask(':app:assembleSamsungRelease') ||
+            taskGraph.hasTask(':app:assembleBlackberryRelease') ||
             taskGraph.hasTask(':app:assembleAmazonUndergroundRelease') ||
             taskGraph.hasTask(':app:assembleGenericFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleAmazonFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleGoogleFreeWithAdsRelease') ||
+            taskGraph.hasTask(':app:assembleBlackberryFreeWithAdsRelease') ||
             taskGraph.hasTask(':app:assembleSamsungFreeWithAdsRelease')) {
 
         def password = ""
@@ -142,7 +144,7 @@ android {
         enabledFor "release", "google", "fdroid", "amazon",
                 "googleFreeWithAds", "amazonFreeWithAds",
                 "samsung", "samsungFreeWithAds",
-                "amazonUnderground"
+                "amazonUnderground", "blackberry", "blackberryFreeWithAds"
     }
 
     signingConfigs {
@@ -248,6 +250,13 @@ android {
             buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
             buildConfigField "boolean", "WITH_ADS", "false"
         }
+        blackberry {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+            buildConfigField "boolean", "WITH_ADS", "false"
+        }
         amazonUnderground {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
@@ -293,6 +302,14 @@ android {
             buildConfigField "boolean", "WITH_ADS", "true"
         }
         amazonFreeWithAds {
+            //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
+            buildConfigField "boolean", "DONATIONS", "false"
+            //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
+            buildConfigField "boolean", "DONATIONS_GOOGLE", "false"
+
+            buildConfigField "boolean", "WITH_ADS", "true"
+        }
+        blackberryFreeWithAds {
             //Disable 'Donations' menu item for Play Store app (it will certainly be a paid app)
             buildConfigField "boolean", "DONATIONS", "false"
             //PlayStore app will contain an In-App Billing (IAB) link to Google Play only
