@@ -31,6 +31,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.resources.IPWhoisInfo;
@@ -217,8 +218,12 @@ public class IPGeoActivity extends AppCompatActivity {
                             map.setMultiTouchControls(true);
 
                             //Night mode
-                            map.getController().setInvertedTiles(!ColorUtils
-                                    .isThemeLight(IPGeoActivity.this));
+//                            map.getController().setInvertedTiles(!ColorUtils
+//                                    .isThemeLight(IPGeoActivity.this));
+                            map.getOverlayManager().getTilesOverlay()
+                                    .setColorFilter(
+                                            ColorUtils.isThemeLight(IPGeoActivity.this) ?
+                                                    null : TilesOverlay.INVERT_COLORS);
 
                             //Act according to user-defined data usage control setting
                             //map.setUseDataConnection(Utils.canUseDataConnection(this));

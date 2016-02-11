@@ -29,6 +29,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.rm3l.ddwrt.BuildConfig;
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
@@ -373,7 +374,10 @@ public class PublicIPGeoTile extends DDWRTTile<None> {
                 map.setTileSource(DDWRTCompanionConstants.TILE_SOURCE);
 
                 //Night mode
-                map.getController().setInvertedTiles(!isThemeLight);
+//                map.getController().setInvertedTiles(!isThemeLight);
+                map.getOverlayManager().getTilesOverlay()
+                        .setColorFilter(isThemeLight ?
+                                null : TilesOverlay.INVERT_COLORS);
 
                 map.setBuiltInZoomControls(true);
                 map.setMultiTouchControls(false);

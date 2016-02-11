@@ -393,23 +393,21 @@ dependencies {
         // exclusion is not necessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
-    //    FIXME Acra 4.7.0-RC1 is a release candidate
-    //    compile 'ch.acra:acra:4.6.2'
-    compile('com.mikepenz:materialdrawer:4.6.3@aar') {
+    compile('com.mikepenz:materialdrawer:4.6.4@aar') {
         transitive = true
     }
 
     //The commons module contains extensions to the library that not everyone may need.
     // This includes the ColorChooserDialog, FolderChooserDialog, the Material Preference classes,
     // and MaterialSimpleListAdapter/MaterialSimpleListItem
-    compile('com.github.afollestad.material-dialogs:commons:0.8.5.3@aar') {
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') {
         transitive = true
     }
 
 //    compile 'com.android.support:multidex:1.0.0'
 
 //    androidTestCompile 'com.android.support:multidex-instrumentation:1.0.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
 
@@ -424,7 +422,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'commons-codec:commons-codec:1.10'
     compile 'com.jcraft:jsch:0.1.51'
-    compile 'ch.acra:acra:4.7.0'
+    compile 'ch.acra:acra:4.8.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
@@ -443,7 +441,7 @@ dependencies {
     compile 'com.github.amlcurran.showcaseview:library:5.4.0'
 //    compile 'com.github.halysongoncalves:pugnotification:1.8.1'
 
-    compile 'org.osmdroid:osmdroid-android:5.0.1@aar'
+    compile 'org.osmdroid:osmdroid-android:5.1@aar'
 
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
 //    compile 'com.github.glomadrian:dashed-circular-progress:62912bbdd5'
