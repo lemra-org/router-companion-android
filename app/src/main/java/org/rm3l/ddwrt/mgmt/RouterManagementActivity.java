@@ -615,6 +615,11 @@ public class RouterManagementActivity
             case ROUTER_MANAGEMENT_SETTINGS_ACTIVITY_CODE:
                 // Make sure the request was successful and reload U if necessary
                 if (resultCode == RESULT_OK) {
+                    //Reset Crashlytics user email addr
+                    final String acraEmailAddr = this.mPreferences
+                            .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+                    Crashlytics.setUserEmail(acraEmailAddr);
+
                     if (this.mCurrentTheme != this.mPreferences.getLong(THEMING_PREF, -1l) ||
                             this.mBackgroundServiceEnabled != this.mPreferences
                                     .getBoolean(NOTIFICATIONS_BG_SERVICE_ENABLE, false) ||

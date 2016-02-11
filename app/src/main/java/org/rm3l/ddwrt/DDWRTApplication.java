@@ -130,6 +130,10 @@ public class DDWRTApplication extends Application {
         Crashlytics.setBool("DEBUG", BuildConfig.DEBUG);
         Crashlytics.setBool("WITH_ADS", BuildConfig.WITH_ADS);
 
+        final String acraEmailAddr = getSharedPreferences(DEFAULT_SHARED_PREFERENCES_KEY, MODE_PRIVATE)
+                .getString(DDWRTCompanionConstants.ACRA_USER_EMAIL, null);
+        Crashlytics.setUserEmail(acraEmailAddr);
+
         //We must initialize Fabric prior to calling this
         if (isFirstLaunch(this)) {
             final String appOriginInstallerPackageName = Utils.getAppOriginInstallerPackageName(this);
