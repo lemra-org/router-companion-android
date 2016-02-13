@@ -247,3 +247,10 @@
 -keep class com.crashlytics.** { *; }
 -keep class com.crashlytics.android.**
 
+-keep class com.airbnb.deeplinkdispatch.** { *; }
+-keepclasseswithmembers class * {
+     @com.airbnb.deeplinkdispatch.DeepLink <methods>;
+}
+
+-dontwarn okio.**
+

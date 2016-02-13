@@ -36,6 +36,7 @@ buildscript {
 import groovy.swing.SwingBuilder
 
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 apply plugin: 'io.fabric'
 apply plugin: 'tracepot'
 apply plugin: 'com.github.triplet.play'
@@ -448,4 +449,10 @@ dependencies {
 
     compile 'mbanje.kurt:fabbutton:1.+'
     compile 'com.sothree.slidinguppanel:library:3.2.1'
+
+    /*
+     * AirBnB DeepLinkDispatch
+     */
+    compile 'com.airbnb:deeplinkdispatch:1.5.0'
+    apt 'com.airbnb:deeplinkdispatch-processor:1.5.0'
 }

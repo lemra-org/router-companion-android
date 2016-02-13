@@ -24,11 +24,14 @@ package org.rm3l.ddwrt;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
+import com.airbnb.deeplinkdispatch.DeepLinkActivity;
 import com.crashlytics.android.Crashlytics;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -84,6 +87,10 @@ public class DDWRTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        final IntentFilter intentFilter = new IntentFilter(DeepLinkActivity.ACTION);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(new DeepLinkReceiver(), intentFilter);
 
         DDWRTCompanionSqliteDAOImpl.initialize(getApplicationContext());
 
