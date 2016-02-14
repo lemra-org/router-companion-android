@@ -35,6 +35,7 @@ import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -153,6 +154,21 @@ public class DDWRTCompanionInMemoryDAOImpl implements DDWRTCompanionDAO {
             }
         }
         return null;
+    }
+
+    @Nullable
+    @Override
+    public Collection<Router> getRoutersByName(String name) {
+        if (name == null) {
+            return Collections.emptyList();
+        }
+        final List<Router> routers = new ArrayList<>();
+        for ( final Router router : DB.values()) {
+            if (name.equals(router.getName())) {
+                routers.add(router);
+            }
+        }
+        return routers;
     }
 
     @Override

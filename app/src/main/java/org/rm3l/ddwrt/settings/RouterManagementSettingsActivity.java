@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 
+import com.airbnb.deeplinkdispatch.DeepLink;
+
 import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.utils.DDWRTCompanionConstants;
 
@@ -40,6 +42,8 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_SYNC_IN
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_VIBRATE;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.THEMING_PREF;
 
+@DeepLink({"dd-wrt://settings",
+        "ddwrt://settings"})
 public class RouterManagementSettingsActivity extends AbstractDDWRTSettingsActivity {
 
     @Override

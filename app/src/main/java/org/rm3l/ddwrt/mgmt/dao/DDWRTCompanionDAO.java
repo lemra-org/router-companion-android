@@ -29,6 +29,7 @@ import org.rm3l.ddwrt.resources.SpeedTestResult;
 import org.rm3l.ddwrt.resources.WANTrafficData;
 import org.rm3l.ddwrt.resources.conn.Router;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface DDWRTCompanionDAO {
@@ -50,6 +51,9 @@ public interface DDWRTCompanionDAO {
 
     @Nullable
     Router getRouter(int id);
+
+    @NonNull
+    Collection<Router> getRoutersByName(String name);
 
     @Nullable
     Long insertWANTrafficData(@NonNull final WANTrafficData... trafficData);

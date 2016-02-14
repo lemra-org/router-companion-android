@@ -21,12 +21,16 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 
+import com.airbnb.deeplinkdispatch.DeepLink;
+
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_CONNECTED_HOSTS_ACTIVE_ONLY;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.NOTIFICATIONS_ENABLE;
@@ -47,7 +51,23 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.WAN_CYCLE_DAY_PREF;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+@DeepLink({"dd-wrt://routers/{routerUuid}/settings",
+        "ddwrt://routers/{routerUuid}/settings"})
 public class RouterSettingsActivity extends AbstractRouterSettingsActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        final Intent intent = getIntent();
+        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+            //Deep link
+            final Bundle parameters = intent.getExtras();
+
+            final String routerUuid = parameters.getString("routerUuid");
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                    routerUuid);
+        }
+        super.onCreate(savedInstanceState);
+    }
 
     @NonNull
     @Override

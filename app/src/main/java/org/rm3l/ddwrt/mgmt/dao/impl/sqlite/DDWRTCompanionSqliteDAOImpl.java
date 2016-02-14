@@ -42,6 +42,7 @@ import org.rm3l.ddwrt.utils.ReportingUtils;
 import org.rm3l.ddwrt.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -367,6 +368,43 @@ public class DDWRTCompanionSqliteDAOImpl implements DDWRTCompanionDAO {
         } catch (final RuntimeException e) {
             ReportingUtils.reportException(null, e);
             return null;
+        } finally {
+            instance.closeDatabase();
+        }
+    }
+
+    @Nullable
+    @Override
+    public Collection<Router> getRoutersByName(String name) {
+        final DDWRTCompanionSqliteDAOImpl instance = getInstance();
+        try {
+            final List<Router> routers = new ArrayList<>();
+            final Cursor cursor = instance.openDatabase()
+                    .query(TABLE_ROUTERS,
+                            routersAllColumns,
+                            String.format(ROUTER_NAME + "=%s",
+                                    name != null ? ("'" + name.replaceAll("'", "''") + "'") : "NULL"),
+                            null, null, null, COLUMN_ID + " DESC");
+
+            //noinspection TryFinallyCanBeTryWithResources
+            try {
+                if (cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        final Router router = cursorToRouter(cursor);
+                        routers.add(router);
+                        cursor.moveToNext();
+                    }
+                }
+            } finally {
+                // make sure to close the cursor
+                cursor.close();
+            }
+
+            return routers;
+        } catch (final RuntimeException e) {
+            ReportingUtils.reportException(null, e);
+            throw e;
         } finally {
             instance.closeDatabase();
         }

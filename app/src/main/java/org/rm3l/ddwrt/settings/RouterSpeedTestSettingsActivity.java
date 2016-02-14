@@ -21,12 +21,16 @@
  */
 package org.rm3l.ddwrt.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 
+import com.airbnb.deeplinkdispatch.DeepLink;
+
 import org.rm3l.ddwrt.R;
+import org.rm3l.ddwrt.mgmt.RouterManagementActivity;
 
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_DURATION_THRESHOLD_SECONDS;
 import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_MAX_FILE_SIZE_MB;
@@ -43,7 +47,24 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.ROUTER_SPEED_TEST_SER
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+
+@DeepLink({"dd-wrt://routers/{routerUuid}/speedtest/settings",
+        "ddwrt://routers/{routerUuid}/speedtest/settings"})
 public class RouterSpeedTestSettingsActivity extends AbstractRouterSettingsActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        final Intent intent = getIntent();
+        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+            //Deep link
+            final Bundle parameters = intent.getExtras();
+
+            final String routerUuid = parameters.getString("routerUuid");
+            intent.putExtra(RouterManagementActivity.ROUTER_SELECTED,
+                    routerUuid);
+        }
+        super.onCreate(savedInstanceState);
+    }
 
     @NonNull
     @Override
