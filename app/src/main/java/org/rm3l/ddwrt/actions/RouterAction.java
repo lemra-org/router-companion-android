@@ -54,7 +54,8 @@ public enum RouterAction {
     START_HTTPD("Start HTTPd"),
     STOP_HTTPD("Stop HTTPd"),
     RESTART_HTTPD("Restart HTTPd"),
-    HTTPD_UNKNOWN_ACTION("HTTPd : Unknown Action");
+    HTTPD_UNKNOWN_ACTION("HTTPd : Unknown Action"),
+    EXEC_CMD("Execute Command");
 
     private final String displayName;
 
