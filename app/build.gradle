@@ -450,6 +450,8 @@ dependencies {
     compile 'mbanje.kurt:fabbutton:1.+'
     compile 'com.sothree.slidinguppanel:library:3.2.1'
 
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+
     /*
      * AirBnB DeepLinkDispatch
      */

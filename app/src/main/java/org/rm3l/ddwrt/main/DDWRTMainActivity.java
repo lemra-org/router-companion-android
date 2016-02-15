@@ -69,6 +69,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.deeplinkdispatch.DeepLink;
 import com.cocosw.undobar.UndoBarController;
 import com.crashlytics.android.Crashlytics;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
@@ -77,6 +78,12 @@ import com.github.amlcurran.showcaseview.sample.ToolbarActionItemTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
@@ -161,6 +168,9 @@ import static org.rm3l.ddwrt.utils.DDWRTCompanionConstants.TILE_REFRESH_SECONDS;
  * Main Android Activity
  * <p/>
  */
+@DeepLink({
+        "ddwrt://routers/{routerUuid}",
+        "dd-wrt://routers/{routerUuid}"})
 public class DDWRTMainActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, UndoBarController.AdvancedUndoListener,
         RouterActionListener,
@@ -253,19 +263,41 @@ public class DDWRTMainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
 
+    private GoogleApiClient mClient;
+
+    private static final Uri BASE_APP_URI = Uri.parse("android-app://" + BuildConfig.APPLICATION_ID +
+            "/http/ddwrt-companion.rm3l.org/routers");
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
         //SQLite
         this.dao = RouterManagementActivity.getDao(this);
         final Intent intent = getIntent();
-        String uuid = intent.getStringExtra(ROUTER_SELECTED);
-        if (uuid == null) {
-            if (savedInstanceState != null) {
-                uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+        String uuid = null;
+        if (intent.getBooleanExtra(DeepLink.IS_DEEP_LINK, false)) {
+            //Deep link
+            final Bundle parameters = intent.getExtras();
+            uuid = parameters.getString("routerUuid");
+
+        } else {
+            final String action = intent.getAction();
+            final String data = intent.getDataString();
+            if (Intent.ACTION_VIEW.equals(action) && data != null) {
+                uuid = data.substring(data.lastIndexOf("/") + 1);
+            } else {
+                uuid = intent.getStringExtra(ROUTER_SELECTED);
+                if (uuid == null) {
+                    if (savedInstanceState != null) {
+                        uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+                    }
+                }
             }
         }
+
         final Router router = this.dao.getRouter(uuid);
 
         if (router == null) {
@@ -273,6 +305,30 @@ public class DDWRTMainActivity extends AppCompatActivity
             finish();
             return;
         }
+        // Connect your client
+        mClient.connect();
+
+        // Define a title for your current page, shown in autocompletion UI
+        final String TITLE = (router.getName() + " (" + router.getRemoteIpAddress() + ")");
+        final Uri APP_URI = BASE_APP_URI.buildUpon().appendPath(router.getUuid()).build();
+
+        final Action viewAction = Action.newAction(Action.TYPE_VIEW, TITLE, APP_URI);
+
+        // Call the App Indexing API view method
+        PendingResult<Status> result = AppIndex.AppIndexApi.start(mClient, viewAction);
+
+        result.setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+                if (status.isSuccess()) {
+                    Log.d(TAG, "App Indexing API: Recorded recipe "
+                            + router.getCanonicalHumanReadableName() + " view successfully.");
+                } else {
+                    Log.e(TAG, "App Indexing API: There was an error recording the recipe view."
+                            + status.toString());
+                }
+            }
+        });
 
 //        Utils.requestAppPermissions(this);
 
@@ -868,8 +924,37 @@ public class DDWRTMainActivity extends AppCompatActivity
         } catch (final Exception e) {
             e.printStackTrace();
         } finally {
-            super.onStop();
+            try {
+                if (mRouter != null) {
+                    final String TITLE = mRouter.getName();
+                    final Uri APP_URI = BASE_APP_URI.buildUpon().appendPath(mRouter.getUuid()).build();
+
+                    Action viewAction = Action.newAction(Action.TYPE_VIEW, TITLE, APP_URI);
+                    PendingResult<Status> result = AppIndex.AppIndexApi.end(mClient, viewAction);
+
+                    result.setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.d(TAG, "App Indexing API: Recorded recipe "
+                                        + mRouter.getCanonicalHumanReadableName() + " view end successfully.");
+                            } else {
+                                Log.e(TAG, "App Indexing API: There was an error recording the recipe view."
+                                        + status.toString());
+                            }
+                        }
+                    });
+
+                    mClient.disconnect();
+                }
+            } catch (final Exception e) {
+                e.printStackTrace();
+            } finally {
+                super.onStop();
+            }
         }
+
+
     }
 
     private void setUpNavDrawer() {
