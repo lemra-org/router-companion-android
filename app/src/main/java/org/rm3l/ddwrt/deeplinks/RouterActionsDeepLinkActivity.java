@@ -66,6 +66,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
     private DDWRTCompanionDAO mDao;
 
     private Collection<Router> mRouters;
+    private RouterActionListener routerActionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,6 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 isUuid = true;
             } catch (final Exception e) {
                 //No worries
-                Crashlytics.logException(e);
                 isUuid = false;
             }
             if (isUuid) {
@@ -111,6 +111,18 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 return;
             }
 
+            routerActionListener = new RouterActionListener() {
+                @Override
+                public void onRouterActionSuccess(@NonNull RouterAction routerAction, @NonNull Router router, Object returnData) {
+                    finish();
+                }
+
+                @Override
+                public void onRouterActionFailure(@NonNull RouterAction routerAction, @NonNull Router router, @Nullable Exception exception) {
+                    finish();
+                }
+            };
+
             final SharedPreferences globalPrefs = getSharedPreferences(DDWRTCompanionConstants.DEFAULT_SHARED_PREFERENCES_KEY,
                     Context.MODE_PRIVATE);
 
@@ -124,66 +136,66 @@ public class RouterActionsDeepLinkActivity extends Activity {
                 case "reboot":
                 case "restart":
                     routerAction = new RebootRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                     break;
 
                 case "clear-arp-cache":
                     routerAction = new ClearARPCacheRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                     break;
 
                 case "clear-dns-cache":
                     routerAction = new ClearDNSCacheRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                     break;
 
                 case "dhcp-release":
                     routerAction = new DHCPClientRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs,
                             DHCPClientRouterAction.DHCPClientAction.RELEASE);
                     break;
 
                 case "dhcp-renew":
                     routerAction = new DHCPClientRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs,
                             DHCPClientRouterAction.DHCPClientAction.RENEW);
                     break;
 
                 case "erase-wan-traffic":
                     routerAction = new EraseWANMonthlyTrafficRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                     break;
 
                 case "stop-httpd":
                     routerAction = new ManageHTTPdRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs,
                             ManageHTTPdRouterAction.STOP);
                     break;
 
                 case "start-httpd":
                     routerAction = new ManageHTTPdRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs,
                             ManageHTTPdRouterAction.START);
                     break;
 
                 case "restart-httpd":
                     routerAction = new ManageHTTPdRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs,
                             ManageHTTPdRouterAction.RESTART);
                     break;
 
                 case "reset-bandwidth-counters":
                     routerAction = new ResetBandwidthMonitoringCountersRouterAction(RouterActionsDeepLinkActivity.this,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                     break;
 
@@ -232,7 +244,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                     final Device device = new Device(deviceMac);
                                     device.setWolPort(deviceWolPort);
                                     new WakeOnLANRouterAction(RouterActionsDeepLinkActivity.this,
-                                            null,
+                                            routerActionListener,
                                             globalPrefs,
                                             device,
                                             wanAndLanBroadcast).execute(router);
@@ -260,7 +272,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -276,7 +288,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -293,7 +305,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -310,7 +322,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -329,7 +341,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -344,7 +356,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             false,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -359,7 +371,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                             RouterActionsDeepLinkActivity.this,
                             nvramInfo,
                             true,
-                            null,
+                            routerActionListener,
                             globalPrefs);
                 }
                     break;
@@ -465,7 +477,7 @@ public class RouterActionsDeepLinkActivity extends Activity {
                                                         ENABLE_1 :
                                                         ENABLE_2;
                                         new ToggleWANAccessPolicyRouterAction(RouterActionsDeepLinkActivity.this,
-                                                null,
+                                                routerActionListener,
                                                 globalPrefs,
                                                 wanAccessPolicy,
                                                 enableStatus).execute(router);
@@ -496,14 +508,14 @@ public class RouterActionsDeepLinkActivity extends Activity {
                     if (action.startsWith("enable")) {
                         routerAction = new EnableWANAccessRouterAction(
                                 RouterActionsDeepLinkActivity.this,
-                                null,
+                                routerActionListener,
                                 globalPrefs,
                                 device
                         );
                     } else {
                         routerAction = new DisableWANAccessRouterAction(
                                 RouterActionsDeepLinkActivity.this,
-                                null,
+                                routerActionListener,
                                 globalPrefs,
                                 device
                         );
