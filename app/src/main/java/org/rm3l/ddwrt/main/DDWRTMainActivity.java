@@ -284,15 +284,28 @@ public class DDWRTMainActivity extends AppCompatActivity
             uuid = parameters.getString("routerUuid");
 
         } else {
-            final String action = intent.getAction();
-            final String data = intent.getDataString();
-            if (Intent.ACTION_VIEW.equals(action) && data != null) {
-                uuid = data.substring(data.lastIndexOf("/") + 1);
-            } else {
-                uuid = intent.getStringExtra(ROUTER_SELECTED);
+//            final String action = intent.getAction();
+//            final String data = intent.getDataString();
+//            if (Intent.ACTION_VIEW.equals(action) && data != null) {
+//                uuid = data.substring(data.lastIndexOf("/") + 1);
+//            } else {
+//                uuid = intent.getStringExtra(ROUTER_SELECTED);
+//                if (uuid == null) {
+//                    if (savedInstanceState != null) {
+//                        uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+//                    }
+//                }
+//            }
+            uuid = intent.getStringExtra(ROUTER_SELECTED);
+            if (uuid == null) {
+                if (savedInstanceState != null) {
+                    uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+                }
                 if (uuid == null) {
-                    if (savedInstanceState != null) {
-                        uuid = savedInstanceState.getString(SAVE_ROUTER_SELECTED);
+                    final String action = intent.getAction();
+                    final String data = intent.getDataString();
+                    if (Intent.ACTION_VIEW.equals(action) && data != null) {
+                        uuid = data.substring(data.lastIndexOf("/") + 1);
                     }
                 }
             }
