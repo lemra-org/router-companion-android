@@ -401,9 +401,9 @@ dependencies {
     //The commons module contains extensions to the library that not everyone may need.
     // This includes the ColorChooserDialog, FolderChooserDialog, the Material Preference classes,
     // and MaterialSimpleListAdapter/MaterialSimpleListItem
-    compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') {
-        transitive = true
-    }
+//    compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') {
+//        transitive = true
+//    }
 
 //    compile 'com.android.support:multidex:1.0.0'
 
