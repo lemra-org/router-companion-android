@@ -1185,7 +1185,6 @@ public class DDWRTMainActivity extends AppCompatActivity
                 return true;
             case R.id.action_feedback:
                 Utils.buildFeedbackDialog(this, true);
-                ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
                 return true;
             case R.id.action_remove_ads:
                 Utils.displayUpgradeMessageForAdsRemoval(this);

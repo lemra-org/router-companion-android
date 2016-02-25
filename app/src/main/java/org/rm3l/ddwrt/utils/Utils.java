@@ -78,7 +78,6 @@ import org.rm3l.ddwrt.R;
 import org.rm3l.ddwrt.donate.DonateActivity;
 import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTDataSyncOnMobileNetworkNotAllowedException;
-import org.rm3l.ddwrt.exceptions.UserGeneratedReportException;
 import org.rm3l.ddwrt.resources.conn.Router;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarCallback;
 import org.rm3l.ddwrt.utils.snackbar.SnackbarUtils;
@@ -92,7 +91,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
@@ -573,8 +571,6 @@ public final class Utils {
         doorbellDialog.setNegativeButtonText(R.string.feedback_cancel);
 
         // Optionally add some properties
-        final UUID randomUUID = UUID.randomUUID();
-        doorbellDialog.addProperty("DIALOG_ID", randomUUID);
         doorbellDialog.addProperty("BUILD_DEBUG", BuildConfig.DEBUG);
         doorbellDialog.addProperty("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
         doorbellDialog.addProperty("BUILD_VERSION_CODE", BuildConfig.VERSION_CODE);
@@ -582,26 +578,51 @@ public final class Utils {
         doorbellDialog.addProperty("BUILD_TYPE", BuildConfig.BUILD_TYPE);
         doorbellDialog.addProperty("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
 
+        final Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("BUILD_APPLICATION_ID", BuildConfig.APPLICATION_ID);
+        eventMap.put("BUILD_FLAVOR", BuildConfig.FLAVOR);
+        eventMap.put("BUILD_TYPE", BuildConfig.BUILD_TYPE);
+        eventMap.put("BUILD_VERSION_NAME", BuildConfig.VERSION_NAME);
+
+        // Callback for when a message is successfully sent
+        doorbellDialog.setOnFeedbackSentCallback(new io.doorbell.android.callbacks.OnFeedbackSentCallback() {
+            @Override
+            public void handle(final String message) {
+                try {
+                    eventMap.put("Status", "Sent");
+                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
+                    Toast.makeText(activity, R.string.feedback_toast_msg, Toast.LENGTH_LONG).show();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         // Callback for when the dialog is shown
         doorbellDialog.setOnShowCallback(new io.doorbell.android.callbacks.OnShowCallback() {
             @Override
             public void handle() {
-                //Generate a custom error-report (for ACRA)
-                Utils.reportException(null, new
-                        UserGeneratedReportException("Feedback " + randomUUID));
+                try {
+                    eventMap.put("Status", "Displayed");
+                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            doorbellDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
+        doorbellDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                try {
+                    eventMap.put("Status", "Canceled");
+                    ReportingUtils.reportEvent(ReportingUtils.EVENT_FEEDBACK, eventMap);
                     Utils.displayRatingBarIfNeeded(activity);
+                } catch (final Exception e) {
+                    e.printStackTrace();
                 }
-            });
-        } else {
-            Utils.displayRatingBarIfNeeded(activity);
-        }
+            }
+        });
 
         if (showDialog) {
             doorbellDialog.show();
