@@ -64,14 +64,12 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="#"
                         android:textAppearance="?android:textAppearanceSmall"/>
                     <TextView
                         android:textIsSelectable="true"
                         android:id="@+id/access_restriction_policy_cardview_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1."
                         android:textAppearance="?android:textAppearanceSmall"
                         android:layout_marginRight="10dp"
                         android:layout_marginEnd="10dp"/>
@@ -81,7 +79,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/access_restriction_policy_cardview_name"
-                        android:text="myPolicy1"
                         android:textAppearance="?android:textAppearanceLarge"/>
 
                 </LinearLayout>
@@ -202,15 +199,32 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                 android:orientation="vertical"
                 android:layout_gravity="end">
 
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/access_restriction_policy_cardview_status"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textOff="OFF"
-                    android:textOn="ON"
-                    android:layout_marginBottom="35dp"/>
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="35dp">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/access_restriction_policy_cardview_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:textOff="OFF"
+                        android:textOn="ON"/>
+
+                    <ImageButton
+                        android:id="@+id/access_restriction_policy_cardview_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/menu"
+                        android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
+
+                </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/access_restriction_policy_remove_btn"
@@ -220,17 +234,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
                     android:src="@drawable/ic_action_action_delete"
                     android:background="?android:selectableItemBackground"
                     android:contentDescription="Remove" />
-
-                <!-- Mutually exclusive with the 'remove' button above.
-                Hidden for now, since there is only one menu item-->
-                <ImageButton
-                    android:id="@+id/access_restriction_policy_cardview_menu"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu"
-                    android:src="@drawable/abs__ic_menu_moreoverflow_holo_light"/>
 
             </LinearLayout>
 

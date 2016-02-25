@@ -28,8 +28,7 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         android:id="@+id/tile_wan_access_policy_toggle"
         android:orderInCategory="1"
         android:title="Toggle"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/tile_wan_access_policy_remove"

@@ -42,6 +42,7 @@ import org.rm3l.ddwrt.actions.RouterAction;
 import org.rm3l.ddwrt.actions.RouterActionListener;
 import org.rm3l.ddwrt.actions.SetNVRAMVariablesAction;
 import org.rm3l.ddwrt.actions.ToggleWANAccessPolicyRouterAction;
+import org.rm3l.ddwrt.exceptions.DDWRTCompanionException;
 import org.rm3l.ddwrt.exceptions.DDWRTNoDataException;
 import org.rm3l.ddwrt.exceptions.DDWRTTileAutoRefreshNotAllowedException;
 import org.rm3l.ddwrt.resources.RouterData;
@@ -573,6 +574,8 @@ public class AccessRestrictionsWANAccessTile extends
                     holder.statusSwitchButton.setChecked(true);
                     break;
                 default:
+                    Utils.reportException(tile.mParentFragmentActivity,
+                            new WANAccessPolicyException("status=[" + status + "]"));
                     holder.statusSwitchButton.setChecked(false);
                     holder.statusSwitchButton.setEnabled(false);
                     break;
@@ -807,6 +810,11 @@ public class AccessRestrictionsWANAccessTile extends
                         }
                     }).create();
 
+            if (!ColorUtils.isThemeLight(tile.mParentFragmentActivity)) {
+                //Set menu background to white
+                holder.menuImageButton.setImageResource(R.drawable.abs__ic_menu_moreoverflow_normal_holo_dark);
+            }
+
             holder.menuImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -906,5 +914,22 @@ public class AccessRestrictionsWANAccessTile extends
     static class WANAccessPoliciesRouterData extends
             RouterData<List<WANAccessPolicy>> {
 
+    }
+
+    static class WANAccessPolicyException extends DDWRTCompanionException {
+        public WANAccessPolicyException() {
+        }
+
+        public WANAccessPolicyException(@Nullable String detailMessage) {
+            super(detailMessage);
+        }
+
+        public WANAccessPolicyException(@Nullable String detailMessage, @Nullable Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+        public WANAccessPolicyException(@Nullable Throwable throwable) {
+            super(throwable);
+        }
     }
 }
