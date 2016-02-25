@@ -23,7 +23,6 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Hidden, as SwitchButton drag n' drop is far better -->
     <item
         android:id="@+id/tile_wan_access_policy_toggle"
         android:orderInCategory="1"
@@ -31,8 +30,14 @@ Contact Info: Armel Soro &lt;apps+ddwrt AT rm3l DOT org&gt;
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/tile_wan_access_policy_remove"
+        android:id="@+id/tile_wan_access_policy_edit"
         android:orderInCategory="2"
+        android:title="Edit"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/tile_wan_access_policy_remove"
+        android:orderInCategory="3"
         android:title="Delete"
         app:showAsAction="ifRoom" />
 

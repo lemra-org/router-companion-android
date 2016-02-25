@@ -829,6 +829,12 @@ public class AccessRestrictionsWANAccessTile extends
                                 case R.id.tile_wan_access_policy_remove:
                                     removeWanPolicyDialog.show();
                                     return true;
+                                case R.id.tile_wan_access_policy_edit:
+                                    //TODO Edit: open up edit popup or, better, a completely different setting activity
+                                    Toast.makeText(tile.mParentFragmentActivity,
+                                            "[TODO] Edit WAN Access Policy #" + wanAccessPolicy.getNumber() +
+                                                    " (" + wanAccessPolicy.getName() + ")", Toast.LENGTH_SHORT).show();
+                                    return true;
                                 default:
                                     break;
                             }
